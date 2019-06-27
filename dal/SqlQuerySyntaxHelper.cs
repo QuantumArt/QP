@@ -302,5 +302,16 @@ namespace Quantumart.QP8.DAL
         }
 
 
+        public static object BooleanToNumeric(DatabaseType dbType, bool value)
+        {
+            if (dbType == DatabaseType.SqlServer)
+            {
+                return value;
+            }
+
+            return value ? 1 : 0;
+        }
+
+
     }
 }

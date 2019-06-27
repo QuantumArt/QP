@@ -35,6 +35,9 @@ namespace Quantumart.QP8.DAL
 
         private static string Limit(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Limit(databaseType, top.ToString());
 
+        private static DatabaseType GetDbType(DbConnection sqlConnection) => DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+        private static DatabaseType GetDbType(QPModelDataContext context) => DatabaseTypeHelper.ResolveDatabaseType(context);
+
         public static UserDAL Authenticate(DbConnection connection, string login, string password, bool useNtLogin, bool checkAdminAccess)
         {
 

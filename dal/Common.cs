@@ -22,7 +22,7 @@ namespace Quantumart.QP8.DAL
     {
         public static long GetContentIdForArticle(DbConnection connection, long id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             using (var cmd = DbCommandFactory.Create($"select content_id from content_item {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.DAL
 
         public static string GetArticleFieldValue(DbConnection connection, int id, int contentId, string name)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             using (var cmd = DbCommandFactory.Create($"select {Escape(dbType, name)} from content_{contentId}_united {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -140,7 +140,7 @@ namespace Quantumart.QP8.DAL
         public static Dictionary<int, string> GetContentFieldValues(DbConnection connection, int contentId, string name)
         {
             var values = new Dictionary<int, string>();
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var databaseType = GetDbType(connection);
             var escapedNameColumn = SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name);
             using (var cmd = DbCommandFactory.Create($"select content_item_id, {escapedNameColumn} from content_{contentId}_united {WithNoLock(databaseType)} where {escapedNameColumn} is not null", connection))
             {
@@ -159,7 +159,7 @@ namespace Quantumart.QP8.DAL
 
         public static int GetArticleIdByFieldValue(DbConnection connection, int contentId, string name, string value)
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var databaseType = GetDbType(connection);
             using (var cmd = DbCommandFactory.Create($"select content_item_id from content_{contentId}_united {WithNoLock(databaseType)} where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name)} = @value", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -171,7 +171,7 @@ namespace Quantumart.QP8.DAL
 
         public static DataRow GetArticleRow(DbConnection connection, int id, int contentId, bool isLive, bool excludeArchive = false)
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var databaseType = GetDbType(connection);
             var suffix = isLive ? string.Empty : "_united";
             var isExcludeArchive = excludeArchive ? $"and archive = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}" : string.Empty;
             using (var cmd = DbCommandFactory.Create($"select * from content_{contentId}{suffix} {WithNoLock(databaseType)} where content_item_id = @id {isExcludeArchive}", connection))
@@ -186,7 +186,7 @@ namespace Quantumart.QP8.DAL
 
         public static DataTable GetArticleTable(DbConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
             var baseSql = $"select {fields} from content_{contentId}{{0}} c {WithNoLock(dbType)}" +
                 $" left join content_item ci {WithNoLock(dbType)} on c.content_item_id = ci.content_item_id {{1}} {{2}}";
@@ -263,7 +263,7 @@ namespace Quantumart.QP8.DAL
             string extraFrom = "",
             string orderBy = "")
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(cn);
+            var databaseType = GetDbType(cn);
             string securityJoin = "";
             if (useSecurity)
             {
@@ -441,7 +441,7 @@ namespace Quantumart.QP8.DAL
 
         public static DateTime? Lock(DbConnection connection, string source, string idField, int id, int? userId)
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var databaseType = GetDbType(connection);
             var lockedValue = (userId.HasValue ? SqlQuerySyntaxHelper.Now(databaseType) : "NULL");
             var query = $@"
                 {(databaseType == DatabaseType.SqlServer
@@ -568,7 +568,7 @@ namespace Quantumart.QP8.DAL
             }
             else
             {
-                var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var databaseType = GetDbType(connection);
                 var query = $@"
                     select article_id, link_id
                     from field_article_bind f inner join content_attribute ca on ca.attribute_id = f.field_id
@@ -592,7 +592,7 @@ namespace Quantumart.QP8.DAL
             }
             else
             {
-                var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var databaseType = GetDbType(connection);
                 var suffix = isLive ? string.Empty : "_united";
                 var isArchive = excludeArchive ? $"join content_item ci {WithNoLock(databaseType)} on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
                 var query = $@"
@@ -613,7 +613,7 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
 
         public static Dictionary<int, Dictionary<int, List<int>>> GetLinkedArticlesMultiple(DbConnection connection, IEnumerable<int> linkIds, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var sql = $@" select
                         ii.r_item_id as linked_item_id,
                         ii.l_item_id as item_id,
@@ -682,7 +682,7 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
             }
             else
             {
-                var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var databaseType = GetDbType(connection);
                 var suffix = isLive ? string.Empty : "_united";
                 var action = id.HasValue ? " = @id" : " is null ";
                 var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
@@ -788,7 +788,7 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
 
         public static Dictionary<string, List<string>> GetM2OValuesBatch(DbConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
@@ -820,7 +820,7 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
 
         public static Dictionary<Tuple<int, int>, List<int>> GetM2OValues(DbConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var result = new Dictionary<Tuple<int, int>, List<int>>();
             if (ids.Any())
             {
@@ -858,7 +858,7 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
-                var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+                var databaseType = GetDbType(sqlConnection);
                 var titleField = databaseType == DatabaseType.Postgres
                     ? $"{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, displayFieldName)}::text"
                     : $"CONVERT (NVARCHAR(255), {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, displayFieldName)})";
@@ -935,7 +935,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static DateTime GetSqlDate(DbConnection connection)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             using (var cmd = DbCommandFactory.Create($"select {Now(dbType)} as date", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -1003,7 +1003,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             string entityRecurringIdField = null)
         {
             var result = new List<int>();
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
 
             string query;
             if (entityTypeCode == EntityTypeCode.Article)
@@ -1115,7 +1115,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static bool CanUnlockItems(DbConnection connection, int userId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             string sql = $@"
                 WITH
                   {SqlQuerySyntaxHelper.RecursiveCte(dbType)} cte (group_id, parent_group_id, can_unlock_items)
@@ -1142,7 +1142,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int CountArticles(DbConnection connection, int contentId, bool includeArchive)
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var databaseType = GetDbType(connection);
             var sql = $"select count(*) from content_{contentId} {WithNoLock(databaseType)}";
             if (!includeArchive)
             {
@@ -1224,7 +1224,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void CopyContentAccess(DbConnection connection, int sourceId, int destinationId, int userId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var sql = $@"
                 DELETE FROM content_access WHERE content_id = {destinationId};
                 INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, created, modified, last_modified_by, propagate_to_items, hide)
@@ -1280,7 +1280,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int GetStringFieldMaxLength(DbConnection connection, int contentId, string fieldName)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             using (var cmd = DbCommandFactory.Create($"select MAX({SqlQuerySyntaxHelper.GetFieldLength(dbType, fieldName)}) from content_{contentId}_united {WithNoLock(dbType)}", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -1614,7 +1614,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         public static DataTable LoadVirtualFieldsRelations(DbConnection sqlConnection, int rootContentId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             string query = $@"
             WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} V2BREL AS (
                 SELECT *, 0 as {Escape(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent
@@ -1694,7 +1694,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IList<int> GetChildArticles(DbConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
+            var dbType = GetDbType(cn);
             var customFilter = string.IsNullOrWhiteSpace(filter) ? string.Empty : $"AND {filter}";
             var parentFilter = ids.Any() ? $"c.{fieldName} IN ({string.Join(",", ids)})" : $"c.{fieldName} IS NULL";
             var query = $"SELECT c.content_item_id FROM content_{contentId}_united c {WithNoLock(dbType)} WHERE {parentFilter} {customFilter}";
@@ -1717,7 +1717,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static DataTable GetVisualEditFieldParams(DbConnection sqlConnection, int fieldId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             using (var cmd = DbCommandFactory.Create(GetVisualEditorConfigQuery(dbType), sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@attr_id", fieldId);
@@ -1806,7 +1806,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && contentId.HasValue)
             {
-                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var dbType = GetDbType(connection);
                 var query = $"SELECT content_item_id as ID, {SqlQuerySyntaxHelper.CastToString(dbType, titleField)} as TITLE from content_{contentId.Value}_united WHERE content_item_id IN ({string.Join(",", entitiesIDs)})";
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
@@ -1825,7 +1825,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && !string.IsNullOrWhiteSpace(source) && !string.IsNullOrWhiteSpace(idField))
             {
-                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var dbType = GetDbType(connection);
                 var query = $"SELECT {idField} as ID, {titleField} as TITLE from {source} WHERE {idField} IN ({string.Join(",", entitiesIDs)})";
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
@@ -1856,7 +1856,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             int pageSize = 0)
         {
             Debug.Assert(userIds != null, "userIDs is null");
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
             var filters = new List<string>();
 
@@ -1927,7 +1927,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetCustomActionList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, out int totalRecords)
         {
             var selectBuilder = new StringBuilder();
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
             selectBuilder.Append("CA.ID, CA.NAME, CA.ACTION_ID");
             selectBuilder.Append(", AT.CODE AS ACTION_TYPE_CODE, AT.NAME AS ACTION_TYPE_NAME");
@@ -1957,7 +1957,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static List<DataRow> GetLockedArticlesList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
             return GetSimplePagedList(
                 sqlConnection,
@@ -2019,7 +2019,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static List<DataRow> GetArticlesWaitingForApproval(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
             var withNoLock = WithNoLock(dbType);
             return GetSimplePagedList(
@@ -2161,7 +2161,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             totalRecords = 0;
             DataTable result = null;
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
             if (useSecurity)
             {
                 var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel, entityTypeCode, parentEntityTypeCode, parentEntityId);
@@ -2414,7 +2414,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetVisualEditorPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var escapedOrderColumnName = Escape(dbType, "ORDER");
             return GetSimplePagedList(
                 sqlConnection,
@@ -2453,7 +2453,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetDisplayColumns(DbConnection sqlConnection, int contentId)
         {
             var queryBuilder = new StringBuilder();
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
             queryBuilder.Append(
                 "SELECT ca.ATTRIBUTE_ID, ca.ATTRIBUTE_NAME, ca.ATTRIBUTE_TYPE_ID, rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID, rca.ATTRIBUTE_TYPE_ID AS RELATED_ATTRIBUTE_TYPE_ID, ");
             queryBuilder.Append(
@@ -2489,7 +2489,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetArticlesPage(DbConnection sqlConnection, ArticlePageOptions options, IList<DbParameter> sqlParams, out int totalRecords)
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
             var selectBuilder = new StringBuilder();
             var fromBuilder = new StringBuilder();
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(options.CommonFilter, options.ContextFilter));
@@ -2758,7 +2758,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 return;
             }
 
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
 
             foreach (var row in GetDisplayColumns(sqlConnection, options.ContentId))
             {
@@ -2918,7 +2918,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetFieldsPage(DbConnection sqlConnection, FieldPageOptions options, out int totalRecords)
         {
             var aggregatedContentIds = GetReferencedAggregatedContentIds(sqlConnection, options.ContentId);
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var filter = "cnt.CONTENT_ID = " + options.ContentId;
@@ -2970,7 +2970,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetContentsPage(DbConnection sqlConnection, ContentPageOptions options, out int totalRecords)
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var selectBuilder = new StringBuilder();
 
             selectBuilder.Append("c.CONTENT_ID as Id, c.CONTENT_NAME as Name, c.DESCRIPTION as Description, c.CREATED as Created, c.MODIFIED as Modified, c.VIRTUAL_TYPE as VirtualType");
@@ -3079,7 +3079,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var selectBuilder = new StringBuilder();
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
             selectBuilder.Append("s.SITE_ID as Id, s.SITE_NAME as Name, s.DESCRIPTION as Description, s.CREATED as Created, s.MODIFIED as Modified, U.LOGIN as LastModifiedByUser");
             selectBuilder.Append($", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName ");
@@ -3121,7 +3121,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetToolbarButtonsForAction(QPModelDataContext context, DbConnection sqlConnection, int userId, bool isAdmin, int? actionId, string actionCode, int entityId)
         {
             var useSecurity = !isAdmin;
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
+            var databaseType = GetDbType(context);
 
 
 
@@ -3173,7 +3173,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<DataRow> GetActionStatusList(QPModelDataContext efContext, DbConnection sqlConnection, int userId, string actionCode, int? actionId, int entityId, string entityCode, bool isAdmin)
         {
             var useSecurity = !isAdmin;
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(efContext);
+            var databaseType = GetDbType(efContext);
             string query;
 
             // if (!useSecurity)
@@ -3415,7 +3415,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void ApplyFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, bool isBlob, bool isM2M, IEnumerable<int> idsForStep, DbConnection connection)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var contentDataColumn = isBlob && dbType == DatabaseType.SqlServer ? "BLOB_DATA" : "DATA";
             var attributeDefValueColumn = "COALESCE(a.DEFAULT_BLOB_VALUE, a.DEFAULT_VALUE)";
             var contentItemsIds = string.Join(",", idsForStep);
@@ -3442,7 +3442,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void ApplyM2MFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, int linkId, List<int> idsForStep, bool symmetric, DbConnection connection)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var query = new StringBuilder();
             query.AppendLine($@"INSERT INTO item_to_item (link_id, l_item_id, r_item_id)");
             query.AppendLine($@"select @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
@@ -3751,7 +3751,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// <returns></returns>
         public static bool UserGroups_IsGroupAdminDescendant(int groupId, DbConnection connection)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var levelColumnName = Escape(dbType, "Level");
             var query = $@"with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} G2G (Parent_Group_Id, Child_Group_Id, {levelColumnName}) AS
                             (
@@ -3864,7 +3864,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetSitePermissionPage(DbConnection sqlConnection, int siteId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var selectBlock = $@"SA.SITE_ACCESS_ID AS ID
                                       ,U.{Escape(dbType, "LOGIN")} AS UserLogin
                                       ,G.GROUP_NAME AS GroupName
@@ -3888,7 +3888,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetContentPermissionPage(DbConnection sqlConnection, int contentId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var selectBlock = $@"SA.CONTENT_ACCESS_ID AS ID
                                       ,U.{Escape(dbType, "LOGIN")} AS UserLogin
                                       ,G.GROUP_NAME AS GroupName
@@ -4027,7 +4027,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetUserGroupPage(DbConnection sqlConnection, List<int> selectedIds, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var selectBlock = @"G.GROUP_ID AS Id,G.GROUP_NAME AS Name,G.DESCRIPTION AS Description,G.CREATED,G.MODIFIED,G.LAST_MODIFIED_BY AS LastModifiedByUserId,G.LAST_MODIFIED_BY_LOGIN AS LastModifiedByUser,G.shared_content_items AS SharedArticles";
             var fromBlock = @"USER_GROUP_TREE G";
 
@@ -4052,7 +4052,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             string strFilter = null;
             string orderBy;
             var filters = new List<string>(4);
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
             if (!string.IsNullOrEmpty(options.Login))
             {
@@ -4098,7 +4098,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetChildContentPermissionsForUser(DbConnection sqlConnection, int siteId, int userId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.USER_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
@@ -4130,7 +4130,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetChildContentPermissionsForGroup(DbConnection sqlConnection, int siteId, int groupId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
             var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
@@ -4222,49 +4222,37 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void InsertChildContentPermissions(DbConnection sqlConnection, List<int> contentIds, int? userId, int? groupId, int permissionLevel, bool propagateToItems, int currentUserId, bool hide)
         {
+
+            var dbType = GetDbType(sqlConnection);
             if (contentIds == null || !contentIds.Any() || !userId.HasValue && !groupId.HasValue)
             {
                 return;
             }
 
-            var query = @"INSERT INTO [CONTENT_ACCESS]
-                                       ([CONTENT_ID]
-                                       ,[USER_ID]
-                                       ,[GROUP_ID]
-                                       ,[PERMISSION_LEVEL_ID]
-                                       ,[PROPAGATE_TO_ITEMS]
-                                       ,[HIDE]
-                                       ,[CREATED]
-                                       ,[MODIFIED]
-                                       ,[LAST_MODIFIED_BY])
-                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, GETDATE(), GETDATE(), @modifiedUserId
-                            from CONTENT C where C.CONTENT_ID in ({0})";
+            var query = $@"INSERT INTO CONTENT_ACCESS
+                                       (CONTENT_ID
+                                       ,{Escape(dbType, "USER_ID")}
+                                       ,GROUP_ID
+                                       ,PERMISSION_LEVEL_ID
+                                       ,PROPAGATE_TO_ITEMS
+                                       ,HIDE
+                                       ,CREATED
+                                       ,MODIFIED
+                                       ,LAST_MODIFIED_BY)
+                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, {Now(dbType)}, {Now(dbType)}, @modifiedUserId
+                            from CONTENT C where C.CONTENT_ID in ({string.Join(",", contentIds)})";
 
-            query = string.Format(query, string.Join(",", contentIds));
+
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
 
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
 
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
-                cmd.Parameters.AddWithValue("@propageteToItems", propagateToItems);
+                cmd.Parameters.AddWithValue("@propageteToItems", SqlQuerySyntaxHelper.BooleanToNumeric(dbType, propagateToItems));
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
                 cmd.Parameters.AddWithValue("@hide", hide);
 
@@ -4325,29 +4313,17 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 return;
             }
 
-            var query = @"delete from [CONTENT_ACCESS] where CONTENT_ID in ({0}) and (@userId IS NULL OR [USER_ID] = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
-            query = string.Format(query, string.Join(",", contentIds));
+            var dbType = GetDbType(sqlConnection);
+
+            var query = $"delete from CONTENT_ACCESS where CONTENT_ID in ({string.Join(",", contentIds)}) and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
+
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
 
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
 
                 cmd.ExecuteNonQuery();
             }
@@ -4355,30 +4331,16 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void RemoveChildContentPermissions(DbConnection sqlConnection, int siteId, int? userId, int? groupId)
         {
-            const string query = @"delete CONTENT_ACCESS from CONTENT_ACCESS A
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"delete CONTENT_ACCESS from CONTENT_ACCESS A
                             JOIN CONTENT C ON A.CONTENT_ID = C.CONTENT_ID
                             where C.SITE_ID = @siteId
-                            and (@userId IS NULL OR A.[USER_ID] = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
+                            and (@userId IS NULL OR A.{Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@groupId", groupId);
 
                 cmd.Parameters.AddWithValue("@siteId", siteId);
                 cmd.ExecuteNonQuery();
@@ -4547,7 +4509,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetEntityTypePermissionsForGroup(DbConnection sqlConnection, int groupId, int? entityId = null)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit from
                                  (<$_security_insert_$>) P1
                                  LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
@@ -4563,7 +4525,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetEntityTypePermissionsForUser(DbConnection sqlConnection, int userId, int? entityId = null)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit, L.PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
@@ -4628,7 +4590,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetVisualEditorCommandsBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $@"
 SELECT cmd.{Escape(dbType, "ID")},
 cmd.{Escape(dbType, "NAME")},
@@ -4654,7 +4616,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(db
 
         public static IEnumerable<DataRow> GetVisualEditorCommandsByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $@"
 SELECT cmd.{Escape(dbType, "ID")},
 cmd.{Escape(dbType, "NAME")},
@@ -4712,7 +4674,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void UpdateOrInsertSiteVeStyleValue(DbConnection sqlConnection, int siteId, int styleId, bool value)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             string query;
             switch (dbType)
             {
@@ -4863,8 +4825,8 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void UnlockAllArticlesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            var databaseType = GetDatabaseType(sqlConnection);
-            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
+            var dbType = GetDbType(sqlConnection);
+            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, dbType)} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4873,9 +4835,11 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
             }
         }
 
+
+
         public static void UnlockAllSitesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            var databaseType = GetDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
             var query = $"update {EscapeObjectName("SITE", databaseType)} set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -4911,7 +4875,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static IEnumerable<DataRow> GetVisualEditorStylesPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var escapedOrderColumnName = Escape(dbType, "ORDER");
             return GetSimplePagedList(
                 sqlConnection,
@@ -4929,7 +4893,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static IEnumerable<DataRow> GetVisualEditorStylesBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $@"SELECT
 s.{Escape(dbType, "ID")},
 s.NAME,
@@ -4958,7 +4922,7 @@ ORDER BY {Escape(dbType, "ORDER")}";
 
         public static IEnumerable<DataRow> GetVisualEditorStylesByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $@"
 SELECT s.{Escape(dbType, "ID")},
 s.NAME,
@@ -5015,7 +4979,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetWorkflowsPage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Workflow,
@@ -5032,7 +4996,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetStatusTypePage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.StatusType,
@@ -5145,7 +5109,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             var result = new HashSet<int>();
             if (!string.IsNullOrEmpty(selectedIds))
             {
-                var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+                var dbType = GetDbType(sqlConnection);
                 var sb = new StringBuilder();
                 sb.AppendLine($"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} IDS (ID)");
                 sb.AppendLine("AS");
@@ -5177,7 +5141,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetCommandBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
             var query = $"SELECT COMMAND_ID, {Escape(dbType, "ON")} FROM VE_COMMAND_SITE_BIND WHERE SITE_ID = {siteId}";
 
@@ -5192,7 +5156,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetCommandBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $"SELECT COMMAND_ID, {Escape(dbType, "ON")} FROM VE_COMMAND_FIELD_BIND WHERE FIELD_ID = {fieldId}";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
@@ -5206,7 +5170,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetStyleBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $"SELECT STYLE_ID, {Escape(dbType, "ON")} FROM VE_STYLE_FIELD_BIND WHERE FIELD_ID = {fieldId}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5219,7 +5183,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetStyleBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $"SELECT STYLE_ID, {Escape(dbType, "ON")} FROM VE_STYLE_SITE_BIND WHERE SITE_ID = {siteId}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -5235,7 +5199,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
         /// </summary>
         public static IEnumerable<decimal> GetAggregatedArticlesIDs(DbConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
 
             if (dbType == DatabaseType.SqlServer)
             {
@@ -5485,7 +5449,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
         {
             if (context == null)
             {
-                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+                var dbType = GetDbType(connection);
                 switch (dbType)
                 {
                     case DatabaseType.SqlServer:
@@ -5570,7 +5534,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetPageTemplatesBySiteId(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.PageTemplate,
@@ -5587,7 +5551,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static IEnumerable<DataRow> GetPagesByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Page,
@@ -5711,7 +5675,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static List<DataRow> GetStatusHistoryItem(DbConnection sqlConnection, int articleId)
         {
-            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
             var query = $@"select
 {(databaseType == DatabaseType.SqlServer ? "TOP 1" : string.Empty)}
     h.STATUS_HISTORY_ID as Id
@@ -5763,7 +5727,7 @@ order by ActionDate desc
 
         public static List<DataRow> GetArticlesForExport(DbConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Article,
@@ -5783,7 +5747,7 @@ order by ActionDate desc
         public static int[] GetReferencedAggregatedContentIds(QPModelDataContext context, DbConnection sqlConnection, int contentId, int[] articleIds, bool isArchive = false)
         {
 
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             if (context == null)
             {
                 switch (dbType)
@@ -5846,7 +5810,7 @@ order by ActionDate desc
 
         public static int[] GetReferencedAggregatedContentIds(DbConnection sqlConnection, int contentId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
             string query = $@"
                 SELECT
@@ -5877,7 +5841,7 @@ order by ActionDate desc
 
         public static Dictionary<int, string> GetAggregatedFieldNames(DbConnection sqlConnection, int[] contentIds)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             using (var cmd = DbCommandFactory.Create($"SELECT CONTENT_ID, ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE JOIN {IdList(dbType, "@ids")} ON CONTENT_ID = ID WHERE AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5899,7 +5863,7 @@ order by ActionDate desc
 
         public static Dictionary<int, Dictionary<int, int>> GetAggregatedArticleIdsMap(QPModelDataContext efContext, DbConnection sqlConnection, int contentId, int[] articleIds)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
 
 
@@ -6195,7 +6159,7 @@ order by ActionDate desc
 
         public static void UnlockAllTemplatesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            var databaseType = GetDatabaseType(sqlConnection);
+            var databaseType = GetDbType(sqlConnection);
             var falseValueStr = GetBoolValue(false, databaseType);
             var templateQuery = $"update {EscapeObjectName("PAGE_TEMPLATE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
             using (var cmd = DbCommandFactory.Create(templateQuery, sqlConnection))
@@ -6243,18 +6207,7 @@ order by ActionDate desc
             }
         }
 
-        private static DatabaseType GetDatabaseType(DbConnection connection)
-        {
-            switch (connection)
-            {
-                case SqlConnection _:
-                    return DatabaseType.SqlServer;
-                case NpgsqlConnection _:
-                    return DatabaseType.Postgres;
-                default:
-                    return DatabaseType.Unknown;
-            }
-        }
+
 
         public static IEnumerable<DataRow> GetFormatIdsByTemplateId(DbConnection sqlConnection, int templateId)
         {
@@ -6656,7 +6609,7 @@ order by ActionDate desc
                 relatedIds.Add(0);
             }
 
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
 
             var query = $"select content_item_id from content_{contentId} c {WithNoLock(dbType)} where content_item_id in ({string.Join(",", relatedIds)}) {condition}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
@@ -7033,7 +6986,7 @@ order by ActionDate desc
 
         public static void UpdateContentModification(DbConnection sqlConnection, int contentId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var sql = $@"
                 update content_modification {WithRowLock(dbType)}
                 set live_modified = {Now(dbType)}, stage_modified = {Now(dbType)} where content_id = {contentId}
@@ -7145,7 +7098,7 @@ order by ActionDate desc
         public static Dictionary<int, int> GetArticleHierarchy(DbConnection sqlConnection, int contentId, string treeFieldName)
         {
             var result = new Dictionary<int, int>();
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var name = SqlQuerySyntaxHelper.FieldName(dbType, treeFieldName);
             var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : $"coalesce({name}, 0)";
             var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united {WithNoLock(dbType)} where archive = 0";
@@ -10097,7 +10050,7 @@ order by ActionDate desc
 
         public static int[] SortIdsByFieldName(DbConnection sqlConnection, int[] ids, int contentId, string fieldName, bool isArchive)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var dbType = GetDbType(sqlConnection);
             var query = $@"
                 select
                     CONTENT_ITEM_ID
@@ -10554,7 +10507,7 @@ order by ActionDate desc
 
         public static IList<int> GetParentIdsTreeResult(DbConnection cn, IList<int> ids, int fieldId, string fieldName, int? contentId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
+            var dbType = GetDbType(cn);
             if (string.IsNullOrWhiteSpace(fieldName) || !contentId.HasValue) return new List<int>();
 
             var query = $@"

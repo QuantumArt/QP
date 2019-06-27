@@ -14,7 +14,7 @@ namespace Quantumart.QP8.DAL
     {
         public static void AddColumn(DbConnection cnn, FieldDAL field)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
             var asyncTableName = tableName + "_async";
             var columnType = (dbType == DatabaseType.SqlServer) ? field.Type.DatabaseType : PgColumnType(field.Type.DatabaseType);
@@ -67,7 +67,7 @@ namespace Quantumart.QP8.DAL
 
         public static void AddIndex(DbConnection cnn, string tableName, string fieldName)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var actualFieldName = (dbType == DatabaseType.Postgres) ? fieldName.ToLower() : fieldName;
             var indexName = IndexName(dbType, tableName, actualFieldName);
             var sql =  $@" create index {indexName} on {tableName}({Escape(dbType, actualFieldName)})";
@@ -76,7 +76,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DropIndex(DbConnection cnn, string tableName, string fieldName)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var actualFieldName = (dbType == DatabaseType.Postgres) ? fieldName.ToLower() : fieldName;
             var indexName = IndexName(dbType, tableName, actualFieldName);
             var tablePrefix = (dbType == DatabaseType.SqlServer) ? $@"{DbSchemaName(dbType)}.{tableName}." : "";
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DropColumn(DbConnection cnn, FieldDAL field)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
             var asyncTableName = tableName + "_async";
 
@@ -111,7 +111,7 @@ namespace Quantumart.QP8.DAL
 
         public static void CreateContentTables(DbConnection cnn, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var tableName = "content_" + id;
             var asyncTableName = tableName + "_async";
             var dtType = (dbType == DatabaseType.Postgres) ? "timestamp without time zone" : "datetime";
@@ -132,7 +132,7 @@ namespace Quantumart.QP8.DAL
 
         public static void CreateContentViews(DbConnection cnn, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var idStr = id.ToString();
 
             var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_create", idStr);
@@ -148,7 +148,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DropContentTables(DbConnection cnn, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var tableName = "content_" + id;
             var asyncTableName = tableName + "_async";
             var sql = $@"drop table {DbSchemaName(dbType)}.{{0}}";
@@ -159,7 +159,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DropContentViews(DbConnection cnn, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cnn);
+            var dbType = GetDbType(cnn);
             var idStr = id.ToString();
 
             var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_drop", idStr);
@@ -194,7 +194,7 @@ namespace Quantumart.QP8.DAL
 
         public static int RemovingActions_RemoveContentItems(int contentId, int itemsToDelete, DbConnection connection)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             string disableTrigger = (dbType == DatabaseType.SqlServer) ? "select 1 as A into #disable_td_delete_item_o2m_nullify;" : "";
             string query = $@"{disableTrigger}
                     delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in
@@ -212,7 +212,7 @@ namespace Quantumart.QP8.DAL
 
         public static int RemovingActions_ClearO2MRelations(int contentId, DbConnection connection)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             if (dbType != DatabaseType.SqlServer)
             {
                 return 0;
@@ -228,7 +228,7 @@ namespace Quantumart.QP8.DAL
         public static void DropView(string viewName, DbConnection connection)
         {
             var sql = "";
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             if (dbType == DatabaseType.SqlServer)
             {
                 sql = $"exec qp_drop_existing '{viewName}', 'IsView'";
@@ -274,7 +274,7 @@ namespace Quantumart.QP8.DAL
 
         public static void RenameColumn(DbConnection connection, string tableName, string oldFieldName, string newFieldName)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var sql = "";
             if (dbType == DatabaseType.SqlServer)
             {
@@ -290,7 +290,7 @@ namespace Quantumart.QP8.DAL
 
         public static void RenameIndex(DbConnection connection, string tableName, string oldFieldName, string newFieldName)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var oldIndexName = IndexName(dbType, tableName, oldFieldName);
             var newIndexName = IndexName(dbType, tableName, newFieldName);
             var sql = "";
@@ -309,7 +309,7 @@ namespace Quantumart.QP8.DAL
 
         public static void CreateContentModification(DbConnection connection, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var sql = $@"INSERT INTO CONTENT_MODIFICATION SELECT {id}, {Now(dbType)}, {Now(dbType)}";
             ExecuteSql(connection, sql);
 
@@ -317,7 +317,7 @@ namespace Quantumart.QP8.DAL
 
         public static void CreateLinkTables(DbConnection connection, ContentToContentDAL item)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             if (dbType != DatabaseType.SqlServer)
             {
                 var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
@@ -335,7 +335,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DropLinkTables(DbConnection connection, ContentToContentDAL item)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
             var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
             var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
@@ -350,7 +350,7 @@ namespace Quantumart.QP8.DAL
 
         public static void CreateLinkView(DbConnection connection, ContentToContentDAL item)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var spName = dbType == DatabaseType.SqlServer ? "qp_build_link_view" : "qp_link_view_create";
             var sql = SqlQuerySyntaxHelper.SpCall(dbType, spName , item.LinkId.ToString(CultureInfo.InvariantCulture));
             ExecuteSql(connection, sql);
@@ -358,7 +358,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DropLinkView(DbConnection connection, ContentToContentDAL item)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var dbType = GetDbType(connection);
             var spName = dbType == DatabaseType.SqlServer ? "qp_drop_link_view" : "qp_link_view_drop";
             var sql = SqlQuerySyntaxHelper.SpCall(dbType, spName, item.LinkId.ToString(CultureInfo.InvariantCulture));
             ExecuteSql(connection, sql);
