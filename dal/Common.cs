@@ -4550,14 +4550,21 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100);
         }
 
-        public static IEnumerable<DataRow> GetActionPermissionsForGroup(DbConnection sqlConnection, int groupId, int entityTypeId, int? actionId)
+        public static IEnumerable<DataRow> GetActionPermissionsForGroup(QPModelDataContext efContext, DbConnection sqlConnection, int groupId, int entityTypeId, int? actionId)
         {
-            var fromBlock = @"(select T.ID, T.NAME, COALESCE(L.PERMISSION_LEVEL_NAME, {2}) AS PERMISSION_LEVEL_NAME, CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit from
+            var dbType = GetDbType(sqlConnection);
+            var refreshActionTypeId = efContext.ActionTypeSet.First(x => x.Code.Equals(ActionTypeCode.Refresh)).Id;
+            var fromBlock = $@"(select
+                                    T.ID,
+                                    T.NAME,
+                                    COALESCE(L.PERMISSION_LEVEL_NAME, {{2}}) AS PERMISSION_LEVEL_NAME,
+                                   {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit
+                                from
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
+                                 WHERE T.ENTITY_TYPE_ID = {{1}} {{3}} AND T.{Escape(dbType, "TYPE_ID")} != {refreshActionTypeId}) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermission = GetEntityTypePermissionsForGroup(sqlConnection, groupId, entityTypeId).FirstOrDefault();
@@ -4572,15 +4579,23 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100);
         }
 
-        public static IEnumerable<DataRow> GetActionPermissionsForUser(DbConnection sqlConnection, int userId, int entityTypeId, int? actionId)
+        public static IEnumerable<DataRow> GetActionPermissionsForUser(QPModelDataContext efContext, DbConnection sqlConnection, int userId, int entityTypeId, int? actionId)
         {
-            var fromBlock = @"(select T.ID, T.NAME, COALESCE(L.PERMISSION_LEVEL_NAME, {2}) AS PERMISSION_LEVEL_NAME, CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,  COALESCE(L.PERMISSION_LEVEL, {4}) AS PERMISSION_LEVEL
+            var dbType = GetDbType(sqlConnection);
+            var refreshActionTypeId = efContext.ActionTypeSet.First(x => x.Code.Equals(ActionTypeCode.Refresh)).Id;
+            var fromBlock = $@"(
+select
+T.ID,
+T.NAME,
+COALESCE(L.PERMISSION_LEVEL_NAME, {{2}}) AS PERMISSION_LEVEL_NAME,
+{SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
+COALESCE(L.PERMISSION_LEVEL, {{4}}) AS PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = {{0}}
                                  RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
+                                 WHERE T.ENTITY_TYPE_ID = {{1}} {{3}} AND T.{Escape(dbType, "TYPE_ID")} != {refreshActionTypeId}) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermissionLevel = "NULL";

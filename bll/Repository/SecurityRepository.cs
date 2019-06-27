@@ -69,7 +69,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                var row = Common.GetActionPermissionsForUser(scope.DbConnection, userId, action.EntityTypeId, action.Id).FirstOrDefault();
+                var row = Common.GetActionPermissionsForUser(QPContext.EFContext, scope.DbConnection, userId, action.EntityTypeId, action.Id).FirstOrDefault();
                 if (row != null && !row.IsNull("PERMISSION_LEVEL"))
                 {
                     return Converter.ToInt32(row.Field<decimal>("PERMISSION_LEVEL"));

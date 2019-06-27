@@ -39,7 +39,7 @@ namespace Quantumart.QP8.DAL
 
             var groupBy = $" group by {entityIdField}";
             var whereParentEntity = "";
-            var permissionTable = $"{entityName}_access_PermLevel";
+            var permissionTable = $"{entityName}_access_permlevel";
 
             var parentEntityIdField = $"{parentEntityName}_id";
 
@@ -190,7 +190,7 @@ namespace Quantumart.QP8.DAL
 select AP.BACKEND_ACTION_ID, COALESCE(AP.PERMISSION_LEVEL, EP.PERMISSION_LEVEL, 0) AS PERMISSION_LEVEL from
 		(select L.PERMISSION_LEVEL AS PERMISSION_LEVEL, T.ID AS BACKEND_ACTION_ID, T.ENTITY_TYPE_ID FROM
 			({actionSecQuery}) P1
-			LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USER_ID")} = {userId}
+			LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USER_ID")} = {userId}
 			RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
 			LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
 		) AP
