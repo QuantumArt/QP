@@ -507,18 +507,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static List<int> InsertArticlesIds(ICollection<Article> articleList, bool preserveGuids = false)
         {
-            var i = 0;
-            var query = new StringBuilder();
+            var doc = new XDocument();
+            doc.Add(new XElement("ITEMS"));
             foreach (var article in articleList)
             {
-                var unionAll = ++i == articleList.Count ? string.Empty : " UNION ALL ";
-                query.AppendLine(preserveGuids
-                    ? $"SELECT {Convert.ToInt32(article.Visible)}, {article.StatusTypeId}, {article.ContentId}, {QPContext.CurrentUserId}, '{article.UniqueId}' {unionAll}"
-                    : $"SELECT {Convert.ToInt32(article.Visible)}, {article.StatusTypeId}, {article.ContentId}, {QPContext.CurrentUserId} {unionAll}"
-                );
+                var elem = new XElement("ITEM");
+                elem.Add(new XAttribute("visible", Convert.ToInt32(article.Visible)));
+                elem.Add(new XAttribute("contentId", article.ContentId));
+                elem.Add(new XAttribute("statusId", article.StatusTypeId));
+                elem.Add(new XAttribute("userId", QPContext.CurrentUserId));
+                if (preserveGuids)
+                {
+                    elem.Add(new XAttribute("guid", article.UniqueId));
+                }
+                doc.Root?.Add(elem);
             }
 
-            return ArticleRepository.InsertArticleIds(query.ToString(), preserveGuids);
+            return ArticleRepository.InsertArticleIds(doc.ToString(), preserveGuids);
         }
 
         private static void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)

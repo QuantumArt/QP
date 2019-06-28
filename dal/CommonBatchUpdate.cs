@@ -19,7 +19,7 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL
 {
-    public partial class Common
+    public class CommonBatchUpdate
     {
         #region BatchUpdate
 
@@ -135,7 +135,7 @@ namespace Quantumart.QP8.DAL
                 }
                 else
                 {
-                    cmd.CommandText = "call qp_batch_insert(@values, @visible, @userId);";
+                    cmd.CommandText = $@"select * from qp_batch_insert(@values, @visible, @userId);";
                     var xml = GetValuesDoc(articles).ToString();
                     cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@values", xml, dbType));
                 }
@@ -150,17 +150,23 @@ namespace Quantumart.QP8.DAL
 
         #region BatchUpdateQuery
 
-        private static string BatchUpdateQuery = $@"
-            UPDATE
-                CONTENT_ITEM
-            SET
-                NOT_FOR_REPLICATION = 1,
-                MODIFIED = GETDATE(),
-                LAST_MODIFIED_BY = @userId
-            WHERE
-                NOT_FOR_REPLICATION = 0 AND
-                CONTENT_ITEM_ID IN (SELECT DISTINCT ArticleId FROM @values)
+        private static string PgBatchUpdateQuery = $@"
 
+            WITH v AS (
+                SELECT ArticleId, FieldId, ContentId, case when TextData <> '' then TextData else null end TextData
+                FROM XMLTABLE('ITEMS/ITEM' passing @values COLUMNS
+                    ArticleId int PATH '@id',
+                    FieldId int PATH '@fieldId',
+                    ContentId int PATH '@contentId',
+                    TextData text PATH 'DATA'
+                ) x
+            )
+            INSERT INTO CONTENT_DATA (ATTRIBUTE_ID, CONTENT_ITEM_ID, CREATED, MODIFIED, DATA, BLOB_DATA, not_for_replication)
+            SELECT v.FieldId, v.ArticleId, now(), now(), v.TextData, null, True FROM v
+            ON CONFLICT (ATTRIBUTE_ID, CONTENT_ITEM_ID) DO UPDATE
+            SET DATA = EXCLUDED.DATA, BLOB_DATA = null";
+
+        private static string SqlBatchUpdateQuery = $@"
             INSERT INTO
                 CONTENT_DATA (ATTRIBUTE_ID, CONTENT_ITEM_ID, CREATED, MODIFIED, [DATA], BLOB_DATA, not_for_replication)
             SELECT
@@ -206,10 +212,27 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-        public static void BatchUpdate(DbConnection sqlConnection, DataTable articles, int userId)
+        public static void UpdateNotForReplication(DbConnection sqlConnection, int[] ids, int userId)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            using (var cmd = DbCommandFactory.Create(BatchUpdateQuery, sqlConnection))
+            var setTrue = dbType == DatabaseType.SqlServer ? "1" : "true";
+            var sql = $@"
+            UPDATE CONTENT_ITEM SET NOT_FOR_REPLICATION = {setTrue}, MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)}, LAST_MODIFIED_BY = @userId
+            WHERE {SqlQuerySyntaxHelper.IsFalse(dbType, "NOT_FOR_REPLICATION")} AND CONTENT_ITEM_ID IN (select id from {Common.IdList(dbType, "@ids")});
+            ";
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
+            {
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void BatchUpdate(DbConnection sqlConnection,  DataTable articles, int userId)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = dbType == DatabaseType.SqlServer ? SqlBatchUpdateQuery : PgBatchUpdateQuery;
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 if (dbType == DatabaseType.SqlServer)
                 {
@@ -217,11 +240,8 @@ namespace Quantumart.QP8.DAL
                 }
                 else
                 {
-                    cmd.CommandText = "call qp_batch_update(@values, @userId);";
-                    var xml = GetValuesDoc(articles).ToString();
-                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@values", xml, dbType));
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@values", GetValuesDoc(articles).ToString(), dbType));
                 }
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.ExecuteNonQuery();
             }
@@ -234,28 +254,28 @@ namespace Quantumart.QP8.DAL
             var textType = dbType == DatabaseType.SqlServer ? "nvarchar(max)" : "text";
             return $@"
             SELECT
-                f.ArticleId,
-                a.CONTENT_ID ContentId,
-                a.ATTRIBUTE_ID FieldId,
-                a.ATTRIBUTE_NAME FieldName,
-                f.Value FieldValue,
+                f.ArticleId ""ArticleId"",
+                a.CONTENT_ID ""ContentId"",
+                a.ATTRIBUTE_ID ""FieldId"",
+                a.ATTRIBUTE_NAME ""FieldName"",
+                f.Value ""FieldValue"",
                 CASE
                     WHEN otm.CONTENT_ID IS NOT NULL THEN a.CONTENT_ID
                     WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
                     WHEN mtm.r_content_id IS NOT NULL THEN mtm.r_content_id
                     WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
                     ELSE NULL
-                END RefContentId,
+                END ""RefContentId"",
                 CASE
                     WHEN otm.CONTENT_ID IS NOT NULL THEN a.ATTRIBUTE_ID
                     WHEN mto.CONTENT_ID IS NOT NULL THEN mto.ATTRIBUTE_ID
                     WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.ATTRIBUTE_ID
                     ELSE NULL
-                END RefFieldId,
+                END ""RefFieldId"",
                 CASE
                     WHEN mtm.link_id IS NOT NULL THEN mtm.link_id
                     ELSE NULL
-                END LinkId
+                END ""LinkId""
             FROM
                 {ValuesTable(dbType)} f
                 JOIN CONTENT_ATTRIBUTE a ON f.FieldId = a.ATTRIBUTE_ID AND f.ContentId = a.CONTENT_ID
@@ -321,11 +341,24 @@ namespace Quantumart.QP8.DAL
 
         public static void ReplicateItems(DbConnection sqlConnection, int[] articleIds, int[] fieldIds)
         {
-            using (var cmd = DbCommandFactory.Create("qp_replicate_items", sqlConnection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = (dbType == DatabaseType.SqlServer) ? "qp_replicate_items" : "call qp_replicate_items(@ids, @attr_ids);";
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", articleIds) });
-                cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", fieldIds) });
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", articleIds) });
+                    cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", fieldIds) });
+
+                }
+                else
+                {
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", articleIds, dbType));
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@attr_ids", fieldIds, dbType));
+                }
+
+                cmd.Parameters.AddWithValue("@modification_update_interval", -1);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -338,12 +371,12 @@ namespace Quantumart.QP8.DAL
             var textType = dbType == DatabaseType.SqlServer ? "nvarchar(max)" : "text";
             var text = $@"select attribute_id, BACK_RELATED_ATTRIBUTE_ID, attribute_type_id, link_id, is_classifier,
                 cast(case when coalesce(cast(enum_values as {textType}), '') <> '' then 1 else 0 end as bit) as is_string_enum
-                from content_attribute where attribute_id in (select id from {IdList(dbType, "@ids")})";
+                from content_attribute where attribute_id in (select id from {Common.IdList(dbType, "@ids")})";
 
             using (var cmd = DbCommandFactory.Create(text, cnn))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
+                cmd.Parameters.Add(Common.GetIdsDatatableParam("@ids", ids, dbType));
 
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
@@ -351,18 +384,5 @@ namespace Quantumart.QP8.DAL
                 return dt;
             }
         }
-
-        public static DataTable IdsToDataTable(IEnumerable<int> ids)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("id");
-            foreach (var id in ids ?? Enumerable.Empty<int>())
-            {
-                dt.Rows.Add(id);
-            }
-
-            return dt;
-        }
-
     }
 }

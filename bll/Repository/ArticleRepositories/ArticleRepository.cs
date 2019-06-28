@@ -1351,13 +1351,11 @@ cil.locked_by,
             }
         }
 
-        internal static List<int> InsertArticleIds(string query, bool preserveGuids = false)
+        internal static List<int> InsertArticleIds(string doc, bool preserveGuids = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return preserveGuids
-                    ? Common.InsertArticleIdsWithGuids(scope.DbConnection, query)
-                    : Common.InsertArticleIds(scope.DbConnection, query);
+                return CommonCsv.InsertArticleIds(scope.DbConnection, doc, preserveGuids);
             }
         }
 
@@ -1365,7 +1363,7 @@ cil.locked_by,
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.UpdateArticleGuids(scope.DbConnection, guidsByIdToUpdate);
+                CommonCsv.UpdateArticleGuids(scope.DbConnection, guidsByIdToUpdate);
             }
         }
 
@@ -1373,7 +1371,7 @@ cil.locked_by,
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.InsertArticleValues(scope.DbConnection, xmlParameter);
+                CommonCsv.InsertArticleValues(scope.DbConnection, xmlParameter);
             }
         }
 
@@ -1381,7 +1379,7 @@ cil.locked_by,
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.ValidateO2MValues(scope.DbConnection, xmlParameter, ImportStrings.IncorrectO2M);
+                CommonCsv.ValidateO2MValues(scope.DbConnection, xmlParameter, ImportStrings.IncorrectO2M);
             }
         }
 
@@ -1413,8 +1411,8 @@ cil.locked_by,
         {
             using (var scope = new QPConnectionScope())
             {
-                const string storedProc = "qp_update_acrticle_modification_date";
-                Common.ModifyDataUsingXmlParameter(scope.DbConnection, storedProc, xmlParameter);
+
+                CommonCsv.UpdateArticlesDateTime(scope.DbConnection, xmlParameter);
             }
         }
 
@@ -1430,8 +1428,7 @@ cil.locked_by,
         {
             using (var scope = new QPConnectionScope())
             {
-                const string storedProc = "qp_update_o2mfieldvalues";
-                Common.ModifyDataUsingXmlParameter(scope.DbConnection, storedProc, xmlParameter);
+                CommonCsv.InsertO2MFieldValues(scope.DbConnection, xmlParameter);
             }
         }
 
@@ -1514,13 +1511,13 @@ cil.locked_by,
                         FormatArticleData(scope.DbConnection, articles);
                     }
 
-                    var rows = Common.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
+                    var rows = CommonBatchUpdate.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
                     var relations = MapperFacade.DataRowMapper.Map<RelationData>(rows);
 
                     var links = GetArticleLinks(articles, relations);
                     articles = UpdateArticleRelations(articles, relations);
 
-                    rows = Common.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
+                    rows = CommonBatchUpdate.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
                     var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
 
                     if (createVersions)
@@ -1535,8 +1532,9 @@ cil.locked_by,
                     links = UpdateLinkIds(links, insertData);
                     articles = UpdateArticleIds(articles, insertData);
 
-                    Common.BatchUpdate(scope.DbConnection, GetBatchDataTable(articles), QPContext.CurrentUserId);
-                    Common.ReplicateItems(scope.DbConnection, GetArticleIds(articles), GetFieldIds(articles));
+                    CommonBatchUpdate.UpdateNotForReplication(scope.DbConnection, articles.Select(n => n.Id).ToArray(), QPContext.CurrentUserId);
+                    CommonBatchUpdate.BatchUpdate(scope.DbConnection, GetBatchDataTable(articles), QPContext.CurrentUserId);
+                    CommonBatchUpdate.ReplicateItems(scope.DbConnection, GetArticleIds(articles), GetFieldIds(articles));
                     Common.UpdateM2MValues(scope.DbConnection, GetLinksXml(links));
 
                     transaction.Complete();
@@ -1550,7 +1548,7 @@ cil.locked_by,
         private static void FormatArticleData(DbConnection cnn, ArticleData[] articles)
         {
             var fieldIds = articles.SelectMany(m => m.Fields).Select(n => n.Id).Distinct().ToArray();
-            var types = Common.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(n => (int)n.Field<decimal>("attribute_id"), m =>
+            var types = CommonBatchUpdate.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(n => (int)n.Field<decimal>("attribute_id"), m =>
             {
                 var attributeTypeId = (int)m.Field<decimal>("attribute_type_id");
                 var linkId = (int?)m.Field<decimal?>("link_id");

@@ -2930,23 +2930,17 @@ namespace Quantumart.QP8.BLL
 
         public static FieldExactTypes CreateExactType(int typeId, int? linkId, bool isClassifier, bool isStringEnum)
         {
-            var result = (FieldExactTypes)typeId;
-            if (result == FieldExactTypes.String && isStringEnum)
+            switch (typeId)
             {
-                result = FieldExactTypes.StringEnum;
+                case FieldTypeCodes.String when isStringEnum:
+                    return FieldExactTypes.StringEnum;
+                case FieldTypeCodes.Numeric when isClassifier:
+                    return FieldExactTypes.Classifier;
+                case FieldTypeCodes.Relation when linkId.HasValue:
+                    return FieldExactTypes.M2MRelation;
+                default:
+                    return (FieldExactTypes)typeId;
             }
-
-            if (result == FieldExactTypes.Numeric && isClassifier)
-            {
-                result = FieldExactTypes.Classifier;
-            }
-
-            if (result == FieldExactTypes.O2MRelation && linkId.HasValue)
-            {
-                result = FieldExactTypes.M2MRelation;
-            }
-
-            return result;
         }
 
         public override string ToString() => $"{Id,6}: {Name}";
