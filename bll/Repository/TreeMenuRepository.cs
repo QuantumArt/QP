@@ -160,7 +160,7 @@ namespace Quantumart.QP8.BLL.Repository
 
                         node.HasChildren = count > 0;
                     }
-                    else if (index == 0 || node.IsRecurring || node.IsGroup)
+                    else //if (index == 0 || node.IsRecurring || node.IsGroup)
                     {
                         var count = TreeMenu.GetTreeChildNodesCount(
                             ctx,
