@@ -229,7 +229,7 @@ namespace Quantumart.QP8.BLL.Repository
                 ThrowNotificationExceptions = false
             };
 #if !NET_STANDARD
-            QPConfiguration.SetAppSettings(cnn.AppSettings);
+            QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
 #endif
             foreach (var simpleCode in code.Split(';'))
             {

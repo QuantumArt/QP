@@ -20,6 +20,7 @@ using QP8.Infrastructure.Logging.Extensions;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
+using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.Configuration
 {
@@ -363,13 +364,13 @@ namespace Quantumart.QP8.Configuration
         /// </summary>
         public static QPublishingSection AppConfigSection => ConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 
-        public static void SetAppSettings(NameValueCollection settings)
+        public static void SetAppSettings(DbConnectorSettings settings)
         {
-            settings[Config.MailHostKey] = ConfigVariable(Config.MailHostKey);
-            settings[Config.MailLoginKey] = ConfigVariable(Config.MailLoginKey);
-            settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
-            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty;
-            settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
+            settings.MailHost = ConfigVariable(Config.MailHostKey);
+            settings.MailLogin = ConfigVariable(Config.MailLoginKey);
+            settings.MailPassword = ConfigVariable(Config.MailPasswordKey);
+            settings.MailAssemble = ConfigVariable(Config.MailAssembleKey) != "no";
+            settings.MailFromName = ConfigVariable(Config.MailFromNameKey);
         }
 
         private static QaConfiguration GetQaConfiguration() => XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig).LogTraceFormat("Load customers from config {0}");

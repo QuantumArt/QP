@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var cnn = new DBConnector(connectionString) { CacheData = false };
             #if !NET_STANDARD
-            QPConfiguration.SetAppSettings(cnn.AppSettings);
+            QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
             #endif
             cnn.SendNotification(siteId, code, id, string.Empty, isLive);
         }
