@@ -46,7 +46,8 @@ namespace QP8.Integration.Tests.Infrastructure
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : string.Empty;
-            return localdbConnector.GetRealData($"select [{fieldName}] from content_{contentId}{asyncString} {idsString}")
+            var field = DbType == DatabaseType.SqlServer ? $@"[{fieldName}]" : $@"""{fieldName.ToLowerInvariant()}""";
+            return localdbConnector.GetRealData($"select {field} from content_{contentId}{asyncString} {idsString}")
                 .Select()
                 .Select(row => ConvertHelpers.ChangeType<T>(row[fieldName]))
                 .ToArray();

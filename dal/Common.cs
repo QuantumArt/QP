@@ -735,22 +735,6 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
             }
         }
 
-        public static int[] CheckArchiveArticle(DbConnection connection, int[] ids)
-        {
-            using (var cmd = DbCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 1", connection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
-            }
-        }
-
         public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(DbConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
             var suffix = isLive ? string.Empty : "_united";
@@ -6449,94 +6433,6 @@ order by ActionDate desc
             }
         }
 
-        public static List<int> InsertArticleIds(DbConnection sqlConnection, string query)
-        {
-            var result = new List<int>();
-            var insertInto = $@"DECLARE @NewArticles TABLE ([ID] INT);
-                                INSERT into [dbo].[CONTENT_ITEM]
-                                      ([VISIBLE]
-                                      ,[STATUS_TYPE_ID]
-                                      ,[CONTENT_ID]
-                                      ,[LAST_MODIFIED_BY])
-                                    OUTPUT inserted.[content_item_id] INTO @NewArticles
-                                    {query};
-                                    SELECT ID FROM @NewArticles;";
-
-            using (var cmd = DbCommandFactory.Create(insertInto, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id;
-                        if (int.TryParse(reader.GetValue(0).ToString(), out id))
-                        {
-                            result.Add(id);
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        public static List<int> InsertArticleIdsWithGuids(DbConnection sqlConnection, string query)
-        {
-            var result = new List<int>();
-            var insertInto = $@"DECLARE @NewArticles TABLE ([ID] INT)
-                                INSERT into [dbo].[CONTENT_ITEM]
-                                      ([VISIBLE]
-                                      ,[STATUS_TYPE_ID]
-                                      ,[CONTENT_ID]
-                                      ,[LAST_MODIFIED_BY]
-                                      ,[UNIQUE_ID])
-                                    OUTPUT inserted.[content_item_id] INTO @NewArticles
-                                    {query}
-                                    SELECT ID FROM @NewArticles";
-
-            using (var cmd = DbCommandFactory.Create(insertInto, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id;
-                        if (int.TryParse(reader.GetValue(0).ToString(), out id))
-                        {
-                            result.Add(id);
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        public static void UpdateArticleGuids(DbConnection sqlConnection, List<Tuple<int, Guid>> guidsByIdToUpdate)
-        {
-            if (guidsByIdToUpdate.Any())
-            {
-                var query = guidsByIdToUpdate.Select(tp => $"UPDATE [dbo].[CONTENT_ITEM] SET [UNIQUE_ID] = '{tp.Item2}' WHERE [CONTENT_ITEM_ID] = {tp.Item1};");
-                using (var cmd = DbCommandFactory.Create(query.Aggregate((entry1, entry2) => entry1 + Environment.NewLine + entry2), sqlConnection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public static void InsertArticleValues(DbConnection sqlConnection, string xmlParameter)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_insertArticleValues", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
-                var resultDt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(resultDt);
-            }
-        }
 
         public static void ChangeInsertIdentityState(DbConnection sqlConnection, string tableName, bool enable)
         {
@@ -6570,57 +6466,6 @@ order by ActionDate desc
                 cmd.ExecuteNonQuery();
             }
         }
-
-        public static void UpdateM2MValues(DbConnection sqlConnection, string xmlParameter)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_update_m2m_values", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
-                var resultDt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(resultDt);
-            }
-        }
-
-        public static void ValidateO2MValues(DbConnection sqlConnection, string xmlParameter, string message)
-        {
-            const string sql = @"
-            DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
-            INSERT INTO @NewArticles
-                SELECT
-                 doc.col.value('(CONTENT_ITEM_ID)[1]', 'int') CONTENT_ITEM_ID
-                ,doc.col.value('(ATTRIBUTE_ID)[1]', 'int') ATTRIBUTE_ID
-                ,doc.col.value('(DATA)[1]', 'nvarchar(3500)') DATA
-                ,doc.col.value('(BLOB_DATA)[1]', 'nvarchar(max)') BLOB_DATA
-                FROM @xmlParameter.nodes('/PARAMETERS/FIELDVALUE') doc(col)
-
-                select * from
-                (select a.*, ca.ATTRIBUTE_NAME, rca.CONTENT_ID as RELATED_CONTENT_ID from @NewArticles a
-                inner join CONTENT_ATTRIBUTE ca on a.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
-                inner join CONTENT_ATTRIBUTE rca on ca.RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID and ca.CONTENT_ID <> rca.CONTENT_ID
-                inner join CONTENT rc on rc.CONTENT_ID = rca.CONTENT_ID and rc.VIRTUAL_TYPE <> 3
-                where a.DATA != ''
-                ) as a
-                left join CONTENT_ITEM ci on ci.CONTENT_ITEM_ID = convert(numeric, data)
-                where ci.CONTENT_ID is null or ci.CONTENT_ID <> a.RELATED_CONTENT_ID";
-
-            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = xmlParameter });
-                var resultDt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(resultDt);
-                if (resultDt.AsEnumerable().Any())
-                {
-                    var dr = resultDt.Rows[0];
-                    var title = dr.Field<string>("ATTRIBUTE_NAME");
-                    var data = dr.Field<string>("DATA");
-                    var id = dr.Field<int>(FieldName.ContentItemId).ToString();
-                    throw new ArgumentException(string.Format(message, id, title, data));
-                }
-            }
-        }
-
         public static List<int> CheckForArticlesExistence(DbConnection sqlConnection, List<int> relatedIds, string condition, int contentId)
         {
             var result = new List<int>();
@@ -6679,17 +6524,6 @@ order by ActionDate desc
             }
 
             return result;
-        }
-
-        public static void ModifyDataUsingXmlParameter(DbConnection sqlConnection, string storedProc, string xmlParameter)
-        {
-            using (var cmd = DbCommandFactory.Create(storedProc, sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
-                var resultDt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(resultDt);
-            }
         }
 
         public static void RemoveLinksFromM2MField(DbConnection sqlConnection, int linkId, List<int> articleIds)
@@ -10283,14 +10117,6 @@ order by ActionDate desc
             return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
-
-
-        private static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer) => SqlQuerySyntaxHelper.GetIdsDatatableParam(paramName, ids, databaseType);
-
-        private static DbParameter GetIntArrayPostgresParam(string paramName, List<int> ints) => new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Integer)
-        {
-            Value = ints.ToArray()
-        };
 
         private static IList<DataRow> GetDatatableResult(DbConnection cn, string query, out int totalCount, params DbParameter[] @params)
         {

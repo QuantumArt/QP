@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
+using NpgsqlTypes;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
@@ -15,25 +16,33 @@ namespace Quantumart.QP8.DAL
     public static partial class Common
     {
 
-        private static string DbSchemaName(DatabaseType databaseType) => SqlQuerySyntaxHelper.DbSchemaName(databaseType);
+        internal static string DbSchemaName(DatabaseType databaseType) => SqlQuerySyntaxHelper.DbSchemaName(databaseType);
 
-        private static string WithNoLock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithNoLock(databaseType);
+        internal static string WithNoLock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithNoLock(databaseType);
 
-        private static string WithRowLock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithRowLock(databaseType);
+        internal static string WithRowLock(DatabaseType databaseType) => SqlQuerySyntaxHelper.WithRowLock(databaseType);
 
-        private static string Now(DatabaseType databaseType) => SqlQuerySyntaxHelper.Now(databaseType);
+        internal static string Now(DatabaseType databaseType) => SqlQuerySyntaxHelper.Now(databaseType);
 
-        private static string IsTrue(DatabaseType databaseType, string expr) => SqlQuerySyntaxHelper.IsTrue(databaseType, expr);
+        internal static string IsTrue(DatabaseType databaseType, string expr) => SqlQuerySyntaxHelper.IsTrue(databaseType, expr);
 
-        private static string IsFalse(DatabaseType databaseType, string expr) => SqlQuerySyntaxHelper.IsFalse(databaseType, expr);
+        internal static string IsFalse(DatabaseType databaseType, string expr) => SqlQuerySyntaxHelper.IsFalse(databaseType, expr);
 
-        private static string IdList(DatabaseType databaseType, string name, string alias = "i") => SqlQuerySyntaxHelper.IdList(databaseType, name, alias);
+        internal static string IdList(DatabaseType databaseType, string name, string alias = "i") => SqlQuerySyntaxHelper.IdList(databaseType, name, alias);
 
-        private static string Escape(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
+        internal static string Escape(DatabaseType databaseType, string entityName) => SqlQuerySyntaxHelper.EscapeEntityName(databaseType, entityName);
 
-        private static string Top(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Top(databaseType, top.ToString());
+        internal static string Top(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Top(databaseType, top.ToString());
 
-        private static string Limit(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Limit(databaseType, top.ToString());
+        internal static string Limit(DatabaseType databaseType, int top) => SqlQuerySyntaxHelper.Limit(databaseType, top.ToString());
+
+        internal static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer) => SqlQuerySyntaxHelper.GetIdsDatatableParam(paramName, ids, databaseType);
+
+        private static DbParameter GetIntArrayPostgresParam(string paramName, List<int> ints) => new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Integer)
+        {
+            Value = ints.ToArray()
+        };
+
 
         private static DatabaseType GetDbType(DbConnection sqlConnection) => DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
         private static DatabaseType GetDbType(QPModelDataContext context) => DatabaseTypeHelper.ResolveDatabaseType(context);
@@ -308,11 +317,13 @@ namespace Quantumart.QP8.DAL
 
         public static void MergeArticle(DbConnection sqlConnection, int contentItemId, int lastModifiedBy = 1)
         {
-            using (var cmd = DbCommandFactory.Create("qp_merge_article", sqlConnection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_merge_article" : "call qp_merge_article(@item_id, last_modified_by);";
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("item_id", contentItemId);
-                cmd.Parameters.AddWithValue("last_modified_by", lastModifiedBy);
+                cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
+                cmd.Parameters.AddWithValue("@item_id", contentItemId);
+                cmd.Parameters.AddWithValue("@last_modified_by", lastModifiedBy);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -460,8 +471,42 @@ WHERE content_item_id = {contentItemId}
         }
 
 
+        public static DataTable IdsToDataTable(IEnumerable<int> ids)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("id");
+            foreach (var id in ids ?? Enumerable.Empty<int>())
+            {
+                dt.Rows.Add(id);
+            }
 
+            return dt;
+        }
 
+        public static void UpdateM2MValues(DbConnection sqlConnection, string xmlParameter)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_update_m2m_values" : "call qp_update_m2m_values(@xmlParameter);";
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
+            {
+                cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xmlParameter", xmlParameter, dbType));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static int[] CheckArchiveArticle(DbConnection connection, int[] ids)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"select content_item_id from content_item {WithNoLock(dbType)} where content_item_id in (select id from {IdList(dbType, "@ids")}) and archive = 1";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+            }
+        }
 
     }
 }

@@ -7,8 +7,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Npgsql" Version="4.0.6" />
+    <PackageReference Include="Npgsql" Version="4.0.7" />
     <PackageReference Include="QP.ConfigurationService.Client" Version="0.2.0" />
+    <PackageReference Include="Quantumart.AspNetCore" Version="4.0.0-beta37" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.5.0" />

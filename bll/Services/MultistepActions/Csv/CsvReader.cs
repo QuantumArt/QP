@@ -28,7 +28,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private readonly FileReader _reader;
         private readonly ImportSettings _importSettings;
         private readonly NotificationPushRepository _notificationRepository;
-
+        private readonly bool _skipFirstLine;
+        private readonly bool _skipSecondLine;
+        private int _initNumber;
         private List<string> _titleHeaders;
         private Dictionary<int, List<Field>> _fieldsMap;
         private Dictionary<Field, int> _headersMap;
@@ -43,14 +45,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _contentId = contentId;
             _importSettings = settings;
             _reader = new FileReader(settings);
+            _skipFirstLine = _reader.Lines.First().Skip;
+            _skipSecondLine = _skipFirstLine && _reader.Lines.Skip(1).First().Skip;
             _notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
         }
 
         public void Process(int step, int itemsPerStep, out int processedItemsCount)
         {
-            _csvLines = _reader.Lines.Where(s => !s.Skip).Skip(step * itemsPerStep).Take(itemsPerStep);
+            _csvLines = _reader.Lines.Where(s => !s.Skip).Skip(step * itemsPerStep).Take(itemsPerStep).ToArray();
+            _initNumber = _csvLines.First().Number - 1;
             _titleHeaders = MultistepActionHelper.GetFileFields(_importSettings, _reader);
-
             InitFields();
             ConvertCsvLinesToArticles();
             WriteArticlesToDb();
@@ -66,18 +70,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             get
             {
-                if (_csvLines == null || !_csvLines.Any())
+                if (_initNumber == 0 || _initNumber == 1 && _skipFirstLine || _initNumber == 2 && _skipSecondLine)
                 {
                     return @"N/A";
                 }
-
-                var num = _csvLines.First().Number - 1;
-                if (num == 0 || num == 1 && _reader.Lines.First().Skip || num == 2 && _reader.Lines.First().Skip && _reader.Lines.Skip(1).First().Skip)
-                {
-                    return @"N/A";
-                }
-
-                return num.ToString();
+                return _initNumber.ToString();
             }
         }
 
@@ -507,18 +504,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static List<int> InsertArticlesIds(ICollection<Article> articleList, bool preserveGuids = false)
         {
-            var i = 0;
-            var query = new StringBuilder();
+            var doc = new XDocument();
+            doc.Add(new XElement("ITEMS"));
             foreach (var article in articleList)
             {
-                var unionAll = ++i == articleList.Count ? string.Empty : " UNION ALL ";
-                query.AppendLine(preserveGuids
-                    ? $"SELECT {Convert.ToInt32(article.Visible)}, {article.StatusTypeId}, {article.ContentId}, {QPContext.CurrentUserId}, '{article.UniqueId}' {unionAll}"
-                    : $"SELECT {Convert.ToInt32(article.Visible)}, {article.StatusTypeId}, {article.ContentId}, {QPContext.CurrentUserId} {unionAll}"
-                );
+                var elem = new XElement("ITEM");
+                elem.Add(new XAttribute("visible", Convert.ToInt32(article.Visible)));
+                elem.Add(new XAttribute("contentId", article.ContentId));
+                elem.Add(new XAttribute("statusId", article.StatusTypeId));
+                elem.Add(new XAttribute("userId", QPContext.CurrentUserId));
+                if (preserveGuids)
+                {
+                    elem.Add(new XAttribute("guid", article.UniqueId));
+                }
+                doc.Root?.Add(elem);
             }
 
-            return ArticleRepository.InsertArticleIds(query.ToString(), preserveGuids);
+            return ArticleRepository.InsertArticleIds(doc.ToString(), preserveGuids);
         }
 
         private static void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)

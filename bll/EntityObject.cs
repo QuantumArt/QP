@@ -106,7 +106,7 @@ namespace Quantumart.QP8.BLL
 
         protected virtual RulesException ValidateUnique(RulesException errors)
         {
-            if (!string.IsNullOrEmpty(Name))
+            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(EntityTypeCode))
             {
                 if (EntityObjectRepository.CheckNameUniqueness(this))
                 {
