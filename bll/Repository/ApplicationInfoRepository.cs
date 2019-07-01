@@ -1,4 +1,5 @@
-﻿using Quantumart.QP8.DAL;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -20,12 +21,9 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        public void PostReplay()
+        public void PostReplay(HashSet<string> insertIdentityOptions)
         {
-            using (var scope = new QPConnectionScope())
-            {
-                Common.PostgresPostReplay(scope.DbConnection);
-            }
+            DefaultRepository.PostReplay(insertIdentityOptions);
         }
     }
 }

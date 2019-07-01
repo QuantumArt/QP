@@ -38,6 +38,8 @@ namespace Quantumart.QP8.BLL
 
         public DatabaseType DbType { get; set; }
 
+        public DatabaseType CurrentDbType => Current.DbType;
+
         static QPConnectionScope()
         {
             if (!IsMapperInitialized())

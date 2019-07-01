@@ -364,9 +364,13 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(connection, sql);
         }
 
-        public static void PostgresPostReplay(DbConnection connection)
+        public static void PostgresUpdateSequence(DbConnection connection, string tableName, string keyName)
         {
-
+            var sql = $@"
+                LOCK TABLE {tableName} IN EXCLUSIVE MODE;
+                SELECT setval('{tableName}_seq', cast(COALESCE((SELECT MAX({keyName})+1 FROM {tableName}), 1) as int), false);
+            ";
+            ExecuteSql(connection, sql);
         }
 
     }
