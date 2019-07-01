@@ -246,7 +246,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        private static string TableIdToInsert(string entityTypeCode)
+        internal static string TableIdToInsert(string entityTypeCode)
         {
             string tableId;
             switch (entityTypeCode)
@@ -283,7 +283,7 @@ namespace Quantumart.QP8.BLL.Repository
             return tableId;
         }
 
-        private static string TableToInsert(string entityTypeCode)
+        internal static string TableToInsert(string entityTypeCode)
         {
             string table = null;
             switch (entityTypeCode)
@@ -355,5 +355,19 @@ namespace Quantumart.QP8.BLL.Repository
         private static readonly MethodInfo ContainsMethod = typeof(Enumerable).GetMethods()
             .FirstOrDefault(m => m.Name == "Contains" && m.GetParameters().Length == 2)
             .MakeGenericMethod(typeof(object));
+
+        public static void PostReplay(HashSet<string> insertIdentityOptions)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                if (scope.CurrentDbType == DatabaseType.Postgres)
+                {
+                    foreach (var key in insertIdentityOptions)
+                    {
+                        Common.PostgresUpdateSequence(scope.DbConnection, TableToInsert(key), TableIdToInsert(key));
+                    }
+                }
+            }
+        }
     }
 }

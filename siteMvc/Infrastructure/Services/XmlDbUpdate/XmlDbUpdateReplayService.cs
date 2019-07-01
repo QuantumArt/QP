@@ -170,12 +170,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void PostReplay()
         {
-            if (ConnectionInfo.DbType != DatabaseType.SqlServer)
+            using (new QPConnectionScope(ConnectionInfo))
             {
-                using (var scope = new QPConnectionScope(ConnectionInfo))
-                {
-                    _appInfoRepository.PostReplay();
-                }
+                _appInfoRepository.PostReplay(_identityInsertOptions);
             }
         }
 
