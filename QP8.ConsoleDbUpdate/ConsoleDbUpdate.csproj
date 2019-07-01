@@ -106,6 +106,15 @@
     <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
       <Link>References\NLog.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\NLog.Web.dll">
+      <Link>References\NLog.Web.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Npgsql.dll">
+      <Link>References\Npgsql.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Npgsql.EntityFrameworkCore.PostgreSQL.dll">
+      <Link>References\Npgsql.EntityFrameworkCore.PostgreSQL.dll</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
       <Link>References\Moq.dll</Link>
     </EmbeddedResource>
@@ -130,6 +139,10 @@
     <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
       <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP.ConfigurationService.Client.dll">
+      <Link>References\QP.ConfigurationService.Client.dll</Link>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll">
       <Link>References\Mono.Options.dll</Link>
     </EmbeddedResource>
@@ -172,12 +185,53 @@
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.AspNet.dll">
       <Link>References\QP8.Infrastructure.Web.AspNet.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll">
-      <Link>References\System.Data.SqlClient.dll</Link>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Diagnostics.DiagnosticSource.dll">
+      <Link>References\System.Diagnostics.DiagnosticSource.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Diagnostics.StackTrace.dll">
+      <Link>References\System.Diagnostics.Diagnostics.StackTrace.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Diagnostics.Tracing.dll">
+      <Link>References\System.Diagnostics.Diagnostics.Tracing.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Interactive.Async.dll">
+      <Link>References\System.Interactive.Async.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.IO.dll">
+      <Link>References\System.IO.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.IO.Compression.dll">
+      <Link>References\System.IO.Compression.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Memory.dll">
+      <Link>References\System.Memory.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\System.Net.Http.dll">
       <Link>References\System.Net.Http.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Net.Sockets.dll">
+      <Link>References\System.Net.Sockets.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Buffers.dll">
+      <Link>References\System.Buffers.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Collections.Immutable.dll">
+      <Link>References\System.Collections.Immutable.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.ComponentModel.Annotations.dll">
+      <Link>References\System.ComponentModel.Annotations.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Data.Common.dll">
+      <Link>References\System.Data.Common.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Data.SqlClient.dll">
+      <Link>References\System.Data.SqlClient.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Numerics.Vectors.dll">
+      <Link>References\System.Numerics.Vectors.dll</Link>
+    </EmbeddedResource>
+
+
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Logging.PrtgMonitoring.dll">
       <Link>References\QP8.Infrastructure.Logging.PrtgMonitoring.dll</Link>
     </EmbeddedResource>
@@ -218,9 +272,61 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Common.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.EntityFrameworkCore.SqlServer.dll">
+      <Link>References\Microsoft.EntityFrameworkCore.SqlServer.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.EntityFrameworkCore.dll">
+      <Link>References\Microsoft.EntityFrameworkCore.dll</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Validation.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.EntityFrameworkCore.Relational.dll">
+      <Link>References\Microsoft.EntityFrameworkCore.Relational.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.EntityFrameworkCore.Abstractions.dll">
+      <Link>References\Microsoft.EntityFrameworkCore.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Options.dll">
+      <Link>References\Microsoft.Extensions.Options.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Primitives.dll">
+      <Link>References\Microsoft.Extensions.Primitives.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Logging.dll">
+      <Link>References\Microsoft.Extensions.Logging.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Logging.Abstractions.dll">
+      <Link>References\Microsoft.Extensions.Logging.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Logging.EventLog.dll">
+      <Link>References\Microsoft.Extensions.Logging.EventLog.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Caching.Abstractions.dll">
+      <Link>References\Microsoft.Extensions.Caching.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Caching.Memory.dll">
+      <Link>References\Microsoft.Extensions.Caching.Memory.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Configuration.Abstractions.dll">
+      <Link>References\Microsoft.Extensions.Configuration.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Configuration.Binder.dll">
+      <Link>References\Microsoft.Extensions.Configuration.Binder.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Configuration.dll">
+      <Link>References\Microsoft.Extensions.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll">
+      <Link>References\Microsoft.Extensions.DependencyInjection.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.DependencyInjection.dll">
+      <Link>References\Microsoft.Extensions.DependencyInjection.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.FileProviders.Abstractions.dll">
+      <Link>References\Microsoft.Extensions.FileProviders.Abstractions.dll</Link>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.BLL.dll">
       <Link>References\Quantumart.QP8.BLL.dll</Link>
     </EmbeddedResource>
@@ -254,6 +360,16 @@
     <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
       <Link>References\Telerik.Web.Mvc.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Remotion.Linq.dll">
+      <Link>References\Remotion.Linq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\SixLabors.Core.dll">
+      <Link>References\SixLabors.Core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\SixLabors.ImageSharp.dll">
+      <Link>References\SixLabors.ImageSharp.dll</Link>
+    </EmbeddedResource>
+
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.AspNet.SignalR.Core.dll">
@@ -304,10 +420,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
-      <HintPath>$(SolutionDir)packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
       <Private>False</Private>
@@ -330,10 +442,6 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SqlClient, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>$(SolutionDir)packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>$(SolutionDir)packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
       <Private>True</Private>

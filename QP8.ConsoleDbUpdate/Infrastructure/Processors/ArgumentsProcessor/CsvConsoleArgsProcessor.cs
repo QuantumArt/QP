@@ -28,7 +28,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             base.PrintEnteredData();
         }
 
-        protected internal override BaseSettingsModel CreateSettingsFromArguments() => new CsvSettingsModel(FilePathes, CustomerCode, ConfigPath, new CsvConfiguration
+        protected internal override BaseSettingsModel CreateSettingsFromArguments() => new CsvSettingsModel(FilePathes, CustomerCode, DbType, ConfigPath, new CsvConfiguration
         {
             HasHeaderRecord = true,
             TrimFields = true,

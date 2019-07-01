@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure;
@@ -15,6 +16,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
     internal abstract class BaseConsoleArgsProcessor
     {
         protected internal string CustomerCode;
+
+        protected internal DatabaseType DbType;
 
         protected internal IList<string> FilePathes;
 
@@ -88,6 +91,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             {
                 optionSet.Add("p|path=", "single or multiple <path> to file|directory with xml|csv record actions to replay", p => FilePathes.Add(p));
                 optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
+                optionSet.Add("t|type=", "database type, 0 (default) - SqlServer, 1 - postgres", c => { DbType = Enum.TryParse<DatabaseType>(c, out var dbtype) ? dbtype : DatabaseType.SqlServer; });
+
             }
 
             optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
