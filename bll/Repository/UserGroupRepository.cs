@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -210,10 +211,67 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static int CopyGroup(UserGroup group, int currentUserId)
         {
-            using (var scope = new QPConnectionScope())
+            var entities = QPContext.EFContext;
+
+            var userGroupDal = entities
+                .UserGroupSet
+                .AsNoTracking()
+                .Include(x => x.ParentGroupToGroupBinds)
+                .Include(x => x.UserGroupBinds)
+                .Include(x => x.SiteAccess)
+                .Include(x => x.ContentAccess)
+                .Include(x => x.ArticleAccess)
+                .Include(x => x.FolderAccess)
+                .Include(x => x.ENTITY_TYPE_ACCESS)
+                .Include(x => x.ACTION_ACCESS)
+                .Single(x => x.Id == group.Id);
+
+            userGroupDal.Id = 0;
+            userGroupDal.Name = group.Name;
+            userGroupDal.Created = userGroupDal.Modified = DateTime.Now;
+            userGroupDal.LastModifiedBy = currentUserId;
+            userGroupDal.BuiltIn = false;
+            userGroupDal.IsReadOnly = false;
+
+            foreach (var sitePermissionDAL in userGroupDal.SiteAccess)
             {
-                return Common.CopyUserGroup(group.Id, group.Name, currentUserId, scope.DbConnection);
+                sitePermissionDAL.Id = 0;
             }
+
+            foreach (var contentPermissionDAL in userGroupDal.ContentAccess)
+            {
+                contentPermissionDAL.Id = 0;
+            }
+
+            foreach (var articlePermissionDAL in userGroupDal.ArticleAccess)
+            {
+                articlePermissionDAL.Id = 0;
+            }
+
+            foreach (var folderPermissionDAL in userGroupDal.FolderAccess)
+            {
+                folderPermissionDAL.Id = 0;
+            }
+
+            foreach (var entityTypePermissionDAL in userGroupDal.ENTITY_TYPE_ACCESS)
+            {
+                entityTypePermissionDAL.Id = 0;
+            }
+
+            foreach (var actionPermissionDAL in userGroupDal.ACTION_ACCESS)
+            {
+                actionPermissionDAL.Id = 0;
+            }
+
+            var newUserGroupEntityEntry = entities.UserGroupSet.Add(userGroupDal);
+            entities.SaveChanges();
+            var newUserGroup = newUserGroupEntityEntry.Entity;
+            return (int)newUserGroup.Id;
+
+            // using (var scope = new QPConnectionScope())
+            // {
+            //     return Common.CopyUserGroup(group.Id, group.Name, currentUserId, scope.DbConnection);
+            // }
         }
 
         internal static IEnumerable<ListItem> GetSimpleList(int[] groupIDs)

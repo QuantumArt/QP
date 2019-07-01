@@ -119,9 +119,9 @@ namespace Quantumart.QP8.BLL.Repository
 
         public static bool NewPasswordMathCurrentPassword(int userId, string newPassword)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                return Common.NewPasswordMatchCurrentPassword(QPConnectionScope.Current.DbConnection, userId, newPassword);
+                return Common.NewPasswordMatchCurrentPassword(scope.DbConnection, userId, newPassword);
             }
         }
 
@@ -259,10 +259,63 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         internal static int CopyUser(User user, int currentUserId)
         {
-            using (var scope = new QPConnectionScope())
+            var entities = QPContext.EFContext;
+
+            var userDal = entities
+                .UserSet
+                .AsNoTracking()
+                .Include(x => x.UserGroupBinds)
+                .Include(x => x.SiteAccess)
+                .Include(x => x.ContentAccess)
+                .Include(x => x.AccessRules)
+                .Include(x => x.FolderAccess)
+                .Include(x => x.ENTITY_TYPE_ACCESS)
+                .Include(x => x.ACTION_ACCESS)
+                .Include(x => x.DefaultFilter)
+                .First(x => x.Id == user.Id);
+
+
+            userDal.Id = 0;
+            userDal.PASSWORD = GeneratePassword();
+            userDal.Created = userDal.Modified = DateTime.Now;
+            userDal.LastModifiedBy = currentUserId;
+            userDal.BuiltIn = false;
+            userDal.LogOn = user.LogOn;
+            foreach (var contentPermissionDAL in userDal.ContentAccess)
             {
-                return Common.CopyUser(user.Id, user.LogOn, currentUserId, scope.DbConnection);
+                contentPermissionDAL.Id = 0;
             }
+
+            foreach (var sitePermissionDAL in userDal.SiteAccess)
+            {
+                sitePermissionDAL.Id = 0;
+            }
+
+            foreach (var userDalAccessRule in userDal.AccessRules)
+            {
+                userDalAccessRule.Id = 0;
+            }
+
+            foreach (var folderPermissionDAL in userDal.FolderAccess)
+            {
+                folderPermissionDAL.Id = 0;
+            }
+
+            foreach (var entityTypePermissionDAL in userDal.ENTITY_TYPE_ACCESS)
+            {
+                entityTypePermissionDAL.Id = 0;
+            }
+
+            foreach (var actionPermissionDAL in userDal.ACTION_ACCESS)
+            {
+                actionPermissionDAL.Id = 0;
+            }
+
+            var newUserEntityEntry = entities.UserSet.Add(userDal);
+            entities.SaveChanges();
+            var newUser = newUserEntityEntry.Entity;
+            return (int)newUser.Id;
+
         }
 
         internal static IEnumerable<User> GetUsers(IEnumerable<int> userIDs)

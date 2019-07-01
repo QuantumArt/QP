@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -129,8 +130,14 @@ namespace Quantumart.QP8.BLL.Services
             var result = new CopyResult();
             var action = Read(id);
             action.Id = 0;
+            if (action.Action != null)
+            {
+                action.Action.Id = 0;
+
+            }
+
             if (action == null)
-            {                
+            {
                 throw new Exception(string.Format(CustomActionStrings.ActionNotFoundByCode, id));
             }
             if (!action.IsUpdatable || !action.IsAccessible(ActionTypeCode.Read))

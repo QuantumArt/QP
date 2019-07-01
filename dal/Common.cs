@@ -3844,6 +3844,8 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int CopyUserGroup(int sourceGroupId, string newName, int currentUserId, DbConnection connection)
         {
+
+
             using (var cmd = DbCommandFactory.Create("qp_copy_user_group", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -10145,11 +10147,22 @@ order by ActionDate desc
 
         public static bool NewPasswordMatchCurrentPassword(DbConnection connection, int userId, string password)
         {
-            var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
-                          select @salt = salt, @old_hash = hash from users where USER_ID = @userId
-                          set @hash = dbo.qp_get_hash(@password, @salt)
-                          select case when @old_hash = @hash then 1 else 0 end as bit";
-            using (var cmd = DbCommandFactory.Create(query, connection))
+
+            var dbType = GetDbType(connection);
+            var q = $@"
+            select
+                case when {DbSchemaName(dbType)}.qp_get_hash(@password, {Escape(dbType, "salt")}) = {Escape(dbType, "hash")}
+                    then {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}
+                    else {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}
+                end
+            FROM {Escape(dbType, "USERS")}
+            WHERE {Escape(dbType, "user_id")} = @userId
+";
+            // var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
+            //               select @salt = salt, @old_hash = hash from users where USER_ID = @userId
+            //               set @hash = dbo.qp_get_hash(@password, @salt)
+            //               select case when @old_hash = @hash then 1 else 0 end as bit";
+            using (var cmd = DbCommandFactory.Create(q, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
