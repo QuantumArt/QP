@@ -347,20 +347,81 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataRow GetArticleVersionRow(DbConnection connection, int id, int versionId)
+        public static DataRow GetArticleVersionRow(QPModelDataContext context, DbConnection connection, int id, int versionId)
         {
-            using (var cmd = DbCommandFactory.Create("qp_get_versions", connection))
+            var dbType = GetDbType(connection);
+
+            var query = "qp_get_versions";
+
+            if (dbType == DatabaseType.Postgres)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@item_id", id);
-                cmd.Parameters.AddWithValue("@version_id", versionId);
+                var contentId = context.ArticleSet.FirstOrDefault(x => x.Id == id)?.ContentId;
+                if (contentId == null)
+                {
+                    return null;
+                }
+
+                var fieldIds = context.FieldSet.Where(x => x.ContentId == contentId).Select(x => x.Id).ToList();
+
+                var mainIds = context.FieldSet.Where(x => x.Aggregated && x.RelationId.HasValue && fieldIds.Contains(x.RelationId.Value)).Select(x => x.ContentId).ToList();
+                mainIds.Add(contentId.Value);
+
+                var fields = context
+                    .FieldSet
+                    .AsNoTracking()
+                    .Include(x => x.Content)
+                    .Where(x => mainIds.Contains(x.ContentId))
+                    .OrderBy(x => x.ContentId)
+                    .ThenBy(x => x.Order);
+
+                var fieldNames = fields.Select(n => PgFieldName(n, contentId)).ToArray();
+                var fieldSelects = string.Join(",", fields.Select(n => $"ct.\"{PgFieldName(n, contentId)}\"::{PgSelectType((int)n.TypeId)}"));
+                var fieldNameResults = string.Join(",", fieldNames.Select(n => $@"""{n}"" TEXT"));
+                var categorySelectQuery = $"select * from (values {string.Join(",", fieldNames.Select(fn => $"(''{fn}'')"))}) v";
+
+
+                query = $@"
+select civ.content_item_id, ct.version_id, civ.created, civ.created_by, civ.modified, civ.last_modified_by, {fieldSelects}
+from content_item_version civ
+inner join (
+    select * from crosstab(
+    '
+select vcd.content_item_version_id::numeric as version_id,
+    case ca.content_id when {contentId} then ca.attribute_name else c.content_name || ''.'' || ca.attribute_name end as attribute_name,
+    qp_get_version_data(vcd.attribute_id, vcd.content_item_version_id) as value
+from content_attribute ca
+inner join content c on ca.content_id = c.content_id
+left outer join version_content_data vcd on ca.attribute_id = vcd.attribute_id
+inner join content_item_version civ on vcd.content_item_version_id = civ.content_item_version_id
+where ca.content_id in ({string.Join(",", mainIds)}) and civ.content_item_id = {id} {(versionId == 0 ? string.Empty : $" and vcd.content_item_version_id = {versionId} ")}
+order by 1, 2
+', '{categorySelectQuery}'
+    ) as ct(version_id numeric, {fieldNameResults})
+) ct on civ.content_item_version_id = ct.version_id
+
+";
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                if (dbType == DatabaseType.Postgres)
+                {
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@item_id", id);
+                    cmd.Parameters.AddWithValue("@version_id", versionId);
+                }
+
                 var ds = new DataSet();
                 DataAdapterFactory.Create(cmd).Fill(ds);
                 return 0 == ds.Tables.Count || 0 == ds.Tables[0].Rows.Count ? null : ds.Tables[0].Rows[0];
             }
         }
 
-
+        private static string PgFieldName(FieldDAL fieldDAL, decimal? contentId) => fieldDAL.ContentId == contentId ? $"{fieldDAL.Name}" : $"{fieldDAL.Content.Name}.{fieldDAL.Name}";
 
         public static void RestoreArticleVersion(DbConnection connection, int userId, int id)
         {

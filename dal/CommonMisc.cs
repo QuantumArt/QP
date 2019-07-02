@@ -425,7 +425,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = DbCommandFactory.Create(query, dbConnection))
             {
                 var value = cmd.ExecuteScalar();
-                return (value == null || value == DBNull.Value) ? null: (string)value;
+                return (value == null || value == DBNull.Value) ? null: Convert.ToString(value);
             }
         }
 

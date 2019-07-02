@@ -104,7 +104,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleVersionRow(QPConnectionScope.Current.DbConnection, articleId, id);
+                return Common.GetArticleVersionRow(QPContext.EFContext, QPConnectionScope.Current.DbConnection, articleId, id);
             }
         }
 
