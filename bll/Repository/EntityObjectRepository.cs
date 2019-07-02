@@ -475,6 +475,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static string GetEntityTitle(long? entityId, string entityTypeCode, decimal? parentEntityId)
         {
+
             if (entityTypeCode == EntityTypeCode.VirtualArticle)
             {
                 return GetArticleTitle(entityId.Value, parentEntityId.Value);
@@ -482,7 +483,9 @@ namespace Quantumart.QP8.BLL.Repository
 
             if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle)
             {
+                if (!entityId.HasValue) return null;
                 var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => x.Id == entityId)?.ContentId;
+                if (!contentId.HasValue) return null;
                 return GetArticleTitle(entityId.Value, contentId.Value);
             }
 

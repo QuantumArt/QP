@@ -4221,18 +4221,20 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetChildArticlePermissionsForUser(DbConnection sqlConnection, int contentId, int userId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
         {
-            var fromBlock = @"(select CI.CONTENT_ITEM_ID AS ID, cast(CI.[{2}] as nvarchar(1024)) AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT)  AS IsExplicit
-                                ,CAST(0 AS BIT) AS PropagateToItems
-                                ,CAST(0 AS BIT) AS Hide
+            var dbType = GetDbType(sqlConnection);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+
+            var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN {trueValue} ELSE {falseValue} END")}  AS IsExplicit
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS PropagateToItems
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS Hide
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                LEFT JOIN content_item_access_PermLevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.[USER_ID] = {0}
+                                LEFT JOIN content_item_access_permlevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.{Escape(dbType, "USER_ID")} = {userId}
                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                RIGHT JOIN CONTENT_{1} CI with(nolock) ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
-
-            fromBlock = string.Format(fromBlock, userId, contentId, titleFieldName);
+                                RIGHT JOIN CONTENT_{contentId} CI {WithNoLock(dbType)} ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
 
             string filter = null;
             if (articleId.HasValue)
@@ -4252,18 +4254,21 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetChildArticlePermissionsForGroup(DbConnection sqlConnection, int contentId, int groupId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
         {
-            var fromBlock = @"(select CI.CONTENT_ITEM_ID AS ID, cast(CI.[{2}] as nvarchar(1024)) AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit
-                                ,CAST(0 AS BIT) AS PropagateToItems
-                                ,CAST(0 AS BIT) AS Hide
+            var dbType = GetDbType(sqlConnection);
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.GROUP_ID IS NOT NULL THEN {trueValue} ELSE {falseValue} END")}  AS IsExplicit
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS PropagateToItems
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS Hide
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                LEFT JOIN content_item_access_PermLevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.GROUP_ID = {0}
+                                LEFT JOIN content_item_access_permlevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.GROUP_ID = {groupId}
                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                RIGHT JOIN CONTENT_{1} CI with(nolock) ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
+                                RIGHT JOIN CONTENT_{contentId} CI {WithNoLock(dbType)} ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
 
-            fromBlock = string.Format(fromBlock, groupId, contentId, titleFieldName);
+
 
             string filter = null;
             if (articleId.HasValue)
@@ -4406,39 +4411,25 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void InsertChildArticlePermissions(DbConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId, int permissionLevel, int currentUserId)
         {
-            var query = @"INSERT INTO [CONTENT_ITEM_ACCESS]
-                            ([CONTENT_ITEM_ID]
-                            ,[USER_ID]
-                            ,[GROUP_ID]
-                            ,[PERMISSION_LEVEL_ID]
-                            ,[CREATED]
-                            ,[MODIFIED]
-                            ,[LAST_MODIFIED_BY])
-                            select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, GETDATE(), GETDATE(), @modifiedUserId
-                            from CONTENT_ITEM CI where CI.CONTENT_ITEM_ID in ({0})";
+            var dbType = GetDbType(sqlConnection);
+            var now = SqlQuerySyntaxHelper.Now(dbType);
+            var query = $@"INSERT INTO CONTENT_ITEM_ACCESS
+                            (CONTENT_ITEM_ID
+                            ,USER_ID
+                            ,GROUP_ID
+                            ,PERMISSION_LEVEL_ID
+                            ,CREATED
+                            ,MODIFIED
+                            ,LAST_MODIFIED_BY)
+                            select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, {now} , {now}, @modifiedUserId
+                            from CONTENT_ITEM CI where CI.CONTENT_ITEM_ID in ({string.Join(",", articleIDs)})";
 
-            query = string.Format(query, string.Join(",", articleIDs));
+
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
-
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
                 cmd.ExecuteNonQuery();
@@ -4489,28 +4480,13 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void RemoveChildArticlePermissions(DbConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId)
         {
-            var query = @"delete from [CONTENT_ITEM_ACCESS] where CONTENT_ITEM_ID in ({0}) and (@userId IS NULL OR [USER_ID] = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
-            query = string.Format(query, string.Join(",", articleIDs));
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"delete from CONTENT_ITEM_ACCESS where CONTENT_ITEM_ID in ({string.Join(",", articleIDs)}) and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
                 cmd.ExecuteNonQuery();
             }
@@ -4518,33 +4494,18 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static void RemoveChildArticlePermissions(DbConnection sqlConnection, int contentId, int? userId, int? groupId)
         {
-            const string query = @"delete [CONTENT_ITEM_ACCESS] from [CONTENT_ITEM_ACCESS] A
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"delete CONTENT_ITEM_ACCESS from CONTENT_ITEM_ACCESS A
                             JOIN CONTENT_ITEM CI ON A.CONTENT_ITEM_ID = CI.CONTENT_ITEM_ID
                             where CI.CONTENT_ID = @contentId
-                            and (@userId IS NULL OR A.[USER_ID] = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
+                            and (@userId IS NULL OR A.{Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
-
-                cmd.Parameters.AddWithValue("@contentId", contentId);
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@contentId", contentId, DbType.Int32);
 
                 cmd.ExecuteNonQuery();
             }
