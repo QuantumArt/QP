@@ -27,6 +27,8 @@ AS $BODY$
 		    case when a.value = '' then ARRAY[]::int[] else regexp_split_to_array(a.value, E',\\s*')::int[] end
 		);
 		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
+		
+		RAISE NOTICE 'New ids: %', new_ids;
 							
 		old_ids := array_agg(row(c.*)) from
 		(					
@@ -42,11 +44,15 @@ AS $BODY$
 		) c;
 		old_ids := coalesce(old_ids, ARRAY[]::link_multiple_splitted[]);
 		
+		RAISE NOTICE 'Old ids: %', old_ids;		
+		
 		cross_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))
 		from unnest(new_ids) t1 inner join unnest(old_ids) t2 
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id;
 		cross_ids := coalesce(cross_ids, ARRAY[]::link_multiple_splitted[]);
-
+		
+		RAISE NOTICE 'Cross ids: %', cross_ids;	
+		
 		old_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))							  
 		from unnest(old_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id

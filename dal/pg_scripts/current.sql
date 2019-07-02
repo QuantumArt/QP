@@ -58,6 +58,19 @@ create type value as
 
 alter type value owner to postgres;
 
+create or replace view backend_action_access_permlevel(action_access_id, user_id, group_id, permission_level, backend_action_id) as
+SELECT c.action_access_id,
+       c.user_id,
+       c.group_id,
+       pl.permission_level,
+       x.id AS backend_action_id
+FROM ((action_access c
+    JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
+         JOIN backend_action x ON ((c.action_id = x.id)));
+
+alter table backend_action_access_permlevel
+    owner to postgres;
+
 create or replace view content_access_perm_level(content_id, user_id, group_id, permission_level_id, created, modified,
                                       last_modified_by, propagate_to_items, content_access_id, hide,
                                       permission_level) as
@@ -203,6 +216,43 @@ FROM (content_attribute ca
          JOIN attribute_type at ON ((ca.attribute_type_id = at.attribute_type_id)));
 
 alter table content_attribute_type
+    owner to postgres;
+
+create view content_item_access_permlevel(content_item_id, user_id, group_id, permission_level_id, created, modified,
+                                          last_modified_by, content_item_access_id, permission_level) as
+SELECT c.content_item_id,
+       c.user_id,
+       c.group_id,
+       c.permission_level_id,
+       c.created,
+       c.modified,
+       c.last_modified_by,
+       c.content_item_access_id,
+       pl.permission_level
+FROM (content_item_access c
+         JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)));
+
+alter table content_item_access_permlevel
+    owner to postgres;
+
+create view content_item_access_permlevel_content(content_item_id, user_id, group_id, permission_level_id, created,
+                                                  modified, last_modified_by, content_item_access_id, permission_level,
+                                                  content_id) as
+SELECT c.content_item_id,
+       c.user_id,
+       c.group_id,
+       c.permission_level_id,
+       c.created,
+       c.modified,
+       c.last_modified_by,
+       c.content_item_access_id,
+       pl.permission_level,
+       x.content_id
+FROM ((content_item_access c
+    JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
+         JOIN content_item x ON ((c.content_item_id = x.content_item_id)));
+
+alter table content_item_access_permlevel_content
     owner to postgres;
 
 create or replace view content_item_workflow(content_item_id, content_id, workflow_id, is_async, article_workflow) as
@@ -447,6 +497,62 @@ BEGIN
     where ci.content_item_id = ANY(ids) and cd.data <> ca2.content_id::text;
 
 	return coalesce(agg_ids, ARRAY[]::int[]);
+END;
+$$;
+create or replace function public.qp_batch_insert(input xml, visible int, user_id int)
+    returns table("OriginalArticleId" int, "CreatedArticleId" int, "ContentId" int)
+    volatile
+    language plpgsql
+as
+$$
+DECLARE
+    result link_multiple[];
+    ids int[];
+    articles link[];
+    statuses link[];
+BEGIN
+        articles := array_agg(distinct row(a.ArticleId, a.ContentId))
+        from (
+            select xml.ArticleId, xml.ContentId
+            FROM XMLTABLE('ITEMS/ITEM' passing input COLUMNS
+                ArticleId int PATH '@id',
+                FieldId int PATH '@fieldId',
+                ContentId int PATH '@contentId',
+                Value text PATH 'DATA'
+            ) xml
+            EXCEPT SELECT CONTENT_ITEM_ID, CONTENT_ID FROM CONTENT_ITEM
+            ORDER BY ArticleId DESC
+        ) a;
+
+
+        raise notice '%', articles;
+
+        statuses := array_agg(row(s.ContentId, s.StatusId)) from
+        (
+            SELECT a.ContentId,
+            CASE WHEN w.WORKFLOW_ID IS NULL THEN
+                ( SELECT STATUS_TYPE_ID FROM STATUS_TYPE t WHERE t.STATUS_TYPE_NAME = 'Published' AND t.SITE_ID = c.SITE_ID)
+            ELSE
+                ( SELECT STATUS_TYPE_ID FROM STATUS_TYPE t WHERE t.STATUS_TYPE_NAME = 'None' AND t.SITE_ID = c.SITE_ID)
+            END StatusId
+
+            FROM unnest(articles) a(ArticleId, ContentId) INNER JOIN CONTENT c ON a.ContentId = c.CONTENT_ID
+            LEFT JOIN CONTENT_WORKFLOW_BIND w ON a.ContentId = w.CONTENT_ID
+            GROUP BY a.ContentId, w.WORKFLOW_ID, c.SITE_ID
+        ) s;
+
+        RAISE NOTICE '%', statuses;
+
+        WITH inserted(id) AS (
+            INSERT INTO CONTENT_ITEM ( CONTENT_ID, VISIBLE, STATUS_TYPE_ID, LAST_MODIFIED_BY, NOT_FOR_REPLICATION)
+            SELECT a.ContentId, $2, s.StatusId, $3, true
+            from unnest(articles) a(ArticleId, ContentId) inner join unnest(statuses) s(ContentId, StatusId) on a.ContentId = s.ContentId
+            order by a.ArticleId desc
+            RETURNING content_item_id
+        ) select array_agg(id) from inserted into ids;
+
+        return query select old_id::int, new_id::int, content_id::int from unnest(ids, articles) x(new_id, old_id, content_id);
+
 END;
 $$;
 CREATE OR REPLACE PROCEDURE public.qp_before_content_item_version_delete(
@@ -725,6 +831,47 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_content_user_query_view_recreate(integer) owner to postgres;
+CREATE OR REPLACE function public.qp_count_duplicates(content_id int, field_ids int[], ids int[] default null,
+                                                       include_archive boolean default false) returns int
+LANGUAGE 'plpgsql'
+
+AS $BODY$
+    DECLARE
+        attr_names text[];
+        attrs text;
+        condition text;
+        sql text;
+        result int;
+    BEGIN
+        attr_names := array_agg('"' || lower(attribute_name) || '"') from content_attribute where attribute_id = ANY(field_ids);
+        raise notice '%', attr_names;
+
+        if ids is not null and array_length(ids, 1) > 0 then
+            condition := 'c.content_item_id = ANY($1)';
+        else
+            condition := '';
+        end if;
+
+        if not include_archive then
+            condition := condition || ' and c.archive = 0';
+        end if;
+
+        if attr_names is not null then
+            attrs := array_to_string(attr_names, ',');
+            sql := 'select coalesce(sum(c0.cnt), 0) from (select COUNT(*) as cnt
+                  from content_%s_united c where 1=1 %s group by %s having COUNT(*) > 1) as c0';
+            sql := format(sql, content_id, condition, attrs);
+
+        else
+            sql := 'select 0 as cnt';
+        end if;
+        raise notice '%', sql;
+        execute sql using ids into result;
+        return result;
+
+    END;
+$BODY$;
+
 create or replace function qp_default_link_ids(field_id numeric) returns text
     stable
     language plpgsql
@@ -978,6 +1125,28 @@ AS $BODY$
 $BODY$;
 
 ALTER FUNCTION public.qp_get_hash(text, bigint)
+    OWNER TO postgres;
+-- FUNCTION: public.qp_get_version_data(numeric, numeric)
+
+-- DROP FUNCTION public.qp_get_version_data(numeric, numeric);
+
+CREATE OR REPLACE FUNCTION public.qp_get_version_data(
+	attribute_id numeric,
+	version_id numeric)
+    RETURNS text
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE
+AS $BODY$
+declare result text;
+begin
+	result := coalesce(vcd.blob_data, vcd.data) from version_content_data vcd where vcd.attribute_id = $1 and vcd.content_item_version_id = $2;
+	return result;
+end;
+$BODY$;
+
+ALTER FUNCTION public.qp_get_version_data(numeric, numeric)
     OWNER TO postgres;
 -- PROCEDURE: public.qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
 
@@ -2249,7 +2418,7 @@ AS $BODY$
             m2m_xml := xmlelement(name items, xmlagg(x.m2m)) from
             (
                 select xmlelement(name item, xmlattributes(
-                    d.id, d.field_id as link_id, d.data as value)
+                    d.id, d.field_id as "linkId", d.data as value)
                 )
                 as m2m from unnest(m2m_data) d
             ) x;
@@ -2644,6 +2813,8 @@ AS $BODY$
 		    case when a.value = '' then ARRAY[]::int[] else regexp_split_to_array(a.value, E',\\s*')::int[] end
 		);
 		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
+		
+		RAISE NOTICE 'New ids: %', new_ids;
 							
 		old_ids := array_agg(row(c.*)) from
 		(					
@@ -2659,11 +2830,15 @@ AS $BODY$
 		) c;
 		old_ids := coalesce(old_ids, ARRAY[]::link_multiple_splitted[]);
 		
+		RAISE NOTICE 'Old ids: %', old_ids;		
+		
 		cross_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))
 		from unnest(new_ids) t1 inner join unnest(old_ids) t2 
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id;
 		cross_ids := coalesce(cross_ids, ARRAY[]::link_multiple_splitted[]);
-
+		
+		RAISE NOTICE 'Cross ids: %', cross_ids;	
+		
 		old_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))							  
 		from unnest(old_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id

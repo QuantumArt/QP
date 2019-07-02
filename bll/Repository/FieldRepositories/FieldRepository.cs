@@ -231,23 +231,43 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                 DefaultRepository.Delete<FieldDAL>(id);
 
-                if (QPContext.DatabaseType != DatabaseType.SqlServer)
-                {
-                    Common.DropColumn(scope.DbConnection, dal);
-                    if (dal.LinkId != null)
-                    {
-                        var realFieldsExists = QPContext.EFContext.FieldSet.Include(n => n.Content)
-                            .Any(n => n.LinkId == dal.LinkId && n.Content.VirtualType == 0);
+                DropLinkTablesAndViews(scope, dal);
 
-                        if (!realFieldsExists)
-                        {
-                            DefaultRepository.SimpleDelete(dal.ContentToContent);
-                            Common.DropLinkView(scope.DbConnection, dal.ContentToContent);
-                            Common.DropLinkTables(scope.DbConnection, dal.ContentToContent);
-                        }
+            }
+        }
+
+        internal static void DropLinkTablesAndViews(int contentId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                var m2ms = QPContext.EFContext.FieldSet.Where(
+                    n => n.ContentId == contentId && n.LinkId != null
+                ).ToArray();
+
+                foreach (var item in m2ms)
+                {
+                    DropLinkTablesAndViews(scope, item);
+                }
+            }
+        }
+
+        private static void DropLinkTablesAndViews(QPConnectionScope scope, FieldDAL dal)
+        {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                Common.DropColumn(scope.DbConnection, dal);
+                if (dal.LinkId != null)
+                {
+                    var realFieldsExists = QPContext.EFContext.FieldSet.Include(n => n.Content)
+                        .Any(n => n.LinkId == dal.LinkId && n.Content.VirtualType == 0);
+
+                    if (!realFieldsExists)
+                    {
+                        DefaultRepository.SimpleDelete(dal.ContentToContent);
+                        Common.DropLinkView(scope.DbConnection, dal.ContentToContent);
+                        Common.DropLinkTables(scope.DbConnection, dal.ContentToContent);
                     }
                 }
-
             }
         }
 

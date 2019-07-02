@@ -73,8 +73,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
-            var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
-            ValidateReplayInput(filteredXmlDocument, currentDbVersion);
+            var currentDbVersion = String.Empty;
+            using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
+            {
+                currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
+                ValidateReplayInput(filteredXmlDocument, currentDbVersion);
+            }
 
             var filteredXmlString = filteredXmlDocument.ToNormalizedString(SaveOptions.DisableFormatting);
             var dbLogEntry = new XmlDbUpdateLogModel
@@ -194,17 +198,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void ValidateReplayInput(XContainer xmlDocument, string currentDbVersion)
         {
-            using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
+            if (!ValidateDbVersion(xmlDocument, currentDbVersion))
             {
-                if (!ValidateDbVersion(xmlDocument, currentDbVersion))
-                {
-                    throw new InvalidOperationException("DB versions doesn't match");
-                }
+                throw new InvalidOperationException("DB versions doesn't match");
+            }
 
-                if (_appInfoRepository.RecordActions())
-                {
-                    throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
-                }
+            if (_appInfoRepository.RecordActions())
+            {
+                throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
             }
         }
 

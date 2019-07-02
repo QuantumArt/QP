@@ -34,7 +34,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal virtual void PrintEnteredData()
         {
-            Console.WriteLine(SqlHelpers.TryParseConnectionString(CustomerCode, out var _)
+            Console.WriteLine(SqlHelpers.TryParseConnectionString(CustomerCode, DbType, out var _)
                 ? $@"Connection String: {CustomerCode}"
                 : $@"Customer Code: {CustomerCode}"
             );

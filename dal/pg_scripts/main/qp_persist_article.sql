@@ -110,7 +110,7 @@ AS $BODY$
             m2m_xml := xmlelement(name items, xmlagg(x.m2m)) from
             (
                 select xmlelement(name item, xmlattributes(
-                    d.id, d.field_id as link_id, d.data as value)
+                    d.id, d.field_id as "linkId", d.data as value)
                 )
                 as m2m from unnest(m2m_data) d
             ) x;

@@ -2,6 +2,7 @@ using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 {
@@ -9,14 +10,17 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
     {
         protected BaseDataProcessor(BaseSettingsModel dataSettings)
         {
-            SetupQpContext(dataSettings.CustomerCode);
+            SetupQpContext(dataSettings.CustomerCode, dataSettings.DbType);
         }
 
-        private static void SetupQpContext(string connectionStringOrCustomerCode)
+        private static void SetupQpContext(string connectionStringOrCustomerCode, DatabaseType dbType)
         {
-            if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, out var cnsBuilder))
+            if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, dbType, out var cnsBuilder))
             {
-                QPContext.CurrentDbConnectionString = QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString);
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(
+                    QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString, dbType:dbType),
+                    dbType
+                );
             }
             else
             {
@@ -28,7 +32,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         public abstract void Process(string inputData);
 
-        protected static string GetConnectionString(string connectionStringOrCustomerCode) => SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, out var cnsBuilder)
+        protected static string GetConnectionString(string connectionStringOrCustomerCode, DatabaseType dbType) => SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, dbType,  out var cnsBuilder)
             ? cnsBuilder.ConnectionString
             : QPConfiguration.GetConnectionString(connectionStringOrCustomerCode);
     }

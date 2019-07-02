@@ -230,8 +230,15 @@
     <EmbeddedResource Include="..\siteMvc\bin\System.Numerics.Vectors.dll">
       <Link>References\System.Numerics.Vectors.dll</Link>
     </EmbeddedResource>
-
-
+    <EmbeddedResource Include="..\siteMvc\bin\System.Threading.Tasks.Extensions.dll">
+      <Link>References\System.Threading.Tasks.Extensions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Threading.Overlapped.dll">
+      <Link>References\System.Threading.Overlapped.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.ValueTuple.dll">
+      <Link>References\System.ValueTuple.dll</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Logging.PrtgMonitoring.dll">
       <Link>References\QP8.Infrastructure.Logging.PrtgMonitoring.dll</Link>
     </EmbeddedResource>
@@ -240,6 +247,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Flurl.Http.dll">
       <Link>References\Flurl.Http.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Runtime.dll">
+      <Link>References\System.Runtime.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Runtime.CompilerServices.Unsafe.dll">
+      <Link>References\System.Runtime.CompilerServices.Unsafe.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Runtime.Serialization.Primitives.dll">
+      <Link>References\System.Runtime.Serialization.Primitives.dll</Link>
     </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>

@@ -197,7 +197,7 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(connection);
             string disableTrigger = (dbType == DatabaseType.SqlServer) ? "select 1 as A into #disable_td_delete_item_o2m_nullify;" : "";
             string query = $@"{disableTrigger}
-                    delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in
+                    delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in (
                         select {Top(dbType, itemsToDelete)} CONTENT_ITEM_ID from CONTENT_ITEM
                         where CONTENT_ID = @content_id order by CONTENT_ITEM_ID {Limit(dbType, itemsToDelete)}
                     );";

@@ -298,6 +298,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         internal static void Delete(int id)
         {
+            FieldRepository.DropLinkTablesAndViews(id);
             DefaultRepository.Delete<ContentDAL>(id);
             if (QPContext.DatabaseType != DatabaseType.SqlServer)
             {
