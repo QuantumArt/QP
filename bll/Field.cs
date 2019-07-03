@@ -1395,7 +1395,7 @@ namespace Quantumart.QP8.BLL
             if (ExactType == FieldExactTypes.O2MRelation)
             {
                 // Создать обратное поле если это необходимо и возможно
-                if (!string.IsNullOrWhiteSpace(NewO2MBackwardFieldName) && !IsBackwardFieldExists)
+                if (!string.IsNullOrWhiteSpace(NewO2MBackwardFieldName) && !IsBackwardFieldExists && !Aggregated)
                 {
                     if (RelateToContentId != null)
                     {

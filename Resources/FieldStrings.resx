@@ -777,4 +777,7 @@
   <data name="BackwardFieldId" xml:space="preserve">
     <value>Backward Field</value>
   </data>
+  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
+    <value>Backward Field  could not be created for Aggregated field</value>
+  </data>
 </root>

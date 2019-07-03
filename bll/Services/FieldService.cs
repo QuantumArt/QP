@@ -60,6 +60,11 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ArgumentNullException(nameof(item));
             }
 
+            if (item.Aggregated)
+            {
+                item.NewO2MBackwardFieldName = null;
+            }
+
             if (item.ExactType == FieldExactTypes.O2MRelation && item.RelateToContentId == item.ContentId && !item.Content.HasTreeField && !item.UseForVariations)
             {
                 item.UseForTree = true;
@@ -73,6 +78,11 @@ namespace Quantumart.QP8.BLL.Services
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
+            }
+
+            if (item.Aggregated)
+            {
+                item.NewO2MBackwardFieldName = null;
             }
 
             if (!FieldRepository.Exists(item.Id))
