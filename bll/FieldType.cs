@@ -54,6 +54,8 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+
+
         public static IEnumerable<FieldType> AllFieldTypes => AllFieldTypesLazy.Value;
     }
 }

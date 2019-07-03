@@ -161,20 +161,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public class FieldParameter
-        {
-            public string Name { get; set; }
-
-            public DbType DbType { get; set; }
-
-            public NpgsqlDbType NpgsqlDbType { get; set; }
-
-            public string Value { get; set; }
-        }
-
         private static DbParameter CreateDbParameter(DatabaseType dbType, FieldParameter item)
         {
-            var value = !string.IsNullOrEmpty(item.Value) ? (object)item.Value : DBNull.Value;
+            var value = item.ObjectValue ?? DBNull.Value;
             if (dbType == DatabaseType.Postgres)
             {
                 return new NpgsqlParameter

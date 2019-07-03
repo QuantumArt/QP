@@ -1666,6 +1666,8 @@ AS $BODY$
                 update content_attribute set CLASSIFIER_ATTRIBUTE_ID = NULL, AGGREGATED = false
                 where CLASSIFIER_ATTRIBUTE_ID = ANY(attr_ids);
 
+                delete from content_constraint_rule where attribute_id = any(attr_ids);
+
                 delete from content_attribute where BACK_RELATED_ATTRIBUTE_ID = any(attr_ids);
 
                 update content_attribute set TREE_ORDER_FIELD = NULL where TREE_ORDER_FIELD = ANY(attr_ids);

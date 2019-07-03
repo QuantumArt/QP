@@ -43,6 +43,11 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var ccDal = MapperFacade.ContentConstraintMapper.GetDalObject(constraint);
                 ccDal = DefaultRepository.SimpleSave(ccDal);
+                foreach (var rule in ccDal.Rules)
+                {
+                    rule.Constraint = ccDal;
+                    DefaultRepository.SimpleSave(rule);
+                }
                 var newContraint = MapperFacade.ContentConstraintMapper.GetBizObject(ccDal);
                 return newContraint;
             }
