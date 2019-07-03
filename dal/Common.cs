@@ -5400,7 +5400,8 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static void SetWorkflowBindedContentId(DbConnection connection, int workflowId, int contentId)
         {
-            var query = $"INSERT INTO [content_workflow_bind] ([CONTENT_ID],[WORKFLOW_ID], [is_async]) VALUES({contentId}, {workflowId}, 1);";
+            var dbType = GetDbType(connection);
+            var query = $"INSERT INTO content_workflow_bind (CONTENT_ID, WORKFLOW_ID, is_async) VALUES({contentId}, {workflowId}, {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)});";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
@@ -5411,7 +5412,7 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static void CleanWorkflowContentBindedIds(DbConnection connection, int workflowId)
         {
-            var query = $"DELETE FROM [content_workflow_bind] where WORKFLOW_ID = {workflowId};";
+            var query = $"DELETE FROM content_workflow_bind where WORKFLOW_ID = {workflowId};";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
