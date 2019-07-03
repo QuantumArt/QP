@@ -46,7 +46,7 @@ namespace Quantumart.QP8.DAL.Entities
                 builder.ToTable("content_FOLDER");
 
                 builder.Property(x => x.ContentId).HasColumnName("content_ID");
-				builder.Property(x => x.Id).HasColumnName("FOLDER_ID");
+				builder.Property(x => x.Id).HasColumnName("FOLDER_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.ParentId).HasColumnName("PARENT_FOLDER_ID");
 				builder.Property(x => x.Name).HasColumnName("NAME");
 				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
