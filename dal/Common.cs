@@ -5602,19 +5602,42 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
             );
         }
 
-        public static IEnumerable<DataRow> GetTemplateObjectsByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.TemplateObject,
-            "o.[parent_object_id] as parentId, o.[OBJECT_ID] as Id, o.[ICON] as Icon, o.[LOCKED_BY] AS [LockedBy], o.[OBJECT_NAME] as [Name], o.[DESCRIPTION] as [Description], o.[CREATED] as [Created], o.[MODIFIED] as [Modified]," +
-            "u.[LOGIN] as [LastModifiedByLogin], t.[TYPE_NAME] as [TypeName], o.LAST_MODIFIED_BY AS [LastModifiedBy], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName, cast(case when oo.object_id is null then 0 else 1 end as bit) as Overriden ",
-            "[TEMPLATE_OBJECT] o inner join USERS u on o.LAST_MODIFIED_BY = u.USER_ID inner join [OBJECT_TYPE] t on o.OBJECT_TYPE_ID = t.OBJECT_TYPE_ID left outer join users u2 on o.[LOCKED_BY] = u2.user_id " +
-            "left join (select distinct parent_object_id as object_id from object) oo on o.OBJECT_ID = oo.object_id ",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "o.[PAGE_TEMPLATE_ID] = " + templateId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetTemplateObjectsByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
+        {
+            var dbType = GetDbType(sqlConnection);
+
+            var selectBlock = $@"
+o.parent_object_id as parentId,
+o.OBJECT_ID as Id,
+o.ICON as Icon,
+o.LOCKED_BY AS LockedBy,
+o.OBJECT_NAME as Name,
+o.DESCRIPTION as Description,
+o.CREATED as Created,
+o.MODIFIED as Modified,
+u.LOGIN as LastModifiedByLogin,
+t.TYPE_NAME as TypeName,
+o.LAST_MODIFIED_BY AS LastModifiedBy,
+{SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.first_name", "' '", "u2.last_name")} as LockedByFullName,
+{SqlQuerySyntaxHelper.CastToBool(dbType, $"case when oo.object_id is null then {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)} else {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} end")} as Overriden
+ ";
+            var fromBlock = $@"
+TEMPLATE_OBJECT o inner join USERS u on o.LAST_MODIFIED_BY = u.USER_ID
+inner join OBJECT_TYPE t on o.OBJECT_TYPE_ID = t.OBJECT_TYPE_ID
+left outer join users u2 on o.LOCKED_BY = u2.user_id
+left join (select distinct parent_object_id as object_id from object) oo on o.OBJECT_ID = oo.object_id ";
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.TemplateObject,
+                selectBlock,
+                fromBlock,
+                !string.IsNullOrEmpty(orderBy) ? orderBy : $"{Escape(dbType, "Name")} ASC",
+                "o.PAGE_TEMPLATE_ID = " + templateId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
         public static IEnumerable<DataRow> GetPageObjectsByPageId(DbConnection sqlConnection, int pageId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
             sqlConnection,
