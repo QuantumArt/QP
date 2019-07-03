@@ -57,6 +57,7 @@ AS $BODY$
         on items.id = c.content_item_id and c.num >= items.max_num;
 
         if delete_ids is not null then
+            call qp_before_content_item_version_delete(delete_ids::int[]);
             DELETE from content_item_version WHERE content_item_version_id = ANY(delete_ids);
         end if;
 

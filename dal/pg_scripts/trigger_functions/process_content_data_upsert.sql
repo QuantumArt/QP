@@ -122,7 +122,7 @@ AS $BODY$
 			END IF;
 								  
 			IF array_length(async_ids, 1) > 0 THEN
-				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', attr.attribute_name, source, attr.attribute_id);
+				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', lower(attr.attribute_name), source, column_type, attr.attribute_id);
 				RAISE NOTICE '%', sql;
 				execute sql using async_ids;
 			END IF;

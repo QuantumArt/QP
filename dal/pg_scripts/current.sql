@@ -1884,6 +1884,7 @@ AS $BODY$
         on items.id = c.content_item_id and c.num >= items.max_num;
 
         if delete_ids is not null then
+            call qp_before_content_item_version_delete(delete_ids::int[]);
             DELETE from content_item_version WHERE content_item_version_id = ANY(delete_ids);
         end if;
 
@@ -3249,7 +3250,7 @@ AS $BODY$
 			END IF;
 								  
 			IF array_length(async_ids, 1) > 0 THEN
-				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', attr.attribute_name, source, attr.attribute_id);
+				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', lower(attr.attribute_name), source, column_type, attr.attribute_id);
 				RAISE NOTICE '%', sql;
 				execute sql using async_ids;
 			END IF;
