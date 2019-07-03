@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -138,7 +138,7 @@ namespace Quantumart.QP8.BLL
             }
             else if (!string.IsNullOrEmpty(value) && Field.Type.DbType == DbType.Decimal)
             {
-                ObjectValue = decimal.Parse(value, CultureInfo.InvariantCulture);
+                ObjectValue = Decimal.Parse(value, CultureInfo.CurrentCulture);
             }
             else
             {

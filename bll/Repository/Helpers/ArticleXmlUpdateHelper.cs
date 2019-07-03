@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
@@ -45,6 +46,11 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 if (item.Field.Type.Name == FieldTypeName.DynamicImage)
                 {
                     value = GetDynamicImageData(item.Field);
+                }
+
+                if (item.Field.Type.Name == FieldTypeName.Numeric)
+                {
+                    value = Converter.ToDbNumericString(value);
                 }
                 xdata.Add(value);
 
