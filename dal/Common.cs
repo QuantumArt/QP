@@ -4015,24 +4015,26 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetSiteFolderPermissionPage(DbConnection sqlConnection, int folderId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[FOLDER_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
 
-            const string fromBlock = @"[FOLDER_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var selectBlock = $@"SA.FOLDER_ACCESS_ID AS ID
+                                      ,U.LOGIN AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.LOGIN AS LastModifiedByUser";
+
+            const string fromBlock = @"FOLDER_ACCESS SA
+                                    LEFT JOIN USERS U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN USERS U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[FOLDER_ID] = " + folderId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "FOLDER_ID = " + folderId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
