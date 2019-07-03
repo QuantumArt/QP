@@ -91,10 +91,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             {
                 optionSet.Add("p|path=", "single or multiple <path> to file|directory with xml|csv record actions to replay", p => FilePathes.Add(p));
                 optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
-                optionSet.Add("t|type=", "database type, 0 (default) - SqlServer, 1 - postgres", c => { DbType = Enum.TryParse<DatabaseType>(c, out var dbtype) ? dbtype : DatabaseType.SqlServer; });
-
             }
 
+            optionSet.Add("t|type=", "database type, 0 (default) - SqlServer, 1 - postgres", c => { DbType = Enum.TryParse<DatabaseType>(c, out var dbtype) ? dbtype : DatabaseType.SqlServer; });
             optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
             optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv]", m => { });
