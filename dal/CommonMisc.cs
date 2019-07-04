@@ -437,26 +437,26 @@ namespace Quantumart.QP8.DAL
             if (!string.IsNullOrWhiteSpace(relName2))
             {
                 query = $@"
-SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName2)} as title
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, Escape(databaseType, relName2))} as title
 FROM content_{relContentId2}_united
-WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relName)} FROM content_{relContentId}_united
-WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, titleName)} FROM content_{contentId}_united
+WHERE content_item_id in (SELECT {Escape(databaseType, relName)} FROM content_{relContentId}_united
+WHERE content_item_id in (SELECT {Escape(databaseType, titleName)} FROM content_{contentId}_united
 WHERE content_item_id = {contentItemId}))
 ";
             }
             else if (!string.IsNullOrWhiteSpace(relName))
             {
                 query = $@"
-SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, relName)} as title
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, Escape(databaseType, relName))} as title
 FROM content_{relContentId}_united
-WHERE content_item_id in (SELECT {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, titleName)} FROM content_{contentId}_united
+WHERE content_item_id in (SELECT {Escape(databaseType, titleName)} FROM content_{contentId}_united
 WHERE content_item_id = {contentItemId})
 ";
             }
             else
             {
                 query = $@"
-SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, titleName)} as title
+SELECT {SqlQuerySyntaxHelper.CastToString(databaseType, Escape(databaseType, titleName))} as title
 FROM content_{contentId}_united
 WHERE content_item_id = {contentItemId}
 ";
