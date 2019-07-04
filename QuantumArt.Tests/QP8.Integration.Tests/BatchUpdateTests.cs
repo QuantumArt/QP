@@ -545,7 +545,7 @@ namespace QP8.Integration.Tests
         {
             const int range = 1000;
             decimal value = Random.Next(-range, range);
-            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
@@ -554,7 +554,7 @@ namespace QP8.Integration.Tests
             const int range = 100000;
             decimal value = Random.Next(-range, range);
             value /= 100;
-            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
@@ -562,14 +562,14 @@ namespace QP8.Integration.Tests
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateDateField()
         {
             var value = DateTime.Today;
-            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
@@ -577,7 +577,7 @@ namespace QP8.Integration.Tests
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         private static void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)

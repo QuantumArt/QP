@@ -1555,7 +1555,7 @@
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="new_article" ids="1989548" parentId="1647" lcid="1049" executed="11/07/2016 15:31:17" executedBy="KoryakinS">
+  <action code="new_article" ids="1989548" parentId="1647" lcid="1033" executed="11/07/2016 15:31:17" executedBy="KoryakinS">
     <field name="field_6115">1648</field>
     <field name="field_6120">f1</field>
     <field name="field_6121">f2</field>
