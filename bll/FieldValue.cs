@@ -136,9 +136,12 @@ namespace Quantumart.QP8.BLL
                 NewUnrelatedItems = currentItems.Except(newItems).ToArray();
                 NewRelatedItems = newItems.Except(currentItems).ToArray();
             }
-            else if (!string.IsNullOrEmpty(value) && Field.Type.DbType == DbType.Decimal)
+            else if (!string.IsNullOrEmpty(value) &&
+                (Field.ExactType == FieldExactTypes.Numeric || Field.ExactType == FieldExactTypes.O2MRelation)
+                && decimal.TryParse(value, out var parsed)
+            )
             {
-                ObjectValue = Decimal.Parse(value, CultureInfo.CurrentCulture);
+                ObjectValue = parsed;
             }
             else
             {
