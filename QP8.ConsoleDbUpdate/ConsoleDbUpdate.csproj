@@ -197,9 +197,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\System.Interactive.Async.dll">
       <Link>References\System.Interactive.Async.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.IO.dll">
-      <Link>References\System.IO.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\System.IO.Compression.dll">
       <Link>References\System.IO.Compression.dll</Link>
     </EmbeddedResource>
@@ -247,9 +244,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Flurl.Http.dll">
       <Link>References\Flurl.Http.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\System.Runtime.dll">
-      <Link>References\System.Runtime.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\System.Runtime.CompilerServices.Unsafe.dll">
       <Link>References\System.Runtime.CompilerServices.Unsafe.dll</Link>

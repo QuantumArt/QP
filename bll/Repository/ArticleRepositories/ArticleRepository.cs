@@ -1066,11 +1066,11 @@ cil.locked_by,
 
         private static readonly Regex DynamicColumnNamePattern = new Regex($@"^{Field.Prefix}(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static string GetDisplayExpression(FieldValue item) => $"{SqlQuerySyntaxHelper.FieldName(QPContext.DatabaseType, item.Field.Name)}";
+        private static string GetDisplayExpression(FieldValue item) => $"{SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, item.Field.Name)}";
 
         private static string GetSqlExpression(FieldValue item)
         {
-            var fieldName = SqlQuerySyntaxHelper.FieldName(QPContext.DatabaseType, item.Field.Name);
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, item.Field.Name);
             return string.IsNullOrEmpty(item.Value) ? $"({fieldName} IS NULL)" : $"({fieldName} = {item.Field.ParamName})";
         }
 
@@ -1095,7 +1095,7 @@ cil.locked_by,
                             return null;
                         }
 
-                        newFieldName = SqlQuerySyntaxHelper.FieldName(dbType, field.Name);
+                        newFieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name);
                         if (field.Type.Name == FieldTypeName.Time)
                         {
                             var schema = SqlQuerySyntaxHelper.DbSchemaName(dbType);
@@ -1104,7 +1104,7 @@ cil.locked_by,
                     }
                     else if (!SqlSorting.ContainsEscapeSymbols(newFieldName, dbType))
                     {
-                        newFieldName = SqlQuerySyntaxHelper.FieldName(dbType, newFieldName);
+                        newFieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, newFieldName);
                     }
 
                     if (sortInfoIndex > 0)

@@ -248,19 +248,6 @@ namespace Quantumart.QP8.DAL
             return dt;
         }
 
-        public static string FieldName(DatabaseType databaseType, string fieldName)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.SqlServer:
-                    return $@"[{fieldName}]";
-                case DatabaseType.Postgres:
-                    return $@"""{fieldName.ToLower()}""";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-        }
-
         public static DbParameter CreateDbParameter(DatabaseType dbType, string paramName, object value)
         {
             switch (dbType)

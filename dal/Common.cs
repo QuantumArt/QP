@@ -108,11 +108,15 @@ namespace Quantumart.QP8.DAL
 
         public static string[] GetArticleFieldValues(DbConnection connection, int[] ids, int contentId, string name)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var values = new List<string>();
-            using (var cmd = DbCommandFactory.Create($"select [{name}] from content_{contentId}_united with(nolock) join @ids ON CONTENT_ITEM_ID = Id", connection))
+            var sql = $@"
+                select {SqlQuerySyntaxHelper.EscapeEntityName(dbType, name)} from content_{contentId}_united c {WithNoLock(dbType)}
+                inner join {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")} ON c.content_item_id = i.id
+                ";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -798,23 +802,21 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
 
         public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(DbConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var suffix = isLive ? string.Empty : "_united";
             var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
             var fieldIds = fiList.Select(n => n.Id).ToArray();
-            var strTemplates = fiList.Select(fi => string.Format(
-                "select content_item_id as linked_item_id, [{0}] as item_id, cast({4} as decimal) as field_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}",
-                fi.Name, fi.ContentId, suffix, isArchive, fi.Id
-            ));
+
+            var strTemplates = fiList.Select(fi => $@"
+                select content_item_id as linked_item_id, {Escape(dbType, fi.Name)} as item_id, cast({fi.Id} as decimal) as field_id
+                from content_{fi.ContentId}{suffix} {WithNoLock(dbType)}
+                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@ids")}) {isArchive}
+            ");
 
             var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@itemIds", ids, dbType));
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 return GroupedLinks(dt, "item_id", "linked_item_id", "field_id", fieldIds);
@@ -7008,7 +7010,7 @@ order by ActionDate desc
         {
             var result = new Dictionary<int, int>();
             var dbType = GetDbType(sqlConnection);
-            var name = SqlQuerySyntaxHelper.FieldName(dbType, treeFieldName);
+            var name = Escape(dbType, treeFieldName);
             var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : $"coalesce({name}, 0)";
             var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united {WithNoLock(dbType)} where archive = 0";
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
