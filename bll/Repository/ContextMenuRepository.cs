@@ -42,8 +42,7 @@ namespace Quantumart.QP8.BLL.Repository
             foreach (var menuItem in contextMenuBiz.Items)
             {
                 menuItem.Icon = customActions.FirstOrDefault(x => x.ActionId == menuItem.ActionId)?.IconUrl ?? menuItem.Icon;
-
-                // прогнать Name через translate
+                menuItem.Name = Translator.Translate(menuItem.Name);
             }
 
             return contextMenuBiz;

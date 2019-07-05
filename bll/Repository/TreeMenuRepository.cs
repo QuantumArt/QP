@@ -55,7 +55,8 @@ namespace Quantumart.QP8.BLL.Repository
             //pluralize
             foreach (var groupNode in nodesList.Where(x => x.IsFolder))
             {
-                groupNode.Title = Pluralize(groupNode.Title);
+                groupNode.Title = Translator.Translate(Pluralize(groupNode.Title));
+
             }
 
             if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
