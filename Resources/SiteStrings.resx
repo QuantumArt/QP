@@ -591,4 +591,7 @@
   <data name="CopySiteItemLinks" xml:space="preserve">
     <value>Copying links between articles</value>
   </data>
+  <data name="ReplaceUrlsInDB" xml:space="preserve">
+    <value>Replace urls to placeholders</value>
+  </data>
 </root>
