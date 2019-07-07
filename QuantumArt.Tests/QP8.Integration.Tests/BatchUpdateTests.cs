@@ -599,12 +599,16 @@ namespace QP8.Integration.Tests
                     }.ToList()
                 }
             };
+            var oldValue = GetFieldValue<T>(contentId, fieldName, articleId);
+            Assert.That(oldValue, Is.Not.EqualTo(DateTime.MinValue));
+            Assert.That(oldValue, Is.Not.Null.Or.Empty);
 
             var result = ArticleService.BatchUpdate(data);
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
 
             var newValue = GetFieldValue<T>(contentId, fieldName, articleId);
             Assert.That(value, Is.EqualTo(newValue));
+            Assert.That(oldValue, Is.Not.EqualTo(newValue));
         }
 
         private static void ClearClassifierField(int articleId)

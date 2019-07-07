@@ -1555,7 +1555,7 @@
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="new_article" ids="1989548" parentId="1647" lcid="1033" executed="11/07/2016 15:31:17" executedBy="KoryakinS">
+  <action code="new_article" ids="1989548" parentId="1647" lcid="1049" executed="11/07/2016 15:31:17" executedBy="KoryakinS">
     <field name="field_6115">1648</field>
     <field name="field_6120">f1</field>
     <field name="field_6121">f2</field>
@@ -1568,16 +1568,16 @@
     <field name="field_6131">1989546</field>
     <field name="field_6117">string</field>
     <field name="field_6133">15</field>
-    <field name="field_6134">17.45</field>
-    <field name="field_6135">7/5/2016</field>
-    <field name="field_6136">1:30 AM</field>
-    <field name="field_6137">7/5/2016 1:30 AM</field>
-    <field name="field_6138"></field>
-    <field name="field_6139"></field>
+    <field name="field_6134">17,45</field>
+    <field name="field_6135">05.07.2016</field>
+    <field name="field_6136">1:30</field>
+    <field name="field_6137">05.07.2016 1:30</field>
+    <field name="field_6138">1.txt</field>
+    <field name="field_6139">1.png</field>
     <field name="field_6140">text box</field>
     <field name="field_6141">&lt;strong&gt;visual edit&lt;/strong&gt;</field>
     <field name="field_6142"></field>
-    <field name="field_6143">Key1</field>
+    <field name="field_6143">Key2</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>

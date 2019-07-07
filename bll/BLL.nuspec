@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Quantumart.QP8.BLL</id>
-    <version>2.9.4-beta3</version>
+    <version>3.0.0-beta1</version>
     <authors>Pavel Celut, Sergey Koryakin</authors>
     <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

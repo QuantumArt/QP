@@ -43,15 +43,20 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 xitem.Add(xdata);
 
                 var value = item.Value ?? "";
+
                 if (item.Field.Type.Name == FieldTypeName.DynamicImage)
                 {
                     value = GetDynamicImageData(item.Field);
                 }
-
-                if (item.Field.Type.Name == FieldTypeName.Numeric)
+                else if (item.Field.Type.Name == FieldTypeName.Numeric)
                 {
                     value = Converter.ToDbNumericString(value);
                 }
+                else if (new[] {FieldTypeName.DateTime, FieldTypeName.Date, FieldTypeName.Time}.Contains(item.Field.Type.Name))
+                {
+                    value = Converter.ToDbDateTimeString(value);
+                }
+
                 xdata.Add(value);
 
             }

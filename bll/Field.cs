@@ -1099,15 +1099,12 @@ namespace Quantumart.QP8.BLL
 
         private void InitDefaultValues()
         {
-            if (ExactType != FieldExactTypes.M2ORelation)
+            if (ExactType != FieldExactTypes.M2ORelation && !String.IsNullOrEmpty(DefaultValue))
             {
                 StringDefaultValue = DefaultValue;
                 NumericDefaultValue = Converter.ToNullableDouble(DefaultValue);
                 BooleanDefaultValue = Converter.ToBoolean(DefaultValue, false);
-                DateDefaultValue = Converter.ToNullableDateTime(DefaultValue);
-                var tdt = Converter.ToNullableDateTime(DefaultValue);
-                TimeDefaultValue = tdt?.TimeOfDay;
-                DateTimeDefaultValue = Converter.ToNullableDateTime(DefaultValue);
+
                 if (ExactType == FieldExactTypes.String)
                 {
                     TextBoxDefaultValue = StringDefaultValue;
@@ -1129,6 +1126,19 @@ namespace Quantumart.QP8.BLL
                 else if (ExactType == FieldExactTypes.Classifier)
                 {
                     ClassifierDefaultValue = Converter.ToNullableInt32(DefaultValue);
+                }
+                else if (ExactType == FieldExactTypes.Date)
+                {
+                    DateDefaultValue = Converter.ToNullableDateTime(DefaultValue);
+                }
+                else if (ExactType == FieldExactTypes.DateTime)
+                {
+                    DateTimeDefaultValue = Converter.ToNullableDateTime(DefaultValue);
+                }
+                else if (ExactType == FieldExactTypes.Time)
+                {
+                    var tdt = Converter.ToNullableDateTime(DefaultValue);
+                    TimeDefaultValue = tdt?.TimeOfDay;
                 }
             }
         }
