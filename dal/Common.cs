@@ -3953,47 +3953,49 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetArticlePermissionPage(DbConnection sqlConnection, int articleId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[CONTENT_ITEM_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.CONTENT_ITEM_ACCESS_ID AS ID
+                                      ,U.LOGIN AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[CONTENT_ITEM_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"CONTENT_ITEM_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[CONTENT_ITEM_ID] = " + articleId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ITEM_ID = " + articleId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
         public static IEnumerable<DataRow> GetWorkflowPermissionPage(DbConnection sqlConnection, int workflowId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[WORKFLOW_ACCESS_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.WORKFLOW_ACCESS_ACCESS_ID AS ID
+                                      ,U.LOGIN AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[WORKFLOW_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"WORKFLOW_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[WORKFLOW_ID] = " + workflowId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "WORKFLOW_ID = " + workflowId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
@@ -4024,47 +4026,49 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static IEnumerable<DataRow> GetEntityTypePermissionPage(DbConnection sqlConnection, int entityTypeId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.ENTITY_TYPE_ACCESS_ID AS [ID]
-                                    ,U.[LOGIN] AS [UserLogin]
-                                    ,G.GROUP_NAME AS [GroupName]
-                                    ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                    ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                    ,cast(0 as bit) as [Hide]
-                                    ,SA.[CREATED]
-                                    ,SA.[MODIFIED]
-                                    ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                    ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.ENTITY_TYPE_ACCESS_ID AS ID
+                                    ,U.LOGIN AS UserLogin
+                                    ,G.GROUP_NAME AS GroupName
+                                    ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                    ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                    ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                    ,SA.CREATED
+                                    ,SA.MODIFIED
+                                    ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                    ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[ENTITY_TYPE_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"ENTITY_TYPE_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[ENTITY_TYPE_ID] = " + entityTypeId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ENTITY_TYPE_ID = " + entityTypeId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
         public static IEnumerable<DataRow> GetActionPermissionPage(DbConnection sqlConnection, int actionId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.ACTION_ACCESS_ID AS [ID]
-                                    ,U.[LOGIN] AS [UserLogin]
-                                    ,G.GROUP_NAME AS [GroupName]
-                                    ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                    ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                    ,cast(0 as bit) as [Hide]
-                                    ,SA.[CREATED]
-                                    ,SA.[MODIFIED]
-                                    ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                    ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.ACTION_ACCESS_ID AS ID
+                                    ,U.LOGIN AS UserLogin
+                                    ,G.GROUP_NAME AS GroupName
+                                    ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                    ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                    ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                    ,SA.CREATED
+                                    ,SA.MODIFIED
+                                    ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                    ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[ACTION_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"ACTION_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[ACTION_ID] = " + actionId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ACTION_ID = " + actionId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
