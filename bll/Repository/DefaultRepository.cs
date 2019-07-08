@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -119,7 +120,10 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
 
-        private static List<TDal> FindAll<TDal>(DbContext dbContext, params object[] keyValues)
+
+
+
+        private static List<TDal> FindAll<TDal>(DbContext dbContext, int[] keyValues)
             where TDal : class
         {
             var entityType = dbContext.Model.FindEntityType(typeof(TDal));
@@ -130,14 +134,7 @@ namespace Quantumart.QP8.BLL.Repository
             var pkProperty = primaryKey.Properties[0];
             var pkPropertyType = pkProperty.ClrType;
 
-            // validate passed key values
-            foreach (var keyValue in keyValues)
-            {
-                if (!pkPropertyType.IsInstanceOfType(keyValue))
-                {
-                    throw new ArgumentException($"Key value '{keyValue}' is not of the right type");
-                }
-            }
+            var castedKeyValues = pkPropertyType != typeof(int) ? keyValues.Select(x => Convert.ChangeType(x, pkPropertyType)).ToArray() : new[] { keyValues };
 
             // retrieve member info for primary key
             var pkMemberInfo = typeof(TDal).GetProperty(pkProperty.Name);
@@ -147,7 +144,7 @@ namespace Quantumart.QP8.BLL.Repository
             // build lambda expression
             var parameter = Expression.Parameter(typeof(TDal), "e");
             var body = Expression.Call(null, ContainsMethod,
-                Expression.Constant(keyValues),
+                Expression.Constant(castedKeyValues),
                 Expression.Convert(Expression.MakeMemberAccess(parameter, pkMemberInfo), typeof(object)));
             var predicateExpression = Expression.Lambda<Func<TDal, bool>>(body, parameter);
 
