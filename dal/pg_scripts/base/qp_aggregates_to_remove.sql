@@ -1,5 +1,5 @@
 create or replace function qp_aggregates_to_remove(ids integer[]) returns integer[]
-    immutable
+    stable
     language plpgsql
 as
 $$

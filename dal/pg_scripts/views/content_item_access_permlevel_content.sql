@@ -1,4 +1,4 @@
-create view content_item_access_permlevel_content(content_item_id, user_id, group_id, permission_level_id, created,
+create or replace view content_item_access_permlevel_content(content_item_id, user_id, group_id, permission_level_id, created,
                                                   modified, last_modified_by, content_item_access_id, permission_level,
                                                   content_id) as
 SELECT c.content_item_id,

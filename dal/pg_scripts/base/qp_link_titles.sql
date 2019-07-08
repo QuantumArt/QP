@@ -1,7 +1,7 @@
 create or replace function qp_link_titles(
     link_id integer, id integer, display_attribute_id integer, maxlength integer
 ) returns text
-    immutable
+    stable
     language plpgsql
 as
 $$

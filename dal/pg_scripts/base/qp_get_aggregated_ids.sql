@@ -1,6 +1,6 @@
 create or replace function qp_get_aggregated_ids(id integer, classifier_ids integer[], content_ids integer[], is_live boolean)
 returns integer[]
-    immutable
+    stable
     language plpgsql
 as
 $$

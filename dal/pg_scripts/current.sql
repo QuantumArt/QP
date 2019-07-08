@@ -218,7 +218,7 @@ FROM (content_attribute ca
 alter table content_attribute_type
     owner to postgres;
 
-create view content_item_access_permlevel(content_item_id, user_id, group_id, permission_level_id, created, modified,
+create or replace view content_item_access_permlevel(content_item_id, user_id, group_id, permission_level_id, created, modified,
                                           last_modified_by, content_item_access_id, permission_level) as
 SELECT c.content_item_id,
        c.user_id,
@@ -235,7 +235,7 @@ FROM (content_item_access c
 alter table content_item_access_permlevel
     owner to postgres;
 
-create view content_item_access_permlevel_content(content_item_id, user_id, group_id, permission_level_id, created,
+create or replace view content_item_access_permlevel_content(content_item_id, user_id, group_id, permission_level_id, created,
                                                   modified, last_modified_by, content_item_access_id, permission_level,
                                                   content_id) as
 SELECT c.content_item_id,
@@ -276,7 +276,7 @@ FROM content_item ci
 alter table content_item_workflow
     owner to postgres;
 
-create or replace view entity_type_access_perm_level(entity_type_access_id, user_id, group_id, permission_level, entity_type_id) as
+create or replace view entity_type_access_permlevel(entity_type_access_id, user_id, group_id, permission_level, entity_type_id) as
 SELECT c.entity_type_access_id,
        c.user_id,
        c.group_id,
@@ -286,7 +286,7 @@ FROM ((entity_type_access c
     JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
          JOIN entity_type x ON ((c.entity_type_id = x.id)));
 
-alter table entity_type_access_perm_level
+alter table entity_type_access_permlevel
     owner to postgres;
 
 create or replace view full_workflow_rules(workflow_rule_id, user_id, group_id, rule_order, predecessor_permission_id,
@@ -455,7 +455,7 @@ alter table workflow_max_statuses
     owner to postgres;
 
 create or replace function qp_aggregated_and_self(ids integer[]) returns integer[]
-    immutable
+    stable
     language plpgsql
 as
 $$
@@ -482,7 +482,7 @@ BEGIN
 END;
 $$;
 create or replace function qp_aggregates_to_remove(ids integer[]) returns integer[]
-    immutable
+    stable
     language plpgsql
 as
 $$
@@ -956,7 +956,7 @@ alter procedure qp_delete_link_table_item(numeric, numeric, link[], boolean, boo
 
 create or replace function qp_get_aggregated_ids(id integer, classifier_ids integer[], content_ids integer[], is_live boolean)
 returns integer[]
-    immutable
+    stable
     language plpgsql
 as
 $$
@@ -1252,7 +1252,7 @@ $$;
 alter function qp_is_numeric(text) owner to postgres;
 
 create or replace function qp_link_ids(link_id integer, id integer, is_stage boolean) returns text
-    immutable
+    stable
     language plpgsql
 as
 $$
@@ -1277,7 +1277,7 @@ alter function qp_link_ids(int, int, boolean) owner to postgres;
 create or replace function qp_link_titles(
     link_id integer, id integer, display_attribute_id integer, maxlength integer
 ) returns text
-    immutable
+    stable
     language plpgsql
 as
 $$
@@ -1386,7 +1386,7 @@ alter procedure qp_link_view_drop(int) owner to postgres;
 create or replace function qp_m2o_titles(
     id integer, field_related_id integer, related_attribute_id integer, maxlength integer
 ) returns text
-    immutable
+    stable
     language plpgsql
 as
 $$

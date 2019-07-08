@@ -1,5 +1,5 @@
 create or replace function qp_aggregated_and_self(ids integer[]) returns integer[]
-    immutable
+    stable
     language plpgsql
 as
 $$

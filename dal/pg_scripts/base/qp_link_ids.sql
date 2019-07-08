@@ -1,5 +1,5 @@
 create or replace function qp_link_ids(link_id integer, id integer, is_stage boolean) returns text
-    immutable
+    stable
     language plpgsql
 as
 $$

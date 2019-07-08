@@ -1,7 +1,7 @@
 create or replace function qp_m2o_titles(
     id integer, field_related_id integer, related_attribute_id integer, maxlength integer
 ) returns text
-    immutable
+    stable
     language plpgsql
 as
 $$
