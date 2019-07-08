@@ -98,6 +98,8 @@ AS $BODY$
         from content_attribute ca where ca.attribute_id = cd.attribute_id
         and (ca.attribute_type_id <> 11 or ca.link_id is null) and cd.content_item_id = ANY(ids);
 
+		update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from unnest(ids) i(id);
+
    		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids)
    		    and (not_for_replication or cancel_split);
 

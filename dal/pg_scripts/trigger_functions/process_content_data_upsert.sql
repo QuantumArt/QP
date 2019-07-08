@@ -57,6 +57,10 @@ AS $BODY$
 
 		IF ft_ids is not null THEN
             update content_data set ft_data = to_tsvector('russian', data) where content_data_id = ANY(ft_ids);
+
+            update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from (
+                select distinct cd.content_item_id::int as id from content_data cd where cd.content_data_id = ANY(ft_ids)
+            ) i;
         END IF;
 		
 		IF TG_OP = 'UPDATE' THEN
