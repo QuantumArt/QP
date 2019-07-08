@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -22,6 +23,7 @@ namespace Quantumart.QP8.BLL.Services
             var action = BackendActionRepository.GetByCode(actionCode);
 
             var allButtons = ToolbarRepository.GetButtonListByActionCode(action.Code, entityId);
+
 
             // если неопределен id сущности, то нужно работать с родительским entity type
             var etypeCode = entityId != 0 ? action.EntityType.Code : action.EntityType.ParentCode;

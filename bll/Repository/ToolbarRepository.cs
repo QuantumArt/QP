@@ -4,6 +4,7 @@ using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.DAL;
+using Unity.Interception.Utilities;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -20,7 +21,9 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var actionId = BackendActionCache.Actions.FirstOrDefault(x => x.Code.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase))?.Id;
                 var rows = Common.GetToolbarButtonsForAction(QPContext.EFContext, scope.DbConnection, QPContext.CurrentUserId, QPContext.IsAdmin, actionId, actionCode, entityId);
-                return MapperFacade.ToolbarButtonRowMapper.GetBizList(rows.ToList());
+                var buttons = MapperFacade.ToolbarButtonRowMapper.GetBizList(rows.ToList());
+                buttons.ForEach(x => x.Name = Translator.Translate(x.Name));
+                return buttons;
                 #warning Отфильтровать по qp_action_visible
             }
         }

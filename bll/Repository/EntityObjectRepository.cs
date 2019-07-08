@@ -369,6 +369,12 @@ namespace Quantumart.QP8.BLL.Repository
                 customerCodeInfo.Title = QPContext.CurrentCustomerCode;
             }
 
+            result.ForEach(x =>
+            {
+                x.Title = Translator.Translate(x.Title);
+                x.EntityTypeName = Translator.Translate(x.EntityTypeName);
+            });
+
             return result;
         }
 
