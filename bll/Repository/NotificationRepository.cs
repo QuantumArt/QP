@@ -72,11 +72,11 @@ namespace Quantumart.QP8.BLL.Repository
         internal static Notification GetPropertiesById(int id)
         {
             return MapperFacade.NotificationMapper.GetBizObject(QPContext.EFContext.NotificationsSet
-                .Include("LastModifiedByUser")
-                .Include("WorkFlow")
-                .Include("FromUser")
-                .Include("ToUser")
-                .Include("ToUserGroup")
+                .Include(x => x.LastModifiedByUser)
+                .Include(x => x.Workflow)
+                .Include(x => x.FromUser)
+                .Include(x => x.ToUser)
+                .Include(x => x.ToUserGroup)
                 .SingleOrDefault(g => g.Id == id)
             );
         }

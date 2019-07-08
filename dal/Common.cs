@@ -2434,22 +2434,49 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             out totalRecords
         );
 
-        public static IEnumerable<DataRow> GetNotificationsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Notification,
-            "[NOTIFICATION_ID] AS Id, [NOTIFICATION_NAME] as [Name], n.[CREATED] as [Created], n.[MODIFIED] as [Modified], n.no_email, n.LAST_MODIFIED_BY as[LastModifiedBy], " +
-            "n.IS_EXTERNAL as[IsExternal], u2.LOGIN as [LastModifiedByLogin], [FOR_CREATE] as ForCreate, FOR_DELAYED_PUBLICATION as [ForDelayedPublication], " +
-            "[FOR_MODIFY] as ForModify, [For_Remove] as ForRemove, [for_status_changed] as [ForStatusChanged], [for_status_partially_changed] as ForStatusPartiallyChanged, [for_frontend] as ForFrontend," +
-            "n.GROUP_ID,n.[USER_ID],n.email_attribute_id, COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver",
-            "dbo.[NOTIFICATIONS] n left outer join user_group ug on n.group_id = ug.group_id " +
-            "left outer join users u on n.user_id = u.user_id left outer join CONTENT_ATTRIBUTE as a on n.email_attribute_id = a.ATTRIBUTE_ID " +
-            "inner join users u2 on n.LAST_MODIFIED_BY = u2.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name]",
-            "n.CONTENT_ID = " + contentId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetNotificationsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+
+            var selectBlock = $@"
+NOTIFICATION_ID AS Id,
+NOTIFICATION_NAME as {Escape(dbType, "Name")},
+n.CREATED as Created,
+n.MODIFIED as Modified,
+n.no_email,
+n.LAST_MODIFIED_BY as LastModifiedBy,
+n.IS_EXTERNAL as IsExternal,
+u2.LOGIN as LastModifiedByLogin,
+FOR_CREATE as ForCreate,
+FOR_DELAYED_PUBLICATION as ForDelayedPublication,
+FOR_MODIFY as ForModify,
+For_Remove as ForRemove,
+for_status_changed as ForStatusChanged,
+for_status_partially_changed as ForStatusPartiallyChanged,
+for_frontend as ForFrontend,
+n.GROUP_ID,
+n.USER_ID,
+n.email_attribute_id,
+COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
+
+
+            var fromBlock = $@"{DbSchemaName(dbType)}.NOTIFICATIONS n left outer join user_group ug on n.group_id = ug.group_id
+                left outer join users u on n.user_id = u.user_id left outer join CONTENT_ATTRIBUTE as a on n.email_attribute_id = a.ATTRIBUTE_ID
+                inner join users u2 on n.LAST_MODIFIED_BY = u2.user_id";
+
+
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Notification,
+                selectBlock,
+                fromBlock,
+                !string.IsNullOrEmpty(orderBy) ? orderBy : Escape(dbType, "Name"),
+                $"n.CONTENT_ID = {contentId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
         public static IEnumerable<DataRow> GetVisualEditorPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
