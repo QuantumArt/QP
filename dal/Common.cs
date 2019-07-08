@@ -786,14 +786,11 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
 
         public static int[] ExcludeArchived(DbConnection connection, int[] ids)
         {
-            using (var cmd = DbCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 0", connection))
+            var dbType = GetDbType(connection);
+            var query = $"select content_item_id from content_item {WithNoLock(dbType)} where content_item_id in (select id from {IdList(dbType, "@itemIds")}) and archive = 0";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
+                cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
