@@ -1781,24 +1781,25 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        private const string UpdateSiteFolderSql =
-            "WITH FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, [PATH], NEW_PATH) as " +
-            "( " +
-            "select FOLDER_ID, PARENT_FOLDER_ID, [PATH], REPLACE([PATH], [PATH], @new_path) AS NEW_PATH from [FOLDER] " +
-            "where FOLDER_ID = @folder_id " +
-            "union all " +
-            "select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.[PATH], REPLACE(F.[PATH], F2.[PATH], F2.NEW_PATH) AS NEW_PATH from [FOLDER] F " +
-            "join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID " +
-            ") " +
-            "UPDATE [FOLDER] SET [FOLDER].[PATH] = NP.NEW_PATH, " +
-            " [FOLDER].[MODIFIED] = @modified, " +
-            " [FOLDER].[LAST_MODIFIED_BY] = @modified_by " +
-            "FROM FOLDERS NP " +
-            "WHERE [FOLDER].FOLDER_ID = NP.FOLDER_ID";
-
         public static void UpdateSiteSubFoldersPath(DbConnection sqlConnection, int parentFolderId, string path, int modifiedBy, DateTime modified)
         {
-            using (var cmd = DbCommandFactory.Create(UpdateSiteFolderSql, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var pathColumnName = Escape(dbType, "PATH");
+            var folderTableName = Escape(dbType, "FOLDER");
+            var query = $@"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, NEW_PATH) as (
+                select FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, REPLACE({pathColumnName}, {pathColumnName}, @new_path) AS NEW_PATH from {folderTableName}
+                where FOLDER_ID = @folder_id
+                union all
+                select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.{pathColumnName}, REPLACE(F.{pathColumnName}, F2.{pathColumnName}, F2.NEW_PATH) AS NEW_PATH from {folderTableName} F
+                join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID
+                )
+                UPDATE {folderTableName} SET {pathColumnName} = NP.NEW_PATH,
+                 MODIFIED = @modified,
+                 LAST_MODIFIED_BY = @modified_by
+                FROM FOLDERS NP
+                WHERE {folderTableName}.FOLDER_ID = NP.FOLDER_ID";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@folder_id", parentFolderId);
                 cmd.Parameters.AddWithValue("@new_path", path);
@@ -1808,25 +1809,28 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        private const string UpdateContentFolderSql =
-            "WITH FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, [PATH], NEW_PATH) as " +
-            "( " +
-            "select FOLDER_ID, PARENT_FOLDER_ID, [PATH], REPLACE([PATH], [PATH], @new_path) AS NEW_PATH from [content_FOLDER] " +
-            "where FOLDER_ID = @folder_id " +
-            "union all " +
-            "select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.[PATH], REPLACE(F.[PATH], F2.[PATH], F2.NEW_PATH) AS NEW_PATH from [content_FOLDER] F " +
-            "join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID " +
-            ") " +
-            "UPDATE [content_FOLDER] " +
-            " SET [content_FOLDER].[PATH] = NP.NEW_PATH, " +
-            " [content_FOLDER].[MODIFIED] = @modified, " +
-            " [content_FOLDER].[LAST_MODIFIED_BY] = @modified_by " +
-            "FROM FOLDERS NP " +
-            "WHERE [content_FOLDER].FOLDER_ID = NP.FOLDER_ID";
-
         public static void UpdateContentSubFoldersPath(DbConnection sqlConnection, int parentFolderId, string path, int modifiedBy, DateTime modified)
         {
-            using (var cmd = DbCommandFactory.Create(UpdateContentFolderSql, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var pathColumnName = Escape(dbType, "PATH");
+            var folderTableName = Escape(dbType, "content_FOLDER");
+
+            var query = $@"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, NEW_PATH) as
+                (
+                select FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, REPLACE({pathColumnName}, {pathColumnName}, @new_path) AS NEW_PATH from {folderTableName}
+                where FOLDER_ID = @folder_id
+                union all
+                select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.{pathColumnName}, REPLACE(F.{pathColumnName}, F2.{pathColumnName}, F2.NEW_PATH) AS NEW_PATH from {folderTableName} F
+                join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID
+                )
+                UPDATE {folderTableName}
+                 SET {pathColumnName} = NP.NEW_PATH,
+                 MODIFIED = @modified,
+                 LAST_MODIFIED_BY = @modified_by
+                FROM FOLDERS NP
+                WHERE {folderTableName}.FOLDER_ID = NP.FOLDER_ID";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@folder_id", parentFolderId);
                 cmd.Parameters.AddWithValue("@new_path", path);
