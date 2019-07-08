@@ -72,7 +72,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.ForDelayedPublication).HasColumnName("FOR_DELAYED_PUBLICATION");
 				builder.Property(x => x.ExternalUrl).HasColumnName("EXTERNAL_URL");
 				builder.Property(x => x.IsExternal).HasColumnName("IS_EXTERNAL");
-				builder.Property(x => x.Id).HasColumnName("NOTIFICATION_ID");
+				builder.Property(x => x.Id).HasColumnName("NOTIFICATION_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.Name).HasColumnName("NOTIFICATION_NAME");
 				builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
 				builder.Property(x => x.FormatId).HasColumnName("FORMAT_ID");
