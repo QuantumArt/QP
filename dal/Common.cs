@@ -1026,25 +1026,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static int? GetParentEntityId(DbConnection connection, string entityTypeCode, int entityId)
-        {
-            int? parentEntityId;
-            using (var cmd = DbCommandFactory.Create("qp_get_parent_entity_id", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entity_id", entityId);
-                cmd.Parameters.Add(new SqlParameter("@parent_entity_id", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                });
-
-                cmd.ExecuteNonQuery();
-                parentEntityId = Converter.ToNullableInt32(cmd.Parameters["@parent_entity_id"].Value);
-            }
-
-            return parentEntityId;
-        }
 
         public static int[] GetParentEntityIdsForTree(
             DbConnection connection,

@@ -283,7 +283,18 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentEntityId(scope.DbConnection, entityTypeCode, entityId);
+                var entityType = EntityTypeRepository.GetByCode(entityTypeCode);
+                if (entityType == null)
+                {
+                    return null;
+                }
+
+                var result = Common.GetNumericFieldValue(scope.DbConnection, entityType.ParentIdField, entityType.Source, entityType.IdField, entityId);
+                return result.HasValue ? Convert.ToInt32(result.Value) : (int?)null;
+
+
+
+
             }
         }
 
