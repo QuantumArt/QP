@@ -30,6 +30,8 @@ namespace Quantumart.QP8.DAL
         {
             var user = context.UserSet.SingleOrDefault(x => x.Id == userId);
 
+
+
             var enableContentGrouping = (entityTypeCode != EntityTypeCode.Content && entityTypeCode != EntityTypeCode.VirtualContent)
                 || user.EnableContentGroupingInTree;
 
@@ -42,6 +44,8 @@ namespace Quantumart.QP8.DAL
             var parentGroupCode = entityType == null || !enableContentGrouping
                 ? null
                 : entityTypes.FirstOrDefault(x => x.Id == entityType.GroupParentId)?.Code;
+
+
 
             var realParentId = isGroup ? GetParentEntityId(context, connection, (decimal)parentEntityId, entityTypeCode) : parentEntityId;
 
@@ -89,6 +93,8 @@ namespace Quantumart.QP8.DAL
             var orderSb = new StringBuilder();
             var sql = string.Empty;
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
+
+            var useSecurity = UseSecurity(isAdmin, databaseType);
             if (newIsFolder || !string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))
             {
                 if (newEntityType?.HasItemNodes ?? false)
@@ -134,20 +140,20 @@ namespace Quantumart.QP8.DAL
                     switch (newEntityType.SourceSP)
                     {
                         case "qp_sites_list":
-                            sqlSb.AppendLine(GetSitesListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, userId, isAdmin));
+                            sqlSb.AppendLine(GetSitesListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, userId, useSecurity));
                             break;
                         case "qp_real_content_list":
                             siteId = !string.IsNullOrWhiteSpace(realParentIdField) ? (decimal?)realParentId.Value : parentEntityId;
-                            sqlSb.AppendLine(GetContentListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, siteId, userId, isAdmin));
+                            sqlSb.AppendLine(GetContentListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), false, siteId, userId, useSecurity));
                             break;
                         case "qp_virtual_content_list":
                             siteId = realParentId.HasValue ? (decimal?)realParentId.Value : parentEntityId;
-                            sqlSb.AppendLine(GetContentListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), true, siteId, userId, isAdmin));
+                            sqlSb.AppendLine(GetContentListSql(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), true, siteId, userId, useSecurity));
                             break;
                         case "qp_site_folder_list":
                             siteId = realParentId.HasValue ? (decimal?)realParentId.Value : parentEntityId;
                             var parentFolderId = newIsFolder ? 0 : parentEntityId.Value;
-                            sqlSb.AppendLine(GetSiteFolderList(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), siteId, parentFolderId, userId, isAdmin));
+                            sqlSb.AppendLine(GetSiteFolderList(context, selectSb.ToString(), whereSb.ToString(), orderSb.ToString(), siteId, parentFolderId, userId, useSecurity));
                             break;
                     }
                 }
@@ -190,7 +196,8 @@ namespace Quantumart.QP8.DAL
                     ? " and et.parent_id is null "
                     : $" and et.parent_id = {newEntityType.Id} ";
 
-                var useSecurity = !isAdmin;
+
+
 
                 string securitySql = null;
                 if (useSecurity)
@@ -258,7 +265,9 @@ namespace Quantumart.QP8.DAL
 ";
         }
 
-        private static string GetContentListSql(QPModelDataContext context, string select, string filter, string orderBy, bool isVirtual, decimal? siteId, int userId, bool isAdmin)
+        private static bool UseSecurity(bool isAdmin, DatabaseType databaseType) => !isAdmin && databaseType != DatabaseType.Postgres;
+
+        private static string GetContentListSql(QPModelDataContext context, string select, string filter, string orderBy, bool isVirtual, decimal? siteId, int userId, bool useSecurity)
         {
             if (string.IsNullOrWhiteSpace(orderBy))
             {
@@ -277,7 +286,7 @@ namespace Quantumart.QP8.DAL
 
             filter += $" and virtual_type {(isVirtual ? "<> 0" : "=0")}";
 
-            var useSecurity = !isAdmin;
+
             var securitySql = string.Empty;
             if (useSecurity)
             {
@@ -294,7 +303,7 @@ namespace Quantumart.QP8.DAL
             return sql;
         }
 
-        private static string GetSitesListSql(QPModelDataContext context, string select, string filter, string orderBy, bool siteIdOnly, int userId, bool isAdmin)
+        private static string GetSitesListSql(QPModelDataContext context, string select, string filter, string orderBy, bool siteIdOnly, int userId, bool useSecurity)
         {
             if (string.IsNullOrWhiteSpace(orderBy))
             {
@@ -313,7 +322,7 @@ namespace Quantumart.QP8.DAL
 
 
 
-            var useSecurity = !isAdmin;
+
             var securitySql = string.Empty;
             if (useSecurity)
             {
@@ -330,7 +339,7 @@ namespace Quantumart.QP8.DAL
             return sql;
         }
 
-        private static string GetSiteFolderList(QPModelDataContext context, string select, string filter, string orderBy, decimal? siteId, int parentFolderId, int userId, bool isAdmin)
+        private static string GetSiteFolderList(QPModelDataContext context, string select, string filter, string orderBy, decimal? siteId, int parentFolderId, int userId, bool useSecurity)
         {
             if (string.IsNullOrWhiteSpace(orderBy))
             {
@@ -347,7 +356,6 @@ namespace Quantumart.QP8.DAL
                 @select += $", {orderBy} as sortorder";
             }
 
-            var useSecurity = !isAdmin;
             var securitySql = string.Empty;
             var parentEntityId = parentFolderId != 0 ? parentFolderId : siteId;
             var parentEntityName = parentFolderId != 0 ? "parent_folder" : "site";

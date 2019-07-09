@@ -274,7 +274,7 @@ namespace Quantumart.QP8.DAL
                 var securitySql = PermissionHelper.GetPermittedItemsAsQuery(
                     efContext, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId
                 );
-                securityJoin = $"INNER JOIN ({securitySql} as pi ON c.content_item_id = pi.content_item_id)";
+                securityJoin = $"INNER JOIN (({securitySql}) as pi ON c.content_item_id = pi.content_item_id)";
 
             }
             var top = searchLimit.HasValue ? Top(databaseType, searchLimit.Value) : String.Empty;
@@ -2558,7 +2558,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static bool IsArticlePermissionsAllowed(DbConnection sqlConnection, int contentId)
         {
-            using (var cmd = DbCommandFactory.Create("select allow_items_permission from content with(nolock) where content_id = " + contentId, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            using (var cmd = DbCommandFactory.Create($"select allow_items_permission from content {WithNoLock(dbType)} where content_id = " + contentId, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -3200,9 +3201,10 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static IEnumerable<DataRow> GetToolbarButtonsForAction(QPModelDataContext context, DbConnection sqlConnection, int userId, bool isAdmin, int? actionId, string actionCode, int entityId)
         {
-            var useSecurity = !isAdmin;
-            var databaseType = GetDbType(context);
 
+            var databaseType = GetDbType(context);
+            #warning заглушка по security для постгрес
+            var useSecurity = !isAdmin && databaseType != DatabaseType.Postgres;
 
 
             var query = $@"
@@ -3225,7 +3227,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 			INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
             {(!useSecurity ? string.Empty : "INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = bat.REQUIRED_PERMISSION_LEVEL_ID")}
 			INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
-            {(!useSecurity ? string.Empty : $"INNER JOIN {PermissionHelper.GetActionPermissionsAsQuery(context, userId)} SEC ON SEC.BACKEND_ACTION_ID = ba.ID")}
+            {(!useSecurity ? string.Empty : $"INNER JOIN ({PermissionHelper.GetActionPermissionsAsQuery(context, userId)}) SEC ON SEC.BACKEND_ACTION_ID = ba.ID")}
 
 		WHERE
 			atb.PARENT_ACTION_ID = {actionId}
@@ -4198,7 +4200,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.USER_ID = {{0}}
+                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.USER_ID = {{0}}
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
                                  WHERE C.SITE_ID = {{1}}) AS TR";
@@ -4231,7 +4233,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
+                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
                                  WHERE C.SITE_ID = {{1}}) AS TR";

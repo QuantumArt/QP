@@ -453,7 +453,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     filter = SqlFilterComposer.Compose(filter, "1 = 0");
                 }
 
-                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);
+                #warning заглушка по security для postgres
+                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId) && QPContext.DatabaseType != DatabaseType.Postgres;
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
                     QPContext.EFContext,

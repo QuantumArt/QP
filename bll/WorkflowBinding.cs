@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
@@ -99,7 +100,8 @@ namespace Quantumart.QP8.BLL
             {
                 if (_CurrentUserMaxWeight == 0)
                 {
-                    if (QPContext.IsAdmin)
+                    #warning заглушка по security для Postgres
+                    if (QPContext.IsAdmin || QPContext.DatabaseType == DatabaseType.Postgres)
                     {
                         _CurrentUserMaxWeight = MaxStatus.Weight;
                     }

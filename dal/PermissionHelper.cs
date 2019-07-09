@@ -160,7 +160,7 @@ namespace Quantumart.QP8.DAL
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var isPostgres = dbType == DatabaseType.Postgres;
             var entitySecQuery = GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 0, endLevelParam: 100, entityNameParam: "entity_type");
-            var permissionTable = "entity_type_access_PermLevel";
+            var permissionTable = "entity_type_access_permlevel";
             if (isPostgres)
             {
                 permissionTable = permissionTable.ToSnakeCase();
