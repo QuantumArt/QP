@@ -221,17 +221,18 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             using (var scope = new QPConnectionScope())
             {
                 FieldDAL dal = null;
+                var isVirtual = false;
                 if (QPContext.DatabaseType != DatabaseType.SqlServer)
                 {
                     var field = GetById(id);
                     field.ReorderContentFields(true);
+                    isVirtual = field.Content.IsVirtual;
                     dal = GetDal(field);
-
                 }
 
                 DefaultRepository.Delete<FieldDAL>(id);
 
-                if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                if (QPContext.DatabaseType != DatabaseType.SqlServer && !isVirtual)
                 {
                     Common.DropColumn(scope.DbConnection, dal);
                     DropLinkTablesAndViews(scope, dal);

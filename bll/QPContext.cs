@@ -656,6 +656,8 @@ namespace Quantumart.QP8.BLL
             return resultUser;
         }
 
+        public static DbConnection CreateDbConnection() => CreateDbConnection(CurrentDbConnectionInfo);
+
         private static DbConnection CreateDbConnection(QpConnectionInfo cnnInfo)
         {
             switch (cnnInfo.DbType)

@@ -339,8 +339,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-
-
         public static long ExecuteScalarLong(DbConnection connection, string sqlString)
         {
             using (var cmd = DbCommandFactory.Create(sqlString, connection))
@@ -1507,7 +1505,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="contentId"></param>
-        public static void CreateFrontedViews(DbConnection connection, int contentId)
+        public static void CreateFrontendViews(DbConnection connection, int contentId)
         {
             using (var cmd = DbCommandFactory.Create("qp_content_frontend_views_create", connection))
             {
@@ -1529,9 +1527,16 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 throw new ArgumentNullException(nameof(viewName));
             }
 
-            using (var cmd = DbCommandFactory.Create("qp_drop_existing", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_drop_existing" : "drop view if exists " + viewName + " cascade";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@name", viewName);
+                    cmd.Parameters.AddWithValue("@flag", "IsView");
+                }
                 cmd.Parameters.AddWithValue("@name", viewName);
                 cmd.Parameters.AddWithValue("@flag", "IsView");
                 cmd.ExecuteNonQuery();
@@ -1614,7 +1619,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 inStatement = string.Join(",", rootFieldId);
             }
 
-            var query = $"SELECT [BASE_ATTR_ID],[BASE_CNT_ID],[VIRTUAL_ATTR_ID],[VIRTUAL_CNT_ID] FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] WHERE BASE_ATTR_ID IN ({inStatement})";
+            var query = $"SELECT BASE_ATTR_ID, BASE_CNT_ID, VIRTUAL_ATTR_ID, VIRTUAL_CNT_ID FROM VIRTUAL_ATTR_BASE_ATTR_RELATION WHERE BASE_ATTR_ID IN ({inStatement})";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
@@ -1635,7 +1640,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 inStatement = string.Join(",", subFieldIds);
             }
 
-            var query = $"SELECT distinct [BASE_ATTR_ID], [BASE_CNT_ID], [VIRTUAL_ATTR_ID], [VIRTUAL_CNT_ID] FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] WHERE VIRTUAL_ATTR_ID IN ({inStatement})";
+            var query = $"SELECT distinct BASE_ATTR_ID, BASE_CNT_ID, VIRTUAL_ATTR_ID, VIRTUAL_CNT_ID FROM VIRTUAL_ATTR_BASE_ATTR_RELATION WHERE VIRTUAL_ATTR_ID IN ({inStatement})";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 var dt = new DataTable();
@@ -1718,7 +1723,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static DataTable GetVirtualContentRelations(DbConnection sqlConnection)
         {
-            const string query = "SELECT [BASE_CONTENT_ID],[VIRTUAL_CONTENT_ID] FROM [VIRTUAL_CONTENT_RELATION]";
+            const string query = "SELECT BASE_CONTENT_ID,VIRTUAL_CONTENT_ID FROM VIRTUAL_CONTENT_RELATION";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 var dt = new DataTable();
@@ -5450,7 +5455,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
             var qb = new StringBuilder();
             foreach (var r in records)
             {
-                qb.AppendFormat("INSERT INTO [user_query_attrs] ([virtual_content_id] ,[user_query_attr_id]) VALUES ({0},{1});", r.VirtualContentId, r.UserQueryAttrId);
+                qb.Append($@"INSERT INTO user_query_attrs (virtual_content_id, user_query_attr_id) VALUES ({r.VirtualContentId}, {r.UserQueryAttrId});");
             }
 
             var query = qb.ToString();
@@ -5458,7 +5463,6 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
             {
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -5469,7 +5473,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
             var qb = new StringBuilder();
             foreach (var r in records)
             {
-                qb.AppendFormat("INSERT INTO [union_attrs] ([virtual_attr_id],[union_attr_id]) VALUES({0},{1});", r.VirtualFieldId, r.UnionFieldId);
+                qb.Append($@"INSERT INTO union_attrs (virtual_attr_id, union_attr_id) VALUES({r.VirtualFieldId}, {r.UnionFieldId});");
             }
 
             var query = qb.ToString();
@@ -5477,7 +5481,6 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
             {
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -5540,24 +5543,29 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static IEnumerable<DataRow> GetAcceptableBaseFieldIdsForCloning(DbConnection sqlConnection, string fieldName, string contentIds, int virtualContentId, bool forNew)
         {
-            var sb = new StringBuilder();
+            string sql;
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var attrName = dbType == DatabaseType.SqlServer ? "ATTRIBUTE_NAME" : "lower(ATTRIBUTE_NAME)";
             if (!forNew)
             {
-                sb.Append("select ATTRIBUTE_ID as id, isnull(user_query_attr_id, 0) as sort_order from CONTENT_ATTRIBUTE ca ");
-                sb.Append("left join user_query_attrs uqa on ca.attribute_id = uqa.user_query_attr_id and uqa.virtual_content_id = @virtualContentId ");
-                sb.AppendFormat("where ATTRIBUTE_NAME = @attrName and CONTENT_ID in ({0}) order by sort_order desc ", contentIds);
+                sql = $@"
+                    select ATTRIBUTE_ID as id, coalesce(user_query_attr_id, 0) as sort_order from CONTENT_ATTRIBUTE ca
+                    left join user_query_attrs uqa on ca.attribute_id = uqa.user_query_attr_id and uqa.virtual_content_id = @virtualContentId
+                    where {attrName} = @attrName and CONTENT_ID in ({contentIds}) order by sort_order desc
+                ";
             }
             else
             {
-                sb.Append("select ATTRIBUTE_ID as id from CONTENT_ATTRIBUTE ca ");
-                sb.AppendFormat("where ATTRIBUTE_NAME = @attrName and CONTENT_ID in ({0}) ", contentIds);
+                sql = $@"
+                    select ATTRIBUTE_ID as id from CONTENT_ATTRIBUTE ca
+                    where {attrName} = @attrName and CONTENT_ID in ({contentIds})
+                ";
             }
 
-            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@attrName", fieldName);
                 cmd.Parameters.AddWithValue("@virtualContentId", virtualContentId);
-                cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();

@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Transactions;
+using Npgsql;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -84,7 +85,15 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.CreateFrontedViews(scope.DbConnection, contentId);
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(scope.DbConnection);
+                if (dbType == DatabaseType.Postgres)
+                {
+                    Common.CreateContentViews(scope.DbConnection, contentId, false);
+                }
+                else
+                {
+                    Common.CreateFrontendViews(scope.DbConnection, contentId);
+                }
             }
         }
 
@@ -190,8 +199,9 @@ namespace Quantumart.QP8.BLL.Repository
                 try
                 {
                     var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
-                    var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {userQuery}";
-                    using (var connect = new SqlConnection(QPContext.CurrentDbConnectionString ?? QPConnectionScope.Current.ConnectionString))
+                    var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                    var createTestViewSql = $"CREATE VIEW {schema}.{viewName} AS {userQuery}";
+                    using (var connect = QPContext.CreateDbConnection())
                     {
                         connect.Open();
                         Common.ExecuteSql(connect, createTestViewSql);
@@ -205,18 +215,24 @@ namespace Quantumart.QP8.BLL.Repository
                     errorMessage = ex.ErrorsToString();
                     return false;
                 }
+                catch (NpgsqlException ex)
+                {
+                    errorMessage = ex.Message;
+                    return false;
+                }
             }
         }
 
         /// <summary>
         /// Возвращает информацию о столбцах запроса
         /// </summary>
-        internal static IEnumerable<UserQueryColumn> GetQuerySchema(string sqlQuery)
+        internal static IEnumerable<UserQueryColumn> GetQuerySchema(string userQuery)
         {
             using (var scope = new QPConnectionScope())
             {
                 var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
-                var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {sqlQuery}";
+                var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                var createTestViewSql = $"CREATE VIEW {schema}.{viewName} AS {userQuery}";
                 RunCreateViewDdl(createTestViewSql);
 
                 var dttU = Common.GetViewColumnUsage(scope.DbConnection, viewName);

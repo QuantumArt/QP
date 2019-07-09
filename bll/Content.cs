@@ -12,6 +12,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
@@ -218,6 +219,20 @@ namespace Quantumart.QP8.BLL
             new UserQueryColumn { ColumnName = FieldName.Modified, DbType = "datetime" },
             new UserQueryColumn { ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0 }
         });
+
+
+        internal static ReadOnlyCollection<UserQueryColumn> PgSystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
+        {
+            new UserQueryColumn { ColumnName = FieldName.ContentItemId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.StatusTypeId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Visible.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Archive.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp without time zone" },
+            new UserQueryColumn { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp without time zone" },
+            new UserQueryColumn { ColumnName = FieldName.LastModifiedBy.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 }
+        });
+
+        internal static ReadOnlyCollection<UserQueryColumn> UserQueryMandatoryColumns => QPContext.DatabaseType == DatabaseType.Postgres ? PgSystemMandatoryColumns : SystemMandatoryColumns;
 
         private Site _site;
         private IEnumerable<Field> _fields;
@@ -1019,6 +1034,9 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        private static ReadOnlyCollection<string> UserQueryValidColumnTypes => QPContext.DatabaseType == DatabaseType.SqlServer ?
+            Field.ValidFieldColumnDbTypeCollection : Field.PgValidFieldColumnDbTypeCollection;
+
         /// <summary>
         /// Валидация виртуального контента типа User Query
         /// </summary>
@@ -1054,14 +1072,14 @@ namespace Quantumart.QP8.BLL
 
                         // проверить на наличие обязательных полей
                         var userQueryViewUniqColumns = userQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
-                        var expectedMandatoryColumns = SystemMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
+                        var expectedMandatoryColumns = UserQueryMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
                         if (expectedMandatoryColumns.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.NotAllMandatoryColumnsInUserQuery, string.Join(", ", expectedMandatoryColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
                         }
 
                         // проверить запрос на наличие недопустимых DB-типов колонок
-                        var invalidTypeColumns = userQueryViewAllColumns.Where(c => !Field.ValidFieldColumnDbTypeCollection.Contains(c.DbType)).ToList();
+                        var invalidTypeColumns = userQueryViewAllColumns.Where(c => !UserQueryValidColumnTypes.Contains(c.DbType)).ToList();
                         if (invalidTypeColumns.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.InvalidColumnsInUserQuery, string.Join(", ", invalidTypeColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
@@ -1085,7 +1103,7 @@ namespace Quantumart.QP8.BLL
                             => columns
                                 .GroupBy(c => c.ColumnName, StringComparer.InvariantCultureIgnoreCase)
                                 .Where(g => g.Select(c => c.TableDbType).Distinct(StringComparer.InvariantCultureIgnoreCase).Count() > 1)
-                                .Select(g => string.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, string.Join(", ", g.Select(c => $"[{c.TableName}]"))))
+                                .Select(g => string.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, string.Join(", ", g.Select(c => $"{SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, c.TableName)}"))))
                                 .ToList();
 
                         var diffTypeColumnMessage = GetDiffTypeColumnMessages(userQueryViewAllColumns).ToList();
@@ -1134,7 +1152,7 @@ namespace Quantumart.QP8.BLL
             {
                 // получить схему view (кроме системных полей)
                 var viewName = $"content_{Id}";
-                var viewColumns = VirtualContentRepository.GetViewSchema(viewName).Where(c => !SystemMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer)).ToList();
+                var viewColumns = VirtualContentRepository.GetViewSchema(viewName).Where(c => !UserQueryMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer)).ToList();
 
                 // спец. обработка колонки content_id из union-контентов
                 foreach (var c in viewColumns)

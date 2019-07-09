@@ -112,6 +112,19 @@ namespace Quantumart.QP8.BLL
             ValidFieldColumnDbTypes.Bit
         });
 
+        public static readonly ReadOnlyCollection<string> PgValidFieldColumnDbTypeCollection = new ReadOnlyCollection<string>(new List<string>
+        {
+            ValidFieldColumnDbTypes.Numeric,
+            ValidFieldColumnDbTypes.Int,
+            ValidFieldColumnDbTypes.BigInt,
+            ValidFieldColumnDbTypes.CharVarying,
+            ValidFieldColumnDbTypes.TimeStampWithoutTimeZone,
+            ValidFieldColumnDbTypes.Text,
+            ValidFieldColumnDbTypes.SmallInt,
+            ValidFieldColumnDbTypes.TinyInt,
+            ValidFieldColumnDbTypes.Bit
+        });
+
         public Field()
             : this(new FieldRepository(), new ContentRepository())
         {

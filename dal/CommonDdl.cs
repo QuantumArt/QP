@@ -117,26 +117,29 @@ namespace Quantumart.QP8.DAL
             var dtType = (dbType == DatabaseType.Postgres) ? "timestamp without time zone" : "datetime";
             var sql = $@"
             create table {DbSchemaName(dbType)}.{{0}} (
-                {Escape(dbType, "CONTENT_ITEM_ID")} numeric NOT NULL PRIMARY KEY,
-                {Escape(dbType, "STATUS_TYPE_ID")} numeric NOT NULL,
-                {Escape(dbType, "VISIBLE")} numeric NOT NULL,
-                {Escape(dbType, "ARCHIVE")} numeric NOT NULL,
+                {Escape(dbType, "CONTENT_ITEM_ID")} numeric(18,0) NOT NULL PRIMARY KEY,
+                {Escape(dbType, "STATUS_TYPE_ID")} numeric(18,0) NOT NULL,
+                {Escape(dbType, "VISIBLE")} numeric(18,0) NOT NULL,
+                {Escape(dbType, "ARCHIVE")} numeric(18,0) NOT NULL,
                 {Escape(dbType, "CREATED")} {dtType} NOT NULL DEFAULT {Now(dbType)},
                 {Escape(dbType, "MODIFIED")} {dtType} NOT NULL DEFAULT {Now(dbType)},
-                {Escape(dbType, "LAST_MODIFIED_BY")} numeric NOT NULL
+                {Escape(dbType, "LAST_MODIFIED_BY")} numeric(18,0) NOT NULL
              )";
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
         }
 
-        public static void CreateContentViews(DbConnection cnn, int id)
+        public static void CreateContentViews(DbConnection cnn, int id, bool withUnited = true)
         {
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
 
-            var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_create", idStr);
-            ExecuteSql(cnn, unitedSql);
+            if (withUnited)
+            {
+                var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_create", idStr);
+                ExecuteSql(cnn, unitedSql);
+            }
 
             var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create", idStr);
             ExecuteSql(cnn, feSql);

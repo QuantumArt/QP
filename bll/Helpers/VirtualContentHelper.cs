@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Npgsql;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -13,6 +15,7 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
+using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -223,15 +226,18 @@ namespace Quantumart.QP8.BLL.Helpers
                             vField.DecimalPlaces = column.DecimalPlaces.Value;
                             break;
                         case ValidFieldColumnDbTypes.Datetime:
+                        case ValidFieldColumnDbTypes.TimeStampWithoutTimeZone:
                             vField.TypeId = FieldTypeCodes.DateTime;
                             break;
                         case ValidFieldColumnDbTypes.Bit:
                             vField.TypeId = FieldTypeCodes.Boolean;
                             break;
                         case ValidFieldColumnDbTypes.Ntext:
+                        case ValidFieldColumnDbTypes.Text:
                             vField.TypeId = FieldTypeCodes.Textbox;
                             break;
                         case ValidFieldColumnDbTypes.Nvarchar:
+                        case ValidFieldColumnDbTypes.CharVarying:
                             vField.TypeId = stringSize == -1 ? FieldTypeCodes.Textbox : FieldTypeCodes.String;
                             vField.StringSize = stringSize;
                             vField.TextBoxRows = Field.TextBoxRowsDefaultValue;
@@ -1455,11 +1461,12 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             try
             {
-                const string createViewTemplate = "CREATE VIEW [dbo].{0} AS {1}";
+                const string createViewTemplate = "CREATE VIEW {0}.{1} AS {2}";
 
                 // View
                 var viewName = $"content_{content.Id}";
-                var viewCreateDdl = string.Format(createViewTemplate, viewName, content.UserQuery);
+                var schemaName = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                var viewCreateDdl = string.Format(createViewTemplate, schemaName, viewName, content.UserQuery);
                 VirtualContentRepository.RunCreateViewDdl(viewCreateDdl);
 
                 // united view
@@ -1468,11 +1475,11 @@ namespace Quantumart.QP8.BLL.Helpers
                 if (string.IsNullOrEmpty(content.UserQueryAlternative))
                 {
                     var unitedViewQuery = $"select * from {viewName}";
-                    viewUnitedCreateDdl = string.Format(createViewTemplate, unitedViewName, unitedViewQuery);
+                    viewUnitedCreateDdl = string.Format(createViewTemplate, schemaName, unitedViewName, unitedViewQuery);
                 }
                 else
                 {
-                    viewUnitedCreateDdl = string.Format(createViewTemplate, unitedViewName, content.UserQueryAlternative);
+                    viewUnitedCreateDdl = string.Format(createViewTemplate, schemaName, unitedViewName, content.UserQueryAlternative);
                 }
 
                 VirtualContentRepository.RunCreateViewDdl(viewUnitedCreateDdl);
@@ -1480,6 +1487,11 @@ namespace Quantumart.QP8.BLL.Helpers
             catch (SqlException ex)
             {
                 var message = string.Format(ContentStrings.ErrorInSubContent, content.Name, ex.ErrorsToString());
+                throw new UserQueryContentCreateViewException(message);
+            }
+            catch (NpgsqlException ex)
+            {
+                var message = string.Format(ContentStrings.ErrorInSubContent, content.Name, ex.Message);
                 throw new UserQueryContentCreateViewException(message);
             }
         }
@@ -1549,7 +1561,7 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             try
             {
-                if (content.VirtualType == VirtualType.UserQuery)
+                if (content.VirtualType == VirtualType.UserQuery && QPContext.DatabaseType == DatabaseType.SqlServer)
                 {
                     RefreshContentViews(content);
                 }
