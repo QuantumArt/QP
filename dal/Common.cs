@@ -5846,26 +5846,33 @@ order by ActionDate desc
             }
         }
 
-        public static List<DataRow> GetAllHistoryStatusesForArticle(DbConnection sqlConnection, int articleId, string orderBy, int startRow, int pageSize, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            @"h.STATUS_HISTORY_ID as ID
+        public static List<DataRow> GetAllHistoryStatusesForArticle(DbConnection sqlConnection, int articleId, string orderBy, int startRow, int pageSize, out int totalRecords)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = @"h.STATUS_HISTORY_ID as ID
                                             ,h.STATUS_HISTORY_DATE as ActionDate
-                                            ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
+                                            ,COALESCE(h1.DESCRIPTION, h.DESCRIPTION) as Comment
                                             ,t.STATUS_TYPE_NAME as StatusTypeName
                                             ,u.LOGIN as ActionMadeBy
-                                            ,s.NAME as SystemStatusTypeName",
-            $@"[dbo].[CONTENT_ITEM_STATUS_HISTORY] as h with (nolock)
-                                    LEFT JOIN [dbo].[STATUS_TYPE] as t with (nolock) on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
-                                    LEFT JOIN [dbo].[USERS] as u with (nolock) on u.USER_ID = h.USER_ID
-                                    LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY with (nolock) where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
-                                    LEFT JOIN [dbo].[SYSTEM_STATUS_TYPE] as s with (nolock) on s.ID = h1.SYSTEM_STATUS_TYPE_ID",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "ActionDate DESC",
-            $"h.CONTENT_ITEM_ID = {articleId}",
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+                                            ,s.NAME as SystemStatusTypeName";
+
+            var formattableString = $@"CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(dbType)}
+                                    LEFT JOIN STATUS_TYPE as t {WithNoLock(dbType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
+                                    LEFT JOIN {Escape(dbType, "USERS")} as u {WithNoLock(dbType)} on u.USER_ID = h.USER_ID
+                                    LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNoLock(dbType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
+                                    LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(dbType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID";
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                selectBlock,
+                formattableString,
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "ActionDate DESC",
+                $"h.CONTENT_ITEM_ID = {articleId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
         public static List<DataRow> GetArticlesForExport(DbConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords)
         {
