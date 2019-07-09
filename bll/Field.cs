@@ -2305,15 +2305,27 @@ namespace Quantumart.QP8.BLL
                 // M2O-поле не может существовать без основного
                 O2MBackwardField?.Die();
 
+                var helper = new VirtualContentHelper();
+                var subContents = rebuildedSubContentViews?.ToArray() ?? new Content.TreeItem[]{ };
+                var contents = helper.GetVirtualContentsToRebuild(subContents);
+
+                if (QPContext.DatabaseType == DatabaseType.Postgres)
+                {
+                    foreach (var content in contents)
+                    {
+                        helper.DropContentViews(content);
+                    }
+                }
+
                 // Удалить поле
                 _fieldRepository.Delete(Id);
 
-                var helper = new VirtualContentHelper();
+
 
                 // Перестроить подчиненные контенты
                 if (removeVirtualFields)
                 {
-                    helper.RebuildSubContentViews(rebuildedSubContentViews.ToList());
+                    helper.RebuildSubContentViews(contents);
                 }
 
                 // Удалить записи OrderField

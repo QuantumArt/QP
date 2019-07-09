@@ -805,7 +805,7 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
             var strTemplates = fiList.Select(fi => $@"
                 select content_item_id as linked_item_id, {Escape(dbType, fi.Name)} as item_id, cast({fi.Id} as decimal) as field_id
                 from content_{fi.ContentId}{suffix} {WithNoLock(dbType)}
-                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@ids")}) {isArchive}
+                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@itemIds")}) {isArchive}
             ");
 
             var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
@@ -1469,19 +1469,21 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         public static DataTable GetVirtualFieldData(DbConnection connection, int contentId)
         {
-            const string query = "SELECT " +
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+
+            var query = "SELECT " +
                 "a.ATTRIBUTE_ID as Id, " +
                 "a.ATTRIBUTE_NAME as Name, " +
-                "a.ATTRIBUTE_TYPE_ID as [Type], " +
+                $"a.ATTRIBUTE_TYPE_ID as {Escape(dbType, "Type")}, " +
                 "pa.content_id AS PersistentContentId, " +
                 "a.persistent_attr_id as PersistentId, " +
                 "pa.attribute_name AS PersistentName, " +
                 "rpa.CONTENT_ID as RelateToPersistentContentId, " +
                 "a.join_attr_id as JoinId " +
-                "FROM content_attribute AS a with(nolock) " +
-                "LEFT OUTER JOIN content_attribute AS pa with(nolock) ON pa.attribute_id = a.persistent_attr_id " +
-                "LEFT OUTER JOIN content_attribute AS rpa with(nolock) ON rpa.attribute_id = pa.related_attribute_id " +
-                "LEFT OUTER JOIN content AS c with(nolock) ON rpa.content_id = c.content_id " +
+                $"FROM content_attribute AS a {WithNoLock(dbType)} " +
+                $"LEFT OUTER JOIN content_attribute AS pa {WithNoLock(dbType)} ON pa.attribute_id = a.persistent_attr_id " +
+                $"LEFT OUTER JOIN content_attribute AS rpa {WithNoLock(dbType)} ON rpa.attribute_id = pa.related_attribute_id " +
+                $"LEFT OUTER JOIN content AS c {WithNoLock(dbType)} ON rpa.content_id = c.content_id " +
                 "WHERE a.content_id = @contentId and a.persistent_attr_id IS NOT NULL";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
@@ -1545,8 +1547,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                     cmd.Parameters.AddWithValue("@name", viewName);
                     cmd.Parameters.AddWithValue("@flag", "IsView");
                 }
-                cmd.Parameters.AddWithValue("@name", viewName);
-                cmd.Parameters.AddWithValue("@flag", "IsView");
                 cmd.ExecuteNonQuery();
             }
         }

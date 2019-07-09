@@ -269,7 +269,7 @@ namespace Quantumart.QP8.BLL.Helpers
         private void UpdateVirtualSubContents(Content content)
         {
             var rebuildedViewSubContents = TraverseForUpdateVirtualSubContents(content);
-            RebuildSubContentViews(rebuildedViewSubContents);
+            RebuildSubContentViews(GetVirtualContentsToRebuild(rebuildedViewSubContents.ToArray()));
             UpdateUserQueryAsSubContents(rebuildedViewSubContents);
         }
 
@@ -1061,7 +1061,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
                 // сначала удалить поля в подчиненных контентах
                 var rebuildedSubContentViews = RemoveSubContentVirtualFields(content, Except(Enumerable.Empty<Content.VirtualFieldNode>(), dbContentVersion.VirtualJoinFieldNodes).ToList());
-                RebuildSubContentViews(rebuildedSubContentViews.ToList());
+                RebuildSubContentViews(GetVirtualContentsToRebuild(rebuildedSubContentViews.ToArray()));
                 RemoveJoinContentFields(Enumerable.Empty<Content.VirtualFieldNode>(), dbContentVersion.VirtualJoinFieldNodes);
             }
             else if (content.StoredVirtualType == VirtualType.Union)
@@ -1320,7 +1320,8 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         internal string GenerateCreateJoinViewDdl(int virtualContentId, int joinRootContentId, IEnumerable<VirtualFieldData> virtualFieldsData)
         {
-            const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}] AS ";
+            var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}} AS ";
             const string joinTableNameTemplate = "dbo.CONTENT_{0} ";
             const string rootContentNameTemplate = "dbo.CONTENT_{0}";
             return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
@@ -1331,7 +1332,8 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         internal string GenerateCreateJoinAsyncViewDdl(int virtualContentId, int joinRootContentId, IEnumerable<VirtualFieldData> virtualFieldsData)
         {
-            const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}_async] AS ";
+            var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}}_async AS ";
             const string joinTableNameTemplate = "dbo.CONTENT_{0}_united ";
             const string rootContentNameTemplate = "dbo.CONTENT_{0}_async";
             return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
@@ -1520,7 +1522,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Удалить view контента
         /// </summary>
-        internal void DropContentViews(Content content)
+        public void DropContentViews(Content content)
         {
             foreach (var viewName in GetVirtualContentAllViewNames(content.Id))
             {
@@ -1539,7 +1541,15 @@ namespace Quantumart.QP8.BLL.Helpers
             }
         }
 
-        internal void RebuildSubContentViews(List<Content.TreeItem> rebuildedViewSubContents)
+        internal void RebuildSubContentViews(Content[] contents)
+        {
+            foreach (var content in contents)
+            {
+                RebuildSubContentView(content);
+            }
+        }
+
+        internal Content[] GetVirtualContentsToRebuild(Content.TreeItem[] rebuildedViewSubContents)
         {
             if (rebuildedViewSubContents.Any())
             {
@@ -1549,12 +1559,10 @@ namespace Quantumart.QP8.BLL.Helpers
                 var updatedContentsDict = updatedContents.ToDictionary(c => c.Id);
 
                 // сортируем контенты по уровню иерархии и пересоздаем вью в соответствии с порядком в иерархии
-                foreach (var contentId in uniqueItems.OrderBy(c => c.Level).Select(c => c.ContentId))
-                {
-                    var content = updatedContentsDict[contentId];
-                    RebuildSubContentView(content);
-                }
+                return uniqueItems.OrderBy(c => c.Level).Select(c => c.ContentId).Select(n => updatedContentsDict[n]).ToArray();
             }
+
+            return new Content[] { };
         }
 
         public void RebuildSubContentView(Content content)
