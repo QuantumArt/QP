@@ -1322,8 +1322,8 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
             string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}} AS ";
-            const string joinTableNameTemplate = "dbo.CONTENT_{0} ";
-            const string rootContentNameTemplate = "dbo.CONTENT_{0}";
+            string joinTableNameTemplate = $"{schema}.CONTENT_{{0}} ";
+            string rootContentNameTemplate = $"{schema}.CONTENT_{{0}}";
             return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
         }
 
@@ -1334,8 +1334,8 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
             string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}}_async AS ";
-            const string joinTableNameTemplate = "dbo.CONTENT_{0}_united ";
-            const string rootContentNameTemplate = "dbo.CONTENT_{0}_async";
+            string joinTableNameTemplate = $"{schema}.CONTENT_{{0}}_united ";
+            string rootContentNameTemplate = $"{schema}.CONTENT_{{0}}_async";
             return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
         }
 
@@ -1344,6 +1344,11 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         private static string GenerateCreateJoinViewDdl(int virtualContentId, int joinRootContentId, List<VirtualFieldData> virtualFieldsData, string viewNameTemplate, string joinTableNameTemplate, string rootContentNameTemplate)
         {
+            var dbType = QPContext.DatabaseType;
+            var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(dbType);
+            var withNolock = DAL.SqlQuerySyntaxHelper.WithNoLock(dbType);
+            Func<string, string> escape = (string name) => DAL.SqlQuerySyntaxHelper.EscapeEntityName(dbType, name);
+
             const string joinRootTableAlias = "c_0";
             var selectBlock = new StringBuilder();
             selectBlock.AppendFormat(viewNameTemplate, virtualContentId);
@@ -1357,13 +1362,13 @@ namespace Quantumart.QP8.BLL.Helpers
                 void Traverse(string parentTableAlias, VirtualFieldData parentFieldData, int i)
                 {
                     var cfTableAlias = string.Concat(parentTableAlias, '_', i);
-                    fromBlock.Append("LEFT OUTER JOIN ").AppendFormat(joinTableNameTemplate, parentFieldData.RelateToPersistentContentId).AppendFormat("AS {0} WITH (nolock) ON {0}.CONTENT_ITEM_ID = {1}.[{2}] ", cfTableAlias, parentTableAlias, parentFieldData.PersistentName);
+                    fromBlock.Append("LEFT OUTER JOIN ").AppendFormat(joinTableNameTemplate, parentFieldData.RelateToPersistentContentId).AppendFormat("AS {0} {3} ON {0}.CONTENT_ITEM_ID = {1}.{2} ", cfTableAlias, parentTableAlias, escape(parentFieldData.PersistentName), withNolock);
 
                     //fromBlock.AppendFormat("LEFT OUTER JOIN dbo.CONTENT_{0} AS {1} WITH (nolock) ON {1}.CONTENT_ITEM_ID = {2}.{3} ", parentFieldData.RelateToPersistentContentId, cfTableAlias, parentTableAlias, parentFieldData.PersistentName);
                     var c = 0;
                     foreach (var cf in virtualFieldsData.Where(f => f.JoinId == parentFieldData.Id))
                     {
-                        selectBlock.AppendFormat("{0}.[{1}] as [{2}],", cfTableAlias, cf.PersistentName, cf.Name);
+                        selectBlock.AppendFormat("{0}.{1} as {2},", cfTableAlias, escape(cf.PersistentName), escape(cf.Name));
 
                         if (cf.Type == FieldTypeCodes.Relation && cf.RelateToPersistentContentId.HasValue)
                         {
@@ -1377,7 +1382,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 var rc = 0;
                 foreach (var rf in virtualFieldsData.Where(d => !d.JoinId.HasValue))
                 {
-                    selectBlock.AppendFormat("{0}.[{1}] as [{2}],", joinRootTableAlias, rf.PersistentName, rf.Name);
+                    selectBlock.AppendFormat("{0}.{1} as {2},", joinRootTableAlias, escape(rf.PersistentName), escape(rf.Name));
 
                     if (rf.Type == FieldTypeCodes.Relation && rf.RelateToPersistentContentId.HasValue)
                     {
@@ -1412,20 +1417,26 @@ namespace Quantumart.QP8.BLL.Helpers
 
         internal string GenerateCreateUnionViewDdl(int contentId, IEnumerable<int> unionSourceContentIds, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
         {
-            const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}] AS";
+            var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}} AS ";
             const string sourceTableNameTemplate = "dbo.CONTENT_{0}";
             return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
         internal string GenerateCreateUnionAsyncViewDdl(int contentId, IEnumerable<int> unionSourceContentIds, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
         {
-            const string viewNameTemplate = "CREATE VIEW [dbo].[content_{0}_async] AS";
+            var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}}_async AS ";
             const string sourceTableNameTemplate = "dbo.CONTENT_{0}_async";
             return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
         private static string GenerateCreateUnionViewDdl(int contentId, IReadOnlyCollection<int> unionSourceContentIds, IReadOnlyCollection<string> contentFieldNames, IReadOnlyDictionary<string, HashSet<int>> fieldNameInSourceContents, string viewNameTemplate, string sourceTableNameTemplate)
         {
+            var dbType = QPContext.DatabaseType;
+            var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(dbType);
+            var withNolock = DAL.SqlQuerySyntaxHelper.WithNoLock(dbType);
+            Func<string, string> escape = (string name) => DAL.SqlQuerySyntaxHelper.EscapeEntityName(dbType, name);
             var sb = new StringBuilder();
             sb.AppendFormat(viewNameTemplate, contentId);
 
@@ -1436,7 +1447,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 var j = contentFieldNames.Count;
                 foreach (var fname in contentFieldNames)
                 {
-                    sb.AppendFormat(fieldNameInSourceContents[fname].Contains(usId) ? "[{0}] [{0}]" : "NULL [{0}]", fname);
+                    sb.AppendFormat(fieldNameInSourceContents[fname].Contains(usId) ? "{0} {0}" : "NULL {0}", escape(fname));
 
                     j--;
                     if (j > 0)

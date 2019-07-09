@@ -1502,9 +1502,11 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// <param name="contentId"></param>
         public static void CreateUnitedView(DbConnection connection, int contentId)
         {
-            using (var cmd = DbCommandFactory.Create("qp_content_united_view_create", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_content_united_view_create" : "call qp_content_united_view_create(@content_id)";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
                 cmd.ExecuteNonQuery();
             }
