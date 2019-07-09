@@ -3085,14 +3085,15 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 filterBuilder.AppendFormat("C.CONTENT_NAME LIKE '%{0}%' AND ", Cleaner.ToSafeSqlLikeCondition(options.ContentName));
             }
 
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
             switch (options.Mode)
             {
                 case ContentSelectMode.ForUnion:
-                    filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND VIRTUAL_TYPE IN (0, 1))", options.SiteId);
+                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND VIRTUAL_TYPE IN (0, 1))");
                     break;
 
                 case ContentSelectMode.ForJoin:
-                    filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND VIRTUAL_TYPE = 0)", options.SiteId);
+                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND VIRTUAL_TYPE = 0)");
                     break;
 
                 case ContentSelectMode.ForField:
@@ -3100,11 +3101,11 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                     break;
 
                 case ContentSelectMode.ForContainer:
-                    filterBuilder.AppendFormat("(C.SITE_ID = {0} or c.is_shared = 1) ", options.SiteId);
+                    filterBuilder.Append($"(C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) ");
                     break;
 
                 case ContentSelectMode.ForForm:
-                    filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND c.VIRTUAL_TYPE = 0) ", options.SiteId);
+                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND c.VIRTUAL_TYPE = 0) ");
                     break;
 
                 case ContentSelectMode.ForCustomAction:
