@@ -1212,6 +1212,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         public static bool IsEntityAccessibleForUserGroup(DbConnection connection, int groupId, string entityTypeCode, int entityId, string actionTypeCode)
         {
+            #warning реализовать нормально! заглушка
+            var dbType = GetDbType(connection);
+            if (dbType == DatabaseType.Postgres)
+            {
+                return true;
+            }
+
+
             using (var cmd = DbCommandFactory.Create("select dbo.qp_is_entity_action_type_accessible(0, @groupId, @entityTypeCode, @entityId, @actionTypeCode)", connection))
             {
                 cmd.CommandType = CommandType.Text;

@@ -43,7 +43,7 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("workflow");
 
-                builder.Property(x => x.Id).HasColumnName("WORKFLOW_ID");
+                builder.Property(x => x.Id).HasColumnName("WORKFLOW_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.Name).HasColumnName("WORKFLOW_NAME");
 				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
 				builder.Property(x => x.Created).HasColumnName("CREATED");
