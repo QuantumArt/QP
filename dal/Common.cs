@@ -3846,15 +3846,19 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         /// <returns></returns>
         public static bool UserGroups_IsCyclePossible(int groupId, int parentGroupId, DbConnection connection)
         {
-            const string query = @"with G2G (Parent_Group_Id, Child_Group_Id, [Level]) AS
+            var dbType = GetDbType(connection);
+            var levelColumnName = Escape(dbType, "Level");
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var query = $@"with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} G2G (Parent_Group_Id, Child_Group_Id, {levelColumnName}) AS
                             (
-                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(@group_id as numeric) as Child_Group_Id, 0 as [Level]
+                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(@group_id as numeric) as Child_Group_Id, 0 as {levelColumnName}
                                 union all
-                                select G.Parent_Group_Id, G.Child_Group_Id, [Level] + 1 as [Level]
+                                select G.Parent_Group_Id, G.Child_Group_Id, {levelColumnName} + 1 as {levelColumnName}
                                 from group_to_group G
                                 join G2G ON G.Parent_Group_Id = G2G.Child_Group_Id
                             )
-                            SELECT CASE WHEN EXISTS(select * from G2G where Parent_Group_Id = @parent_group_id or Child_Group_Id = @parent_group_id) THEN 1 ELSE 0 END";
+                            SELECT CASE WHEN EXISTS(select * from G2G where Parent_Group_Id = @parent_group_id or Child_Group_Id = @parent_group_id) THEN {trueValue} ELSE {falseValue} END";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
