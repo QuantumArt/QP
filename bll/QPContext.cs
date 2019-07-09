@@ -628,8 +628,20 @@ namespace Quantumart.QP8.BLL
                         case SqlException sqlEx:
                             errorCode = sqlEx.State;
                             break;
-                        case NpgsqlException npgsqlEx:
-                            errorCode = npgsqlEx.ErrorCode;
+                        case PostgresException npgsqlEx:
+                            var code = npgsqlEx.SqlState;
+                            if (code.StartsWith("AUTH", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                var codeNumberStr = code.Substring(4, 1);
+                                if (!int.TryParse(codeNumberStr, out errorCode))
+                                {
+                                    errorCode = QpAuthenticationErrorNumber.UnknownError;
+                                }
+                            }
+                            else
+                            {
+                                errorCode = QpAuthenticationErrorNumber.UnknownError;
+                            }
                             break;
                         default:
                             errorCode = ex.ErrorCode;
