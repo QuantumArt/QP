@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -281,7 +282,38 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void Delete(int id)
         {
-            DefaultRepository.Delete<UserGroupDAL>(id);
+            var entities = QPContext.EFContext;
+            var group = entities
+                .UserGroupSet
+                .Include(x => x.UserGroupBinds)
+                .Include(x => x.ParentGroupToGroupBinds)
+                .Include(x => x.ChildGroupToGroupBinds)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (group == null)
+            {
+                return;
+            }
+
+            foreach (var userGroupBind in group.UserGroupBinds)
+            {
+                entities.Remove(userGroupBind);
+            }
+
+            foreach (var parentGroupToGroupBind in group.ParentGroupToGroupBinds)
+            {
+                entities.Remove(parentGroupToGroupBind);
+            }
+
+            foreach (var childGroupToGroupBind in group.ChildGroupToGroupBinds)
+            {
+                entities.Remove(childGroupToGroupBind);
+            }
+
+            entities.Remove(group);
+            entities.SaveChanges();
+
+            // DefaultRepository.Delete<UserGroupDAL>(id);
         }
     }
 }
