@@ -4895,7 +4895,8 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static bool IsVeCommandAliasFree(DbConnection sqlConnection, string alias, int pluginId)
         {
-            const string query = @"select COUNT(*) FROM VE_COMMAND WHERE [ALIAS] = @alias AND [PLUGIN_ID] <> @pluginId";
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"select COUNT(*) FROM VE_COMMAND WHERE {Escape(dbType, "ALIAS")} = @alias AND {Escape(dbType, "PLUGIN_ID")} <> @pluginId";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4957,12 +4958,13 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static int GetVeCommandsMaxRowOrder(DbConnection sqlConnection)
         {
-            const string query = @"select MAX([ROW_ORDER]) FROM VE_COMMAND";
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"select MAX({Escape(dbType, "ROW_ORDER")}) FROM VE_COMMAND";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var maxOrder = cmd.ExecuteScalar();
-                return DBNull.Value.Equals(maxOrder) ? 0 : (int)maxOrder;
+                return DBNull.Value.Equals(maxOrder) ? 0 : Convert.ToInt32(maxOrder);
             }
         }
 
