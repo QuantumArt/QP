@@ -75,7 +75,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void LoadStructureCache(IContextStorage st, bool resetExternal)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 if (st != null)
                 {
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         private void TestUser()
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var user = UserRepository.GetById(UserId);
                 if (user == null)
