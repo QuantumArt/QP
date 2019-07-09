@@ -4695,7 +4695,12 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
         /// </summary>
         public static void UpdateOrInsertSiteVeCommandValue(DbConnection sqlConnection, int siteId, int commandId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_COMMAND_SITE_BIND where [COMMAND_ID] = @cId and [SITE_ID] = @sId)
                             begin
                                     INSERT INTO VE_COMMAND_SITE_BIND
@@ -4712,6 +4717,20 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
                                     update VE_COMMAND_SITE_BIND set [ON] = @val where [COMMAND_ID] = @cId and [SITE_ID] = @sId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+                        INSERT INTO VE_COMMAND_SITE_BIND
+                        (command_id, site_id, {Escape(dbType, "on")})
+                        VALUES(@cId, @sId, @val)
+                        ON CONFLICT(command_id, site_id)
+                        DO UPDATE SET {Escape(dbType, "on")} = @val
+                        ";
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -4770,7 +4789,8 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void RemoveSiteVeCommand(DbConnection sqlConnection, int siteId, int commandId)
         {
-            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_COMMAND_SITE_BIND where [COMMAND_ID] = @cId and [SITE_ID] = @sId", sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_COMMAND_SITE_BIND where COMMAND_ID = @cId and SITE_ID = @sId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
                 cmd.Parameters.AddWithValue("@sId", siteId);
@@ -4791,7 +4811,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void RemoveFieldVeCommand(DbConnection sqlConnection, int fieldId, int commandId)
         {
-            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_COMMAND_FIELD_BIND where [COMMAND_ID] = @cId and [FIELD_ID] = @fId", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_COMMAND_FIELD_BIND where COMMAND_ID = @cId and FIELD_ID = @fId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
                 cmd.Parameters.AddWithValue("@fId", fieldId);
@@ -4801,7 +4821,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void RemoveFieldVeStyle(DbConnection sqlConnection, int fieldId, int styleId)
         {
-            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_STYLE_FIELD_BIND where [STYLE_ID] = @sId and [FIELD_ID] = @fId", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_STYLE_FIELD_BIND where STYLE_ID = @sId and FIELD_ID = @fId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@sId", styleId);
                 cmd.Parameters.AddWithValue("@fId", fieldId);
@@ -4811,7 +4831,12 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static void UpdateOrInsertFieldVeCommandValue(DbConnection sqlConnection, int fieldId, int commandId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_COMMAND_FIELD_BIND where [COMMAND_ID] = @cId and [FIELD_ID] = @fId)
                             begin
                                     INSERT INTO VE_COMMAND_FIELD_BIND
@@ -4828,6 +4853,18 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
                                     update VE_COMMAND_FIELD_BIND set [ON] = @val where [COMMAND_ID] = @cId and [FIELD_ID] = @fId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+ INSERT INTO VE_COMMAND_FIELD_BIND (command_id, field_id, {Escape(dbType, "on")})
+    VALUES( @cId, @fId, @val )
+    ON CONFLICT(command_id, field_id)
+    DO UPDATE SET {Escape(dbType, "on")} = @val;
+";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -4840,7 +4877,8 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
 
         public static bool IsVeCommandNameFree(DbConnection sqlConnection, string name, int pluginId)
         {
-            const string query = @"select COUNT(*) FROM VE_COMMAND WHERE [NAME] = @name AND [PLUGIN_ID] <> @pluginId";
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"select COUNT(*) FROM VE_COMMAND WHERE {Escape(dbType, "NAME")} = @name AND PLUGIN_ID <> @pluginId";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5000,7 +5038,12 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
 
         public static void UpdateOrInsertFieldVeStyleValue(DbConnection sqlConnection, int fieldId, int styleId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_STYLE_FIELD_BIND where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId)
                             begin
                                     INSERT INTO VE_STYLE_FIELD_BIND
@@ -5017,6 +5060,19 @@ from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where 
                                     update VE_STYLE_FIELD_BIND set [ON] = @val where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
+    VALUES( @styleId, @fieldId, @val )
+    ON CONFLICT(style_id, field_id)
+    DO UPDATE SET {Escape(dbType, "on")} = @val;
+";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
