@@ -5126,7 +5126,8 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static IEnumerable<DataRow> GetStatusTypeWeightsBySiteId(DbConnection connection, int siteId, int exceptId)
         {
-            const string query = "select [WEIGHT] FROM [dbo].[STATUS_TYPE] where [SITE_ID] = @siteId and [STATUS_TYPE_ID] <> @id";
+            var dbType = GetDbType(connection);
+            var query = $"select {Escape(dbType, "WEIGHT")} FROM {DbSchemaName(dbType)}.{Escape(dbType, "STATUS_TYPE")} where {Escape(dbType, "SITE_ID")} = @siteId and {Escape(dbType, "STATUS_TYPE_ID")} <> @id";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5140,7 +5141,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static long GetNumberOfArticlesUsingStatusByStatusId(DbConnection connection, int id)
         {
-            using (var cmd = DbCommandFactory.Create("select COUNT(*) from [CONTENT_ITEM] where [STATUS_TYPE_ID] = @id", connection))
+            using (var cmd = DbCommandFactory.Create("select COUNT(*) from CONTENT_ITEM where STATUS_TYPE_ID = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -5151,7 +5152,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static long GetNumberOfWorkflowsUsingStatusByStatusId(DbConnection connection, int id)
         {
-            using (var cmd = DbCommandFactory.Create("select COUNT(*) from [workflow_rules] where [SUCCESSOR_STATUS_ID] = @id", connection))
+            using (var cmd = DbCommandFactory.Create("select COUNT(*) from workflow_rules where SUCCESSOR_STATUS_ID = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -5162,7 +5163,10 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static void SetNullAssociatedNotificationsStatusTypesIds(DbConnection connection, int id)
         {
-            var query = "UPDATE [NOTIFICATIONS] SET [notify_on_status_type_id] = null, [for_status_changed] = 0, " + $"[for_status_partially_changed] = 0 WHERE [notify_on_status_type_id] = {id}";
+            var dbType = GetDbType(connection);
+
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var query = $"UPDATE NOTIFICATIONS SET notify_on_status_type_id = null, for_status_changed = {falseValue}, for_status_partially_changed = {falseValue} WHERE notify_on_status_type_id = {id}";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
@@ -5172,7 +5176,8 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static void RemoveAssociatedContentItemsStatusHistoryRecords(DbConnection connection, int id)
         {
-            var query = $"DELETE FROM [CONTENT_ITEM_STATUS_HISTORY] with (rowlock)  where [STATUS_TYPE_ID] = {id}";
+            var dbType = GetDbType(connection);
+            var query = $"DELETE FROM CONTENT_ITEM_STATUS_HISTORY {WithRowLock(dbType)}  where STATUS_TYPE_ID = {id}";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
@@ -5182,7 +5187,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static void RemoveAssociatedWaitingForApprovalRecords(DbConnection connection, int id)
         {
-            var query = $"DELETE FROM [WAITING_FOR_APPROVAL] where [STATUS_TYPE_ID] = {id}";
+            var query = $"DELETE FROM WAITING_FOR_APPROVAL where STATUS_TYPE_ID = {id}";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
