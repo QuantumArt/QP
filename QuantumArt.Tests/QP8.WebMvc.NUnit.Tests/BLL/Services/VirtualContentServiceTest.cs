@@ -196,17 +196,17 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Services
             const int joinRootContentId = 295;
             const int virtualContentId = 500;
 
-            const string expected = "CREATE VIEW [dbo].[content_500] AS " +
+            const string expected = "CREATE VIEW dbo.content_500 AS " +
                 "SELECT c_0.CONTENT_ITEM_ID,c_0.STATUS_TYPE_ID,c_0.VISIBLE,c_0.ARCHIVE,c_0.CREATED,c_0.MODIFIED,c_0.LAST_MODIFIED_BY,c_0.[Title] as [Title],c_0.[fff] as [fff],c_0.[m2m] as [m2m]," +
                 "c_0_0.[Title] as [m2m.Title],c_0_0.[fff] as [m2m.fff],c_0_0.[m2m] as [m2m.m2m]," +
                 "c_0_0_0.[Title] as [m2m.m2m.Title],c_0_0_0.[fff] as [m2m.m2m.fff],c_0_0_0.[m2m] as [kdsfjkdsfjk.m2m]," +
                 "c_0_0_0_0.[Title] as [m2m.m2m.m2m.Title]," +
                 "c_0.[o2o] as [o2o],c_0_1.[Title] as [o2o.Title] " +
                 "FROM dbo.CONTENT_295 AS c_0 " +
-                "LEFT OUTER JOIN dbo.CONTENT_295 AS c_0_0 WITH (nolock) ON c_0_0.CONTENT_ITEM_ID = c_0.[m2m] " +
-                "LEFT OUTER JOIN dbo.CONTENT_295 AS c_0_0_0 WITH (nolock) ON c_0_0_0.CONTENT_ITEM_ID = c_0_0.[m2m] " +
-                "LEFT OUTER JOIN dbo.CONTENT_295 AS c_0_0_0_0 WITH (nolock) ON c_0_0_0_0.CONTENT_ITEM_ID = c_0_0_0.[m2m] " +
-                "LEFT OUTER JOIN dbo.CONTENT_300 AS c_0_1 WITH (nolock) ON c_0_1.CONTENT_ITEM_ID = c_0.[o2o] ";
+                "LEFT OUTER JOIN dbo.CONTENT_295 AS c_0_0 WITH(nolock)  ON c_0_0.CONTENT_ITEM_ID = c_0.[m2m] " +
+                "LEFT OUTER JOIN dbo.CONTENT_295 AS c_0_0_0 WITH(nolock)  ON c_0_0_0.CONTENT_ITEM_ID = c_0_0.[m2m] " +
+                "LEFT OUTER JOIN dbo.CONTENT_295 AS c_0_0_0_0 WITH(nolock)  ON c_0_0_0_0.CONTENT_ITEM_ID = c_0_0_0.[m2m] " +
+                "LEFT OUTER JOIN dbo.CONTENT_300 AS c_0_1 WITH(nolock)  ON c_0_1.CONTENT_ITEM_ID = c_0.[o2o] ";
 
             var helper = new VirtualContentHelper();
             var actual = helper.GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData);
@@ -240,17 +240,17 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Services
             const int joinRootContentId = 295;
             const int virtualContentId = 500;
 
-            const string expected = "CREATE VIEW [dbo].[content_500_async] AS " +
+            const string expected = "CREATE VIEW dbo.content_500_async AS " +
                 "SELECT c_0.CONTENT_ITEM_ID,c_0.STATUS_TYPE_ID,c_0.VISIBLE,c_0.ARCHIVE,c_0.CREATED,c_0.MODIFIED,c_0.LAST_MODIFIED_BY,c_0.[Title] as [Title],c_0.[fff] as [fff],c_0.[m2m] as [m2m]," +
                 "c_0_0.[Title] as [m2m.Title],c_0_0.[fff] as [m2m.fff],c_0_0.[m2m] as [m2m.m2m]," +
                 "c_0_0_0.[Title] as [m2m.m2m.Title],c_0_0_0.[fff] as [m2m.m2m.fff],c_0_0_0.[m2m] as [kdsfjkdsfjk.m2m]," +
                 "c_0_0_0_0.[Title] as [m2m.m2m.m2m.Title]," +
                 "c_0.[o2o] as [o2o],c_0_1.[Title] as [o2o.Title] " +
                 "FROM dbo.CONTENT_295_async AS c_0 " +
-                "LEFT OUTER JOIN dbo.CONTENT_295_united AS c_0_0 WITH (nolock) ON c_0_0.CONTENT_ITEM_ID = c_0.[m2m] " +
-                "LEFT OUTER JOIN dbo.CONTENT_295_united AS c_0_0_0 WITH (nolock) ON c_0_0_0.CONTENT_ITEM_ID = c_0_0.[m2m] " +
-                "LEFT OUTER JOIN dbo.CONTENT_295_united AS c_0_0_0_0 WITH (nolock) ON c_0_0_0_0.CONTENT_ITEM_ID = c_0_0_0.[m2m] " +
-                "LEFT OUTER JOIN dbo.CONTENT_300_united AS c_0_1 WITH (nolock) ON c_0_1.CONTENT_ITEM_ID = c_0.[o2o] ";
+                "LEFT OUTER JOIN dbo.CONTENT_295_united AS c_0_0 WITH(nolock)  ON c_0_0.CONTENT_ITEM_ID = c_0.[m2m] " +
+                "LEFT OUTER JOIN dbo.CONTENT_295_united AS c_0_0_0 WITH(nolock)  ON c_0_0_0.CONTENT_ITEM_ID = c_0_0.[m2m] " +
+                "LEFT OUTER JOIN dbo.CONTENT_295_united AS c_0_0_0_0 WITH(nolock)  ON c_0_0_0_0.CONTENT_ITEM_ID = c_0_0_0.[m2m] " +
+                "LEFT OUTER JOIN dbo.CONTENT_300_united AS c_0_1 WITH(nolock)  ON c_0_1.CONTENT_ITEM_ID = c_0.[o2o] ";
 
             var helper = new VirtualContentHelper();
             var actual = helper.GenerateCreateJoinAsyncViewDdl(virtualContentId, joinRootContentId, virtualFieldsData);
@@ -272,7 +272,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Services
                 { "f4", new HashSet<int>(new[] { 2 }) }
             };
 
-            var expected = "CREATE VIEW [dbo].[content_10] AS SELECT 1 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,[f1] [f1],[f2] [f2],NULL [f3],NULL [f4] FROM dbo.content_1 UNION ALL SELECT 2 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,NULL [f1],NULL [f2],[f3] [f3],[f4] [f4] FROM dbo.content_2".ToLower();
+            var expected = "CREATE VIEW dbo.content_10 AS  SELECT 1 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,[f1] [f1],[f2] [f2],NULL [f3],NULL [f4] FROM dbo.content_1 UNION ALL SELECT 2 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,NULL [f1],NULL [f2],[f3] [f3],[f4] [f4] FROM dbo.content_2".ToLower();
             var helper = new VirtualContentHelper();
             var actual = helper.GenerateCreateUnionViewDdl(contentId, unionSourceContentIDs, contentFieldNames, fieldNameInSourceContents).ToLower();
 
@@ -294,7 +294,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Services
                 { "f4", new HashSet<int>(new[] { 2 }) }
             };
 
-            var expected = "CREATE VIEW [dbo].[content_10_async] AS SELECT 1 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,[f1] [f1],[f2] [f2],NULL [f3],NULL [f4] FROM dbo.content_1_async UNION ALL SELECT 2 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,NULL [f1],NULL [f2],[f3] [f3],[f4] [f4] FROM dbo.content_2_async".ToLower();
+            var expected = "CREATE VIEW dbo.content_10_async AS  SELECT 1 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,[f1] [f1],[f2] [f2],NULL [f3],NULL [f4] FROM dbo.content_1_async UNION ALL SELECT 2 content_id,content_item_id,created,modified,last_modified_by,status_type_id,visible,archive,NULL [f1],NULL [f2],[f3] [f3],[f4] [f4] FROM dbo.content_2_async".ToLower();
             var helper = new VirtualContentHelper();
             var actual = helper.GenerateCreateUnionAsyncViewDdl(contentId, unionSourceContentIDs, contentFieldNames, fieldNameInSourceContents).ToLower();
 
