@@ -154,7 +154,7 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var tableName = "content_" + id;
             var asyncTableName = tableName + "_async";
-            var sql = $@"drop table {DbSchemaName(dbType)}.{{0}}";
+            var sql = $@"drop table if exists {DbSchemaName(dbType)}.{{0}}";
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));

@@ -153,6 +153,10 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void ChangeUnionContentTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "ti_union_contents_auto_map_attrs", enable);

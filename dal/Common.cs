@@ -5437,9 +5437,9 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
         /// <param name="contentId"></param>
         public static void RemoveUnionAttrsByUnionContent(DbConnection connection, int contentId)
         {
-            const string query = @"delete UNION_ATTRS from UNION_ATTRS UA
-                            JOIN CONTENT_ATTRIBUTE CA ON UA.virtual_attr_id = CA.ATTRIBUTE_ID
-                            WHERE CA.CONTENT_ID = @content_id";
+            var query = $@"delete from UNION_ATTRS WHERE virtual_attr_id IN (
+                                    select ATTRIBUTE_ID FROM CONTENT_ATTRIBUTE WHERE CONTENT_ID = @content_id
+                                )";
 
             using (var cmd = DbCommandFactory.Create(query, connection))
             {

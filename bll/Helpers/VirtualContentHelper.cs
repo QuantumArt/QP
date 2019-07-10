@@ -1419,7 +1419,7 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
             string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}} AS ";
-            const string sourceTableNameTemplate = "dbo.CONTENT_{0}";
+            string sourceTableNameTemplate = $"{schema}.CONTENT_{{0}}";
             return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
@@ -1427,7 +1427,7 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
             string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}}_async AS ";
-            const string sourceTableNameTemplate = "dbo.CONTENT_{0}_async";
+            string sourceTableNameTemplate = $"{schema}.CONTENT_{{0}}_async";
             return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
