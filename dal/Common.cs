@@ -997,6 +997,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int GetBaseFieldId(DbConnection connection, int fieldId, int articleId)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             using (var cmd = DbCommandFactory.Create("qp_get_base_field", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -1006,7 +1007,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 {
                     if (dr.Read())
                     {
-                        return (int)dr.GetDecimal(0);
+                        return (dbType == DatabaseType.Postgres) ? dr.GetInt32(0) : (int)dr.GetDecimal(0);
                     }
 
                     return fieldId;
@@ -1602,9 +1603,22 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static IEnumerable<int> GetRealBaseFieldIds(DbConnection connection, int virtualFieldId)
         {
             var result = new List<int>();
-            using (var cmd = DbCommandFactory.Create("qp_get_real_base_attributes", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var recursive = dbType == DatabaseType.SqlServer ? "" : "RECURSIVE";
+            var sql = $@" WITH {recursive} TREE(BASE_ATTR_ID, BASE_CNT_VTYPE) AS
+            (
+                select BASE_ATTR_ID, BASE_CNT_VTYPE FROM VIRTUAL_ATTR_BASE_ATTR_RELATION
+                where VIRTUAL_ATTR_ID = @v_attr_id
+
+                union all
+
+                select R.BASE_ATTR_ID, R.BASE_CNT_VTYPE FROM VIRTUAL_ATTR_BASE_ATTR_RELATION R
+                join TREE T ON T.BASE_ATTR_ID = R.VIRTUAL_ATTR_ID
+            )
+            select BASE_ATTR_ID from TREE where BASE_CNT_VTYPE = 0 ";
+
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@v_attr_id", virtualFieldId);
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -1693,7 +1707,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 inStatement = string.Join(",", unionFieldIds);
             }
 
-            var query = $"select COUNT(union_attr_id) F_COUNT, VIRTUAL_ATTR_ID UNION_FIELD_ID FROM union_attrs GROUP BY VIRTUAL_ATTR_ID HAVING VIRTUAL_ATTR_ID IN ({inStatement})";
+            var query = $"select cast(COUNT(union_attr_id) as int) F_COUNT, VIRTUAL_ATTR_ID UNION_FIELD_ID FROM union_attrs GROUP BY VIRTUAL_ATTR_ID HAVING VIRTUAL_ATTR_ID IN ({inStatement})";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 var dt = new DataTable();

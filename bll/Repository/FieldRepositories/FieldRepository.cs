@@ -237,8 +237,6 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     Common.DropColumn(scope.DbConnection, dal);
                     DropLinkTablesAndViews(scope, dal);
                 }
-
-
             }
         }
 

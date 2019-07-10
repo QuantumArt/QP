@@ -72,6 +72,7 @@ namespace Quantumart.QP8.BLL.Helpers
             IEnumerable<int> baseFieldsIDs = Content.VirtualFieldNode.Linearize(newVirtualJoinFieldNodes).Select(n => n.Id).Distinct().ToArray();
             var baseFields = FieldRepository.GetList(baseFieldsIDs);
             var baseFieldsDictionary = baseFields.ToDictionary(bs => bs.Id);
+            var maxOrder = newContent.GetMaxFieldsOrder();
 
             // Сохранить иерархию полей
             void Traverse(Field parentVirtualField, IEnumerable<Content.VirtualFieldNode> nodes)
@@ -89,6 +90,11 @@ namespace Quantumart.QP8.BLL.Helpers
                         if (_forceNewFieldIds != null)
                         {
                             virtualField.ForceId = _forceNewFieldIds.Dequeue();
+                        }
+
+                        if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                        {
+                            virtualField.Order = maxOrder + _newFieldIds.Count + 1;
                         }
 
                         var newVirtualField = VirtualFieldRepository.Save(virtualField);
@@ -142,6 +148,11 @@ namespace Quantumart.QP8.BLL.Helpers
                     field.ForceId = _forceNewFieldIds.Dequeue();
                 }
 
+                if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                {
+                    field.Order = _newFieldIds.Count + 1;
+                }
+
                 field = VirtualFieldRepository.Save(field);
                 _newFieldIds.Add(field.Id);
             }
@@ -175,6 +186,11 @@ namespace Quantumart.QP8.BLL.Helpers
                 if (_forceNewFieldIds != null)
                 {
                     vField.ForceId = _forceNewFieldIds.Dequeue();
+                }
+
+                if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                {
+                    vField.Order = _newFieldIds.Count + 1;
                 }
 
                 var vFieldResult = VirtualFieldRepository.Save(vField);
@@ -527,12 +543,19 @@ namespace Quantumart.QP8.BLL.Helpers
                 // удалить поля из БД
                 RemoveContentFields(makeoutResult.FieldsToRemove.Select(f => f.Id));
 
+                var maxOrder = dbContent.GetMaxFieldsOrder();
+
                 // Сохранить новые поля
                 foreach (var f in makeoutResult.NewFieldsToAdd)
                 {
                     if (_forceNewFieldIds != null)
                     {
                         f.ForceId = _forceNewFieldIds.Dequeue();
+                    }
+
+                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                    {
+                        f.Order = maxOrder + _newFieldIds.Count + 1;
                     }
 
                     var fResult = VirtualFieldRepository.Save(f);
@@ -583,12 +606,19 @@ namespace Quantumart.QP8.BLL.Helpers
                 // удалить поля из БД
                 RemoveContentFields(makeoutResult.FieldsToRemove.Select(f => f.Id));
 
+                var maxOrder = unionContent.GetMaxFieldsOrder();
+
                 // Сохранить новые поля в БД
                 foreach (var f in makeoutResult.NewFieldsToAdd)
                 {
                     if (_forceNewFieldIds != null)
                     {
                         f.ForceId = _forceNewFieldIds.Dequeue();
+                    }
+
+                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                    {
+                        f.Order = maxOrder + _newFieldIds.Count + 1;
                     }
 
                     var fResult = VirtualFieldRepository.Save(f);
@@ -755,6 +785,8 @@ namespace Quantumart.QP8.BLL.Helpers
                 // удалить поля из БД
                 RemoveContentFields(makeoutResult.FieldsToRemove.Select(f => f.Id));
 
+                var maxOrder = content.GetMaxFieldsOrder();
+
                 // Сохранить новые поля
                 foreach (var f in makeoutResult.NewFieldsToAdd)
                 {
@@ -762,6 +794,12 @@ namespace Quantumart.QP8.BLL.Helpers
                     {
                         f.ForceId = _forceNewFieldIds.Dequeue();
                     }
+
+                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                    {
+                        f.Order = maxOrder + _newFieldIds.Count + 1;
+                    }
+
                     var fResult = VirtualFieldRepository.Save(f);
                     _newFieldIds.Add(fResult.Id);
                     f.Id = fResult.Id;
@@ -818,6 +856,8 @@ namespace Quantumart.QP8.BLL.Helpers
                     // Удалить привязки полей
                     VirtualFieldRepository.RemoveUserQueryAttrs(dbContent);
 
+                    var maxOrder = dbContent.GetMaxFieldsOrder();
+
                     // удалить поля из БД
                     RemoveContentFields(makeoutResult.FieldsToRemove.Select(f => f.Id));
 
@@ -828,6 +868,11 @@ namespace Quantumart.QP8.BLL.Helpers
                         {
                             f.ForceId = _forceNewFieldIds.Dequeue();
                         }
+                        if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                        {
+                            f.Order = maxOrder + _newFieldIds.Count + 1;
+                        }
+
                         var fResult = VirtualFieldRepository.Save(f);
                         _newFieldIds.Add(fResult.Id);
 
