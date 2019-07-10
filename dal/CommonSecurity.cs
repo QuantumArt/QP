@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Storage;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 
@@ -14,18 +15,35 @@ namespace Quantumart.QP8.DAL
     {
         public static DataRow[] GetRelationSecurityFields(DbConnection sqlConnection)
         {
-            const string sqlText = @"
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            const string contentLinkSql = @"
+                    SELECT
+                        link_id AS link_id,
+                        l_content_id AS content_id,
+                        r_content_id AS linked_content_id
+                    FROM content_to_content
+                    UNION
+                    SELECT
+                        link_id AS link_id,
+                        r_content_id AS content_id,
+                        l_content_id AS linked_content_id
+                    FROM content_to_content
+                    ";
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+
+            var sqlText = $@"
 				select coalesce(ca3.content_id, ca1.content_id) as path_content_id, coalesce(ca4.CONTENT_ID, cl.linked_content_id) as rel_content_id, ca1.content_id,
-				cast(case when ca1.link_id is not null then 1 else 0 end as bit) as is_m2m,
-				cast(case when ca2.attribute_id is not null then 1 else 0 end as bit) as is_ext,
+				{SqlQuerySyntaxHelper.CastToBool(dbType, $"case when ca1.link_id is not null then {trueValue} else {falseValue} end")} as is_m2m,
+				{SqlQuerySyntaxHelper.CastToBool(dbType, $"case when ca2.attribute_id is not null then {trueValue} else {falseValue} end")} as is_ext,
 				ca1.is_classifier,
 				ca1.attribute_id, ca1.attribute_name, ca1.link_id, ca2.ATTRIBUTE_NAME as agg_attribute_name
 				from CONTENT_ATTRIBUTE ca1
-				left join content_link cl on ca1.content_id = cl.content_id and ca1.link_id = cl.link_id
+				left join ({contentLinkSql}) cl on ca1.content_id = cl.content_id and ca1.link_id = cl.link_id
 				left join CONTENT_ATTRIBUTE ca4 on ca1.RELATED_ATTRIBUTE_ID = ca4.ATTRIBUTE_ID
-				left join content_attribute ca2 on ca1.content_id = ca2.content_id and ca2.AGGREGATED = 1
+				left join content_attribute ca2 on ca1.content_id = ca2.content_id and ca2.AGGREGATED = {trueValue}
 				left join content_attribute ca3 on ca2.RELATED_ATTRIBUTE_ID = ca3.attribute_Id
-				 where ca1.USE_RELATION_SECURITY = 1
+				 where ca1.USE_RELATION_SECURITY = {trueValue}
 			 ";
 
             using (var cmd = DbCommandFactory.Create(sqlText, sqlConnection))
@@ -155,23 +173,25 @@ namespace Quantumart.QP8.DAL
             var securitySql = Common.GetPermittedItemsAsQuery(sqlConnection, userId, 0, startLevel, PermissionLevel.FullAccess,
                 entityName, parentEntityName, parentId);
 
-            var sql = string.Format(
-                @" select i.id, cast((case when pi.{1} is null then 0 else 1 end) as bit) as granted from @ids i
-				left join ({0}) as pi on pi.{1} = i.id "
-                , securitySql, columnName);
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+
+            var sql = $@" select
+                i.id,
+                {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when pi.{columnName} is null then {falseValue} else {trueValue} end")} as granted
+                from  {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}
+				left join ({securitySql}) as pi on pi.{columnName} = i.id ";
 
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = Common.IdsToDataTable(testIds)
-                });
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", testIds, dbType));
+
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        granted[(int)(decimal)reader["id"]] = (bool)reader["granted"];
+                        granted[Convert.ToInt32(reader["id"])] = (bool)reader["granted"];
                     }
                 }
             }
@@ -179,7 +199,7 @@ namespace Quantumart.QP8.DAL
             return granted;
         }
 
-        public static string GetSecurityPathSql(List<RelationSecurityPathItem> items, int contentId)
+        public static string GetSecurityPathSql(DatabaseType dbType, List<RelationSecurityPathItem> items, int contentId)
         {
             if (items == null)
             {
@@ -188,7 +208,7 @@ namespace Quantumart.QP8.DAL
 
             var sqlBuilder = new StringBuilder();
             var lastItem = items.Last();
-            var selects = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary).Select(GetSelectExpression);
+            var selects = Enumerable.Repeat(lastItem, 1).Concat(lastItem.Secondary).Select(item => GetSelectExpression(dbType, item));
             sqlBuilder.Append($"select c0.content_item_id as id, {string.Join(", ", selects)} from content_{contentId}_united c0 ");
             foreach (var item in items)
             {
@@ -213,15 +233,9 @@ namespace Quantumart.QP8.DAL
                         var inner = string.Join("union all " + Environment.NewLine,
                             item.Extensions.Select(n =>
                                 n.LinkId.HasValue
-                                    ? string.Format(
-                                        @"select {0} as agg, il.linked_item_id as {3} From content_{2}_united c
-											inner join item_link il on c.content_item_id = il.item_id and il.link_id = {1} {4} ",
-                                        n.AggAttributeName, n.LinkId.Value, n.ContentId, first.AttributeName, Environment.NewLine
-                                    )
-                                    : string.Format(
-                                        "select {0} as agg, {1} as {3} From content_{2}_united {4}", n.AggAttributeName, n.AttributeName, n.ContentId,
-                                        first.AttributeName, Environment.NewLine
-                                    ))
+                                    ? $@"select {n.AggAttributeName} as agg, il.linked_item_id as {first.AttributeName} From content_{n.ContentId}_united c
+											inner join item_link il on c.content_item_id = il.item_id and il.link_id = {n.LinkId.Value} {Environment.NewLine} "
+                                    : $"select {n.AggAttributeName} as agg, {n.AttributeName} as {first.AttributeName} From content_{n.ContentId}_united {Environment.NewLine}")
                         );
 
                         sqlBuilder.AppendFormat("inner join ({3}{0}{3}) c{1} on c{1}.agg = c{2}.CONTENT_ITEM_ID{3}", inner, first.Order,
@@ -246,20 +260,23 @@ namespace Quantumart.QP8.DAL
                 }
             }
 
-            sqlBuilder.AppendFormat("where c0.content_item_id in (select id from @ids)");
+            sqlBuilder.Append($"where c0.content_item_id in (select id from {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")})");
             return sqlBuilder.ToString();
         }
 
-        private static string GetSelectExpression(RelationSecurityPathItem n)
+        private static string GetSelectExpression(DatabaseType dbType, RelationSecurityPathItem n)
         {
             if (n.IsClassifier)
             {
-                return $"c{n.JoinOrder}.[{n.AttributeName}]";
+                return $"c{n.JoinOrder}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, n.AttributeName)}";
             }
 
+            var fieldName = dbType == DatabaseType.Postgres ? $"\"{n.RelContentId}\"" : $"'{n.RelContentId}'";
+            var castToInt = dbType == DatabaseType.Postgres ? "::integer" : string.Empty;
+
             return n.LinkId.HasValue
-                ? $"dbo.qp_link_ids({n.LinkId}, c{n.JoinOrder}.CONTENT_ITEM_ID, 1) as '{n.RelContentId}'"
-                : $"cast(c{n.Order}.content_item_id as nvarchar(30)) as '{n.RelContentId}'";
+                ? $"{SqlQuerySyntaxHelper.DbSchemaName(dbType)}.qp_link_ids({n.LinkId}{castToInt}, c{n.JoinOrder}.CONTENT_ITEM_ID{castToInt}, {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}) as {fieldName}"
+                : $"{SqlQuerySyntaxHelper.CastToString(dbType, $"c{n.Order}.content_item_id")} as {fieldName}";
         }
 
         public static Dictionary<int, bool> CheckLockedBy(DbConnection dbConnection, int[] ids, int currentUserId, bool forceUnlock)
@@ -295,6 +312,7 @@ namespace Quantumart.QP8.DAL
 
         public static RelationSecurityInfo GetRelationSecurityInfo(DbConnection dbConnection, int contentId, int[] ids)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(dbConnection);
             var result = new RelationSecurityInfo();
             var pathRows = GetRelationSecurityFields(dbConnection);
 
@@ -302,6 +320,8 @@ namespace Quantumart.QP8.DAL
             var finder = new RelationSecurityPathFinder(pathRows.ToList(), contentId);
             finder.Compute();
             securityPathes.Add(finder.CurrentPath);
+
+
             foreach (var extra in finder.ExtraFinders)
             {
                 extra.Compute();
@@ -312,7 +332,8 @@ namespace Quantumart.QP8.DAL
             {
                 if (securityPath.Count <= 0)
                 {
-                    var isEndNode = finder.PathRows.Any(n => (int)(n.Field<decimal?>("rel_content_id") ?? 0) == contentId);
+
+                    var isEndNode = finder.PathRows.Any(n => (Converter.ToNullableInt32(n["rel_content_id"]) ?? 0 ) == contentId);
                     if (!isEndNode)
                     {
                         result.MakeEmpty();
@@ -334,14 +355,10 @@ namespace Quantumart.QP8.DAL
                     result.AddContentInItemMapping(item, new Dictionary<int, int[]>());
                 }
 
-                var sql = GetSecurityPathSql(securityPath, contentId);
+                var sql = GetSecurityPathSql(dbType, securityPath, contentId);
                 using (var cmd = DbCommandFactory.Create(sql, dbConnection))
                 {
-                    cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = Common.IdsToDataTable(ids)
-                    });
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -387,7 +404,7 @@ namespace Quantumart.QP8.DAL
         private static void ProcessSecurityPathSqlReader(DbDataReader reader, int[] contentIds, string[] classifierNames,
             RelationSecurityInfo result)
         {
-            var id = (int)(decimal)reader["id"];
+            var id = Converter.ToInt32(reader["id"]);
             foreach (var item in contentIds)
             {
                 var ints = Converter.ToInt32Collection((string)reader[item.ToString()], ',');
@@ -398,7 +415,7 @@ namespace Quantumart.QP8.DAL
             {
                 foreach (var clName in classifierNames)
                 {
-                    var clValue = Converter.ToInt32((decimal)reader[clName]);
+                    var clValue = Converter.ToInt32(reader[clName]);
                     result.AppendToContentMapping(clValue, id);
                 }
             }

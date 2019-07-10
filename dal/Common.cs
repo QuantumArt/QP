@@ -116,6 +116,7 @@ namespace Quantumart.QP8.DAL
                 ";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
+
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 using (var dr = cmd.ExecuteReader())
                 {
@@ -274,7 +275,7 @@ namespace Quantumart.QP8.DAL
                 var securitySql = PermissionHelper.GetPermittedItemsAsQuery(
                     efContext, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId
                 );
-                securityJoin = $"INNER JOIN (({securitySql}) as pi ON c.content_item_id = pi.content_item_id)";
+                securityJoin = $" INNER JOIN ({securitySql}) as pi ON c.content_item_id = pi.content_item_id ";
 
             }
             var top = searchLimit.HasValue ? Top(databaseType, searchLimit.Value) : String.Empty;
@@ -2714,6 +2715,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         private static void AddRelationSecurityFilteringToQuery(DbConnection connection, ArticleRelationSecurityParameter filter, int userId, StringBuilder fromBuilder, StringBuilder whereBuilder)
         {
             var securitySql = GetPermittedItemsAsQuery(connection, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, filter.RelatedContentId);
+            var dbType = GetDbType(connection);
+            var withNoLock = WithNoLock(dbType);
             if (filter.IsClassifier)
             {
                 if (whereBuilder.Length != 0)
@@ -2721,19 +2724,19 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                     whereBuilder.Append(" AND ");
                 }
 
-                whereBuilder.AppendFormat("c.[{0}] in ({1})", filter.FieldName, string.Join(",", filter.AllowedContentIds));
+                whereBuilder.AppendLine($"c.{Escape(dbType, filter.FieldName)} in ({string.Join(",", filter.AllowedContentIds)})");
             }
             else if (filter.IsManyToMany)
             {
-                fromBuilder.AppendFormatLine(" inner join (select distinct linked_item_id from content_{0}_united link_sec_{1} with(nolock) ", filter.RelatedContentId, filter.FieldId);
-                fromBuilder.AppendFormatLine(" inner join item_link links_{1} with(nolock) on link_sec_{1}.content_item_id = links_{1}.item_id and links_{1}.link_id = {0} ", filter.LinkId, filter.FieldId);
-                fromBuilder.AppendFormatLine(" inner join ({0}) pi_{1} on link_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql, filter.FieldId);
-                fromBuilder.AppendFormatLine(" ) as sec_items_{0} on c.content_item_id = sec_items_{0}.linked_item_id ", filter.FieldId);
+                fromBuilder.AppendLine($" inner join (select distinct linked_item_id from content_{filter.RelatedContentId}_united link_sec_{filter.FieldId} {withNoLock} ");
+                fromBuilder.AppendLine($" inner join item_link links_{filter.FieldId} {withNoLock} on link_sec_{filter.FieldId}.content_item_id = links_{filter.FieldId}.item_id and links_{filter.FieldId}.link_id = {filter.LinkId} ");
+                fromBuilder.AppendLine($" inner join ({securitySql}) pi_{filter.FieldId} on link_sec_{filter.FieldId}.content_item_id = pi_{filter.FieldId}.content_item_id ");
+                fromBuilder.AppendLine($" ) as sec_items_{filter.FieldId} on c.content_item_id = sec_items_{filter.FieldId}.linked_item_id ");
             }
             else
             {
-                fromBuilder.AppendFormatLine(" inner join content_{0}_united rel_sec_{1} with(nolock) on c.[{2}] = rel_sec_{1}.content_item_id", filter.RelatedContentId, filter.FieldId, filter.FieldName);
-                fromBuilder.AppendFormatLine(" inner join ({0}) pi_{1} on rel_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql, filter.FieldId);
+                fromBuilder.AppendLine($" inner join content_{filter.RelatedContentId}_united rel_sec_{filter.FieldId} {withNoLock} on c.{Escape(dbType, filter.FieldName)} = rel_sec_{filter.FieldId}.content_item_id");
+                fromBuilder.AppendLine($" inner join ({securitySql}) pi_{filter.FieldId} on rel_sec_{filter.FieldId}.content_item_id = pi_{filter.FieldId}.content_item_id ");
             }
         }
 
@@ -3219,8 +3222,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
 
             var databaseType = GetDbType(context);
-            #warning заглушка по security для постгрес
-            var useSecurity = !isAdmin && databaseType != DatabaseType.Postgres;
+            var useSecurity = !isAdmin; //&& databaseType != DatabaseType.Postgres;
 
 
             var query = $@"
@@ -3247,7 +3249,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
 		WHERE
 			atb.PARENT_ACTION_ID = {actionId}
-            {(!useSecurity ? string.Empty : "AND (SEC.PERMISSION_LEVEL >= PL.PERMISSION_LEVEL or bat.CODE = ''refresh'')")}
+            {(!useSecurity ? string.Empty : "AND (SEC.PERMISSION_LEVEL >= PL.PERMISSION_LEVEL or bat.CODE = 'refresh')")}
 			-- AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
 		ORDER BY
 			{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")}

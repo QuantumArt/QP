@@ -454,7 +454,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 }
 
                 #warning заглушка по security для postgres
-                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId) && QPContext.DatabaseType != DatabaseType.Postgres;
+                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);// && QPContext.DatabaseType != DatabaseType.Postgres;
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
                     QPContext.EFContext,
