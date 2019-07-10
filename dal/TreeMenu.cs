@@ -265,7 +265,7 @@ namespace Quantumart.QP8.DAL
 ";
         }
 
-        private static bool UseSecurity(bool isAdmin, DatabaseType databaseType) => !isAdmin && databaseType != DatabaseType.Postgres;
+        private static bool UseSecurity(bool isAdmin, DatabaseType databaseType) => !isAdmin ;//&& databaseType != DatabaseType.Postgres;
 
         private static string GetContentListSql(QPModelDataContext context, string select, string filter, string orderBy, bool isVirtual, decimal? siteId, int userId, bool useSecurity)
         {

@@ -218,6 +218,18 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.PasswordModified = dal.Created;
             }
 
+            var everyoneGroups = UserGroupRepository.GetEveryoneGroups();
+            foreach (var everyoneGroup in everyoneGroups)
+            {
+                if (dal.UserGroupBinds.All(x => x.UserGroupId != everyoneGroup.Id))
+                {
+                    var newBind = new UserUserGroupBindDAL();
+                    newBind.UserGroupId = everyoneGroup.Id;
+                    dal.UserGroupBinds.Add(newBind);
+                    entities.Add(newBind);
+                }
+            }
+
             entities.Entry(dal).State = EntityState.Added;
             entities.SaveChanges();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -36,6 +37,9 @@ namespace Quantumart.QP8.BLL.Repository
                 return MapperFacade.UserGroupListItemRowMapper.GetBizList(rows.ToList());
             }
         }
+
+        internal static IEnumerable<UserGroup> GetEveryoneGroups() => MapperFacade.UserGroupMapper.GetBizList(QPContext.EFContext.UserGroupSet.Where(x => x.IsReadOnly && x.BuiltIn).ToList());
+
 
         /// <summary>
         /// Возвращает список по ids
