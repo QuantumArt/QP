@@ -1238,14 +1238,15 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         public static int GetMaxUserWeight(DbConnection connection, int userId, int workflowId)
         {
-            const string sql = @"SELECT dbo.qp_get_user_weight(@userId, @workflowId)";
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var schema = DbSchemaName(dbType);
+            var sql = $@"SELECT {schema}.qp_get_user_weight(@userId, @workflowId)";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@workflowId", workflowId);
                 var value = cmd.ExecuteScalar();
-                return value == DBNull.Value ? 0 : (int)(decimal)value;
+                return value == DBNull.Value ? 0 : dbType == DatabaseType.SqlServer ? (int)(decimal)value : (int)value;
             }
         }
 

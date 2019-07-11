@@ -71,7 +71,7 @@ FROM ((action_access c
 alter table backend_action_access_permlevel
     owner to postgres;
 
-create or replace view content_access_perm_level(content_id, user_id, group_id, permission_level_id, created, modified,
+create or replace view content_access_permlevel(content_id, user_id, group_id, permission_level_id, created, modified,
                                       last_modified_by, propagate_to_items, content_access_id, hide,
                                       permission_level) as
 SELECT c.content_id,
@@ -91,7 +91,7 @@ FROM (content_access c
 alter table content_access_perm_level
     owner to postgres;
 
-create or replace view content_access_perm_level_site(content_id, user_id, group_id, permission_level_id, created, modified,
+create or replace view content_access_permlevel_site(content_id, user_id, group_id, permission_level_id, created, modified,
                                            last_modified_by, propagate_to_items, content_access_id, hide,
                                            permission_level, site_id) as
 SELECT c.content_id,
@@ -350,6 +350,27 @@ create or replace view item_link_united(link_id, item_id, linked_item_id, is_rev
 alter table item_link_united
     owner to postgres;
 
+-- View: public.site_access_permlevel
+
+-- DROP VIEW public.site_access_permlevel;
+
+CREATE OR REPLACE VIEW public.site_access_permlevel AS
+ SELECT c.site_id,
+    c.user_id,
+    c.group_id,
+    c.permission_level_id,
+    c.created,
+    c.modified,
+    c.last_modified_by,
+    c.propagate_to_contents,
+    c.site_access_id,
+    pl.permission_level
+   FROM site_access c
+     JOIN permission_level pl ON c.permission_level_id = pl.permission_level_id;
+
+ALTER TABLE public.site_access_permlevel
+    OWNER TO postgres;
+
 create or replace view template_object(object_id, parent_object_id, page_template_id, page_id, object_name, object_format_id,
                             description, object_type_id, use_default_values, created, modified, last_modified_by,
                             allow_stage_edit, global, net_object_name, locked, locked_by, enable_viewstate,
@@ -440,6 +461,24 @@ create or replace view VIRTUAL_ATTR_BASE_ATTR_RELATION AS
 	JOIN CONTENT VC ON VA.CONTENT_ID = VC.CONTENT_ID
 
 alter table v_user_query_attrs
+    owner to postgres;
+CREATE OR REPLACE VIEW VIRTUAL_CONTENT_RELATION AS
+	select  DISTINCT
+			PA.CONTENT_ID AS BASE_CONTENT_ID,		
+			A.CONTENT_ID AS VIRTUAL_CONTENT_ID
+			from CONTENT_ATTRIBUTE A
+			JOIN CONTENT_ATTRIBUTE PA ON A.persistent_attr_id = PA.ATTRIBUTE_ID		
+	UNION ALL
+	SELECT union_content_id AS BASE_CONTENT_ID,
+		   virtual_content_id AS VIRTUAL_CONTENT_ID
+	FROM union_contents
+	UNION ALL
+	SELECT real_content_id AS BASE_CONTENT_ID,
+		   virtual_content_id AS VIRTUAL_CONTENT_ID
+	FROM user_query_contents;
+
+
+alter table VIRTUAL_CONTENT_RELATION
     owner to postgres;
 create or replace view workflow_max_statuses AS
 
@@ -1026,6 +1065,38 @@ $BODY$;
 
 ALTER FUNCTION public.qp_get_article_title_func(numeric, numeric)
     OWNER TO postgres;
+create or replace function qp_get_base_field(field_id integer, article_id integer)
+returns integer
+    stable
+    language plpgsql
+as
+$$
+DECLARE
+    virtual_type int;
+    result int;
+    attr content_attribute;
+BEGIN
+
+    attr := row(ca.*) from content_attribute ca where ca.attribute_id = $1;
+    virtual_type := c.virtual_type from content c where c.content_id = attr.content_id;
+
+    if virtual_type = 1 then
+		result := ca.persistent_attr_id from content_attribute ca where attribute_id = attr.attribute_id;
+    elseif virtual_type = 2 then
+		result := ua.union_attr_id from union_attrs ua inner join content_attribute ca on ua.union_attr_id = ca.attribute_id where virtual_attr_id = attr.attribute_id and ca.content_id in (select content_id from content_item where content_item_id = $2);
+    elseif virtual_type = 3 then
+	    result := ca.attribute_id from content_attribute ca where attribute_name = attr.attribute_name and content_id in (select real_content_id from user_query_contents where virtual_content_id = attr.content_id);
+    else
+        result := attr.attribute_id;
+    end if;
+
+    return coalesce(result, attr.attribute_id);
+
+
+END;
+$$;
+
+alter function qp_get_base_field(int, int) owner to postgres;
 -- FUNCTION: public.qp_get_display_field(numeric, boolean)
 
 -- DROP FUNCTION public.qp_get_display_field(numeric, boolean);
@@ -1125,6 +1196,41 @@ AS $BODY$
 $BODY$;
 
 ALTER FUNCTION public.qp_get_hash(text, bigint)
+    OWNER TO postgres;
+create or replace function qp_get_user_weight(user_id int, workflow_id int)
+returns int
+    stable
+    language plpgsql
+as
+$$
+DECLARE
+    result int;
+BEGIN
+
+    result := max(st.weight) FROM workflow_rules wr
+		INNER JOIN status_type st ON wr.successor_status_id = st.status_type_id
+		WHERE wr.workflow_id = $2 and wr.user_id = $1;
+
+    if result is null then
+		WITH RECURSIVE groups(group_id) AS
+		(
+		    select ug.group_id from user_group_bind ug where ug.user_id = $1
+		    UNION ALL
+		    select gg.parent_group_id from group_to_group gg inner join groups g on g.group_id = gg.child_group_id
+		 )
+		select max(st.weight) into result FROM workflow_rules wr
+		INNER JOIN status_type st ON wr.successor_status_id = st.status_type_id
+		WHERE wr.workflow_id = $2 and wr.group_id in (select group_id from groups);
+
+	end if;
+
+	return result;
+
+END;
+$$;
+
+
+ALTER FUNCTION public.qp_get_user_weight(int, int)
     OWNER TO postgres;
 -- FUNCTION: public.qp_get_version_data(numeric, numeric)
 
@@ -1604,31 +1710,31 @@ CREATE OR REPLACE FUNCTION public.qp_authenticate(
     LANGUAGE 'plpgsql'
 
     COST 100
-    VOLATILE 
+    VOLATILE
 AS $BODY$
-	DECLARE 
+	DECLARE
 		user_row users%ROWTYPE;
 	BEGIN
 		IF use_nt_login THEN
 			select * from users where nt_login = $1 into user_row;
 			IF user_row is null THEN
-				RAISE EXCEPTION 'Your Windows account is not mapped to any QP user';
+				RAISE EXCEPTION 'Your Windows account is not mapped to any QP user' using errcode = 'AUTH5';
 			ELSEIF user_row.disabled = 1 THEN
-				RAISE EXCEPTION 'Account is disabled. Contact <@MailForErrors@>';
+				RAISE EXCEPTION 'Account is disabled. Contact <@MailForErrors@>' using errcode = 'AUTH2';
 			ELSEIF user_row.auto_login = 0 THEN
-				RAISE EXCEPTION 'Auto login option is switched off for your account. Contact <@MailForErrors@>';
+				RAISE EXCEPTION 'Auto login option is switched off for your account. Contact <@MailForErrors@>' using errcode = 'AUTH6';
 			END IF;
 		ELSE
 			select * from users u where u.login = $1 into user_row;
 			IF user_row is null THEN
-				RAISE EXCEPTION 'Login doesn''t exist';
+				RAISE EXCEPTION 'Login doesn''t exist' using errcode = 'AUTH1';
 			ELSEIF user_row.disabled = 1 THEN
-				RAISE EXCEPTION 'Account is disabled. Contact <@MailForErrors@>';
+				RAISE EXCEPTION 'Account is disabled. Contact <@MailForErrors@>' using errcode = 'AUTH2';
 			ELSEIF qp_get_hash(password, user_row.salt) <> user_row.hash THEN
-				RAISE EXCEPTION 'Password is incorrect';
+				RAISE EXCEPTION 'Password is incorrect' using errcode = 'AUTH3';
 			ELSEIF check_admin_access THEN
 				IF NOT EXISTS(select * from USER_GROUP_BIND where GROUP_ID = 1 and USER_ID = user_row.user_id) THEN
-					RAISE EXCEPTION 'Account is not a member of Administrators group';
+					RAISE EXCEPTION 'Account is not a member of Administrators group' using errcode = 'AUTH4';
 				END IF;
 			END IF;
 		END IF;
@@ -2005,6 +2111,42 @@ AS $BODY$
 $BODY$;
 
 ALTER PROCEDURE qp_create_content_item_versions(numeric[], numeric) owner to postgres;
+
+CREATE OR REPLACE FUNCTION public.qp_get_article_tsvector(id int)
+RETURNS tsvector
+    STABLE
+    LANGUAGE 'plpgsql'
+
+AS $BODY$
+	DECLARE
+	    result tsvector;
+	    data content_data[];
+	    data_item content_data;
+    BEGIN
+	    result := '' as tsvector;
+	    data = array_agg(cd.* order by attribute_id asc) from content_data cd
+	    where cd.content_item_id = $1 and cd.ft_data is not null;
+
+	    data = coalesce(data, ARRAY[]::content_data[]);
+
+	    foreach data_item in array data
+	    loop
+            result := result || data_item.ft_data;
+        end loop;
+
+	    return result;
+
+	END;
+$BODY$;
+
+
+
+alter function qp_get_article_tsvector(int) owner to postgres;
+
+
+
+
+
 create or replace function qp_get_m2o_ids(content_id integer, field_name text, id integer default NULL)
     returns int[]
     called on null input
@@ -2621,6 +2763,8 @@ AS $BODY$
         from content_attribute ca where ca.attribute_id = cd.attribute_id
         and (ca.attribute_type_id <> 11 or ca.link_id is null) and cd.content_item_id = ANY(ids);
 
+		update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from unnest(ids) i(id);
+
    		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids)
    		    and (not_for_replication or cancel_split);
 
@@ -3185,6 +3329,10 @@ AS $BODY$
 
 		IF ft_ids is not null THEN
             update content_data set ft_data = to_tsvector('russian', data) where content_data_id = ANY(ft_ids);
+
+            update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from (
+                select distinct cd.content_item_id::int as id from content_data cd where cd.content_data_id = ANY(ft_ids)
+            ) i;
         END IF;
 		
 		IF TG_OP = 'UPDATE' THEN

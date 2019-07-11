@@ -100,8 +100,7 @@ namespace Quantumart.QP8.BLL
             {
                 if (_CurrentUserMaxWeight == 0)
                 {
-                    #warning заглушка по security для Postgres
-                    if (QPContext.IsAdmin || QPContext.DatabaseType == DatabaseType.Postgres)
+                    if (QPContext.IsAdmin)
                     {
                         _CurrentUserMaxWeight = MaxStatus.Weight;
                     }
