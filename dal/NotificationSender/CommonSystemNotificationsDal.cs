@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.DAL.NotificationSender
 {
     public class CommonSystemNotificationsDal
     {
-        private const string InsertNotificationsQuery =
+        private const string SqlInsertNotificationsQuery =
             @"INSERT INTO [dbo].[SYSTEM_NOTIFICATION_QUEUE]
 			(
                 [CdcLastExecutedLsnId],
@@ -26,42 +27,29 @@ namespace Quantumart.QP8.DAL.NotificationSender
 			FROM
                 @notifications.nodes('/Notifications/Notification') AS tbl(col)";
 
-        private const string UpdateSentNotificationsQuery =
-            @"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
-				SENT = 1,
-                LastExceptionMessage = NULL,
-				MODIFIED = getdate()
-			WHERE ID IN (SELECT Id FROM @ids)";
-
-        private const string UpdateUnsentNotificationsQuery =
-            @"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
-				TRIES = TRIES + 1,
-                LastExceptionMessage = @lastExceptionMessage,
-				MODIFIED = getdate()
-			WHERE ID IN (SELECT Id FROM @ids)";
-
-        private const string DeleteSentNotificationsQuery = @"DELETE FROM SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
+        private const string PgInsertNotificationsQuery =
+            @"
+WITH v AS (
+    SELECT CdcLastExecutedLsnId, TRANSACTION_LSN, TRANSACTION_DATE, URL, JSON
+    FROM XMLTABLE('Notifications/Notification' passing @notifications COLUMNS
+        CdcLastExecutedLsnId integer PATH 'CdcLastExecutedLsnId',
+        TRANSACTION_LSN text PATH 'TransactionLsn',
+        TRANSACTION_DATE timestamp without time zone PATH 'TransactionDate',
+        URL text PATH 'Url',
+        JSON text PATH 'Json'
+        ) x
+    )
+    INSERT INTO system_notification_queue (CdcLastExecutedLsnId, TRANSACTION_LSN, TRANSACTION_DATE, URL, JSON)
+    SELECT v.CdcLastExecutedLsnId, v.TRANSACTION_LSN, v.TRANSACTION_DATE, v.URL, v.JSON";
 
         private static void ExecuteIdsQuery(DbConnection connection, string query, IEnumerable<int> ids, string lastExceptionMessage = null)
         {
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
                 cmd.CommandType = CommandType.Text;
-                var idsTable = Common.IdsToDataTable(ids);
-
-                switch (cmd)
-                {
-                    case SqlCommand sqlCommand:
-                        var parameter = sqlCommand.Parameters.AddWithValue("@ids", idsTable);
-                        parameter.SqlDbType = SqlDbType.Structured;
-                        parameter.TypeName = "dbo.Ids";
-                        sqlCommand.Parameters.Add(new SqlParameter("@lastExceptionMessage", SqlDbType.NVarChar, -1) { Value = (object)lastExceptionMessage ?? DBNull.Value });
-                        break;
-                    default:
-                        throw new NotImplementedException("Not implemented for postgres");
-                }
-
-
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+                cmd.Parameters.AddWithValue("@lastExceptionMessage", lastExceptionMessage);
 
                 cmd.ExecuteNonQuery();
             }
@@ -69,35 +57,43 @@ namespace Quantumart.QP8.DAL.NotificationSender
 
         public static void InsertNotifications(DbConnection connection, string notificationsXml)
         {
-            using (var cmd = DbCommandFactory.Create(InsertNotificationsQuery, connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var query = dbType == DatabaseType.Postgres ? PgInsertNotificationsQuery : SqlInsertNotificationsQuery;
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                var parameter = cmd.Parameters.AddWithValue("@notifications", notificationsXml);
-                switch (parameter)
-                {
-                    case SqlParameter sqlParameter:
-                        sqlParameter.SqlDbType = SqlDbType.Xml;
-                        break;
-                    default:
-                        throw new NotImplementedException("Not implemented for postgres");
-                }
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@notifications", notificationsXml, dbType));
                 cmd.ExecuteNonQuery();
             }
         }
 
         public static void UpdateSentNotifications(DbConnection connection, IEnumerable<int> ids)
         {
-            ExecuteIdsQuery(connection, UpdateSentNotificationsQuery, ids);
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var query = $@"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
+				SENT = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)},
+                LastExceptionMessage = NULL,
+				MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)}
+			WHERE ID IN (SELECT Id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")})";
+            ExecuteIdsQuery(connection, query, ids);
         }
 
         public static void UpdateUnsentNotifications(DbConnection connection, IEnumerable<int> ids, string lastExceptionMessage = null)
         {
-            ExecuteIdsQuery(connection, UpdateUnsentNotificationsQuery, ids, lastExceptionMessage);
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var query = $@"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
+				TRIES = TRIES + 1,
+                LastExceptionMessage = @lastExceptionMessage,
+				MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)}
+			WHERE ID IN (SELECT Id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")})";
+            ExecuteIdsQuery(connection, query, ids, lastExceptionMessage);
         }
 
         public static void DeleteSentNotifications(DbConnection connection)
         {
-            using (var cmd = DbCommandFactory.Create(DeleteSentNotificationsQuery, connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var query = $"DELETE FROM SYSTEM_NOTIFICATION_QUEUE WHERE SENT = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();

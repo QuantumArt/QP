@@ -98,6 +98,19 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
+                // var explicitUserRules = QPContext
+                //     .EFContext
+                //     .WorkflowRulesSet
+                //     .Include(x => x.StatusType)
+                //     .Where(x => x.Id == workflowId && x.UserId == QPContext.CurrentUserId)
+                //     .ToList();
+                // if (explicitUserRules.Any())
+                // {
+                //     return (int)explicitUserRules.Max(x => x.StatusType.Weight);
+                // }
+
+
+
                 return Common.GetMaxUserWeight(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, workflowId);
             }
         }
