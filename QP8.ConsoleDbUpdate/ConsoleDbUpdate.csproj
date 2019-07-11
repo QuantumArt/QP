@@ -309,9 +309,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Logging.Abstractions.dll">
       <Link>References\Microsoft.Extensions.Logging.Abstractions.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Logging.EventLog.dll">
-      <Link>References\Microsoft.Extensions.Logging.EventLog.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Extensions.Caching.Abstractions.dll">
       <Link>References\Microsoft.Extensions.Caching.Abstractions.dll</Link>
     </EmbeddedResource>
