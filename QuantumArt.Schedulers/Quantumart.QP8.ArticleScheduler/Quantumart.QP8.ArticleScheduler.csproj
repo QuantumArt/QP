@@ -4,6 +4,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)bll\BLL.csproj" />
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
+
     <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring.Unity\QP8.Infrastructure.Logging.PrtgMonitoring.Unity.csproj" />
   </ItemGroup>
   <ItemGroup>

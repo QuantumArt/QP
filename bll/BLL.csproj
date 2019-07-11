@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <Version>3.0.0-beta4</Version>
+    <Version>3.0.0-beta5</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Authors>Pavel Celut, Sergey Koryakin</Authors>
     <Company>Quantum Art</Company>
@@ -11,18 +11,52 @@
     <Copyright>Copyright © 2007-2019 Quantum Art</Copyright>
     <AssemblyName>Quantumart.QP8.BLL</AssemblyName>
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
+    <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
+    <PackageId>Quantumart.QP8.BLL</PackageId>
+    <PackageProjectUrl>https://github.com/QuantumArt/QP/bll</PackageProjectUrl>
+    <PackageTags>QP</PackageTags>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Postgres support</PackageReleaseNotes>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeQP8Libraries</TargetsForTfmSpecificBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+  <Target Name="IncludeQP8Libraries">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Constants.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Configuration.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.DAL.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Merger.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Resources.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Security.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Utils.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)Quantumart.QP8.Validators.dll" />
+    </ItemGroup>
+  </Target>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" />
-    <PackageReference Include="Npgsql" Version="4.0.7" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
-    <PackageReference Include="Quantumart.AspNetCore" Version="4.0.0-beta50" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
-    <PackageReference Include="Unity" Version="5.8.13" />
-    <PackageReference Include="AutoMapper" Version="8.0.0" />
-    <PackageReference Include="QA.Validation.Xaml" Version="1.3.0-portable1" />
-    <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.3.0-portable1" />
+    <PackageReference Include="EnterpriseLibrary.Common.NetCore" Version="6.0.1312" PrivateAssets="None" />
+    <PackageReference Include="EnterpriseLibrary.Validation.NetCore" Version="6.0.1312" PrivateAssets="None" />
+    <PackageReference Include="Irony" Version="1.1.0" PrivateAssets="None" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" PrivateAssets="None" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" PrivateAssets="None" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" PrivateAssets="None" />
+    <PackageReference Include="Npgsql" Version="4.0.7" PrivateAssets="None" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" PrivateAssets="None" />
+    <PackageReference Include="Quantumart.AspNetCore" Version="4.0.0-beta50" PrivateAssets="None" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" PrivateAssets="None" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" PrivateAssets="None" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" PrivateAssets="None" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" PrivateAssets="None" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="System.Security.Permissions" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.1" PrivateAssets="None" />
+    <PackageReference Include="Unity" Version="5.8.13" PrivateAssets="None" />
+    <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
+    <PackageReference Include="QA.Validation.Xaml" Version="1.3.0-portable1" PrivateAssets="None" />
+    <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.3.0-portable1" PrivateAssets="None" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <Reference Include="System.DirectoryServices" />
@@ -33,13 +67,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)dal\DAL.csproj" />
-    <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj" />
-    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj" />
-    <ProjectReference Include="$(SolutionDir)security\Security.csproj" />
-    <ProjectReference Include="$(SolutionDir)validators\Validators.csproj" />
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj" />
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj" />
+    <ProjectReference Include="$(SolutionDir)dal\DAL.csproj" PrivateAssets="All" />
+    <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj" PrivateAssets="All" />
+    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj" PrivateAssets="All" />
+    <ProjectReference Include="$(SolutionDir)security\Security.csproj" PrivateAssets="All" />
+    <ProjectReference Include="$(SolutionDir)validators\Validators.csproj" PrivateAssets="All" />
+    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj" PrivateAssets="None" />
+    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj" PrivateAssets="None" />
   </ItemGroup>
 </Project>
 
