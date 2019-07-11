@@ -14,6 +14,7 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using QP.ConfigurationService.Models;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -124,6 +125,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var sqlMetalPath = QPConfiguration.ConfigVariable(Config.SqlMetalKey);
+            var extDbType = (QP.ConfigurationService.Models.DatabaseType)QPContext.DatabaseType;
 
             if (site.ExternalDevelopment)
             {
@@ -147,14 +149,14 @@ namespace Quantumart.QP8.BLL.Services
                     File.Delete(site.TempArchiveForClasses);
                 }
 
-                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString)
+                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType)
                 {
                     SiteRoot = liveTempDirectory,
                     IsLive = true,
                     DisableClassGeneration = site.DownloadEfSource
                 }.Assemble();
 
-                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString)
+                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType)
                 {
                     SiteRoot = stageTempDirectory,
                     IsLive = false,
@@ -165,7 +167,7 @@ namespace Quantumart.QP8.BLL.Services
                 return MessageResult.Download($"/Backend/Site/GetClassesZip/{id}");
             }
 
-            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
+            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType).Assemble();
             return null;
         }
 #endif
