@@ -178,7 +178,7 @@ namespace Quantumart.QP8.DAL
         {
             var databaseType = GetDbType(connection);
             var suffix = isLive ? string.Empty : "_united";
-            var isExcludeArchive = excludeArchive ? $"and archive = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}" : string.Empty;
+            var isExcludeArchive = excludeArchive ? $"and archive = 0" : string.Empty;
             using (var cmd = DbCommandFactory.Create($"select * from content_{contentId}{suffix} {WithNoLock(databaseType)} where content_item_id = @id {isExcludeArchive}", connection))
             {
                 cmd.CommandType = CommandType.Text;
