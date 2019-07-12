@@ -2596,6 +2596,7 @@
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\kendo\kendo.all.d.ts" />
     <TypeScriptCompile Include="Scripts\polyfills\polyfills.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\App.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.d.ts">

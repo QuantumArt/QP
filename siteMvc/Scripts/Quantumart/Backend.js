@@ -81,6 +81,7 @@ export class Backend {
   _busy = false;
   _backendActionExecutor = null;
   _backendSplitter = null;
+  /** @type {BackendTreeMenu} */
   _backendTreeMenu = null;
   _backendTreeMenuContextMenuManager = null;
   _backendContextMenuManager = null;
@@ -128,7 +129,7 @@ export class Backend {
     );
 
     // eslint-disable-next-line max-statements
-    this._directLinkExecutor.ready($.proxy(function (openByDirectLink) {
+    this._directLinkExecutor.ready(openByDirectLink => {
       this._directLinkExecutor.attachObserver(
         window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler
       );
@@ -153,7 +154,7 @@ export class Backend {
         contextMenuManager: this._backendTreeMenuContextMenuManager
       });
 
-      this._backendTreeMenu.initialize(3);
+      this._backendTreeMenu.initialize();
       this._backendTreeMenu.attachObserver(
         window.EVENT_TYPE_TREE_MENU_ACTION_EXECUTING, this._onActionExecutingHandler
       );
@@ -268,7 +269,7 @@ export class Backend {
       }
 
       this._initializeSignOut();
-    }, this));
+    });
 
     this._initializeSignalrHubs();
   }

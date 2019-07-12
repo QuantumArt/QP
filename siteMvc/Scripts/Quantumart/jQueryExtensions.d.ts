@@ -1,3 +1,5 @@
+/// <reference path="../kendo/kendo.all.d.ts" />
+
 interface JQueryStatic {
   /** Подготавливает значение к преобразованию в число */
   _prepareNumber(value: any): string;

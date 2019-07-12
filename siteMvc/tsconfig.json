@@ -20,7 +20,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "sourceMap": true,
-    "target": "es5"
+    "target": "es5",
+    "module": "es6"
   },
   "include": [
     "Scripts/Quantumart/**/*",
