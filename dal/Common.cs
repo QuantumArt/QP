@@ -1374,10 +1374,9 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// </summary>
         public static bool DoPluralLinksExist(DbConnection connection, int contentId, int linkId)
         {
-            using (
-                var cmd =
-                    DbCommandFactory.Create(
-                        $"select 1 where exists(select item_id from item_link_united i inner join content_{contentId}_united c with(nolock) on i.item_id = c.content_item_id where link_id = @lid group by item_id having COUNT(linked_item_id) > 1)", connection))
+            var dbType = GetDbType(connection);
+            var query = $"select 1 where exists(select item_id from item_link_united i inner join content_{contentId}_united c {WithNoLock(dbType)} on i.item_id = c.content_item_id where link_id = @lid group by item_id having COUNT(linked_item_id) > 1)";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@lid", linkId);
@@ -1415,27 +1414,49 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             // 1. перенести данные о связях из CONTENT_DATA в item_to_item.
             // 2. В CONTENT_DATA в качестве значения поля для  всех статей установить LinkId
-            const string cmdText = "INSERT INTO [item_to_item] ([link_id],[l_item_id],[r_item_id]) select @linkid as link_id, D.CONTENT_ITEM_ID as l_item_id, D.DATA as r_item_id from CONTENT_DATA D where ATTRIBUTE_ID = @fid and D.DATA is not null; " +
-                "update CONTENT_DATA set DATA = @linkid where ATTRIBUTE_ID = @fid;";
+            // const string cmdText = "INSERT INTO [item_to_item] ([link_id],[l_item_id],[r_item_id]) select @linkid as link_id, D.CONTENT_ITEM_ID as l_item_id, D.DATA as r_item_id from CONTENT_DATA D where ATTRIBUTE_ID = @fid and D.DATA is not null; " +
+            //     "update CONTENT_DATA set DATA = @linkid where ATTRIBUTE_ID = @fid;";
 
-            using (var cmd = DbCommandFactory.Create(cmdText, connection))
+            var query = $@"SELECT d.content_item_id as item_id, d.data as linked_item_id from content_data d where attribute_id = {fieldId} and d.data is not null";
+            var doc = new XDocument();
+            var items = new XElement("items");
+            doc.Add(items);
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.Parameters.AddWithValue("@fid", fieldId);
-                cmd.Parameters.AddWithValue("@linkid", linkId);
-                cmd.ExecuteNonQuery();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var itemXml = new XElement("item");
+                        itemXml.Add(new XAttribute("id", reader["item_id"]));
+                        itemXml.Add(new XAttribute("linkId", linkId));
+                        itemXml.Add(new XAttribute("value", reader["linked_item_id"]));
+                        doc.Root?.Add(itemXml);
+                    }
+                }
+                UpdateM2MValues(connection, doc.ToString(SaveOptions.None));
             }
         }
 
         public static void M2MtoO2MTranferData(DbConnection connection, int fieldId, int linkId)
         {
             // перенести данные о связях из item_to_item в CONTENT_DATA.
-            const string cmdText = "update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid; " +
-                "update CONTENT_DATA SET DATA = NULL where CONTENT_DATA.ATTRIBUTE_ID = @fid and CONTENT_DATA.DATA = @linkid;";
+            var query = $@"WITH cte as (
+SELECT cd.content_item_id as item_id,
+	ilu.linked_item_id as linked_item_id
+	FROM content_data cd
+	left outer join item_link_united ilu on cd.content_item_id = ilu.item_id and ilu.link_id = @linkId
+	where cd.attribute_id = @fieldId
+)
+UPDATE content_data cd
+SET data = cte.linked_item_id
+from cte
+where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
 
-            using (var cmd = DbCommandFactory.Create(cmdText, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.Parameters.AddWithValue("@fid", fieldId);
-                cmd.Parameters.AddWithValue("@linkid", linkId);
+                cmd.Parameters.AddWithValue("@linkId", linkId);
+                cmd.Parameters.AddWithValue("@fieldId", fieldId);
                 cmd.ExecuteNonQuery();
             }
         }
