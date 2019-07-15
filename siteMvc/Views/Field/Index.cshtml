@@ -33,7 +33,7 @@
           return '<input type="checkbox" disabled' + (dataItem[settings.predicate] && ' checked="checked"');
         };
       };
-      $(`#${'@Model.MainComponentId'}`).qpGrid({
+      $('#@Model.MainComponentId').qpGrid({
         columns: [
           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
           { field: 'TypeCode', title: 'Type', template: iconTpl({ icon: 'TypeIcon', tooltip: 'TypeName' }), attributes: { 'class': 'isCentered' }, width: 47 },

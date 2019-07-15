@@ -122,7 +122,7 @@
         { field: '@FieldName.ModifierLogin', title: '@ArticleStrings.LastModifiedBy', width: 75 },
       ];
       Array.prototype.splice.apply(columns, [6, 0].concat(dynamicColumns));
-      $(`#${'@Model.MainComponentId'}`).qpGrid({
+      $('#@Model.MainComponentId').qpGrid({
         columns: columns,
         dataSource: {
           transport: {

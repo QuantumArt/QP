@@ -8,7 +8,7 @@
   <div id="@Model.MainComponentId"></div>
   <script>
     $(function () {
-      $(`#${'@Model.MainComponentId'}`).qpGrid({
+      $('#@Model.MainComponentId').qpGrid({
         columns: [
           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
           { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },

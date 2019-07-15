@@ -13,13 +13,13 @@
     }
     @Html.UnselectLink(Model)
   }
-  
+
 <div id="@Model.SearchBlockId" class="alMainContaner">
   @Html.Partial("UserAndGroupSearchBlock", Model)
   <div id="@Model.MainComponentId"></div>
   <script>
     $(function () {
-      $(`#${'@Model.MainComponentId'}`).qpGrid({
+      $('#@Model.MainComponentId').qpGrid({
         columns: [
           {
             field: '',
