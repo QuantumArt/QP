@@ -9,7 +9,7 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Repository
 {
-    internal class BackendActionRepository
+    internal static class BackendActionRepository
     {
         internal static BackendAction GetById(int actionId)
         {
@@ -45,9 +45,20 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var userId = QPContext.CurrentUserId;
                 var action = BackendActionCache.Actions.FirstOrDefault(x => x.Code == actionCode);
-                var actionId = action?.Id;
+                if (action == null)
+                {
+                    throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
+                }
+                var actionId = action.Id;
                 var entityCode = EntityTypeRepository.GetById(action.EntityTypeId)?.Code;
-                var statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(Common.GetActionStatusList(QPContext.EFContext, scope.DbConnection, userId, actionCode, actionId, entityId, entityCode, QPContext.IsAdmin).ToList());
+                var statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(
+                    CommonSecurity.GetActionStatusList(
+                        QPContext.EFContext,
+                        scope.DbConnection,
+                        userId, actionCode, actionId, entityId, entityCode,
+                        QPContext.IsAdmin
+                    ).ToList()
+                );
                 return statusesList;
             }
         }

@@ -290,7 +290,7 @@ namespace Quantumart.QP8.DAL
             var securitySql = string.Empty;
             if (useSecurity)
             {
-                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 1, entityNameParam: "content", parentEntityNameParam: "site", parentEntityIdParam: siteId);
+                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userId: userId, startLevel: 1, entityTypeName: "content", parentEntityTypeName: "site", parentEntityId: siteId.Value);
             }
 
             var sql = $@"
@@ -326,7 +326,7 @@ namespace Quantumart.QP8.DAL
             var securitySql = string.Empty;
             if (useSecurity)
             {
-                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 1, entityNameParam: "site");
+                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userId: userId, startLevel: 1, entityTypeName: "site");
             }
 
             var sql = $@"
@@ -357,11 +357,11 @@ namespace Quantumart.QP8.DAL
             }
 
             var securitySql = string.Empty;
-            var parentEntityId = parentFolderId != 0 ? parentFolderId : siteId;
+            var parentEntityId = parentFolderId != 0 ? parentFolderId : siteId.Value;
             var parentEntityName = parentFolderId != 0 ? "parent_folder" : "site";
             if (useSecurity)
             {
-                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 1, entityNameParam: "folder", parentEntityNameParam: parentEntityName, parentEntityIdParam: parentEntityId);
+                securitySql = PermissionHelper.GetPermittedItemsAsQuery(context, userId: userId, startLevel: 1, entityTypeName: "folder", parentEntityTypeName: parentEntityName, parentEntityId: parentEntityId);
             }
 
             var sql = $@"

@@ -301,6 +301,19 @@ namespace Quantumart.QP8.DAL
         }
 
 
+        public static string Least(DatabaseType databaseType, string first, string second)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $@"IIF({first} < {second}, {first}, {second})";
+                case DatabaseType.Postgres:
+                    return $@"LEAST({first}, {second})";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
         public static object BooleanToNumeric(DatabaseType dbType, bool value)
         {
             if (dbType == DatabaseType.SqlServer)

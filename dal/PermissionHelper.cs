@@ -14,38 +14,31 @@ namespace Quantumart.QP8.DAL
 
         public static string GetPermittedItemsAsQuery(
             QPModelDataContext context,
-            decimal? userIdParam = 0,
-            decimal? groupIdParam = 0,
-            int? startLevelParam = 2,
-            int? endLevelParam = 4,
-            string entityNameParam = "content_item",
-            string parentEntityNameParam = "",
-            decimal? parentEntityIdParam = 0)
+            decimal userId = 0,
+            decimal groupId = 0,
+            int startLevel = 2,
+            int endLevel = 4,
+            string entityTypeName = "content_item",
+            string parentEntityTypeName = "",
+            decimal parentEntityId = 0)
         {
-            var userId = userIdParam ?? 0;
-            var groupId = groupIdParam ?? 0;
-            var startLevel = startLevelParam ?? 2;
-            var endLevel = endLevelParam ?? 4;
-            var entityName = entityNameParam ?? "content_item";
-            var parentEntityName = parentEntityNameParam ?? "";
-            var parentEntityId = parentEntityIdParam ?? 0;
 
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var isPostgres = dbType == DatabaseType.Postgres;
             var sql = string.Empty;
 
             const string minPlExpression = "cast(min(pl) as int)%10";
-            var entityIdField = $"{entityName}_id";
+            var entityIdField = $"{entityTypeName}_id";
 
             var groupBy = $" group by {entityIdField}";
             var whereParentEntity = "";
-            var permissionTable = $"{entityName}_access_permlevel";
+            var permissionTable = $"{entityTypeName}_access_permlevel";
 
-            var parentEntityIdField = $"{parentEntityName}_id";
+            var parentEntityIdField = $"{parentEntityTypeName}_id";
 
-            if (!string.IsNullOrWhiteSpace(parentEntityName) && parentEntityId != 0)
+            if (!string.IsNullOrWhiteSpace(parentEntityTypeName) && parentEntityId != 0)
             {
-                permissionTable += $"_{parentEntityName}";
+                permissionTable += $"_{parentEntityTypeName}";
                 whereParentEntity += $" and {parentEntityIdField} = {parentEntityId}";
             }
 
@@ -54,7 +47,7 @@ namespace Quantumart.QP8.DAL
                 permissionTable = permissionTable.ToSnakeCase();
             }
 
-            var hide = entityName.Equals("content", StringComparison.InvariantCultureIgnoreCase)
+            var hide = entityTypeName.Equals("content", StringComparison.InvariantCultureIgnoreCase)
                 ? isPostgres ? ", MAX(hide::int) as hide " : ", MAX(CONVERT(int, hide)) as hide "
                 : ", 0 as hide ";
 
@@ -159,7 +152,7 @@ namespace Quantumart.QP8.DAL
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var isPostgres = dbType == DatabaseType.Postgres;
-            var entitySecQuery = GetPermittedItemsAsQuery(context, userIdParam: userId, startLevelParam: 0, endLevelParam: 100, entityNameParam: "entity_type");
+            var entitySecQuery = GetPermittedItemsAsQuery(context, userId, startLevel: 0, endLevel: 100, entityTypeName: "entity_type");
             var permissionTable = "entity_type_access_permlevel";
             if (isPostgres)
             {
@@ -178,10 +171,10 @@ namespace Quantumart.QP8.DAL
         {
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var actionSecQuery = GetPermittedItemsAsQuery(context,
-                userIdParam: userId,
-                startLevelParam: 0,
-                endLevelParam: 100,
-                entityNameParam: "BACKEND_ACTION"
+                userId,
+                startLevel: 0,
+                endLevel: 100,
+                entityTypeName: "BACKEND_ACTION"
                 );
 
             var entitySecQuery = GetEntityPermissionAsQuery(context, userId);

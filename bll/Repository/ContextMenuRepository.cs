@@ -25,8 +25,6 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         internal static ContextMenu GetByCode(string menuCode, bool loadItems = false)
         {
-            // using (var scope = new QPConnectionScope())
-            // {
             var contextMenu = loadItems
                 ? QPContext.EFContext.ContextMenuSet
                     .Include(x => x.Items)
@@ -46,8 +44,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             return contextMenuBiz;
-
-            // }
         }
 
         /// <summary>
@@ -58,11 +54,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var contextMenus = QPContext.EFContext.ContextMenuSet.OrderBy(x => x.Code).ToList();
             return MapperFacade.ContextMenuMapper.GetBizList(contextMenus);
-
-            // using (var scope = new QPConnectionScope())
-            // {
-            //     return MapperFacade.ContextMenuRowMapper.GetBizList(Common.GetContextMenusList(scope.DbConnection, QPContext.CurrentUserId).ToList());
-            // }
         }
 
         /// <summary>
@@ -70,26 +61,14 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         internal static IEnumerable<BackendActionStatus> GetStatusesList(string menuCode, int entityId)
         {
-            #warning прикрутить security (qp_get_menu_status_list)
-
-            var contextMenuId = QPContext.EFContext.ContextMenuSet.FirstOrDefault(x => x.Code == menuCode)?.Id;
-
-            return QPContext
-                .EFContext
-                .ContextMenuItemSet
-                .Include(x => x.Action)
-                .Where(x => x.ContextMenuId == contextMenuId)
-                .Select(x => new BackendActionStatus
-                {
-                    Code = x.Action.Code,
-                    Visible = true
-                })
-                .ToList();
-
-            // using (var scope = new QPConnectionScope())
-            // {
-            //     return MapperFacade.BackendActionStatusMapper.GetBizList(Common.GetMenuStatusList(scope.DbConnection, QPContext.CurrentUserId, menuCode, entityId).ToList());
-            // }
+            using (var scope = new QPConnectionScope())
+            {
+                 return MapperFacade.BackendActionStatusMapper.GetBizList(
+                     CommonSecurity.GetMenuStatusList(
+                         scope.DbConnection, QPContext.EFContext,  QPContext.CurrentUserId, QPContext.IsAdmin,
+                         menuCode, entityId
+                     ).ToList());
+            }
         }
 
         internal static EntityType GetEntityType(int menuId)

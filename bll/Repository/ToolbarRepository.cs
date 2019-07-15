@@ -19,12 +19,19 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                var actionId = BackendActionCache.Actions.FirstOrDefault(x => x.Code.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase))?.Id;
-                var rows = Common.GetToolbarButtonsForAction(QPContext.EFContext, scope.DbConnection, QPContext.CurrentUserId, QPContext.IsAdmin, actionId, actionCode, entityId);
+                var action = BackendActionCache.Actions.FirstOrDefault(x => x.Code.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase));
+                if (action == null)
+                {
+                    throw new ApplicationException("Action is not found: " + actionCode);
+                }
+
+                var rows = Common.GetToolbarButtonsForAction(
+                    QPContext.EFContext, scope.DbConnection, QPContext.CurrentUserId, QPContext.IsAdmin,
+                    action.Id, action.EntityType.Code, entityId
+                );
                 var buttons = MapperFacade.ToolbarButtonRowMapper.GetBizList(rows.ToList());
                 buttons.ForEach(x => x.Name = Translator.Translate(x.Name));
                 return buttons;
-                #warning Отфильтровать по qp_action_visible
             }
         }
     }

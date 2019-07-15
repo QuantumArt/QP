@@ -88,7 +88,7 @@ SELECT c.content_id,
 FROM (content_access c
          JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)));
 
-alter table content_access_perm_level
+alter table content_access_permlevel
     owner to postgres;
 
 create or replace view content_access_permlevel_site(content_id, user_id, group_id, permission_level_id, created, modified,
@@ -110,7 +110,7 @@ FROM ((content_access c
     JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
          JOIN content x ON ((c.content_id = x.content_id)));
 
-alter table content_access_perm_level_site
+alter table content_access_permlevel_site
     owner to postgres;
 
 create or replace view content_attribute_type(database_type, input_type, icon, type_name, attribute_id, content_id, attribute_name,
@@ -287,6 +287,21 @@ FROM ((entity_type_access c
          JOIN entity_type x ON ((c.entity_type_id = x.id)));
 
 alter table entity_type_access_permlevel
+    owner to postgres;
+
+create or replace view folder_access_permlevel as
+    SELECT c.*, pl.permission_level from FOLDER_ACCESS as c
+    INNER JOIN Permission_Level as pl ON c.permission_level_id = pl.permission_level_id;
+
+alter table folder_access_permlevel
+    owner to postgres;
+
+create or replace view folder_access_permlevel_site as
+    SELECT c.*, pl.permission_level, x.site_id from FOLDER_ACCESS as c
+    INNER JOIN Permission_Level as pl ON c.permission_level_id = pl.permission_level_id
+    INNER JOIN folder as x ON c.folder_id = x.folder_id;
+
+alter table folder_access_permlevel_site
     owner to postgres;
 
 create or replace view full_workflow_rules(workflow_rule_id, user_id, group_id, rule_order, predecessor_permission_id,
@@ -479,6 +494,19 @@ CREATE OR REPLACE VIEW VIRTUAL_CONTENT_RELATION AS
 
 
 alter table VIRTUAL_CONTENT_RELATION
+    owner to postgres;
+create or replace view workflow_access_permlevel as
+SELECT c.*, pl.permission_level from workflow_access as c INNER JOIN permission_level as pl ON c.permission_level_id = pl.permission_level_id;
+
+alter table workflow_access_permlevel
+    owner to postgres;
+
+CREATE OR REPLACE VIEW workflow_access_permlevel_site AS
+  SELECT c.*, pl.permission_level, x.site_id from workflow_access as c
+  INNER JOIN permission_level as pl ON c.permission_level_id = pl.permission_level_id
+  INNER JOIN workflow as x ON c.workflow_id = x.workflow_id;
+
+alter table workflow_access_permlevel_site
     owner to postgres;
 create or replace view workflow_max_statuses AS
 

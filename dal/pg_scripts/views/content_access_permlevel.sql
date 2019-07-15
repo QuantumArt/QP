@@ -15,6 +15,6 @@ SELECT c.content_id,
 FROM (content_access c
          JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)));
 
-alter table content_access_perm_level
+alter table content_access_permlevel
     owner to postgres;
 

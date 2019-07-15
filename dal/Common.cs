@@ -1192,48 +1192,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         }
 
         /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для пользователя по entity_type_code и action_type_code
-        /// </summary>
-        public static bool IsEntityAccessible(DbConnection connection, int userId, string entityTypeCode, int entityId, string actionTypeCode)
-        {
-            #warning реализовать для postgres
-            if (IsPostgresConnection(connection)) return true;
-            using (var cmd = DbCommandFactory.Create("select dbo.qp_is_entity_action_type_accessible(@userId, 0, @entityTypeCode, @entityId, @actionTypeCode)", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entityId", entityId);
-                cmd.Parameters.AddWithValue("@actionTypeCode", actionTypeCode);
-                return (bool)cmd.ExecuteScalar();
-            }
-        }
-
-        /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для пользователя по entity_type_code и action_type_code
-        /// </summary>
-        public static bool IsEntityAccessibleForUserGroup(DbConnection connection, int groupId, string entityTypeCode, int entityId, string actionTypeCode)
-        {
-            #warning реализовать нормально! заглушка
-            var dbType = GetDbType(connection);
-            if (dbType == DatabaseType.Postgres)
-            {
-                return true;
-            }
-
-
-            using (var cmd = DbCommandFactory.Create("select dbo.qp_is_entity_action_type_accessible(0, @groupId, @entityTypeCode, @entityId, @actionTypeCode)", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@groupId", groupId);
-                cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entityId", entityId);
-                cmd.Parameters.AddWithValue("@actionTypeCode", actionTypeCode);
-                return (bool)cmd.ExecuteScalar();
-            }
-        }
-
-        /// <summary>
         /// Получение максимального веса, доступного пользователю в цепочке workflow
         /// </summary>
         public static int GetMaxUserWeight(DbConnection connection, int userId, int workflowId)
@@ -3238,111 +3196,6 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 options.UserId,
                 options.UseSecurity
             );
-        }
-
-        public static IEnumerable<DataRow> GetToolbarButtonsForAction(QPModelDataContext context, DbConnection sqlConnection, int userId, bool isAdmin, int? actionId, string actionCode, int entityId)
-        {
-
-            var databaseType = GetDbType(context);
-            var useSecurity = !isAdmin; //&& databaseType != DatabaseType.Postgres;
-
-
-            var query = $@"
-        SELECT
-			ba.ID AS ACTION_ID,
-			ba.CODE AS ACTION_CODE,
-			bat.CODE AS ACTION_TYPE_CODE,
-			ba2.ID AS PARENT_ACTION_ID,
-			ba2.CODE AS PARENT_ACTION_CODE,
-			atb.NAME AS NAME,
-			bat.ITEMS_AFFECTED,
-			atb.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")},
-			COALESCE(ca.ICON_URL, atb.ICON) AS ICON,
-			atb.ICON_DISABLED,
-			atb.IS_COMMAND
-		FROM
-			ACTION_TOOLBAR_BUTTON AS atb
-			INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
-			LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
-			INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
-            {(!useSecurity ? string.Empty : "INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = bat.REQUIRED_PERMISSION_LEVEL_ID")}
-			INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
-            {(!useSecurity ? string.Empty : $"INNER JOIN ({PermissionHelper.GetActionPermissionsAsQuery(context, userId)}) SEC ON SEC.BACKEND_ACTION_ID = ba.ID")}
-
-		WHERE
-			atb.PARENT_ACTION_ID = {actionId}
-            {(!useSecurity ? string.Empty : "AND (SEC.PERMISSION_LEVEL >= PL.PERMISSION_LEVEL or bat.CODE = 'refresh')")}
-			-- AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
-		ORDER BY
-			{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")}
-";
-
-            // #warning реализовать для postgres
-            // if (IsPostgresConnection(sqlConnection)) return new List<DataRow>();
-            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                // cmd.Parameters.AddWithValue("user_id", userId);
-                // cmd.Parameters.AddWithValue("action_code", actionCode);
-                // cmd.Parameters.AddWithValue("entity_id", entityId);
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static IEnumerable<DataRow> GetActionStatusList(QPModelDataContext efContext, DbConnection sqlConnection, int userId, string actionCode, int? actionId, int entityId, string entityCode, bool isAdmin)
-        {
-            var useSecurity = !isAdmin;
-            var databaseType = GetDbType(efContext);
-            string query;
-
-            // if (!useSecurity)
-            // {
-            #warning прикрутить security (из qp_get_action_status_list)
-            query = $@"
-        SELECT ba.CODE, {SqlQuerySyntaxHelper.ToBoolSql(databaseType, true)} as visible
-		FROM ACTION_TOOLBAR_BUTTON atb
-		INNER JOIN BACKEND_ACTION ba on ba.ID = atb.ACTION_ID
-		INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
-		WHERE atb.PARENT_ACTION_ID = {actionId} AND at.items_affected = 1
-";
-            // }
-            // else
-            // {
-            //     var secQuery = PermissionHelper.GetActionPermissionsAsQuery(efContext, userId);
-            //
-            // }
-
-            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                // cmd.Parameters.AddWithValue("user_id", userId);
-                // cmd.Parameters.AddWithValue("action_code", actionCode);
-                // cmd.Parameters.AddWithValue("entity_id", entityId);
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static IEnumerable<DataRow> GetMenuStatusList(DbConnection sqlConnection, int userId, string menuCode, int entityId)
-        {
-            using (var cmd = DbCommandFactory.Create("qp_get_menu_status_list", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("user_id", userId);
-                cmd.Parameters.AddWithValue("menu_code", menuCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
-
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-
-                return dt.AsEnumerable().ToArray();
-            }
         }
 
         public static IEnumerable<DataRow> GetChildTreeNodeList(DbConnection sqlConnection, int userId, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId = 0)
@@ -5622,7 +5475,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
             }
         }
 
-        public static string GetPermittedItemsAsQuery(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId, QPModelDataContext context = null)
+        public static string GetPermittedItemsAsQuery(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityTypeName, string parentEntityTypeName, int parentEntityId, QPModelDataContext context = null)
         {
             if (context == null)
             {
@@ -5640,7 +5493,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 }
             }
 
-            return PermissionHelper.GetPermittedItemsAsQuery(context, userId, groupId, startLevel, endLevel, entityName, parentEntityName, parentEntityId);
+            return PermissionHelper.GetPermittedItemsAsQuery(context, userId, groupId, startLevel, endLevel, entityTypeName, parentEntityTypeName, parentEntityId);
             // using (var cmd = DbCommandFactory.Create("qp_GetPermittedItemsAsQuery", connection))
             // {
             //     cmd.CommandType = CommandType.StoredProcedure;

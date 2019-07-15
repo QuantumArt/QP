@@ -153,11 +153,13 @@
       <HintPath>$(SolutionDir)packages\Microsoft.Owin.Security.4.0.0\lib\net451\Microsoft.Owin.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(SolutionDir)\packages\enterpriselibrary.validation.netcore\6.0.1312\lib\netstandard2.0\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(SolutionDir)\packages\enterpriselibrary.common.netcore\6.0.1312\lib\netstandard2.0\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.NetCore.6.0.1312\lib\netstandard2.0\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.NetCore.6.0.1312\lib\netstandard2.0\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
       <HintPath>$(SolutionDir)packages\System.Configuration.ConfigurationManager.4.5.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
@@ -2713,6 +2715,7 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
+
 
 
 

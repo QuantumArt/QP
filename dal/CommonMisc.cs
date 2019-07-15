@@ -126,17 +126,17 @@ namespace Quantumart.QP8.DAL
         {
             totalRecords = -1;
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var entityName = isSite ? EntityTypeCode.OldSiteFolder : EntityTypeCode.ContentFolder;
-            var parentEntityName = isSite ? EntityTypeCode.Site : EntityTypeCode.Content;
+            var entityTypeName = isSite ? EntityTypeCode.OldSiteFolder : EntityTypeCode.ContentFolder;
+            var parentEntityTypeName = isSite ? EntityTypeCode.Site : EntityTypeCode.Content;
             var blockFilter = string.Empty;
 
             var useSecurity = !isAdmin;
 
             int parentLevel;
-            if (entityName == EntityTypeCode.ContentFolder)
+            if (entityTypeName == EntityTypeCode.ContentFolder)
             {
                 useSecurity = false;
-                parentLevel = GetEntityAccessLevel(sqlConnection, context, userId, 0, parentEntityName, id);
+                parentLevel = CommonSecurity.GetEntityAccessLevel(sqlConnection, context, userId, 0, parentEntityTypeName, id);
                 if (parentLevel == 0)
                 {
                     blockFilter += " AND 1 = 0 ";
@@ -146,15 +146,21 @@ namespace Quantumart.QP8.DAL
             else
             {
                 parentLevel = folderId.HasValue
-                    ? GetEntityAccessLevel(sqlConnection, context, userId, 0, EntityTypeCode.SiteFolder, folderId.Value)
-                    : GetEntityAccessLevel(sqlConnection, context, userId, 0, parentEntityName, id);
+                    ? CommonSecurity.GetEntityAccessLevel(sqlConnection, context, userId, 0, EntityTypeCode.SiteFolder, folderId.Value)
+                    : CommonSecurity.GetEntityAccessLevel(sqlConnection, context, userId, 0, parentEntityTypeName, id);
             }
 
-            var securitySql = useSecurity
-                ? PermissionHelper.GetPermittedItemsAsQuery(context, userId, 0, 0, 4, entityName, parentEntityName, id)
-                : string.Empty;
+            var securitySql = useSecurity ? PermissionHelper.GetPermittedItemsAsQuery(
+                    context, userId, 0, PermissionLevel.Deny, PermissionLevel.FullAccess,
+                    entityTypeName, parentEntityTypeName, id
+                ) : string.Empty;
 
-
+            var childrenParam = SqlQuerySyntaxHelper.CastToBool(dbType,
+                $@"
+                    CASE WHEN (
+                        SELECT COUNT(FOLDER_ID) FROM {entityTypeName} WHERE PARENT_FOLDER_ID = c.FOLDER_ID
+                    ) > 0 THEN 1 ELSE 0 END
+            ");
             var query = $@"
             SELECT
 {(countOnly
@@ -165,23 +171,23 @@ namespace Quantumart.QP8.DAL
             c.CREATED,
             c.MODIFIED,
             c.LAST_MODIFIED_BY,
-            {SqlQuerySyntaxHelper.CastToBool(dbType, $"CASE WHEN (SELECT COUNT(FOLDER_ID) FROM {entityName} WHERE PARENT_FOLDER_ID = c.FOLDER_ID) > 0 THEN 1 ELSE 0 END")} AS HAS_CHILDREN,
+            {childrenParam} AS HAS_CHILDREN,
             mu.{Escape(dbType, "USER_ID")} as MODIFIER_USER_ID,
             mu.FIRST_NAME as MODIFIER_FIRST_NAME,
             mu.LAST_NAME AS MODIFIER_LAST_NAME,
             mu.EMAIL AS MODIFIER_EMAIL,
             mu.{Escape(dbType, "LOGIN")} AS MODIFIER_LOGIN
             {(useSecurity
-                ? $", COALESCE(pi.permission_level, {SqlQuerySyntaxHelper.CastToVarchar(dbType, parentLevel.ToString())}) as EFFECTIVE_PERMISSION_LEVEL"
+                ? $", COALESCE(pi.permission_level, {parentLevel}) as EFFECTIVE_PERMISSION_LEVEL"
                 : string.Empty
                         )}
 "
                 )} ";
 
             query += $@"
-    FROM {entityName} as c
+    FROM {entityTypeName} as c
     {(useSecurity
-                ? $"LEFT JOIN ({securitySql}) as pi ON c.folder_id = pi.{entityName}_id"
+                ? $"LEFT JOIN ({securitySql}) as pi ON c.folder_id = pi.{entityTypeName}_id"
                 : string.Empty
     )}
     {(!countOnly
@@ -190,7 +196,7 @@ namespace Quantumart.QP8.DAL
     WHERE
     {(folderId.HasValue
                 ? $" c.parent_folder_id = '{folderId.Value}' "
-                : $" c.parent_folder_id is null and c.{parentEntityName}_id = '{id}'"
+                : $" c.parent_folder_id is null and c.{parentEntityTypeName}_id = '{id}'"
     )}
 
     {(useSecurity
@@ -205,64 +211,9 @@ namespace Quantumart.QP8.DAL
                 query += "ORDER BY c.NAME ASC";
             }
 
-            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
-            {
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                totalRecords = dt.Rows.Count;
-                return dt.AsEnumerable().ToArray();
-            }
+            return GetDataTableForQuery(sqlConnection, query).AsEnumerable().ToArray();
         }
 
-        private static int GetEntityAccessLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, string parentEntityName, int id)
-        {
-            #warning реализовать qp_entity_access_level
-            return PermissionLevel.FullAccess;
-        }
-
-        // public static IEnumerable<DataRow> GetChildFoldersList(DbConnection sqlConnection, int userId, int id, bool isSite, int? folderId, int permissionLevel, bool countOnly, out int totalRecords)
-        // {
-        //     totalRecords = -1;
-        //     using (var cmd = DbCommandFactory.Create("qp_get_folders_tree", sqlConnection))
-        //     {
-        //         cmd.CommandType = CommandType.StoredProcedure;
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId });
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "parent_entity_id", DbType = DbType.Decimal, Value = id });
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "is_site", DbType = DbType.Boolean, Value = isSite });
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "parent_folder_id", DbType = DbType.Decimal, IsNullable = true, Value = folderId });
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "permission_level", DbType = DbType.Decimal, Value = permissionLevel });
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "count_only", DbType = DbType.Int32, Value = countOnly });
-        //         cmd.Parameters.Add(new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords });
-        //
-        //         var dt = new DataTable();
-        //         DataAdapterFactory.Create(cmd).Fill(dt);
-        //         totalRecords = (int)cmd.Parameters["total_records"].Value;
-        //         return dt.AsEnumerable().ToArray();
-        //     }
-        // }
-
-        // public static string GetEntityName(DbConnection sqlConnection, string entityTypeCode, int entityId, int parentEntityId)
-        // {
-        //
-        //     using (var cmd = DbCommandFactory.Create("qp_get_entity_title", sqlConnection))
-        //     {
-        //         cmd.CommandType = CommandType.StoredProcedure;
-        //         cmd.Parameters.AddWithValue("entity_type_code", entityTypeCode);
-        //         cmd.Parameters.AddWithValue("entity_id", entityId);
-        //         cmd.Parameters.AddWithValue("parent_entity_id", parentEntityId);
-        //         cmd.Parameters.Add(
-        //             new SqlParameter
-        //             {
-        //                 ParameterName = "title",
-        //                 DbType = DbType.String,
-        //                 Size = 255,
-        //                 Direction = ParameterDirection.Output,
-        //             }
-        //         );
-        //         cmd.ExecuteNonQuery();
-        //         return cmd.Parameters["title"].Value.ToString();
-        //     }
-        // }
 
         public static bool CheckEntityExistence(DbConnection sqlConnection, string entityTypeCode, string entitySource, string entityIdField, decimal entityId)
         {
@@ -502,11 +453,57 @@ WHERE content_item_id = {contentItemId}
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+                return GetDataTableForCommand(cmd).AsEnumerable()
+                    .Select(row => (int)(decimal)row["content_item_id"]).ToArray();
             }
         }
 
+         public static IEnumerable<DataRow> GetToolbarButtonsForAction(
+             QPModelDataContext context, DbConnection sqlConnection, int userId, bool isAdmin,
+             int actionId, string entityTypeCode, int entityId)
+        {
+
+            var databaseType = GetDbType(context);
+            var useSecurity = !isAdmin;
+            var level = CommonSecurity.GetEntityAccessLevel(sqlConnection, context, userId, 0, entityTypeCode, entityId);
+            var least = SqlQuerySyntaxHelper.Least(databaseType, "SEC.PERMISSION_LEVEL", level.ToString());
+            var query = $@"
+        SELECT
+			ba.ID AS ACTION_ID, ba.CODE AS ACTION_CODE, bat.CODE AS ACTION_TYPE_CODE, ba2.ID AS PARENT_ACTION_ID,
+			ba2.CODE AS PARENT_ACTION_CODE, atb.NAME AS NAME, bat.ITEMS_AFFECTED,
+			atb.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")},
+			COALESCE(ca.ICON_URL, atb.ICON) AS ICON, atb.ICON_DISABLED,atb.IS_COMMAND
+		FROM
+			ACTION_TOOLBAR_BUTTON AS atb
+			INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
+			LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
+			INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
+            {(!useSecurity ? string.Empty : "INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = bat.REQUIRED_PERMISSION_LEVEL_ID")}
+			INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
+            {(!useSecurity ? string.Empty : $"INNER JOIN ({PermissionHelper.GetActionPermissionsAsQuery(context, userId)}) SEC ON SEC.BACKEND_ACTION_ID = ba.ID")}
+
+		WHERE
+			atb.PARENT_ACTION_ID = {actionId}
+            {(!useSecurity ? string.Empty : $"AND ({least} >= PL.PERMISSION_LEVEL or bat.CODE = 'refresh')")}
+		ORDER BY
+			{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ORDER")}
+";
+            return GetDataTableForQuery(sqlConnection, query);
+        }
+
+         public static IEnumerable<DataRow> GetDataTableForQuery(DbConnection sqlConnection, string query)
+         {
+             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
+             {
+                 return GetDataTableForCommand(cmd);
+             }
+         }
+
+         public static IEnumerable<DataRow> GetDataTableForCommand(DbCommand cmd)
+         {
+             var dt = new DataTable();
+             DataAdapterFactory.Create(cmd).Fill(dt);
+             return dt.AsEnumerable().ToArray();
+         }
     }
 }

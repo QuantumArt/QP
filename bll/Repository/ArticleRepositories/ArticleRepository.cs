@@ -103,7 +103,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences)
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
-            var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
+            var availableForList = QPContext.IsAdmin || SecurityRepository.IsEntityAccessible( EntityTypeCode.Content, contentId, ActionTypeCode.List);
             if (!availableForList || ftsOptions.HasError.HasValue && ftsOptions.HasError.Value)
             {
                 filter = SqlFilterComposer.Compose(filter, "1 = 0");
@@ -447,7 +447,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 }
 
                 var isUserAdmin = QPContext.IsAdmin;
-                var availableForList = isUserAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
+                var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.List);
                 if (!availableForList)
                 {
                     filter = SqlFilterComposer.Compose(filter, "1 = 0");

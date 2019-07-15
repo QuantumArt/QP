@@ -17,6 +17,6 @@ FROM ((content_access c
     JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
          JOIN content x ON ((c.content_id = x.content_id)));
 
-alter table content_access_perm_level_site
+alter table content_access_permlevel_site
     owner to postgres;
 

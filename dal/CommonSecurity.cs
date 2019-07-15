@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
@@ -46,13 +47,7 @@ namespace Quantumart.QP8.DAL
 				 where ca1.USE_RELATION_SECURITY = {trueValue}
 			 ";
 
-            using (var cmd = DbCommandFactory.Create(sqlText, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
+            return Common.GetDataTableForQuery(sqlConnection, sqlText).AsEnumerable().ToArray();
         }
 
         public class RelationSecurityPathFinder
@@ -197,6 +192,189 @@ namespace Quantumart.QP8.DAL
             }
 
             return granted;
+        }
+
+        public static int GetEntityAccessLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, string entityTypeCode, int entityId)
+        {
+            var actualEntityTypeCode = GetActualEntityTypeCode(entityTypeCode);
+
+            if (!IsSecurityDefined(actualEntityTypeCode) || entityId == 0)
+            {
+                return PermissionLevel.FullAccess;
+            }
+
+            var predefinedLevel = GetPredefinedLevel(sqlConnection, context, userId, groupId, entityId, actualEntityTypeCode);
+
+            if (predefinedLevel.HasValue)
+            {
+                return predefinedLevel.Value;
+            }
+
+            var result = GetPermissionLevel(sqlConnection, entityId, userId, groupId, actualEntityTypeCode);
+
+            if (!result.HasValue && actualEntityTypeCode == EntityTypeCode.OldSiteFolder)
+            {
+                return GetFolderAccessLevel(sqlConnection, context, userId, groupId, actualEntityTypeCode, entityId);
+            }
+
+            return result ?? PermissionLevel.Deny;
+        }
+
+        private static bool IsSecurityDefined(string actualEntityTypeCode)
+        {
+            var entityTypeCodes = new[]
+            {
+                EntityTypeCode.OldArticle, EntityTypeCode.Content, EntityTypeCode.Site,
+                EntityTypeCode.OldSiteFolder, EntityTypeCode.ContentFolder, EntityTypeCode.Workflow
+            };
+
+            return entityTypeCodes.Contains(actualEntityTypeCode);
+        }
+
+        private static int? GetPredefinedLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, int entityId, string actualEntityTypeCode)
+        {
+            int? predefinedLevel = null;
+
+            switch (actualEntityTypeCode)
+            {
+                case EntityTypeCode.Content:
+                {
+                    predefinedLevel = GetPredefinedContentLevel(sqlConnection, context, userId, groupId, entityId);
+                    break;
+                }
+
+                case EntityTypeCode.ContentFolder:
+                {
+                    predefinedLevel = GetPredefinedContentFolderLevel(sqlConnection, context, userId, groupId, entityId);
+                    break;
+                }
+
+                case EntityTypeCode.OldArticle:
+                {
+                    predefinedLevel = GetPredefinedArticleLevel(sqlConnection, context, userId, groupId, entityId);
+                    break;
+                }
+            }
+
+            return predefinedLevel;
+        }
+
+        private static int GetFolderAccessLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, string entityTypeCode, int entityId)
+        {
+            var folder = context.SiteFolderSet.Single(n => n.Id == entityId);
+            return folder.ParentId.HasValue ?
+                GetEntityAccessLevel(sqlConnection, context, userId, groupId, entityTypeCode, (int)folder.ParentId.Value) :
+                GetEntityAccessLevel(sqlConnection, context, userId, groupId, EntityTypeCode.Site, (int)folder.SiteId);
+        }
+
+        private static int? GetPredefinedArticleLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, int entityId)
+        {
+            int? resultLevel = null;
+            var contentId = context.ArticleSet.Include(n => n.Content)
+                .Where(n => n.Id == entityId && n.Content.AllowItemsPermission == 0)
+                .Select(n => n.ContentId).SingleOrDefault();
+
+            if (contentId != 0)
+            {
+                resultLevel = GetEntityAccessLevel(sqlConnection, context, userId, groupId, EntityTypeCode.Content, (int)contentId);
+            }
+
+            return resultLevel;
+        }
+
+        private static int? GetPredefinedContentFolderLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, int entityId)
+        {
+            int? resultLevel = null;
+            var contentId = context.ContentFolderSet.Where(n => n.Id == entityId)
+                .Select(n => n.ContentId)
+                .SingleOrDefault();
+
+            if (contentId != 0)
+            {
+                resultLevel = GetEntityAccessLevel(sqlConnection, context, userId, groupId, EntityTypeCode.Content, (int)contentId);
+            }
+
+            return resultLevel;
+        }
+
+        private static int? GetPredefinedContentLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, int entityId)
+        {
+            int? resultLevel = null;
+            var classifierId = context.FieldSet.Where(n => n.ContentId == entityId)
+                .Where(n => n.ClassifierId != null)
+                .Select(n => n.ClassifierId)
+                .SingleOrDefault();
+
+            if (classifierId.HasValue)
+            {
+                var baseContentId = context.FieldSet.Where(n => n.Id == classifierId.Value)
+                    .Select(n => n.ContentId)
+                    .SingleOrDefault();
+
+                if (baseContentId != 0)
+                {
+                    resultLevel = GetEntityAccessLevel(sqlConnection, context, userId, groupId, EntityTypeCode.Content, (int)baseContentId);
+                }
+            }
+
+            return resultLevel;
+        }
+
+        private static string GetActualEntityTypeCode(string entityTypeCode)
+        {
+            string actualEntityTypeCode;
+            switch (entityTypeCode)
+            {
+                case EntityTypeCode.Article:
+                    actualEntityTypeCode = EntityTypeCode.OldArticle;
+                    break;
+                case EntityTypeCode.VirtualContent:
+                    actualEntityTypeCode = EntityTypeCode.Content;
+                    break;
+                case EntityTypeCode.SiteFolder:
+                    actualEntityTypeCode = EntityTypeCode.OldSiteFolder;
+                    break;
+                default:
+                    actualEntityTypeCode = entityTypeCode;
+                    break;
+            }
+
+            return actualEntityTypeCode;
+        }
+
+        private static int? GetPermissionLevel(DbConnection sqlConnection, int id, int userId, int groupId,
+            string entityTypeName, string parentEntityTypeName = "", int parentId = 0)
+        {
+            return GetPermissionLevels(
+                sqlConnection, new[] { id }, userId, groupId, entityTypeName, parentEntityTypeName, parentId
+            )[id];
+        }
+
+        private static Dictionary<int,int?> GetPermissionLevels(DbConnection sqlConnection, int[] ids, int userId, int groupId, string entityTypeName, string parentEntityTypeName = "", int parentId = 0)
+        {
+            var result = new Dictionary<int, int?>();
+            var securitySql = Common.GetPermittedItemsAsQuery(sqlConnection, userId, groupId, PermissionLevel.Deny, PermissionLevel.FullAccess,
+                entityTypeName, parentEntityTypeName, parentId);
+
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+
+            var sql = $@" select i.id, pi.permission_level from {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}
+				left join ({securitySql}) as pi on pi.{entityTypeName}_id = i.id ";
+
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
+            {
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result[Convert.ToInt32(reader["id"])] = Converter.ToNullableInt32(reader["permission_level"]);
+                    }
+                }
+            }
+
+            return result;
         }
 
         public static string GetSecurityPathSql(DatabaseType dbType, List<RelationSecurityPathItem> items, int contentId)
@@ -421,6 +599,84 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+
+        public static IEnumerable<DataRow> GetActionStatusList(QPModelDataContext efContext, DbConnection sqlConnection, int userId, string actionCode, int? actionId, int entityId, string entityCode, bool isAdmin)
+        {
+            var useSecurity = !isAdmin;
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            string query;
+
+             if (!useSecurity)
+             {
+                query = $@"
+                    SELECT ba.CODE, {SqlQuerySyntaxHelper.ToBoolSql(databaseType, true)} as visible
+		            FROM ACTION_TOOLBAR_BUTTON atb
+		            INNER JOIN BACKEND_ACTION ba on ba.ID = atb.ACTION_ID
+		            INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
+		            WHERE atb.PARENT_ACTION_ID = {actionId} AND at.items_affected = 1
+                ";
+            }
+            else
+            {
+                var level = GetEntityAccessLevel(sqlConnection, efContext, userId, 0, entityCode, entityId);
+                var least = SqlQuerySyntaxHelper.Least(databaseType, "SEC.PERMISSION_LEVEL", level.ToString());
+                var secQuery = PermissionHelper.GetActionPermissionsAsQuery(efContext, userId);
+                query = $@"
+                    SELECT ba.CODE,
+					CAST((
+                        CASE WHEN {least} >= PL.PERMISSION_LEVEL THEN 1 ELSE 0
+                    END ) AS BIT) as visible
+		            FROM ACTION_TOOLBAR_BUTTON atb
+		            INNER JOIN BACKEND_ACTION ba on ba.ID = atb.ACTION_ID
+		            INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
+					INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = AT.REQUIRED_PERMISSION_LEVEL_ID
+					INNER JOIN ({secQuery}) SEC ON SEC.BACKEND_ACTION_ID = ba.ID
+		            WHERE atb.PARENT_ACTION_ID = {actionId} AND at.items_affected = 1
+                ";
+            }
+
+            return Common.GetDataTableForQuery(sqlConnection, query);
+        }
+
+        public static IEnumerable<DataRow> GetMenuStatusList(
+            DbConnection sqlConnection, QPModelDataContext efContext, int userId, bool isAdmin,
+            string menuCode, int entityId)
+        {
+            var useSecurity = !isAdmin;
+            var databaseType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var menuId = efContext.ContextMenuSet.First(x => x.Code == menuCode).Id;
+            string query;
+
+             if (!useSecurity)
+             {
+                query = $@"
+                    SELECT ba.CODE, {SqlQuerySyntaxHelper.ToBoolSql(databaseType, true)} as visible
+		            FROM CONTEXT_MENU_ITEM cmi
+		            INNER JOIN BACKEND_ACTION ba on ba.ID = cmi.ACTION_ID
+		            WHERE cmi.context_menu_id = {menuId}
+                ";
+            }
+            else
+            {
+                var level = GetEntityAccessLevel(sqlConnection, efContext, userId, 0, menuCode, entityId);
+                var secQuery = PermissionHelper.GetActionPermissionsAsQuery(efContext, userId);
+                var least = SqlQuerySyntaxHelper.Least(databaseType, "SEC.PERMISSION_LEVEL", level.ToString());
+                query = $@"
+                    SELECT ba.CODE,
+					CAST((
+                        CASE WHEN {least} >= PL.PERMISSION_LEVEL THEN 1 ELSE 0
+                    END ) AS BIT) as visible
+		            FROM CONTEXT_MENU_ITEM cmi
+		            INNER JOIN BACKEND_ACTION ba on ba.ID = cmi.ACTION_ID
+		            INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
+					INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = AT.REQUIRED_PERMISSION_LEVEL_ID
+					INNER JOIN ({secQuery}) SEC ON SEC.BACKEND_ACTION_ID = ba.ID
+		            WHERE cmi.context_menu_id = {menuId}
+                ";
+            }
+
+            return Common.GetDataTableForQuery(sqlConnection, query);
+        }
 
     }
 }
