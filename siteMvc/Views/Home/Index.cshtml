@@ -52,7 +52,7 @@
   <em class="bl"></em>
   <em class="br"></em>
   <div id="tree">
-    @(Html.Telerik().TreeView().Name("MainTreeMenu"))
+    <div class="t-widget t-treeview t-reset" id="MainTreeMenu"></div>
   </div>
   <div class="lineBottom"></div>
 </div>)
@@ -100,9 +100,13 @@ panes.Add().Content(
   @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true))
 
   <script>
-      CKEDITOR.timestamp = '@DateTime.Now.Ticks';
-      var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-      var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-      Url.SetRootPath("@Url.Content("~/")");
+    CKEDITOR.timestamp = '@DateTime.Now.Ticks';
+    var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+    var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+    Url.SetRootPath("@Url.Content("~/")");
+
+    $(document).ready(function () {
+      $('#MainTreeMenu').tTreeView();
+    });
   </script>
 </body>

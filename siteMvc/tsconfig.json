@@ -21,7 +21,9 @@
     "noUnusedParameters": false,
     "sourceMap": true,
     "target": "es5",
-    "module": "es6"
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "Scripts/build"
   },
   "include": [
     "Scripts/Quantumart/**/*",

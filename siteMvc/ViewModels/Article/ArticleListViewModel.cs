@@ -210,19 +210,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return 0;
         }
 
-        public Dictionary<string, object> TreeHthmlAttributes
-        {
-            get
-            {
-                var result = new Dictionary<string, object>();
-                if (AllowMultipleEntitySelection)
-                {
-                    result.AddCssClass(HtmlHelpersExtensions.CheckBoxTreeClassName);
-                }
-
-                return result;
-            }
-        }
+        public string TreeСssClass => AllowMultipleEntitySelection ? HtmlHelpersExtensions.CheckBoxTreeClassName : "";
 
         public override bool AllowFilterSelectedEntities => true;
 

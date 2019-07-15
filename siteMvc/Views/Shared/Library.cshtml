@@ -17,7 +17,10 @@
     {
       panes.Add().Content(
         @<div class="treeContainer">
-          @Html.Telerik().TreeView().Name(Model.TreeElementId)
+          <div class="t-widget t-treeview t-reset" id="@Model.TreeElementId"></div>
+          <script type="text/javascript">
+            $('#@Model.TreeElementId').tTreeView();
+          </script>
         </div>
       )
       .Size("250px")
