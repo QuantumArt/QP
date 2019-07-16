@@ -194,11 +194,26 @@ namespace Quantumart.QP8.DAL
             return granted;
         }
 
+        private static bool IsAdmin(DbConnection sqlConnection, int userId, int groupId)
+        {
+            if (userId != 0)
+            {
+                return Common.IsAdmin(sqlConnection, userId);
+            }
+
+            if (groupId != 0)
+            {
+                return groupId == SpecialIds.AdminGroupId;
+            }
+
+            return false;
+        }
+
         public static int GetEntityAccessLevel(DbConnection sqlConnection, QPModelDataContext context, int userId, int groupId, string entityTypeCode, int entityId)
         {
             var actualEntityTypeCode = GetActualEntityTypeCode(entityTypeCode);
 
-            if (!IsSecurityDefined(actualEntityTypeCode) || entityId == 0)
+            if (!IsSecurityDefined(actualEntityTypeCode) || entityId == 0 || IsAdmin(sqlConnection, userId, groupId))
             {
                 return PermissionLevel.FullAccess;
             }
@@ -677,6 +692,55 @@ namespace Quantumart.QP8.DAL
 
             return Common.GetDataTableForQuery(sqlConnection, query);
         }
+
+        public static void CreateContentAccess(DbConnection connection, int id)
+        {
+            GiveContentAccessToCreator(connection, id);
+            GiveContentAccessByPropagatingFromSite(connection, id);
+        }
+
+        public static void CreateWorkflowAccess(DbConnection connection, int id)
+        {
+            GiveWorkflowAccessToCreator(connection, id);
+        }
+
+        private static string PropagateToItems => "case c.virtual_type when 0 then 1 else 0 end as propagate_to_items";
+
+        private static void GiveContentAccessToCreator(DbConnection connection, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"
+                INSERT INTO content_access (content_id, user_id, permission_level_id, last_modified_by, propagate_to_items)
+                SELECT content_id, last_modified_by, 1, 1, {PropagateToItems}
+                FROM content c where c.content_id = {id}
+            " ;
+            Common.ExecuteSql(connection, sql);
+        }
+
+        public static void GiveContentAccessByPropagatingFromSite(DbConnection connection, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"
+                INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, last_modified_by, propagate_to_items)
+                SELECT c.content_id, ca.user_id, ca.group_id, ca.permission_level_id, 1, {PropagateToItems}
+                FROM content c inner join site_access ca on ca.site_id = c.site_id
+                WHERE c.content_id = {id}
+                AND (ca.user_id <> i.last_modified_by OR ca.user_id IS NULL) AND ca.propagate_to_contents = 1
+            " ;
+            Common.ExecuteSql(connection, sql);
+        }
+
+        private static void GiveWorkflowAccessToCreator(DbConnection connection, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"
+                INSERT INTO workflow_access (workflow_id, user_id, permission_level_id, last_modified_by)
+                SELECT workflow_id, last_modified_by, 1, 1
+                FROM workflow w where w.workflow_id = {id}
+            " ;
+            Common.ExecuteSql(connection, sql);
+        }
+
 
     }
 }

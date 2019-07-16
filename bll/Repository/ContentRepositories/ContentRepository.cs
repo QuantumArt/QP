@@ -232,20 +232,45 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             return (int)QPContext.EFContext.ContentSet.Where(n => n.Id == (decimal)id).Select(n => n.SiteId).Single();
         }
 
+        private static void ChangeInsertAccessContentTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_access_content", enable);
+        }
+
+        private static void ChangeInsertModificationTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_insert_modify_row", enable);
+        }
+
         internal static Content Save(Content content, bool createDefaultField)
         {
             var binding = content.WorkflowBinding;
-            FieldRepository.ChangeCreateFieldsTriggerState(false);
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                FieldRepository.ChangeCreateFieldsTriggerState(false);
+                ChangeInsertAccessContentTriggerState(false);
+                ChangeInsertModificationTriggerState(false);
+                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
+            }
 
             var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
+
             if (QPContext.DatabaseType != DatabaseType.SqlServer)
             {
                 Common.CreateContentTables(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
-                Common.CreateContentModification(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
             }
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
-            FieldRepository.ChangeCreateFieldsTriggerState(true);
+
+            Common.CreateContentModification(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
+            CommonSecurity.CreateContentAccess(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
+                FieldRepository.ChangeCreateFieldsTriggerState(true);
+                ChangeInsertAccessContentTriggerState(true);
+                ChangeInsertModificationTriggerState(true);
+            }
 
             if (createDefaultField)
             {

@@ -113,7 +113,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public MessageResult Remove(int id)
         {
-            WorkflowRepository.DeleteVeStyle(id);
+            WorkflowRepository.Delete(id);
             return null;
         }
 
