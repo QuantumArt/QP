@@ -17,21 +17,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
     public static class HtmlHelperGridExtensions
     {
-        public static MvcHtmlString ArticleGrid(this HtmlHelper html, ArticleListViewModel model)
-        {
-            var result = html.Telerik().Grid<DataRow>()
-                .Name(model.MainComponentId)
-                .Columns(c => ConfigureColumns(c, model.DisplayFields, model.AllowMultipleEntitySelection, !model.IsWindow))
-                .DataBinding(db => db.Ajax().Select(model.GetDataActionName, model.ControllerName))
-                .EnableCustomBinding(true)
-                .Sortable()
-                .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(model.PageSize))
-                .Selectable(s => s.Enabled(true))
-                .ClientEvents(e => e.OnDataBinding("$q.preventDefaultFunction").OnRowDataBound("$q.preventDefaultFunction"))
-                .ToHtmlString();
+        //public static MvcHtmlString ArticleGrid(this HtmlHelper html, ArticleListViewModel model)
+        //{
+        //    var result = html.Telerik().Grid<DataRow>()
+        //        .Name(model.MainComponentId)
+        //        .Columns(c => ConfigureColumns(c, model.DisplayFields, model.AllowMultipleEntitySelection, !model.IsWindow))
+        //        .DataBinding(db => db.Ajax().Select(model.GetDataActionName, model.ControllerName))
+        //        .EnableCustomBinding(true)
+        //        .Sortable()
+        //        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(model.PageSize))
+        //        .Selectable(s => s.Enabled(true))
+        //        .ClientEvents(e => e.OnDataBinding("$q.preventDefaultFunction").OnRowDataBound("$q.preventDefaultFunction"))
+        //        .ToHtmlString();
 
-            return MvcHtmlString.Create(result);
-        }
+        //    return MvcHtmlString.Create(result);
+        //}
 
         private static void ConfigureColumns(GridColumnFactory<DataRow> columnFactory, IEnumerable<Field> displayFields, bool allowMultipleEntitySelection, bool hasTitleLink)
         {

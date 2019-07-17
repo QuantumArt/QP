@@ -5,43 +5,30 @@
 
 @using (Html.BeginDocumentPadding())
 {
-        @(Html.Telerik().Grid<ArticleListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-            {
-                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                    .Width(30)
-                    .HtmlAttributes(new { @class = "id" });
-                c.Bound(s => s.Title)
-                    .Title(ArticleStrings.Title)
-                    .HtmlAttributes(new { @class = "title" });
-                c.Bound(s => s.SiteName)
-                    .Title(SiteStrings.Name);
-                c.Bound(s => s.ContentName)
-                    .Title(ContentStrings.Name);
-                c.Bound(s => s.StatusName)
-                    .Title(ArticleStrings.Status);
-                c.Bound(s => s.Created)
-                    .Title(EntityObjectStrings.Created);
-                c.Bound(s => s.Modified)
-                    .Title(EntityObjectStrings.Modified);
-                c.Bound(s => s.LastModifiedByUser)
-                    .Title(EntityObjectStrings.LastModifiedBy);
-            })
-        .DataBinding(db => db.Ajax()
-            .Select(Model.DataBindingActionName, Model.DataBindingControllerName)
-        )
-        .EnableCustomBinding(true)
-        .Sortable()
-            .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e.OnDataBinding("$q.preventDefaultFunction")
-             .OnRowDataBound("$q.preventDefaultFunction")
-        )
-    )
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {      
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },         
+          { field: 'Title', title: '@ArticleStrings.Title', attributes: { 'class': 'title' } },
+          { field: 'SiteName', title: '@SiteStrings.Name' },
+          { field: 'ContentName', title: '@ContentStrings.Name' },
+          { field: 'StatusName', title: '@ArticleStrings.Status' },
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.DataBindingActionName, Model.DataBindingControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
 }
 @Html.PrepareAndRunInitScript(Model)
-
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

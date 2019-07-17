@@ -311,13 +311,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, GridCommand command)
+        public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, int page, int pageSize, string orderBy = "")
         {
-            var serviceResult = FieldService.ListForExport(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = FieldService.ListForExport(new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            }, parentId, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -326,10 +330,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
+        public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, string IDs)
         {
             var result = FieldService.InitList(parentId);
-            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExportExpanded)
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, Converter.ToInt32Collection(IDs, ','), ActionCode.MultipleSelectFieldForExportExpanded)
             {
                 IsMultiple = true
             };

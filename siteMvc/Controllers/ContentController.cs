@@ -478,7 +478,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
         public ActionResult _Select(
@@ -559,19 +558,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
         public ActionResult _SelectForJoin(
             string tabId,
             int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            int page,
+            int pageSize,
+            int IDs,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string orderBy = "")
         {
+          
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForJoin(filter, command.GetListCommand(), id);
+            var serviceResult = ContentService.ListForJoin(filter, new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            },
+            IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -716,20 +723,26 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForUnion(
             string tabId,
             int parentId,
+            int page,
+            int pageSize,
             string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+             string orderBy = "")
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForUnion(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = ContentService.ListForUnion(filter, new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            }, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

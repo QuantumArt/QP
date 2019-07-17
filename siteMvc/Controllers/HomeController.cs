@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
@@ -43,12 +44,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult _LockedArticles(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _LockedArticles(string tabId, int parentId,
+            int page,
+            int pageSize,
+            int IDs,
+            string orderBy = "")
         {
-            var serviceResult = ArticleService.ListLocked(command.GetListCommand());
+            var serviceResult = ArticleService.ListLocked(new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -64,12 +73,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult _ArticlesForApproval(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _ArticlesForApproval(string tabId, int parentId,
+            int page,
+            int pageSize,
+            int IDs,
+            string orderBy = "")
         {
-            var serviceResult = ArticleService.ArticlesForApproval(command.GetListCommand());
+            var serviceResult = ArticleService.ArticlesForApproval(new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

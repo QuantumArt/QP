@@ -5,68 +5,86 @@
 
 @using (Html.BeginDocumentPadding())
 {
-    if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
     {
-        using (Html.BeginLinkButtonsList())
-        {
-            @Html.AddNewItemLink(Model)
-        }
+      @Html.AddNewItemLink(Model)
     }
+  }
 
-    @(Html.Telerik().Grid<SiteListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-        {
-            c.Bound(string.Empty)
-                .Title(@"<input type='checkbox' />")
-                .Width(30)
-                .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                .ClientTemplate(@"<input type='checkbox' name='SelectedSitesIDs' value='<#= Id #>' />")
-                .HtmlAttributes(new { @class = "t-select-cell" })
-                .Sortable(false);
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+       var bodyIconTpl = function (settings) {
+        return function () {
+          return '<img ' +
+            'src="' +
+            '@Url.GetThemeSmallIconsImageFolderUrl()' + '/site' + settings.src + '.gif"' +
+            'class="smallIcon"' +
+            'title="' + (settings.title || settings.src) + '"'
+            '/>';
+        };
+      };
+      var headIconTpl = function (settings) {
+        return function () {
+          return '<img ' +
+            'src="' +
+            '@Url.GetThemeRootImageFolderUrl()' + settings.url + '"' +
+            'style="width: 16px; height: 16px;"' +
+            'class="t-image"' +
+            'title="' + settings.title + '"' +
+            'alt="' + (settings.alt || settings.title) + '"' +
+            '/>';
+        };
+      };
 
-            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                .Width(30)
-                .HtmlAttributes(new { @class = "id" });
-            c.Bound(s => s.IsLive)
-                .Title(string.Empty)
-                .Width(30)
-                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "site<#= IsLive #>.gif", string.Empty))
-                .HtmlAttributes(new { style = "text-align: center;" });
-            c.Bound(s => s.LockedBy)
-                .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
-                .Width(30)
-                .HeaderHtmlAttributes(new { @class = "t-image-header" })
-                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
-                .HtmlAttributes(new { style = "text-align: center;" });
-            c.Bound(s => s.Name)
-                .Title(EntityObjectStrings.Name)
-                .HtmlAttributes(new { @class = "title" });
-            c.Bound(s => s.Description)
-                .Title(EntityObjectStrings.Description);
-            c.Bound(s => s.Dns)
-                .Title(SiteStrings.Dns);
-            c.Bound(s => s.UploadUrl)
-                .Title(SiteStrings.UploadUrl);
-            c.Bound(s => s.Created)
-                .Title(EntityObjectStrings.Created);
-            c.Bound(s => s.Modified)
-                .Title(EntityObjectStrings.Modified);
-            c.Bound(s => s.LastModifiedByUser)
-                .Title(EntityObjectStrings.LastModifiedBy);
-        })
-        .DataBinding(db => db.Ajax().Select(Model.GettingDataActionName, "Site"))
-        .EnableCustomBinding(true)
-        .Sortable()
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e => e
-            .OnDataBinding("$q.preventDefaultFunction")
-            .OnRowDataBound("$q.preventDefaultFunction")
-        )
-    )
+       $('#@Model.MainComponentId').qpGrid({
+         columns: [
+           {
+             field: '',
+             headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+             headerAttributes: { 'class': 't-select-header' },
+             template: '<input type="checkbox" name="SelectedSitesIDs" value="#:Id#" />',
+             sortable: false,
+             attributes: { 'class': 't-select-cell' },
+             width: 35
+           },
+           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
+           {
+             field: 'IsLive',
+             title: '@string.Empty',
+             attributes: { 'class': 'isCentered' },
+             width: 30,
+             template: bodyIconTpl({  src: @Model.I }),
+           },
+           {
+             field: 'LockedBy',
+             headerTemplate: headIconTpl({ url: 'grid/header_icons/lock.gif', title: '@ArticleStrings.IsLockedHeaderTooltip' }),
+             headerAttributes: { 'class': 't-image-header'},
+             attributes: { 'class': 'isCentered' },
+             width: 30,
+             template: bodyIconTpl({ icon: '@FieldName.LockedByIcon', tooltip: '@FieldName.LockedByTooltip' }),
+           },
+           { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+           { field: 'Description', title: '@EntityObjectStrings.Description' },
+           { field: 'Dns', title: '@SiteStrings.Dns' },
+           { field: 'UploadUrl', title: '@SiteStrings.UploadUrl' },
+           { field: 'Created', title: '@EntityObjectStrings.Created' },
+           { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+           { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy' }
+         ],
+         dataSource: {
+           transport: {
+             read: {
+               url: "@Url.Action(Model.GettingDataActionName, "Site", new { tabId = Model.TabId, parentId = Model.ParentEntityId} )"
+             }
+           },
+           pagesize: '@Default.GridPageSize',
+         },
+       });
+    });
+  </script>         
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

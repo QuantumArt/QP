@@ -39,12 +39,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Sites)]
         [BackendActionContext(ActionCode.Sites)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy="")
         {
-            var serviceResult = SiteService.List(command.GetListCommand());
+            var serviceResult = SiteService.List(new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -61,14 +65,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectSites)]
         [BackendActionContext(ActionCode.MultipleSelectSites)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, GridCommand command)
+        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, int page, int pageSize, string orderBy = "")
         {
             var selectedSiteIDs = Converter.ToInt32Collection(IDs, ',');
-            var serviceResult = SiteService.List(command.GetListCommand(), selectedSiteIDs);
+            var serviceResult = SiteService.List(new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
+            }, selectedSiteIDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

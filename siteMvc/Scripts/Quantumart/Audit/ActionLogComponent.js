@@ -4,6 +4,7 @@ import { ActionLogFilterTile } from './ActionLogFilterTile';
 import { ActionLogItemListFilter } from './ActionLogItemListFilter';
 import { ActionLogTextFilter } from './ActionLogTextFilter';
 import { ActionLogUserFilter } from './ActionLogUserFilter';
+import { BackendEntityGridManager } from '../Managers/BackendEntityGridManager';
 import { $q } from '../Utils';
 
 export class ActionLogComponent {
@@ -16,204 +17,204 @@ export class ActionLogComponent {
     this._actionTypes = actionTypes;
     this._entityTypes = entityTypes;
     this._actions = actions;
+    //this._beGrid = BackendEntityGridManager.getInstance().getGrid(gridElementId);
   }
 
-  _filterElementId = '';
-  _gridElementId = '';
-  $filterCombo = null;
-  $tilesContainer = null;
-  _actionTypes = null;
-  _entityTypes = null;
-  _tiles = {};
+    _filterElementId = '';
+    _gridElementId = '';
+    $filterCombo = null;
+    $tilesContainer = null;
+    _actionTypes = null;
+    _entityTypes = null;
+    _tiles = {};
+    _beGrid = null;
 
-  initialize() {
-    const $grid = $(`#${this._gridElementId}`);
-    const gridComponent = $grid.data('tGrid');
-    const $filter = $(`#${this._filterElementId}`);
+    initialize() {
+      const $filter = $(`#${this._filterElementId}`);
 
-    $grid
-      .unbind('dataBinding', gridComponent.onDataBinding)
-      .bind('dataBinding', this._onDataBindingHandler);
+      this._beGrid = BackendEntityGridManager.getInstance().createGrid(
+        this._fileGridId, this._fileEntityTypeCode, this._folderId, this._actionCode, {
+          contextMenuCode: this._fileEntityTypeCode,
+          autoLoad: false,
+          keyColumnName: 'Name',
+          allowMultipleRowSelection: this._allowMultipleSelection,
+          zIndex: this._zIndex
+        }
+      );
 
-    $('.alSearchButton', $filter).click(this._onApplyFilterHandler);
-    $('.alResetButton', $filter).click(this._onClearFilterHandler);
+      this._beGrid._createDataQueryParams = () => ({
+        gridParentId: this._beGrid._parentEntityId,
+        searchQuery: this.getFilterData() ? JSON.stringify(this.getFilterData()) : undefined
+      });
+
+      $('.alSearchButton', $filter).click(this._onApplyFilterHandler);
+      $('.alResetButton', $filter).click(this._onClearFilterHandler);
 
 
-    this.$filterCombo = $filter
-      .find('.alFilterCombo')
-      .change($.proxy(this._onFilterSelected, this));
+      this.$filterCombo = $filter
+        .find('.alFilterCombo')
+        .change($.proxy(this._onFilterSelected, this));
 
-    this.$tilesContainer = $filter.find('.alTilesContainer');
-    gridComponent.ajaxRequest();
-  }
-
-  _onApplyFilter() {
-    $(`#${this._gridElementId}`)
-      .data('tGrid')
-      .ajaxRequest();
-  }
-
-  _onClearFilter() {
-    this._destroyAllTiles();
-    // @ts-ignore FIXME
-    $('.alSearchButton', this.$filter).trigger('click');
-  }
-
-  _onDataBinding(e) {
-    const filterData = this.getFilterData();
-    if (filterData) {
-      // eslint-disable-next-line no-param-reassign
-      e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
+      this.$tilesContainer = $filter.find('.alTilesContainer');
+      BackendEntityGridManager.getInstance().resetGrid();
     }
-  }
 
-  getFilterData() {
-    const filterData = {};
-    Object.keys(this._tiles).forEach(tileType => {
-      if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
-        this._tiles[tileType].getOptions().deriveFilterData(this._tiles[tileType], filterData);
+    _onApplyFilter() {
+      this._beGrid.resetGrid();
+    }
+
+    _onClearFilter() {
+      this._destroyAllTiles();
+      // @ts-ignore FIXME
+      $('.alSearchButton', this.$filter).trigger('click');
+    }
+
+    getFilterData() {
+      const data = {};
+      Object.keys(this._tiles).forEach(tileType => {
+        if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
+          this._tiles[tileType].getOptions().deriveFilterData(this._tiles[tileType], data);
+        }
+      });
+      return data;
+    }
+
+    _onFilterSelected() {
+      const $selected = this.$filterCombo.find('option:selected');
+      if ($selected.val()) {
+        this._createTile({ value: $selected.val(), text: $selected.text() });
       }
-    });
-    return filterData;
-  }
 
-  _onFilterSelected() {
-    const $selected = this.$filterCombo.find('option:selected');
-    if ($selected.val()) {
-      this._createTile({ value: $selected.val(), text: $selected.text() });
+      this.$filterCombo.val('');
     }
 
-    this.$filterCombo.val('');
-  }
+    _onTileClose(eventType, sender, args) {
+      this._destroyTile(args.type);
+    }
 
-  _onTileClose(eventType, sender, args) {
-    this._destroyTile(args.type);
-  }
-
-  _createTile(options) {
-    const that = this;
-    if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
-      const ft = +options.value || 0;
-      const tileComponent = new ActionLogFilterTile(this.$tilesContainer,
-        {
-          title: options.text,
-          type: ft,
-          windowSize: (function () {
-            switch (+options.value || 0) {
-              case $e.ActionLogFilteredColumns.EntityStringId:
-              case $e.ActionLogFilteredColumns.EntityTitle:
-              case $e.ActionLogFilteredColumns.ParentEntityId:
-              case $e.ActionLogFilteredColumns.EntityTypeName:
-                return { width: 350, height: 65 };
-              case $e.ActionLogFilteredColumns.ActionTypeName:
-              case $e.ActionLogFilteredColumns.ActionName:
-                return { width: 400, height: 65 };
-              case $e.ActionLogFilteredColumns.ExecutionTime:
-                return { width: 350, height: 112 };
-              default:
-                return { width: 350, height: 125 };
-            }
-          }()),
-          createFilter($filterContainer) {
-            switch (ft) {
-              case $e.ActionLogFilteredColumns.EntityStringId:
-              case $e.ActionLogFilteredColumns.EntityTitle:
-              case $e.ActionLogFilteredColumns.ParentEntityId:
-                return new ActionLogTextFilter($filterContainer);
-              case $e.ActionLogFilteredColumns.ExecutionTime:
-                return new ActionLogDatetimeFilter($filterContainer);
-              case $e.ActionLogFilteredColumns.ActionTypeName:
-                return new ActionLogItemListFilter($filterContainer, that._actionTypes);
-              case $e.ActionLogFilteredColumns.ActionName:
-                return new ActionLogItemListFilter($filterContainer, that._actions);
-              case $e.ActionLogFilteredColumns.EntityTypeName:
-                return new ActionLogItemListFilter($filterContainer, that._entityTypes);
-              case $e.ActionLogFilteredColumns.UserLogin:
-                return new ActionLogUserFilter($filterContainer);
-              default:
-                return new ActionLogFilterBase($filterContainer);
-            }
-          },
-          deriveFilterData(tile, filterData) {
-            const tileValue = tile.getValue();
-            if (tileValue) {
-              switch (tile.getOptions().type) {
+    _createTile(options) {
+      const that = this;
+      if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
+        const ft = +options.value || 0;
+        const tileComponent = new ActionLogFilterTile(this.$tilesContainer,
+          {
+            title: options.text,
+            type: ft,
+            windowSize: (function () {
+              switch (+options.value || 0) {
                 case $e.ActionLogFilteredColumns.EntityStringId:
-                  filterData.entityStringId = tileValue; // eslint-disable-line no-param-reassign
-                  break;
                 case $e.ActionLogFilteredColumns.EntityTitle:
-                  filterData.entityTitle = tileValue; // eslint-disable-line no-param-reassign
-                  break;
                 case $e.ActionLogFilteredColumns.ParentEntityId:
-                  filterData.parentEntityId = tileValue; // eslint-disable-line no-param-reassign
-                  break;
-                case $e.ActionLogFilteredColumns.ExecutionTime:
-                  filterData.from = tileValue.from; // eslint-disable-line no-param-reassign
-                  filterData.to = tileValue.to; // eslint-disable-line no-param-reassign
-                  break;
-                case $e.ActionLogFilteredColumns.ActionTypeName:
-                  filterData.actionTypeCode = tileValue; // eslint-disable-line no-param-reassign
-                  break;
-                case $e.ActionLogFilteredColumns.ActionName:
-                  filterData.actionCode = tileValue; // eslint-disable-line no-param-reassign
-                  break;
                 case $e.ActionLogFilteredColumns.EntityTypeName:
-                  filterData.entityTypeCode = tileValue; // eslint-disable-line no-param-reassign
-                  break;
-                case $e.ActionLogFilteredColumns.UserLogin:
-                  if ($.isArray(tileValue) && tileValue.length > 0) {
-                    filterData.userIDs = tileValue; // eslint-disable-line no-param-reassign
-                  }
-                  break;
+                  return { width: 350, height: 65 };
+                case $e.ActionLogFilteredColumns.ActionTypeName:
+                case $e.ActionLogFilteredColumns.ActionName:
+                  return { width: 400, height: 65 };
+                case $e.ActionLogFilteredColumns.ExecutionTime:
+                  return { width: 350, height: 112 };
                 default:
-                  break;
+                  return { width: 350, height: 125 };
+              }
+            }()),
+            createFilter($filterContainer) {
+              switch (ft) {
+                case $e.ActionLogFilteredColumns.EntityStringId:
+                case $e.ActionLogFilteredColumns.EntityTitle:
+                case $e.ActionLogFilteredColumns.ParentEntityId:
+                  return new ActionLogTextFilter($filterContainer);
+                case $e.ActionLogFilteredColumns.ExecutionTime:
+                  return new ActionLogDatetimeFilter($filterContainer);
+                case $e.ActionLogFilteredColumns.ActionTypeName:
+                  return new ActionLogItemListFilter($filterContainer, that._actionTypes);
+                case $e.ActionLogFilteredColumns.ActionName:
+                  return new ActionLogItemListFilter($filterContainer, that._actions);
+                case $e.ActionLogFilteredColumns.EntityTypeName:
+                  return new ActionLogItemListFilter($filterContainer, that._entityTypes);
+                case $e.ActionLogFilteredColumns.UserLogin:
+                  return new ActionLogUserFilter($filterContainer);
+                default:
+                  return new ActionLogFilterBase($filterContainer);
+              }
+            },
+            deriveFilterData(tile, filterData) {
+              const tileValue = tile.getValue();
+              if (tileValue) {
+                switch (tile.getOptions().type) {
+                  case $e.ActionLogFilteredColumns.EntityStringId:
+                    filterData.entityStringId = tileValue; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.EntityTitle:
+                    filterData.entityTitle = tileValue; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.ParentEntityId:
+                    filterData.parentEntityId = tileValue; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.ExecutionTime:
+                    filterData.from = tileValue.from; // eslint-disable-line no-param-reassign
+                    filterData.to = tileValue.to; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.ActionTypeName:
+                    filterData.actionTypeCode = tileValue; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.ActionName:
+                    filterData.actionCode = tileValue; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.EntityTypeName:
+                    filterData.entityTypeCode = tileValue; // eslint-disable-line no-param-reassign
+                    break;
+                  case $e.ActionLogFilteredColumns.UserLogin:
+                    if ($.isArray(tileValue) && tileValue.length > 0) {
+                      filterData.userIDs = tileValue; // eslint-disable-line no-param-reassign
+                    }
+                    break;
+                  default:
+                    break;
+                }
               }
             }
           }
-        }
-      );
-      tileComponent.attachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE, $.proxy(this._onTileClose, this));
-      tileComponent.initialize();
-      this._tiles[options.value] = tileComponent;
+        );
+        tileComponent.attachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE, $.proxy(this._onTileClose, this));
+        tileComponent.initialize();
+        this._tiles[options.value] = tileComponent;
+      }
     }
-  }
 
-  _destroyTile(tileType) {
-    if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
-      const tileComponent = this._tiles[tileType];
-      tileComponent.detachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE);
-      tileComponent.dispose();
-      $q.removeProperty(this._tiles, tileType);
+    _destroyTile(tileType) {
+      if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
+        const tileComponent = this._tiles[tileType];
+        tileComponent.detachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE);
+        tileComponent.dispose();
+        $q.removeProperty(this._tiles, tileType);
+      }
     }
-  }
 
-  _destroyAllTiles() {
-    Object.keys(this._tiles).forEach(tileType => {
-      this._destroyTile(tileType);
-    }, this);
-  }
+    _destroyAllTiles() {
+      Object.keys(this._tiles).forEach(tileType => {
+        this._destroyTile(tileType);
+      }, this);
+    }
 
-  dispose() {
-    this._destroyAllTiles();
+    dispose() {
+      this._destroyAllTiles();
 
-    const $grid = $(`#${this._gridElementId}`);
-    const $filter = $(`#${this._filterElementId}`);
+      const $grid = $(`#${this._gridElementId}`);
+      const $filter = $(`#${this._filterElementId}`);
 
-    $grid.unbind('dataBinding');
-    this._onDataBindingHandler = null;
+      $grid.unbind('dataBinding');
+      this._onDataBindingHandler = null;
 
-    $('.alSearchButton', $filter).unbind();
-    $('.alResetButton', $filter).unbind();
-    this._onApplyFilterHandler = null;
-    this._onDataBindingHandler = null;
+      $('.alSearchButton', $filter).unbind();
+      $('.alResetButton', $filter).unbind();
+      this._onApplyFilterHandler = null;
+      this._onDataBindingHandler = null;
 
-    this.$filterCombo.off('change');
-    this.$filterCombo = null;
-    this.$tilesContainer = null;
+      this.$filterCombo.off('change');
+      this.$filterCombo = null;
+      this.$tilesContainer = null;
 
-    $q.collectGarbageInIE();
-  }
+      $q.collectGarbageInIE();
+    }
 }
-
 
 Quantumart.QP8.ActionLogComponent = ActionLogComponent;
