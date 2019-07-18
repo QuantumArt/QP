@@ -699,6 +699,11 @@ namespace Quantumart.QP8.DAL
             GiveContentAccessByPropagatingFromSite(connection, id);
         }
 
+        public static void CreateSiteAccess(DbConnection connection, int id)
+        {
+            GiveSiteAccessToCreator(connection, id);
+        }
+
         public static void CreateWorkflowAccess(DbConnection connection, int id)
         {
             GiveWorkflowAccessToCreator(connection, id);
@@ -717,6 +722,17 @@ namespace Quantumart.QP8.DAL
             Common.ExecuteSql(connection, sql);
         }
 
+        private static void GiveSiteAccessToCreator(DbConnection connection, int id)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = $@"
+                INSERT INTO site_access (site_id, user_id, permission_level_id, last_modified_by)
+                SELECT site_id, last_modified_by, 1, 1
+                FROM site s where s.site_id = {id}
+            " ;
+            Common.ExecuteSql(connection, sql);
+        }
+
         public static void GiveContentAccessByPropagatingFromSite(DbConnection connection, int id)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
@@ -725,7 +741,7 @@ namespace Quantumart.QP8.DAL
                 SELECT c.content_id, ca.user_id, ca.group_id, ca.permission_level_id, 1, {PropagateToItems}
                 FROM content c inner join site_access ca on ca.site_id = c.site_id
                 WHERE c.content_id = {id}
-                AND (ca.user_id <> i.last_modified_by OR ca.user_id IS NULL) AND ca.propagate_to_contents = 1
+                AND (ca.user_id <> c.last_modified_by OR ca.user_id IS NULL) AND ca.propagate_to_contents = 1
             " ;
             Common.ExecuteSql(connection, sql);
         }

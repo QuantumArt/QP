@@ -9,13 +9,18 @@ CREATE OR REPLACE FUNCTION public.process_content_item_insert()
     VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
+	    all_ids int[];
 		ids int[];
 		ids2 int[];
 		content_ids int[];
 		cid int;
 		none_id int;
     BEGIN
-	
+
+	    all_ids := array_agg(content_item_id) from NEW_TABLE;
+		all_ids := COALESCE(all_ids, ARRAY[]::int[]);
+	    call qp_create_content_item_access(all_ids);
+
 		insert into content_data (content_item_id, attribute_id, not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
 		from new_table i inner join content_attribute ca on i.content_id = ca.content_id;

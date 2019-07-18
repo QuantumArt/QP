@@ -43,7 +43,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.FileName).HasColumnName("Filename");
 				builder.Property(x => x.Hash).HasColumnName("Hash");
 				builder.Property(x => x.Applied).HasColumnName("Applied");
-				builder.Property(x => x.Id).HasColumnName("Id");
+				builder.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
 
 
                 builder.HasKey(x => x.Id);

@@ -49,7 +49,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.ActionCode).HasColumnName("ACTION_CODE");
 				builder.Property(x => x.ExecutionTime).HasColumnName("EXEC_TIME");
 				builder.Property(x => x.UserId).HasColumnName("USER_ID");
-				builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 
 
                 builder.HasKey(x => x.Id);

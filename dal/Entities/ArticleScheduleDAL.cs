@@ -54,7 +54,7 @@ namespace Quantumart.QP8.DAL.Entities
                 builder.ToTable("CONTENT_ITEM_SCHEDULE");
 
                 builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
-				builder.Property(x => x.Id).HasColumnName("SCHEDULE_ID");
+				builder.Property(x => x.Id).HasColumnName("SCHEDULE_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.MaximumOccurences).HasColumnName("MAXIMUM_OCCURENCES");
 				builder.Property(x => x.Created).HasColumnName("CREATED");
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");

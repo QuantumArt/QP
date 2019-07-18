@@ -32,4 +32,5 @@ AggregatedAndSelf
 M2ONames
 ChangingSiteColumnsToNull
 AddCustomActionAlias
+TriggersDisabling
 

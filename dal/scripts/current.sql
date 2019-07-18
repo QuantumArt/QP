@@ -4106,4 +4106,423 @@ end
 GO
 
 GO
+ALTER TRIGGER [dbo].[td_content_and_article_workflow_bind]
+ON [dbo].[workflow]
+FOR DELETE
+AS
+BEGIN
+    if object_id('tempdb..#disable_td_content_and_article_workflow_bind') is null
+    begin
+
+        DELETE FROM content_workflow_bind WHERE workflow_id in (select d.workflow_id from deleted d)
+        DELETE FROM article_workflow_bind WHERE workflow_id in (select d.workflow_id from deleted d)
+        DELETE waiting_for_approval from waiting_for_approval wa inner join content_item_workflow ciw on wa.content_item_id = ciw.content_item_id
+            WHERE ciw.workflow_id in (select d.workflow_id from deleted d)
+    end
+END
+GO
+ALTER TRIGGER [dbo].[td_content_to_content] ON [dbo].[content_to_content] AFTER DELETE
+AS
+BEGIN
+    if object_id('tempdb..#disable_td_content_to_content') is null
+    begin 
+        declare @link_id numeric, @i numeric, @count numeric
+      
+        declare @cc table (
+          id numeric identity(1,1) primary key,
+          link_id numeric
+        )
+      
+        insert into @cc (link_id) select d.link_id from deleted d
+      
+        set @i = 1
+        select @count = count(id) from @cc
+      
+        while @i < @count + 1
+        begin
+          select @link_id = link_id from @cc where id = @i
+          exec qp_drop_link_view @link_id
+          set @i = @i + 1
+        end
+    end
+END
+GO
+
+ALTER TRIGGER [dbo].[td_drop_table] ON [dbo].[CONTENT]
+FOR  DELETE
+AS
+BEGIN
+    if object_id('tempdb..#disable_td_drop_table') is null
+    begin
+
+		declare @content_id numeric
+
+		declare del_content CURSOR FOR
+		select content_id from deleted
+
+		open del_content
+		FETCH NEXT FROM del_content into @content_id
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			EXEC qp_content_table_drop @content_id
+			FETCH NEXT FROM del_content into @content_id
+		END
+
+		close del_content
+		deallocate del_content
+    END
+END
+GO
+
+
+ALTER TRIGGER ti_access_site ON SITE 
+FOR INSERT
+AS
+BEGIN
+    if object_id('tempdb..#disable_ti_access_site') is null
+    begin
+        insert into site_access (site_id, user_id, permission_level_id, last_modified_by)
+        (select site_id, last_modified_by, 1, 1 from inserted i where i.last_modified_by > 1 )
+        insert into site_access (site_id, group_id, permission_level_id, last_modified_by)
+        (select site_id, 1, 1, 1 from inserted)
+    end
+END
+go
+
+ALTER TRIGGER [dbo].[ti_access_workflow] ON [dbo].[workflow] FOR INSERT
+AS
+BEGIN
+    if object_id('tempdb..#disable_ti_access_workflow') is null
+    begin
+		INSERT INTO workflow_access (workflow_id, user_id, permission_level_id, last_modified_by)
+		SELECT workflow_id, last_modified_by, 1, 1 FROM inserted
+
+		INSERT INTO workflow_access (workflow_id, group_id, permission_level_id, last_modified_by)
+		SELECT c.workflow_id, 1, 1, 1
+		FROM inserted AS c WHERE c.workflow_id NOT IN (
+			SELECT ca.workflow_id FROM workflow_access AS ca
+			WHERE ca.workflow_id = c.workflow_id AND ca.group_id = 1
+		)
+	END
+END
+GO
+ALTER TRIGGER [dbo].[ti_content_to_content] ON [dbo].[content_to_content] AFTER INSERT
+AS
+BEGIN
+    if object_id('tempdb..#disable_ti_content_to_content') is null
+    begin
+		declare @link_id numeric, @i numeric, @count numeric, @inscount numeric
+
+		declare @cc table (
+			id numeric identity(1,1) primary key,
+			link_id numeric
+		)
+
+		select @count = count(link_id) from inserted
+
+		if (@count = 1) -- prevent @@identity change (for restore site)
+		begin
+			select @link_id = link_id from inserted
+			exec qp_build_link_view @link_id
+		end
+		else if (@count > 1)
+		begin
+			insert into @cc (link_id) select i.link_id from inserted i
+
+			set @i = 1
+
+			while @i < @count + 1
+			begin
+				select @link_id = link_id from @cc where id = @i
+				exec qp_build_link_view @link_id
+				set @i = @i + 1
+			end
+		end
+	end
+END
+GO
+USE [sbermobile_catalog]
+GO
+/****** Object:  Trigger [dbo].[ti_insert_field]    Script Date: 16.07.2019 18:18:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER TRIGGER [dbo].[ti_insert_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT
+AS
+BEGIN
+	if object_id('tempdb..#disable_ti_insert_field') is null
+	begin
+		declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric, @content_id numeric
+		declare @indexed numeric, @required numeric
+		declare @attribute_type_id numeric, @type_name nvarchar(255), @database_type nvarchar(255)
+
+		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
+
+		declare @i numeric, @count numeric, @max numeric
+
+		declare @ca table (
+			id numeric identity(1,1) primary key,
+			attribute_id numeric,
+			attribute_name nvarchar(255),
+			attribute_size numeric,
+			indexed numeric,
+			required numeric,
+			attribute_type_id numeric,
+			type_name nvarchar(255),
+			database_type nvarchar(255),
+			content_id numeric
+		)
+
+		/* Collect affected items */
+		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id)
+			select i.attribute_id, i.attribute_name, i.attribute_size, i.index_flag, i.required, i.attribute_type_id, at.type_name, at.database_type, i.content_id
+			from inserted i
+			inner join attribute_type at on i.attribute_type_id = at.attribute_type_id
+			inner join content c on i.content_id = c.content_id
+			where c.virtual_type = 0
+
+		set @i = 1
+		select @count = count(id) from @ca
+
+		while @i < @count + 1
+		begin
+			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
+				@type_name = type_name, @database_type = database_type, @content_id = content_id
+				from @ca where id = @i
+
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
+
+				IF NOT EXISTS(SELECT * FROM sysobjects WHERE id = OBJECT_ID(@base_table_name) AND OBJECTPROPERTY(id, 'IsUserTable') = 1)
+				begin
+					exec qp_rebuild_content @content_id
+				end
+				else begin
+
+					/* Add column in common and async tables */
+					set @table_name = @base_table_name + '_ASYNC'
+					exec qp_add_column @base_table_name, @attribute_name, @type_name, @database_type, @attribute_size
+					exec qp_add_column @table_name, @attribute_name, @type_name, @database_type, @attribute_size
+
+					/* Create indexes on new fields if required */
+					if @indexed = 1
+					begin
+						exec qp_add_index @base_table_name, @attribute_name
+						exec qp_add_index @table_name, @attribute_name
+					end
+
+					/* Recreate United View */
+					exec qp_content_united_view_recreate @content_id
+					exec qp_content_frontend_views_recreate @content_id
+				end
+			set @i = @i + 1
+		end
+	END
+END
+GO
+ALTER TRIGGER [dbo].[ti_insert_modify_row] ON [dbo].[CONTENT] FOR INSERT
+AS
+BEGIN
+  	if object_id('tempdb..#disable_ti_insert_modify_row') is null
+	begin
+		INSERT INTO CONTENT_MODIFICATION
+		SELECT CONTENT_ID, GETDATE(), GETDATE() from inserted
+	end
+
+END
+GO
+ALTER TRIGGER [dbo].[ti_statuses_and_default_notif] ON [dbo].[SITE]
+FOR INSERT
+AS
+BEGIN
+    if object_id('tempdb..#disable_ti_statuses_and_default_notif') is null
+    begin
+        insert into status_type (site_id, status_type_name, weight, description, last_modified_by, BUILT_IN)
+        (select site_id , 'Created',  10, 'Article has been created' ,1, 1 from inserted)
+
+        insert into status_type (site_id, status_type_name, weight, description, last_modified_by, BUILT_IN)
+        (select site_id , 'Approved',  50, 'Article has been modified' ,1, 1 from inserted)
+
+        insert into status_type (site_id, status_type_name, weight, description, last_modified_by, BUILT_IN)
+        (select site_id , 'Published',  100, 'Article has been published' ,1, 1 from inserted)
+
+        insert into status_type (site_id, status_type_name, weight, description, last_modified_by, BUILT_IN)
+        (select site_id , 'None',  0, 'No Status has been assigned' ,1, 1 from inserted)
+ 
+        INSERT INTO page_template(site_id, template_name, net_template_name, template_picture, created, modified, last_modified_by, charset, codepage, locale, is_system, net_language_id)
+        select site_id, 'Default Notification Template', 'Default_Notification_Template', '', getdate(), getdate(), 1, 'utf-8', 65001, 1049, 1, dbo.qp_default_net_language(script_language) from inserted
+
+        insert into content_group (site_id, name)
+        select site_id, 'Default Group' from inserted
+    end
+END
+go
+
+ALTER TRIGGER [dbo].[tu_content_attribute_clean_empty_links] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
+AS
+BEGIN
+	if update(link_id) and object_id('tempdb..#disable_tu_content_attribute_clean_empty_links') is null
+	begin
+		declare @link_id numeric, @attribute_id numeric, @version numeric
+		declare @i numeric, @count numeric
+		declare @links table (
+			id numeric identity(1,1) primary key,
+			link_id numeric,
+			attribute_id numeric
+		)
+
+		insert into @links (link_id, attribute_id)
+		select d.link_id, d.attribute_id from deleted d inner join inserted i on d.attribute_id = i.attribute_id where d.link_id IS NOT NULL AND (i.link_id IS NULL OR i.link_id <> d.link_id) 
+
+		set @i = 1
+		select @count = count(id) from @links
+		set @version = dbo.qp_get_version_control()		
+
+		while @i < @count + 1
+		begin
+			select @link_id = link_id, @attribute_id = attribute_id from @links where id = @i
+			
+			exec qp_drop_link_with_check @link_id
+			
+			if @version is not null
+			   DELETE FROM item_to_item_version WHERE attribute_id = @attribute_id
+			
+			set @i = @i + 1
+		end
+	end
+END
+GO
+
+ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
+AS
+BEGIN
+if not update(attribute_order) and object_id('tempdb..#disable_tu_update_field') is null and
+		(
+			update(attribute_name) or update(attribute_type_id)
+			or update(attribute_size) or update(index_flag) or update(is_long)
+		)
+	begin
+		declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric, @content_id numeric
+		declare @indexed numeric, @required numeric, @is_long bit
+		declare @attribute_type_id numeric, @type_name nvarchar(255), @database_type nvarchar(255)
+
+		declare @new_attribute_name nvarchar(255), @new_attribute_size numeric
+		declare @new_indexed numeric, @new_required numeric, @new_is_long bit
+		declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
+		declare @related_content_id numeric, @new_related_content_id numeric
+		declare @link_id numeric, @new_link_id numeric
+
+		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
+
+		declare @i numeric, @count numeric, @preserve_index bit
+
+		declare @ca table (
+			id numeric identity(1,1) primary key,
+			attribute_id numeric,
+			attribute_name nvarchar(255),
+			attribute_size numeric,
+			indexed numeric,
+			required numeric,
+			attribute_type_id numeric,
+			type_name nvarchar(255),
+			database_type nvarchar(255),
+			content_id numeric,
+			related_content_id numeric,
+			link_id numeric,
+			is_long bit
+		)
+
+	/* Collect affected items */
+		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id, related_content_id, link_id, is_long)
+			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id,
+			isnull(ca1.content_id, 0), isnull(d.link_id, 0), d.is_long
+			from deleted d
+			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
+			inner join content c on d.content_id = c.content_id
+			left join CONTENT_ATTRIBUTE ca1 on d.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
+			where c.virtual_type = 0
+
+		set @i = 1
+		select @count = count(id) from @ca
+
+		while @i < @count + 1
+		begin
+			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
+				@type_name = type_name, @database_type = database_type, @content_id = content_id,
+				@related_content_id = related_content_id, @link_id = link_id, @is_long = is_long
+				from @ca where id = @i
+
+			select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
+				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id,
+				@new_type_name = at.type_name, @new_database_type = at.database_type,
+				@new_related_content_id = isnull(ca1.content_id, 0), @new_link_id = isnull(ca.link_id, 0), @new_is_long = ca.IS_LONG
+				from content_attribute ca
+				inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
+				left join CONTENT_ATTRIBUTE ca1 on ca.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
+				where ca.attribute_id = @attribute_id
+
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
+				set @table_name = @base_table_name + '_ASYNC'
+
+				if @indexed = 1 and @new_indexed = 1
+					set @preserve_index = 1
+				else
+					set @preserve_index = 0
+
+				if @attribute_type_id <> @new_attribute_type_id
+					or @link_id <> @new_link_id
+					or @related_content_id <> @new_related_content_id
+					or (@attribute_size > @new_attribute_size and @attribute_type_id = 1)
+				begin
+					exec qp_clear_versions_for_field @attribute_id
+				end
+
+				if @indexed = 1 and @new_indexed = 0
+				begin
+					exec qp_drop_index @base_table_name, @attribute_name
+					exec qp_drop_index @table_name, @attribute_name
+				end
+
+				if @database_type <> @new_database_type or (@attribute_size <> @new_attribute_size and @new_database_type <> 'ntext')
+				begin
+					if @database_type = 'ntext' and @new_database_type <> 'ntext'
+						exec qp_copy_blob_data_to_data @attribute_id
+					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
+						exec qp_copy_data_to_blob_data @attribute_id
+
+					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
+					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
+					exec qp_content_united_view_recreate @content_id
+					exec qp_content_frontend_views_recreate @content_id
+				end
+				else if @attribute_name <> @new_attribute_name
+				begin
+					exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
+					exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index
+					exec qp_content_united_view_recreate @content_id
+					exec qp_content_frontend_views_recreate @content_id
+				end
+				else if @is_long <> @new_is_long
+				begin
+					exec qp_content_frontend_views_recreate @content_id
+				end
+
+				if @attribute_name <> @new_attribute_name
+					UPDATE container Set order_static = REPLACE(order_static, @attribute_name, @new_attribute_name) WHERE content_id = @content_id AND order_static LIKE '%'+ @attribute_name +'%'
+
+				if @indexed = 0 and @new_indexed = 1
+				begin
+					exec qp_add_index @base_table_name, @new_attribute_name
+					exec qp_add_index @table_name, @new_attribute_name
+				end
+			set @i = @i + 1
+		end
+	end
+END
+GO
+
+GO
 

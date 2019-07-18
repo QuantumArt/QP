@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services
 
         Workflow ReadPropertiesForUpdate(int id);
 
-        Workflow UpdateProperties(Workflow workflow, IEnumerable<int> activeContents);
+        Workflow UpdateProperties(Workflow workflow, IEnumerable<int> activeContents, IEnumerable<int> activeStatuses);
 
         IEnumerable<StatusType> GetStatusTypesBySiteId(int siteId);
 
@@ -76,10 +76,10 @@ namespace Quantumart.QP8.BLL.Services
 
         public Workflow ReadPropertiesForUpdate(int id) => ReadProperties(id);
 
-        public Workflow UpdateProperties(Workflow workflow, IEnumerable<int> activeContentsIds)
+        public Workflow UpdateProperties(Workflow workflow, IEnumerable<int> activeContentsIds, IEnumerable<int> activeStatuses)
         {
             workflow.BindWithContent(activeContentsIds);
-            return WorkflowRepository.UpdateProperties(workflow);
+            return WorkflowRepository.UpdateProperties(workflow, activeStatuses);
         }
 
         public IEnumerable<StatusType> GetStatusTypesBySiteId(int siteId) => StatusTypeRepository.GetStatusList(siteId);

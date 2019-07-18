@@ -76,7 +76,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 var oldIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
-                model.Data = _workflowService.UpdateProperties(model.Data, model.ActiveContentsIds);
+                var activeStatusesIds = model.ActiveStatuses.Select(n => int.Parse(n.Value)).ToArray();
+                model.Data = _workflowService.UpdateProperties(model.Data, model.ActiveContentsIds, activeStatusesIds);
                 var newIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
                 PersistRulesIds(oldIds, newIds);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateWorkflow });

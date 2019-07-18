@@ -45,12 +45,14 @@ namespace Quantumart.QP8.BLL.Repository
                     {
                         DefaultRepository.Delete<ArticleScheduleDAL>(originalId);
                     }
+
                 }
 
                 var needToPersist = dalItem.FreqType != ScheduleFreqTypes.None && hasChanges;
                 if (needToPersist)
                 {
                     dalItem.UseService = QPConfiguration.UseScheduleService;
+                    dalItem.Created = article.Modified;
                     dalItem.Modified = article.Modified;
                     dalItem.LastModifiedBy = article.LastModifiedBy;
                     DefaultRepository.SimpleSave(dalItem);

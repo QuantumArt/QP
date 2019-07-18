@@ -33,7 +33,7 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("STYLE_ATTRIBUTE");
 
-                builder.Property(x => x.Id).HasColumnName("STYLE_ATTRIBUTE_ID");
+                builder.Property(x => x.Id).HasColumnName("STYLE_ATTRIBUTE_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.StyleId).HasColumnName("STYLE_ID");
 				builder.Property(x => x.Name).HasColumnName("ATTRIBUTE_NAME");
 				builder.Property(x => x.AttributeValue).HasColumnName("ATTRIBUTE_VALUE");

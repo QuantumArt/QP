@@ -42,7 +42,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.TransactionLsn).HasColumnName("TransactionLsn");
 				builder.Property(x => x.ProviderUrl).HasColumnName("ProviderUrl");
 				builder.Property(x => x.ProviderName).HasColumnName("ProviderName");
-				builder.Property(x => x.Id).HasColumnName("Id");
+				builder.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
 
 
                 builder.HasKey(x => x.Id);

@@ -29,7 +29,7 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("STYLE_TAG");
 
-                builder.Property(x => x.Id).HasColumnName("STYLE_TAG_ID");
+                builder.Property(x => x.Id).HasColumnName("STYLE_TAG_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.TagName).HasColumnName("TAG_NAME");
 
 

@@ -46,7 +46,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.Url).HasColumnName("URL");
 				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
 				builder.Property(x => x.Name).HasColumnName("NAME");
-				builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 
 
                 builder.HasKey(x => x.Id);

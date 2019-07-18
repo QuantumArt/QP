@@ -1773,6 +1773,40 @@ $BODY$;
 
 ALTER FUNCTION public.qp_authenticate(text, text, boolean, boolean)
     OWNER TO postgres;
+CREATE OR REPLACE PROCEDURE public.qp_batch_delete_contents(site_id int, count_to_del int DEFAULT 20)
+LANGUAGE 'plpgsql'
+
+AS $BODY$
+	DECLARE
+	    ids int[];
+	BEGIN
+        ids := array_agg(c.content_id) from content c where c.site_id = $1 limit $2;
+        if ids is not null then
+
+	        delete from union_contents
+	        where virtual_content_id = ANY(ids) or union_content_id = ANY(ids) or master_content_id = ANY(ids);
+
+	        delete from union_attrs where virtual_attr_id in (
+	            select attribute_id from content_attribute where content_id = ANY(ids)
+	        );
+
+	        delete from user_query_contents
+	        where virtual_content_id = ANY(ids) or real_content_id = ANY(ids);
+
+	        delete from user_query_attrs
+	        where virtual_content_id = ANY(ids);
+
+	        delete from user_query_attrs where user_query_attr_id in (
+	            select attribute_id from content_attribute where content_id = ANY(ids)
+	        );
+
+	        delete from content where content_id = ANY(ids);
+	    end if;
+
+    END;
+$BODY$;
+
+END
 CREATE OR REPLACE PROCEDURE public.qp_before_content_delete(
 	ids integer[])
 LANGUAGE 'plpgsql'
@@ -1959,6 +1993,47 @@ $$;
 
 alter function qp_correct_data(text, numeric, numeric, text) owner to postgres;
 
+CREATE OR REPLACE PROCEDURE public.qp_create_content_item_access(
+	ids numeric[]
+)
+LANGUAGE 'plpgsql'
+
+AS $BODY$
+	DECLARE
+	    items content_item[];
+	BEGIN
+        items := array_agg(row(ci.*)) from content_item ci inner join content c on ci.content_id = c.content_id
+        where content_item_id = ANY(ids) and c.allow_items_permission = 1;
+
+        if items is null then
+            return;
+        end if;
+
+        INSERT INTO content_item_access (content_item_id, user_id, permission_level_id, last_modified_by)
+	    SELECT i.content_item_id, i.last_modified_by, 1, 1 FROM unnest(items) i WHERE i.last_modified_by <> 1;
+
+        INSERT INTO content_item_access (content_item_id, user_id, group_id, permission_level_id, last_modified_by)
+	    SELECT i.content_item_id, ca.user_id, ca.group_id, ca.permission_level_id, 1
+	    FROM content_access AS ca INNER JOIN unnest(items) i ON ca.content_id = i.content_id
+		LEFT OUTER JOIN user_group AS g ON g.group_id = ca.group_id
+	    WHERE (ca.user_id <> i.last_modified_by or ca.user_id IS NULL)
+		AND ((g.shared_content_items = 0 and g.GROUP_ID <> 1) OR g.group_id IS NULL) AND ca.propagate_to_items = 1;
+
+
+	  INSERT INTO content_item_access
+		(content_item_id, group_id, permission_level_id, last_modified_by)
+	  SELECT DISTINCT
+		i.content_item_id, g.group_id, 1, 1
+	  FROM unnest(items) i
+		LEFT OUTER JOIN user_group_bind AS gb ON gb.user_id = i.last_modified_by
+		LEFT OUTER JOIN user_group AS g ON g.group_id = gb.group_id
+	  WHERE
+		g.shared_content_items = 1 and g.GROUP_ID <> 1;
+
+    END;
+$BODY$;
+
+ALTER PROCEDURE qp_create_content_item_access(numeric[]) owner to postgres;
 CREATE OR REPLACE PROCEDURE public.qp_create_content_item_versions(
 	ids numeric[],
 	last_modified_by numeric
@@ -3524,13 +3599,18 @@ CREATE OR REPLACE FUNCTION public.process_content_item_insert()
     VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
+	    all_ids int[];
 		ids int[];
 		ids2 int[];
 		content_ids int[];
 		cid int;
 		none_id int;
     BEGIN
-	
+
+	    all_ids := array_agg(content_item_id) from NEW_TABLE;
+		all_ids := COALESCE(all_ids, ARRAY[]::int[]);
+	    call qp_create_content_item_access(all_ids);
+
 		insert into content_data (content_item_id, attribute_id, not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
 		from new_table i inner join content_attribute ca on i.content_id = ca.content_id;

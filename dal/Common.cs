@@ -3489,9 +3489,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 "us.SITE_NAME as union_site_name " +
                 "from union_contents r " +
                 "join CONTENT as bc on bc.CONTENT_ID = r.union_content_id " +
-                "join [SITE] bs on bc.SITE_ID = bs.SITE_ID " +
+                "join SITE bs on bc.SITE_ID = bs.SITE_ID " +
                 "join CONTENT as uc on uc.CONTENT_ID = r.virtual_content_id " +
-                "join [SITE] us on uc.SITE_ID = us.SITE_ID " +
+                "join SITE us on uc.SITE_ID = us.SITE_ID " +
                 "where us.site_id <> bs.site_id AND us.site_id <> @site_id";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
@@ -3516,10 +3516,10 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 "rc.CONTENT_NAME as rel_content_name " +
                 "from content_attribute a " +
                 "join content c on c.CONTENT_ID = a.CONTENT_ID " +
-                "join [SITE] s on c.SITE_ID = s.SITE_ID " +
+                "join SITE s on c.SITE_ID = s.SITE_ID " +
                 "join content_attribute ra on ra.RELATED_ATTRIBUTE_ID = a.ATTRIBUTE_ID " +
                 "join content rc on rc.CONTENT_ID = ra.CONTENT_ID " +
-                "join [SITE] rs on rc.SITE_ID = rs.SITE_ID " +
+                "join SITE rs on rc.SITE_ID = rs.SITE_ID " +
                 "where rs.site_id <> s.site_id AND s.site_id = @site_id";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
@@ -3536,7 +3536,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static int GetSiteArticleCount(int siteId, DbConnection connection)
         {
             const string query =
-                "select count(CONTENT_ITEM_ID) from CONTENT_ITEM I " +
+                "select cast(count(CONTENT_ITEM_ID) as int) from CONTENT_ITEM I " +
                 "join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID " +
                 "where C.SITE_ID = @site_id";
 
@@ -3550,7 +3550,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static int GetSiteContentCount(int siteId, DbConnection connection)
         {
-            const string query = "select count(CONTENT_ID) from CONTENT where SITE_ID = @site_id";
+            const string query = "select cast(count(CONTENT_ID) as int) from CONTENT where SITE_ID = @site_id";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -3562,37 +3562,12 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             }
         }
 
-        public static int RemovingActions_RemoveSiteArticles(int siteId, int articleToRemove, DbConnection connection)
-        {
-            var query = @"
-                select 1 as A into #disable_td_delete_item_o2m_nullify;
-                select 1 as A into #disable_td_item_to_item;
-
-                select top {0} I.content_item_id into #top_items
-                from CONTENT_ITEM I
-                inner join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID
-                where C.SITE_ID = @site_id
-                order by I.content_id ASC, I.content_item_id ASC
-
-                DELETE FROM item_to_item where r_item_id in (select CONTENT_ITEM_ID from #top_items)
-                DELETE FROM content_item where content_item_id in (select CONTENT_ITEM_ID from #top_items)
-            ";
-
-            query = string.Format(query, articleToRemove);
-
-            using (var cmd = DbCommandFactory.Create(query, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@site_id", siteId);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
         public static IEnumerable<int> RemovingActions_BatchRemoveContents(int siteId, int contentsToRemove, DbConnection connection)
         {
-            using (var cmd = DbCommandFactory.Create("qp_batch_delete_contents", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_batch_delete_contents", "@site_id, @count_to_del");
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
                 cmd.Parameters.AddWithValue("@count_to_del", contentsToRemove);
                 var dt = new DataTable();

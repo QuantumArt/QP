@@ -99,7 +99,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.Property(x => x.ExternalCss).HasColumnName("EXTERNAL_CSS");
             builder.Property(x => x.SendNotifications).HasColumnName("SEND_NOTIFICATIONS");
             builder.Property(x => x.ExternalUrl).HasColumnName("EXTERNAL_URL");
-            builder.Property(x => x.Id).HasColumnName("SITE_ID");
+            builder.Property(x => x.Id).HasColumnName("SITE_ID").ValueGeneratedOnAdd();
             builder.Property(x => x.Name).HasColumnName("SITE_NAME");
             builder.Property(x => x.Dns).HasColumnName("DNS");
             builder.Property(x => x.LiveDirectory).HasColumnName("LIVE_DIRECTORY");

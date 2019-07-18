@@ -49,7 +49,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.Property(x => x.Color).HasColumnName("COLOR");
             builder.Property(x => x.BuiltIn).HasColumnName("BUILT_IN");
             builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
-            builder.Property(x => x.Id).HasColumnName("STATUS_TYPE_ID");
+            builder.Property(x => x.Id).HasColumnName("STATUS_TYPE_ID").ValueGeneratedOnAdd();
             builder.Property(x => x.Name).HasColumnName("STATUS_TYPE_NAME");
             builder.Property(x => x.Weight).HasColumnName("WEIGHT");
             builder.Property(x => x.Description).HasColumnName("DESCRIPTION");

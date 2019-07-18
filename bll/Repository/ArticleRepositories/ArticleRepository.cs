@@ -1132,7 +1132,7 @@ cil.locked_by,
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.RemovingActions_RemoveSiteArticles(siteId, articleToRemove, scope.DbConnection);
+                return Common.RemovingActions_RemoveSiteContentItems(siteId, articleToRemove, scope.DbConnection);
             }
         }
 

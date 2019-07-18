@@ -195,6 +195,28 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static int RemovingActions_RemoveSiteContentItems(int siteId, int itemsToDelete, DbConnection connection)
+        {
+            var dbType = GetDbType(connection);
+            string disableTrigger = (dbType == DatabaseType.SqlServer) ? $@"
+                select 1 as A into #disable_td_delete_item_o2m_nullify;
+                select 1 as A into #disable_td_item_to_item;
+            " : "";
+            string query = $@"{disableTrigger}
+                    delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in (
+                        select {Top(dbType, itemsToDelete)} CONTENT_ITEM_ID from CONTENT_ITEM ci
+                        inner join CONTENT c on c.content_id = ci.content_id
+                        where c.site_id = @site_id order by CONTENT_ITEM_ID {Limit(dbType, itemsToDelete)}
+                    );";
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@site_id", siteId);
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
         public static int RemovingActions_RemoveContentItems(int contentId, int itemsToDelete, DbConnection connection)
         {
             var dbType = GetDbType(connection);

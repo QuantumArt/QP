@@ -51,7 +51,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.Created).HasColumnName("CREATED");
 				builder.Property(x => x.ArticleId).HasColumnName("ARTICLE_ID");
 				builder.Property(x => x.EventName).HasColumnName("EVENT_NAME");
-				builder.Property(x => x.Id).HasColumnName("ID");
+				builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 
 
                 builder.HasKey(x => x.Id);
