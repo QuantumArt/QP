@@ -56,16 +56,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ActionAuthorize(ActionCode.ActionLog)]
         [BackendActionContext(ActionCode.ActionLog)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Actions(GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))] BackendActionLogFilter filter)
+        public ActionResult _Actions(
+            int page,
+            int pageSize,
+            string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))]
+            BackendActionLogFilter filter)
         {
-            var list = _actionLogService.GetLogPage(command.GetListCommand(), filter);
-            var data = list.Data.Select(r =>
+            var list = _actionLogService.GetLogPage(new ListCommand
             {
-                r.ActionTypeName = Translator.Translate(r.ActionTypeName);
-                r.ActionName = Translator.Translate(r.ActionName);
-                r.EntityTypeName = Translator.Translate(r.EntityTypeName);
-                return r;
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            }, filter);
+
+            var data = list.Data.Select(log =>
+            {
+                log.ActionTypeName = Translator.Translate(log.ActionTypeName);
+                log.ActionName = Translator.Translate(log.ActionName);
+                log.EntityTypeName = Translator.Translate(log.EntityTypeName);
+                return log;
             });
 
             return new TelerikResult(data, list.TotalRecords);

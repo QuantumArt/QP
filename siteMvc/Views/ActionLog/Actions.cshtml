@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL
-@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 @model Quantumart.QP8.WebMvc.ViewModels.Audit.ActionLogAreaViewModel
 
@@ -30,7 +29,8 @@
     <div id="@Model.GridElementId"></div>
     <script>
         $(function () {
-          $(`#${'@Model.GridElementId'}`).qpGrid({
+          $('#@Model.GridElementId').qpGrid({
+            selectable: false,
             columns: [
               { field: 'ActionName', title: '@AuditStrings.ActionName' },
               { field: 'ActionTypeName', title: '@AuditStrings.ActionTypeName' },
@@ -38,14 +38,18 @@
               { field: 'EntityStringId', title: '@AuditStrings.EntityStringId' },
               { field: 'EntityTitle', title: '@AuditStrings.EntityTitle', sortable: false},
               { field: 'ParentEntityId', title: '@AuditStrings.ParentEntityId' },
-              { field: 'IsApi', title: '@AuditStrings.IsApi', template: '<input type=""checkbox"" disabled=""disabled"" <# if (IsApi)  { #> checked=""checked"" <# } #> />' },
+              {
+                field: 'IsApi',
+                title: '@AuditStrings.IsApi',
+                template: '<input type="checkbox" disabled="disabled" # if (IsApi) { # checked="checked" # } # />'
+              },
               { field: 'ExecutionTime', title: '@AuditStrings.ExecutionTime' },
               { field: 'UserLogin', title: '@AuditStrings.UserLogin' }
             ],
             dataSource: {
               transport: {
                 read: {
-                  url: "@Url.Action("_Action", "ActionLog", new { tabId = Model.TabId, parentId = Model.ParentEntityId})",
+                  url: "@Url.Action("_Actions", "ActionLog")",
                 },
               },
               pageSize: @Default.GridPageSize,
