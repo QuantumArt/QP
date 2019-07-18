@@ -366,8 +366,7 @@
           transport: {
             read: {
               type: 'post',
-              dataType: 'json',
-              ...opt.dataSource.read
+              dataType: 'json'
             }
           },
           schema: {

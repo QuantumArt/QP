@@ -564,7 +564,7 @@ export class BackendEntityGrid extends Observable {
   }
 
   getRows() {
-    let $rows = [];
+    let $rows = $([]);
     if (this._gridComponent) {
       $rows = $(`#${this._gridElementId}`).find('tbody>tr[role="row"]');
     }
@@ -1320,7 +1320,7 @@ export class BackendEntityGrid extends Observable {
 
       $q.collectGarbageInIE();
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     }
   }
 }

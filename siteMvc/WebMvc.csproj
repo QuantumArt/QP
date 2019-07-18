@@ -1551,7 +1551,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery\jquery-1.8.3.js" />
     <Content Include="Scripts\kendo\kendo.all.min.js" />
-    <Content Include="Scripts\kendo\kendo.grid.min.js" />
     <Content Include="Scripts\polyfills\array\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\array\array.findIndex.polyfill.js" />
     <Content Include="Scripts\polyfills\array\array.from.polyfill.js" />
@@ -1574,6 +1573,9 @@
     </Content>
     <Content Include="Scripts\kendo\kendo.all.min.js.map" />
     <Content Include="Scripts\kendo\kendo.grid.min.js.map" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\package-lock.json" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\package.json" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\README.md" />
     <None Include="Settings.StyleCop" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
