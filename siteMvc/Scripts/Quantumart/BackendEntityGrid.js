@@ -502,7 +502,7 @@ export class BackendEntityGrid extends Observable {
         $(`#${this._selectAllId}`).bind('click', this._onSelectAllClickHandler);
       }
     } catch (e) {
-      console.warn(e);
+      console.error(e);
     }
   }
 
@@ -1328,7 +1328,7 @@ export class BackendEntityGrid extends Observable {
 
       $q.collectGarbageInIE();
     } catch (error) {
-      console.warn(error);
+      console.error(error);
     }
   }
 }
