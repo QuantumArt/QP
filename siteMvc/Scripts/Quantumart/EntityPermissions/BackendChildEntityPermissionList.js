@@ -21,7 +21,7 @@ export class BackendChildEntityPermissionList {
       $grid.off();
     };
 
-    beGrid._createDataQueryParams = () => ({
+    beGrid.createDataQueryParams = () => ({
       gridParentId: beGrid._parentEntityId,
       ...searchBlockComponent.getSearchData()
     });

@@ -28,6 +28,7 @@ export class BackendEntityGridManager extends Observable {
 
   constructor() {
     super();
+    /** @type {{ [x: string]: { [x: string]: BackendEntityGrid } }} */
     this._gridGroups = {};
   }
 
@@ -74,8 +75,12 @@ export class BackendEntityGridManager extends Observable {
     $q.removeProperty(this._gridGroups, gridGroupCode);
   }
 
+  /**
+   * @param {string} gridElementId
+   * @returns {BackendEntityGrid}
+   */
   getGrid(gridElementId) {
-    const gridGroup = Object.values(this._gridGroups).find(val => val[gridElementId], this);
+    const gridGroup = Object.values(this._gridGroups).find(val => Boolean(val[gridElementId]));
     return gridGroup[gridElementId];
   }
 

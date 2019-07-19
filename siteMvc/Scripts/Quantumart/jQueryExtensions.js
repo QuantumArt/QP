@@ -367,6 +367,21 @@
             read: {
               type: 'post',
               dataType: 'json'
+            },
+
+            /**
+             * @param {kendo.data.DataSourceTransportParameterMapData} data
+             * @returns Query params
+             */
+            parameterMap(data) {
+              const params = {
+                page: data.page,
+                pageSize: data.pageSize
+              };
+              if (data.sort && data.sort.length) {
+                params.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+              }
+              return params;
             }
           },
           schema: {

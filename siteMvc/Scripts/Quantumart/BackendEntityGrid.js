@@ -502,17 +502,21 @@ export class BackendEntityGrid extends Observable {
         $(`#${this._selectAllId}`).bind('click', this._onSelectAllClickHandler);
       }
     } catch (e) {
-      console.log(e);
+      console.warn(e);
     }
   }
 
-  _getParameterMapper(customData) {
+  _getParameterMapper() {
+    /**
+     * @param {kendo.data.DataSourceTransportParameterMapData} data
+     * @returns Query params
+     */
     return data => {
+      /** @type {Object} */
       const result = {
         page: data.page,
         pageSize: data.pageSize,
-        ...this._createDataQueryParams(),
-        ...customData && { ...customData }
+        ...this.createDataQueryParams()
       };
       if (data.sort && data.sort.length) {
         result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
@@ -910,7 +914,7 @@ export class BackendEntityGrid extends Observable {
 
     if (this._allowFilterSelectedEntities && !this._hostIsWindow) {
       eventArgs.set_context({
-        dataQueryParams: this._createDataQueryParams(),
+        dataQueryParams: this.createDataQueryParams(),
         url: this._gridComponent.dataSource.transport.options.read.url
       });
     }
@@ -953,7 +957,7 @@ export class BackendEntityGrid extends Observable {
     if (onlyOnePage) {
       this._saveRowSelectionState();
     } else {
-      const queryData = Object.assign({ page: 1, pageSize: 0, onlyIds: true }, this._createDataQueryParams());
+      const queryData = Object.assign({ page: 1, pageSize: 0, onlyIds: true }, this.createDataQueryParams());
       const action = this._getCurrentAction();
 
       if (action) {
@@ -1016,7 +1020,11 @@ export class BackendEntityGrid extends Observable {
     }
   }
 
-  _createDataQueryParams() {
+  /**
+   * @virtual
+   * @returns Query params
+   */
+  createDataQueryParams() {
     const params = { gridParentId: this._parentEntityId };
 
     if (this._startingEntitiesIDs) {

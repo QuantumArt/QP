@@ -1081,7 +1081,7 @@ export class BackendEntityGridOld extends Observable {
   }
 
   _onRowDataBound(e) {
-    BackendEntityGrid.applyStatusColor(e.row, e.dataItem);
+    BackendEntityGridOld.applyStatusColor(e.row, e.dataItem);
     if (this._autoGenerateLink) {
       this._addLinkToCell(e.row);
     }
