@@ -64,12 +64,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))]
             BackendActionLogFilter filter)
         {
-            var list = _actionLogService.GetLogPage(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
-            }, filter);
+            var list = _actionLogService.GetLogPage(GetListCommand(page, pageSize, orderBy), filter);
 
             var data = list.Data.Select(log =>
             {
@@ -89,15 +84,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ActionAuthorize(ActionCode.ButtonTrace)]
         [BackendActionContext(ActionCode.ButtonTrace)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _ButtonTrace(GridCommand command)
+        public ActionResult _ButtonTrace(int page, int pageSize, string orderBy)
         {
-            var list = _buttonTraceService.GetPage(command.GetListCommand());
-            var data = list.Data.Select(r =>
+            var list = _buttonTraceService.GetPage(GetListCommand(page, pageSize, orderBy));
+
+            var data = list.Data.Select(trace =>
             {
-                r.ButtonName = Translator.Translate(r.ButtonName);
-                r.TabName = Translator.Translate(r.TabName);
-                return r;
+                trace.ButtonName = Translator.Translate(trace.ButtonName);
+                trace.TabName = Translator.Translate(trace.TabName);
+                return trace;
             });
 
             return new TelerikResult(data, list.TotalRecords);
@@ -114,10 +109,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ActionAuthorize(ActionCode.RemovedEntities)]
         [BackendActionContext(ActionCode.RemovedEntities)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _RemovedEntities(GridCommand command)
+        public ActionResult _RemovedEntities(int page, int pageSize, string orderBy)
         {
-            var list = _removedEntitiesService.GetPage(command.GetListCommand());
+            var list = _removedEntitiesService.GetPage(GetListCommand(page, pageSize, orderBy));
             return new TelerikResult(list.Data, list.TotalRecords);
         }
 
@@ -132,10 +126,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ActionAuthorize(ActionCode.SuccessfulSession)]
         [BackendActionContext(ActionCode.SuccessfulSession)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _SucessfullSessions(GridCommand command)
+        public ActionResult _SucessfullSessions(int page, int pageSize, string orderBy)
         {
-            var list = _sessionLogService.GetSucessfullSessionPage(command.GetListCommand());
+            var list = _sessionLogService.GetSucessfullSessionPage(GetListCommand(page, pageSize, orderBy));
             return new TelerikResult(list.Data, list.TotalRecords);
         }
 
@@ -150,11 +143,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ActionAuthorize(ActionCode.FailedSession)]
         [BackendActionContext(ActionCode.FailedSession)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _FailedSessions(GridCommand command)
+        public ActionResult _FailedSessions(int page, int pageSize, string orderBy)
         {
-            var list = _sessionLogService.GetFailedSessionPage(command.GetListCommand());
+            var list = _sessionLogService.GetFailedSessionPage(GetListCommand(page, pageSize, orderBy));
             return new TelerikResult(list.Data, list.TotalRecords);
+        }
+
+        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
+        {
+            return new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            };
         }
     }
 }

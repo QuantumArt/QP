@@ -1,6 +1,8 @@
-using System;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
+using System;
 
 namespace Quantumart.QP8.BLL
 {
@@ -18,9 +20,11 @@ namespace Quantumart.QP8.BLL
 
         public int? UserId { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("SessionStartTime", NameResourceType = typeof(AuditStrings))]
         public DateTime StartTime { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("SessionEndTime", NameResourceType = typeof(AuditStrings))]
         public DateTime? EndTime { get; set; }
 
@@ -43,6 +47,7 @@ namespace Quantumart.QP8.BLL
 
         #region Caulculated
 
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("FailedTime", NameResourceType = typeof(AuditStrings))]
         public DateTime FailedTime => StartTime;
 

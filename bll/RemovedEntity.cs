@@ -1,6 +1,8 @@
-﻿using System;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
+using System;
 
 namespace Quantumart.QP8.BLL
 {
@@ -23,6 +25,7 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UserLogin", NameResourceType = typeof(AuditStrings))]
         public string UserLogin { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("ExecutionTime", NameResourceType = typeof(AuditStrings))]
         public DateTime DeletedTime { get; set; }
     }

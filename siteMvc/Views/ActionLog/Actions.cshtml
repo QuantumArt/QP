@@ -28,60 +28,35 @@
     </form>
     <div id="@Model.GridElementId"></div>
     <script>
-        $(function () {
-          $('#@Model.GridElementId').qpGrid({
-            selectable: false,
-            columns: [
-              { field: 'ActionName', title: '@AuditStrings.ActionName' },
-              { field: 'ActionTypeName', title: '@AuditStrings.ActionTypeName' },
-              { field: 'EntityTypeName', title: '@AuditStrings.EntityTypeName' },
-              { field: 'EntityStringId', title: '@AuditStrings.EntityStringId' },
-              { field: 'EntityTitle', title: '@AuditStrings.EntityTitle', sortable: false},
-              { field: 'ParentEntityId', title: '@AuditStrings.ParentEntityId' },
-              {
-                field: 'IsApi',
-                title: '@AuditStrings.IsApi',
-                template: '<input type="checkbox" disabled="disabled" # if (IsApi) { # checked="checked" # } # />'
-              },
-              { field: 'ExecutionTime', title: '@AuditStrings.ExecutionTime' },
-              { field: 'UserLogin', title: '@AuditStrings.UserLogin' }
-            ],
-            dataSource: {
-              transport: {
-                read: {
-                  url: "@Url.Action("_Actions", "ActionLog")",
-                },
-              },
-              pageSize: @Default.GridPageSize,
+      $(function () {
+        $('#@Model.GridElementId').qpGrid({
+          selectable: false,
+          columns: [
+            { field: 'ActionName', title: '@AuditStrings.ActionName' },
+            { field: 'ActionTypeName', title: '@AuditStrings.ActionTypeName' },
+            { field: 'EntityTypeName', title: '@AuditStrings.EntityTypeName' },
+            { field: 'EntityStringId', title: '@AuditStrings.EntityStringId' },
+            { field: 'EntityTitle', title: '@AuditStrings.EntityTitle', sortable: false },
+            { field: 'ParentEntityId', title: '@AuditStrings.ParentEntityId' },
+            {
+              field: 'IsApi',
+              title: '@AuditStrings.IsApi',
+              template: '<input type="checkbox" disabled="disabled" # if (IsApi) { # checked="checked" # } # />'
             },
-          })
+            { field: 'ExecutionTime', title: '@AuditStrings.ExecutionTime' },
+            { field: 'UserLogin', title: '@AuditStrings.UserLogin' }
+          ],
+          dataSource: {
+            transport: {
+              read: {
+                url: "@Url.Action("_Actions", "ActionLog")",
+              },
+            },
+            pageSize: @Default.GridPageSize,
+          },
         })
+      });
     </script>
-    @*@(Html.Telerik().Grid<BackendActionLog>().Name(Model.GridElementId)
-              .DataKeys(k => k.Add(s => s.Id))
-              .Columns(c =>
-              {
-                  c.Bound(s => s.ActionName);
-                  c.Bound(s => s.ActionTypeName);
-                  c.Bound(s => s.EntityTypeName);
-                  c.Bound(s => s.EntityStringId);
-                  c.Bound(s => s.EntityTitle).Sortable(false);
-                  c.Bound(s => s.ParentEntityId);
-                  c.Bound(s => s.IsApi).ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (IsApi)  { #> checked=""checked"" <# } #> />");
-                  c.Bound(s => s.ExecutionTime);
-                  c.Bound(s => s.UserLogin);
-              }
-              )
-              .DataBinding(db => db.Ajax().Select("_Actions", "ActionLog"))
-              .EnableCustomBinding(true)
-              .Sortable()
-              .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
-              .Selectable(s => s.Enabled(false))
-              .ClientEvents(e => e
-                  .OnDataBinding("$q.preventDefaultFunction")
-                  .OnRowDataBound("$q.preventDefaultFunction")
-              )
-      )*@
   </div>
 }
 

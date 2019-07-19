@@ -3,22 +3,29 @@ using Newtonsoft.Json;
 
 namespace Quantumart.QP8.BLL.Converters
 {
-    class DateTimeConverter : JsonConverter
+    internal class DateTimeConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
+        public override bool CanConvert(Type type)
         {
-            return true;
+            return type == typeof(DateTime);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            DateTimeOffset date = (DateTime)value;
-            serializer.Serialize(writer, date.ToString("d/M/yyyy hh:mm:ss"));
+            if (value == null)
+            {
+                serializer.Serialize(writer, null);
+            }
+            else
+            {
+                DateTime date = (DateTime)value;
+                serializer.Serialize(writer, date.ToString("d/M/yyyy hh:mm:ss"));
+            }
         }
     }
 }
