@@ -5401,12 +5401,17 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
 
         public static int[] GetIdsToAutoArchive(DbConnection connection, IEnumerable<int> ids)
         {
+            var dbType = GetDbType(connection);
             var result = new List<int>();
-            const string query = "select content_item_id FROM @ids i inner join content_item ci on i.id = ci.content_item_id inner join content c on c.content_id = ci.content_id where c.auto_archive = 1";
+            string query = $@"SELECT content_item_id
+                FROM {IdList(dbType, "@ids", "ids")}
+                    INNER JOIN content_item ci ON ids.id = ci.content_item_id
+                    INNER JOIN content c ON c.content_id = ci.content_id
+                WHERE c.auto_archive = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 using (IDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -5877,7 +5882,10 @@ order by ActionDate desc
         public static Dictionary<int, string> GetAggregatedFieldNames(DbConnection sqlConnection, int[] contentIds)
         {
             var dbType = GetDbType(sqlConnection);
-            using (var cmd = DbCommandFactory.Create($"SELECT CONTENT_ID, ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE JOIN {IdList(dbType, "@ids")} ON CONTENT_ID = ID WHERE AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}", sqlConnection))
+            using (var cmd = DbCommandFactory.Create($@"SELECT CONTENT_ID, ATTRIBUTE_NAME
+                    FROM CONTENT_ATTRIBUTE
+                        JOIN {IdList(dbType, "@ids")} ON CONTENT_ID = ID
+                    WHERE AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", contentIds, dbType));
@@ -5981,12 +5989,15 @@ order by ActionDate desc
             }
         }
 
-        public static Dictionary<int, string> GetFieldNames(DbConnection sqlConnection, int[] referenceFieldIds)
+        public static Dictionary<int, string> GetFieldNames(DbConnection connection, int[] referenceFieldIds)
         {
-            using (var cmd = DbCommandFactory.Create("SELECT f.ATTRIBUTE_ID, f.ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE f JOIN @ids ids ON f.ATTRIBUTE_ID = ids.ID", sqlConnection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($@"SELECT f.ATTRIBUTE_ID, f.ATTRIBUTE_NAME
+                    FROM CONTENT_ATTRIBUTE f
+                    JOIN {IdList(dbType, "@ids", "ids")} ON f.ATTRIBUTE_ID = ids.ID", connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", referenceFieldIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", referenceFieldIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new Dictionary<int, string>();

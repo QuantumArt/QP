@@ -20,6 +20,7 @@
     <PackageReleaseNotes>Postgres support</PackageReleaseNotes>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeQP8Libraries</TargetsForTfmSpecificBuildOutput>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageVersion>3.0.0-beta9.3</PackageVersion>
   </PropertyGroup>
   <Target Name="IncludeQP8Libraries">
     <ItemGroup>
