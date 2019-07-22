@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.Workflow.WorkflowListViewModel
 
@@ -17,7 +16,6 @@
   <script>
     $(function () {
       $('#@Model.MainComponentId').qpGrid({
-        selectable: "row",
         columns: [
           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
           { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
