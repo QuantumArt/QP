@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -35,9 +36,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Pages)]
         [BackendActionContext(ActionCode.Pages)]
-        public ActionResult _IndexPages(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexPages(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _pageService.GetPagesByTemplateId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _pageService.GetPagesByTemplateId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -211,6 +213,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PersistResultId(result.Id);
             PersistFromId(id);
             return JsonMessageResult(result.Message);
+        }
+
+        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
+        {
+            return new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            };
         }
     }
 }
