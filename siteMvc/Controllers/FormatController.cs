@@ -34,12 +34,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.PageObjectFormats)]
         [BackendActionContext(ActionCode.PageObjectFormats)]
-        public ActionResult _IndexPageObjectFormats(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexPageObjectFormats(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _formatService.GetPageObjectFormatsByObjectId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _formatService.GetPageObjectFormatsByObjectId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -54,12 +54,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.TemplateObjectFormats)]
         [BackendActionContext(ActionCode.TemplateObjectFormats)]
-        public ActionResult _IndexTemplateObjectFormats(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexTemplateObjectFormats(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _formatService.GetTemplateObjectFormatsByObjectId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _formatService.GetTemplateObjectFormatsByObjectId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -428,6 +428,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             _formatService.CaptureLockPageObjectFormat(id);
             return Json(null);
+        }
+
+        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
+        {
+            return new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            };
         }
     }
 }

@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using System;
 
 namespace Quantumart.QP8.BLL.ListItems
@@ -6,8 +8,10 @@ namespace Quantumart.QP8.BLL.ListItems
     {
         public int Id { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Created { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Modified { get; set; }
 
         public int LastModifiedBy { get; set; }
