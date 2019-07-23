@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.Field.FieldSelectableListViewModel
 
@@ -89,7 +88,7 @@
         dataSource: {
           transport: {
             read: {
-              url: "@Url.Action(Model.GetDataAction, "Field", new { tabId = Model.TabId, parentId = Model.ParentEntityId, id = string.Join(",", Model.SelectedIDs) })"
+              url: "@Url.Action(Model.GetDataAction, "Field", new { tabId = Model.TabId, parentId = Model.ParentEntityId })"
             },
           },
           pagesize: '@Default.GridPageSize',

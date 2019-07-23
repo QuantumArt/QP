@@ -35,19 +35,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ActionAuthorize(ActionCode.Fields)]
-        public ActionResult _Index(
-            string tabId,
-            int parentId,
-            int page,
-            int pageSize,
-            string orderBy = "")
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy = "")
         {
-            var serviceResult = FieldService.List(parentId, new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = FieldService.List(parentId, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -314,14 +305,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, int page, int pageSize, string orderBy = "")
+        public ActionResult _MultipleSelectForExport(
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
         {
-            var serviceResult = FieldService.ListForExport(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            }, parentId, Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = FieldService.ListForExport(listCommand, parentId, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -330,10 +318,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, string IDs)
+        public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
         {
             var result = FieldService.InitList(parentId);
-            var model = new FieldSelectableListViewModel(result, tabId, parentId, Converter.ToInt32Collection(IDs, ','), ActionCode.MultipleSelectFieldForExportExpanded)
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExportExpanded)
             {
                 IsMultiple = true
             };
@@ -342,13 +330,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForExportExpanded(string tabId, int parentId, string IDs, GridCommand command)
+        public ActionResult _MultipleSelectForExportExpanded(
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
         {
-            var serviceResult = FieldService.ListForExportExpanded(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = FieldService.ListForExportExpanded(
+                listCommand, parentId, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -376,6 +366,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PersistChildFieldIds(result.ChildFieldIds);
             PersistChildLinkIds(result.ChildLinkIds);
             return JsonMessageResult(result.Message);
+        }
+
+        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
+        {
+            return new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            };
         }
     }
 }
