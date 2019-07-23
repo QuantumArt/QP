@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL.Converters
             else
             {
                 DateTime date = (DateTime)value;
-                serializer.Serialize(writer, date.ToString("d/M/yyyy hh:mm:ss"));
+                serializer.Serialize(writer, date.ToString("d/M/yyyy HH:mm:ss"));
             }
         }
     }

@@ -7,18 +7,6 @@
   <div id="@Model.MainComponentId"></div>
   <script>
     $(function () {
-      var bodyIconTpl = function (settings) {
-        return function (dataItem) {
-          return '<img ' +
-            'src="' +
-            '@Url.GetThemeSmallIconsImageFolderUrl()' + dataItem[settings.icon] + '"' +
-            'style="width: 16px; height: 16px;"' +
-            'class="t-image"' +
-            'title="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
-            'alt="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
-            '/>';
-        };
-      };
       $('#@Model.MainComponentId').qpGrid({
         columns: [
           {
