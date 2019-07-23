@@ -578,9 +578,9 @@ DECLARE
     articles link[];
     statuses link[];
 BEGIN
-        articles := array_agg(distinct row(a.ArticleId, a.ContentId))
+        articles := array_agg(row(a.ArticleId, a.ContentId) order by ArticleId desc)
         from (
-            select xml.ArticleId, xml.ContentId
+            select distinct xml.ArticleId, xml.ContentId
             FROM XMLTABLE('ITEMS/ITEM' passing input COLUMNS
                 ArticleId int PATH '@id',
                 FieldId int PATH '@fieldId',
@@ -588,7 +588,6 @@ BEGIN
                 Value text PATH 'DATA'
             ) xml
             EXCEPT SELECT CONTENT_ITEM_ID, CONTENT_ID FROM CONTENT_ITEM
-            ORDER BY ArticleId DESC
         ) a;
 
 
