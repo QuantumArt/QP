@@ -2291,7 +2291,7 @@ $$;
 
 alter function qp_get_m2o_ids_multiple(integer, text, integer[]) owner to postgres;
 
-CREATE OR REPLACE FUNCTION public.qp_mass_update_content_item(input xml, content_id int, last_modified_by int, not_for_replication int, create_versions bool)
+CREATE OR REPLACE FUNCTION public.qp_mass_update_content_item(input xml, content_id int, last_modified_by int, not_for_replication int, create_versions bool, import_only bool DEFAULT false)
 RETURNS TABLE(id numeric)
 LANGUAGE 'plpgsql'
 as
@@ -2328,29 +2328,32 @@ DECLARE
 
         RAISE NOTICE 'New Ids: %', new_ids;
 
+        if not import_only then
 
-        perform ci.content_item_id from content_item ci
-        where ci.content_item_id in (select a.content_item_id from articles a)
-        for update;
+            perform ci.content_item_id from content_item ci
+            where ci.content_item_id in (select a.content_item_id from articles a)
+            for update;
 
-        old_ids := array_agg(ci.content_item_id) from content_item ci
-        where ci.content_item_id in (select a.content_item_id from articles a);
+            old_ids := array_agg(ci.content_item_id) from content_item ci
+            where ci.content_item_id in (select a.content_item_id from articles a);
 
-        RAISE NOTICE 'Old Ids: %', old_ids;
+            RAISE NOTICE 'Old Ids: %', old_ids;
 
-        if create_versions then
-            call qp_create_content_item_versions(old_ids, $3);
+            if create_versions then
+                call qp_create_content_item_versions(old_ids, $3);
+            end if;
+
+            old_splitted_ids := array_agg(ci.content_item_id) from content_item ci
+            where ci.content_item_id in (select i.id from unnest(old_ids) i(id)) and splitted;
+
+            RAISE NOTICE 'Old Splitted Ids: %', old_splitted_ids;
+
+            old_non_splitted_ids := array_agg(ci.content_item_id) from content_item ci
+            where ci.content_item_id in (select i.id from unnest(old_ids) i(id)) and not splitted;
+
+            RAISE NOTICE 'Old Non-Splitted Ids: %', old_non_splitted_ids;
+
         end if;
-
-        old_splitted_ids := array_agg(ci.content_item_id) from content_item ci
-        where ci.content_item_id in (select i.id from unnest(old_ids) i(id)) and splitted;
-
-        RAISE NOTICE 'Old Splitted Ids: %', old_splitted_ids;
-
-        old_non_splitted_ids := array_agg(ci.content_item_id) from content_item ci
-        where ci.content_item_id in (select i.id from unnest(old_ids) i(id)) and not splitted;
-
-        RAISE NOTICE 'Old Non-Splitted Ids: %', old_non_splitted_ids;
 
         update content_item ci
             set modified = now(),
@@ -2362,22 +2365,25 @@ DECLARE
 
         drop table articles;
 
-        new_splitted_ids := array_agg(ci.content_item_id) from content_item ci
-        where ci.content_item_id in (select i.id from unnest(old_non_splitted_ids) i(id)) and splitted;
+        if not import_only then
 
-        RAISE NOTICE 'New Splitted Ids: %', new_splitted_ids;
+            new_splitted_ids := array_agg(ci.content_item_id) from content_item ci
+            where ci.content_item_id in (select i.id from unnest(old_non_splitted_ids) i(id)) and splitted;
 
-        new_non_splitted_ids := array_agg(ci.content_item_id) from content_item ci
-        where ci.content_item_id in (select i.id from unnest(old_splitted_ids) i(id)) and not splitted;
+            RAISE NOTICE 'New Splitted Ids: %', new_splitted_ids;
 
-        RAISE NOTICE 'New Non-Splitted Ids: %', new_non_splitted_ids;
+            new_non_splitted_ids := array_agg(ci.content_item_id) from content_item ci
+            where ci.content_item_id in (select i.id from unnest(old_splitted_ids) i(id)) and not splitted;
 
-        if new_splitted_ids is not null then
-            call qp_split_articles(new_splitted_ids, $3);
-        end if;
+            RAISE NOTICE 'New Non-Splitted Ids: %', new_non_splitted_ids;
 
-        if new_non_splitted_ids is not null then
-            call qp_merge_articles(new_non_splitted_ids, $3, true);
+            if new_splitted_ids is not null then
+                call qp_split_articles(new_splitted_ids, $3);
+            end if;
+
+            if new_non_splitted_ids is not null then
+                call qp_merge_articles(new_non_splitted_ids, $3, true);
+            end if;
         end if;
 
         return query select unnest::numeric from unnest(new_ids);
