@@ -23,7 +23,5 @@ namespace Quantumart.QP8.BLL.ListItems
         public int LastModifiedByUserId { get; set; }
 
         public string LastModifiedByUser { get; set; }
-
-        public string SharedArticlesChecked => SharedArticles ? "checked=\"checked\"" : null;
     }
 }

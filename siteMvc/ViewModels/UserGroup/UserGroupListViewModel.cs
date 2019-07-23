@@ -17,6 +17,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
         {
             var model = Create<UserGroupListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
+            model.AllowMultipleEntitySelection = false;
             return model;
         }
 

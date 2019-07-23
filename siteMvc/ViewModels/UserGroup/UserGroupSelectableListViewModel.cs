@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
@@ -17,6 +16,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
             model.SelectedIDs = ids;
             model.AutoGenerateLink = false;
             model.ShowAddNewItemButton = !model.IsWindow;
+            model.AllowMultipleEntitySelection = false;
             model.AllowGlobalSelection = false;
             return model;
         }

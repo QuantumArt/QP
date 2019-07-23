@@ -17,6 +17,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
             model.AutoGenerateLink = false;
             model.IsMultiple = isMultiple;
             model.TitleFieldName = "Login";
+            model.AllowMultipleEntitySelection = isMultiple;
             return model;
         }
 

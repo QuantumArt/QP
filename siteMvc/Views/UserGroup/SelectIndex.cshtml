@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL.Services.DTO
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.UserGroup.UserGroupSelectableListViewModel
 
@@ -16,7 +15,7 @@
           {
             field: 'SharedArticles',
             title: '@UserGroupStrings.SharedArticles',
-            template: '<input type="checkbox" disabled name="SharedArticles" value="#:SharedArticlesChecked#" />',
+            template: '<input type="checkbox" disabled name="SharedArticles" # if (SharedArticles) { # checked="checked" # } # />',
             attributes: { 'class': 'isCentered' },
             headerAttributes: { 'class': 'isCentered' },
           },

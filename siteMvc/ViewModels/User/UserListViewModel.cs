@@ -16,6 +16,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
         {
             var model = Create<UserListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
+            model.AllowMultipleEntitySelection = false;
             return model;
         }
 

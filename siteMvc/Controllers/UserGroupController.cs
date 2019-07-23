@@ -70,7 +70,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectUserGroup)]
         [BackendActionContext(ActionCode.SelectUserGroup)]
         public ActionResult _Select(
