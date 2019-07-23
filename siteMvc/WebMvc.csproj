@@ -2025,8 +2025,6 @@
     </Content>
     <Content Include="Views\Workflow\Properties.cshtml">
     </Content>
-    <Content Include="Views\Workflow\MultipleIndex.cshtml">
-    </Content>
     <Content Include="Views\VisualEditorConfig\AspellCheck.cshtml">
     </Content>
   </ItemGroup>
@@ -2591,9 +2589,6 @@
     </Content>
     <Content Include="Views\VirtualContent\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
-    </Content>
-    <Content Include="Views\VirtualContent\MultipleIndex.cshtml">
-      <LastGenOutput>MultipleIndex.generated.cs</LastGenOutput>
     </Content>
     <Content Include="Views\User\SearchBlock.cshtml">
     </Content>
