@@ -31,11 +31,11 @@ AS $BODY$
 		IF attr_ids IS NULL THEN
 			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
 				where ca.content_id = $1;
-			attr_ids := array_agg(attribute_id) from unnest(attributes) a;	
 		ELSE
 			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
 				where ca.content_id = $1 AND attribute_id = ANY(attr_ids);
 		END IF;
+		attr_ids := array_agg(attribute_id) from unnest(attributes) a;	
 	
 		IF array_length(attributes, 1) > 0 THEN
 	

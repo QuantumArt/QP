@@ -1610,11 +1610,11 @@ AS $BODY$
 		IF attr_ids IS NULL THEN
 			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
 				where ca.content_id = $1;
-			attr_ids := array_agg(attribute_id) from unnest(attributes) a;	
 		ELSE
 			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
 				where ca.content_id = $1 AND attribute_id = ANY(attr_ids);
 		END IF;
+		attr_ids := array_agg(attribute_id) from unnest(attributes) a;	
 	
 		IF array_length(attributes, 1) > 0 THEN
 	
@@ -2858,15 +2858,26 @@ AS $BODY$
 									 
 		END LOOP;
 
-		update content_data cd set o2m_data = cd.data::numeric, ft_data = to_tsvector('russian', cd.data)
-		 from content_attribute ca where ca.attribute_id = cd.attribute_id
-		 and ca.attribute_type_id = 11 and ca.link_id is null and cd.content_item_id = ANY(ids);
+		update content_data cd2 set o2m_data = a.o2m_data, ft_data = a.ft_data from
+		(
+		    select to_tsvector('russian', cd.data) ft_data, cd.data::numeric o2m_data, cd.attribute_id, cd.content_item_id
+		    from content_data cd inner join content_attribute ca on ca.attribute_id = cd.attribute_id
+		    and ca.attribute_type_id = 11 and ca.link_id is null
+		    WHERE cd.content_item_id = ANY(ids)
+		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id and cd2.o2m_data <> a.o2m_data;
 
-		update content_data cd set ft_data = to_tsvector('russian', cd.data)
-        from content_attribute ca where ca.attribute_id = cd.attribute_id
-        and (ca.attribute_type_id <> 11 or ca.link_id is null) and cd.content_item_id = ANY(ids);
+		update content_data cd2 set ft_data = a.ft_data from
+	    (
+		    select to_tsvector('russian', cd.data) ft_data, cd.attribute_id, cd.content_item_id
+		    from content_data cd inner join content_attribute ca on ca.attribute_id = cd.attribute_id
+		    and (ca.attribute_type_id <> 11 or ca.link_id is not null)
+		    WHERE cd.content_item_id = ANY(ids)
+		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id and cd2.ft_data <> a.ft_data;
 
-		update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from unnest(ids) i(id);
+		update content_item_ft ci set ft_data = a.ft_data from
+        (
+		    select qp_get_article_tsvector(i.id) ft_data, i.id from unnest(ids) i(id)
+		) a where ci.content_item_id = a.id and ci.ft_data <> a.ft_data;
 
    		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids)
    		    and (not_for_replication or cancel_split);
