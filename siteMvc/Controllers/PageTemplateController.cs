@@ -35,12 +35,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Templates)]
         [BackendActionContext(ActionCode.Templates)]
-        public ActionResult _IndexTemplates(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexTemplates(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _pageTemplateService.GetPageTemplatesBySiteId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _pageTemplateService.GetPageTemplatesBySiteId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -357,5 +357,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
             },
             JsonRequestBehavior = JsonRequestBehavior.DenyGet
         };
+
+        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
+        {
+            return new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            };
+        }
     }
 }
