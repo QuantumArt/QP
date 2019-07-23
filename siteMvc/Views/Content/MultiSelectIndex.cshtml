@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.Content.ContentSelectableListViewModel
 
@@ -14,7 +13,7 @@
             field: '',
             headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
             headerAttributes: { 'class': 't-select-header' },
-            template: '<input type="checkbox" name="selectedContentIDs" value="#:Id#" />',
+            template: '<input type="checkbox" name="selectedContentIDs" value="#= Id #" />',
             sortable: false,
             attributes: { 'class': 't-select-cell' },
             width: 35,
