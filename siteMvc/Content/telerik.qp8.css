@@ -666,6 +666,10 @@ a.t-button.t-state-disabled:hover,
 
 /* Kendo */
 
+.k-block, .k-content, .k-dropdown .k-input, .k-popup, .k-toolbar, .k-widget {
+  color: #000;
+}
+
 .qpGrid .k-grid-header .k-link .k-icon.k-i-sort-asc-sm,
 .qpGrid .k-grid-header .k-link .k-icon.k-i-sort-desc-sm {
   vertical-align: top;
@@ -683,7 +687,7 @@ a.t-button.t-state-disabled:hover,
 
 .qpGrid .k-state-selected td .html,
 .qpGrid .k-state-selected td .js {
-  color: white;
+  color: #fff;
 }
 
 .isCentered {
