@@ -46,11 +46,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult _LockedArticles(string tabId, int parentId,
-            int page,
-            int pageSize,
-            int IDs,
-            string orderBy = "")
+        public ActionResult _LockedArticles(string tabId, int parentId, int page, int pageSize, string orderBy = "")
         {
             var serviceResult = ArticleService.ListLocked(new ListCommand
             {
@@ -75,11 +71,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult _ArticlesForApproval(string tabId, int parentId,
-            int page,
-            int pageSize,
-            int IDs,
-            string orderBy = "")
+        public ActionResult _ArticlesForApproval(string tabId, int parentId, int page, int pageSize, string orderBy = "")
         {
             var serviceResult = ArticleService.ArticlesForApproval(new ListCommand
             {

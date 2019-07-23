@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.HomePage.ArticleBaseListViewModel
 
@@ -36,7 +35,7 @@
           {
             field: 'IsPermanentLock',
             title: '@GlobalStrings.PermanentLockSet',
-            template: '<input type="checkbox" disabled="disabled" checked="#:IsPermanentLock#" />', },
+            template: '<input type="checkbox" disabled="disabled" # if (IsPermanentLock) { # checked="checked" # } # />', },
           { field: 'SiteName', title: '@SiteStrings.Name' },
           { field: 'ContentName', title: '@ContentStrings.Name' },
           { field: 'StatusName', title: '@ArticleStrings.Status' },
@@ -56,4 +55,5 @@
     });
   </script> 
 }
+
 @Html.PrepareAndRunInitScript(Model)
