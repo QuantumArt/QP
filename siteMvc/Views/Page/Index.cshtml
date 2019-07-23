@@ -29,7 +29,7 @@
           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
           {
             field: 'GenerateTrace',
-            title: '',
+            headerTemplate: '',
             width: 15,
             template: '<img class="smallIcon" # if (GenerateTrace) { # src="@Url.Content("~/Content/qp8/icons/16x16/page1.gif")" # } else { # src="@Url.Content("~/Content/qp8/icons/16x16/page0.gif")" # } # />',
           },
@@ -43,7 +43,7 @@
           },
           {
             field: 'Reassemble',
-            title: '',
+            headerTemplate: '',
             width: 15,
             template: '<img class="smallIcon" # if (Reassemble) { # src="@Url.Content("~/Content/qp8/icons/16x16/reassemble.gif")" # } # />',
           },
