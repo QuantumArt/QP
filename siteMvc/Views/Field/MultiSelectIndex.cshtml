@@ -16,25 +16,13 @@
   <div id="@Model.MainComponentId"></div>
   <script>
     $(function () {
-
-      var bodyIconTpl = function (settings) {
-        return function (dataItem) {
-          return '<img ' +
-            'src="' +
-            '@Url.GetThemeSmallIconsImageFolderUrl()' + '/' + dataItem[settings.src] + '"' +
-            'class="smallIcon"' +
-            'title="' + (dataItem[settings.title] || dataItem[settings.src]) + '"'
-            '/>';
-        };
-      };
-
-     $('#@Model.MainComponentId').qpGrid({
+      $('#@Model.MainComponentId').qpGrid({
         columns: [
           {
               field: '',
               headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
               headerAttributes: { 'class': 't-select-header' },
-              template: '<input type="checkbox" name="selectedContentIDs" value="#:Id#" />',
+              template: '<input type="checkbox" name="selectedContentIDs" value="#= Id #" />',
               sortable: false,
               attributes: { 'class': 't-select-cell' },
               width: 35
@@ -44,7 +32,7 @@
             field: 'TypeCode',
             headerTemplate: '',
             attributes: { 'style': 'text-align: center;' },
-            template: bodyIconTpl({ src: 'TypeIcon', title: 'Type' }),
+            template: '<img src="@Url.GetThemeSmallIconsImageFolderUrl()/#= TypeIcon #" title="#= TypeName #" class="smallIcon" />',
             width: 30
           },
           { field: 'ContentName', title: '@TemplateStrings.Content', attributes: { 'class': 'title' } },
@@ -56,28 +44,28 @@
           {
             field: 'Required',
             title: '@FieldStrings.Required',
-            template: '<input type="checkbox" disabled="disabled" checked="#:Required#" />',
+            template: '<input type="checkbox" disabled="disabled" # if (Required) { # checked="checked" # } # />',
             attributes: { 'class': 'isCentered' },
             headerAttributes: { 'class': 'isCentered' },
           },
           {
             field: 'Indexed',
             title: '@FieldStrings.Indexed',
-            template: '<input type="checkbox" disabled="disabled" checked="#:Indexed#" />',
+            template: '<input type="checkbox" disabled="disabled" # if (Indexed) { # checked="checked" # } # />',
             attributes: { 'class': 'isCentered' },
             headerAttributes: { 'class': 'isCentered' },
            },
            {
             field: 'MapAsProperty',
             title: '@FieldStrings.MapAsProperty',
-            template: '<input type="checkbox" disabled="disabled" checked="#:MapAsProperty#" />',
+            template: '<input type="checkbox" disabled="disabled" # if (MapAsProperty) { # checked="checked" # } # />',
             attributes: { 'class': 'isCentered' },
             headerAttributes: { 'class': 'isCentered' },
           },
           {
             field: 'ViewInList',
             title: '@FieldStrings.ViewInList',
-            template: '<input type="checkbox" disabled="disabled" checked="#:ViewInList#" />',
+            template: '<input type="checkbox" disabled="disabled" # if (ViewInList) { # checked="checked" # } # />',
             attributes: { 'class': 'isCentered' },
             headerAttributes: { 'class': 'isCentered' },
            },

@@ -1,5 +1,4 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.EntityPermissions.PermissionListViewModel
 
@@ -31,7 +30,7 @@
             field: '',
             headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
             headerAttributes: { 'class': 't-select-header' },
-            template: '<input type="checkbox" name="SelectedSitePermissionIDs" value="#:Id#" />',
+            template: '<input type="checkbox" name="SelectedSitePermissionIDs" value="#= Id #" />',
             sortable: false,
             attributes: { 'class': 't-select-cell' },
             width: 35,
@@ -45,7 +44,7 @@
               {
                 field: 'PropagateToItems',
                 title: '@EntityPermissionStrings.PropagateToItems',
-                template: '<input type="checkbox" disabled="disabled" checked="#:PropagateToItems#" />',
+                template: '<input type="checkbox" disabled="disabled" # if (PropagateToItems) { # checked="checked" # } # />',
                 attributes: { 'class': 'isCentered' },
                 headerAttributes: { 'class': 'isCentered' },
               },
@@ -57,7 +56,7 @@
               {
                 field: 'Hide',
                 title: '@EntityPermissionStrings.Hide',
-                template: '<input type="checkbox" disabled="disabled" value="#:Hide#" />',
+                template: '<input type="checkbox" disabled="disabled" # if (Hide) { # checked="checked" # } # />',
                 attributes: { 'class': 'isCentered' },
                 headerAttributes: { 'class': 'isCentered' },
               },
@@ -79,56 +78,6 @@
       })
     });
   </script>
-  @*@(Html.Telerik().Grid<EntityPermissionListItem>().Name(Model.MainComponentId)
-            .DataKeys(k => k.Add(s => s.Id))
-            .Columns(c =>
-            {
-              c.Bound("")
-          .Title(@"<input type='checkbox' />")
-          .Width(30)
-          .HeaderHtmlAttributes(new { @class = "t-select-header" })
-          .ClientTemplate(@"<input type='checkbox' name='SelectedSitePermissionIDs' value='<#= Id #>' />")
-          .HtmlAttributes(new { @class = "t-select-cell" })
-          .Sortable(false);
-
-              c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-             .Width(30)
-             .HtmlAttributes(new { @class = "id" });
-
-              c.Bound(s => s.UserLogin).Title(EntityPermissionStrings.User);
-              c.Bound(s => s.GroupName).Title(EntityPermissionStrings.Group);
-              c.Bound(s => s.LevelName).Title(EntityPermissionStrings.PermissionLevel);
-
-              if (Model.IsPropagateable)
-              {
-                c.Bound(s => s.PropagateToItems)
-            .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (PropagateToItems)  { #> checked=""checked"" <# } #>/>")
-            .Title(EntityPermissionStrings.PropagateToItems);
-              }
-
-              if (Model.CanHide)
-              {
-                c.Bound(s => s.Hide)
-            .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (Hide)  { #> checked=""checked"" <# } #>/>")
-            .Title(EntityPermissionStrings.Hide);
-              }
-
-              c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
-              c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
-              c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
-            })
-            .DataBinding(db => db.Ajax()
-                    .Select(Model.GettingDataActionName, Model.GettingDataControllerName)
-            )
-            .EnableCustomBinding(true)
-            .Sortable()
-            .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-            .Selectable(s => s.Enabled(true))
-            .ClientEvents(e =>
-                e.OnDataBinding("$q.preventDefaultFunction")
-                 .OnRowDataBound("$q.preventDefaultFunction")
-            )
-  )*@
 }
 
 @Html.PrepareAndRunInitScript(Model)

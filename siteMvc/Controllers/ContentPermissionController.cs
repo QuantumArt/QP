@@ -5,7 +5,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -89,7 +88,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public override ActionResult ChildIndex(string tabId, int parentId) => base.ChildIndex(tabId, parentId);
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ChildContentPermissions)]
         [BackendActionContext(ActionCode.ChildContentPermissions)]
         public override ActionResult _ChildIndex(
