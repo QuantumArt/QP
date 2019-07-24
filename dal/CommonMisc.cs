@@ -308,6 +308,14 @@ namespace Quantumart.QP8.DAL
             var securityJoin = "";
             if (!isAdmin)
             {
+                if (articleId.HasValue)
+                {
+                    var level = CommonSecurity.GetEntityAccessLevel(sqlConnection, context, userId, 0, EntityTypeCode.Article, articleId.Value);
+                    if (level < PermissionLevel.List)
+                    {
+                        articleId = null;
+                    }
+                }
                 var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.Content, EntityTypeCode.Site, siteId);
                 securityJoin = $"INNER JOIN ({securitySql}) sec on sec.content_id = ci.content_id ";
             }
@@ -330,7 +338,6 @@ namespace Quantumart.QP8.DAL
                     SELECT {PgFtSelect(true)}
                     FROM content_item ci
                     {PgFtCommonJoins()}
-                    {securityJoin}
                     WHERE ci.content_item_id = {articleId.Value}
                     UNION ALL
                 " + sql;
@@ -415,7 +422,6 @@ namespace Quantumart.QP8.DAL
             {
                 var sql2 = $@"
                     SELECT count(*) FROM content_item ci
-                    {securityJoin}
                     where ci.content_item_id = " + articleId.Value;
                 result += (int)ExecuteScalarLong(connection, sql2);
             }
