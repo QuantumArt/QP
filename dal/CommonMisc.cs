@@ -281,28 +281,93 @@ namespace Quantumart.QP8.DAL
 
         public static DataTable SearchInArticles(DbConnection sqlConnection, int siteId, int userId, string searchString, int? articleId, string sortExpression, int startRow, int pageSize, out int totalRecords)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var safeSearchString = Cleaner.ToSafeSqlString(searchString);
             totalRecords = -1;
-            object[] parameters =
-            {
-                new SqlParameter { ParameterName = "p_site_id", DbType = DbType.Int32, Value = siteId },
-                new SqlParameter { ParameterName = "p_user_id", DbType = DbType.Int32, Value = userId },
-                new SqlParameter { ParameterName = "p_item_id", DbType = DbType.Int32, Value = articleId },
-                new SqlParameter { ParameterName = "p_searchparam", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString) },
-                new SqlParameter { ParameterName = "p_order_by", DbType = DbType.String, Value = sortExpression },
-                new SqlParameter { ParameterName = "p_start_row", DbType = DbType.Int32, Value = startRow },
-                new SqlParameter { ParameterName = "p_page_size", DbType = DbType.Int32, Value = pageSize },
-                new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords }
-            };
+            var sql = (dbType == DatabaseType.SqlServer) ? "qp_all_article_search" :
+                $@"SELECT c.content_name ""ParentName"", c.content_id ""ParentId"", cif.content_item_id ""Id"",
+                0 ""FieldId"", '' ""Text"", ci.created ""Created"", ci.modified ""Modified"", ci.archive ""Archive"",
+                ts_rank_cd(cif.ft_data, q, 2) ""Rank"", st.status_type_name ""StatusName"", u.login ""LastModifiedByUser"",
+                qp_get_article_title_func(ci.content_item_id, ci.content_id) ""Name""
+            FROM content_item_ft cif
+                CROSS JOIN {GetPgFtQuery(safeSearchString)} q
+                INNER JOIN content_item ci on cif.content_item_id = ci.content_item_id
+                INNER JOIN status_type st on ci.status_type_id = st.status_type_id
+                INNER JOIN users u on ci.last_modified_by = u.user_id
+                INNER JOIN content c on c.content_id = ci.content_id
+            WHERE ft_data @@ q AND c.site_id = @p_site_id
+            ORDER BY {sortExpression} OFFSET {startRow - 1} LIMIT {pageSize};";
 
-            using (var cmd = DbCommandFactory.Create("qp_all_article_search", sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddRange(parameters);
+                cmd.Parameters.AddWithValue("@p_site_id", siteId);
+                cmd.Parameters.AddWithValue("@p_user_id", userId);
+                cmd.Parameters.AddWithValue("@p_item_id", articleId);
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@p_searchparam", safeSearchString);
+                    cmd.Parameters.AddWithValue("@p_order_by", sortExpression);
+                    cmd.Parameters.AddWithValue("@p_start_row", startRow);
+                    cmd.Parameters.AddWithValue("@p_page_size", pageSize);
+                    cmd.Parameters.Add(new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords });
+                }
+
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                totalRecords = (int)cmd.Parameters["total_records"].Value;
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    totalRecords = (int)cmd.Parameters["total_records"].Value;
+                }
+                else if (dbType == DatabaseType.Postgres)
+                {
+                    totalRecords = GetPgSearchInArticlesCount(sqlConnection, safeSearchString);
+                }
+
                 return dt;
             }
+        }
+
+        public static Dictionary<decimal, string> GetPgFtDescriptions(DbConnection connection, int[] ids, string searchString)
+        {
+            var result = new Dictionary<decimal, string>();
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var headLineOptions = "StartSel=\"<span class=\"\"seachResultHighlight\"\">\", StopSel=\"</span>\"";
+            var sql = $@"
+                select content_item_id, content_data_id, ts_rank_cd(ft_data, q, 2) as rank,
+                ts_headline('russian', coalesce(blob_data, data), q, '{headLineOptions}') as text
+                from content_data, {GetPgFtQuery(Cleaner.ToSafeSqlString(searchString))} q
+                WHERE ft_data @@ q and content_item_id in (select id from {IdList(dbType, "@ids")})
+                order by rank desc, content_item_id asc
+            ";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                foreach (var row in dt.AsEnumerable())
+                {
+                    var id = row.Field<decimal>("content_item_id");
+                    if (!result.ContainsKey(id))
+                    {
+                        result.Add(id, row.Field<string>("text"));
+                    }
+                }
+
+                return result;
+            }
+        }
+
+
+        public static string GetPgFtQuery(string searchString)
+        {
+            return $"websearch_to_tsquery('russian', '{searchString}')";
+        }
+
+        public static int GetPgSearchInArticlesCount(DbConnection connection, string searchString)
+        {
+            var sql = $@"SELECT count(*) FROM content_item_ft, {GetPgFtQuery(searchString)} query WHERE ft_data @@ query";
+            return (int)ExecuteScalarLong(connection, sql);
         }
 
         /// <summary>

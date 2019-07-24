@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
@@ -33,9 +34,24 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var dt = Common.SearchInArticles(QPConnectionScope.Current.DbConnection, siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
             var result = Mapper.Map<IEnumerable<DataRow>, IEnumerable<SearchInArticlesResultItem>>(dt.AsEnumerable()).ToList();
-            foreach (var item in result)
+            if (QPContext.DatabaseType == DatabaseType.Postgres)
             {
-                item.Text = Cleaner.RemoveAllHtmlTags(item.Text);
+                var ids = result.Select(n => n.Id).ToArray();
+                var descriptions = Common.GetPgFtDescriptions(QPConnectionScope.Current.DbConnection, ids, sqlSearchString);
+                foreach (var item in result)
+                {
+                    if (descriptions.TryGetValue(item.Id, out var text))
+                    {
+                        item.Text = text;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in result)
+                {
+                    item.Text = Cleaner.RemoveAllHtmlTags(item.Text);
+                }
             }
 
             return result;
@@ -50,18 +66,32 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// </summary>
         private static string TranslateSortExpression(string sortExpression)
         {
-            var replaces = new Dictionary<string, string>
+            var dbType = QPContext.DatabaseType;
+            if (dbType == DatabaseType.Postgres)
             {
-                { "Text", "data.[rank]" },
+                if (String.IsNullOrEmpty(sortExpression))
+                {
+                    return $@"""Rank"" desc";
+                }
+
+                var parts = sortExpression.Split(' ');
+                parts[0] = $@"""{parts[0]}""";
+                return string.Join(" ", parts);
+            }
+            var rank = SqlQuerySyntaxHelper.EscapeEntityName(dbType, "rank");
+            var login = SqlQuerySyntaxHelper.EscapeEntityName(dbType, "login");
+            var replaces = new Dictionary<string, string>()
+            {
+                { "Text", $"data.{rank}" },
                 { "Id", "data.content_item_id" },
                 { "Created", "ci.created" },
                 { "Modified", "ci.modified" },
-                { "LastModifiedByUser", "usr.[LOGIN]" },
-                { "ParentName", "c.CONTENT_NAME" },
-                { "StatusName", "st.STATUS_TYPE_NAME" }
+                { "LastModifiedByUser", $"usr.{login}" },
+                { "ParentName", "c.content_name" },
+                { "StatusName", "st.status_type_name" }
             };
 
-            return TranslateHelper.TranslateSortExpression(sortExpression, replaces, "data.[rank] desc");
+            return TranslateHelper.TranslateSortExpression(sortExpression, replaces, $"data.{rank} desc");
         }
     }
 }

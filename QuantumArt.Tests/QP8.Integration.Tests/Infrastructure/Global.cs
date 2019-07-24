@@ -19,11 +19,11 @@ namespace QP8.Integration.Tests.Infrastructure
 
         public static string DbName => TestContext.Parameters.Get("qp8_test_ci_dbname", $"qp8_test_ci_{Environment.MachineName.ToLowerInvariant()}");
 
-        public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        //public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
 
-        //public static string ConnectionString => $"Server=mscpgsql01;Port=5432;Database=qp8_test;User Id=postgres;Password=1q2w-p=[;Application Name=UnitTest";
+        public static string ConnectionString => $"Server=mscpgsql01;Port=5432;Database=qp8_test;User Id=postgres;Password=1q2w-p=[;Application Name=UnitTest";
 
-        public static DatabaseType DbType = DatabaseType.SqlServer;
+        public static DatabaseType DbType = DatabaseType.Postgres;
 
         public static M.DatabaseType ClientDbType => (M.DatabaseType)(int)DbType;
 

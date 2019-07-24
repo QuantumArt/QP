@@ -4,7 +4,7 @@ namespace Quantumart.QP8.BLL
 {
     public class SearchInArticlesResultItem
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
