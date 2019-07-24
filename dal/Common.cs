@@ -342,11 +342,14 @@ namespace Quantumart.QP8.DAL
 
         public static long ExecuteScalarLong(DbConnection connection, string sqlString)
         {
+            return Convert.ToInt64(ExecuteScalar(connection, sqlString));
+        }
+
+        public static object ExecuteScalar(DbConnection connection, string sqlString)
+        {
             using (var cmd = DbCommandFactory.Create(sqlString, connection))
             {
-                cmd.CommandType = CommandType.Text;
-                var result = cmd.ExecuteScalar();
-                return Convert.ToInt64(result);
+                return cmd.ExecuteScalar();
             }
         }
 

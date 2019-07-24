@@ -279,24 +279,62 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable SearchInArticles(DbConnection sqlConnection, int siteId, int userId, string searchString, int? articleId, string sortExpression, int startRow, int pageSize, out int totalRecords)
+        private static string PgFtSelect(bool forId)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var safeSearchString = Cleaner.ToSafeSqlString(searchString);
-            totalRecords = -1;
-            var sql = (dbType == DatabaseType.SqlServer) ? "qp_all_article_search" :
-                $@"SELECT c.content_name ""ParentName"", c.content_id ""ParentId"", cif.content_item_id ""Id"",
+            var rank = (forId) ? "1" : "ts_rank_cd(cif.ft_data, q, 2)";
+            return  $@"
+                c.content_name ""ParentName"", ci.content_id ""ParentId"", ci.content_item_id ""Id"",
                 0 ""FieldId"", '' ""Text"", ci.created ""Created"", ci.modified ""Modified"", ci.archive ""Archive"",
-                ts_rank_cd(cif.ft_data, q, 2) ""Rank"", st.status_type_name ""StatusName"", u.login ""LastModifiedByUser"",
+                {rank} ""Rank"", st.status_type_name ""StatusName"", u.login ""LastModifiedByUser"",
                 qp_get_article_title_func(ci.content_item_id, ci.content_id) ""Name""
-            FROM content_item_ft cif
-                CROSS JOIN {GetPgFtQuery(safeSearchString)} q
-                INNER JOIN content_item ci on cif.content_item_id = ci.content_item_id
+            ";
+        }
+
+        private static string PgFtCommonJoins()
+        {
+            return @"
                 INNER JOIN status_type st on ci.status_type_id = st.status_type_id
                 INNER JOIN users u on ci.last_modified_by = u.user_id
                 INNER JOIN content c on c.content_id = ci.content_id
-            WHERE ft_data @@ q AND c.site_id = @p_site_id
+            ";
+        }
+
+        public static DataTable SearchInArticles(QPModelDataContext context, DbConnection sqlConnection, int siteId, int userId, string searchString, int? articleId, string sortExpression, int startRow, int pageSize, out int totalRecords)
+        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var isOnlySite = context.SiteSet.Count() == 1;
+            var siteFilter = isOnlySite ? "" : " AND c.site_id = @p_site_id";
+            var isAdmin = IsAdmin(sqlConnection, userId);
+            var securityJoin = "";
+            if (!isAdmin)
+            {
+                var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.Content, EntityTypeCode.Site, siteId);
+                securityJoin = $"INNER JOIN ({securitySql}) sec on sec.content_id = ci.content_id ";
+            }
+
+            var safeSearchString = Cleaner.ToSafeSqlString(searchString);
+            totalRecords = -1;
+            var sql = (dbType == DatabaseType.SqlServer) ? "qp_all_article_search" :
+                $@"SELECT {PgFtSelect(false)}
+            FROM content_item_ft cif
+                CROSS JOIN {GetPgFtQuery(safeSearchString)} q
+                INNER JOIN content_item ci on cif.content_item_id = ci.content_item_id
+                {PgFtCommonJoins()}
+                {securityJoin}
+            WHERE ft_data @@ q {siteFilter}
             ORDER BY {sortExpression} OFFSET {startRow - 1} LIMIT {pageSize};";
+
+            if (articleId.HasValue)
+            {
+                sql = $@"
+                    SELECT {PgFtSelect(true)}
+                    FROM content_item ci
+                    {PgFtCommonJoins()}
+                    {securityJoin}
+                    WHERE ci.content_item_id = {articleId.Value}
+                    UNION ALL
+                " + sql;
+            }
 
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
@@ -321,7 +359,7 @@ namespace Quantumart.QP8.DAL
                 }
                 else if (dbType == DatabaseType.Postgres)
                 {
-                    totalRecords = GetPgSearchInArticlesCount(sqlConnection, safeSearchString);
+                    totalRecords = GetPgSearchInArticlesCount(sqlConnection, safeSearchString, articleId, securityJoin);
                 }
 
                 return dt;
@@ -364,10 +402,25 @@ namespace Quantumart.QP8.DAL
             return $"websearch_to_tsquery('russian', '{searchString}')";
         }
 
-        public static int GetPgSearchInArticlesCount(DbConnection connection, string searchString)
+        public static int GetPgSearchInArticlesCount(DbConnection connection, string searchString, int? articleId, string securityJoin)
         {
-            var sql = $@"SELECT count(*) FROM content_item_ft, {GetPgFtQuery(searchString)} query WHERE ft_data @@ query";
-            return (int)ExecuteScalarLong(connection, sql);
+            var sql = $@"
+                SELECT count(*) FROM content_item_ft cif
+                CROSS JOIN {GetPgFtQuery(searchString)} query
+                inner join content_item ci on ci.content_item_id = cif.content_item_id
+                {securityJoin}
+                WHERE cif.ft_data @@ query";
+            var result = (int)ExecuteScalarLong(connection, sql);
+            if (articleId.HasValue)
+            {
+                var sql2 = $@"
+                    SELECT count(*) FROM content_item ci
+                    {securityJoin}
+                    where ci.content_item_id = " + articleId.Value;
+                result += (int)ExecuteScalarLong(connection, sql2);
+            }
+
+            return result;
         }
 
         /// <summary>

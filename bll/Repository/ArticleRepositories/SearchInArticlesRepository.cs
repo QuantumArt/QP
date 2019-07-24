@@ -32,7 +32,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
     {
         public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string sqlSearchString, int? articleId, ListCommand listCmd, out int totalRecords)
         {
-            var dt = Common.SearchInArticles(QPConnectionScope.Current.DbConnection, siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
+            var dt = Common.SearchInArticles(QPContext.EFContext, QPConnectionScope.Current.DbConnection, siteId, userId, sqlSearchString, articleId, TranslateSortExpression(listCmd.SortExpression), listCmd.StartRecord, listCmd.PageSize, out totalRecords);
             var result = Mapper.Map<IEnumerable<DataRow>, IEnumerable<SearchInArticlesResultItem>>(dt.AsEnumerable()).ToList();
             if (QPContext.DatabaseType == DatabaseType.Postgres)
             {

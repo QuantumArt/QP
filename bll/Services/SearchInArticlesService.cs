@@ -55,8 +55,8 @@ namespace Quantumart.QP8.BLL.Services
 
             using (new QPConnectionScope())
             {
-                int.TryParse(searchString, out var articleId);
-                var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, articleId > 0 ? articleId : (int?)null, listCmd, out totalRecords).ToArray();
+                var resultArticleId = int.TryParse(searchString, out var articleId) && articleId > 0 ? articleId : (int?)null;
+                var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, resultArticleId, listCmd, out totalRecords).ToArray();
                 if (result.Any())
                 {
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
