@@ -143,15 +143,5 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = _statusTypeService.ListForWorkflow(command.GetListCommand(), Converter.ToInt32Collection(IDs, ','), parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
-
-        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
-        {
-            return new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
-            };
-        }
     }
 }

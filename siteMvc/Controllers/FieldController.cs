@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ActionAuthorize(ActionCode.Fields)]
-        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy = "")
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = FieldService.List(parentId, listCommand);
@@ -366,16 +366,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PersistChildFieldIds(result.ChildFieldIds);
             PersistChildLinkIds(result.ChildLinkIds);
             return JsonMessageResult(result.Message);
-        }
-
-        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
-        {
-            return new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
-            };
         }
     }
 }

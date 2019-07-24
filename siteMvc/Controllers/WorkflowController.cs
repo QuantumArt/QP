@@ -42,13 +42,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.Workflows)]
         public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _workflowService.GetWorkflowsBySiteId(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
-            }, parentId);
-
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _workflowService.GetWorkflowsBySiteId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

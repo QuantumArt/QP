@@ -46,14 +46,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult _LockedArticles(string tabId, int parentId, int page, int pageSize, string orderBy = "")
+        public ActionResult _LockedArticles(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = ArticleService.ListLocked(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.ListLocked(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -71,14 +67,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult _ArticlesForApproval(string tabId, int parentId, int page, int pageSize, string orderBy = "")
+        public ActionResult _ArticlesForApproval(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = ArticleService.ArticlesForApproval(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.ArticlesForApproval(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

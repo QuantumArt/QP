@@ -37,16 +37,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = ArticleVersionService.List(
-                parentId,
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleVersionService.List(parentId, listCommand);
             var result = Mapper.Map<List<ArticleVersion>, List<ArticleVersionListItem>>(serviceResult);
             return new TelerikResult(result, result.Count);
         }

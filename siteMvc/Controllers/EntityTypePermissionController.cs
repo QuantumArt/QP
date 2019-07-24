@@ -30,7 +30,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            string orderBy = "") => base._Index(
+            string orderBy) => base._Index(
                 tabId,
                 parentId,
                 page,

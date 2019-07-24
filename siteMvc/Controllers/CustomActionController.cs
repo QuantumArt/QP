@@ -146,14 +146,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             int gridParentId,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = _service.List(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

@@ -60,16 +60,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            string orderBy = "")
+            string orderBy)
         {
             filter = filter ?? ContentListFilter.Empty;
             filter.SiteId = parentId > 0 ? (int?)parentId : null;
-            var serviceResult = ContentService.List(filter, new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -333,17 +329,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int pageSize,
             int gridParentId,
             [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = ContentService.GetFileList(
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
-                gridParentId,
-                searchQuery);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.GetFileList(listCommand, gridParentId, searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -567,18 +556,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int pageSize,
             int IDs,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            string orderBy = "")
+            string orderBy)
         {
           
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForJoin(filter, new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            },
-            IDs);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForJoin(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -733,16 +717,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int pageSize,
             string IDs,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-             string orderBy = "")
+             string orderBy)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForUnion(filter, new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            }, Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForUnion(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

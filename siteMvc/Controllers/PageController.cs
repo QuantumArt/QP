@@ -214,15 +214,5 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PersistFromId(id);
             return JsonMessageResult(result.Message);
         }
-
-        private static ListCommand GetListCommand(int page, int pageSize, string orderBy)
-        {
-            return new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
-            };
-        }
     }
 }

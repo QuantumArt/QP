@@ -35,13 +35,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.VisualEditorStyles)]
         public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _visualEditorService.GetVisualEditorStyles(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
-            }, parentId);
-
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _visualEditorService.GetVisualEditorStyles(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

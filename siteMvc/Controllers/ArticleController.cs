@@ -55,19 +55,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string customFilter,
             bool? onlyIds,
             int[] filterIds,
-            string orderBy = "")
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
 
+            var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
                 new int[0],
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
+                listCommand,
                 searchQuery,
                 null,
                 customFilter,
@@ -101,18 +97,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string customFilter,
             bool? onlyIds,
             int[] filterIds,
-            string orderBy = "")
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+            var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
                 new int[0],
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
+                listCommand,
                 searchQuery,
                 null,
                 customFilter,
@@ -156,18 +148,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string customFilter,
             bool? onlyIds,
             int[] filterIds,
-            string orderBy = "")
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+            var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
                 new[] { IDs },
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
+                listCommand,
                 searchQuery,
                 null,
                 customFilter,
@@ -214,19 +202,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string customFilter,
             bool? onlyIds,
             int[] filterIds,
-            string orderBy = "")
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
+            var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
                 selectedArticleIDs,
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
+                listCommand,
                 searchQuery,
                 null,
                 customFilter,
@@ -265,16 +249,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            string orderBy = "")
+            string orderBy)
         {
-            var result = ArticleService.ArticleStatusHistory(
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
-                parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var result = ArticleService.ArticleStatusHistory(listCommand, parentId);
             return new TelerikResult(result.Data, result.TotalRecords);
         }
 

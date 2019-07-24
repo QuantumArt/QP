@@ -39,14 +39,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = _service.List(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -78,14 +74,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             int IDs,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = _service.List(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            }, new[] { IDs });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand, new[] { IDs });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

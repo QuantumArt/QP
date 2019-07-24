@@ -46,14 +46,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = _service.List(new ListCommand
-            {
-                StartPage = page,
-                PageSize = pageSize,
-                SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-            }, filter);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand, filter);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -109,17 +105,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int pageSize,
             int IDs,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter,
-            string orderBy = "")
+            string orderBy)
         {
-            var serviceResult = _service.List(
-                new ListCommand
-                {
-                    StartPage = page,
-                    PageSize = pageSize,
-                    SortExpression = GridExtensions.ToSqlSortExpression(orderBy)
-                },
-                filter,
-                new[] { IDs });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand, filter, new[] { IDs });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
