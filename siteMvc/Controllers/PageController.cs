@@ -161,7 +161,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.SelectPageForObjectForm)]
         [BackendActionContext(ActionCode.SelectPageForObjectForm)]
-        public ActionResult _SelectPages(string tabId, int parentId, int IDs, int page, int pageSize, string orderBy)
+        public ActionResult _SelectPages(string tabId, int parentId, int page, int pageSize, string orderBy, int IDs = 0)
         {
             var template = _pageService.ReadPageTemplateProperties(parentId);
             var listCommand = GetListCommand(page, pageSize, orderBy);

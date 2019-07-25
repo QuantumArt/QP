@@ -65,6 +65,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
         [ActionAuthorize(ActionCode.SelectUserGroup)]
         [BackendActionContext(ActionCode.SelectUserGroup)]
@@ -73,8 +77,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            int IDs,
-            string orderBy)
+            string orderBy,
+            int IDs = 0)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = _service.List(listCommand, new[] { IDs });

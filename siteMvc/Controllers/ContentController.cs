@@ -465,9 +465,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
         public ActionResult _Select(
-            string tabId, int parentId, int IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
@@ -494,9 +495,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
         public ActionResult _SelectForObjectContainer(
-            string tabId, int parentId, int IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
@@ -523,9 +525,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
         public ActionResult _SelectForObjectForm(
-            string tabId, int parentId, int IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
@@ -552,9 +555,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
         public ActionResult _SelectForJoin(
-            string tabId, int parentId, int IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
           
             filter = filter ?? new ContentListFilter();
@@ -582,9 +586,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]
         public ActionResult _SelectForField(
-            string tabId, int parentId, int IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;

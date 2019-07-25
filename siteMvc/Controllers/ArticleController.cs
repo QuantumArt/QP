@@ -135,6 +135,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Index", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
@@ -143,12 +147,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            int IDs,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
             string customFilter,
             bool? onlyIds,
             int[] filterIds,
-            string orderBy)
+            string orderBy,
+            int IDs = 0)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var listCommand = GetListCommand(page, pageSize, orderBy);
