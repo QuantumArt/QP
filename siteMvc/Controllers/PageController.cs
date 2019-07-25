@@ -154,14 +154,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectPageForObjectForm)]
         [BackendActionContext(ActionCode.SelectPageForObjectForm)]
-        public ActionResult _SelectPages(string tabId, int id, GridCommand command, int parentId)
+        public ActionResult _SelectPages(string tabId, int parentId, int IDs, int page, int pageSize, string orderBy)
         {
             var template = _pageService.ReadPageTemplateProperties(parentId);
-            var serviceResult = _pageService.ListPagesForSite(command.GetListCommand(), template.SiteId, id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _pageService.ListPagesForSite(listCommand, template.SiteId, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
