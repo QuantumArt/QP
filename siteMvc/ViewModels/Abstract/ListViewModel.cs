@@ -127,7 +127,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
                 return result;
             }
         }
-
-        public string IconFormat => @"<img src=""{0}/{1}"" title=""{2}"" class=""smallIcon"" />";
     }
 }
