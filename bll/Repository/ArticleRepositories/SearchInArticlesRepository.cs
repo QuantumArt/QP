@@ -78,20 +78,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 parts[0] = $@"""{parts[0]}""";
                 return string.Join(" ", parts);
             }
-            var rank = SqlQuerySyntaxHelper.EscapeEntityName(dbType, "rank");
-            var login = SqlQuerySyntaxHelper.EscapeEntityName(dbType, "login");
             var replaces = new Dictionary<string, string>()
             {
-                { "Text", $"data.{rank}" },
-                { "Id", "data.content_item_id" },
-                { "Created", "ci.created" },
-                { "Modified", "ci.modified" },
-                { "LastModifiedByUser", $"usr.{login}" },
-                { "ParentName", "c.content_name" },
-                { "StatusName", "st.status_type_name" }
+                { "Text", "Rank" }
             };
 
-            return TranslateHelper.TranslateSortExpression(sortExpression, replaces, $"data.{rank} desc");
+            return TranslateHelper.TranslateSortExpression(sortExpression, replaces, $"Rank desc");
         }
     }
 }

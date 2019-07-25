@@ -303,9 +303,11 @@ namespace Quantumart.QP8.DAL
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             var isOnlySite = context.SiteSet.Count() == 1;
-            var siteFilter = isOnlySite ? "" : " AND c.site_id = @p_site_id";
+            var siteFilter = isOnlySite ? "" : " AND c.site_id = @site_id";
             var isAdmin = IsAdmin(sqlConnection, userId);
             var securityJoin = "";
+
+
             if (!isAdmin)
             {
                 if (articleId.HasValue)
@@ -320,57 +322,113 @@ namespace Quantumart.QP8.DAL
                 securityJoin = $"INNER JOIN ({securitySql}) sec on sec.content_id = ci.content_id ";
             }
 
-            var safeSearchString = Cleaner.ToSafeSqlString(searchString);
-            totalRecords = -1;
-            var sql = (dbType == DatabaseType.SqlServer) ? "qp_all_article_search" :
-                $@"SELECT {PgFtSelect(false)}
-            FROM content_item_ft cif
-                CROSS JOIN {GetPgFtQuery(safeSearchString)} q
-                INNER JOIN content_item ci on cif.content_item_id = ci.content_item_id
-                {PgFtCommonJoins()}
-                {securityJoin}
-            WHERE ft_data @@ q {siteFilter}
-            ORDER BY {sortExpression} OFFSET {startRow - 1} LIMIT {pageSize};";
-
-            if (articleId.HasValue)
+            var createTableSql = "";
+            var dropTableSql = "";
+            bool useSql2012Syntax = true;
+            if (dbType == DatabaseType.SqlServer)
             {
-                sql = $@"
+                createTableSql = $@"
+                    create table #temp (content_item_id numeric primary key, [rank] int, attribute_id numeric, [priority] int);
+                    create table #temp2 (content_item_id numeric primary key, [rank] int, attribute_id numeric, [priority] int);
+                    insert into #temp
+                    select content_item_id, weight, attribute_id, priority from
+                    (
+                        select cd.content_item_id, ft.[rank] as weight, cd.attribute_id, 0 as priority,
+                        ROW_NUMBER() OVER(PARTITION BY cd.CONTENT_ITEM_ID ORDER BY [rank] desc) as number
+                        from CONTAINSTABLE(content_data, *,  @searchparam) ft
+                        inner join content_data cd on ft.[key] = cd.content_data_id
+                    ) as c where c.number = 1 order by weight desc;
+                ";
+                if (articleId.HasValue)
+                {
+                    createTableSql += $@"
+                        if not exists (select * from #temp where content_item_id = @item_id)
+                        insert into #temp select cast(@item_id as varchar(20)), 0, 0, 1
+                    ";
+                }
+
+                createTableSql += $@"
+                    insert into #temp2
+                    select cd.* from #temp cd
+                    inner join content_item ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+                    inner join content c on c.CONTENT_ID = ci.CONTENT_ID
+                    {securityJoin}
+                    where 1 = 1 {siteFilter};
+                ";
+
+                dropTableSql = $@"
+                drop table #temp;
+                drop table #temp2;
+                ";
+
+                useSql2012Syntax = GetSqlServerVersion(sqlConnection).Major >= 11;
+
+            }
+
+            var startPaging = dbType == DatabaseType.Postgres ? $@"select *, count(*) over() ""Count"" from ("
+                : useSql2012Syntax ? "SELECT "
+                : $"WITH PAGED_DATA_CTE AS (SELECT ROW_NUMBER() OVER (ORDER BY {sortExpression}) AS Row,";
+
+            var endPaging = dbType == DatabaseType.Postgres ? $") a LIMIT {pageSize} OFFSET {startRow - 1}"
+                : useSql2012Syntax ? $@"ORDER BY {sortExpression} OFFSET {startRow - 1} ROWS FETCH NEXT {pageSize} ROWS ONLY"
+                : $@") select * from PAGED_DATA_CTE where Row between {startRow} and {startRow + pageSize - 1} order by Row asc;";
+
+            var articleSql = dbType == DatabaseType.Postgres && articleId.HasValue ? $@"
                     SELECT {PgFtSelect(true)}
                     FROM content_item ci
                     {PgFtCommonJoins()}
-                    WHERE ci.content_item_id = {articleId.Value}
+                    WHERE ci.content_item_id = @item_id
                     UNION ALL
-                " + sql;
-            }
+                "
+                : "";
 
+            var sql = (dbType == DatabaseType.SqlServer) ? $@"
+                {createTableSql}
+                {startPaging}
+                count(*) over() as Count, data.CONTENT_ITEM_ID as Id, data.ATTRIBUTE_ID as FieldId, data.[rank] as Rank,
+                ci.CREATED as Created, ci.ARCHIVE as Archive, ci.MODIFIED as Modified, ci.CONTENT_ID as ParentId,
+                COALESCE(cd.BLOB_DATA, cd.DATA) as Text, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as Name,
+            	c.CONTENT_NAME as ParentName, st.STATUS_TYPE_NAME as StatusName, usr.[LOGIN] as LastModifiedByUser
+
+                from #temp2 data
+                left join dbo.CONTENT_ATTRIBUTE attr on data.ATTRIBUTE_ID = attr.ATTRIBUTE_ID
+                inner join dbo.CONTENT_ITEM ci on data.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+                left join content_data cd on ci.content_item_id = cd.content_item_id and cd.attribute_id = attr.attribute_id
+                inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID
+                inner join dbo.STATUS_TYPE st on st.STATUS_TYPE_ID = ci.STATUS_TYPE_ID
+                inner join dbo.USERS usr on usr.[USER_ID] = ci.LAST_MODIFIED_BY
+                {endPaging}
+                {dropTableSql}
+                "
+                : $@"
+                {startPaging}
+                {articleSql}
+                SELECT {PgFtSelect(false)}
+                FROM content_item_ft cif
+                    CROSS JOIN {GetPgFtQuery()} q
+                    INNER JOIN content_item ci on cif.content_item_id = ci.content_item_id
+                    {PgFtCommonJoins()}
+                    {securityJoin}
+                WHERE ft_data @@ q {siteFilter}
+                ORDER BY {sortExpression}
+                {endPaging}
+            ";
+
+            var dt = new DataTable();
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
-                cmd.Parameters.AddWithValue("@p_site_id", siteId);
-                cmd.Parameters.AddWithValue("@p_user_id", userId);
-                cmd.Parameters.AddWithValue("@p_item_id", articleId);
-                if (dbType == DatabaseType.SqlServer)
+                cmd.Parameters.AddWithValue("@site_id", siteId);
+                cmd.Parameters.AddWithValue("@searchparam", searchString);
+                if (articleId.HasValue)
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@p_searchparam", safeSearchString);
-                    cmd.Parameters.AddWithValue("@p_order_by", sortExpression);
-                    cmd.Parameters.AddWithValue("@p_start_row", startRow);
-                    cmd.Parameters.AddWithValue("@p_page_size", pageSize);
-                    cmd.Parameters.Add(new SqlParameter { ParameterName = "total_records", Direction = ParameterDirection.InputOutput, DbType = DbType.Int32, Value = totalRecords });
+                    cmd.Parameters.AddWithValue("@item_id", articleId.Value);
                 }
 
-                var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                if (dbType == DatabaseType.SqlServer)
-                {
-                    totalRecords = (int)cmd.Parameters["total_records"].Value;
-                }
-                else if (dbType == DatabaseType.Postgres)
-                {
-                    totalRecords = GetPgSearchInArticlesCount(sqlConnection, safeSearchString, articleId, securityJoin);
-                }
-
-                return dt;
+                totalRecords = dt.AsEnumerable().Any() ? Convert.ToInt32(dt.Rows[0]["Count"]) : 0;
             }
+
+            return dt;
         }
 
         public static Dictionary<decimal, string> GetPgFtDescriptions(DbConnection connection, int[] ids, string searchString)
@@ -381,13 +439,14 @@ namespace Quantumart.QP8.DAL
             var sql = $@"
                 select content_item_id, content_data_id, ts_rank_cd(ft_data, q, 2) as rank,
                 ts_headline('russian', coalesce(blob_data, data), q, '{headLineOptions}') as text
-                from content_data, {GetPgFtQuery(Cleaner.ToSafeSqlString(searchString))} q
+                from content_data, {GetPgFtQuery()} q
                 WHERE ft_data @@ q and content_item_id in (select id from {IdList(dbType, "@ids")})
                 order by rank desc, content_item_id asc
             ";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
+                cmd.Parameters.AddWithValue("@searchParam", searchString);
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
                 foreach (var row in dt.AsEnumerable())
@@ -404,29 +463,9 @@ namespace Quantumart.QP8.DAL
         }
 
 
-        public static string GetPgFtQuery(string searchString)
+        public static string GetPgFtQuery()
         {
-            return $"websearch_to_tsquery('russian', '{searchString}')";
-        }
-
-        public static int GetPgSearchInArticlesCount(DbConnection connection, string searchString, int? articleId, string securityJoin)
-        {
-            var sql = $@"
-                SELECT count(*) FROM content_item_ft cif
-                CROSS JOIN {GetPgFtQuery(searchString)} query
-                inner join content_item ci on ci.content_item_id = cif.content_item_id
-                {securityJoin}
-                WHERE cif.ft_data @@ query";
-            var result = (int)ExecuteScalarLong(connection, sql);
-            if (articleId.HasValue)
-            {
-                var sql2 = $@"
-                    SELECT count(*) FROM content_item ci
-                    where ci.content_item_id = " + articleId.Value;
-                result += (int)ExecuteScalarLong(connection, sql2);
-            }
-
-            return result;
+            return $"websearch_to_tsquery('russian', @searchparam)";
         }
 
         /// <summary>

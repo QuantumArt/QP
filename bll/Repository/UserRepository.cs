@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.DAL.Entities;
@@ -206,6 +207,11 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
+        private static void ChangeInsertBindTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_add_to_everyone_group", enable);
+        }
+
         internal static User SaveProperties(User user)
         {
             var entities = QPContext.EFContext;
@@ -231,9 +237,14 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             entities.Entry(dal).State = EntityState.Added;
+
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(false);
+            }
+
             entities.SaveChanges();
-
-
 
 
             // Save Groups
@@ -260,6 +271,11 @@ namespace Quantumart.QP8.BLL.Repository
             if (!string.IsNullOrEmpty(user.Password))
             {
                 UpdatePassword(user.Id, user.Password);
+            }
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(true);
             }
 
             var updated = MapperFacade.UserMapper.GetBizObject(dal);
@@ -323,8 +339,19 @@ namespace Quantumart.QP8.BLL.Repository
                 actionPermissionDAL.Id = 0;
             }
 
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(false);
+            }
+
             var newUserEntityEntry = entities.UserSet.Add(userDal);
             entities.SaveChanges();
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(true);
+            }
+
             var newUser = newUserEntityEntry.Entity;
             return (int)newUser.Id;
 
