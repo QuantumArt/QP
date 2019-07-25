@@ -402,7 +402,6 @@
     <Compile Include="Extensions\Helpers\HtmlAttributesExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperFieldExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperFieldGroupExtensions.cs" />
-    <Compile Include="Extensions\Helpers\HtmlHelperGridExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperLinkButtonsListExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperPageExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperPanelExtensions.cs" />
