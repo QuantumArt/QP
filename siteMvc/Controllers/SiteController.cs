@@ -84,13 +84,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SearchInArticles)]
         [BackendActionContext(ActionCode.SearchInArticles)]
         [ValidateInput(false)]
-        public ActionResult _SearchInArticles(string tabId, int parentId, int id, GridCommand command, string searchQuery)
+        public ActionResult _SearchInArticles(
+            string tabId, int parentId, int page, int pageSize, string orderBy, string searchQuery, int IDs = 0)
         {
-            var searchResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, command.GetListCommand(), out var totalRecord);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var searchResult = _searchInArticlesService.SearchInArticles(IDs, QPContext.CurrentUserId, searchQuery, listCommand, out var totalRecord);
             return new TelerikResult(searchResult, totalRecord);
         }
 
