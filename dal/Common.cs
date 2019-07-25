@@ -2723,11 +2723,14 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             }
         }
 
+        private static string FtTempTable(DatabaseType dbType) => dbType == DatabaseType.SqlServer ? "#ft_temp" : "ft_temp";
+
         private static void DropFullTextTemporaryTable(DbConnection sqlConnection, bool useFullText)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             if (useFullText)
             {
-                using (var immediateCmd = DbCommandFactory.Create("DROP TABLE #ft_temp", sqlConnection))
+                using (var immediateCmd = DbCommandFactory.Create($"DROP TABLE {FtTempTable(dbType)}", sqlConnection))
                 {
                     immediateCmd.ExecuteNonQuery();
                 }
@@ -2736,12 +2739,15 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static bool AddFullTextFilteringToQuery(DbConnection cn, ArticleFullTextSearchParameter ftsOptions, int contentId, int[] extensionContentIds, StringBuilder fromBuilder)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
+            var temp = dbType == DatabaseType.Postgres ? "TEMPORARY" : "";
+            var tempTable = FtTempTable(dbType);
             var useFullText = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
             if (useFullText)
             {
                 var sb = new StringBuilder();
-                sb.Append("CREATE TABLE #ft_temp (content_item_id decimal primary key); ");
-                sb.Append("insert into #ft_temp ");
+                sb.Append($"CREATE {temp} TABLE {tempTable} (content_item_id decimal primary key); ");
+                sb.Append($"insert into {tempTable} ");
                 sb.Append(GetFullTextSearchQuery(cn, contentId, extensionContentIds, ftsOptions));
 
                 using (var cmd = DbCommandFactory.Create(sb.ToString(), cn))
@@ -2749,7 +2755,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                     cmd.ExecuteNonQuery();
                 }
 
-                fromBuilder.AppendLine(" INNER JOIN #ft_temp as qp_fts ON c.content_item_id = qp_fts.content_item_id");
+                fromBuilder.AppendLine($" INNER JOIN {tempTable} as qp_fts ON c.content_item_id = qp_fts.content_item_id");
             }
 
             return useFullText;
@@ -2767,6 +2773,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static string GetFullTextSearchQuery(DbConnection cn, int contentId, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
             string allContentIds;
             IDictionary<int, string> aggregatedFieldMap = null;
             var allfields = string.IsNullOrEmpty(ftsOptions.FieldIdList);
@@ -2790,44 +2797,59 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             }
 
             var sb = new StringBuilder();
-            sb.Append($"SELECT DISTINCT TOP({ftsOptions.SearchResultLimit}) ");
+            var top = dbType == DatabaseType.SqlServer ? $"TOP({ftsOptions.SearchResultLimit}) " : "";
+            sb.Append($"SELECT DISTINCT {top}");
             if (extensionContentIds != null && extensionContentIds.Any())
             {
-                sb.AppendFormat("case CI.CONTENT_ID when {0} then CI.CONTENT_ITEM_ID ", contentId);
+                sb.Append(" COALESCE(");
                 if (aggregatedFieldMap != null)
                 {
                     foreach (var cid in extensionContentIds.Where(aggregatedFieldMap.ContainsKey))
                     {
-                        sb.AppendFormat("when {0} then CEX_{0}.{1}  ", cid, aggregatedFieldMap[cid]);
+                        sb.Append($"CEX_{cid}.{aggregatedFieldMap[cid]}, ");
                     }
                 }
-
-                sb.Append("end CONTENT_ITEM_ID ");
+                sb.Append("CI.CONTENT_ITEM_ID) AS CONTENT_ITEM_ID ");
             }
             else
             {
                 sb.Append("CI.CONTENT_ITEM_ID ");
             }
 
-            sb.Append("from content_item CI ");
-            sb.Append("join content_data CD on CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ");
+            sb.AppendLine("from content_item CI ");
+            sb.AppendLine("inner join content_data CD on CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ");
+            if (dbType == DatabaseType.Postgres)
+            {
+                sb.AppendLine($"cross join {GetPgFtQuery(ftsOptions.RawQueryString)} q");
+            }
             if (extensionContentIds != null && aggregatedFieldMap != null)
             {
                 foreach (var cid in extensionContentIds.Where(aggregatedFieldMap.ContainsKey))
                 {
-                    sb.AppendFormat("left join CONTENT_{0} CEX_{0} on CI.CONTENT_ITEM_ID = CEX_{0}.CONTENT_ITEM_ID ", cid);
+                    sb.AppendLine($"left join CONTENT_{cid} CEX_{cid} on CI.CONTENT_ITEM_ID = CEX_{cid}.CONTENT_ITEM_ID ");
                 }
             }
 
-            sb.AppendFormat("where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID and CI.CONTENT_ID IN ({0}) ", allContentIds);
-            var fieldCondition = allfields ? string.Empty : $" CD.ATTRIBUTE_ID in ({ftsOptions.FieldIdList}) and ";
-            sb.AppendFormat("and ({0} contains(CD.*, '{1}')) ", fieldCondition, ftsOptions.QueryString);
+            sb.AppendLine($"where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID and CI.CONTENT_ID IN ({allContentIds}) ");
+            if (!allfields)
+            {
+                sb.AppendLine($" and CD.ATTRIBUTE_ID in ({ftsOptions.FieldIdList}) ");
+            }
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sb.AppendLine($" and contains(CD.*, '{ftsOptions.QueryString}') ");
+            }
+            else
+            {
+                sb.AppendLine(" and CD.ft_data @@ q");
+            }
 
             int parsedInt;
             var parsed = int.TryParse(ftsOptions.RawQueryString, out parsedInt);
             if (allfields && parsed)
             {
-                sb.AppendFormat("union select ci2.content_item_id from content_item ci2 where ci2.content_id IN ({0}) and ci2.CONTENT_ITEM_ID = {1} ", allContentIds, parsedInt);
+                sb.AppendLine($"union select ci2.content_item_id from content_item ci2 where ci2.content_id IN ({allContentIds}) and ci2.CONTENT_ITEM_ID = {parsedInt} ");
             }
 
             return sb.ToString();

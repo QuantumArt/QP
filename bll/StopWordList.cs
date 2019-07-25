@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils.FullTextSearch;
 
@@ -29,7 +30,7 @@ namespace Quantumart.QP8.BLL
 
         #region IStopWordList Members
 
-        public bool ContainsWord(string word) => stopListHashSet.Value.Contains(word);
+        public bool ContainsWord(string word) => QPContext.DatabaseType == DatabaseType.SqlServer && stopListHashSet.Value.Contains(word);
 
         #endregion
     }

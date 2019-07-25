@@ -457,15 +457,15 @@ namespace Quantumart.QP8.DAL
                         result.Add(id, row.Field<string>("text"));
                     }
                 }
-
                 return result;
             }
         }
 
 
-        public static string GetPgFtQuery()
+        public static string GetPgFtQuery(string query = null)
         {
-            return $"websearch_to_tsquery('russian', @searchparam)";
+            var actualQuery = String.IsNullOrEmpty(query) ? "@searchparam" : $"'{Cleaner.ToSafeSqlString(query)}'";
+            return $"websearch_to_tsquery('russian', {actualQuery})";
         }
 
         /// <summary>
