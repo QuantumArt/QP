@@ -11,7 +11,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Audit;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
