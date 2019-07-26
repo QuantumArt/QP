@@ -218,18 +218,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Formats", model);
         }
 
-        /// <param name="IDs">
-        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
-        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
-        /// </param>
         [ActionAuthorize(ActionCode.SearchInCode)]
         [BackendActionContext(ActionCode.SearchInCode)]
         public ActionResult _Formats(
-            string tabId, int parentId, int? templateId, int? pageId, string filterVal,
-            int page, int pageSize, string orderBy, int IDs = 0)
+            string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal,
+            int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = _pageTemplateService.FormatSearch(listCommand, IDs, templateId, pageId, filterVal);
+            var serviceResult = _pageTemplateService.FormatSearch(listCommand, id, templateId, pageId, filterVal);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -242,18 +238,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Templates", model);
         }
 
-        /// <param name="IDs">
-        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
-        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
-        /// </param>
         [ActionAuthorize(ActionCode.SearchInTemplates)]
         [BackendActionContext(ActionCode.SearchInTemplates)]
         public ActionResult _Templates(
-            string tabId, int parentId, string filterVal,
-            int page, int pageSize, string orderBy, int IDs = 0)
+            string tabId, int parentId, int id, string filterVal,
+            int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = _pageTemplateService.TemplateSearch(listCommand, IDs, filterVal);
+            var serviceResult = _pageTemplateService.TemplateSearch(listCommand, id, filterVal);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -266,18 +258,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Objects", model);
         }
 
-        /// <param name="IDs">
-        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
-        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
-        /// </param>
         [ActionAuthorize(ActionCode.SearchInObjects)]
         [BackendActionContext(ActionCode.SearchInObjects)]
         public ActionResult _Parameters(
-            string tabId, int parentId, int? templateId, int? pageId, string filterVal,
-            int page, int pageSize, string orderBy, int IDs = 0)
+            string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal,
+            int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = _pageTemplateService.ObjectSearch(listCommand, IDs, templateId, pageId, filterVal);
+            var serviceResult = _pageTemplateService.ObjectSearch(listCommand, id, templateId, pageId, filterVal);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
