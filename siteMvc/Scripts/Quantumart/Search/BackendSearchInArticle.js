@@ -1,54 +1,65 @@
 import { BackendEntityGridManager } from '../Managers/BackendEntityGridManager';
 
 export class BackendSearchInArticle {
+  /** @type {JQuery} */
+  $searchInput = null;
+  /** @type {JQuery} */
+  $searchButton = null;
+
+  /**
+   * @param {string} gridElementId
+   * @param {string} searchBlockElementId
+   * @param {string} initQuery
+   * @param {Quantumart.QP8.BackendDocumentContext} documentContext
+   */
   constructor(gridElementId, searchBlockElementId, initQuery, documentContext) {
     this._gridElementId = gridElementId;
     this._searchBlockElementId = searchBlockElementId;
-    this._onSearchButtonClickHandler = $.proxy(this._onSearchButtonClick, this);
+    this._onSearchButtonClick = this._onSearchButtonClick.bind(this);
     this._initQuery = initQuery;
     this._documentContext = documentContext;
   }
 
-  _gridElementId = '';
-  _searchBlockElementId = '';
-  _initQuery = '';
-  _documentContext = null;
-
-  _onSearchButtonClick() {
-    const searchQuery = $(`#${this._searchBlockElementId} input.textbox`).val();
-    BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { searchQuery });
-  }
-
-  _getButton() {
-    return $(`#${this._searchBlockElementId}`).find('.button');
-  }
-
   initialize() {
-    const $button = this._getButton();
-    $button.bind('click', this._onSearchButtonClickHandler);
+    this.$searchInput = $(`#${this._searchBlockElementId}`).find('input.textbox');
+    this.$searchButton = $(`#${this._searchBlockElementId}`).find('.button');
+    this.$searchButton.bind('click', this._onSearchButtonClick);
     this._refreshQuery(this._initQuery);
   }
 
+  _onSearchButtonClick() {
+    const searchQuery = this.$searchInput.val();
+    BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, {
+      searchQuery
+    });
+  }
+
+  /**
+   * @param {Quantumart.QP8.BackendEventArgs} eventArgs
+   */
   refreshQuery(eventArgs) {
     const context = eventArgs.get_context();
-    const query = context && context.additionalUrlParameters ? context.additionalUrlParameters.query : '';
+    const query
+      = context && context.additionalUrlParameters
+        ? context.additionalUrlParameters.query
+        : '';
     this._documentContext.getHost()._additionalUrlParameters = null;
     this._refreshQuery(query);
   }
 
+  /**
+   * @param {string} query
+   */
   _refreshQuery(query) {
-    const $button = this._getButton();
     if (query) {
-      $(`#${this._searchBlockElementId} input.textbox`).val(query);
-      $button.trigger('click');
+      this.$searchInput.val(query);
+      this.$searchButton.trigger('click');
     }
   }
 
   dispose() {
-    $(`#${this._searchBlockElementId}`).find('.button').unbind('click');
-    this._onSearchButtonClickHandler = null;
+    this.$searchButton.unbind('click');
   }
 }
-
 
 Quantumart.QP8.BackendSearchInArticle = BackendSearchInArticle;

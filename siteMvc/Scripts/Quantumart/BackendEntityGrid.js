@@ -782,6 +782,17 @@ export class BackendEntityGrid extends Observable {
     return selectedEntities;
   }
 
+  /**
+   * @typedef {Object} ExtraGridOptions
+   * @property {string} searchQuery
+   * @property {string} contextQuery
+   * @property {boolean} saveRowsSelection
+   * @property {number[]} removedIds
+   */
+
+  /**
+   * @param {ExtraGridOptions} [options]
+   */
   resetGrid(options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.searchQuery)) {
@@ -802,6 +813,9 @@ export class BackendEntityGrid extends Observable {
     }
   }
 
+  /**
+   * @param {ExtraGridOptions} [options]
+   */
   refreshGrid(options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.saveRowsSelection)) {

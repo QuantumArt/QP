@@ -86,10 +86,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.SearchInArticles)]
         [ValidateInput(false)]
         public ActionResult _SearchInArticles(
-            string tabId, int parentId, int page, int pageSize, string orderBy, string searchQuery, int IDs = 0)
+            string tabId, int parentId, int id, int page, int pageSize, string orderBy, string searchQuery)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var searchResult = _searchInArticlesService.SearchInArticles(IDs, QPContext.CurrentUserId, searchQuery, listCommand, out var totalRecord);
+            var searchResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, listCommand, out var totalRecord);
             return new TelerikResult(searchResult, totalRecord);
         }
 

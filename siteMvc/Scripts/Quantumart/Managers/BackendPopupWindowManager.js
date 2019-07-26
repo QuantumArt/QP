@@ -25,6 +25,7 @@ export class BackendPopupWindowManager extends Observable {
 
   constructor() {
     super();
+    /** @type {{ [x: string]: BackendPopupWindow }} */
     this._popupWindows = {};
     this._hostStateStorage = new BackendDocumentHostStateStorage();
   }
