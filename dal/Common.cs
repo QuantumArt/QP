@@ -1073,6 +1073,21 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static bool IsCountOverflow(SqlConnection connection, int contentId, bool includeArchive, int countLimit)
+        {
+            var archiveSql = (includeArchive) ?  "" : $" where archive = 0";
+            var sql = $@"select count(*) from (
+                    select TOP({countLimit + 1}) content_item_id from content_{contentId}
+                    WITH (NOLOCK)
+                    {archiveSql}
+                ) a";
+
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            {
+                return Convert.ToInt32(cmd.ExecuteScalar()) > countLimit;
+            }
+        }
+
         /// <summary>
         /// Получение максимального веса, доступного пользователю в цепочке workflow
         /// </summary>
@@ -2730,7 +2745,7 @@ namespace Quantumart.QP8.DAL
                 filter = "cnt.CONTENT_ID IN (" + string.Join(",", aggregatedContentIds.Union(new[] { options.ContentId })) + ")";
                 filter = SqlFilterComposer.Compose(filter, "ca.AGGREGATED = 0");
                 filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
-            }          
+            }
 
             var selectBuilder = new StringBuilder();
             selectBuilder.Append("ca.[ATTRIBUTE_ID] AS Id,  CASE WHEN (cnt.CONTENT_ID = " + options.ContentId + ") THEN [ATTRIBUTE_NAME] ELSE cnt.[CONTENT_NAME] + '.' + [ATTRIBUTE_NAME] END as [Name], [ATTRIBUTE_NAME] as [FieldName], cnt.[CONTENT_NAME] as [ContentName], ca.[CREATED] as [Created], ca.[MODIFIED] as [Modified], ATTRIBUTE_ORDER as [Order]");
