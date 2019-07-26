@@ -34,7 +34,7 @@
           dataSource: {
             transport: {
               read: {
-                url: '@Url.Action("_Templates", "PageTemplate", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )',
+                url: '@Url.Action("_Templates", "PageTemplate", new { tabId = Model.TabId, parentId = Model.ParentEntityId, id = Model.SiteId } )',
               },
             },
             pageSize: @Default.GridPageSize,
