@@ -546,7 +546,7 @@ BEGIN
   end
 
   insert into item_link_async select * from item_to_item ii where l_item_id in (select id from @ids)
-  and link_id in (select link_id from content_attribute where content_id = @content_id)
+  and link_id in (select link_id from content_attribute where content_id in (select id from @contentIds))
   and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id)
 
 END
@@ -1465,9 +1465,6 @@ BEGIN
 
     insert into @ids
     exec qp_get_m2o_ids @contentId, @fieldName, @id
-
-    select content_item_id
-    from content_data where ATTRIBUTE_ID = @fieldId and DATA = CAST(@id as nvarchar)
 
     insert into @new_ids select * from dbo.split(@value, ',');
 
