@@ -22,13 +22,17 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
     {
         internal static ObjectQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
 
+        internal static IQueryable<FieldDAL> DefaultLightFieldQuery => QPContext.EFContext.FieldSet.Include("Type").Include("LastModifiedByUser");
+
         Field IFieldRepository.GetById(int fieldId) => GetById(fieldId);
 
         Field IFieldRepository.GetByName(int contentId, string fieldName) => GetByName(contentId, fieldName);
 
         IList<Field> IFieldRepository.GetByNames(int contentId, IList<string> fieldNames)
         {
-            return MapperFacade.FieldMapper.GetBizList(DefaultFieldQuery.Where(f => f.ContentId == contentId && fieldNames.Contains(f.Name)).ToList());
+            var list = MapperFacade.FieldMapper.GetBizList(DefaultLightFieldQuery.Where(f => f.ContentId == contentId && fieldNames.Contains(f.Name)).ToList());
+            ApplyContentToFields(list, contentId);
+            return list;
         }
 
         Field IFieldRepository.GetByOrder(int contentId, int order)
@@ -404,6 +408,15 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             return MapperFacade.FieldMapper.GetBizList(DefaultFieldQuery.Where(f => decIDs.Contains(f.Id)).ToList());
         }
 
+        private static void ApplyContentToFields(IEnumerable<Field> fields, int contentId)
+        {
+            var content = ContentRepository.GetById(contentId);
+            foreach (var item in fields)
+            {
+                item.Content = content;
+            }
+        }
+
         internal static List<Field> GetList(int contentId, bool forList)
         {
             var result = GetListFromCache(contentId);
@@ -418,7 +431,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 lambda = n => n.ViewInList;
             }
 
-            return MapperFacade.FieldMapper.GetBizList(DefaultFieldQuery.Where(n => n.ContentId == contentId).Where(lambda).OrderBy(n => n.Order).ToList());
+            var list =  MapperFacade.FieldMapper.GetBizList(
+                DefaultLightFieldQuery.Where(n => n.ContentId == contentId).Where(lambda).OrderBy(n => n.Order).ToList()
+            );
+            ApplyContentToFields(list, contentId);
+            return list;
         }
 
         internal static ListResult<FieldListItem> GetList(ListCommand cmd, int contentId)

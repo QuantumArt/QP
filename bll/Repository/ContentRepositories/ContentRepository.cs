@@ -236,8 +236,11 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             foreach (var aggregated in content.AggregatedContents)
             {
                 var localAggregated = aggregated;
-                localAggregated.AutoArchive = content.AutoArchive;
-                localAggregated = DefaultRepository.Update<Content, ContentDAL>(localAggregated);
+                if (localAggregated.AutoArchive != content.AutoArchive)
+                {
+                    localAggregated.AutoArchive = content.AutoArchive;
+                    localAggregated = DefaultRepository.Update<Content, ContentDAL>(localAggregated);
+                }
 
                 binding.SetContent(localAggregated);
                 WorkflowRepository.UpdateContentWorkflowBind(binding);

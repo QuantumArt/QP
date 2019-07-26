@@ -239,8 +239,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var fieldId = baseField.Id;
             var selectedArticleIDs = Converter.ToInt32Collection(value, ',');
             var filter = baseField.GetRelationFilter(articleId);
-            var itemCount = ArticleService.Count(contentId, filter, false);
-            var isListOverflow = field.MaxDataListItemCount == 0 || itemCount > field.MaxDataListItemCount;
+            var isListOverflow = field.MaxDataListItemCount == 0 ||
+                ArticleService.IsCountOverflow(contentId, false, field.MaxDataListItemCount);
             var mode = isListOverflow ? ListSelectionMode.OnlySelectedItems : ListSelectionMode.AllItems;
             var list = new List<ListItem>();
             if (!isListOverflow || selectedArticleIDs.Length != 0)
