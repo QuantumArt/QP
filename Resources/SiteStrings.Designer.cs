@@ -1006,6 +1006,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace urls to placeholders.
+        /// </summary>
+        public static string ReplaceUrlsInDB {
+            get {
+                return ResourceManager.GetString("ReplaceUrlsInDB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replace URLs.
         /// </summary>
         public static string ReplaceUrls {

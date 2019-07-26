@@ -189,6 +189,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ObjectFormat SaveObjectFormatProperties(ObjectFormat objectFormat)
         {
+            
             objectFormat.ReplaceUrlsToPlaceHolders();
             var format = FormatRepository.SaveObjectFormatProperties(objectFormat);
             ManagePageAndObjectModified(format);
