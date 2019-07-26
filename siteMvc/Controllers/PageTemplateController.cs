@@ -241,8 +241,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SearchInTemplates)]
         [BackendActionContext(ActionCode.SearchInTemplates)]
         public ActionResult _Templates(
-            string tabId, int parentId, int id, string filterVal,
-            int page, int pageSize, string orderBy)
+            string tabId, int parentId, string filterVal,
+            int page, int pageSize, string orderBy,
+            // TODO: review where 'id' parameter should came from
+            int id = 0)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = _pageTemplateService.TemplateSearch(listCommand, id, filterVal);

@@ -62,7 +62,11 @@ interface JQuery {
    */
   maxZIndex(opt?: { inc?: number, group?: string }): JQuery;
 
-  /** Preconfigured @see .kendoGrid() */
+  /**
+   * Preconfigured @see .kendoGrid()
+   * https://demos.telerik.com/kendo-ui/grid/index
+   * https://docs.telerik.com/kendo-ui/framework/templates/overview
+   */
   qpGrid(options: kendo.ui.GridOptions): JQuery;
 }
 

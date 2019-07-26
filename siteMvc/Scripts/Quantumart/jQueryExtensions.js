@@ -335,6 +335,8 @@
     },
 
     // Инициализатор грида
+    // https://demos.telerik.com/kendo-ui/grid/index
+    // https://docs.telerik.com/kendo-ui/framework/templates/overview
     qpGrid(opt) {
       (function checkGridParams() {
         try {
