@@ -1194,6 +1194,23 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
+        public static bool IsCountOverflow(DbConnection connection, int contentId, bool includeArchive, int countLimit)
+        {
+            var databaseType = GetDbType(connection);
+            var archiveSql = (includeArchive) ?  "" : $" where archive = 0";
+            var sql = $@"select count(*) from (
+                    select {Top(databaseType, countLimit + 1)} content_item_id from content_{contentId}
+                    {WithNoLock(databaseType)}
+                    {archiveSql}
+                    {Limit(databaseType, countLimit + 1)}
+                ) a";
+
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                return Convert.ToInt32(cmd.ExecuteScalar()) > countLimit;
+            }
+        }
+
         /// <summary>
         /// Получение максимального веса, доступного пользователю в цепочке workflow
         /// </summary>

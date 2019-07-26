@@ -136,8 +136,10 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
 
         public static ArticleInitListResult InitArchiveList(int contentId) => InitList(contentId, true);
 
-        public static int Count(int contentId, string filter) => ArticleRepository.GetCount(contentId);
-        public static int Count(int contentId, string filter, bool includeArchive) => ArticleRepository.GetCount(contentId, includeArchive);
+        public static int Count(int contentId) => ArticleRepository.GetCount(contentId);
+        public static int Count(int contentId, bool includeArchive) => ArticleRepository.GetCount(contentId, includeArchive);
+
+        public static bool IsCountOverflow(int contentId, bool includeArchive, int overflowLimit) => ArticleRepository.IsCountOverflow(contentId, includeArchive, overflowLimit);
 
         public static ListResult<SimpleDataRow> List(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds = null, int[] filterIds = null)
         {

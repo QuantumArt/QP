@@ -155,10 +155,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static int GetCount(int contentId)
         {
-            using (new QPConnectionScope())
-            {
-                return Common.CountArticles(QPConnectionScope.Current.DbConnection, contentId, true);
-            }
+            return GetCount(contentId, true);
         }
 
         internal static int GetCount(int contentId, bool includeArchive)
@@ -173,7 +170,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                return Common.CountArticles(QPConnectionScope.Current.DbConnection, contentId, false);
+                return GetCount(contentId, false);
+            }
+        }
+
+        internal static bool IsCountOverflow(int contentId, bool includeArchive, int countLimit)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.IsCountOverflow(QPConnectionScope.Current.DbConnection, contentId, includeArchive, countLimit);
             }
         }
 
