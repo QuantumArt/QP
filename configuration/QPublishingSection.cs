@@ -35,15 +35,8 @@ namespace Quantumart.QP8.Configuration
         }
 
         /// <summary>
-        /// Возвращает название темы по умолчанию
+        /// Максимальный размер загружаемого файла в мегабайтах
         /// </summary>
-        [ConfigurationProperty("uploaderType", IsRequired = true)]
-        public string UploaderTypeName
-        {
-            get => Url.ToAbsolute(base["uploaderType"].ToString());
-            set => base["uploaderType"] = value;
-        }
-
         [ConfigurationProperty("uploadMaxSize", DefaultValue = 100)]
         public int UploadMaxSize => (int)base["uploadMaxSize"];
 

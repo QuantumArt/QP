@@ -2,14 +2,12 @@
 import { BackendEntityGridManager } from '../Managers/BackendEntityGridManager';
 import { BackendEntityTreeManager } from '../Managers/BackendEntityTreeManager';
 import { BackendFileList } from './BackendFileList';
-import { BackendHtmlUploader } from '../Uploader/BackendHtmlUploader';
 import { BackendLibraryManager } from '../Managers/BackendLibraryManager';
 import { BackendPlUploader } from '../Uploader/BackendPlUploader';
 import { BackendSplitter } from '../BackendSplitter';
 import { Observable } from '../Common/Observable';
 import { $a, BackendActionParameters } from '../BackendActionExecutor';
 import { $q } from '../Utils';
-
 
 window.EVENT_TYPE_LIBRARY_DATA_BOUND = 'OnLibraryDataBound';
 window.EVENT_TYPE_LIBRARY_ACTION_EXECUTING = 'OnLibraryActionExecuting';
@@ -53,7 +51,7 @@ export class BackendLibrary extends Observable {
     this._folderTreeId = options.folderTreeId;
     this._fileGridId = options.fileGridId;
     this._allowMultipleSelection = options.allowMultipleSelection;
-    this._uploaderType = options.uploaderType;
+
     if (options.filterFileTypeId) {
       this._filterFileTypeId = options.filterFileTypeId;
       this._isFilterFileTypeIdDefined = true;
@@ -100,7 +98,6 @@ export class BackendLibrary extends Observable {
   _libraryPath = '';
   _folderUrl = '';
   _allowMultipleSelection = true;
-  _uploaderType = Quantumart.QP8.Enums.UploaderType.Silverlight;
 
   LIBRARY_TREE_CONTAINER_CLASS_NAME = 'l-tree';
   LIBRARY_GRID_CONTAINER_CLASS_NAME = 'l-grid';
@@ -144,19 +141,19 @@ export class BackendLibrary extends Observable {
       }
     );
     this._folderTree.attachObserver(
-      window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, $.proxy(this._onFolderSelectedHandler, this)
+      window.EVENT_TYPE_ENTITY_TREE_ENTITY_SELECTED, this._onFolderSelectedHandler.bind(this)
     );
     this._folderTree.attachObserver(
-      window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this)
+      window.EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING, this._onActionExecutingHandler.bind(this)
     );
-    this._folderTree.oneTimeObserver(window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND, $.proxy(this._onFolderTreeLoaded, this));
+    this._folderTree.oneTimeObserver(window.EVENT_TYPE_ENTITY_TREE_DATA_BOUND, this._onFolderTreeLoaded.bind(this));
     this._folderTree.initialize();
 
     this._splitter = new BackendSplitter(this._splitterId,
       { firstPaneWidth: 250, minFirstPaneWidth: 50, maxFirstPaneWidth: 250, stateCookieName: 'FolderTreeSize' }
     );
-    this._splitter.attachObserver(window.EVENT_TYPE_SPLITTER_RESIZED, $.proxy(this._onSplitterResized, this));
-    this._splitter.attachObserver(window.EVENT_TYPE_SPLITTER_INITIALIZED, $.proxy(this._onSplitterResized, this));
+    this._splitter.attachObserver(window.EVENT_TYPE_SPLITTER_RESIZED, this._onSplitterResized.bind(this));
+    this._splitter.attachObserver(window.EVENT_TYPE_SPLITTER_INITIALIZED, this._onSplitterResized.bind(this));
 
     this._fileGrid = BackendEntityGridManager.getInstance().createGrid(
       this._fileGridId, this._fileEntityTypeCode, this._folderId, this._actionCode, {
@@ -169,13 +166,13 @@ export class BackendLibrary extends Observable {
     );
 
     this._fileGrid.attachObserver(
-      window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, $.proxy(this._onFileSelectedHandler, this)
+      window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, this._onFileSelectedHandler.bind(this)
     );
     this._fileGrid.attachObserver(
-      window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND, $.proxy(this._onFileListDataBoundHandler, this)
+      window.EVENT_TYPE_ENTITY_GRID_DATA_BOUND, this._onFileListDataBoundHandler.bind(this)
     );
     this._fileGrid.attachObserver(
-      window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this)
+      window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, this._onActionExecutingHandler.bind(this)
     );
     this._fileGrid.initialize();
 
@@ -190,12 +187,12 @@ export class BackendLibrary extends Observable {
       this._fileEntityTypeCode, this._actionCode, this._fileEntityTypeCode,
       window.FILE_LIST_MODE_NAME_LIST, options
     );
-    this._fileList.attachObserver(window.EVENT_TYPE_FILE_LIST_SELECTED, $.proxy(this._onFileSelectedHandler, this));
+    this._fileList.attachObserver(window.EVENT_TYPE_FILE_LIST_SELECTED, this._onFileSelectedHandler.bind(this));
     this._fileList.attachObserver(
-      window.EVENT_TYPE_FILE_LIST_DATA_BOUND, $.proxy(this._onFileListDataBoundHandler, this)
+      window.EVENT_TYPE_FILE_LIST_DATA_BOUND, this._onFileListDataBoundHandler.bind(this)
     );
     this._fileList.attachObserver(
-      window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this)
+      window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, this._onActionExecutingHandler.bind(this)
     );
     this._fileList.initialize();
 
@@ -204,13 +201,13 @@ export class BackendLibrary extends Observable {
       this._fileEntityTypeCode, this._actionCode, this._fileEntityTypeCode, window.FILE_LIST_MODE_PREVIEW_LIST, options
     );
     this._filePreviewList.attachObserver(
-      window.EVENT_TYPE_FILE_LIST_SELECTED, $.proxy(this._onFileSelectedHandler, this)
+      window.EVENT_TYPE_FILE_LIST_SELECTED, this._onFileSelectedHandler.bind(this)
     );
     this._filePreviewList.attachObserver(
-      window.EVENT_TYPE_FILE_LIST_DATA_BOUND, $.proxy(this._onFileListDataBoundHandler, this)
+      window.EVENT_TYPE_FILE_LIST_DATA_BOUND, this._onFileListDataBoundHandler.bind(this)
     );
     this._filePreviewList.attachObserver(
-      window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, $.proxy(this._onActionExecutingHandler, this)
+      window.EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, this._onActionExecutingHandler.bind(this)
     );
     this._filePreviewList.initialize();
 
@@ -221,18 +218,12 @@ export class BackendLibrary extends Observable {
     }
 
     if (this._allowUpload) {
-      if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
-        this._uploader = new BackendHtmlUploader(
-          this._libraryElement, { extensions: fileExtensions }
-        );
-      } else {
-        this._uploader = new BackendPlUploader(
-          this._libraryElement, { extensions: fileExtensions }
-        );
-      }
+      this._uploader = new BackendPlUploader(
+        this._libraryElement, { extensions: fileExtensions }
+      );
 
       this._uploader.attachObserver(
-        window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, $.proxy(this._onFileUploadedHandler, this)
+        window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, this._onFileUploadedHandler.bind(this)
       );
       this._uploader.initialize();
     }
@@ -240,10 +231,10 @@ export class BackendLibrary extends Observable {
     this._loadFolderPath();
     this._updateFolderInfo();
 
-    $(this._filterApplyButtonElement).click($.proxy(this._onFilterChangedHandler, this));
-    $(this._filterResetButtonElement).click($.proxy(this._onFilterResetHandler, this));
-    $(this._filterFormElement).submit($.proxy(this._onFilterFormSubmittedHandler, this));
-    $(this._fileTypeListElement).change($.proxy(this._onFileTypeChangedHandler, this));
+    $(this._filterApplyButtonElement).click(this._onFilterChangedHandler.bind(this));
+    $(this._filterResetButtonElement).click(this._onFilterResetHandler.bind(this));
+    $(this._filterFormElement).submit(this._onFilterFormSubmittedHandler.bind(this));
+    $(this._fileTypeListElement).change(this._onFileTypeChangedHandler.bind(this));
 
     if (this._isFilterFileTypeIdDefined) {
       $(`option[value='${this._filterFileTypeId}']`, this._fileTypeListElement).prop('selected', true);
@@ -283,28 +274,25 @@ export class BackendLibrary extends Observable {
     if (this._viewTypeCode === window.VIEW_TYPE_CODE_DETAILS) {
       this._fileGrid.set_parentEntityId(this._folderId);
       this._fileGrid.resetGrid({
-        searchQuery: JSON.stringify(
-          {
-            FileType: this._filterFileTypeId,
-            FileNameFilter: this._filterFileName
-          })
+        searchQuery: JSON.stringify({
+          FileType: this._filterFileTypeId,
+          FileNameFilter: this._filterFileName
+        })
       });
     } else if (this._viewTypeCode === window.VIEW_TYPE_CODE_LIST) {
-      this._fileList.rebind(
-        {
-          pageNumber: 0,
-          folderId: this._folderId,
-          fileTypeId: this._filterFileTypeId,
-          fileNameFilter: this._filterFileName
-        });
+      this._fileList.rebind({
+        pageNumber: 0,
+        folderId: this._folderId,
+        fileTypeId: this._filterFileTypeId,
+        fileNameFilter: this._filterFileName
+      });
     } else if (this._viewTypeCode === window.VIEW_TYPE_CODE_THUMBNAILS) {
-      this._filePreviewList.rebind(
-        {
-          pageNumber: 0,
-          folderId: this._folderId,
-          fileTypeId: this._filterFileTypeId,
-          fileNameFilter: this._filterFileName
-        });
+      this._filePreviewList.rebind({
+        pageNumber: 0,
+        folderId: this._folderId,
+        fileTypeId: this._filterFileTypeId,
+        fileNameFilter: this._filterFileName
+      });
     }
   }
 
@@ -518,7 +506,6 @@ export class BackendLibrary extends Observable {
     super.dispose();
   }
 }
-
 
 BackendLibrary.generateActionUrl = function (actionName, urlParams) {
   let result = '';

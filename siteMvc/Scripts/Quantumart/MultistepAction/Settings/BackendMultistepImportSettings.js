@@ -1,11 +1,12 @@
 import { BackendActionExecutor } from '../../BackendActionExecutor';
-import { BackendHtmlUploader } from '../../Uploader/BackendHtmlUploader';
 import { BackendPlUploader } from '../../Uploader/BackendPlUploader';
 import { $q } from '../../Utils';
 
 export class MultistepActionImportSettings {
   constructor(options) {
     this.options = options;
+
+    this._onFileUploadedHandler = this._onFileUploadedHandler.bind(this);
   }
 
   IMPORT_BUTTON = 'Import';
@@ -26,7 +27,6 @@ export class MultistepActionImportSettings {
 
   _renameMatch = true;
   _useSiteLibrary = false;
-  _uploaderType = Quantumart.QP8.Enums.UploaderType.PlUpload;
   _fileNameId = 'FileName';
   _noHeadersId = 'NoHeaders';
 
@@ -34,25 +34,18 @@ export class MultistepActionImportSettings {
     this._fileWrapperElementId = `${context._popupWindowId}_upload_pl_cont_import`;
     this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
     $(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
-    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
-      this._uploaderComponent = new BackendHtmlUploader(this._fileWrapperElement, {
-        extensions: '',
-        resolveName: this._renameMatch
-      });
-    } else {
-      this._uploaderComponent = new BackendPlUploader(this._fileWrapperElement, {
-        extensions: '',
-        resolveName: this._renameMatch,
-        useSiteLibrary: this._useSiteLibrary
-      });
-    }
+
+    this._uploaderComponent = new BackendPlUploader(this._fileWrapperElement, {
+      extensions: '',
+      resolveName: this._renameMatch,
+      useSiteLibrary: this._useSiteLibrary
+    });
 
     this._uploaderComponent.initialize();
     this._uploaderComponent.setFolderPath(uploadPath);
     this._uploaderComponent.attachObserver(
-      window.EVENT_TYPE_LIBRARY_FILE_UPLOADED,
-      $.proxy(this._onFileUploadedHandler, this
-      ));
+      window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, this._onFileUploadedHandler
+    );
   }
 
   _onFileUploadedHandler(eventType, sender, eventArgs) {

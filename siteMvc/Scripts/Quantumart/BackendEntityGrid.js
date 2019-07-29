@@ -784,10 +784,10 @@ export class BackendEntityGrid extends Observable {
 
   /**
    * @typedef {Object} ExtraGridOptions
-   * @property {string} searchQuery
-   * @property {string} contextQuery
-   * @property {boolean} saveRowsSelection
-   * @property {number[]} removedIds
+   * @property {string} [searchQuery]
+   * @property {string} [contextQuery]
+   * @property {boolean} [saveRowsSelection]
+   * @property {number[]} [removedIds]
    */
 
   /**

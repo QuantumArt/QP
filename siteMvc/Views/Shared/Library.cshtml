@@ -1,7 +1,5 @@
 ﻿@using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
 @model Quantumart.QP8.WebMvc.ViewModels.Library.LibraryViewModel
-
 
 <div class="library" id="@Model.MainComponentId">
   <div class="t-widget t-splitter-horizontal l-splitter" id="@Model.SplitterId">
@@ -44,22 +42,7 @@
             <input id="@Html.UniqueId("findFileButton")" type="button" class="l-filterButton button" value="@LibraryStrings.Find" />
             <input id="@Html.UniqueId("resetFilterButton")" type="button" class="l-resetFilterButton button" value="@LibraryStrings.ResetFilter" />
 
-            @if (Model.UploaderType == UploaderType.Silverlight && Model.AllowUpload)
-            {
-              <div id="@Html.UniqueId("silverlightUploader")" class='l-sl-uploader'></div>
-            }
-            else if (Model.UploaderType == UploaderType.Html && Model.AllowUpload)
-            {
-              <div class="l-html-uploader">
-                @(Html.Telerik().Upload()
-                                .Name(Html.UniqueId("mvcUploader"))
-                                .Async(async => async.Save("UploadFile", "Library"))
-                                .Multiple(true)
-                                .ShowFileList(false)
-                )
-              </div>
-            }
-            else if (Model.UploaderType == UploaderType.PlUpload && Model.AllowUpload)
+            @if (Model.AllowUpload)
             {
               <div class="l-pl-uploader-container" id="@Html.UniqueId("upload_pl_cont_libr")" style="display:inline-block;">
                 <div id="@Html.UniqueId("upload_pl_libr_btn")" class="pl_upload_button" style="display:inline-block; vertical-align: baseline;">

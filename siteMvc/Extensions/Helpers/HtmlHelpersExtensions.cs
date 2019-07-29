@@ -218,31 +218,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var tb = new TagBuilder("div");
             tb.MergeAttribute("id", source.UniqueId(id + "_upload"));
 
-            var uploaderType = UploaderTypeHelper.UploaderType;
-            switch (uploaderType)
-            {
-                case UploaderType.Silverlight:
-                    tb.MergeAttribute("class", BrowseButtonClassName + " l-sl-uploader");
-                    break;
-                case UploaderType.Html:
-                    tb.MergeAttribute("class", "l-html-uploader");
-                    tb.InnerHtml = source.Telerik().Upload()
-                        .Name(source.UniqueId(id + "mvcUploader"))
-                        .Async(async => async.Save("UploadFile", "Library"))
-                        .Multiple(false)
-                        .ShowFileList(false)
-                        .ToHtmlString();
-                    break;
-                case UploaderType.PlUpload:
-                    tb.MergeAttribute("class", "l-pl-uploader-container");
-                    tb.MergeAttribute("style", "display:inline-block;");
-                    var pbTb = new TagBuilder("div");
-                    pbTb.AddCssClass("lop-pbar-container");
-                    pbTb.MergeAttribute("style", "height: 18px;");
-                    pbTb.InnerHtml = "<div class=\"lop-pbar\"></div>";
-                    tb.InnerHtml = $"<div id={source.UniqueId("uploadBtn_") + id} class=\"t-button pl_upload_button\"><span>{LibraryStrings.Upload}</span></div>{pbTb}";
-                    break;
-            }
+            tb.MergeAttribute("class", "l-pl-uploader-container");
+            tb.MergeAttribute("style", "display:inline-block;");
+            var pbTb = new TagBuilder("div");
+            pbTb.AddCssClass("lop-pbar-container");
+            pbTb.MergeAttribute("style", "height: 18px;");
+            pbTb.InnerHtml = "<div class=\"lop-pbar\"></div>";
+            tb.InnerHtml = $"<div id={source.UniqueId("uploadBtn_") + id} class=\"t-button pl_upload_button\"><span>{LibraryStrings.Upload}</span></div>{pbTb}";
 
             return tb.ToString();
         }
@@ -949,7 +931,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 tb.MergeDataAttribute("rename_matched", Converter.ToJsString(renameMatched));
                 tb.MergeDataAttribute("is_image", Converter.ToJsString(field.ExactType == FieldExactTypes.Image));
                 tb.MergeDataAttribute("allow_file_upload", Converter.ToJsString(allowUpload));
-                tb.MergeDataAttribute("uploader_type", ((int)UploaderTypeHelper.UploaderType).ToString());
                 tb.MergeDataAttribute("folder_Id", folder?.Id.ToString() ?? string.Empty);
             }
 

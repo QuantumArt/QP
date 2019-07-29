@@ -418,7 +418,6 @@
     <Compile Include="Extensions\Helpers\SelectOptions.cs" />
     <Compile Include="Extensions\Helpers\TagBuilderExtensions.cs" />
     <Compile Include="Extensions\Helpers\UnvalidatedRequestValuesMock.cs" />
-    <Compile Include="Extensions\Helpers\UploaderTypeHelper.cs" />
     <Compile Include="Extensions\Helpers\UrlHelperSiteFolderExtensions.cs" />
     <Compile Include="Extensions\ModelBinders\ArticleScheduleModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\ArticleVersionModelBinder.cs" />
@@ -1980,7 +1979,6 @@
     <Compile Include="ViewModels\Library\FileViewModel.cs" />
     <Compile Include="ViewModels\Library\LibraryViewModel.cs" />
     <Compile Include="ViewModels\Site\SearchInArticlesListViewModel.cs" />
-    <Compile Include="ViewModels\UploaderType.cs" />
     <Compile Include="ViewModels\User\ProfileViewModel.cs" />
     <Compile Include="ViewModels\Site\SiteListViewModel.cs" />
     <Compile Include="ViewModels\Site\SiteViewModel.cs" />
@@ -2261,7 +2259,6 @@
     <Content Include="Scripts\Quantumart\Search\BackendUserAndGroupSearchBlock.js" />
     <Content Include="Scripts\Quantumart\Search\BackendUserSearchBlock.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendActionPermissionTree.js" />
-    <Content Include="Scripts\Quantumart\Uploader\BackendHtmlUploader.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendBaseUploader.js" />
     <Content Include="Scripts\Quantumart\Mediators\BackendVirtualContentProperties.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendVirtualFieldTree.js" />
