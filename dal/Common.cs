@@ -1314,7 +1314,15 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int GetBlobFieldMaxSymbolLength(DbConnection connection, int contentId, string fieldName)
         {
-            using (var cmd = DbCommandFactory.Create(string.Format("select MAX(DATALENGTH([{1}])) / 2 from content_{0}_united with(nolock)", contentId, fieldName), connection))
+            var dbType = GetDbType(connection);
+
+            var query = $"select MAX(DATALENGTH([{fieldName}])) / 2 from content_{contentId}_united with(nolock)";
+            if (dbType == DatabaseType.Postgres)
+            {
+                query = $"select MAX(LENGTH({Escape(dbType, fieldName)})) from content_{contentId}_united";
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1325,7 +1333,8 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         public static int? GetNumericFieldMaxValue(DbConnection connection, int contentId, string fieldName)
         {
-            using (var cmd = DbCommandFactory.Create(string.Format("select MAX([{1}]) from content_{0}_united with(nolock)", contentId, fieldName), connection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select MAX({Escape(dbType, fieldName)}) from content_{contentId}_united {WithNoLock(dbType)}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1339,7 +1348,10 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         /// <returns>True - нет "плохих" значений</returns>
         public static bool CheckNumericValuesAsO2MForeingKey(DbConnection connection, int contentId, string fieldName, int relatedContentId)
         {
-            using (var cmd = DbCommandFactory.Create(string.Format("select 1 where EXISTS (select C1.CONTENT_ITEM_ID from content_{0}_united C1 with(nolock) join content_{2}_united C2 with(nolock) ON C1.[{1}] != C2.[CONTENT_ITEM_ID])", contentId, fieldName, relatedContentId), connection))
+            var dbType = GetDbType(connection);
+            var withNoLock = WithNoLock(dbType);
+            var query = $"select 1 where EXISTS (select C1.CONTENT_ITEM_ID from content_{contentId}_united C1 {withNoLock} join content_{relatedContentId}_united C2 {withNoLock} ON C1.{Escape(dbType, fieldName)} != C2.CONTENT_ITEM_ID)";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var obj = cmd.ExecuteScalar();
@@ -5570,7 +5582,8 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
         {
             if (enumValues.Any())
             {
-                var query = $@"update content_data set DATA = @def_value, MODIFIED = GETDATE()
+                var dbType = GetDbType(sqlConnection);
+                var query = $@"update content_data set DATA = @def_value, MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)}
                     where ATTRIBUTE_ID = @field_id
                     and DATA not in ({string.Join(",", enumValues.Select(v => $"'{Cleaner.ToSafeSqlString(v)}'"))}) and DATA IS NOT NULL";
 
