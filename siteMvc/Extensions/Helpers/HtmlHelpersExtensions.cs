@@ -16,7 +16,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Telerik.Web.Mvc.UI;
@@ -300,7 +299,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var newHtmlAttributes = new Dictionary<string, object> { { "id", htmlAttributes["id"] }, { "class", htmlAttributes["class"] } };
             newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
 
-            return MvcHtmlString.Create(source.Telerik().NumericTextBox()
+            var htmlString = MvcHtmlString.Create(source.Telerik().NumericTextBox()
                 .MinValue(minValue)
                 .MaxValue(maxValue)
                 .ButtonTitleDown(GlobalStrings.DecreaseValue)
@@ -313,6 +312,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .EmptyMessage(string.Empty)
                 .Enable(!ContainsReadOnly(htmlAttributes))
                 .ToHtmlString());
+
+            return htmlString;
         }
 
         public static MvcHtmlString Relation(this HtmlHelper source, string id, IEnumerable<QPSelectListItem> list, ControlOptions options, RelationType relationType, bool isListOverflow, EntityDataListArgs entityDataListArgs)
@@ -805,51 +806,137 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static MvcHtmlString DateTimePicker(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
         {
-            var inputId = htmlAttributes["id"].ToString();
-            var stringValue = value?.ToString();
-            var newHtmlAttributes = new Dictionary<string, object> { { "id", inputId } };
-            string htmlString;
+            DateTime? dateTime = ToDateTime(value);
+            string inputId = htmlAttributes["id"].ToString();
 
-            var className = mode == DateTimePickerMode.Date
-                ? DateTextboxClassName
-                : mode == DateTimePickerMode.Time
-                    ? TimeTextboxClassName
-                    : DateTimeTextboxClassName;
+            var widget = new TagBuilder("div");
+            widget.AddCssClass("t-widget");
 
-            newHtmlAttributes.Add("class", className);
-            newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
+            var wrap = new TagBuilder("div");
+            wrap.AddCssClass("t-picker-wrap");
+
+            var input = new TagBuilder("input");
+            input.AddCssClass("t-input");
+            input.MergeAttribute("id", inputId);
+            input.MergeAttribute("name", id);
+            input.MergeAttribute("type", "text");
+
+            if (isReadOnly)
+            {
+                input.MergeAttribute("disabled", "disabled");
+            }
+            if (htmlAttributes.ContainsKey(DataContentFieldName))
+            {
+                input.MergeAttribute(DataContentFieldName, htmlAttributes[DataContentFieldName].ToString());
+            }
+
+            var select = new TagBuilder("span");
+            select.AddCssClass("t-select");
+
+            var openCalendar = new TagBuilder("span");
+            openCalendar.AddCssClass("t-icon t-icon-calendar");
+            openCalendar.MergeAttribute("title", "Open the calendar");
+            openCalendar.SetInnerText("Open the calendar");
+
+            var openTime = new TagBuilder("span");
+            openTime.AddCssClass("t-icon t-icon-clock");
+            openTime.MergeAttribute("title", "Open the time view");
+            openTime.SetInnerText("Open the time view");
+
+            var script = new TagBuilder("script");
+            script.MergeAttribute("type", "text/javascript");
 
             switch (mode)
             {
                 case DateTimePickerMode.DateTime:
-                    htmlString = source.Telerik().DateTimePicker()
-                        .Name(id)
-                        .Value(stringValue)
-                        .Enable(!isReadOnly)
-                        .InputHtmlAttributes(newHtmlAttributes)
-                        .ToHtmlString();
+                    widget.AddCssClass("t-datetimepicker");
+                    input.AddCssClass(DateTimeTextboxClassName);
+                    input.MergeAttribute("value", dateTime?.ToString("g"));
+                    select.InnerHtml = openCalendar.ToString() + openTime.ToString();
+                    script.InnerHtml = $@"
+                      $('#{inputId}').tDateTimePicker({{
+                        format: '{CurrentDateFormat('g')}',
+                        minValue: new Date(1899, 11, 31),
+                        maxValue: new Date(2100, 0, 1),
+                        startTimeValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        endTimeValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        interval: 30,
+                        selectedValue: {ToJavaScriptDate(dateTime)},
+                      }});";
                     break;
                 case DateTimePickerMode.Date:
-                    htmlString = source.Telerik().DatePicker()
-                        .Name(id)
-                        .Value(stringValue)
-                        .Enable(!isReadOnly)
-                        .InputHtmlAttributes(newHtmlAttributes)
-                        .ToHtmlString();
+                    widget.AddCssClass("t-datepicker");
+                    input.AddCssClass(DateTextboxClassName);
+                    input.MergeAttribute("value", dateTime?.ToString("d"));
+                    select.InnerHtml = openCalendar.ToString();
+                    script.InnerHtml = $@"
+                      $('#{inputId}').tDatePicker({{
+                        format: '{CurrentDateFormat('d')}',
+                        minValue: new Date(1899, 11, 31),
+                        maxValue: new Date(2100, 0, 1),
+                        selectedValue: {ToJavaScriptDate(dateTime?.Date)},
+                      }});";
                     break;
                 case DateTimePickerMode.Time:
-                    htmlString = source.Telerik().TimePicker()
-                        .Name(id)
-                        .Value(stringValue)
-                        .Enable(!isReadOnly)
-                        .InputHtmlAttributes(newHtmlAttributes)
-                        .ToHtmlString();
+                    widget.AddCssClass("t-timepicker");
+                    input.AddCssClass(TimeTextboxClassName);
+                    input.MergeAttribute("value", dateTime?.ToString("t"));
+                    select.InnerHtml = openTime.ToString();
+                    script.InnerHtml = $@"
+                      $('#{inputId}').tTimePicker({{
+                        format: '{CurrentDateFormat('t')}',
+                        minValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        maxValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        interval: 30,
+                        selectedValue: {ToJavaScriptDate(dateTime)},
+                      }});";
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
-            return MvcHtmlString.Create(htmlString);
+            var sb = new StringBuilder();
+            sb.Append(widget.ToString(TagRenderMode.StartTag));
+            sb.Append(wrap.ToString(TagRenderMode.StartTag));
+            sb.Append(input.ToString(TagRenderMode.SelfClosing));
+            sb.Append(select.ToString(TagRenderMode.Normal));
+            sb.Append(wrap.ToString(TagRenderMode.EndTag));
+            sb.Append(widget.ToString(TagRenderMode.EndTag));
+            sb.Append(script.ToString(TagRenderMode.Normal));
+
+            return MvcHtmlString.Create(sb.ToString());
+        }
+
+        private static DateTime? ToDateTime(object value)
+        {
+            if (value is DateTime dateTime)
+            {
+                return dateTime;
+            }
+            if (value is TimeSpan timeSpan)
+            {
+                return System.DateTime.Today.Add(timeSpan);
+            }
+            if (System.DateTime.TryParse(value?.ToString(), out dateTime))
+            {
+                return dateTime;
+            }
+            return null;
+        }
+
+        private static string ToJavaScriptDate(DateTime? dateTime)
+        {
+            if (dateTime == null)
+            {
+                return "null";
+            }
+            DateTime dt = dateTime.Value;
+            return $"new Date({dt.Year}, {dt.Month - 1}, {dt.Day}, {dt.Hour}, {dt.Minute}, {dt.Second})";
+        }
+
+        private static string CurrentDateFormat(char format)
+        {
+            return CultureInfo.CurrentCulture.DateTimeFormat.GetAllDateTimePatterns(format).First();
         }
 
         public static MvcHtmlString File(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, int? entityId, ArticleVersion version, bool? isReadOnly = null, bool? allowUpload = null, bool allowPreview = true, bool allowDownload = true)
@@ -1217,11 +1304,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             options.Merge(htmlAttributes, true);
-            return MvcHtmlString.Create(source.Telerik().TreeView()
+
+            var htmlString =  MvcHtmlString.Create(source.Telerik().TreeView()
                 .Name(name)
                 .HtmlAttributes(options)
                 .ToHtmlString()
             );
+
+            return htmlString;
         }
 
         public static MvcHtmlString VirtualFieldTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)
