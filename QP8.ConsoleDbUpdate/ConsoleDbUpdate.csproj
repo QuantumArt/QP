@@ -254,9 +254,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\RazorGenerator.Mvc.dll">
       <Link>References\RazorGenerator.Mvc.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
-      <Link>References\Telerik.Web.Mvc.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.AspNet.SignalR.Core.dll">
@@ -362,6 +359,3 @@
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
-
-
-

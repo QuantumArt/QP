@@ -236,10 +236,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Telerik.Web.Mvc, Version=2010.2.930.235, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)binaries\Telerik.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Abstractions, Version=3.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
       <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Abstractions.dll</HintPath>
       <Private>True</Private>
@@ -1623,6 +1619,7 @@
     <Content Include="Content\kendo\kendo.bootstrap.min.css.map" />
     <Content Include="Content\kendo\kendo.material.min.css.map" />
     <Content Include="Content\kendo\kendo.silver.min.css.map" />
+    <Content Include="webpack.config.js" />
     <None Include="NLog.xsd" />
     <None Include="packages.config" />
     <Content Include="Scripts\jquery\jquery-1.8.3.js" />
@@ -2361,6 +2358,7 @@
     <Content Include="Views\ArticleSearchBlock\Identifier.cshtml">
       <LastGenOutput>Identifier.generated.cs</LastGenOutput>
     </Content>
+    <Content Include="tsconfig.json" />
     <None Include="Views\ArticleSearchBlock\FullTextBlock.cshtml">
       <LastGenOutput>FullTextBlock.generated.cs</LastGenOutput>
     </None>
