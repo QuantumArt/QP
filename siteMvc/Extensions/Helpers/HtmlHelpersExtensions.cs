@@ -806,7 +806,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static MvcHtmlString DateTimePicker(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
         {
-            DateTime? dateTime = ToDateTime(value);
+            DateTime? dateTime = ToDateTime(value ?? source.ViewData.Eval(id));
+
             string inputId = htmlAttributes["id"].ToString();
 
             var widget = new TagBuilder("div");
