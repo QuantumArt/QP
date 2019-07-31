@@ -296,24 +296,68 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
         {
-            var newHtmlAttributes = new Dictionary<string, object> { { "id", htmlAttributes["id"] }, { "class", htmlAttributes["class"] } };
-            newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
+            double? doubleValue = Converter.ToNullableDouble(value ?? source.ViewData.Eval(name));
 
-            var htmlString = MvcHtmlString.Create(source.Telerik().NumericTextBox()
-                .MinValue(minValue)
-                .MaxValue(maxValue)
-                .ButtonTitleDown(GlobalStrings.DecreaseValue)
-                .ButtonTitleUp(GlobalStrings.IncreaseValue)
-                .Name(name)
-                .InputHtmlAttributes(new { id = htmlAttributes["id"], @class = htmlAttributes["class"] })
-                .Value(Converter.ToNullableDouble(value))
-                .DecimalDigits(decimalDigits)
-                .Spinners(true)
-                .EmptyMessage(string.Empty)
-                .Enable(!ContainsReadOnly(htmlAttributes))
-                .ToHtmlString());
+            string inputId = htmlAttributes["id"].ToString();
+            string inputClass = htmlAttributes["class"].ToString();
 
-            return htmlString;
+            var widget = new TagBuilder("div");
+            widget.AddCssClass("t-widget t-numerictextbox");
+
+            var input = new TagBuilder("input");
+            input.AddCssClass("t-input");
+            input.AddCssClass(inputClass);
+            input.MergeAttribute("id", inputId);
+            input.MergeAttribute("name", name);
+            input.MergeAttribute("type", "text");
+            input.MergeAttribute("value", doubleValue?.ToString());
+
+            if (ContainsReadOnly(htmlAttributes))
+            {
+                input.MergeAttribute("disabled", "disabled");
+            }
+            if (htmlAttributes.ContainsKey(DataContentFieldName))
+            {
+                input.MergeAttribute(DataContentFieldName, htmlAttributes[DataContentFieldName].ToString());
+            }
+
+            var increment = new TagBuilder("a");
+            increment.AddCssClass("t-link t-icon t-arrow-up");
+            increment.MergeAttribute("href", "#");
+            increment.MergeAttribute("tabindex", "-1");
+            increment.MergeAttribute("title", GlobalStrings.IncreaseValue);
+            increment.SetInnerText("Increment");
+
+            var decrement = new TagBuilder("a");
+            decrement.AddCssClass("t-link t-icon t-arrow-down");
+            decrement.MergeAttribute("href", "#");
+            decrement.MergeAttribute("tabindex", "-1");
+            decrement.MergeAttribute("title", GlobalStrings.DecreaseValue);
+            decrement.SetInnerText("Decrement");
+
+            var script = new TagBuilder("script");
+            script.MergeAttribute("type", "text/javascript");
+            script.InnerHtml = $@"
+              $('#{inputId}').tTextBox({{
+                val: {doubleValue?.ToString() ?? "null"},
+                step: 1,
+                minValue: {minValue?.ToString() ?? "null"},
+                maxValue: {maxValue?.ToString() ?? "null"},
+                digits: {decimalDigits},
+                groupSize: 3,
+                negative: 1,
+                type: 'numeric',
+              }});";
+
+            var sb = new StringBuilder();
+            sb.Append(widget.ToString(TagRenderMode.StartTag));
+            sb.Append(input.ToString(TagRenderMode.SelfClosing));
+            sb.Append(increment.ToString(TagRenderMode.Normal));
+            sb.Append(decrement.ToString(TagRenderMode.Normal));
+            sb.Append(widget.ToString(TagRenderMode.EndTag));
+            sb.Append(script.ToString(TagRenderMode.Normal));
+
+            return MvcHtmlString.Create(sb.ToString());
         }
 
         public static MvcHtmlString Relation(this HtmlHelper source, string id, IEnumerable<QPSelectListItem> list, ControlOptions options, RelationType relationType, bool isListOverflow, EntityDataListArgs entityDataListArgs)
@@ -1186,7 +1230,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null, bool forceReadOnly = false)
         {
-            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);            
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);
             if (!string.IsNullOrWhiteSpace(toggleId))
             {
                 var toggleIds = toggleId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1306,7 +1350,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             options.Merge(htmlAttributes, true);
 
-            var htmlString =  MvcHtmlString.Create(source.Telerik().TreeView()
+            var htmlString = MvcHtmlString.Create(source.Telerik().TreeView()
                 .Name(name)
                 .HtmlAttributes(options)
                 .ToHtmlString()
