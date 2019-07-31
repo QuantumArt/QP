@@ -1214,6 +1214,10 @@ namespace Quantumart.QP8.BLL
             {
                 Indexed = false;
             }
+            else if (IsUnique && !Constraint.IsComplex)
+            {
+                Indexed = true;
+            }
 
             if (ExactType == FieldExactTypes.O2MRelation)
             {

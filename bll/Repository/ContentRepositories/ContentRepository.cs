@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -232,6 +233,11 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             return (int)QPContext.EFContext.ContentSet.Where(n => n.Id == (decimal)id).Select(n => n.SiteId).Single();
         }
 
+        private static void ChangeCreateFieldsTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_create_fields", enable);
+        }
+
         private static void ChangeInsertAccessContentTriggerState(bool enable)
         {
             Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_access_content", enable);
@@ -242,44 +248,59 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_insert_modify_row", enable);
         }
 
+        private static void ChangeDropTableTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "td_drop_table", enable);
+        }
+
+        private static void ChangeCleanEmptyGropusTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "tiud_remove_empty_content_groups", enable);
+        }
+
+
         internal static Content Save(Content content, bool createDefaultField)
         {
-            var binding = content.WorkflowBinding;
-
-            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            using (var scope = new QPConnectionScope())
             {
-                FieldRepository.ChangeCreateFieldsTriggerState(false);
-                ChangeInsertAccessContentTriggerState(false);
-                ChangeInsertModificationTriggerState(false);
-                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
+                try
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeCreateFieldsTriggerState(false);
+                        ChangeInsertAccessContentTriggerState(false);
+                        ChangeInsertModificationTriggerState(false);
+                        ChangeCleanEmptyGropusTriggerState(false);
+                        DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
+                    }
+                    var binding = content.WorkflowBinding;
+                    var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
+
+                    Common.CreateContentTables(scope.DbConnection, newContent.Id);
+                    Common.CreateContentModification(scope.DbConnection, newContent.Id);
+                    CommonSecurity.CreateContentAccess(scope.DbConnection, newContent.Id);
+
+                    if (createDefaultField)
+                    {
+                        CreateDefaultField(newContent, content.ForceFieldIds); // implicitly create views
+                    }
+
+                    binding.SetContent(newContent);
+                    WorkflowRepository.UpdateContentWorkflowBind(binding);
+                    return GetById(newContent.Id);
+                }
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
+                        ChangeCreateFieldsTriggerState(true);
+                        ChangeInsertAccessContentTriggerState(true);
+                        ChangeInsertModificationTriggerState(true);
+                        ChangeCleanEmptyGropusTriggerState(true);
+                    }
+                }
             }
-
-            var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
-
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                Common.CreateContentTables(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
-            }
-
-            Common.CreateContentModification(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
-            CommonSecurity.CreateContentAccess(QPContext.CurrentConnectionScope.DbConnection, newContent.Id);
-
-            if (QPContext.DatabaseType == DatabaseType.SqlServer)
-            {
-                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
-                FieldRepository.ChangeCreateFieldsTriggerState(true);
-                ChangeInsertAccessContentTriggerState(true);
-                ChangeInsertModificationTriggerState(true);
-            }
-
-            if (createDefaultField)
-            {
-                CreateDefaultField(newContent, content.ForceFieldIds); // implicitly create views
-            }
-
-            binding.SetContent(newContent);
-            WorkflowRepository.UpdateContentWorkflowBind(binding);
-            return GetById(newContent.Id);
         }
 
         private static void CreateDefaultField(Content newContent, IReadOnlyList<int> forceFieldIds)
@@ -300,44 +321,93 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             field.PersistWithVirtualRebuild(true);
         }
 
+        private static void DeleteEmptyContentGroups()
+        {
+            var emptyGroups = QPContext.EFContext.ContentGroupSet
+                .Where(n => !n.Contents.Any() && n.Name != ContentGroup.DefaultName).ToArray();
+
+            QPContext.EFContext.ContentGroupSet.RemoveRange(emptyGroups);
+            QPContext.EFContext.SaveChanges();
+        }
+
         internal static Content Update(Content content)
         {
-            var binding = content.WorkflowBinding;
-            var newContent = DefaultRepository.Update<Content, ContentDAL>(content);
-            binding.SetContent(newContent);
-            WorkflowRepository.UpdateContentWorkflowBind(binding);
-
-            // Обновить свойства у агрегированных контентов
-            foreach (var aggregated in content.AggregatedContents)
+            using (var scope = new QPConnectionScope())
             {
-                var localAggregated = aggregated;
-                if (localAggregated.AutoArchive != content.AutoArchive)
+                try
                 {
-                    localAggregated.AutoArchive = content.AutoArchive;
-                    localAggregated = DefaultRepository.Update<Content, ContentDAL>(localAggregated);
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeCleanEmptyGropusTriggerState(false);
+                    }
+
+                    var binding = content.WorkflowBinding;
+                    var newContent = DefaultRepository.Update<Content, ContentDAL>(content);
+                    binding.SetContent(newContent);
+                    WorkflowRepository.UpdateContentWorkflowBind(binding);
+
+                    // Обновить свойства у агрегированных контентов
+                    foreach (var aggregated in content.AggregatedContents)
+                    {
+                        var localAggregated = aggregated;
+                        if (localAggregated.AutoArchive != content.AutoArchive)
+                        {
+                            localAggregated.AutoArchive = content.AutoArchive;
+                            localAggregated = DefaultRepository.Update<Content, ContentDAL>(localAggregated);
+                        }
+
+                        binding.SetContent(localAggregated);
+                        WorkflowRepository.UpdateContentWorkflowBind(binding);
+                    }
+
+                    DeleteEmptyContentGroups();
+
+                    return GetById(newContent.Id);
+
                 }
-
-                binding.SetContent(localAggregated);
-                WorkflowRepository.UpdateContentWorkflowBind(binding);
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeCleanEmptyGropusTriggerState(true);
+                    }
+                }
             }
-
-            return GetById(newContent.Id);
         }
 
         internal static void Delete(int id)
         {
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            using (var scope = new QPConnectionScope())
             {
-                FieldRepository.DropLinkTablesAndViews(id);
+                try
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeDropTableTriggerState(false);
+                        ChangeCleanEmptyGropusTriggerState(false);
+                    }
+
+                    FieldRepository.DropLinkTablesAndViews(id);
+
+                    DefaultRepository.Delete<ContentDAL>(id);
+
+                    Common.DropContentViews(scope.DbConnection, id);
+                    Common.DropContentTables(scope.DbConnection, id);
+
+                    DeleteEmptyContentGroups();
+                }
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeDropTableTriggerState(true);
+                        ChangeCleanEmptyGropusTriggerState(true);
+                    }
+                }
             }
 
-            DefaultRepository.Delete<ContentDAL>(id);
 
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                Common.DropContentViews(QPContext.CurrentConnectionScope.DbConnection, id);
-                Common.DropContentTables(QPContext.CurrentConnectionScope.DbConnection, id);
-            }
+
         }
 
         internal static Content Copy(Content content, int? forceId, int[] forceFieldIds, int[] forceLinkIds, bool forHierarchy)

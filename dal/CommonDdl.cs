@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
@@ -12,7 +13,7 @@ namespace Quantumart.QP8.DAL
 {
     public static partial class Common
     {
-        public static void AddColumn(DbConnection cnn, FieldDAL field)
+        public static void AddColumn(DbConnection cnn, FieldDAL field, bool rebuildViews = true)
         {
             var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
@@ -32,10 +33,18 @@ namespace Quantumart.QP8.DAL
             var sql = $"alter table {{0}} add {fieldDef}";
 
             var contentId = (int)field.ContentId;
-            DropContentViews(cnn, contentId);
+            if (rebuildViews)
+            {
+                DropContentViews(cnn, contentId);
+            }
+
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
-            CreateContentViews(cnn, contentId);
+
+            if (rebuildViews)
+            {
+                CreateContentViews(cnn, contentId);
+            }
 
             if (field.IndexFlag == 1)
             {
@@ -59,10 +68,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string IndexName(DatabaseType dbType, string tableName, string fieldName)
+        public static string IndexName(DatabaseType dbType, string tableName, string fieldName, bool escape = true)
         {
-            var indexName = $@"{DbSchemaName(dbType)}.{tableName}_{fieldName}";
-            return Escape(dbType, indexName);
+            var indexName = $@"dbo.{tableName}_{fieldName}"; // dbo is used for compatibility with migrated indexes
+            return escape ? Escape(dbType, indexName) : indexName;
         }
 
         public static void AddIndex(DbConnection cnn, string tableName, string fieldName)
@@ -79,14 +88,15 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var actualFieldName = (dbType == DatabaseType.Postgres) ? fieldName.ToLower() : fieldName;
             var indexName = IndexName(dbType, tableName, actualFieldName);
+            var unescapedIndexName = IndexName(dbType, tableName, actualFieldName, false);
+            var pgCheck = dbType == DatabaseType.Postgres ? " IF EXISTS " : "";
+            var sqlCheck = dbType == DatabaseType.Postgres ? "" : $"if exists(select name from sysindexes where name = '{unescapedIndexName}')";
             var tablePrefix = (dbType == DatabaseType.SqlServer) ? $@"{DbSchemaName(dbType)}.{tableName}." : "";
-            var sql = $@"
-            drop index {tablePrefix}{indexName}
-            ";
+            var sql = $@"{sqlCheck} drop index {pgCheck} {tablePrefix}{indexName}";
             ExecuteSql(cnn, sql);
         }
 
-        public static void DropColumn(DbConnection cnn, FieldDAL field)
+        public static void DropColumn(DbConnection cnn, FieldDAL field, bool rebuildViews = true)
         {
             var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
@@ -101,19 +111,26 @@ namespace Quantumart.QP8.DAL
             }
 
             var contentId = (int)field.ContentId;
-            DropContentViews(cnn, contentId);
+            if (rebuildViews)
+            {
+                DropContentViews(cnn, contentId);
+            }
+
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
-            CreateContentViews(cnn, contentId);
 
+            if (rebuildViews)
+            {
+                CreateContentViews(cnn, contentId);
+            }
         }
 
 
         public static void CreateContentTables(DbConnection cnn, int id)
         {
             var dbType = GetDbType(cnn);
-            var tableName = "content_" + id;
-            var asyncTableName = tableName + "_async";
+            var tableName = "CONTENT_" + id;
+            var asyncTableName = tableName + "_ASYNC";
             var dtType = (dbType == DatabaseType.Postgres) ? "timestamp without time zone" : "datetime";
             var sql = $@"
             create table {DbSchemaName(dbType)}.{{0}} (
@@ -135,18 +152,51 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
 
-            if (withUnited)
+            if (dbType == DatabaseType.SqlServer)
             {
-                var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_create", idStr);
-                ExecuteSql(cnn, unitedSql);
+                if (withUnited)
+                {
+                    var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_recreate", idStr);
+                    ExecuteSql(cnn, unitedSql);
+                }
+
+                var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_recreate", idStr);
+                ExecuteSql(cnn, feSql);
             }
+            else
+            {
+                if (withUnited)
+                {
+                    var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_create", idStr);
+                    ExecuteSql(cnn, unitedSql);
+                }
 
-            var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create", idStr);
-            ExecuteSql(cnn, feSql);
+                var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create", idStr);
+                ExecuteSql(cnn, feSql);
 
-            var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", idStr);
-            ExecuteSql(cnn, newSql);
+                var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", idStr);
+                ExecuteSql(cnn, newSql);
+            }
+        }
 
+        private static void RecreateNewViews(DbConnection cnn, int id)
+        {
+            var dbType = GetDbType(cnn);
+            var idStr = id.ToString();
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                var recreateSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_recreate", idStr);
+                ExecuteSql(cnn, recreateSql);
+            }
+            else
+            {
+                var dropSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_drop", idStr);
+                ExecuteSql(cnn, dropSql);
+
+                var createSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", idStr);
+                ExecuteSql(cnn, createSql);
+            }
         }
 
         public static void DropContentTables(DbConnection cnn, int id)
@@ -165,14 +215,18 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
 
-            var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_drop", idStr);
-            ExecuteSql(cnn, newSql);
+            if (dbType != DatabaseType.SqlServer)
+            {
+                var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_drop", idStr);
+                ExecuteSql(cnn, newSql);
 
-            var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_drop", idStr);
-            ExecuteSql(cnn, feSql);
+                var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_drop", idStr);
+                ExecuteSql(cnn, feSql);
 
-            var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_drop", idStr);
-            ExecuteSql(cnn, unitedSql);
+                var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_drop", idStr);
+                ExecuteSql(cnn, unitedSql);
+            }
+
         }
 
         public static IEnumerable<DataRow> RemovingActions_GetContentsItemInfo(int? siteId, int? contentId, DbConnection connection)
@@ -266,8 +320,43 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(connection, sql);
         }
 
+        private static void RecreateColumn(DbConnection cnn, FieldDAL oldField, FieldDAL newField)
+        {
+            var tableName = "content_" + newField.ContentId;
+            var asyncTableName = tableName + "_async";
+            DropColumn(cnn, oldField, false);
+            AddColumn(cnn, newField, false);
+            FillColumn(cnn, tableName, newField);
+            FillColumn(cnn, asyncTableName, newField);
+
+        }
+
+        private static void FillColumn(DbConnection cnn, string tableName, FieldDAL newField)
+        {
+            var dbType = GetDbType(cnn);
+            var sql = $@"
+                update {tableName} set {Escape(dbType, newField.Name)} = coalesce(cd.blob_data, cd.data)
+                from content_data cd
+                where cd.attribute_id = {newField.Id} and cd.content_item_id = {tableName}.content_item_id
+            ";
+            using (var cmd = DbCommandFactory.Create(sql, cnn))
+            {
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public static void UpdateColumn(DbConnection connection, FieldDAL oldField, FieldDAL newField)
         {
+            bool isIncompatibleChange = oldField.Type.DatabaseType != newField.Type.DatabaseType ||
+                oldField.Size != newField.Size && newField.Type.DatabaseType != "NTEXT";
+            if (isIncompatibleChange)
+            {
+                DropContentViews(connection, (int)newField.ContentId);
+                RecreateColumn(connection, oldField, newField);
+                CreateContentViews(connection, (int)newField.ContentId);;
+                return;
+            }
+
             var tableName = "content_" + newField.ContentId;
             var asyncTableName = tableName + "_async";
             if (oldField.IndexFlag == 1 && newField.IndexFlag == 0)
@@ -275,6 +364,8 @@ namespace Quantumart.QP8.DAL
                 DropIndex(connection, tableName, oldField.Name);
                 DropIndex(connection, asyncTableName, oldField.Name);
             }
+
+            var dbType = GetDbType(connection);
 
             if (oldField.Name != newField.Name)
             {
@@ -288,6 +379,10 @@ namespace Quantumart.QP8.DAL
                     RenameIndex(connection, tableName, oldField.Name, newField.Name);
                     RenameIndex(connection, asyncTableName, oldField.Name, newField.Name);
                 }
+            }
+            else if (oldField.IsLong != newField.IsLong)
+            {
+                RecreateNewViews(connection, (int)newField.ContentId);
             }
 
             if (oldField.IndexFlag == 0 && newField.IndexFlag == 1)
@@ -317,7 +412,7 @@ namespace Quantumart.QP8.DAL
         {
             var dbType = GetDbType(connection);
             var oldIndexName = IndexName(dbType, tableName, oldFieldName);
-            var newIndexName = IndexName(dbType, tableName, newFieldName);
+            var newIndexName = IndexName(dbType, tableName, newFieldName, dbType == DatabaseType.Postgres);
             var sql = "";
 
             if (dbType == DatabaseType.SqlServer)
@@ -398,5 +493,45 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(connection, sql);
         }
 
+        public static void CreateComplexIndex(QPModelDataContext ctx, DbConnection cnn, ContentConstraintDAL constraint)
+        {
+            var dbType = GetDbType(cnn);
+            var ids = constraint.Rules.Select(n => n.FieldId).ToArray();
+            var indexName = $"constraint_{constraint.Id}_ind";
+            var asyncIndexName = $"constraint_{constraint.Id}_async_ind";
+            var tableName = "content_" + constraint.ContentId;
+            var asyncTableName = tableName + "_async";
+            var fields = ctx.FieldSet.Where(n => ids.Contains(n.Id)).OrderBy(n => n.Order)
+                .Select(n => Escape(dbType, n.Name)).ToArray();
+            var indexTemplate = $"CREATE INDEX {{0}} on {{1}} ({String.Join(",", fields)});";
+            var sql = String.Format(indexTemplate, indexName, tableName);
+            ExecuteSql(cnn, sql);
+            var asyncSql = String.Format(indexTemplate, asyncIndexName, asyncTableName);
+            ExecuteSql(cnn, asyncSql);
+        }
+
+        public static void DropComplexIndex(DbConnection cnn, ContentConstraintDAL constraint)
+        {
+            var dbType = GetDbType(cnn);
+
+            var indexName = $"constraint_{constraint.Id}_ind";
+            var asyncIndexName = $"constraint_{constraint.Id}_async_ind";
+            var pgCheck = dbType == DatabaseType.Postgres ? " IF EXISTS " : "";
+            var sqlCheckTemplate = "if exists(select name from sysindexes where name = '{0}')";
+            var sqlCheck = dbType == DatabaseType.SqlServer ? String.Format(sqlCheckTemplate, indexName) : "";
+            var sqlAsyncCheck = dbType == DatabaseType.SqlServer ? String.Format(sqlCheckTemplate, asyncIndexName) : "";
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                indexName = $"content_{constraint.ContentId}.{indexName}";
+                asyncIndexName = $"content_{constraint.ContentId}_async.{asyncIndexName}";
+            }
+
+            var indexTemplate = $"{{0}} DROP INDEX {pgCheck} {{1}};";
+            var sql = String.Format(indexTemplate, sqlCheck, indexName);
+            ExecuteSql(cnn, sql);
+            var asyncSql = String.Format(indexTemplate, sqlAsyncCheck, asyncIndexName);;
+            ExecuteSql(cnn, asyncSql);
+        }
     }
 }

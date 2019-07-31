@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
@@ -224,22 +225,37 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                FieldDAL dal = null;
-                var isVirtual = false;
-                if (QPContext.DatabaseType != DatabaseType.SqlServer)
+                try
                 {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeCleanEmptyLinksTriggerState(scope.DbConnection, false);
+                        ChangeRemoveFieldTriggerState(scope.DbConnection, false);
+                        ChangeReorderFieldsTriggerState(scope.DbConnection, false);
+                    }
+
                     var field = GetById(id);
                     field.ReorderContentFields(true);
-                    isVirtual = field.Content.IsVirtual;
-                    dal = GetDal(field);
+                    var isVirtual = field.Content.IsVirtual;
+                    FieldDAL dal = GetDal(field);
+
+                    DefaultRepository.Delete<FieldDAL>(id);
+
+                    if (!isVirtual)
+                    {
+                        Common.DropColumn(scope.DbConnection, dal);
+                        DropLinkTablesAndViews(scope, dal);
+                    }
                 }
-
-                DefaultRepository.Delete<FieldDAL>(id);
-
-                if (QPContext.DatabaseType != DatabaseType.SqlServer && !isVirtual)
+                finally
                 {
-                    Common.DropColumn(scope.DbConnection, dal);
-                    DropLinkTablesAndViews(scope, dal);
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeCleanEmptyLinksTriggerState(scope.DbConnection, true);
+                        ChangeRemoveFieldTriggerState(scope.DbConnection, true);
+                        ChangeReorderFieldsTriggerState(scope.DbConnection, true);
+                    }
+
                 }
             }
         }
@@ -286,13 +302,19 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         Field IFieldRepository.CreateNew(Field item, bool explicitOrder)
         {
-            try
+            using (var scope = new QPConnectionScope())
             {
-                using (var scope = new QPConnectionScope())
+                try
                 {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeMaxOrderTriggerState(scope.DbConnection, false);
+                        ChangeInsertFieldTriggerState(scope.DbConnection, false);
+                        ChangeM2MDefaultTriggerState(scope.DbConnection, false);
+                    }
+
                     if (explicitOrder)
                     {
-                        ChangeMaxOrderTriggerState(false);
                         item.ReorderContentFields();
                     }
 
@@ -301,11 +323,8 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Field, item);
                     var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
-                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
-                    {
-                        var field = GetDal(newItem);
-                        Common.AddColumn(scope.DbConnection, field);
-                    }
+                    var field = GetDal(newItem);
+                    Common.AddColumn(scope.DbConnection, field);
 
                     DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
 
@@ -319,13 +338,15 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     return GetById(newItem.Id);
                 }
-
-            }
-            finally
-            {
-                if (explicitOrder)
+                finally
                 {
-                    ChangeMaxOrderTriggerState(true);
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeMaxOrderTriggerState(scope.DbConnection, true);
+                        ChangeInsertFieldTriggerState(scope.DbConnection, true);
+                        ChangeM2MDefaultTriggerState(scope.DbConnection, true);
+                    }
+
                 }
             }
         }
@@ -351,16 +372,20 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
         Field IFieldRepository.Update(Field item)
         {
-            try
+            using (var scope = new QPConnectionScope())
             {
-                using (var scope = new QPConnectionScope())
+                try
                 {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeMaxOrderTriggerState(scope.DbConnection, false);
+                        ChangeM2MDefaultTriggerState(scope.DbConnection, false);
+                        ChangeCleanEmptyLinksTriggerState(scope.DbConnection, false);
+                        ChangeInsertFieldTriggerState(scope.DbConnection, false);
+                        ChangeUpdateFieldTriggerState(scope.DbConnection, false);
+                    }
+
                     var preUpdateField = GetById(item.Id);
-
-                    ChangeMaxOrderTriggerState(false);
-                    ChangeM2MDefaultTriggerState(false);
-
-
                     var constraint = item.Constraint;
                     var dynamicImage = item.DynamicImage;
 
@@ -371,12 +396,9 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     UpdateRelationData(item, preUpdateField);
 
                     var newItem = DefaultRepository.Update<Field, FieldDAL>(item);
-                    if (QPContext.DatabaseType != DatabaseType.SqlServer)
-                    {
-                        var oldDal = GetDal(preUpdateField);
-                        var newDal = GetDal(newItem);
-                        Common.UpdateColumn(scope.DbConnection, oldDal, newDal);
-                    }
+                    var oldDal = GetDal(preUpdateField);
+                    var newDal = GetDal(newItem);
+                    Common.UpdateColumn(scope.DbConnection, oldDal, newDal);
 
                     UpdateFieldOrder(newItem.Id, item.Order);
 
@@ -386,12 +408,17 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     return GetById(newItem.Id);
                 }
-
-            }
-            finally
-            {
-                ChangeMaxOrderTriggerState(true);
-                ChangeM2MDefaultTriggerState(true);
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeMaxOrderTriggerState(scope.DbConnection, true);
+                        ChangeM2MDefaultTriggerState(scope.DbConnection, true);
+                        ChangeCleanEmptyLinksTriggerState(scope.DbConnection, true);
+                        ChangeInsertFieldTriggerState(scope.DbConnection, true);
+                        ChangeUpdateFieldTriggerState(scope.DbConnection, true);
+                    }
+                }
             }
         }
 
@@ -833,66 +860,41 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             }
         }
 
-        internal static void ChangeCreateFieldsTriggerState(bool enable)
+        internal static void ChangeMaxOrderTriggerState(DbConnection cnn, bool enable)
         {
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                return;
-            }
-
-            using (var scope = new QPConnectionScope())
-            {
-                Common.ChangeTriggerState(scope.DbConnection, "ti_create_fields", enable);
-            }
+            Common.ChangeTriggerState(cnn, "ti_set_max_order", enable);
         }
 
-        internal static void ChangeMaxOrderTriggerState(bool enable)
+        internal static void ChangeInsertFieldTriggerState(DbConnection cnn, bool enable)
         {
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                return;
-            }
-
-            using (var scope = new QPConnectionScope())
-            {
-                Common.ChangeTriggerState(scope.DbConnection, "ti_set_max_order", enable);
-            }
+            Common.ChangeTriggerState(cnn, "ti_insert_field", enable);
         }
 
-        internal static void ChangeContentAttributeTriggerState(bool enable)
+        internal static void ChangeUpdateFieldTriggerState(DbConnection cnn, bool enable)
         {
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                return;
-            }
-            using (var scope = new QPConnectionScope())
-            {
-                Common.ChangeTriggerState(scope.DbConnection, "ti_content_attribute_m2m_default_value", enable);
-            }
+            Common.ChangeTriggerState(cnn, "tu_update_field", enable);
         }
 
-        internal static void ChangeInsertFieldTriggerState(bool enable)
+        internal static void ChangeRemoveFieldTriggerState(DbConnection cnn, bool enable)
         {
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                return;
-            }
-            using (var scope = new QPConnectionScope())
-            {
-                Common.ChangeTriggerState(scope.DbConnection, "ti_insert_field", enable);
-            }
+            Common.ChangeTriggerState(cnn, "td_remove_field", enable);
         }
 
-        internal static void ChangeM2MDefaultTriggerState(bool enable)
+        internal static void ChangeReorderFieldsTriggerState(DbConnection cnn, bool enable)
         {
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
-            {
-                return;
-            }
-            using (var scope = new QPConnectionScope())
-            {
-                Common.ChangeTriggerState(scope.DbConnection, "tu_content_attribute_m2m_default_value", enable);
-            }
+            Common.ChangeTriggerState(cnn, "td_reorder_fields", enable);
+        }
+
+        internal static void ChangeCleanEmptyLinksTriggerState(DbConnection cnn, bool enable)
+        {
+            Common.ChangeTriggerState(cnn, "tu_content_attribute_clean_empty_links", enable);
+            Common.ChangeTriggerState(cnn, "td_content_attribute_clean_empty_links", enable);
+        }
+
+        internal static void ChangeM2MDefaultTriggerState(DbConnection cnn, bool enable)
+        {
+            Common.ChangeTriggerState(cnn, "tu_content_attribute_m2m_default_value", enable);
+            Common.ChangeTriggerState(cnn, "ti_content_attribute_m2m_default_value", enable);
         }
 
         public class ContentListItem

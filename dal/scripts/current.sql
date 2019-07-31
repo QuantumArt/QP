@@ -4175,6 +4175,51 @@ END
 GO
 
 
+ALTER TRIGGER [dbo].[ti_access_content] ON [dbo].[CONTENT] FOR INSERT
+AS
+  if object_id('tempdb..#disable_ti_access_content') is null
+  begin
+	  INSERT INTO content_access
+		(content_id, user_id, permission_level_id, last_modified_by, propagate_to_items)
+	  SELECT
+		content_id, last_modified_by, 1, 1,
+		propagate_to_items =
+			case virtual_type
+				when 0 then 1
+				else 0
+			end
+	  FROM inserted
+
+	  INSERT INTO content_access
+		(content_id, user_id, group_id, permission_level_id, last_modified_by, propagate_to_items)
+	  SELECT
+		i.content_id,ca.user_id, ca.group_id, ca.permission_level_id , 1,
+		propagate_to_items =
+			case virtual_type
+				when 0 then 1
+				else 0
+			end
+	  FROM site_access ca, inserted i
+	  WHERE ca.site_id = i.site_id
+		AND (ca.user_id <> i.last_modified_by OR ca.user_id IS NULL)
+		AND ca.propagate_to_contents = 1
+
+	  INSERT INTO content_access
+		(content_id, group_id, permission_level_id, last_modified_by, propagate_to_items)
+	  SELECT
+		c.content_id, 1, 1,	1,
+		propagate_to_items =
+			case virtual_type
+				when 0 then 1
+				else 0
+			end
+	  FROM inserted AS c
+	  WHERE c.content_id NOT IN (
+		SELECT ca.content_id FROM content_access AS ca
+		WHERE ca.content_id = c.content_id AND ca.group_id = 1
+	  )
+  end
+GO
 ALTER TRIGGER ti_access_site ON SITE 
 FOR INSERT
 AS
@@ -4371,6 +4416,16 @@ BEGIN
 END
 go
 
+ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
+AS BEGIN
+	if object_id('tempdb..#disable_tiud_remove_empty_content_groups') is null
+	begin
+      DELETE FROM content_group
+      WHERE NAME <> 'Default Group'
+      AND NOT EXISTS(SELECT * FROM content WHERE content.content_group_id = content_group.content_group_id)
+    END
+END
+GO
 ALTER TRIGGER [dbo].[tu_content_attribute_clean_empty_links] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
 AS
 BEGIN
@@ -4403,6 +4458,52 @@ BEGIN
 			set @i = @i + 1
 		end
 	end
+END
+GO
+ALTER TRIGGER [dbo].[tu_content_indexes] ON [dbo].[content_constraint] 
+FOR UPDATE 
+AS
+BEGIN
+	if object_id('tempdb..#disable_tu_content_indexes') is null
+	BEGIN
+        DECLARE @constraint_id numeric
+        DECLARE @content_id numeric
+        DECLARE @attribute_id numeric
+        DECLARE @count numeric
+        SELECT @constraint_id = COUNT(constraint_id) FROM deleted
+        IF @constraint_id <> 0 
+        BEGIN
+            DECLARE Constraints CURSOR FOR SELECT constraint_id, content_id FROM deleted
+            OPEN Constraints
+            FETCH NEXT FROM Constraints INTO @constraint_id, @content_id
+            WHILE @@fetch_status = 0 BEGIN
+                print @constraint_id
+                print @content_id
+                exec qp_drop_complex_index @constraint_id, 1, @content_id
+                exec qp_drop_complex_index @constraint_id, 0, @content_id
+                FETCH NEXT FROM Constraints INTO @constraint_id, @content_id
+            END
+            CLOSE Constraints
+            DEALLOCATE Constraints
+        END
+        DECLARE Constraints CURSOR FOR SELECT constraint_id FROM inserted
+        OPEN Constraints
+        FETCH NEXT FROM Constraints INTO @constraint_id
+        WHILE @@fetch_status = 0 BEGIN
+            SELECT @count = count(constraint_id),@attribute_id = min(attribute_id) FROM content_constraint_rule WHERE constraint_id = @constraint_id
+            IF (@count = 1)
+                UPDATE content_attribute SET index_flag = 1 WHERE attribute_id = @attribute_id
+            ElSE
+                IF (@count > 1)
+                BEGIN
+                    exec qp_create_complex_index @constraint_id, 1
+                    exec qp_create_complex_index @constraint_id, 0
+                END
+            FETCH NEXT FROM Constraints INTO @constraint_id
+        END
+        CLOSE Constraints
+        DEALLOCATE Constraints
+    END
 END
 GO
 
@@ -4533,6 +4634,315 @@ if not update(attribute_order) and object_id('tempdb..#disable_tu_update_field')
 		end
 	end
 END
+GO
+
+GO
+ALTER FUNCTION [dbo].[qp_correct_data] (
+@data nvarchar(max),
+@type_id numeric,
+@length numeric,
+@default_value nvarchar(255)
+) RETURNS nvarchar(max)
+AS
+BEGIN
+	declare @num numeric, @err numeric
+	declare @return_data nvarchar(3500)
+	if @type_id in (1, 7, 8, 12) begin
+		set @return_data = left(@data, @length)
+	end
+	else if @type_id in (2, 3, 11) begin
+		if isnumeric(@data) = 1 or @data is null
+			set @return_data = @data
+		else if isnumeric(@default_value) = 1
+			set @return_data = @default_value
+		else
+			set @return_data = null
+	end
+	else if @type_id in (4, 5, 6) begin
+		if isdate(@data) = 1 or @data is null
+			set @return_data = @data
+		else if isdate(@default_value) = 1
+			set @return_data = @default_value
+		else
+			set @return_data = null
+	end
+	else begin
+		set @return_data = @data
+	end
+	RETURN @return_data
+END
+GO
+ALTER procedure [dbo].[qp_get_content_data_pivot]
+@item_id numeric
+as
+begin
+
+declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
+declare @content_id numeric
+select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
+
+if @content_id is not null
+begin
+	declare @attributes table
+	(
+		name nvarchar(255)
+	)
+	insert into @attributes
+	select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
+
+	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
+
+	set @sql = N'select * from
+	(
+	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME,
+	dbo.qp_correct_data(cast(coalesce(cd.blob_data, cd.data) as nvarchar(max)), ca.attribute_type_id, ca.attribute_size, ca.default_value) as pivot_data
+	from CONTENT_ATTRIBUTE ca
+	left outer join CONTENT_DATA cd on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+	inner join CONTENT_ITEM ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+	where ca.CONTENT_ID = @content_id and cd.CONTENT_ITEM_ID = @item_id
+	) as src
+	PIVOT
+	(
+	MAX(src.pivot_data)
+	FOR src.ATTRIBUTE_NAME IN (' + @fields +  N')
+	) AS pt order by pt.content_item_id desc
+	'
+	print @sql
+	exec sp_executesql @sql, N'@content_id numeric, @item_id numeric', @content_id = @content_id, @item_id = @item_id
+end
+end
+GO
+ALTER PROCEDURE [dbo].[qp_get_update_cell_sql]
+@table_name nvarchar(255),
+@content_item_id numeric,
+@attribute_id numeric,
+@attribute_type_id numeric,
+@attribute_size numeric,
+@default_value nvarchar(255),
+@attribute_name nvarchar(255),
+@sql nvarchar(2048) output
+AS
+BEGIN
+	declare @source_function nvarchar(512)
+	set @source_function = 'dbo.qp_correct_data(cast(coalesce(cd.blob_data, cd.data) as nvarchar(max)), ' + convert(nvarchar, @attribute_type_id) + ', ' + convert(nvarchar, @attribute_size) + ', N''' + isnull(@default_value, '') + ''')'
+
+	set @sql = ' update ' + @table_name + ' set [' + @attribute_name + '] = ' + @source_function + ' from content_data cd '
+	set @sql = @sql + ' where ' + @table_name + '.content_item_id = ' + convert(nvarchar, @content_item_id)
+	set @sql = @sql + ' and cd.attribute_id = ' + convert(nvarchar, @attribute_id) + ' and cd.content_item_id = ' + @table_name + '.content_item_id '
+END
+GO
+ALTER PROCEDURE [dbo].[qp_get_update_column_sql]
+@table_name nvarchar(255),
+@content_item_ids nvarchar(max),
+@attribute_id numeric,
+@attribute_type_id numeric,
+@attribute_size numeric,
+@default_value nvarchar(255),
+@attribute_name nvarchar(255),
+@sql nvarchar(max) output
+AS
+BEGIN
+	declare @source_function nvarchar(512)
+	set @source_function = 'dbo.qp_correct_data( cast(coalesce(cd.blob_data, cd.data) as nvarchar(max)), ' + convert(nvarchar, @attribute_type_id) + ', ' + convert(nvarchar, @attribute_size) + ', N''' + isnull(@default_value, '') + ''')'
+
+	set @sql = ' update ' + @table_name + ' set [' + @attribute_name + '] = ' + @source_function + ' from content_data cd '
+	set @sql = @sql + ' where ' + @table_name + '.content_item_id in (' + @content_item_ids + ')'
+	set @sql = @sql + ' and cd.attribute_id = ' + convert(nvarchar, @attribute_id) + ' and cd.content_item_id = ' + @table_name + '.content_item_id '
+END
+GO
+ALTER function [dbo].[qp_get_version_data](@attribute_id numeric, @version_id numeric) returns nvarchar(max)
+as
+begin
+	declare @result nvarchar(max)
+	select @result = convert(nvarchar(max), coalesce(cd.BLOB_DATA, cd.DATA)) from version_content_data cd inner join CONTENT_ATTRIBUTE ca on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID where cd.attribute_id = @attribute_id and content_item_version_id = @version_id
+	return @result
+end
+GO
+ALTER procedure [dbo].[qp_get_versions]
+@item_id numeric,
+@version_id numeric = 0
+as
+begin
+
+declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
+declare @content_id numeric
+select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
+
+if @content_id is not null
+begin
+
+	declare @attributes table
+	(
+		name nvarchar(255)
+	)
+
+	declare @main_ids table
+	(
+		id numeric
+	)
+
+	insert into @main_ids
+	select content_id from CONTENT_ATTRIBUTE where AGGREGATED = 1 and RELATED_ATTRIBUTE_ID in (select ATTRIBUTE_ID from CONTENT_ATTRIBUTE where CONTENT_ID  = @content_id)
+
+	insert into @main_ids
+	values(@content_id)
+
+
+	insert into @attributes(name)
+	select CASE c.CONTENT_ID WHEN @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + '.' + CA.ATTRIBUTE_NAME END
+	from content_attribute ca
+	inner join content c on ca.CONTENT_ID = c.CONTENT_ID
+	where ca.CONTENT_ID in (select id from @main_ids)
+	order by C.CONTENT_ID, CA.attribute_order
+
+	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
+	SELECT @prefixed_fields = COALESCE(@prefixed_fields + ', ', '') + 'pt.[' + name + ']' FROM @attributes
+
+	if @version_id = 0
+		set @version_sql = ''
+	else
+		set @version_sql = ' and vcd.CONTENT_ITEM_VERSION_ID= @version_id'
+
+
+	declare @ids nvarchar(max)
+	select @ids = coalesce(@ids + ', ', '') + cast(id as nvarchar(10)) from @main_ids
+
+	set @sql = N'select pt.content_item_id, pt.version_id, pt.created, pt.created_by, pt.modified, pt.last_modified_by, ' + @prefixed_fields  + N' from
+	(
+	select civ.CONTENT_ITEM_ID, civ.CREATED, civ.CREATED_BY, civ.MODIFIED, civ.LAST_MODIFIED_BY, vcd.CONTENT_ITEM_VERSION_ID as version_id,
+	case ca.CONTENT_ID when @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + ''.'' + ca.ATTRIBUTE_NAME END AS ATTRIBUTE_NAME,
+	cast(coalesce(vcd.blob_data, vcd.data) as nvarchar(max)) as pivot_data
+	from CONTENT_ATTRIBUTE ca
+	INNER JOIN CONTENT c on ca.CONTENT_ID = c.CONTENT_ID
+	left outer join VERSION_CONTENT_DATA vcd on ca.ATTRIBUTE_ID = vcd.ATTRIBUTE_ID
+	inner join CONTENT_ITEM_VERSION civ on vcd.CONTENT_ITEM_VERSION_ID = civ.CONTENT_ITEM_VERSION_ID
+	where ca.CONTENT_ID in (' + @ids + ') and civ.CONTENT_ITEM_ID = @item_id ' + @version_sql + ') as src
+	PIVOT
+	(
+	MAX(src.pivot_data)
+	FOR src.ATTRIBUTE_NAME IN (' + @fields +  N')
+	) AS pt order by pt.version_id desc
+
+	'
+
+	exec sp_executesql @sql, N'@content_id numeric, @item_id numeric, @version_id numeric', @content_id = @content_id, @item_id = @item_id, @version_id = @version_id
+end
+end
+GO
+USE [sbermobile_catalog]
+GO
+/****** Object:  StoredProcedure [dbo].[qp_update_items_with_content_data_pivot]    Script Date: 31.07.2019 17:33:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- **************************************
+-- Pavel Celut
+-- version 7.9.9.10
+-- speed-up selective import
+-- **************************************
+
+ALTER procedure [dbo].[qp_update_items_with_content_data_pivot]
+@content_id numeric,
+@ids nvarchar(max),
+@is_async bit,
+@attr_ids nvarchar(max) = ''
+as
+begin
+
+	declare @sql nvarchar(max), @fields nvarchar(max), @update_fields nvarchar(max), @prefixed_fields nvarchar(max), @table_name nvarchar(50)
+
+	set @table_name = 'content_' + CAST(@content_id as nvarchar)
+	if (@is_async = 1)
+	set @table_name = @table_name + '_async'
+
+	declare @attributes table
+	(
+		name nvarchar(255) primary key
+	)
+
+	if @attr_ids = ''
+		insert into @attributes
+		select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
+	else
+		insert into @attributes
+		select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id and attribute_id in (select nstr from dbo.SplitNew(@attr_ids, ','))
+
+	if exists (select * from @attributes)
+	begin
+		SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
+
+		SELECT @update_fields = COALESCE(@update_fields + ', ', '') + 'base.[' + name + '] = pt.[' + name + ']' FROM @attributes
+
+		set @sql = N'update base set ' + @update_fields + ' from ' + @table_name + ' base inner join
+		(
+		select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME,
+	    dbo.qp_correct_data(cast(coalesce(cd.blob_data, cd.data) as nvarchar(max)), ca.attribute_type_id, ca.attribute_size, ca.default_value) as pivot_data
+		from CONTENT_ATTRIBUTE ca
+		left outer join CONTENT_DATA cd on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+		inner join CONTENT_ITEM ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+		where ca.CONTENT_ID = @content_id and cd.CONTENT_ITEM_ID in (' + @ids + ')
+		) as src
+		PIVOT
+		(
+		MAX(src.pivot_data)
+		FOR src.ATTRIBUTE_NAME IN (' + @fields +  N')
+		) AS pt
+		on pt.content_item_id = base.content_item_id
+		'
+		print @sql
+		exec sp_executesql @sql, N'@content_id numeric', @content_id = @content_id
+	end
+end
+GO
+ALTER procedure [dbo].[qp_update_with_content_data_pivot]
+@item_id numeric
+as
+begin
+
+declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @update_fields nvarchar(max), @prefixed_fields nvarchar(max), @table_name nvarchar(50)
+declare @content_id numeric, @splitted bit
+select @content_id = content_id, @splitted = SPLITTED from content_item ci where ci.CONTENT_ITEM_ID = @item_id
+
+if @content_id is not null
+begin
+
+	set @table_name = 'content_' + CAST(@content_id as nvarchar)
+	if (@splitted = 1)
+		set @table_name = @table_name + '_async'
+
+	declare @attributes table
+	(
+		name nvarchar(255)
+	)
+	insert into @attributes
+	select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
+
+	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
+
+	SELECT @update_fields = COALESCE(@update_fields + ', ', '') + 'base.[' + name + '] = pt.[' + name + ']' FROM @attributes
+
+	set @sql = N'update base set ' + @update_fields + ' from ' + @table_name + ' base inner join
+	(
+	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME,
+	dbo.qp_correct_data(cast(coalesce(cd.blob_data, cd.data) as nvarchar(max)), ca.attribute_type_id, ca.attribute_size, ca.default_value) as pivot_data
+	from CONTENT_ATTRIBUTE ca
+	left outer join CONTENT_DATA cd on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+	inner join CONTENT_ITEM ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+	where ca.CONTENT_ID = @content_id and cd.CONTENT_ITEM_ID = @item_id
+	) as src
+	PIVOT
+	(
+	MAX(src.pivot_data)
+	FOR src.ATTRIBUTE_NAME IN (' + @fields +  N')
+	) AS pt
+	on pt.content_item_id = base.content_item_id
+	'
+	print @sql
+	exec sp_executesql @sql, N'@content_id numeric, @item_id numeric', @content_id = @content_id, @item_id = @item_id
+end
+end
 GO
 
 GO

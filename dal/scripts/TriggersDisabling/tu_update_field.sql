@@ -92,11 +92,6 @@ if not update(attribute_order) and object_id('tempdb..#disable_tu_update_field')
 
 				if @database_type <> @new_database_type or (@attribute_size <> @new_attribute_size and @new_database_type <> 'ntext')
 				begin
-					if @database_type = 'ntext' and @new_database_type <> 'ntext'
-						exec qp_copy_blob_data_to_data @attribute_id
-					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
-						exec qp_copy_data_to_blob_data @attribute_id
-
 					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_content_united_view_recreate @content_id
