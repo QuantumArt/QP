@@ -18,7 +18,6 @@ using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
-using Telerik.Web.Mvc.UI;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -1330,7 +1329,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.QpCheckBoxList(name, qpSelectListItems, options, entityDataListArgs, repeatDirection, true);
         }
 
-        public static MvcHtmlString CheckBoxTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, string entityTypeCode, int? parentEntityId, string actionCode, bool allowGlobalSelection = false, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString CheckBoxTreeFor<TModel>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
+            string entityTypeCode,
+            int? parentEntityId,
+            string actionCode,
+            bool allowGlobalSelection = false,
+            Dictionary<string, object> htmlAttributes = null)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
             var options = new Dictionary<string, object> { { "id", source.UniqueId(name) } };
@@ -1340,7 +1346,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.AddData("allow_global_selection", allowGlobalSelection.ToString().ToLowerInvariant());
             options.AddData("tree_name", name);
             options.AddData("show_checkbox", bool.TrueString.ToLowerInvariant());
-            options.AddCssClass(CheckBoxTreeClassName);
 
             if (source.GetMetaData(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
             {
@@ -1350,13 +1355,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             options.Merge(htmlAttributes, true);
 
-            var htmlString = MvcHtmlString.Create(source.Telerik().TreeView()
-                .Name(name)
-                .HtmlAttributes(options)
-                .ToHtmlString()
-            );
+            var widget = new TagBuilder("div");
+            widget.MergeAttributes(options);
+            widget.AddCssClass(CheckBoxTreeClassName);
+            widget.AddCssClass("t-widget t-treeview t-reset");
 
-            return htmlString;
+            var script = new TagBuilder("script");
+            script.MergeAttribute("type", "text/javascript");
+            script.InnerHtml = $"$('#{widget.Attributes["id"]}').tTreeView();";
+
+            string htmlString = widget.ToString() + script.ToString();
+
+            return MvcHtmlString.Create(htmlString);
         }
 
         public static MvcHtmlString VirtualFieldTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)
