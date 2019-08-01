@@ -232,6 +232,8 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                         ChangeCleanEmptyLinksTriggerState(scope.DbConnection, false);
                         ChangeRemoveFieldTriggerState(scope.DbConnection, false);
                         ChangeReorderFieldsTriggerState(scope.DbConnection, false);
+                        ChangeDeleteContentLinkTriggerState(scope.DbConnection, false);
+
                     }
 
                     var field = GetById(id);
@@ -254,6 +256,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                         ChangeCleanEmptyLinksTriggerState(scope.DbConnection, true);
                         ChangeRemoveFieldTriggerState(scope.DbConnection, true);
                         ChangeReorderFieldsTriggerState(scope.DbConnection, true);
+                        ChangeDeleteContentLinkTriggerState(scope.DbConnection, true);
                     }
 
                 }
@@ -287,7 +290,10 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 {
                     DefaultRepository.SimpleDelete(dal.ContentToContent);
                     Common.DropLinkView(scope.DbConnection, dal.ContentToContent);
-                    Common.DropLinkTables(scope.DbConnection, dal.ContentToContent);
+                    if (QPContext.DatabaseType == DatabaseType.Postgres)
+                    {
+                        Common.DropLinkTables(scope.DbConnection, dal.ContentToContent);
+                    }
                 }
             }
         }
@@ -896,6 +902,17 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             Common.ChangeTriggerState(cnn, "tu_content_attribute_m2m_default_value", enable);
             Common.ChangeTriggerState(cnn, "ti_content_attribute_m2m_default_value", enable);
         }
+
+        internal static void ChangeInsertContentLinkTriggerState(DbConnection cnn, bool enable)
+        {
+            Common.ChangeTriggerState(cnn, "ti_content_to_content", enable);
+        }
+
+        internal static void ChangeDeleteContentLinkTriggerState(DbConnection cnn, bool enable)
+        {
+            Common.ChangeTriggerState(cnn, "td_content_to_content", enable);
+        }
+
 
         public class ContentListItem
         {

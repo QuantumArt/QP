@@ -334,8 +334,9 @@ namespace Quantumart.QP8.DAL
         private static void FillColumn(DbConnection cnn, string tableName, FieldDAL newField)
         {
             var dbType = GetDbType(cnn);
+            var typeExpr = dbType == DatabaseType.Postgres ? PgColumnType(newField.Type.DatabaseType) : "nvarchar(max)";
             var sql = $@"
-                update {tableName} set {Escape(dbType, newField.Name)} = coalesce(cd.blob_data, cd.data)
+                update {tableName} set {Escape(dbType, newField.Name)} = cast(coalesce(cd.blob_data, cd.data) as {typeExpr})
                 from content_data cd
                 where cd.attribute_id = {newField.Id} and cd.content_item_id = {tableName}.content_item_id
             ";
@@ -438,19 +439,17 @@ namespace Quantumart.QP8.DAL
         public static void CreateLinkTables(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = GetDbType(connection);
-            if (dbType != DatabaseType.SqlServer)
-            {
-                var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
-                var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
-                var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
-                var asyncRevTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async_rev";
-                var sql = $@"CREATE TABLE {{0}} (id int NOT NULL, linked_id int NOT NULL, PRIMARY KEY (id, linked_id))";
+            var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
+            var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
+            var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
+            var asyncRevTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async_rev";
 
-                ExecuteSql(connection, String.Format(sql, tableName));
-                ExecuteSql(connection, String.Format(sql, revTableName));
-                ExecuteSql(connection, String.Format(sql, asyncTableName));
-                ExecuteSql(connection, String.Format(sql, asyncRevTableName));
-            }
+            var sql = $@"CREATE TABLE {{0}} (id int NOT NULL, linked_id int NOT NULL, PRIMARY KEY (id, linked_id))";
+
+            ExecuteSql(connection, String.Format(sql, tableName));
+            ExecuteSql(connection, String.Format(sql, revTableName));
+            ExecuteSql(connection, String.Format(sql, asyncTableName));
+            ExecuteSql(connection, String.Format(sql, asyncRevTableName));
         }
 
         public static void DropLinkTables(DbConnection connection, ContentToContentDAL item)

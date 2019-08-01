@@ -104,23 +104,38 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             {
                 link.LinkId = link.ForceLinkId;
             }
-
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.ContentLink);
-            var resultDal = DefaultRepository.SimpleSave(GetDal(link));
-            var result = GetBll(resultDal);
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.ContentLink);
-
-            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            using (var scope = new QPConnectionScope())
             {
-                using (var scope = new QPConnectionScope())
+                try
                 {
-                    Common.CreateLinkTables(scope.DbConnection, resultDal);
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.ContentLink);
+                        FieldRepository.ChangeInsertContentLinkTriggerState(scope.DbConnection, false);
+                    }
+
+                    var resultDal = DefaultRepository.SimpleSave(GetDal(link));
+                    var result = GetBll(resultDal);
+                    if (QPContext.DatabaseType == DatabaseType.Postgres)
+                    {
+                        Common.CreateLinkTables(scope.DbConnection, resultDal);
+                    }
                     Common.CreateLinkView(scope.DbConnection, resultDal);
+
+                    result.WasNew = true;
+                    return result;
+
+                }
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.ContentLink);
+                        FieldRepository.ChangeInsertContentLinkTriggerState(scope.DbConnection, true);
+                    }
                 }
             }
 
-            result.WasNew = true;
-            return result;
         }
 
         ContentLink IContentRepository.UpdateLink(ContentLink link)
@@ -258,7 +273,6 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "tiud_remove_empty_content_groups", enable);
         }
 
-
         internal static Content Save(Content content, bool createDefaultField)
         {
             using (var scope = new QPConnectionScope())
@@ -385,6 +399,10 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     {
                         ChangeDropTableTriggerState(false);
                         ChangeCleanEmptyGropusTriggerState(false);
+                        FieldRepository.ChangeDeleteContentLinkTriggerState(scope.DbConnection, false);
+                        FieldRepository.ChangeCleanEmptyLinksTriggerState(scope.DbConnection, false);
+                        FieldRepository.ChangeRemoveFieldTriggerState(scope.DbConnection, false);
+                        FieldRepository.ChangeReorderFieldsTriggerState(scope.DbConnection, false);
                     }
 
                     FieldRepository.DropLinkTablesAndViews(id);
@@ -402,6 +420,10 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     {
                         ChangeDropTableTriggerState(true);
                         ChangeCleanEmptyGropusTriggerState(true);
+                        FieldRepository.ChangeDeleteContentLinkTriggerState(scope.DbConnection, true);
+                        FieldRepository.ChangeCleanEmptyLinksTriggerState(scope.DbConnection, true);
+                        FieldRepository.ChangeRemoveFieldTriggerState(scope.DbConnection, true);
+                        FieldRepository.ChangeReorderFieldsTriggerState(scope.DbConnection, true);
                     }
                 }
             }
