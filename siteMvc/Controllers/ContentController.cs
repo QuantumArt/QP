@@ -15,7 +15,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
@@ -28,7 +27,6 @@ using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -52,14 +50,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+        public ActionResult _Index(
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? ContentListFilter.Empty;
             filter.SiteId = parentId > 0 ? (int?)parentId : null;
-            var serviceResult = ContentService.List(filter, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -74,14 +75,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.VirtualContents)]
         [BackendActionContext(ActionCode.VirtualContents)]
-        public ActionResult _VirtualIndex(string tabId, int parentId, GridCommand command)
+        public ActionResult _VirtualIndex(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
             var normFilter = ContentListFilter.Empty;
             normFilter.SiteId = parentId;
-            var serviceResult = VirtualContentService.List(normFilter, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = VirtualContentService.List(normFilter, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -316,16 +317,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "gridParentId")]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Files(GridCommand command, int gridParentId, [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
+        public ActionResult _Files(
+            string tabId, int parentId, int gridParentId, int page, int pageSize, string orderBy,
+            [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
         {
-            var serviceResult = ContentService.GetFileList(command.GetListCommand(), gridParentId, searchQuery);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.GetFileList(listCommand, gridParentId, searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "folderId")]
-        public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
+        public JsonResult _FileList(
+            int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
         {
             var serviceResult = ContentService.GetFileList(
                 new ListCommand
@@ -453,20 +457,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
         public ActionResult _Select(
-            string tabId,
-            int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.List(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -480,20 +487,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
         public ActionResult _SelectForObjectContainer(
-            string tabId,
-            int id,
-            GridCommand command,
-            int parentId,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForContainer(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForContainer(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -507,20 +517,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
         public ActionResult _SelectForObjectForm(
-            string tabId,
-            int id,
-            GridCommand command,
-            int parentId,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForForm(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForForm(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -534,20 +547,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
         public ActionResult _SelectForJoin(
-            string tabId,
-            int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
+          
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForJoin(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForJoin(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -561,20 +578,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]
         public ActionResult _SelectForField(
-            string tabId,
-            int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForField(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForField(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -591,20 +611,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.List(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -625,16 +643,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForCustomAction(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             string customFilter)
         {
             filter = filter ?? new ContentListFilter();
@@ -643,7 +658,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 filter.CustomFilter = customFilter;
             }
 
-            var serviceResult = ContentService.ListForCustomAction(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForCustomAction(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -660,22 +676,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForWorkflow(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             string customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             filter.CustomFilter = customFilter;
-            var serviceResult = ContentService.ListForWorkflow(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForWorkflow(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -692,20 +706,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForUnion(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForUnion(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForUnion(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

@@ -1,15 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.StatusType;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -33,12 +32,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.StatusTypes)]
         [BackendActionContext(ActionCode.StatusTypes)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _statusTypeService.GetStatusesBySiteId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _statusTypeService.GetStatusesBySiteId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -133,13 +132,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForWorkflow(string tabId, string IDs, GridCommand command, int parentId)
+        public ActionResult _MultipleSelectForWorkflow(
+            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _statusTypeService.ListForWorkflow(command.GetListCommand(), Converter.ToInt32Collection(IDs, ','), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _statusTypeService.ListForWorkflow(listCommand, Converter.ToInt32Collection(IDs, ','), parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
     }

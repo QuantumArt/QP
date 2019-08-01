@@ -1,75 +1,86 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.ObjectListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
-	{
-		using (Html.BeginLinkButtonsList())
-		{
-			@Html.AddNewItemLink(Model)
-		}
-	}
+  if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
+    {
+      @Html.AddNewItemLink(Model)
+    }
+  }
 
-    @(Html.Telerik().Grid<ObjectListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-        {
-            c.Bound("")
-                .Title(@"<input type='checkbox' />")
-                .Width(30)
-                .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                .ClientTemplate(@"<input type='checkbox' name='SelectedNotificationsIDs' value='<#= Id #>' />")
-                .HtmlAttributes(new { @class = "t-select-cell" })
-                .Sortable(false);
-			c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                   .Width(30)
-                   .HtmlAttributes(new { @class = "id" });
-            c.Bound(s => s.Icon)
-                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= Icon #>", ""))
-                .Title("")
-                .Width(15);
-            c.Bound(s => s.LockedBy)
-                .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
-                .Width(30)
-                .HeaderHtmlAttributes(new { @class = "t-image-header" })
-                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
-                .HtmlAttributes(new { style = "text-align: center;" });
-            if (!Model.IsTemplateObject)
-                c.Bound(s => s.ParentId)
-                .ClientTemplate(@"<# if (ParentId != null)  { #> <img class=""smallIcon""  src=" + Url.Content("~/Content/qp8/icons/16x16/page_object_redefined.gif") + " <# } #>")
-                .Title("")
-                .Width(15);
-            else
-                c.Bound(s => s.Overriden)
-                .ClientTemplate(@"<# if (Overriden)  { #> <img class=""smallIcon""  src=" + Url.Content("~/Content/qp8/icons/16x16/template_object_redefined.gif") + " <# } #>")
-                .Title("")
-                .Width(15);
-            c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
-                .HtmlAttributes(new { @class = "title" });
-
-            c.Bound(s => s.TypeName).Title(TemplateStrings.Type);
-            c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
-            c.Bound(s => s.Created).Title(NotificationStrings.ForCreate);
-            c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
-            c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
-        })
-        .DataBinding(db => db.Ajax()
-                .Select(Model.GettingDataActionName, "Object")
-        )
-        .EnableCustomBinding(true)
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Sortable()
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e.OnDataBinding("$q.preventDefaultFunction")
-             .OnRowDataBound("$q.preventDefaultFunction")
-        )
-    )
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          {
+            field: '',
+            headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+            headerAttributes: { 'class': 't-select-header' },
+            template: '<input type="checkbox" name="SelectedNotificationsIDs" value="#= Id #" />',
+            sortable: false,
+            attributes: { 'class': 't-select-cell' },
+            width: 30,
+          },
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
+          {
+            field: 'Icon',
+            headerTemplate: '',
+            template: '<img src="@Url.GetThemeSmallIconsImageFolderUrl()/#= Icon #" title="" class="smallIcon" />',
+            width: 15,
+          },
+          {
+            field: 'LockedBy',
+            headerTemplate: '<img src="@(Url.GetThemeRootImageFolderUrl())/grid/header_icons/lock.gif" style="width: 16px; height: 16px;" class="t-image" alt="" />',
+            headerAttributes: { 'class': 't-image-header' },
+            template: '<img src="@(Url.GetThemeSmallIconsImageFolderUrl())/#= LockedByIcon #" title="#= LockedByToolTip #" class="smallIcon" />',
+            attributes: { 'style': 'text-align: center;' },
+            width: 30,
+          },
+          @if (Model.IsTemplateObject)
+          {
+            <text>
+            {
+              field: 'Overriden',
+              headerTemplate: '<img class="smallIcon" src="@Url.Content("~/Content/qp8/icons/16x16/template_object_redefined.gif")" style="filter: grayscale(100%);" />',
+              template: '# if (Overriden) { # <img class="smallIcon" src="@Url.Content("~/Content/qp8/icons/16x16/template_object_redefined.gif")" /> # } #',
+              width: 15,
+            },
+            </text>
+          }
+          else
+          {
+            <text>
+            {
+              field: 'ParentId',
+              headerTemplate: '<img class="smallIcon" src="@Url.Content("~/Content/qp8/icons/16x16/page_object_redefined.gif")" style="filter: grayscale(100%);"  />',
+              template: '# if (ParentId != null) { # <img class="smallIcon" src="@Url.Content("~/Content/qp8/icons/16x16/page_object_redefined.gif")" /> # } #',
+              width: 15,
+            },
+            </text>
+          }
+          { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+          { field: 'TypeName', title: '@TemplateStrings.Type' },
+          { field: 'Description', title: '@EntityObjectStrings.Description' },
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByLogin', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GettingDataActionName, "Object", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

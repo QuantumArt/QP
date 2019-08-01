@@ -4,75 +4,97 @@ import { ActionLogFilterTile } from './ActionLogFilterTile';
 import { ActionLogItemListFilter } from './ActionLogItemListFilter';
 import { ActionLogTextFilter } from './ActionLogTextFilter';
 import { ActionLogUserFilter } from './ActionLogUserFilter';
-import { $q } from '../Utils';
+
+/**
+ * @typedef {{ value: string; text: string; }} SelectOption
+ */
 
 export class ActionLogComponent {
+  /** @type {JQuery} */
+  $grid = null;
+  /** @type {JQuery} */
+  $filter = null;
+  /** @type {JQuery} */
+  $filterCombo = null;
+  /** @type {JQuery} */
+  $tilesContainer = null;
+  /** @type {kendo.ui.Grid} */
+  _kendoGrid = null;
+  /** @type {{ [x: string]: ActionLogFilterTile }} */
+  _tiles = {};
+
+  /**
+   * @param {string} filterElementId
+   * @param {string} gridElementId
+   * @param {SelectOption[]} actionTypes
+   * @param {SelectOption[]} entityTypes
+   * @param {SelectOption[]} actions
+   */
   constructor(filterElementId, gridElementId, actionTypes, entityTypes, actions) {
     this._filterElementId = filterElementId;
     this._gridElementId = gridElementId;
-    this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
-    this._onApplyFilterHandler = $.proxy(this._onApplyFilter, this);
-    this._onClearFilterHandler = $.proxy(this._onClearFilter, this);
     this._actionTypes = actionTypes;
     this._entityTypes = entityTypes;
     this._actions = actions;
+
+    this._onApplyFilter = this._onApplyFilter.bind(this);
+    this._onClearFilter = this._onClearFilter.bind(this);
+    this._onFilterSelected = this._onFilterSelected.bind(this);
+    this._onTileClose = this._onTileClose.bind(this);
   }
 
-  _filterElementId = '';
-  _gridElementId = '';
-  $filterCombo = null;
-  $tilesContainer = null;
-  _actionTypes = null;
-  _entityTypes = null;
-  _tiles = {};
-
   initialize() {
-    const $grid = $(`#${this._gridElementId}`);
-    const gridComponent = $grid.data('tGrid');
-    const $filter = $(`#${this._filterElementId}`);
+    this.$grid = $(`#${this._gridElementId}`);
+    this.$filter = $(`#${this._filterElementId}`);
 
-    $grid
-      .unbind('dataBinding', gridComponent.onDataBinding)
-      .bind('dataBinding', this._onDataBindingHandler);
+    this._kendoGrid = this.$grid.getKendoGrid();
 
-    $('.alSearchButton', $filter).click(this._onApplyFilterHandler);
-    $('.alResetButton', $filter).click(this._onClearFilterHandler);
+    /**
+     * @param {kendo.data.DataSourceTransportParameterMapData} data
+     * @returns Query params
+     */
+    this._kendoGrid.dataSource.transport.parameterMap = data => {
+      const result = {
+        page: data.page,
+        pageSize: data.pageSize,
+        searchQuery: JSON.stringify(this._getFilterData())
+      };
+      if (data.sort && data.sort.length) {
+        result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+      }
+      return result;
+    };
 
+    $('.alSearchButton', this.$filter).click(this._onApplyFilter);
+    $('.alResetButton', this.$filter).click(this._onClearFilter);
 
-    this.$filterCombo = $filter
+    this.$filterCombo = this.$filter
       .find('.alFilterCombo')
-      .change($.proxy(this._onFilterSelected, this));
+      .change(this._onFilterSelected);
 
-    this.$tilesContainer = $filter.find('.alTilesContainer');
-    gridComponent.ajaxRequest();
+    this.$tilesContainer = this.$filter.find('.alTilesContainer');
+
+    this._kendoGrid.dataSource.read();
   }
 
   _onApplyFilter() {
-    $(`#${this._gridElementId}`)
-      .data('tGrid')
-      .ajaxRequest();
+    if (this._kendoGrid.dataSource.page() === 1) {
+      this._kendoGrid.dataSource.read();
+    } else {
+      this._kendoGrid.dataSource.page(1);
+    }
   }
 
   _onClearFilter() {
     this._destroyAllTiles();
-    // @ts-ignore FIXME
-    $('.alSearchButton', this.$filter).trigger('click');
+    this._onApplyFilter();
   }
 
-  _onDataBinding(e) {
-    const filterData = this.getFilterData();
-    if (filterData) {
-      // eslint-disable-next-line no-param-reassign
-      e.data = Object.assign({}, e.data, { searchQuery: JSON.stringify(filterData) });
-    }
-  }
-
-  getFilterData() {
+  _getFilterData() {
     const filterData = {};
     Object.keys(this._tiles).forEach(tileType => {
-      if (tileType && Object.prototype.hasOwnProperty.call(this._tiles, tileType)) {
-        this._tiles[tileType].getOptions().deriveFilterData(this._tiles[tileType], filterData);
-      }
+      const tileComponent = this._tiles[tileType];
+      tileComponent.getOptions().deriveFilterData(tileComponent, filterData);
     });
     return filterData;
   }
@@ -82,24 +104,26 @@ export class ActionLogComponent {
     if ($selected.val()) {
       this._createTile({ value: $selected.val(), text: $selected.text() });
     }
-
     this.$filterCombo.val('');
   }
 
-  _onTileClose(eventType, sender, args) {
+  _onTileClose(_eventType, _sender, args) {
     this._destroyTile(args.type);
   }
 
+  /**
+   * @param {SelectOption} options
+   */
   _createTile(options) {
     const that = this;
     if (options && options.value && !Object.prototype.hasOwnProperty.call(this._tiles, options.value)) {
-      const ft = +options.value || 0;
+      const ft = Number(options.value) || 0;
       const tileComponent = new ActionLogFilterTile(this.$tilesContainer,
         {
           title: options.text,
           type: ft,
           windowSize: (function () {
-            switch (+options.value || 0) {
+            switch (Number(options.value) || 0) {
               case $e.ActionLogFilteredColumns.EntityStringId:
               case $e.ActionLogFilteredColumns.EntityTitle:
               case $e.ActionLogFilteredColumns.ParentEntityId:
@@ -134,6 +158,11 @@ export class ActionLogComponent {
                 return new ActionLogFilterBase($filterContainer);
             }
           },
+
+          /**
+           * @param {ActionLogFilterTile} tile
+           * @param {*} filterData
+           */
           deriveFilterData(tile, filterData) {
             const tileValue = tile.getValue();
             if (tileValue) {
@@ -172,7 +201,7 @@ export class ActionLogComponent {
           }
         }
       );
-      tileComponent.attachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE, $.proxy(this._onTileClose, this));
+      tileComponent.attachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE, this._onTileClose);
       tileComponent.initialize();
       this._tiles[options.value] = tileComponent;
     }
@@ -183,37 +212,24 @@ export class ActionLogComponent {
       const tileComponent = this._tiles[tileType];
       tileComponent.detachObserver(window.EVENT_TYPE_FILTER_TILE_CLOSE);
       tileComponent.dispose();
-      $q.removeProperty(this._tiles, tileType);
+      delete this._tiles[tileType];
     }
   }
 
   _destroyAllTiles() {
     Object.keys(this._tiles).forEach(tileType => {
       this._destroyTile(tileType);
-    }, this);
+    });
   }
 
   dispose() {
     this._destroyAllTiles();
 
-    const $grid = $(`#${this._gridElementId}`);
-    const $filter = $(`#${this._filterElementId}`);
-
-    $grid.unbind('dataBinding');
-    this._onDataBindingHandler = null;
-
-    $('.alSearchButton', $filter).unbind();
-    $('.alResetButton', $filter).unbind();
-    this._onApplyFilterHandler = null;
-    this._onDataBindingHandler = null;
+    $('.alSearchButton', this.$filter).unbind();
+    $('.alResetButton', this.$filter).unbind();
 
     this.$filterCombo.off('change');
-    this.$filterCombo = null;
-    this.$tilesContainer = null;
-
-    $q.collectGarbageInIE();
   }
 }
-
 
 Quantumart.QP8.ActionLogComponent = ActionLogComponent;

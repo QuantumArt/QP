@@ -1,17 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 using Quantumart.QP8.WebMvc.ViewModels.HomePage;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -43,12 +42,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult _LockedArticles(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _LockedArticles(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = ArticleService.ListLocked(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.ListLocked(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -64,12 +63,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult _ArticlesForApproval(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _ArticlesForApproval(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = ArticleService.ArticlesForApproval(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.ArticlesForApproval(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

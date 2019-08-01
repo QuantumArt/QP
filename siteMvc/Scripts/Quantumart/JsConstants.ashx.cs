@@ -374,16 +374,6 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
                 { "NewWindow", (int)ActionTargetType.NewWindow }
             }));
 
-            // Типы компонентов загрузки файлов
-            constants.AppendLine("// Типы компонентов загрузки файлов");
-            constants.AppendLine(GenerateEnumeration("Quantumart.QP8.Enums.UploaderType", new Dictionary<string, int>
-            {
-                { "PlUpload", (int)UploaderType.PlUpload },
-                { "Silverlight", (int)UploaderType.Silverlight },
-                { "Html", (int)UploaderType.Html }
-            }));
-
-
             // Типы главного компонента
             constants.AppendLine("// Типы главного компонента");
             constants.AppendLine(GenerateEnumeration("Quantumart.QP8.Enums.MainComponentType", new Dictionary<string, int>

@@ -2,12 +2,16 @@
 
 @using (Html.BeginDocumentPadding())
 {
-	<div class="actionPermission" id="@Model.MainComponentId">
-		@Html.Partial("UserAndGroupSearchBlock", Model)
-		<div class="treeContainer">
-			@Html.Telerik().TreeView().Name(Html.UniqueId("Tree"))
-		</div>
-	</div>
+  <div class="actionPermission" id="@Model.MainComponentId">
+    @Html.Partial("UserAndGroupSearchBlock", Model)
+    <div class="treeContainer">
+      @{ string treeUniqueId = Html.UniqueId("Tree"); }
+      <div class="t-widget t-treeview t-reset" id="@treeUniqueId"></div>
+      <script type="text/javascript">
+        $('#@treeUniqueId').tTreeView();
+      </script>
+    </div>
+  </div>
 }
 
 @Html.PrepareAndRunInitScript(Model)

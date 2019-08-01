@@ -1,5 +1,4 @@
 import { BackendEventArgs } from '../Common/BackendEventArgs';
-import { BackendHtmlUploader } from '../Uploader/BackendHtmlUploader';
 import { BackendLibrary } from '../Library/BackendLibrary';
 import { BackendPlUploader } from '../Uploader/BackendPlUploader';
 import { BackendSelectPopupWindow } from '../List/BackendSelectPopupWindow';
@@ -56,15 +55,15 @@ export class BackendFileField {
         this._subFolder = options.subFolder;
         this._initSubFolder = this._subFolder;
       }
-
-      if (options.uploaderType) {
-        this._uploaderType = options.uploaderType;
-      }
     }
 
-    this._onPreviewButtonClickHandler = $.proxy(this._onPreviewButtonClick, this);
-    this._onDownloadButtonClickHandler = $.proxy(this._onDownloadButtonClick, this);
-    this._onLibraryButtonClickHandler = $.proxy(this._onLibraryButtonClick, this);
+    this._onPreviewButtonClick = this._onPreviewButtonClick.bind(this);
+    this._onDownloadButtonClick = this._onDownloadButtonClick.bind(this);
+    this._onLibraryButtonClick = this._onLibraryButtonClick.bind(this);
+
+    this._onFileUploadedHandler = this._onFileUploadedHandler.bind(this);
+    this._librarySelectedHandler = this._librarySelectedHandler.bind(this);
+    this._libraryClosedHandler = this._libraryClosedHandler.bind(this);
   }
 
   _fileFieldElementId = '';
@@ -88,7 +87,6 @@ export class BackendFileField {
   _useSiteLibrary = false;
   _libraryEntityId = 0;
   _libraryParentEntityId = 0;
-  _uploaderType = Quantumart.QP8.Enums.UploaderType.Html;
   _selectPopupWindowComponent = null;
   _uploaderComponent = null;
   _uploaderSubFolder = '';
@@ -224,10 +222,6 @@ export class BackendFileField {
     this._closeLibrary();
   }
 
-  _onPreviewButtonClickHandler = null;
-  _onDownloadButtonClickHandler = null;
-  _onLibraryButtonClickHandler = null;
-
   _showOrHidePreviewButton(filename, $previewButton) {
     const it = Quantumart.QP8.Enums.LibraryFileType.Image;
     if (this._isImage || window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it].split(';').filter(
@@ -246,14 +240,14 @@ export class BackendFileField {
     let $browseButton = $fileWrapper.find(`.${this.BROWSE_BUTTON_CLASS_NAME}:first`);
     let $previewButton = $fileWrapper.find(`.${this.PREVIEW_BUTTON_CLASS_NAME}:first`);
 
-    $previewButton.bind('click', this._onPreviewButtonClickHandler);
+    $previewButton.bind('click', this._onPreviewButtonClick);
     this._showOrHidePreviewButton($fileField.val(), $previewButton);
     let $libraryButton = $fileWrapper.find(`.${this.LIBRARY_BUTTON_CLASS_NAME}:first`);
 
-    $libraryButton.bind('click', this._onLibraryButtonClickHandler);
+    $libraryButton.bind('click', this._onLibraryButtonClick);
     let $downloadButton = $fileWrapper.find(`.${this.DOWNLOAD_BUTTON_CLASS_NAME}:first`);
 
-    $downloadButton.bind('click', this._onDownloadButtonClickHandler);
+    $downloadButton.bind('click', this._onDownloadButtonClick);
 
     this._fileFieldElement = $fileField.get(0);
     this._fileWrapperElement = $fileWrapper.get(0);
@@ -278,24 +272,17 @@ export class BackendFileField {
     const it = Quantumart.QP8.Enums.LibraryFileType.Image;
     const extensions = this._isImage ? window.LIBRARY_FILE_EXTENSIONS_DICTIONARY[it] : '';
 
-    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
-      this._uploaderComponent = new BackendHtmlUploader(this._fileWrapperElement, {
-        extensions,
-        resolveName: this.getRenameMatched()
-      });
-    } else {
-      this._uploaderComponent = new BackendPlUploader(this._fileWrapperElement, {
-        extensions,
-        resolveName: this.getRenameMatched(),
-        useSiteLibrary: this._useSiteLibrary,
-        getFormScriptOptions: this._getFormScriptOptions.bind(this)
-      });
-    }
+    this._uploaderComponent = new BackendPlUploader(this._fileWrapperElement, {
+      extensions,
+      resolveName: this.getRenameMatched(),
+      useSiteLibrary: this._useSiteLibrary,
+      getFormScriptOptions: this._getFormScriptOptions.bind(this)
+    });
 
     this._uploaderComponent.initialize();
     this.updateUploader();
     this._uploaderComponent.attachObserver(
-      window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, $.proxy(this._onFileUploadedHandler, this)
+      window.EVENT_TYPE_LIBRARY_FILE_UPLOADED, this._onFileUploadedHandler
     );
   }
 
@@ -377,10 +364,10 @@ export class BackendFileField {
     if (!this._selectPopupWindowComponent) {
       this._selectPopupWindowComponent = new BackendSelectPopupWindow(eventArgs, options);
       this._selectPopupWindowComponent.attachObserver(
-        window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, $.proxy(this._librarySelectedHandler, this)
+        window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, this._librarySelectedHandler
       );
       this._selectPopupWindowComponent.attachObserver(
-        window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, $.proxy(this._libraryClosedHandler, this)
+        window.EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, this._libraryClosedHandler
       );
     }
 
@@ -434,7 +421,7 @@ export class BackendFileField {
     if (this._downloadButtonElement) {
       let $downloadButton = $(this._downloadButtonElement);
 
-      $downloadButton.unbind('click', this._onDownloadButtonClickHandler);
+      $downloadButton.unbind('click', this._onDownloadButtonClick);
 
       $downloadButton = null;
       this._downloadButtonElement = null;
@@ -448,7 +435,7 @@ export class BackendFileField {
     if (this._previewButtonElement) {
       let $previewButton = $(this._previewButtonElement);
 
-      $previewButton.unbind('click', this._onPreviewButtonClickHandler);
+      $previewButton.unbind('click', this._onPreviewButtonClick);
 
       $previewButton = null;
       this._previewButtonElement = null;
@@ -457,7 +444,7 @@ export class BackendFileField {
     if (this._libraryButtonElement) {
       let $libraryButton = $(this._libraryButtonElement);
 
-      $libraryButton.unbind('click', this._onLibraryButtonClickHandler);
+      $libraryButton.unbind('click', this._onLibraryButtonClick);
 
       $libraryButton = null;
       this._libraryButtonElement = null;
@@ -472,12 +459,7 @@ export class BackendFileField {
     this._browseButtonElement = null;
     this._fileWrapperElement = null;
     this._fileFieldElement = null;
-
-    this._onPreviewButtonClickHandler = null;
-    this._onDownloadButtonClickHandler = null;
-    this._onLibraryButtonClickHandler = null;
   }
 }
-
 
 Quantumart.QP8.BackendFileField = BackendFileField;

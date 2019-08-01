@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -18,6 +20,7 @@ namespace Quantumart.QP8.BLL
         public int Id { get; set; }
         public int? UserId { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("ExecutionTime", NameResourceType = typeof(AuditStrings))]
         public DateTime ExecutionTime { get; set; }
 

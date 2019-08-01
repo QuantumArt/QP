@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Quantumart.QP8.BLL.Services.DTO;
+using System.Collections.Generic;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.User
@@ -17,6 +17,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
             model.AutoGenerateLink = false;
             model.IsMultiple = isMultiple;
             model.TitleFieldName = "Login";
+            model.AllowMultipleEntitySelection = isMultiple;
             return model;
         }
 

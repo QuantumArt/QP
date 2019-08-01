@@ -5,7 +5,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -22,10 +21,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public override ActionResult Index(string tabId, int parentId) => base.Index(tabId, parentId);
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ContentPermissions)]
         [BackendActionContext(ActionCode.ContentPermissions)]
-        public override ActionResult _Index(string tabId, int parentId, GridCommand command) => base._Index(tabId, parentId, command);
+        public override ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy) => base._Index(
+                tabId,
+                parentId,
+                page,
+                pageSize,
+                orderBy);
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentPermission)]
@@ -80,10 +88,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public override ActionResult ChildIndex(string tabId, int parentId) => base.ChildIndex(tabId, parentId);
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ChildContentPermissions)]
         [BackendActionContext(ActionCode.ChildContentPermissions)]
-        public override ActionResult _ChildIndex(string tabId, int parentId, int? userId, int? groupId, GridCommand command) => base._ChildIndex(tabId, parentId, userId, groupId, command);
+        public override ActionResult _ChildIndex(
+            string tabId,
+            int parentId,
+            int? userId,
+            int? groupId,
+            int page,
+            int pageSize,
+            string orderBy) => base._ChildIndex(
+                tabId,
+                parentId,
+                userId,
+                groupId,
+                page,
+                pageSize,
+                orderBy);
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]

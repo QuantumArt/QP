@@ -56,7 +56,7 @@ if (!$p) {
     Write-Host "Done"
 }
 
-$defaultcurrentPath = split-path -parent $MyInvocation.MyCommand.Definition
+$defaultcurrentPath = "E:\Git projects\QP"
 
 $BackendZipPath = Join-Path $defaultcurrentPath "Backend.zip"
 $WinlogonZipPath = Join-Path $defaultcurrentPath "WinLogon.zip"

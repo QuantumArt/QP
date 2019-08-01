@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;

@@ -1,22 +1,140 @@
 ﻿@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Constants.Mvc
+@using Quantumart.QP8.BLL.Helpers
 @model Quantumart.QP8.WebMvc.ViewModels.Article.ArticleListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-    using (Html.BeginLinkButtonsList())
+  using (Html.BeginLinkButtonsList())
+  {
+    if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
     {
-        if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
-        {
-            @Html.AddNewItemLink(Model)
-        }
-
-        @Html.SelectAllLink(Model)
-        @Html.UnselectLink(Model)
-        <li class="doctab-title__element doctab-title__articles-count-label--selected">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+      @Html.AddNewItemLink(Model)
     }
 
-    @Html.ArticleGrid(Model)
+    @Html.SelectAllLink(Model)
+    @Html.UnselectLink(Model)
+    <li class="doctab-title__element doctab-title__articles-count-label--selected">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+  }
+
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      var headIconTpl = function (settings) {
+        return function () {
+          return '<img ' +
+            'src="' +
+            '@Url.GetThemeRootImageFolderUrl()' + settings.url + '"' +
+            'style="width: 16px; height: 16px;"' +
+            'class="t-image"' +
+            'title="' + settings.title + '"' +
+            'alt="' + (settings.alt || settings.title) + '"' +
+            '/>';
+        };
+      };
+      var bodyIconTpl = function (settings) {
+        return function (dataItem) {
+          return '<img ' +
+            'src="' +
+            '@Url.GetThemeSmallIconsImageFolderUrl()' + dataItem[settings.icon] + '"' +
+            'style="width: 16px; height: 16px;"' +
+            'class="t-image"' +
+            'title="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
+            'alt="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
+            '/>';
+        };
+      };
+      var getClass = function (column, i) {
+        var className = '';
+        if (i === 0 && column.HasTitleLink) {
+          className += 'title ';
+        }
+        if (column.Type === 'Boolean') {
+          className += 'isCentered ';
+        }
+        if (column.Type === 'Numeric' && !column.IsClassifier) {
+          className += 'isRight ';
+        }
+        return className;
+      };
+      var columnsData = @Html.Raw(Json.Encode(Model.GetDynamicColumns()));
+      var dynamicColumns = columnsData.map(function (c, i) {
+        return {
+          field: c.Field,
+          title: c.Title,
+          sortable: c.Sortable,
+          template: '#=' + c.Field + '#',
+          attributes: { 'class': getClass(c, i), 'role': 'gridcell' },
+        };
+      });
+      var columns = [
+        @if (Model.AllowMultipleEntitySelection)
+        {
+          <text>
+            {
+              field: '',
+              headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+              headerAttributes: { 'class': 't-select-header' },
+              template: '<input type="checkbox" name="SelectedArticlesIDs" value="#= @FieldName.ContentItemId #" />',
+              sortable: false,
+              attributes: { 'class': 't-select-cell' },
+              width: 35,
+            },
+          </text>
+        }
+        { field: '@FieldName.ContentItemId', title: '@FieldName.Id', attributes: { 'class': 'id' }, width: 58 },
+        {
+          field: '@FieldName.LockedBy',
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/lock.gif', title: '@ArticleStrings.IsLockedHeaderTooltip' }),
+          headerAttributes: { 'class': 't-image-header isCentered' },
+          template: bodyIconTpl({ icon: '@FieldName.LockedByIcon', tooltip: '@FieldName.LockedByTooltip' }),
+          attributes: { 'class': 'isCentered' },
+          width: 47
+        },
+        {
+          field: '@FieldName.Scheduled',
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/scheduled.gif', title: '@ArticleStrings.IsScheduledTooltip' }),
+          headerAttributes: { 'class': 't-image-header isCentered' },
+          template: bodyIconTpl({ icon: '@FieldName.ScheduledIcon', tooltip: '@FieldName.ScheduledTooltip' }),
+          attributes: { 'class': 'isCentered' },
+          width: 47
+        },
+        {
+          field: '@FieldName.Splitted',
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/splited.gif', title: '@ArticleStrings.IsSplitedTooltip' }),
+          headerAttributes: { 'class': 't-image-header isCentered' },
+          template: bodyIconTpl({ icon: '@FieldName.SplittedIcon', tooltip: '@FieldName.SplittedTooltip' }),
+          attributes: { 'class': 'isCentered' },
+          width: 47
+        },
+        {
+          field: '@FieldName.Visible',
+          headerTemplate: headIconTpl({ url: 'grid/header_icons/invisible.gif', title: '@ArticleStrings.IsInvisibleTooltip' }),
+          headerAttributes: { 'class': 't-image-header isCentered' },
+          template: bodyIconTpl({ icon: '@FieldName.VisibleIcon', tooltip: '@FieldName.VisibleTooltip' }),
+          attributes: { 'class': 'isCentered' },
+          width: 47
+        },
+        { field: '@FieldName.StatusTypeName', title: '@ArticleStrings.Status', width: 75 },
+        { field: '@FieldName.Created', title: '@ArticleStrings.Created', width: 75 },
+        { field: '@FieldName.Modified', title: '@ArticleStrings.Modified', width: 75 },
+        { field: '@FieldName.ModifierLogin', title: '@ArticleStrings.LastModifiedBy', width: 75 },
+      ];
+      Array.prototype.splice.apply(columns, [6, 0].concat(dynamicColumns));
+      $('#@Model.MainComponentId').qpGrid({
+        columns: columns,
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GetDataActionName, "Article", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Model.PageSize,
+        },
+      });
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

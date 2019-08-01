@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
@@ -30,7 +30,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
 
         public override string ContextMenuCode => IsVirtual ? Constants.EntityTypeCode.VirtualContent : Constants.EntityTypeCode.Content;
 
-        public string GetDataAction => IsVirtual ? "_VirtualIndex" : "_Index";
+        public string GetDataActionName => IsVirtual ? "_VirtualIndex" : "_Index";
 
         public override string AddNewItemText => ContentStrings.Link_AddNewContent;
 

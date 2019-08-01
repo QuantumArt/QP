@@ -364,9 +364,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\RazorGenerator.Mvc.dll">
       <Link>References\RazorGenerator.Mvc.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
-      <Link>References\Telerik.Web.Mvc.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Remotion.Linq.dll">
       <Link>References\Remotion.Linq.dll</Link>
     </EmbeddedResource>
@@ -473,6 +470,3 @@
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
-
-
-

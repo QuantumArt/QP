@@ -10,7 +10,6 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
@@ -24,8 +23,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public override string EntityTypeCode => Constants.EntityTypeCode.Content;
 
         public int ContentId { get; set; }
-
-        public UploaderType UploaderType => UploaderTypeHelper.UploaderType;
 
         public bool AllowUpload => true;
 

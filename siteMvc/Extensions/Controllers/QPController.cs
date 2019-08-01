@@ -16,6 +16,7 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
@@ -273,6 +274,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
                 }
             }
+        }
+
+        protected static ListCommand GetListCommand(int page, int pageSize, string orderBy)
+        {
+            return new ListCommand
+            {
+                StartPage = page,
+                PageSize = pageSize,
+                SortExpression = GridExtensions.ToSqlSortExpression(orderBy ?? "")
+            };
         }
     }
 }

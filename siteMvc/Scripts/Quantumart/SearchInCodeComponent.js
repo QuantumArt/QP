@@ -1,89 +1,103 @@
 import { ControlHelpers } from './ControlHelpers';
-import { $q } from './Utils';
 
 export class SearchInCodeComponent {
+  /** @type {JQuery} */
+  $filter = null;
+  /** @type {JQuery} */
+  $grid = null;
+  /** @type {kendo.ui.Grid} */
+  _kendoGrid = null;
+
+  /**
+   * @param {string} filterElementId
+   * @param {string} gridElementId
+   */
   constructor(filterElementId, gridElementId) {
     this._filterElementId = filterElementId;
     this._gridElementId = gridElementId;
-    this._onDataBindingHandler = $.proxy(this._onDataBinding, this);
-    this._onApplyFilterHandler = $.proxy(this._onApplyFilter, this);
-    this._onClearFilterHandler = $.proxy(this._onClearFilter, this);
-  }
-
-  _filterElementId = '';
-  _gridElementId = '';
-
-  _onDataBinding(e) {
-    const $filter = $(`#${this._filterElementId}`);
-    const filter = {
-      templateId: $('.sic_templateSelector', $filter).find('select').val(),
-      pageId: $('.sic_pageSelector', $filter).find('.stateField').val(),
-      filterVal: $('.sic_filter input', $filter).val()
-    };
-
-    Object.assign(e, { data: filter });
-  }
-
-  _onApplyFilter() {
-    const $grid = $(`#${this._gridElementId}`);
-    const gridComponent = $grid.data('tGrid');
-    gridComponent.ajaxRequest();
-  }
-
-  _onClearFilter() {
-    const $filter = $(`#${this._filterElementId}`);
-    $filter.find('.sic_templateSelector select').val('0');
-    if ($filter.find('.singleItemPicker').size() > 0) {
-      $filter.find('.singleItemPicker').data('entity_data_list_component').deselectAllListItems();
-    }
-
-    $filter.find('.sic_filter input').val('');
-    // @ts-ignore FIXME
-    $('.sic_search_button', this.$filter).trigger('click');
+    this._onApplyFilter = this._onApplyFilter.bind(this);
+    this._onClearFilter = this._onClearFilter.bind(this);
   }
 
   initialize() {
-    const $grid = $(`#${this._gridElementId}`);
-    const gridComponent = $grid.data('tGrid');
-    const $filter = $(`#${this._filterElementId}`);
+    this.$filter = $(`#${this._filterElementId}`);
+    this.$grid = $(`#${this._gridElementId}`);
+    this._kendoGrid = this.$grid.getKendoGrid();
 
-    ControlHelpers.initAllEntityDataLists($filter);
+    /**
+     * @param {kendo.data.DataSourceTransportParameterMapData} data
+     * @returns Query params
+     */
+    this._kendoGrid.dataSource.transport.parameterMap = data => {
+      const result = {
+        page: data.page,
+        pageSize: data.pageSize,
+        templateId: Number($('.sic_templateSelector', this.$filter).find('select').val()) || null,
+        pageId: Number($('.sic_pageSelector', this.$filter).find('.stateField').val()) || null,
+        filterVal: $('.sic_filter input', this.$filter).val()
+      };
+      if (data.sort && data.sort.length) {
+        result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+      }
+      return result;
+    };
 
-    $grid
-      .unbind('dataBinding', gridComponent.onDataBinding)
-      .bind('dataBinding', this._onDataBindingHandler);
+    ControlHelpers.initAllEntityDataLists(this.$filter);
 
-    $('.sic_search_button', $filter).click(this._onApplyFilterHandler);
-    $('.sic_reset_button', $filter).click(this._onClearFilterHandler);
-    if ($('.sic_templateSelector select', $filter)) {
-      $('.sic_templateSelector select', $filter).change($.proxy(this._onApplyFilter, this));
+    $('.sic_search_button', this.$filter).click(this._onApplyFilter);
+    $('.sic_reset_button', this.$filter).click(this._onClearFilter);
+    if ($('.sic_templateSelector select', this.$filter).size() > 0) {
+      $('.sic_templateSelector select', this.$filter).change(this._onApplyFilter);
     }
 
-    if ($('.sic_pageSelector .singleItemPicker', $filter).size() > 0
-      && $('.sic_pageSelector .singleItemPicker', $filter).data('entity_data_list_component')
+    if ($('.sic_pageSelector .singleItemPicker', this.$filter).size() > 0
+      && $('.sic_pageSelector .singleItemPicker', this.$filter).data('entity_data_list_component')
     ) {
-      $('.sic_pageSelector .singleItemPicker', $filter)
+      $('.sic_pageSelector .singleItemPicker', this.$filter)
         .data('entity_data_list_component')
-        .attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, $.proxy(this._onApplyFilter, this));
+        .attachObserver(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._onApplyFilter);
 
-      gridComponent.ajaxRequest();
+      this._kendoGrid.dataSource.read();
     }
   }
 
+  _isApplyFilterRequested = false;
+
+  _onApplyFilter() {
+    // prevent double AJAX requests
+    if (!this._isApplyFilterRequested) {
+      this._isApplyFilterRequested = true;
+      setTimeout(() => {
+        this._isApplyFilterRequested = false;
+
+        if (this._kendoGrid.dataSource.page() === 1) {
+          this._kendoGrid.dataSource.read();
+        } else {
+          this._kendoGrid.dataSource.page(1);
+        }
+      });
+    }
+  }
+
+  _onClearFilter() {
+    this.$filter.find('.sic_templateSelector select').val('0');
+
+    if (this.$filter.find('.singleItemPicker').size() > 0) {
+      this.$filter.find('.singleItemPicker').data('entity_data_list_component').deselectAllListItems();
+    }
+
+    this.$filter.find('.sic_filter input').val('');
+
+    this._onApplyFilter();
+  }
+
   dispose() {
-    const $grid = $(`#${this._gridElementId}`);
-    const $filter = $(`#${this._filterElementId}`);
+    this.$grid.unbind('dataBinding');
 
-    $grid.unbind('dataBinding');
-    $('.sic_search_button', $filter).unbind();
-    $('.sic_reset_button', $filter).unbind();
+    $('.sic_search_button', this.$filter).unbind();
+    $('.sic_reset_button', this.$filter).unbind();
 
-    this._onDataBindingHandler = null;
-    this._onApplyFilterHandler = null;
-    this._onDataBindingHandler = null;
-
-    ControlHelpers.destroyAllEntityDataLists($filter);
-    $q.collectGarbageInIE();
+    ControlHelpers.destroyAllEntityDataLists(this.$filter);
   }
 }
 

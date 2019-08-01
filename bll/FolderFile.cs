@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
@@ -182,12 +184,14 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Дата создания файла
         /// </summary>
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
         public DateTime Created { get; set; }
 
         /// <summary>
         /// Дата модификации файла
         /// </summary>
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
         public DateTime Modified { get; set; }
 

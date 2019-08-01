@@ -6,13 +6,11 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -30,12 +28,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticleVersions)]
         [BackendActionContext(ActionCode.ArticleVersions)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy)
         {
-            var serviceResult = ArticleVersionService.List(parentId, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleVersionService.List(parentId, listCommand);
             var result = Mapper.Map<List<ArticleVersion>, List<ArticleVersionListItem>>(serviceResult);
             return new TelerikResult(result, result.Count);
         }

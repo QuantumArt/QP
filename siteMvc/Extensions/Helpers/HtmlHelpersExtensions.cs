@@ -16,10 +16,8 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
-using Telerik.Web.Mvc.UI;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -218,31 +216,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var tb = new TagBuilder("div");
             tb.MergeAttribute("id", source.UniqueId(id + "_upload"));
 
-            var uploaderType = UploaderTypeHelper.UploaderType;
-            switch (uploaderType)
-            {
-                case UploaderType.Silverlight:
-                    tb.MergeAttribute("class", BrowseButtonClassName + " l-sl-uploader");
-                    break;
-                case UploaderType.Html:
-                    tb.MergeAttribute("class", "l-html-uploader");
-                    tb.InnerHtml = source.Telerik().Upload()
-                        .Name(source.UniqueId(id + "mvcUploader"))
-                        .Async(async => async.Save("UploadFile", "Library"))
-                        .Multiple(false)
-                        .ShowFileList(false)
-                        .ToHtmlString();
-                    break;
-                case UploaderType.PlUpload:
-                    tb.MergeAttribute("class", "l-pl-uploader-container");
-                    tb.MergeAttribute("style", "display:inline-block;");
-                    var pbTb = new TagBuilder("div");
-                    pbTb.AddCssClass("lop-pbar-container");
-                    pbTb.MergeAttribute("style", "height: 18px;");
-                    pbTb.InnerHtml = "<div class=\"lop-pbar\"></div>";
-                    tb.InnerHtml = $"<div id={source.UniqueId("uploadBtn_") + id} class=\"t-button pl_upload_button\"><span>{LibraryStrings.Upload}</span></div>{pbTb}";
-                    break;
-            }
+            tb.MergeAttribute("class", "l-pl-uploader-container");
+            tb.MergeAttribute("style", "display:inline-block;");
+            var pbTb = new TagBuilder("div");
+            pbTb.AddCssClass("lop-pbar-container");
+            pbTb.MergeAttribute("style", "height: 18px;");
+            pbTb.InnerHtml = "<div class=\"lop-pbar\"></div>";
+            tb.InnerHtml = $"<div id={source.UniqueId("uploadBtn_") + id} class=\"t-button pl_upload_button\"><span>{LibraryStrings.Upload}</span></div>{pbTb}";
 
             return tb.ToString();
         }
@@ -315,22 +295,68 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
         {
-            var newHtmlAttributes = new Dictionary<string, object> { { "id", htmlAttributes["id"] }, { "class", htmlAttributes["class"] } };
-            newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
+            double? doubleValue = Converter.ToNullableDouble(value ?? source.ViewData.Eval(name));
 
-            return MvcHtmlString.Create(source.Telerik().NumericTextBox()
-                .MinValue(minValue)
-                .MaxValue(maxValue)
-                .ButtonTitleDown(GlobalStrings.DecreaseValue)
-                .ButtonTitleUp(GlobalStrings.IncreaseValue)
-                .Name(name)
-                .InputHtmlAttributes(new { id = htmlAttributes["id"], @class = htmlAttributes["class"] })
-                .Value(Converter.ToNullableDouble(value))
-                .DecimalDigits(decimalDigits)
-                .Spinners(true)
-                .EmptyMessage(string.Empty)
-                .Enable(!ContainsReadOnly(htmlAttributes))
-                .ToHtmlString());
+            string inputId = htmlAttributes["id"].ToString();
+            string inputClass = htmlAttributes["class"].ToString();
+
+            var widget = new TagBuilder("div");
+            widget.AddCssClass("t-widget t-numerictextbox");
+
+            var input = new TagBuilder("input");
+            input.AddCssClass("t-input");
+            input.AddCssClass(inputClass);
+            input.MergeAttribute("id", inputId);
+            input.MergeAttribute("name", name);
+            input.MergeAttribute("type", "text");
+            input.MergeAttribute("value", doubleValue?.ToString());
+
+            if (ContainsReadOnly(htmlAttributes))
+            {
+                input.MergeAttribute("disabled", "disabled");
+            }
+            if (htmlAttributes.ContainsKey(DataContentFieldName))
+            {
+                input.MergeAttribute(DataContentFieldName, htmlAttributes[DataContentFieldName].ToString());
+            }
+
+            var increment = new TagBuilder("a");
+            increment.AddCssClass("t-link t-icon t-arrow-up");
+            increment.MergeAttribute("href", "#");
+            increment.MergeAttribute("tabindex", "-1");
+            increment.MergeAttribute("title", GlobalStrings.IncreaseValue);
+            increment.SetInnerText("Increment");
+
+            var decrement = new TagBuilder("a");
+            decrement.AddCssClass("t-link t-icon t-arrow-down");
+            decrement.MergeAttribute("href", "#");
+            decrement.MergeAttribute("tabindex", "-1");
+            decrement.MergeAttribute("title", GlobalStrings.DecreaseValue);
+            decrement.SetInnerText("Decrement");
+
+            var script = new TagBuilder("script");
+            script.MergeAttribute("type", "text/javascript");
+            script.InnerHtml = $@"
+              $('#{inputId}').tTextBox({{
+                val: {doubleValue?.ToString() ?? "null"},
+                step: 1,
+                minValue: {minValue?.ToString() ?? "null"},
+                maxValue: {maxValue?.ToString() ?? "null"},
+                digits: {decimalDigits},
+                groupSize: 3,
+                negative: 1,
+                type: 'numeric',
+              }});";
+
+            var sb = new StringBuilder();
+            sb.Append(widget.ToString(TagRenderMode.StartTag));
+            sb.Append(input.ToString(TagRenderMode.SelfClosing));
+            sb.Append(increment.ToString(TagRenderMode.Normal));
+            sb.Append(decrement.ToString(TagRenderMode.Normal));
+            sb.Append(widget.ToString(TagRenderMode.EndTag));
+            sb.Append(script.ToString(TagRenderMode.Normal));
+
+            return MvcHtmlString.Create(sb.ToString());
         }
 
         public static MvcHtmlString Relation(this HtmlHelper source, string id, IEnumerable<QPSelectListItem> list, ControlOptions options, RelationType relationType, bool isListOverflow, EntityDataListArgs entityDataListArgs)
@@ -823,51 +849,138 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static MvcHtmlString DateTimePicker(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
         {
-            var inputId = htmlAttributes["id"].ToString();
-            var stringValue = value?.ToString();
-            var newHtmlAttributes = new Dictionary<string, object> { { "id", inputId } };
-            string htmlString;
+            DateTime? dateTime = ToDateTime(value ?? source.ViewData.Eval(id));
 
-            var className = mode == DateTimePickerMode.Date
-                ? DateTextboxClassName
-                : mode == DateTimePickerMode.Time
-                    ? TimeTextboxClassName
-                    : DateTimeTextboxClassName;
+            string inputId = htmlAttributes["id"].ToString();
 
-            newHtmlAttributes.Add("class", className);
-            newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
+            var widget = new TagBuilder("div");
+            widget.AddCssClass("t-widget");
+
+            var wrap = new TagBuilder("div");
+            wrap.AddCssClass("t-picker-wrap");
+
+            var input = new TagBuilder("input");
+            input.AddCssClass("t-input");
+            input.MergeAttribute("id", inputId);
+            input.MergeAttribute("name", id);
+            input.MergeAttribute("type", "text");
+
+            if (isReadOnly)
+            {
+                input.MergeAttribute("disabled", "disabled");
+            }
+            if (htmlAttributes.ContainsKey(DataContentFieldName))
+            {
+                input.MergeAttribute(DataContentFieldName, htmlAttributes[DataContentFieldName].ToString());
+            }
+
+            var select = new TagBuilder("span");
+            select.AddCssClass("t-select");
+
+            var openCalendar = new TagBuilder("span");
+            openCalendar.AddCssClass("t-icon t-icon-calendar");
+            openCalendar.MergeAttribute("title", "Open the calendar");
+            openCalendar.SetInnerText("Open the calendar");
+
+            var openTime = new TagBuilder("span");
+            openTime.AddCssClass("t-icon t-icon-clock");
+            openTime.MergeAttribute("title", "Open the time view");
+            openTime.SetInnerText("Open the time view");
+
+            var script = new TagBuilder("script");
+            script.MergeAttribute("type", "text/javascript");
 
             switch (mode)
             {
                 case DateTimePickerMode.DateTime:
-                    htmlString = source.Telerik().DateTimePicker()
-                        .Name(id)
-                        .Value(stringValue)
-                        .Enable(!isReadOnly)
-                        .InputHtmlAttributes(newHtmlAttributes)
-                        .ToHtmlString();
+                    widget.AddCssClass("t-datetimepicker");
+                    input.AddCssClass(DateTimeTextboxClassName);
+                    input.MergeAttribute("value", dateTime?.ToString("g"));
+                    select.InnerHtml = openCalendar.ToString() + openTime.ToString();
+                    script.InnerHtml = $@"
+                      $('#{inputId}').tDateTimePicker({{
+                        format: '{CurrentDateFormat('g')}',
+                        minValue: new Date(1899, 11, 31),
+                        maxValue: new Date(2100, 0, 1),
+                        startTimeValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        endTimeValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        interval: 30,
+                        selectedValue: {ToJavaScriptDate(dateTime)},
+                      }});";
                     break;
                 case DateTimePickerMode.Date:
-                    htmlString = source.Telerik().DatePicker()
-                        .Name(id)
-                        .Value(stringValue)
-                        .Enable(!isReadOnly)
-                        .InputHtmlAttributes(newHtmlAttributes)
-                        .ToHtmlString();
+                    widget.AddCssClass("t-datepicker");
+                    input.AddCssClass(DateTextboxClassName);
+                    input.MergeAttribute("value", dateTime?.ToString("d"));
+                    select.InnerHtml = openCalendar.ToString();
+                    script.InnerHtml = $@"
+                      $('#{inputId}').tDatePicker({{
+                        format: '{CurrentDateFormat('d')}',
+                        minValue: new Date(1899, 11, 31),
+                        maxValue: new Date(2100, 0, 1),
+                        selectedValue: {ToJavaScriptDate(dateTime?.Date)},
+                      }});";
                     break;
                 case DateTimePickerMode.Time:
-                    htmlString = source.Telerik().TimePicker()
-                        .Name(id)
-                        .Value(stringValue)
-                        .Enable(!isReadOnly)
-                        .InputHtmlAttributes(newHtmlAttributes)
-                        .ToHtmlString();
+                    widget.AddCssClass("t-timepicker");
+                    input.AddCssClass(TimeTextboxClassName);
+                    input.MergeAttribute("value", dateTime?.ToString("t"));
+                    select.InnerHtml = openTime.ToString();
+                    script.InnerHtml = $@"
+                      $('#{inputId}').tTimePicker({{
+                        format: '{CurrentDateFormat('t')}',
+                        minValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        maxValue: {ToJavaScriptDate(System.DateTime.Today)},
+                        interval: 30,
+                        selectedValue: {ToJavaScriptDate(dateTime)},
+                      }});";
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
-            return MvcHtmlString.Create(htmlString);
+            var sb = new StringBuilder();
+            sb.Append(widget.ToString(TagRenderMode.StartTag));
+            sb.Append(wrap.ToString(TagRenderMode.StartTag));
+            sb.Append(input.ToString(TagRenderMode.SelfClosing));
+            sb.Append(select.ToString(TagRenderMode.Normal));
+            sb.Append(wrap.ToString(TagRenderMode.EndTag));
+            sb.Append(widget.ToString(TagRenderMode.EndTag));
+            sb.Append(script.ToString(TagRenderMode.Normal));
+
+            return MvcHtmlString.Create(sb.ToString());
+        }
+
+        private static DateTime? ToDateTime(object value)
+        {
+            if (value is DateTime dateTime)
+            {
+                return dateTime;
+            }
+            if (value is TimeSpan timeSpan)
+            {
+                return System.DateTime.Today.Add(timeSpan);
+            }
+            if (System.DateTime.TryParse(value?.ToString(), out dateTime))
+            {
+                return dateTime;
+            }
+            return null;
+        }
+
+        private static string ToJavaScriptDate(DateTime? dateTime)
+        {
+            if (dateTime == null)
+            {
+                return "null";
+            }
+            DateTime dt = dateTime.Value;
+            return $"new Date({dt.Year}, {dt.Month - 1}, {dt.Day}, {dt.Hour}, {dt.Minute}, {dt.Second})";
+        }
+
+        private static string CurrentDateFormat(char format)
+        {
+            return CultureInfo.CurrentCulture.DateTimeFormat.GetAllDateTimePatterns(format).First();
         }
 
         public static MvcHtmlString File(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, int? entityId, ArticleVersion version, bool? isReadOnly = null, bool? allowUpload = null, bool allowPreview = true, bool allowDownload = true)
@@ -949,7 +1062,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 tb.MergeDataAttribute("rename_matched", Converter.ToJsString(renameMatched));
                 tb.MergeDataAttribute("is_image", Converter.ToJsString(field.ExactType == FieldExactTypes.Image));
                 tb.MergeDataAttribute("allow_file_upload", Converter.ToJsString(allowUpload));
-                tb.MergeDataAttribute("uploader_type", ((int)UploaderTypeHelper.UploaderType).ToString());
                 tb.MergeDataAttribute("folder_Id", folder?.Id.ToString() ?? string.Empty);
             }
 
@@ -1117,7 +1229,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null, bool forceReadOnly = false)
         {
-            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);            
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);
             if (!string.IsNullOrWhiteSpace(toggleId))
             {
                 var toggleIds = toggleId.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1217,7 +1329,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.QpCheckBoxList(name, qpSelectListItems, options, entityDataListArgs, repeatDirection, true);
         }
 
-        public static MvcHtmlString CheckBoxTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, string entityTypeCode, int? parentEntityId, string actionCode, bool allowGlobalSelection = false, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString CheckBoxTreeFor<TModel>(
+            this HtmlHelper<TModel> source,
+            Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
+            string entityTypeCode,
+            int? parentEntityId,
+            string actionCode,
+            bool allowGlobalSelection = false,
+            Dictionary<string, object> htmlAttributes = null)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
             var options = new Dictionary<string, object> { { "id", source.UniqueId(name) } };
@@ -1227,7 +1346,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.AddData("allow_global_selection", allowGlobalSelection.ToString().ToLowerInvariant());
             options.AddData("tree_name", name);
             options.AddData("show_checkbox", bool.TrueString.ToLowerInvariant());
-            options.AddCssClass(CheckBoxTreeClassName);
 
             if (source.GetMetaData(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
             {
@@ -1236,11 +1354,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             options.Merge(htmlAttributes, true);
-            return MvcHtmlString.Create(source.Telerik().TreeView()
-                .Name(name)
-                .HtmlAttributes(options)
-                .ToHtmlString()
-            );
+
+            var widget = new TagBuilder("div");
+            widget.MergeAttributes(options);
+            widget.AddCssClass(CheckBoxTreeClassName);
+            widget.AddCssClass("t-widget t-treeview t-reset");
+
+            var script = new TagBuilder("script");
+            script.MergeAttribute("type", "text/javascript");
+            script.InnerHtml = $"$('#{widget.Attributes["id"]}').tTreeView();";
+
+            string htmlString = widget.ToString() + script.ToString();
+
+            return MvcHtmlString.Create(htmlString);
         }
 
         public static MvcHtmlString VirtualFieldTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)

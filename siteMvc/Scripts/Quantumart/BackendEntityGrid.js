@@ -35,7 +35,7 @@ export class BackendEntityGrid extends Observable {
     super();
 
     this.GRID_BUSY_CLASS_NAME = 'busy';
-    this.ROW_SELECTED_CLASS_NAME = 't-state-selected';
+    this.ROW_SELECTED_CLASS_NAME = 'k-state-selected';
     this.TITLE_CELL_CLASS_NAME = 'title';
     this.ID_CELL_CLASS_NAME = 'id';
     this.ROW_CLICKABLE_SELECTORS = 'tbody tr:not(.t-grouping-row,.t-detail-row,.t-no-data,:has(> .t-edit-container))';
@@ -388,7 +388,7 @@ export class BackendEntityGrid extends Observable {
   // eslint-disable-next-line camelcase
   get_currentPage() {
     if (this._gridComponent) {
-      return this._gridComponent.currentPage;
+      return this._gridComponent.dataSource._page;
     }
 
     return undefined;
@@ -397,111 +397,132 @@ export class BackendEntityGrid extends Observable {
   // eslint-disable-next-line camelcase
   get_orderBy() {
     if (this._gridComponent) {
-      return this._gridComponent.orderBy;
+      return this._gridComponent.dataSource._sort;
     }
 
     return undefined;
   }
 
-
   // eslint-disable-next-line max-statements
   initialize() {
-    $('.fullTextBlock label').addClass('hidden');
+    try {
+      $('.fullTextBlock label').addClass('hidden');
 
-    const $grid = $(`#${this._gridElementId}`);
-    const gridComponent = $grid.data('tGrid');
+      const $grid = $(`#${this._gridElementId}`);
+      const gridComponent = $grid.getKendoGrid();
 
-    if (this._currentPage) {
-      gridComponent.currentPage = this._currentPage;
-    }
-
-    if (this._orderBy) {
-      gridComponent.orderBy = this._orderBy;
-    }
-
-    this._gridElement = $grid.get(0);
-    this._gridComponent = gridComponent;
-    this._startingEntitiesIDs = this._selectedEntitiesIDs.slice();
-
-    $grid
-      .unbind('dataBinding', gridComponent.onDataBinding)
-      .unbind('dataBound', gridComponent.onDataBound)
-      .unbind('rowDataBound', gridComponent.onRowDataBound)
-      .bind('dataBinding', this._onDataBindingHandler)
-      .bind('dataBound', this._onDataBoundHandler)
-      .bind('rowDataBound', this._onRowDataBoundHandler);
-
-    if (this._autoLoad && !this._delayAutoLoad) {
-      gridComponent.ajaxRequest();
-    }
-
-    if (gridComponent.selectable) {
-      const $headerCheckbox = this._getHeaderCheckbox();
-
-      if ($headerCheckbox) {
-        if (this._allowMultipleRowSelection) {
-          $headerCheckbox.bind('click', this._onHeaderCheckboxClickHandler);
-        } else {
-          $headerCheckbox.css('display', 'none');
-        }
+      if (this._currentPage) {
+        gridComponent.dataSource._page = this._currentPage;
       }
 
-      gridComponent.$tbody
-        .undelegate(this.ROW_CLICKABLE_SELECTORS, 'click')
-        .delegate(`${this.ROW_CLICKABLE_SELECTORS} td`, 'click', this._onRowCellClickHandler)
-        .delegate(
-          `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
-          'click',
-          this._onRowCheckboxCellClickHandler
-        );
-    }
+      if (this._orderBy) {
+        gridComponent.dataSource._sort = this._orderBy;
+      }
 
-    if (this._contextMenuCode) {
-      const contextMenuComponent = new BackendContextMenu(
-        this._contextMenuCode,
-        `${this._gridElementId}_ContextMenu`,
-        {
-          targetElements: this._gridElement,
-          allowManualShowing: 'true',
-          isBindToExternal: this._isBindToExternal,
-          zIndex: this._zIndex
+      this._gridElement = $grid.get(0);
+      this._gridComponent = gridComponent;
+      this._startingEntitiesIDs = this._selectedEntitiesIDs.slice();
+
+      gridComponent.dataSource.transport.parameterMap = this._getParameterMapper();
+      gridComponent
+        .unbind('dataBinding', gridComponent.onDataBinding)
+        .unbind('dataBound', gridComponent.onDataBound)
+        .bind('dataBinding', this._onDataBindingHandler)
+        .bind('dataBound', this._onDataBoundHandler);
+
+      if (this._autoLoad && !this._delayAutoLoad) {
+        gridComponent.dataSource.read();
+      }
+
+      if (gridComponent.options.selectable) {
+        const $headerCheckbox = this._getHeaderCheckbox();
+
+        if ($headerCheckbox) {
+          if (this._allowMultipleRowSelection) {
+            $headerCheckbox.bind('click', this._onHeaderCheckboxClickHandler);
+          } else {
+            $headerCheckbox.css('display', 'none');
+          }
         }
-      );
 
-      contextMenuComponent.initialize();
-      contextMenuComponent.addMenuItemsToMenu(true);
+        gridComponent.tbody
+          .undelegate(this.ROW_CLICKABLE_SELECTORS, 'click')
+          .delegate(`${this.ROW_CLICKABLE_SELECTORS} td`, 'click', this._onRowCellClickHandler)
+          .delegate(
+            `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
+            'click',
+            this._onRowCheckboxCellClickHandler
+          );
+      }
 
-      $grid.delegate(
-        this.ROW_CLICKABLE_SELECTORS,
-        $.fn.jeegoocontext.getContextMenuEventType(),
-        this._onContextMenuHandler
-      );
+      if (this._contextMenuCode) {
+        const contextMenuComponent = new BackendContextMenu(
+          this._contextMenuCode,
+          `${this._gridElementId}_ContextMenu`,
+          {
+            targetElements: this._gridElement,
+            allowManualShowing: 'true',
+            isBindToExternal: this._isBindToExternal,
+            zIndex: this._zIndex
+          }
+        );
 
-      contextMenuComponent.attachObserver(
-        window.EVENT_TYPE_CONTEXT_MENU_SHOWING,
-        this._onRowContextMenuShowingHandler
-      );
+        contextMenuComponent.initialize();
+        contextMenuComponent.addMenuItemsToMenu(true);
 
-      contextMenuComponent.attachObserver(
-        window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING,
-        this._onRowContextMenuItemClickingHandler
-      );
+        $grid.delegate(
+          this.ROW_CLICKABLE_SELECTORS,
+          $.fn.jeegoocontext.getContextMenuEventType(),
+          this._onContextMenuHandler
+        );
 
-      contextMenuComponent.attachObserver(
-        window.EVENT_TYPE_CONTEXT_MENU_HIDDEN,
-        this._onRowContextMenuHiddenHandler
-      );
+        contextMenuComponent.attachObserver(
+          window.EVENT_TYPE_CONTEXT_MENU_SHOWING,
+          this._onRowContextMenuShowingHandler
+        );
 
-      this._contextMenuComponent = contextMenuComponent;
+        contextMenuComponent.attachObserver(
+          window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING,
+          this._onRowContextMenuItemClickingHandler
+        );
+
+        contextMenuComponent.attachObserver(
+          window.EVENT_TYPE_CONTEXT_MENU_HIDDEN,
+          this._onRowContextMenuHiddenHandler
+        );
+
+        this._contextMenuComponent = contextMenuComponent;
+      }
+
+      if (this._deselectAllId) {
+        $(`#${this._deselectAllId}`).bind('click', this._onDeselectAllClickHandler);
+      }
+
+      if (this._selectAllId) {
+        $(`#${this._selectAllId}`).bind('click', this._onSelectAllClickHandler);
+      }
+    } catch (e) {
+      console.error(e);
     }
+  }
 
-    if (this._deselectAllId) {
-      $(`#${this._deselectAllId}`).bind('click', this._onDeselectAllClickHandler);
-    }
-
-    if (this._selectAllId) {
-      $(`#${this._selectAllId}`).bind('click', this._onSelectAllClickHandler);
-    }
+  _getParameterMapper() {
+    /**
+     * @param {kendo.data.DataSourceTransportParameterMapData} data
+     * @returns Query params
+     */
+    return data => {
+      /** @type {Object} */
+      const result = {
+        page: data.page,
+        pageSize: data.pageSize,
+        ...this.createDataQueryParams()
+      };
+      if (data.sort && data.sort.length) {
+        result.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+      }
+      return result;
+    };
   }
 
   _getCurrentAction() {
@@ -547,11 +568,10 @@ export class BackendEntityGrid extends Observable {
   }
 
   getRows() {
-    let $rows = [];
+    let $rows = $([]);
     if (this._gridComponent) {
-      $rows = this._gridComponent.$rows();
+      $rows = $(`#${this._gridElementId}`).find('tbody>tr[role="row"]');
     }
-
     return $rows;
   }
 
@@ -593,7 +613,8 @@ export class BackendEntityGrid extends Observable {
     }
 
     const $row = this.getRow(rowElem);
-    this._setRowsSelectedState($row, !this.isRowSelected($row));
+    const isSelected = this.isRowSelected($row);
+    this._setRowsSelectedState($row, !isSelected);
     this._saveRowSelectionState();
     this._executePostSelectActions();
   }
@@ -653,7 +674,7 @@ export class BackendEntityGrid extends Observable {
   }
 
   _getHeaderCheckbox() {
-    return $(this.CHECKBOX_HEADER_SELECTORS, this._gridComponent.$header);
+    return $(this.CHECKBOX_HEADER_SELECTORS, this._gridComponent.wrapper);
   }
 
   _refreshHeaderCheckbox() {
@@ -761,6 +782,17 @@ export class BackendEntityGrid extends Observable {
     return selectedEntities;
   }
 
+  /**
+   * @typedef {Object} ExtraGridOptions
+   * @property {string} [searchQuery]
+   * @property {string} [contextQuery]
+   * @property {boolean} [saveRowsSelection]
+   * @property {number[]} [removedIds]
+   */
+
+  /**
+   * @param {ExtraGridOptions} [options]
+   */
   resetGrid(options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.searchQuery)) {
@@ -772,12 +804,18 @@ export class BackendEntityGrid extends Observable {
       }
     }
 
-    this._gridComponent.currentPage = 1;
+    if (this._gridComponent.dataSource._page !== 1) {
+      this._gridComponent.dataSource.page(1);
+    }
+
     if (this._gridComponent) {
-      this._gridComponent.ajaxRequest();
+      this._gridComponent.dataSource.read();
     }
   }
 
+  /**
+   * @param {ExtraGridOptions} [options]
+   */
   refreshGrid(options) {
     if ($q.isObject(options)) {
       if (!$q.isNull(options.saveRowsSelection)) {
@@ -797,9 +835,8 @@ export class BackendEntityGrid extends Observable {
       }
     }
 
-    const gridComponent = this._gridComponent;
-    if (gridComponent) {
-      gridComponent.ajaxRequest();
+    if (this._gridComponent) {
+      this._gridComponent.dataSource.read();
     }
   }
 
@@ -891,8 +928,8 @@ export class BackendEntityGrid extends Observable {
 
     if (this._allowFilterSelectedEntities && !this._hostIsWindow) {
       eventArgs.set_context({
-        dataQueryParams: this._createDataQueryParams(),
-        url: this._gridComponent.url('selectUrl')
+        dataQueryParams: this.createDataQueryParams(),
+        url: this._gridComponent.dataSource.transport.options.read.url
       });
     }
 
@@ -929,13 +966,12 @@ export class BackendEntityGrid extends Observable {
 
   _saveRowAllSelectionState() {
     let eventArgs = null;
-    const onlyOnePage = !(this.getRows().length < this._gridComponent.total);
+    const onlyOnePage = !(this.getRows().length < this._gridComponent.dataSource._total);
 
     if (onlyOnePage) {
       this._saveRowSelectionState();
     } else {
-      const url = this._gridComponent.url('selectUrl');
-      const queryData = Object.assign({ page: 1, size: 0, onlyIds: true }, this._createDataQueryParams());
+      const queryData = Object.assign({ page: 1, pageSize: 0, onlyIds: true }, this.createDataQueryParams());
       const action = this._getCurrentAction();
 
       if (action) {
@@ -953,7 +989,7 @@ export class BackendEntityGrid extends Observable {
       let rowsData = null;
 
       // synchronous AJAX call (sic!)
-      $q.postDataToUrl(url, queryData, false, data => {
+      $q.postDataToUrl(this._gridComponent.dataSource.transport.options.read.url, queryData, false, data => {
         rowsData = data;
       }, $q.processGenericAjaxError);
 
@@ -998,7 +1034,11 @@ export class BackendEntityGrid extends Observable {
     }
   }
 
-  _createDataQueryParams() {
+  /**
+   * @virtual
+   * @returns Query params
+   */
+  createDataQueryParams() {
     const params = { gridParentId: this._parentEntityId };
 
     if (this._startingEntitiesIDs) {
@@ -1020,11 +1060,7 @@ export class BackendEntityGrid extends Observable {
     return params;
   }
 
-  _onDataBinding(e) {
-    const params = this._createDataQueryParams();
-
-    // eslint-disable-next-line no-param-reassign
-    Object.assign(e, { data: params });
+  _onDataBinding() {
     if (this._isDataLoaded) {
       const action = this._getCurrentAction();
       if (action) {
@@ -1051,8 +1087,8 @@ export class BackendEntityGrid extends Observable {
 
   _onDataBound() {
     const grid = this._gridComponent;
-    if (grid.currentPage > 1 && !grid.total) {
-      grid.pageTo(grid.currentPage - 1);
+    if (grid.currentPage > 1 && !grid.dataSource._total) {
+      grid.dataSource._page = grid.currentPage - 1;
     }
 
     this._isDataLoaded = true;
@@ -1078,12 +1114,17 @@ export class BackendEntityGrid extends Observable {
     if (this._allowSaveRowsSelection) {
       this._restoreRowSelectionState();
     }
+
+    grid._data.forEach(dataItem => {
+      const row = $(`#${this._gridElementId}`).find(`[data-uid=${dataItem.uid}]`);
+      this._onRowDataBound(row, dataItem);
+    });
   }
 
-  _onRowDataBound(e) {
-    BackendEntityGrid.applyStatusColor(e.row, e.dataItem);
+  _onRowDataBound(row, dataItem) {
+    BackendEntityGrid.applyStatusColor(row, dataItem);
     if (this._autoGenerateLink) {
-      this._addLinkToCell(e.row);
+      this._addLinkToCell(row);
     }
   }
 
@@ -1199,105 +1240,110 @@ export class BackendEntityGrid extends Observable {
   }
 
   dispose() {
-    super.dispose();
+    try {
+      super.dispose();
 
-    this._stopDeferredOperations = true;
-    if (this._autoGenerateLink) {
-      this._removeLinksFromCells();
-    }
-
-    this._resetRowSelectionState();
-    if (this._gridManagerComponent) {
-      if (this._gridElementId) {
-        this._gridManagerComponent.removeGrid(this._gridElementId);
+      this._stopDeferredOperations = true;
+      if (this._autoGenerateLink) {
+        this._removeLinksFromCells();
       }
-    }
 
-    const $grid = $(this._gridElement);
-    if (this._gridComponent) {
-      if (this._contextMenuComponent) {
-        if (this._gridComponent.selectable) {
-          const $headerCheckbox = this._getHeaderCheckbox();
-          if ($headerCheckbox && this._allowMultipleRowSelection) {
-            $headerCheckbox.unbind('click', this._onHeaderCheckboxClickHandler);
+      this._resetRowSelectionState();
+      if (this._gridManagerComponent) {
+        if (this._gridElementId) {
+          this._gridManagerComponent.removeGrid(this._gridElementId);
+        }
+      }
+
+      const $grid = $(this._gridElement);
+      if (this._gridComponent) {
+        if (this._contextMenuComponent) {
+          if (this._gridComponent.selectable) {
+            const $headerCheckbox = this._getHeaderCheckbox();
+            if ($headerCheckbox && this._allowMultipleRowSelection) {
+              $headerCheckbox.unbind('click', this._onHeaderCheckboxClickHandler);
+            }
+
+            this._gridComponent.tbody
+              .undelegate(
+                `${this.ROW_CLICKABLE_SELECTORS} td`,
+                'click',
+                this._onRowCellClickHandler
+              )
+              .undelegate(
+                `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
+                'click',
+                this._onRowCheckboxCellClickHandler
+              );
           }
 
-          this._gridComponent.$tbody
+          $grid
+            .unbind('dataBinding')
+            .unbind('dataBound')
             .undelegate(
-              `${this.ROW_CLICKABLE_SELECTORS} td`,
-              'click',
-              this._onRowCellClickHandler
-            )
-            .undelegate(
-              `${this.ROW_CLICKABLE_SELECTORS} ${this.CHECKBOX_CELL_SELECTORS}`,
-              'click',
-              this._onRowCheckboxCellClickHandler
+              this.ROW_CLICKABLE_SELECTORS,
+              $.fn.jeegoocontext.getContextMenuEventType(),
+              this._onContextMenuHandler
             );
-        }
 
-        $grid
-          .unbind('dataBinding')
-          .unbind('dataBound')
-          .unbind('rowDataBound')
-          .undelegate(
-            this.ROW_CLICKABLE_SELECTORS,
-            $.fn.jeegoocontext.getContextMenuEventType(),
-            this._onContextMenuHandler
+          this._contextMenuComponent.detachObserver(
+            window.EVENT_TYPE_CONTEXT_MENU_SHOWING,
+            this._onRowContextMenuShowingHandler
           );
 
-        this._contextMenuComponent.detachObserver(
-          window.EVENT_TYPE_CONTEXT_MENU_SHOWING,
-          this._onRowContextMenuShowingHandler
-        );
+          this._contextMenuComponent.detachObserver(
+            window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING,
+            this._onRowContextMenuItemClickingHandler
+          );
 
-        this._contextMenuComponent.detachObserver(
-          window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING,
-          this._onRowContextMenuItemClickingHandler
-        );
+          this._contextMenuComponent.detachObserver(
+            window.EVENT_TYPE_CONTEXT_MENU_HIDDEN,
+            this._onRowContextMenuHiddenHandler
+          );
 
-        this._contextMenuComponent.detachObserver(
-          window.EVENT_TYPE_CONTEXT_MENU_HIDDEN,
-          this._onRowContextMenuHiddenHandler
-        );
-
-        this._contextMenuComponent.dispose();
+          this._contextMenuComponent.dispose();
+        }
       }
+
+      // kendo.destroy() requres jquery > 1.7
+      $grid.removeData().empty();
+
+      if (this._deselectAllId) {
+        $(`#${this._deselectAllId}`).unbind('click', this._onDeselectAllClickHandler);
+      }
+
+      if (this._selectAllId) {
+        $(`#${this._selectAllId}`).unbind('click', this._onSelectAllClickHandler);
+      }
+
+      $q.dispose.call(this, [
+        '_searchQuery',
+        '_contextQuery',
+        '_startingEntitiesIDs',
+        '_selectedEntitiesIDs',
+        '_gridComponent',
+        '_gridManagerComponent',
+        '_contextMenuComponent',
+        '_gridElement',
+        '_onDataBoundHandler',
+        '_onRowDataBoundHandler',
+        '_onHeaderCheckboxClickHandler',
+        '_onTitleLinkClickHandler',
+        '_onRowCellClickHandler',
+        '_onRowCheckboxCellClickHandler',
+        '_onContextMenuHandler',
+        '_onRowContextMenuShowingHandler',
+        '_onRowContextMenuItemClickingHandler',
+        '_onRowContextMenuHiddenHandler',
+        '_onSelectAllClickHandler',
+        '_onDeselectAllClickHandler',
+        '_onDataBindingHandler'
+      ]);
+
+      $q.collectGarbageInIE();
+    } catch (error) {
+      console.error(error);
     }
-
-    $grid.removeData('tGrid').empty();
-    if (this._deselectAllId) {
-      $(`#${this._deselectAllId}`).unbind('click', this._onDeselectAllClickHandler);
-    }
-
-    if (this._selectAllId) {
-      $(`#${this._selectAllId}`).unbind('click', this._onSelectAllClickHandler);
-    }
-
-    $q.dispose.call(this, [
-      '_searchQuery',
-      '_contextQuery',
-      '_startingEntitiesIDs',
-      '_selectedEntitiesIDs',
-      '_gridComponent',
-      '_gridManagerComponent',
-      '_contextMenuComponent',
-      '_gridElement',
-      '_onDataBoundHandler',
-      '_onRowDataBoundHandler',
-      '_onHeaderCheckboxClickHandler',
-      '_onTitleLinkClickHandler',
-      '_onRowCellClickHandler',
-      '_onRowCheckboxCellClickHandler',
-      '_onContextMenuHandler',
-      '_onRowContextMenuShowingHandler',
-      '_onRowContextMenuItemClickingHandler',
-      '_onRowContextMenuHiddenHandler',
-      '_onSelectAllClickHandler',
-      '_onDeselectAllClickHandler',
-      '_onDataBindingHandler'
-    ]);
-
-    $q.collectGarbageInIE();
   }
 }
 

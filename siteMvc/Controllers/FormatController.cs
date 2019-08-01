@@ -9,7 +9,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -34,12 +33,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.PageObjectFormats)]
         [BackendActionContext(ActionCode.PageObjectFormats)]
-        public ActionResult _IndexPageObjectFormats(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexPageObjectFormats(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _formatService.GetPageObjectFormatsByObjectId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _formatService.GetPageObjectFormatsByObjectId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -54,12 +53,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.TemplateObjectFormats)]
         [BackendActionContext(ActionCode.TemplateObjectFormats)]
-        public ActionResult _IndexTemplateObjectFormats(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexTemplateObjectFormats(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _formatService.GetTemplateObjectFormatsByObjectId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _formatService.GetTemplateObjectFormatsByObjectId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -74,12 +73,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.PageObjectFormatVersions)]
         [BackendActionContext(ActionCode.PageObjectFormatVersions)]
-        public ActionResult _IndexPageObjectFormatVersions(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexPageObjectFormatVersions(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _formatService.GetPageObjectFormatVersionsByFormatId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _formatService.GetPageObjectFormatVersionsByFormatId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -94,12 +93,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.TemplateObjectFormatVersions)]
         [BackendActionContext(ActionCode.TemplateObjectFormatVersions)]
-        public ActionResult _IndexTemplateObjectFormatVersions(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexTemplateObjectFormatVersions(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _formatService.GetTemplateObjectFormatVersionsByFormatId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _formatService.GetTemplateObjectFormatVersionsByFormatId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

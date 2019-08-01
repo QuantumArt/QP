@@ -1,14 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -32,12 +31,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Pages)]
         [BackendActionContext(ActionCode.Pages)]
-        public ActionResult _IndexPages(string tabId, int parentId, GridCommand command)
+        public ActionResult _IndexPages(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _pageService.GetPagesByTemplateId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _pageService.GetPagesByTemplateId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -152,14 +151,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectPageForObjectForm)]
         [BackendActionContext(ActionCode.SelectPageForObjectForm)]
-        public ActionResult _SelectPages(string tabId, int id, GridCommand command, int parentId)
+        public ActionResult _SelectPages(string tabId, int parentId, int page, int pageSize, string orderBy, int IDs = 0)
         {
             var template = _pageService.ReadPageTemplateProperties(parentId);
-            var serviceResult = _pageService.ListPagesForSite(command.GetListCommand(), template.SiteId, id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _pageService.ListPagesForSite(listCommand, template.SiteId, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

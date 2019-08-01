@@ -5,7 +5,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -22,10 +21,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public override ActionResult Index(string tabId, int parentId) => base.Index(tabId, parentId);
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SiteFolderPermissions)]
         [BackendActionContext(ActionCode.SiteFolderPermissions)]
-        public override ActionResult _Index(string tabId, int parentId, GridCommand command) => base._Index(tabId, parentId, command);
+        public override ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy) => base._Index(
+                tabId,
+                parentId,
+                page,
+                pageSize,
+                orderBy);
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSiteFolderPermission)]

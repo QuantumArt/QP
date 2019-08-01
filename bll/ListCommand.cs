@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.BLL
+namespace Quantumart.QP8.BLL
 {
     public class ListCommand
     {

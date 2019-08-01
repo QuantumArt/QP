@@ -1,59 +1,60 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.PageTemplateListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
-	{
-		using (Html.BeginLinkButtonsList())
-		{
-			@Html.AddNewItemLink(Model)
-		}
-	}
+  if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
+    {
+      @Html.AddNewItemLink(Model)
+    }
+  }
 
-    @(Html.Telerik().Grid<PageTemplateListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-        {
-			c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                   .Width(30)
-                   .HtmlAttributes(new { @class = "id" });
-            c.Bound(s => s.IsSystem)
-                .ClientTemplate(@"<img class=""smallIcon"" <# if (IsSystem)  { #> src=" + Url.Content("~/Content/qp8/icons/16x16/template1.gif") + " <# } #> <# if (!IsSystem)  { #> src=" + Url.Content("~/Content/qp8/icons/16x16/template0.gif") + " <# } #>/>")
-                .Title("")
-                .Width(15)
-                ;
-            c.Bound(s => s.LockedBy)
-                .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" alt=\"\" />", Url.GetThemeRootImageFolderUrl() + "/grid/header_icons/lock.gif"))
-                .Width(30)
-                .HeaderHtmlAttributes(new { @class = "t-image-header" })
-                .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= LockedByIcon #>", "<#= LockedByToolTip #>"))
-                .HtmlAttributes(new { style = "text-align: center;" });
-            c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
-                .HtmlAttributes(new { @class = "title" });
-            c.Bound(s => s.Folder).Title(TemplateStrings.Folder);
-			c.Bound(s => s.Description)
-                .Title(EntityObjectStrings.Description);
-            c.Bound(s => s.Created).Title(NotificationStrings.ForCreate);
-            c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
-            c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
-        })
-        .DataBinding(db => db.Ajax()
-                .Select(Model.GettingDataActionName, "PageTemplate")
-        )
-        .EnableCustomBinding(true)
-        .Sortable()
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e.OnDataBinding("$q.preventDefaultFunction")
-             .OnRowDataBound("$q.preventDefaultFunction")
-        )
-    )
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          {
+            field: 'Id',
+            title: '@EntityObjectStrings.ID',
+            attributes: { 'class': 'id' },
+            width: 30,
+          },
+          {
+            field: 'IsSystem',
+            headerTemplate: '',
+            template: '<img class="smallIcon" # if (IsSystem) { # src="@Url.Content("~/Content/qp8/icons/16x16/template1.gif")" # } else { # src="@Url.Content("~/Content/qp8/icons/16x16/template0.gif")" # } # />',
+            width: 15,
+          },
+          {
+            field: 'LockedBy',
+            headerAttributes: { 'class': 't-image-header' },
+            headerTemplate: '<img src="@Url.GetThemeRootImageFolderUrl()/grid/header_icons/lock.gif" style="width: 16px; height: 16px;" class="t-image" alt="" />',
+            attributes: { 'style': 'text-align: center;' },
+            template: '<img src="@Url.GetThemeSmallIconsImageFolderUrl()/#= LockedByIcon #" title="#= LockedByToolTip #" class="smallIcon" />',
+            width: 30,
+          },
+          { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+          { field: 'Folder', title: '@TemplateStrings.Folder' },
+          { field: 'Description', title: '@EntityObjectStrings.Description' },
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GettingDataActionName, "PageTemplate", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -378,10 +378,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Telerik.Web.Mvc, Version=2010.2.930.235, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)binaries\Telerik.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Abstractions, Version=3.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f">
       <HintPath>$(SolutionDir)packages\Unity.5.8.13\lib\net47\Unity.Abstractions.dll</HintPath>
       <Private>True</Private>
@@ -544,7 +540,6 @@
     <Compile Include="Extensions\Helpers\HtmlAttributesExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperFieldExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperFieldGroupExtensions.cs" />
-    <Compile Include="Extensions\Helpers\HtmlHelperGridExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperLinkButtonsListExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperPageExtensions.cs" />
     <Compile Include="Extensions\Helpers\HtmlHelperPanelExtensions.cs" />
@@ -561,7 +556,6 @@
     <Compile Include="Extensions\Helpers\SelectOptions.cs" />
     <Compile Include="Extensions\Helpers\TagBuilderExtensions.cs" />
     <Compile Include="Extensions\Helpers\UnvalidatedRequestValuesMock.cs" />
-    <Compile Include="Extensions\Helpers\UploaderTypeHelper.cs" />
     <Compile Include="Extensions\Helpers\UrlHelperSiteFolderExtensions.cs" />
     <Compile Include="Extensions\ModelBinders\ArticleScheduleModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\ArticleVersionModelBinder.cs" />
@@ -1508,6 +1502,120 @@
     <Content Include="Content\jsoneditor\test\test_minimalist_min.html" />
     <Content Include="Content\jsoneditor\test\test_schema.html" />
     <Content Include="Content\jsoneditor\test\util.test.js" />
+    <Content Include="Content\kendo\BlueOpal\editor.png" />
+    <Content Include="Content\kendo\BlueOpal\imagebrowser.png" />
+    <Content Include="Content\kendo\BlueOpal\indeterminate.gif" />
+    <Content Include="Content\kendo\BlueOpal\loading-image.gif" />
+    <Content Include="Content\kendo\BlueOpal\loading.gif" />
+    <Content Include="Content\kendo\BlueOpal\loading_2x.gif" />
+    <Content Include="Content\kendo\BlueOpal\markers.png" />
+    <Content Include="Content\kendo\BlueOpal\markers_2x.png" />
+    <Content Include="Content\kendo\BlueOpal\slider-h.gif" />
+    <Content Include="Content\kendo\BlueOpal\slider-v.gif" />
+    <Content Include="Content\kendo\BlueOpal\sprite.png" />
+    <Content Include="Content\kendo\BlueOpal\sprite_2x.png" />
+    <Content Include="Content\kendo\BlueOpal\sprite_kpi.png" />
+    <Content Include="Content\kendo\BlueOpal\sprite_kpi_2x.png" />
+    <Content Include="Content\kendo\Bootstrap\editor.png" />
+    <Content Include="Content\kendo\Bootstrap\imagebrowser.png" />
+    <Content Include="Content\kendo\Bootstrap\indeterminate.gif" />
+    <Content Include="Content\kendo\Bootstrap\loading-image.gif" />
+    <Content Include="Content\kendo\Bootstrap\loading.gif" />
+    <Content Include="Content\kendo\Bootstrap\loading_2x.gif" />
+    <Content Include="Content\kendo\Bootstrap\markers.png" />
+    <Content Include="Content\kendo\Bootstrap\markers_2x.png" />
+    <Content Include="Content\kendo\Bootstrap\slider-h.gif" />
+    <Content Include="Content\kendo\Bootstrap\slider-v.gif" />
+    <Content Include="Content\kendo\Bootstrap\sprite.png" />
+    <Content Include="Content\kendo\Bootstrap\sprite_2x.png" />
+    <Content Include="Content\kendo\Bootstrap\sprite_kpi.png" />
+    <Content Include="Content\kendo\Bootstrap\sprite_kpi_2x.png" />
+    <Content Include="Content\kendo\fonts\DejaVu\LICENSE.txt" />
+    <Content Include="Content\kendo\fonts\glyphs\KendoUIGlyphs.svg" />
+    <Content Include="Content\kendo\fonts\glyphs\WebComponentsIcons.svg" />
+    <Content Include="Content\kendo\images\back.png" />
+    <Content Include="Content\kendo\images\kendoui.svg" />
+    <Content Include="Content\kendo\images\wp8_icons.png" />
+    <Content Include="Content\kendo\images\wp8_inverseicons.png" />
+    <Content Include="Content\kendo\kendo.blueopal.min.css" />
+    <Content Include="Content\kendo\kendo.bootstrap.min.css" />
+    <Content Include="Content\kendo\kendo.common.min.css" />
+    <Content Include="Content\kendo\kendo.default.min.css" />
+    <Content Include="Content\kendo\kendo.material.min.css" />
+    <Content Include="Content\kendo\kendo.office365.min.css" />
+    <Content Include="Content\kendo\kendo.silver.min.css" />
+    <Content Include="Content\kendo\Material\editor.png" />
+    <Content Include="Content\kendo\Material\imagebrowser.png" />
+    <Content Include="Content\kendo\Material\indeterminate.gif" />
+    <Content Include="Content\kendo\Material\loading-image.gif" />
+    <Content Include="Content\kendo\Material\loading.gif" />
+    <Content Include="Content\kendo\Material\loading_2x.gif" />
+    <Content Include="Content\kendo\Material\markers.png" />
+    <Content Include="Content\kendo\Material\markers_2x.png" />
+    <Content Include="Content\kendo\Material\slider-h.gif" />
+    <Content Include="Content\kendo\Material\slider-v.gif" />
+    <Content Include="Content\kendo\Material\sprite.png" />
+    <Content Include="Content\kendo\Material\sprite_2x.png" />
+    <Content Include="Content\kendo\Material\sprite_kpi.png" />
+    <Content Include="Content\kendo\Material\sprite_kpi_2x.png" />
+    <Content Include="Content\kendo\Office365\editor.png" />
+    <Content Include="Content\kendo\Office365\imagebrowser.png" />
+    <Content Include="Content\kendo\Office365\indeterminate.gif" />
+    <Content Include="Content\kendo\Office365\loading-image.gif" />
+    <Content Include="Content\kendo\Office365\loading.gif" />
+    <Content Include="Content\kendo\Office365\loading_2x.gif" />
+    <Content Include="Content\kendo\Office365\markers.png" />
+    <Content Include="Content\kendo\Office365\markers_2x.png" />
+    <Content Include="Content\kendo\Office365\slider-h.gif" />
+    <Content Include="Content\kendo\Office365\slider-v.gif" />
+    <Content Include="Content\kendo\Office365\sprite.png" />
+    <Content Include="Content\kendo\Office365\sprite_2x.png" />
+    <Content Include="Content\kendo\Office365\sprite_kpi.png" />
+    <Content Include="Content\kendo\Office365\sprite_kpi_2x.png" />
+    <Content Include="Content\kendo\Silver\editor.png" />
+    <Content Include="Content\kendo\Silver\imagebrowser.png" />
+    <Content Include="Content\kendo\Silver\indeterminate.gif" />
+    <Content Include="Content\kendo\Silver\loading-image.gif" />
+    <Content Include="Content\kendo\Silver\loading.gif" />
+    <Content Include="Content\kendo\Silver\loading_2x.gif" />
+    <Content Include="Content\kendo\Silver\markers.png" />
+    <Content Include="Content\kendo\Silver\markers_2x.png" />
+    <Content Include="Content\kendo\Silver\slider-h.gif" />
+    <Content Include="Content\kendo\Silver\slider-v.gif" />
+    <Content Include="Content\kendo\Silver\sprite.png" />
+    <Content Include="Content\kendo\Silver\sprite_2x.png" />
+    <Content Include="Content\kendo\Silver\sprite_kpi.png" />
+    <Content Include="Content\kendo\Silver\sprite_kpi_2x.png" />
+    <Content Include="Content\kendo\textures\brushed-metal.png" />
+    <Content Include="Content\kendo\textures\dots1.png" />
+    <Content Include="Content\kendo\textures\dots10.png" />
+    <Content Include="Content\kendo\textures\dots11.png" />
+    <Content Include="Content\kendo\textures\dots12.png" />
+    <Content Include="Content\kendo\textures\dots13.png" />
+    <Content Include="Content\kendo\textures\dots2.png" />
+    <Content Include="Content\kendo\textures\dots3.png" />
+    <Content Include="Content\kendo\textures\dots4.png" />
+    <Content Include="Content\kendo\textures\dots5.png" />
+    <Content Include="Content\kendo\textures\dots6.png" />
+    <Content Include="Content\kendo\textures\dots7.png" />
+    <Content Include="Content\kendo\textures\dots8.png" />
+    <Content Include="Content\kendo\textures\dots9.png" />
+    <Content Include="Content\kendo\textures\glass-lighter.png" />
+    <Content Include="Content\kendo\textures\glass.png" />
+    <Content Include="Content\kendo\textures\highlight.png" />
+    <Content Include="Content\kendo\textures\hsv-gradient.png" />
+    <Content Include="Content\kendo\textures\hue.png" />
+    <Content Include="Content\kendo\textures\leather1.png" />
+    <Content Include="Content\kendo\textures\leather2.png" />
+    <Content Include="Content\kendo\textures\noise.png" />
+    <Content Include="Content\kendo\textures\stripe1.png" />
+    <Content Include="Content\kendo\textures\stripe2.png" />
+    <Content Include="Content\kendo\textures\stripe3.png" />
+    <Content Include="Content\kendo\textures\stripe4.png" />
+    <Content Include="Content\kendo\textures\stripe5.png" />
+    <Content Include="Content\kendo\textures\stripe6.png" />
+    <Content Include="Content\kendo\textures\transparency.png" />
+    <Content Include="Content\kendo\textures\transtexture.png" />
     <Content Include="Content\QP8\icons\16x16\crop.gif" />
     <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
     <Content Include="Content\QP8\icons\16x16\green_arrow_up.png" />
@@ -1625,9 +1733,40 @@
     <Content Include="Content\jsoneditor\src\js\assets\jsonlint\README.md" />
     <Content Include="Content\jsoneditor\test\largefile.json" />
     <Content Include="Content\custom\layout.scss" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSans-Bold.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSans-BoldOblique.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSans-ExtraLight.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSans-Oblique.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSans.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSansMono-Bold.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSansMono-BoldOblique.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSansMono-Oblique.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSansMono.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSerif-Bold.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSerif-BoldItalic.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSerif-Italic.ttf" />
+    <Content Include="Content\kendo\fonts\DejaVu\DejaVuSerif.ttf" />
+    <Content Include="Content\kendo\fonts\glyphs\KendoUIGlyphs.eot" />
+    <Content Include="Content\kendo\fonts\glyphs\KendoUIGlyphs.ttf" />
+    <Content Include="Content\kendo\fonts\glyphs\KendoUIGlyphs.woff" />
+    <Content Include="Content\kendo\fonts\glyphs\WebComponentsIcons.eot" />
+    <Content Include="Content\kendo\fonts\glyphs\WebComponentsIcons.ttf" />
+    <Content Include="Content\kendo\fonts\glyphs\WebComponentsIcons.woff" />
+    <Content Include="Content\kendo\images\kendoui.ttf" />
+    <Content Include="Content\kendo\images\kendoui.woff" />
+    <Content Include="Content\kendo\kendo.blueopal.min.css.map" />
+    <Content Include="Content\kendo\kendo.common.min.css.map" />
+    <Content Include="Content\kendo\kendo.default.min.css.map" />
+    <Content Include="Content\kendo\kendo.office365.min.css.map" />
+    <Content Include="Content\kendo\kendo.bootstrap.min.css.map" />
+    <Content Include="Content\kendo\kendo.material.min.css.map" />
+    <Content Include="Content\kendo\kendo.silver.min.css.map" />
+    <Content Include="webpack.config.js" />
     <None Include="App.config" />
     <None Include="NLog.xsd" />
     <None Include="packages.config" />
+    <Content Include="Scripts\jquery\jquery-1.8.3.js" />
+    <Content Include="Scripts\kendo\kendo.all.min.js" />
     <Content Include="Scripts\polyfills\array\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\array\array.findIndex.polyfill.js" />
     <Content Include="Scripts\polyfills\array\array.from.polyfill.js" />
@@ -1642,11 +1781,17 @@
     <Content Include="Scripts\polyfills\string\string.startsWith.polyfill.js" />
     <Content Include="Scripts\Quantumart\App.js" />
     <Content Include="Scripts\Quantumart\AppLogon.js" />
+    <Content Include="Scripts\Quantumart\BackendEntityGrid.js" />
     <Content Include="Scripts\Quantumart\Common\BackendTabEventArgs.js" />
     <Content Include="Scripts\Quantumart\languages\BackendChangePasswordWindow.Lang.js" />
     <Content Include="Scripts\Quantumart\BackendDirectLinkExecutor.md">
       <DependentUpon>BackendDirectLinkExecutor.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\kendo\kendo.all.min.js.map" />
+    <Content Include="Scripts\kendo\kendo.grid.min.js.map" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\package-lock.json" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\package.json" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\README.md" />
     <None Include="Settings.StyleCop" />
     <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
@@ -1974,7 +2119,6 @@
     <Compile Include="ViewModels\Library\FileViewModel.cs" />
     <Compile Include="ViewModels\Library\LibraryViewModel.cs" />
     <Compile Include="ViewModels\Site\SearchInArticlesListViewModel.cs" />
-    <Compile Include="ViewModels\UploaderType.cs" />
     <Compile Include="ViewModels\User\ProfileViewModel.cs" />
     <Compile Include="ViewModels\Site\SiteListViewModel.cs" />
     <Compile Include="ViewModels\Site\SiteViewModel.cs" />
@@ -2017,8 +2161,6 @@
     <Content Include="Views\Workflow\Index.cshtml">
     </Content>
     <Content Include="Views\Workflow\Properties.cshtml">
-    </Content>
-    <Content Include="Views\Workflow\MultipleIndex.cshtml">
     </Content>
     <Content Include="Views\VisualEditorConfig\AspellCheck.cshtml">
     </Content>
@@ -2257,7 +2399,6 @@
     <Content Include="Scripts\Quantumart\Search\BackendUserAndGroupSearchBlock.js" />
     <Content Include="Scripts\Quantumart\Search\BackendUserSearchBlock.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendActionPermissionTree.js" />
-    <Content Include="Scripts\Quantumart\Uploader\BackendHtmlUploader.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendBaseUploader.js" />
     <Content Include="Scripts\Quantumart\Mediators\BackendVirtualContentProperties.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendVirtualFieldTree.js" />
@@ -2295,7 +2436,7 @@
     <Content Include="Scripts\Quantumart\BackendContextMenu.js" />
     <Content Include="Scripts\Quantumart\Document\BackendEditingArea.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendEntityEditor.js" />
-    <Content Include="Scripts\Quantumart\BackendEntityGrid.js" />
+    <Content Include="Scripts\Quantumart\BackendEntityGridOld.js" />
     <Content Include="Scripts\Quantumart\BackendSplitter.js" />
     <Content Include="Scripts\Quantumart\BackendTabStrip.js" />
     <Content Include="Scripts\Quantumart\Toolbar\BackendActionToolbar.js" />
@@ -2360,6 +2501,7 @@
     <Content Include="Views\ArticleSearchBlock\Identifier.cshtml">
       <LastGenOutput>Identifier.generated.cs</LastGenOutput>
     </Content>
+    <Content Include="tsconfig.json" />
     <None Include="Views\ArticleSearchBlock\FullTextBlock.cshtml">
       <LastGenOutput>FullTextBlock.generated.cs</LastGenOutput>
     </None>
@@ -2585,9 +2727,6 @@
     <Content Include="Views\VirtualContent\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\VirtualContent\MultipleIndex.cshtml">
-      <LastGenOutput>MultipleIndex.generated.cs</LastGenOutput>
-    </Content>
     <Content Include="Views\User\SearchBlock.cshtml">
     </Content>
     <Content Include="Views\User\Properties.cshtml">
@@ -2669,6 +2808,7 @@
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\kendo\kendo.all.d.ts" />
     <TypeScriptCompile Include="Scripts\polyfills\polyfills.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\App.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.d.ts">
@@ -2715,7 +2855,3 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
-
-
-

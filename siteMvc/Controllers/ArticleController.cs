@@ -14,14 +14,12 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -44,29 +42,28 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
         public ActionResult _Index(
             string tabId,
             int parentId,
-            GridCommand command,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
-            IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))]
-            IList<ArticleContextQueryParam> contextQuery,
+            int page,
+            int pageSize,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
             string customFilter,
             bool? onlyIds,
-            int[] filterIds)
+            int[] filterIds,
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
 
+            var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
                 new int[0],
-                command.GetListCommand(),
+                listCommand,
                 searchQuery,
-                contextQuery,
+                null,
                 customFilter,
                 ftsParser,
                 onlyIds,
@@ -87,21 +84,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArchiveArticles)]
         [BackendActionContext(ActionCode.ArchiveArticles)]
         public ActionResult _ArchiveIndex(
             string tabId,
             int parentId,
-            GridCommand command,
+            int page,
+            int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleContextQueryParam>>))] IList<ArticleContextQueryParam> contextQuery,
             string customFilter,
             bool? onlyIds,
-            int[] filterIds)
+            int[] filterIds,
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var serviceResult = ArticleService.List(parentId, new int[0], command.GetListCommand(), searchQuery, contextQuery, customFilter, ftsParser, onlyIds, filterIds);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.List(
+                parentId,
+                new int[0],
+                listCommand,
+                searchQuery,
+                null,
+                customFilter,
+                ftsParser,
+                onlyIds,
+                filterIds);
+
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -125,22 +133,37 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Index", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
         public ActionResult _Select(
             string tabId,
             int parentId,
-            int id,
-            GridCommand command,
+            int page,
+            int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
             string customFilter,
-            bool? onlyIds)
-
+            bool? onlyIds,
+            int[] filterIds,
+            string orderBy,
+            int IDs = 0)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.List(
+                parentId,
+                new[] { IDs },
+                listCommand,
+                searchQuery,
+                null,
+                customFilter,
+                ftsParser,
+                onlyIds);
+
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -167,22 +190,34 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
             string tabId,
             int parentId,
+            int page,
+            int pageSize,
             string IDs,
-            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
             string customFilter,
-            bool? onlyIds)
+            bool? onlyIds,
+            int[] filterIds,
+            string orderBy)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
-            var serviceResult = ArticleService.List(parentId, selectedArticleIDs, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.List(
+                parentId,
+                selectedArticleIDs,
+                listCommand,
+                searchQuery,
+                null,
+                customFilter,
+                ftsParser,
+                onlyIds);
+
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -208,12 +243,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticleStatus)]
         [BackendActionContext(ActionCode.ArticleStatus)]
-        public ActionResult _StatusHistoryList(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _StatusHistoryList(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy)
         {
-            var result = ArticleService.ArticleStatusHistory(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var result = ArticleService.ArticleStatusHistory(listCommand, parentId);
             return new TelerikResult(result.Data, result.TotalRecords);
         }
 

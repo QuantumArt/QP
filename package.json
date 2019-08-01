@@ -10,7 +10,9 @@
     "url": "http://tfs:8080/tfs/QuantumartCollection/QP/_workitems"
   },
   "dependencies": {
+    "@progress/kendo-ui": "^2019.1.412",
     "classnames": "^2.2.5",
+    "natives": "^1.1.6",
     "prop-types": "^15.5.8",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",

@@ -6,72 +6,61 @@
 @using (Html.BeginDocumentPadding())
 {
 
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
     {
-        using (Html.BeginLinkButtonsList())
-        {
-		    @Html.AddNewItemLink(Model)
-        }
+      @Html.AddNewItemLink(Model)
     }
-
-    @(Html.Telerik().Grid<FieldListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-            {
-                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                    .Width(30)
-                    .HtmlAttributes(new { @class = "id" })
-                    ;
-
-
-                c.Bound(s => s.TypeCode)
-                    .Title("")
-                    .Width(30)
-                    .ClientTemplate(string.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= TypeIcon #>", "<#= Type #>"))
-                    .HtmlAttributes(new { style = "text-align: center;" });
-
-                c.Bound(s => s.Name)
-                    .Title(EntityObjectStrings.Name)
-                    .HtmlAttributes(new { @class = "title" });
-
-                c.Bound(s => s.FriendlyName)
-                    .Title(FieldStrings.FriendlyName);
-
-                c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
-                c.Bound(s => s.TypeName).Title(FieldStrings.FieldType);
-                c.Bound(s => s.Size).Title(FieldStrings.SizeTitle);
-
-                c.Bound(s => s.Required)
-                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (Required)  { #> checked=""checked"" <# } #> />")
-                    .Title(FieldStrings.Required);
-                c.Bound(s => s.Indexed)
-                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (Indexed)  { #> checked=""checked"" <# } #> />")
-                    .Title(FieldStrings.Indexed);
-				c.Bound(s => s.MapAsProperty)
-					.ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (MapAsProperty)  { #> checked=""checked"" <# } #> />")
-					.Title(FieldStrings.MapAsProperty);
-				c.Bound(s => s.ViewInList)
-					.ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ViewInList)  { #> checked=""checked"" <# } #> />")
-					.Title(FieldStrings.ViewInList);
-                c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
-                c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
-                c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
-            })
-        .DataBinding(db => db.Ajax()
-            .Select("_Index", "Field")
-        )
-        .EnableCustomBinding(true)
-        .Sortable()
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e
-                .OnDataBinding("$q.preventDefaultFunction")
-                .OnRowDataBound("$q.preventDefaultFunction")
-        )
-    )
+  }
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      var iconTpl = function (settings) {
+        return function (dataItem) {
+          return '<img ' +
+            'src="' +
+            '@Url.GetThemeSmallIconsImageFolderUrl()' + dataItem[settings.icon] + '"' +
+            'style="width: 16px; height: 16px;"' +
+            'class="smallIcon"' +
+            'title="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
+            'alt="' + (dataItem[settings.tooltip] || dataItem[settings.icon]) + '"' +
+            '/>';
+        };
+      };
+      var checkboxTpl = function (settings) {
+        return function (dataItem) {
+          return '<input type="checkbox" disabled' + (dataItem[settings.predicate] && ' checked="checked"');
+        };
+      };
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+          { field: 'TypeCode', title: 'Type', template: iconTpl({ icon: 'TypeIcon', tooltip: 'TypeName' }), attributes: { 'class': 'isCentered' }, width: 47 },
+          { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' }, width: 133 },
+          { field: 'FriendlyName', title: '@FieldStrings.FriendlyName' },
+          { field: 'Description', title: '@EntityObjectStrings.Description' },
+          { field: 'TypeName', title: '@FieldStrings.FieldType' },
+          { field: 'Size', title: '@FieldStrings.SizeTitle' },
+          { field: 'Required', title: '@FieldStrings.Required', template: checkboxTpl({ predicate: 'Required' }), attributes: { 'class': 'isCentered' }, width: 60 },
+          { field: 'Indexed', title: '@FieldStrings.Indexed', template: checkboxTpl({ predicate: 'Indexed' }), attributes: { 'class': 'isCentered' }, width: 60 },
+          { field: 'MapAsProperty', title: '@FieldStrings.MapAsProperty', template: checkboxTpl({ predicate: 'MapAsProperty' }), attributes: { 'class': 'isCentered' }, width: 60 },
+          { field: 'ViewInList', title: '@FieldStrings.ViewInList', template: checkboxTpl({ predicate: 'ViewInList' }), attributes: { 'class': 'isCentered' }, width: 60 },
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action("_Index", "Field", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -1,5 +1,4 @@
-using System.Linq;
-using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -8,7 +7,8 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
-using Telerik.Web.Mvc;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -32,12 +32,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.VisualEditorPlugins)]
         [BackendActionContext(ActionCode.VisualEditorPlugins)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _visualEditorService.GetVisualEditorPlugins(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _visualEditorService.GetVisualEditorPlugins(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

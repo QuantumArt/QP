@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
 using Newtonsoft.Json;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -14,7 +11,10 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using Telerik.Web.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -38,12 +38,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Workflows)]
         [BackendActionContext(ActionCode.Workflows)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = _workflowService.GetWorkflowsBySiteId(command.GetListCommand(), parentId);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _workflowService.GetWorkflowsBySiteId(listCommand, parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

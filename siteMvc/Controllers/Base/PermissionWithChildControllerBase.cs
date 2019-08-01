@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using QP8.Infrastructure.Web.AspNet.ActionResults;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -13,7 +14,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers.Base
 {
@@ -34,9 +34,17 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return JsonHtml("ChildEntityPermissionIndex", model);
         }
 
-        public virtual ActionResult _ChildIndex(string tabId, int parentId, int? userId, int? groupId, GridCommand command)
+        public virtual ActionResult _ChildIndex(
+            string tabId,
+            int parentId,
+            int? userId,
+            int? groupId,
+            int page,
+            int pageSize,
+            string orderBy)
         {
-            var serviceResult = ChildContentService.List(parentId, groupId, userId, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ChildContentService.List(parentId, groupId, userId, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

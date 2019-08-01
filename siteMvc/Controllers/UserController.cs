@@ -7,13 +7,11 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.User;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -38,16 +36,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Users)]
         [BackendActionContext(ActionCode.Users)]
         public ActionResult _Index(
             string tabId,
             int parentId,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
+            int page,
+            int pageSize,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter,
+            string orderBy)
         {
-            var serviceResult = _service.List(command.GetListCommand(), filter);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand, filter);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -70,18 +70,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
-            string tabId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
+            string tabId, string IDs, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
             var selectedIDs = Converter.ToInt32Collection(IDs, ',');
-            var serviceResult = _service.List(command.GetListCommand(), filter, selectedIDs);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand, filter, selectedIDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -94,17 +93,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("MultipleSelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
         public ActionResult _Select(
             string tabId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
+            int page,
+            int pageSize,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter,
+            string orderBy,
+            int IDs = 0)
         {
-            var serviceResult = _service.List(command.GetListCommand(), filter, new[] { id });
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand, filter, new[] { IDs });
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

@@ -2,6 +2,7 @@ node_modules/
 **/vendor/**
 **/build/**
 *.min.js
+*.d.ts
 
 siteMvc/Scripts/Quantumart/ckeditor/aspell/**
 !siteMvc/Scripts/Quantumart/ckeditor/aspell/plugin.js

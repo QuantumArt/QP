@@ -15,12 +15,10 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -138,12 +136,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.CustomActions)]
         [BackendActionContext(ActionCode.CustomActions)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            int gridParentId,
+            string orderBy)
         {
-            var serviceResult = _service.List(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = _service.List(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

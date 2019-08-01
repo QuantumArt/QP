@@ -1,4 +1,6 @@
-﻿using System;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
+using System;
 
 namespace Quantumart.QP8.BLL
 {
@@ -8,8 +10,10 @@ namespace Quantumart.QP8.BLL
 
         public string Name { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Created { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Modified { get; set; }
 
         public string LastModifiedByUser { get; set; }

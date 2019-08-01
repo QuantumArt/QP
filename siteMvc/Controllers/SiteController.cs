@@ -8,14 +8,12 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.Site;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -39,12 +37,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Sites)]
         [BackendActionContext(ActionCode.Sites)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = SiteService.List(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = SiteService.List(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -61,14 +59,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectSites)]
         [BackendActionContext(ActionCode.MultipleSelectSites)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, GridCommand command)
+        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
         {
             var selectedSiteIDs = Converter.ToInt32Collection(IDs, ',');
-            var serviceResult = SiteService.List(command.GetListCommand(), selectedSiteIDs);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = SiteService.List(listCommand, selectedSiteIDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -84,13 +82,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SearchInArticles)]
         [BackendActionContext(ActionCode.SearchInArticles)]
         [ValidateInput(false)]
-        public ActionResult _SearchInArticles(string tabId, int parentId, int id, GridCommand command, string searchQuery)
+        public ActionResult _SearchInArticles(
+            string tabId, int parentId, int id, int page, int pageSize, string orderBy, string searchQuery)
         {
-            var searchResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, command.GetListCommand(), out var totalRecord);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var searchResult = _searchInArticlesService.SearchInArticles(id, QPContext.CurrentUserId, searchQuery, listCommand, out var totalRecord);
             return new TelerikResult(searchResult, totalRecord);
         }
 
@@ -176,10 +175,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "gridParentId")]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Files(GridCommand command, int gridParentId, [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
+        public ActionResult _Files(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            int gridParentId,
+            [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery,
+            string orderBy)
         {
-            var serviceResult = SiteService.GetFileList(command.GetListCommand(), gridParentId, searchQuery);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = SiteService.GetFileList(listCommand, gridParentId, searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

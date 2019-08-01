@@ -1,4 +1,6 @@
 using System;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
@@ -12,6 +14,7 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("TabName", NameResourceType = typeof(AuditStrings))]
         public string TabName { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         [LocalizedDisplayName("ExecutionTime", NameResourceType = typeof(AuditStrings))]
         public DateTime ActivatedTime { get; set; }
 

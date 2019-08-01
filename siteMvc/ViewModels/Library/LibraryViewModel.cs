@@ -98,8 +98,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
             get { return FileTypeList.OrderBy(i => i.Value).ToArray(); }
         }
 
-        public UploaderType UploaderType => UploaderTypeHelper.UploaderType;
-
         public override string EntityTypeCode => Mode == LibraryMode.Site ? Constants.EntityTypeCode.Site : Constants.EntityTypeCode.Content;
 
         public override string ActionCode => Mode == LibraryMode.Site ? Constants.ActionCode.SiteLibrary : Constants.ActionCode.ContentLibrary;
@@ -120,7 +118,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
                 result.fileGridId = GridElementId;
                 result.folderTreeId = TreeElementId;
                 result.allowMultipleSelection = !IsWindow;
-                result.uploaderType = (int)UploaderType;
                 result.allowUpload = AllowUpload;
                 if (FilterFileTypeId.HasValue)
                 {
