@@ -323,6 +323,12 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     {
                         item.ReorderContentFields();
                     }
+                    else
+                    {
+                        var maxOrder = (int)QPContext.EFContext.FieldSet.Where(n => n.ContentId == item.ContentId)
+                            .Select(n => n.Order).DefaultIfEmpty(0).Max();
+                        item.Order = maxOrder + 1;
+                    }
 
                     var constraint = item.Constraint;
                     var dynamicImage = item.DynamicImage;
@@ -333,11 +339,6 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     Common.AddColumn(scope.DbConnection, field);
 
                     DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
-
-                    if (explicitOrder)
-                    {
-                        UpdateFieldOrder(newItem.Id, item.Order);
-                    }
 
                     SaveConstraint(constraint, newItem);
                     SaveDynamicImage(dynamicImage, newItem);
