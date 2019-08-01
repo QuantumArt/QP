@@ -690,6 +690,10 @@ a.t-button.t-state-disabled:hover,
   color: #fff;
 }
 
+.qpGrid .k-alt {
+  background-color: #ebeff3;
+}
+
 .isCentered {
   text-align: center !important;
 }
