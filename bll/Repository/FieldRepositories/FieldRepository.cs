@@ -246,7 +246,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     if (!isVirtual)
                     {
                         Common.DropColumn(scope.DbConnection, dal);
-                        DropLinkTablesAndViews(scope, dal);
+                        DropLinkWithCheck(scope.DbConnection, dal);
                     }
                 }
                 finally
@@ -263,7 +263,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             }
         }
 
-        internal static void DropLinkTablesAndViews(int contentId)
+        internal static void DropLinkWithCheck(int contentId)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -274,25 +274,27 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                 foreach (var item in m2ms)
                 {
-                    DropLinkTablesAndViews(scope, item);
+                    DropLinkWithCheck(scope.DbConnection, item);
                 }
             }
         }
 
-        private static void DropLinkTablesAndViews(QPConnectionScope scope, FieldDAL dal)
+        private static void DropLinkWithCheck(DbConnection cnn, FieldDAL dal)
         {
-            if (dal.LinkId != null)
+            if (dal.LinkId.HasValue)
             {
                 var anotherRealFieldsExists = QPContext.EFContext.FieldSet.Include(n => n.Content)
                     .Any(n => n.LinkId == dal.LinkId && n.Content.VirtualType == 0 && n.Id != dal.Id);
 
-                if (!anotherRealFieldsExists)
+                var link = QPContext.EFContext.ContentToContentSet.SingleOrDefault(n => n.LinkId == dal.LinkId.Value);
+
+                if (!anotherRealFieldsExists && link != null)
                 {
-                    DefaultRepository.SimpleDelete(dal.ContentToContent);
-                    Common.DropLinkView(scope.DbConnection, dal.ContentToContent);
+                    DefaultRepository.SimpleDelete(link);
+                    Common.DropLinkView(cnn, link);
                     if (QPContext.DatabaseType == DatabaseType.Postgres)
                     {
-                        Common.DropLinkTables(scope.DbConnection, dal.ContentToContent);
+                        Common.DropLinkTables(cnn, link);
                     }
                 }
             }
@@ -400,18 +402,24 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     UpdateBackwardFields(item, preUpdateField);
 
-                    UpdateRelationData(item, preUpdateField);
-
                     var newItem = DefaultRepository.Update<Field, FieldDAL>(item);
+
                     var oldDal = GetDal(preUpdateField);
                     var newDal = GetDal(newItem);
                     Common.UpdateColumn(scope.DbConnection, oldDal, newDal);
+
+                    UpdateRelationData(item, preUpdateField);
 
                     UpdateFieldOrder(newItem.Id, item.Order);
 
                     UpdateConstraint(constraint, newItem);
 
                     UpdateDynamicImage(dynamicImage, newItem);
+
+                    if (newDal.LinkId != oldDal.LinkId)
+                    {
+                        DropLinkWithCheck(scope.DbConnection, oldDal);
+                    }
 
                     return GetById(newItem.Id);
                 }
@@ -713,45 +721,53 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
         /// </summary>
         private static void UpdateRelationData(Field newItem, Field preUpdateField)
         {
-            // M2M -> M2O или новое базовое поле для M2O
-            if (preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.M2ORelation ||
-                preUpdateField.ExactType == FieldExactTypes.M2ORelation && newItem.ExactType == FieldExactTypes.M2ORelation && preUpdateField.BackRelationId != newItem.BackRelationId)
+            using (var scope = new QPConnectionScope())
             {
-                using (var scope = new QPConnectionScope())
+                // M2M -> M2O или новое базовое поле для M2O
+                if ((preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.M2ORelation ||
+                    preUpdateField.ExactType == FieldExactTypes.M2ORelation && newItem.ExactType == FieldExactTypes.M2ORelation &&
+                    preUpdateField.BackRelationId != newItem.BackRelationId) && newItem.BackRelationId.HasValue)
                 {
-                    // ReSharper disable once PossibleInvalidOperationException
                     Common.ChangeContentDataForRelation(scope.DbConnection, newItem.Id, newItem.BackRelationId.Value);
                 }
-            }
 
-            // M2O -> M2M или новый связанный контент для M2M
-            if (preUpdateField.ExactType == FieldExactTypes.M2ORelation && newItem.ExactType == FieldExactTypes.M2MRelation ||
-                preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.M2MRelation && preUpdateField.LinkId != newItem.LinkId)
-            {
-                using (var scope = new QPConnectionScope())
+                // M2O -> M2M или новый связанный контент для M2M
+                if ((preUpdateField.ExactType == FieldExactTypes.M2ORelation && newItem.ExactType == FieldExactTypes.M2MRelation ||
+                    preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.M2MRelation
+                    && preUpdateField.LinkId != newItem.LinkId) && newItem.LinkId.HasValue)
                 {
-                    // ReSharper disable once PossibleInvalidOperationException
                     Common.ChangeContentDataForRelation(scope.DbConnection, newItem.Id, newItem.LinkId.Value);
                 }
-            }
 
-            // O2M -> M2M
-            if (preUpdateField.ExactType == FieldExactTypes.O2MRelation && newItem.ExactType == FieldExactTypes.M2MRelation)
-            {
-                using (var scope = new QPConnectionScope())
+                // O2M -> M2M
+                if ((preUpdateField.ExactType == FieldExactTypes.O2MRelation && newItem.ExactType == FieldExactTypes.M2MRelation) &&
+                    newItem.LinkId.HasValue)
                 {
-                    // ReSharper disable once PossibleInvalidOperationException
                     Common.O2MtoM2MTranferData(scope.DbConnection, newItem.Id, newItem.LinkId.Value);
+                    if (preUpdateField.BackRelationId.HasValue)
+                    {
+                        Common.ChangeContentDataForRelation(scope.DbConnection, preUpdateField.BackRelationId.Value, newItem.LinkId.Value);
+                    }
                 }
-            }
 
-            // M2M -> O2M
-            else if (preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.O2MRelation)
-            {
-                using (var scope = new QPConnectionScope())
+                // M2M -> O2M
+                else if ((preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.O2MRelation) &&
+                    preUpdateField.LinkId.HasValue)
                 {
-                    // ReSharper disable once PossibleInvalidOperationException
                     Common.M2MtoO2MTranferData(scope.DbConnection, newItem.Id, preUpdateField.LinkId.Value);
+                    if (preUpdateField.BackRelationId.HasValue)
+                    {
+                        Common.ChangeContentDataForRelation(scope.DbConnection, preUpdateField.BackRelationId.Value, newItem.Id);
+                    }
+                }
+
+                if (preUpdateField.ExactType == FieldExactTypes.O2MRelation && newItem.ExactType != FieldExactTypes.O2MRelation)
+                {
+                    Common.ClearO2MData(scope.DbConnection, newItem.Id);
+                }
+                else if (preUpdateField.ExactType != FieldExactTypes.O2MRelation && newItem.ExactType == FieldExactTypes.O2MRelation)
+                {
+                    Common.FillO2MData(scope.DbConnection, newItem.Id);
                 }
             }
         }

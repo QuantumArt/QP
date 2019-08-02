@@ -1397,16 +1397,32 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
+        public static void ClearO2MData(DbConnection connection, int fieldId)
+        {
+            var dbType = GetDbType(connection);
+            if (dbType == DatabaseType.Postgres)
+            {
+                var updSql = $@"update CONTENT_DATA set O2M_DATA = NULL where ATTRIBUTE_ID = {fieldId} AND O2M_DATA IS NOT NULL;";
+                ExecuteSql(connection, updSql);
+            }
+        }
+
+        public static void FillO2MData(DbConnection connection, int fieldId)
+        {
+            var dbType = GetDbType(connection);
+            if (dbType == DatabaseType.Postgres)
+            {
+                var updSql = $@"update CONTENT_DATA set O2M_DATA = DATA::numeric where ATTRIBUTE_ID = {fieldId};";
+                ExecuteSql(connection, updSql);
+            }
+        }
+
         /// <summary>
         /// Трансформирует даные статей при изменении типа поля с O2M в M2M
         /// </summary>
         public static void O2MtoM2MTranferData(DbConnection connection, int fieldId, int linkId)
         {
-            // 1. перенести данные о связях из CONTENT_DATA в item_to_item.
-            // 2. В CONTENT_DATA в качестве значения поля для  всех статей установить LinkId
-            // const string cmdText = "INSERT INTO [item_to_item] ([link_id],[l_item_id],[r_item_id]) select @linkid as link_id, D.CONTENT_ITEM_ID as l_item_id, D.DATA as r_item_id from CONTENT_DATA D where ATTRIBUTE_ID = @fid and D.DATA is not null; " +
-            //     "update CONTENT_DATA set DATA = @linkid where ATTRIBUTE_ID = @fid;";
-
+            var dbType = GetDbType(connection);
             var query = $@"SELECT d.content_item_id as item_id, d.data as linked_item_id from content_data d where attribute_id = {fieldId} and d.data is not null";
             var doc = new XDocument();
             var items = new XElement("items");
@@ -1426,6 +1442,10 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 }
                 UpdateM2MValues(connection, doc.ToString(SaveOptions.None));
             }
+
+            var updSql = $@"update CONTENT_DATA set DATA = '{linkId}', BLOB_DATA = NULL where ATTRIBUTE_ID = {fieldId};";
+            ExecuteSql(connection, updSql);
+
         }
 
         public static void M2MtoO2MTranferData(DbConnection connection, int fieldId, int linkId)

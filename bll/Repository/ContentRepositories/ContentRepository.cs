@@ -405,7 +405,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                         FieldRepository.ChangeReorderFieldsTriggerState(scope.DbConnection, false);
                     }
 
-                    FieldRepository.DropLinkTablesAndViews(id);
+                    FieldRepository.DropLinkWithCheck(id);
 
                     DefaultRepository.Delete<ContentDAL>(id);
 
