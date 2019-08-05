@@ -1,5 +1,7 @@
 {
   "name": "quantumart_qp8",
+  "version": "1.0.0",
+  "private": true,
   "author": "Quantum Art",
   "description": "Quantum Art QP8 project",
   "repository": {
@@ -9,13 +11,16 @@
   "bugs": {
     "url": "http://tfs:8080/tfs/QuantumartCollection/QP/_workitems"
   },
+  "scripts": {
+    "start": "npm run build-dev",
+    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.babel.js",
+    "build-dev": "gulp --gulpfile siteMvc/gulpfile.babel.js",
+    "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
+    "lint": "eslint ./siteMvc/Scripts/Quantumart/",
+    "type-check": "tsc --noEmit --project siteMvc/tsconfig.json || exit 0",
+    "webpack": "webpack --watch --config siteMvc/webpack.config.js"
+  },
   "dependencies": {
-    "@progress/kendo-ui": "^2019.1.412",
-    "classnames": "^2.2.5",
-    "natives": "^1.1.6",
-    "prop-types": "^15.5.8",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
     "tslib": "^1.8.1"
   },
   "devDependencies": {
@@ -64,16 +69,5 @@
     "typescript": "^2.6.2",
     "webpack": "^3.10.0",
     "yargs": "^8.0.2"
-  },
-  "scripts": {
-    "start": "npm run build-dev",
-    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.babel.js",
-    "build-dev": "gulp --gulpfile siteMvc/gulpfile.babel.js",
-    "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
-    "lint": "eslint ./siteMvc/Scripts/Quantumart/",
-    "type-check": "tsc --noEmit --project siteMvc/tsconfig.json || exit 0",
-    "webpack": "webpack --watch --config siteMvc/webpack.config.js"
-  },
-  "private": true,
-  "version": "1.0.0"
+  }
 }
