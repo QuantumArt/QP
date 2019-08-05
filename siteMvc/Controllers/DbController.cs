@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
@@ -62,7 +63,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateDbSettings)]
         [BackendActionLog]
         [ValidateInput(false)]
-        public ActionResult Settings(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> Settings(string tabId, int parentId, FormCollection collection)
         {
             var db = DbService.ReadSettingsForUpdate();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
@@ -101,7 +102,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = DbService.UpdateSettings(model.Data);
                 if (needSendMessage)
                 {
-                    _communicationService.Send("singleusermode", message);
+                    await _communicationService.Send("singleusermode", message);
                 }
 
                 return Redirect("Settings", new { successfulActionCode = ActionCode.UpdateDbSettings });

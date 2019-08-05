@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using AutoMapper;
-using Microsoft.AspNet.SignalR;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Facades;
@@ -20,7 +19,6 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Extensions.ValidatorProviders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
-using Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions;
 using Quantumart.QP8.WebMvc.Infrastructure.ValueProviders;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
@@ -116,7 +114,6 @@ namespace Quantumart.QP8.WebMvc
             var resolver = new UnityDependencyResolver();
             DependencyResolver.SetResolver(resolver);
             QPContext.SetUnityContainer(resolver.UnityContainer);
-            GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(resolver.UnityContainer);
         }
 
         public static void RegisterMappings()

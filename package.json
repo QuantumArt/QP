@@ -21,6 +21,7 @@
     "webpack": "webpack --watch --config siteMvc/webpack.config.js"
   },
   "dependencies": {
+    "@aspnet/signalr": "^1.1.4",
     "tslib": "^1.8.1"
   },
   "devDependencies": {
@@ -28,7 +29,6 @@
     "@types/jquery.scrollto": "^1.4.28",
     "@types/knockout": "^3.4.47",
     "@types/qtip2": "^2.2.29",
-    "@types/signalr": "^2.2.35",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.2",
     "babel-plugin-syntax-decorators": "^6.13.0",

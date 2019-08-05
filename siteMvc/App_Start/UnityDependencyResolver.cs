@@ -103,7 +103,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<INotificationService, NotificationService>()
                 .RegisterType<IActionPermissionTreeService, ActionPermissionTreeService>()
                 .RegisterType<ISecurityService, SecurityService>()
-                .RegisterType<ICommunicationService, CommunicationService>()
+                .RegisterType<ICommunicationService, CommunicationHub>()
                 .RegisterType<SingleUserModeHub>();
 
             RegisterMultistepActionServices(UnityContainer);
