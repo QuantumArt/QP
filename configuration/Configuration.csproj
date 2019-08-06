@@ -24,7 +24,6 @@
     <ProjectReference Include="$(SolutionDir)\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
-    <Reference Include="System.Web" />
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

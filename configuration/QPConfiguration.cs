@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
-using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
-#if !NET_STANDARD
-using System.Web.Configuration;
-#endif
-
 using System.Xml.Linq;
 using Npgsql;
 using QP.ConfigurationService.Client;
@@ -70,12 +64,10 @@ namespace Quantumart.QP8.Configuration
             return elem?.Value ?? String.Empty;
         }
 
-
         public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
             return GetConnectionInfo(customerCode, appName).ConnectionString;
         }
-
 
         public static QpConnectionInfo GetConnectionInfo(string customerCode, string appName = "QP8Backend")
         {
@@ -116,7 +108,6 @@ namespace Quantumart.QP8.Configuration
                     {
                         dbType = parsed;
                     }
-
                 }
 
                 if (!String.IsNullOrEmpty(connectionString))
@@ -232,13 +223,6 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
-                    #if !NET_STANDARD
-                    if (!string.IsNullOrEmpty(WebConfigSection?.QpConfigPath))
-                    {
-                        _configPath = WebConfigSection.QpConfigPath;
-                    }
-                    else
-                    #endif
                     if (!string.IsNullOrEmpty(AppConfigSection?.QpConfigPath))
                     {
                         _configPath = AppConfigSection.QpConfigPath;
@@ -271,13 +255,6 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceUrl == null)
                 {
-                    #if !NET_STANDARD
-                    if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigUrl))
-                    {
-                        _configServiceUrl = WebConfigSection.QpConfigUrl;
-                    }
-                    else
-                    #endif
                     if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigUrl))
                     {
                         _configServiceUrl = AppConfigSection.QpConfigUrl;
@@ -298,15 +275,6 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceToken == null)
                 {
-                    #if !NET_STANDARD
-
-                    if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigToken))
-                    {
-                        _configServiceToken = WebConfigSection.QpConfigToken;
-                    }
-                    else
-                    #endif
-
                     if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigToken))
                     {
                         _configServiceToken = AppConfigSection.QpConfigToken;
@@ -321,22 +289,12 @@ namespace Quantumart.QP8.Configuration
             set { _configServiceToken = value; }
         }
 
-
         public static int CommandTimeout
         {
             get
             {
                 if (_commandTimeout == null)
                 {
-#if !NET_STANDARD
-
-                    if (WebConfigSection?.CommandTimeout != null)
-                    {
-                        _commandTimeout = WebConfigSection.CommandTimeout;
-                    }
-                    else
-#endif
-
                     if (AppConfigSection?.CommandTimeout != null)
                     {
                         _commandTimeout = AppConfigSection.CommandTimeout;
@@ -350,17 +308,11 @@ namespace Quantumart.QP8.Configuration
             }
         }
 
-
-#if !NET_STANDARD
-        /// <summary>
-        /// Возвращает кастомную конфигурационную секцию в файле web.config
-        /// </summary>
-        public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
-
-#endif
+        [Obsolete("Use AppConfigSection instead")]
+        public static QPublishingSection WebConfigSection => AppConfigSection;
 
         /// <summary>
-        /// Возвращает кастомную конфигурационную секцию в файле web.config
+        /// Возвращает кастомную конфигурационную секцию в файле app.config
         /// </summary>
         public static QPublishingSection AppConfigSection => ConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 

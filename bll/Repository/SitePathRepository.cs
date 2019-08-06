@@ -1,6 +1,5 @@
 #if !NET_STANDARD
 using System.Web;
-using System.Web.Configuration;
 #endif
 
 using System.IO;
@@ -30,7 +29,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>URL бэкенда</returns>
         internal static string GetCurrentRootUrl()
         {
-            var qpConfig = WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
+            QPublishingSection qpConfig = QPConfiguration.AppConfigSection;
             return qpConfig == null ? string.Empty : qpConfig.BackendUrl;
         }
 
