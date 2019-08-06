@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<ExportArticlesController>(new InjectionFactory(c => new ExportArticlesController(new ExportArticlesService())))
                 .RegisterType<ExportSelectedArticlesController>(new InjectionFactory(c => new ExportSelectedArticlesController(new ExportArticlesService())))
                 .RegisterType<ExportSelectedArchiveArticlesController>(new InjectionFactory(c => new ExportSelectedArchiveArticlesController(new ExportArticlesService())))
-                .RegisterType<MultistepController>(new InjectionFactory(c => new MultistepController(c.Resolve<Func<string, IMultistepActionService>>(), c.Resolve<Func<string, string>>())))
+                .RegisterType<MultistepController>(new InjectionFactory(c => new MultistepController(c.Resolve<Func<string, IMultistepActionService>>(), c.Resolve<Func<string, IActionCode>>())))
                 .RegisterType<CopySiteController>(new InjectionFactory(c => new CopySiteController(new CopySiteService())))
                 .RegisterType<RemoveSiteController>(new InjectionFactory(c => new RemoveSiteController(new RemoveSiteService())))
                 .RegisterType<AssembleSiteController>(new InjectionFactory(c => new AssembleSiteController(new AssembleSiteService())))
@@ -103,7 +103,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<INotificationService, NotificationService>()
                 .RegisterType<IActionPermissionTreeService, ActionPermissionTreeService>()
                 .RegisterType<ISecurityService, SecurityService>()
-                .RegisterType<ICommunicationService, CommunicationHub>()
+                .RegisterType<ICommunicationService, CommunicationService>()
                 .RegisterType<SingleUserModeHub>();
 
             RegisterMultistepActionServices(UnityContainer);
