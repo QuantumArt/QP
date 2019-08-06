@@ -1,16 +1,3 @@
-USE [sbermobile_catalog]
-GO
-/****** Object:  StoredProcedure [dbo].[qp_update_items_with_content_data_pivot]    Script Date: 31.07.2019 17:33:32 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- **************************************
--- Pavel Celut
--- version 7.9.9.10
--- speed-up selective import
--- **************************************
 
 ALTER procedure [dbo].[qp_update_items_with_content_data_pivot]
 @content_id numeric,

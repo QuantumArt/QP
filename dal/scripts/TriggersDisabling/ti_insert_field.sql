@@ -1,11 +1,3 @@
-USE [sbermobile_catalog]
-GO
-/****** Object:  Trigger [dbo].[ti_insert_field]    Script Date: 16.07.2019 18:18:20 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 ALTER TRIGGER [dbo].[ti_insert_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT
 AS
 BEGIN
