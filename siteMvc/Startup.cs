@@ -54,7 +54,48 @@ namespace Quantumart.QP8.WebMvc
                 routes.MapHub<SingleUserModeHub>("/signalr/singleUserMode");
             });
 
-            app.UseMvc();
+            app.UseMvc(RegisterRoutes);
+        }
+
+        private static void RegisterRoutes(IRouteBuilder routes)
+        {
+            // TODO: routes.IgnoreRoute("{resource}.ashx/{*pathInfo}");
+            routes.MapRoute(
+                "MultistepAction",
+                "Multistep/{command}/{action}/{tabId}/{parentId}",
+                new { controller = "Multistep", parentId = 0 },
+                new { parentId = @"\d+" }
+            );
+
+            routes.MapRoute(
+                "Properties",
+                "{controller}/{action}/{tabId}/{parentId}/{id}",
+                new { action = "Properties", parentId = 0 },
+                new { parentId = @"\d+" }
+            );
+
+            routes.MapRoute(
+                "New",
+                "{controller}/{action}/{tabId}/{parentId}",
+                new { action = "New" },
+                new { parentId = @"\d+" }
+            );
+
+            routes.MapRoute(
+                "Default",
+                "{controller}/{action}/{id?}",
+                new { controller = "Home", action = "Index" }
+            );
+        }
+
+        private static void RegisterMappings()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                ViewModelMapper.CreateAllMappings(cfg);
+                DTOMapper.CreateAllMappings(cfg);
+                MapperFacade.CreateAllMappings(cfg);
+            });
         }
     }
 }
