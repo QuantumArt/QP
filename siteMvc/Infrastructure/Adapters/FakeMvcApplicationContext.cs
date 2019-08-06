@@ -8,6 +8,7 @@ using AutoMapper;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
 {
+    // TODO: init AspNetCore in FakeMvcApplicationContext
     public class FakeMvcApplicationContext : IDisposable
     {
         internal FakeMvcApplicationContext()
@@ -16,7 +17,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
             MvcApplication.RegisterModelValidatorProviders();
             CheatBuildManager();
 
-            MvcApplication.RegisterUnity();
+            //MvcApplication.RegisterUnity();
             MvcApplication.RegisterRoutes(new RouteCollection());
         }
 

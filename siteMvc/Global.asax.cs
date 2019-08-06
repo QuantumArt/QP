@@ -37,6 +37,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Workflow;
 
 namespace Quantumart.QP8.WebMvc
 {
+    // TODO: remove Global.asax
     public class MvcApplication : HttpApplication
     {
         public static void RegisterRoutes(RouteCollection routes)
@@ -111,9 +112,9 @@ namespace Quantumart.QP8.WebMvc
 
         internal static void RegisterUnity()
         {
-            var resolver = new UnityDependencyResolver();
-            DependencyResolver.SetResolver(resolver);
-            QPContext.SetUnityContainer(resolver.UnityContainer);
+            //var resolver = new UnityDependencyResolver();
+            //DependencyResolver.SetResolver(resolver);
+            //QPContext.SetUnityContainer(resolver.UnityContainer);
         }
 
         public static void RegisterMappings()

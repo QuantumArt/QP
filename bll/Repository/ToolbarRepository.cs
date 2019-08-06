@@ -4,7 +4,6 @@ using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.DAL;
-using Unity.Interception.Utilities;
 
 namespace Quantumart.QP8.BLL.Repository
 {

@@ -27,7 +27,6 @@ using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Utils;
-using Unity;
 
 namespace Quantumart.QP8.BLL
 {
@@ -758,11 +757,11 @@ namespace Quantumart.QP8.BLL
             dbContext.SaveChanges();
         }
 
-        public static IUnityContainer CurrentUnityContainer { get; private set; }
+        public static IServiceProvider ServiceProvider { get; private set; }
 
-        public static void SetUnityContainer(IUnityContainer container)
+        public static void SetServiceProvider(IServiceProvider provider)
         {
-            CurrentUnityContainer = container;
+            ServiceProvider = provider;
         }
 
         private static IContextStorage _externalContextStorage;

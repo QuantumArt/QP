@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -13,7 +14,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using Unity;
 
 namespace Quantumart.QP8.BLL
 {
@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL
 
         public User()
         {
-            _contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => QPContext.CurrentUnityContainer.Resolve<IUserService>().GetContentDefaultFilters(Id));
+            _contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => QPContext.ServiceProvider.GetRequiredService<IUserService>().GetContentDefaultFilters(Id));
             EnableContentGroupingInTree = true;
         }
 
