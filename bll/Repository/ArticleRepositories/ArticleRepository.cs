@@ -909,11 +909,10 @@ cil.locked_by,
 
             using (new QPConnectionScope())
             {
-                return Common.CountDuplicates(
-                    QPConnectionScope.Current.DbConnection,
-                    constraint.ContentId,
-                    constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId).ToArray(),
-                    restrictToIds);
+                var fieldIds = constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId).ToArray();
+                return Common.CountDuplicates(QPConnectionScope.Current.DbConnection,
+                    constraint.ContentId, fieldIds,restrictToIds, includeArchive
+                );
             }
         }
 

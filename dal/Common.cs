@@ -481,10 +481,10 @@ order by 1, 2
 
         }
 
-        public static int CountDuplicates(DbConnection connection, int contentId, int[] fieldIds, int[] itemIds)
+        public static int CountDuplicates(DbConnection connection, int contentId, int[] fieldIds, int[] itemIds, bool includeArchive)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = dbType == DatabaseType.SqlServer ? "qp_count_duplicates" : "select qp_count_duplicates(@content_id, @field_ids, @ids);";
+            var sql = dbType == DatabaseType.SqlServer ? "qp_count_duplicates" : "select qp_count_duplicates(@content_id, @field_ids, @ids, @includeArchive);";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
@@ -499,6 +499,8 @@ order by 1, 2
                     cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@field_ids", fieldIds, dbType));
                     cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", itemIds, dbType));
                 }
+                cmd.Parameters.AddWithValue("@includeArchive", includeArchive);
+
                 return (int)cmd.ExecuteScalar();
             }
         }
