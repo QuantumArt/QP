@@ -444,6 +444,7 @@ namespace Quantumart.QP8.BLL
         public bool IsDateTime => TypeId == FieldTypeCodes.DateTime || TypeId == FieldTypeCodes.Date || TypeId == FieldTypeCodes.Time;
 
         public bool ReplaceUrls => ExactType == FieldExactTypes.String || IsBlob;
+        public bool ReplaceUrlsInDB => Content.Site.ReplaceUrlsInDB;
 
         public RelationType RelationType
         {

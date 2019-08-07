@@ -39,6 +39,7 @@
                                                               Model.BinBlock,
                                                               Model.OnScreenAssemblingParametersBlock
                                                             }))
+    @Html.CheckBoxFieldFor(s=>s.Data.ReplaceUrlsInDB)
 
     @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
   }

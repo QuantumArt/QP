@@ -1148,6 +1148,7 @@
           <Property Name="EXTERNAL_DEVELOPMENT" Type="bit" Nullable="false" />
           <Property Name="DOWNLOAD_EF_SOURCE" Type="bit" Nullable="false" />
           <Property Name="DISABLE_LIST_AUTO_WRAP" Type="bit" Nullable="false" />
+          <Property Name="REPLACE_URLS_IN_DB" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SITE_ACCESS">
           <Key>
@@ -7304,6 +7305,7 @@
           <Property Name="ExternalDevelopment" Type="Boolean" Nullable="false" />
           <Property Name="DownloadEfSource" Type="Boolean" Nullable="false" />
           <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
+          <Property Name="ReplaceUrlsInDB" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="SitePermissionDAL">
           <Key>
@@ -11462,6 +11464,7 @@
           <EntitySetMapping Name="SiteSet">
             <EntityTypeMapping TypeName="QP8Model.SiteDAL">
               <MappingFragment StoreEntitySet="SITE">
+                <ScalarProperty Name="ReplaceUrlsInDB" ColumnName="REPLACE_URLS_IN_DB" />
                 <ScalarProperty Name="DisableListAutoWrap" ColumnName="DISABLE_LIST_AUTO_WRAP" />
                 <ScalarProperty Name="DownloadEfSource" ColumnName="DOWNLOAD_EF_SOURCE" />
                 <ScalarProperty Name="ExternalDevelopment" ColumnName="EXTERNAL_DEVELOPMENT" />

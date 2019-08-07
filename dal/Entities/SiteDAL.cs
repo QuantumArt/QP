@@ -56,6 +56,7 @@ namespace Quantumart.QP8.DAL.Entities
         public bool EnableOnScreen { get; set; }
         public bool PermanentLock { get; set; }
         public bool UseEnglishQuotes { get; set; }
+        public bool ReplaceUrlsInDB { get; set; }
         public string ExternalUrl { get; set; }
         public bool SendNotifications { get; set; }
         public string ExternalCss { get; set; }
@@ -142,6 +143,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.Property(x => x.GenerateMapFileOnly).HasColumnName("GENERATE_MAP_FILE_ONLY");
             builder.Property(x => x.EnableOnScreen).HasColumnName("ENABLE_ONSCREEN");
             builder.Property(x => x.UseEnglishQuotes).HasColumnName("USE_ENGLISH_QUOTES");
+            builder.Property(x => x.ReplaceUrlsInDB).HasColumnName("REPLACE_URLS_IN_DB");
 
             builder.HasKey(x => x.Id);
 
