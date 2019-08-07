@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Web.WebPages;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using QP8.Infrastructure.Logging;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -19,93 +23,119 @@ using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.Infrastructure.Settings;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
-    // ReSharper disable once InconsistentNaming
-    public class QPController : Controller
+    public abstract class QPController : Controller
     {
         protected IArticleService DbArticleService;
 
-        public QPController()
+        protected QPController()
         {
+            Logger.Log.SetContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
         }
 
-        public QPController(IArticleService dbArticleService)
+        protected QPController(IArticleService dbArticleService)
+            : this()
         {
             DbArticleService = dbArticleService;
         }
 
-        protected override void Initialize(RequestContext requestContext)
+        protected JsonResult JsonCamelCase(object data)
         {
-            base.Initialize(requestContext);
-            Logger.Log.SetContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
+            return Json(data, JsonSettingsRegistry.CamelCaseSettings);
         }
 
-        public string RenderPartialView(string partialViewName, object model)
+        protected async Task<string> RenderPartialView(string viewName, object model)
         {
-            if (string.IsNullOrEmpty(partialViewName))
+            if (string.IsNullOrEmpty(viewName))
             {
-                partialViewName = ControllerContext.RouteData.GetRequiredString(HttpRouteData.Action);
+                viewName = ControllerContext.ActionDescriptor.ActionName;
             }
 
             ViewData.Model = model;
-            using (var sw = new StringWriter())
-            {
-                var viewResult = ViewEngines.Engines.FindPartialView(ControllerContext, partialViewName);
-                var viewContext = new ViewContext(ControllerContext, viewResult.View, ViewData, TempData, sw);
-                viewResult.View.Render(viewContext, sw);
 
-                return sw.GetStringBuilder().ToString();
+            var viewEngine = HttpContext.RequestServices.GetRequiredService<ICompositeViewEngine>();
+
+            var viewEngineResult = viewEngine.FindView(ControllerContext, viewName, false);
+
+            using (var writer = new StringWriter())
+            {
+                var viewContext = new ViewContext(
+                    ControllerContext,
+                    viewEngineResult.View,
+                    ViewData,
+                    TempData,
+                    writer,
+                    new HtmlHelperOptions());
+
+                await viewEngineResult.View.RenderAsync(viewContext);
+
+                return writer.GetStringBuilder().ToString();
             }
         }
 
-        public ActionResult JsonHtml(string viewName, object model)
+        protected async Task<JsonResult> JsonHtml(string viewName, object model)
         {
             if (HttpContext.IsXmlDbUpdateReplayAction())
             {
                 if (!ModelState.IsValid)
                 {
-                    throw new AggregateException(ModelState.Values.SelectMany(x => x.Errors).Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
+                    var exceptions = ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage));
+
+                    throw new AggregateException(exceptions);
                 }
 
                 return null;
             }
 
-            return new JsonNetResult<object>( new
-            { success = true, view = RenderPartialView(viewName, model) }
-                );
+            string view = await RenderPartialView(viewName, model);
+
+            return Json(new { success = true, view });
         }
 
-        public JsonCamelCaseResult<JSendResponse> JsonCamelCaseHtml(string viewName, object model = null)
+        protected async Task<JsonResult> JsonCamelCaseHtml(string viewName, object model = null)
         {
             if (HttpContext.IsXmlDbUpdateReplayAction())
             {
                 if (!ModelState.IsValid)
                 {
-                    throw new AggregateException(ModelState.Values.SelectMany(x => x.Errors).Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
+                    var exceptions = ModelState.Values
+                       .SelectMany(x => x.Errors)
+                       .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage));
+
+                    throw new AggregateException(exceptions);
                 }
 
                 return null;
             }
 
-            return new JSendResponse
+            string view = await RenderPartialView(viewName, model);
+
+            return JsonCamelCase(new JSendResponse
             {
                 Status = JSendStatus.Success,
-                Data = RenderPartialView(viewName, model)
-            };
+                Data = view
+            });
         }
 
-        public static bool IsError(HttpContextBase context)
+        protected static bool IsError(HttpContext context)
         {
-            var form = context.Request.Form;
-            var formResult = form != null && form.AllKeys.Contains(HttpContextFormConstants.IsError) && bool.Parse(form[HttpContextFormConstants.IsError]);
-            return formResult || context.Items.Contains(HttpContextItems.IsError);
+            IFormCollection form = context.Request.Form;
+
+            bool formHasError = form != null &&
+                form.TryGetValue(HttpContextFormConstants.IsError, out var formValue) &&
+                bool.Parse(formValue);
+
+            return formHasError || context.Items.ContainsKey(HttpContextItems.IsError);
         }
 
-        public ActionResult Redirect(string actionName, object routeValues) => HttpContext.IsXmlDbUpdateReplayAction() ? null : RedirectToAction(actionName, routeValues);
+        protected ActionResult Redirect(string actionName, object routeValues) => HttpContext.IsXmlDbUpdateReplayAction() ? null : RedirectToAction(actionName, routeValues);
 
-        public JsonNetResult<MessageResult> JsonMessageResult(MessageResult result)
+        protected JsonResult JsonMessageResult(MessageResult result)
         {
             if (HttpContext.IsXmlDbUpdateReplayAction())
             {
@@ -119,10 +149,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
             if (result != null && result.Type == ActionMessageType.Error)
             {
-                ControllerContext.RequestContext.HttpContext.Items.Add(HttpContextItems.IsError, true);
+                HttpContext.Items.Add(HttpContextItems.IsError, true);
             }
 
-            return result;
+            return Json(result);
         }
 
         private void PersistToHttpContext(string key, int item)
@@ -143,46 +173,46 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
-        public void PersistFromId(int id)
+        protected void PersistFromId(int id)
         {
             PersistToHttpContext(HttpContextItems.FromId, id);
         }
 
-        public void PersistFromId(int id, Guid guid)
+        protected void PersistFromId(int id, Guid guid)
         {
             PersistToHttpContext(HttpContextItems.FromId, id);
             PersistToHttpContext(HttpContextItems.FromGuid, guid.ToString());
         }
 
-        public void PersistFromIds(int[] ids)
+        protected void PersistFromIds(int[] ids)
         {
             PersistToHttpContext(HttpContextItems.FromId, ids);
         }
 
-        public void PersistFromIds(int[] ids, Guid[] guids)
+        protected void PersistFromIds(int[] ids, Guid[] guids)
         {
             PersistToHttpContext(HttpContextItems.FromId, ids);
             PersistToHttpContext(HttpContextItems.FromGuid, guids);
         }
 
-        public void PersistResultId(int id)
+        protected void PersistResultId(int id)
         {
             BackendActionContext.Current.ResetEntityId(id);
             PersistToHttpContext(HttpContextItems.ResultId, id);
         }
 
-        public void PersistResultId(int id, Guid guid)
+        protected void PersistResultId(int id, Guid guid)
         {
             PersistResultId(id);
             PersistToHttpContext(HttpContextItems.ResultGuid, guid.ToString());
         }
 
-        public void PersistActionCode(string name)
+        protected void PersistActionCode(string name)
         {
             PersistToHttpContext(HttpContextItems.ActionCode, name);
         }
 
-        public void PersistLinkId(int? oldLinkId, int? newLinkId)
+        protected void PersistLinkId(int? oldLinkId, int? newLinkId)
         {
             if (newLinkId.HasValue && newLinkId.Value > 0 && (!oldLinkId.HasValue || oldLinkId.Value != newLinkId.Value))
             {
@@ -190,12 +220,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
-        public void PersistActionId(int id)
+        protected void PersistActionId(int id)
         {
             PersistToHttpContext(HttpContextItems.ActionId, id);
         }
 
-        public void PersistDefaultFormatId(int? defaultFormatId)
+        protected void PersistDefaultFormatId(int? defaultFormatId)
         {
             if (defaultFormatId.HasValue)
             {
@@ -203,7 +233,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
-        public void PersistBackwardId(Field oldBackward, Field newBackward)
+        protected void PersistBackwardId(Field oldBackward, Field newBackward)
         {
             if (newBackward != null && newBackward.Id > 0 && (oldBackward == null || oldBackward.Id == 0))
             {
@@ -211,42 +241,42 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
-        public void PersistFieldIds(int[] ids)
+        protected void PersistFieldIds(int[] ids)
         {
             PersistToHttpContext(HttpContextItems.FieldIds, ids);
         }
 
-        public void PersistLinkIds(int[] ids)
+        protected void PersistLinkIds(int[] ids)
         {
             PersistToHttpContext(HttpContextItems.LinkIds, ids);
         }
 
-        public void PersistVirtualFieldIds(int[] ids)
+        protected void PersistVirtualFieldIds(int[] ids)
         {
             PersistToHttpContext(HttpContextItems.NewVirtualFieldIds, ids);
         }
 
-        public void PersistChildFieldIds(int[] ids)
+        protected void PersistChildFieldIds(int[] ids)
         {
             PersistToHttpContext(HttpContextItems.NewChildFieldIds, ids);
         }
 
-        public void PersistChildLinkIds(int[] ids)
+        protected void PersistChildLinkIds(int[] ids)
         {
             PersistToHttpContext(HttpContextItems.NewChildLinkIds, ids);
         }
 
-        public void PersistCommandIds(int[] oldIds, int[] ids)
+        protected void PersistCommandIds(int[] oldIds, int[] ids)
         {
             PersistToHttpContext(HttpContextItems.NewCommandIds, (oldIds != null ? ids.Except(oldIds) : ids).ToList());
         }
 
-        public void PersistRulesIds(int[] oldIds, int[] ids)
+        protected void PersistRulesIds(int[] oldIds, int[] ids)
         {
             PersistToHttpContext(HttpContextItems.NewRulesIds, (oldIds != null ? ids.Except(oldIds) : ids).ToList());
         }
 
-        public void PersistNotificationFormatId(int? formatId)
+        protected void PersistNotificationFormatId(int? formatId)
         {
             if (formatId.HasValue)
             {
@@ -256,23 +286,23 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         protected void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
         {
-            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
-            if (formIds != null)
+            string formIdsValue = HttpContext.Request.Form[formIdsKey];
+
+            int[] validatedFormIds = formIdsValue
+                .Split(',')
+                .Where(str => int.TryParse(str, out int _))
+                .Select(int.Parse)
+                .ToArray();
+
+            if (validatedFormIds.Length > 0 &&
+                validatedFormIds.Length <= (QPConfiguration.AppConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
             {
-                var validatedFormIds = formIds
-                    .Where(g => g.IsInt())
-                    .Select(int.Parse)
+                var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
+                    .Where(g => g != Guid.Empty)
+                    .Select(g => g.ToString())
                     .ToArray();
 
-                if (validatedFormIds.Any() && validatedFormIds.Length <= (QPConfiguration.WebConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
-                {
-                    var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
-                        .Where(g => g != Guid.Empty)
-                        .Select(g => g.ToString())
-                        .ToArray();
-
-                    HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
-                }
+                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
             }
         }
 
