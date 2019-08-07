@@ -1166,7 +1166,7 @@ namespace Quantumart.QP8.BLL
         {
             foreach (var item in FieldValues)
             {
-                if (item.Field.ReplaceUrls)
+                if (item.Field.ReplaceUrlsInDB && item.Field.ReplaceUrls)
                 {
                     item.Value = PlaceHolderHelper.ReplaceUrlsToPlaceHolders(Content.Site, item.Value);
                 }

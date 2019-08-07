@@ -1783,6 +1783,7 @@
     <Content Include="Scripts\Quantumart\AppLogon.js" />
     <Content Include="Scripts\Quantumart\BackendEntityGrid.js" />
     <Content Include="Scripts\Quantumart\Common\BackendTabEventArgs.js" />
+    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\QP8BackendApi.Interaction.js" />
     <Content Include="Scripts\Quantumart\languages\BackendChangePasswordWindow.Lang.js" />
     <Content Include="Scripts\Quantumart\BackendDirectLinkExecutor.md">
       <DependentUpon>BackendDirectLinkExecutor.js</DependentUpon>
@@ -1993,7 +1994,6 @@
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\StringEnumFieldSearch.js" />
     <Content Include="Scripts\Quantumart\CustomAction\BackendCustomActionHost.js" />
     <Content Include="Scripts\Quantumart\CustomAction\CustomActionProperties.js" />
-    <Content Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.js" />
     <Content Include="Scripts\Quantumart\Document\BackendDocumentHostStateStorage.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendClassifierField.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendAggregationList.js" />
@@ -2810,7 +2810,7 @@
     <TypeScriptCompile Include="Scripts\kendo\kendo.all.d.ts" />
     <TypeScriptCompile Include="Scripts\polyfills\polyfills.d.ts" />
     <TypeScriptCompile Include="Scripts\Quantumart\App.d.ts" />
-    <TypeScriptCompile Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.d.ts">
+    <TypeScriptCompile Include="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction\QP8BackendApi.Interaction.d.ts">
       <DependentUpon>QP8BackendApi.Interaction.js</DependentUpon>
     </TypeScriptCompile>
     <TypeScriptCompile Include="Scripts\Quantumart\jQueryExtensions.d.ts" />

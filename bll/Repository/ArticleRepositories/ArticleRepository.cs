@@ -900,7 +900,7 @@ cil.locked_by,
             return true;
         }
 
-        internal static int CountDuplicates(ContentConstraint constraint, int[] restrictToIds, int exceptFieldId)
+        internal static int CountDuplicates(ContentConstraint constraint, int[] restrictToIds, int exceptFieldId, bool includeArchive = false)
         {
             if (restrictToIds != null && restrictToIds.Length == 0)
             {
