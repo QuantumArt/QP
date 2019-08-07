@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <Version>3.0.0-beta8</Version>
+    <Version>3.0.0-beta97</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Authors>Pavel Celut, Sergey Koryakin</Authors>
     <Company>Quantum Art</Company>
@@ -20,7 +20,7 @@
     <PackageReleaseNotes>Postgres support</PackageReleaseNotes>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeQP8Libraries</TargetsForTfmSpecificBuildOutput>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageVersion>3.0.0-beta9.3</PackageVersion>
+    <PackageVersion>3.0.0-beta97</PackageVersion>
   </PropertyGroup>
   <Target Name="IncludeQP8Libraries">
     <ItemGroup>
