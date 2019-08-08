@@ -1,6 +1,7 @@
 using System;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -46,19 +47,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id) => JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
+        public async Task<ActionResult> Settings(string tabId, int parentId, int id)
         {
-            ContentId = id
-        });
+            return await JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
+            {
+                ContentId = id
+            });
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public ActionResult FileFields(int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> FileFields(int parentId, int id, FormCollection collection)
         {
             var model = new ImportViewModel();
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
 
             model.SetCorrespondingFieldName(collection);
             var settings = model.GetImportSettingsObject(parentId, id);
@@ -77,15 +81,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> SetupWithParams(int parentId, int id, FormCollection collection)
         {
             var model = new ImportViewModel();
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
 
             model.SetCorrespondingFieldName(collection);
             IMultistepActionParams settings = model.GetImportSettingsObject(parentId, id);
             _service.SetupWithParams(parentId, id, settings);
-            return new JSendResponse { Status = JSendStatus.Success };
+            return JsonCamelCase(new JSendResponse { Status = JSendStatus.Success });
         }
 
         [HttpPost]

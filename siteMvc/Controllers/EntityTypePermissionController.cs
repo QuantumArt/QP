@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
@@ -19,7 +21,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EntityTypePermissions)]
         [BackendActionContext(ActionCode.EntityTypePermissions)]
-        public override ActionResult Index(string tabId, int parentId) => base.Index(tabId, parentId);
+        public override async Task<ActionResult> Index(string tabId, int parentId)
+        {
+            return await base.Index(tabId, parentId);
+        }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.EntityTypePermissions)]
@@ -39,7 +44,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewEntityTypePermission)]
         [BackendActionContext(ActionCode.AddNewEntityTypePermission)]
-        public override ActionResult New(string tabId, int parentId) => base.New(tabId, parentId);
+        public override async Task<ActionResult> New(string tabId, int parentId)
+        {
+            return await base.New(tabId, parentId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -48,12 +56,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewEntityTypePermission)]
         [BackendActionLog]
         [Record]
-        public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
+        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        {
+            return await base.New(tabId, parentId, collection);
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EntityTypePermissionProperties)]
         [BackendActionContext(ActionCode.EntityTypePermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode) => base.Properties(tabId, parentId, id, successfulActionCode);
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
+        {
+            return await base.Properties(tabId, parentId, id, successfulActionCode);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -62,7 +76,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateEntityTypePermission)]
         [BackendActionLog]
         [Record(ActionCode.EntityTypePermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection) => base.Properties(tabId, parentId, id, collection);
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        {
+            return await base.Properties(tabId, parentId, id, collection);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -86,7 +103,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeEntityTypePermission)]
         [BackendActionContext(ActionCode.ChangeEntityTypePermission)]
-        public override ActionResult Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack) => base.Change(tabId, parentId, userId, groupId, isPostBack);
+        public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
+        {
+            return await base.Change(tabId, parentId, userId, groupId, isPostBack);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -94,7 +114,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateEntityTypePermissionChanges)]
         [BackendActionContext(ActionCode.UpdateEntityTypePermissionChanges)]
         [BackendActionLog]
-        public override ActionResult Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection) => base.Change(tabId, parentId, userId, groupId, collection);
+        public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
+        {
+            return await base.Change(tabId, parentId, userId, groupId, collection);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

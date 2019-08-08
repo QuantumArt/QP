@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
@@ -19,26 +20,26 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
 
-        public ActionResult Home(string tabId, int parentId)
+        public async Task<ActionResult> Home(string tabId, int parentId)
         {
             var model = HomeViewModel.Create(tabId, parentId, DbService.Home());
-            return JsonHtml("Home", model);
+            return await JsonHtml("Home", model);
         }
 
-        public ActionResult About(string tabId, int parentId)
+        public async Task<ActionResult> About(string tabId, int parentId)
         {
             var model = ViewModel.Create<AboutViewModel>(tabId, parentId);
-            return JsonHtml("About", model);
+            return await JsonHtml("About", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult LockedArticles(string tabId, int parentId, int id)
+        public async Task<ActionResult> LockedArticles(string tabId, int parentId, int id)
         {
             var model = ArticleBaseListViewModel.Create(id, tabId, parentId);
             model.DataBindingActionName = "_LockedArticles";
-            return JsonHtml("LockedArticles", model);
+            return await JsonHtml("LockedArticles", model);
         }
 
         [HttpPost]
@@ -54,12 +55,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult ArticlesForApproval(string tabId, int parentId, int id)
+        public async Task<ActionResult> ArticlesForApproval(string tabId, int parentId, int id)
         {
             var model = ArticleBaseListViewModel.Create(id, tabId, parentId);
             model.DataBindingActionName = "_ArticlesForApproval";
             model.AllowMultipleEntitySelection = false;
-            return JsonHtml("ArticlesForApproval", model);
+            return await JsonHtml("ArticlesForApproval", model);
         }
 
         [HttpPost]

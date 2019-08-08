@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Enums.Csv;
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         {
             NewFieldsList = new List<KeyValuePair<string, BLL.Field>>();
             UniqueAggregatedFieldsToUpdate = new Dictionary<int, string>();
-            foreach (var key in collection.AllKeys.Where(s => s.StartsWith(FieldPrefix)))
+            foreach (var key in collection.Keys.Where(s => s.StartsWith(FieldPrefix)))
             {
                 if (key.StartsWith(IdPrefix))
                 {

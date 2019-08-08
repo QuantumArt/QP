@@ -1,7 +1,7 @@
 using System.Linq;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Enums.Csv;
@@ -29,30 +29,39 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public ActionResult PreSettings(int parentId, int[] ids) => new JsonNetResult(_service.MultistepActionSettings(parentId, 0, ids));
-
-        [HttpPost]
-        [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ActionAuthorize(ActionCode.ExportArchiveArticles)]
-        [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public ActionResult Settings(string tabId, int parentId, [Bind(Prefix = "IDs")] int[] ids) => JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
+        public ActionResult PreSettings(int parentId, int[] ids)
         {
-            ContentId = parentId,
-            Ids = ids,
-            IsArchive = true
-        });
+            return Json(_service.MultistepActionSettings(parentId, 0, ids));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public ActionResult Setup(int parentId, [Bind(Prefix = "IDs")] int[] ids, bool? boundToExternal) => new JsonNetResult(_service.Setup(parentId, 0, ids, boundToExternal, true));
+        public async Task<ActionResult> Settings(string tabId, int parentId, [Bind(Prefix = "IDs")] int[] ids)
+        {
+            return await JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
+            {
+                ContentId = parentId,
+                Ids = ids,
+                IsArchive = true
+            });
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int[] ids, ExportViewModel model)
+        public ActionResult Setup(int parentId, [Bind(Prefix = "IDs")] int[] ids, bool? boundToExternal)
+        {
+            return Json(_service.Setup(parentId, 0, ids, boundToExternal, true));
+        }
+
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ActionAuthorize(ActionCode.ExportArchiveArticles)]
+        [BackendActionContext(ActionCode.ExportArchiveArticles)]
+        public JsonResult SetupWithParams(int parentId, int[] ids, ExportViewModel model)
         {
             var settings = new ExportSettings
             {
@@ -73,13 +82,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
             settings.isArchive = true;
             settings.FieldIdsToExpand = model.FieldsToExpand ?? Enumerable.Empty<int>().ToArray();
             _service.SetupWithParams(parentId, ids, settings);
-            return new JSendResponse { Status = JSendStatus.Success };
+            return JsonCamelCase(new JSendResponse { Status = JSendStatus.Success });
         }
 
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step) => new JsonNetResult(_service.Step(stage, step));
+        public ActionResult Step(int stage, int step)
+        {
+            return Json(_service.Step(stage, step));
+        }
 
         [HttpPost]
         public void TearDown(bool isError)

@@ -1,7 +1,7 @@
 using System.Linq;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Enums.Csv;
@@ -34,11 +34,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id) => JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
+        public async Task<ActionResult> Settings(string tabId, int parentId, int id)
         {
-            ContentId = id,
-            IsArchive = true
-        });
+            return await JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
+            {
+                ContentId = id,
+                IsArchive = true
+            });
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -50,7 +53,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public JsonCamelCaseResult<JSendResponse> SetupWithParams(int parentId, int id, ExportViewModel model)
+        public JsonResult SetupWithParams(int parentId, int id, ExportViewModel model)
         {
             var settings = new ExportSettings
             {
@@ -71,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             settings.isArchive = true;
             _service.SetupWithParams(parentId, id, settings);
-            return new JSendResponse { Status = JSendStatus.Success };
+            return JsonCamelCase(new JSendResponse { Status = JSendStatus.Success });
         }
 
         [HttpPost]
