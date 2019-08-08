@@ -1,7 +1,7 @@
 using System.Net.Mime;
 using System.Threading.Tasks;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -46,14 +46,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
-        public ActionResult Settings(string tabId, int parentId, string successfulActionCode)
+        public async Task<ActionResult> Settings(string tabId, int parentId, string successfulActionCode)
         {
             var db = DbService.ReadSettings();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
 
             ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(QPContext.GetRecordXmlFilePath());
-            return JsonHtml("Settings", model);
+            return await JsonHtml("Settings", model);
         }
 
         [HttpPost]
@@ -61,13 +61,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateDbSettings)]
         [BackendActionContext(ActionCode.UpdateDbSettings)]
         [BackendActionLog]
-        [ValidateInput(false)]
         public async Task<ActionResult> Settings(string tabId, int parentId, FormCollection collection)
         {
             var db = DbService.ReadSettingsForUpdate();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -107,7 +106,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Settings", new { successfulActionCode = ActionCode.UpdateDbSettings });
             }
 
-            return JsonHtml("Settings", model);
+            return await JsonHtml("Settings", model);
         }
 
         [ActionAuthorize(ActionCode.DbSettings)]
@@ -123,7 +122,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution)
+        public ActionResult ReplayRecordedUserActions(string xmlString, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution)
         {
             var info = QPContext.CurrentDbConnectionInfo;
             new XmlDbUpdateReplayService(
@@ -138,11 +137,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 _httpContextProcessor
             ).Process(xmlString);
 
-            return new JSendResponse
+            return JsonCamelCase(new JSendResponse
             {
                 Status = JSendStatus.Success,
                 Message = "Xml data successfully processed"
-            };
+            });
         }
     }
 }

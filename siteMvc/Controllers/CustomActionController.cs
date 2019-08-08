@@ -4,10 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.AspNet.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
@@ -25,14 +27,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class CustomActionController : QPController
     {
         private readonly ICustomActionService _service;
+        private readonly IServiceProvider _serviceProvider;
 
-        public CustomActionController(ICustomActionService service)
+        public CustomActionController(ICustomActionService service, IServiceProvider serviceProvider)
         {
             _service = service;
+            _serviceProvider = serviceProvider;
         }
 
         [HttpPost]
-        public ActionResult Execute(string tabId, int parentId, int[] ids, string actionCode)
+        public async Task<ActionResult> Execute(string tabId, int parentId, int[] ids, string actionCode)
         {
             CustomActionPrepareResult customActionToExecute = null;
             try
@@ -48,7 +52,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 if (customActionToExecute.CustomAction.Action.IsInterface)
                 {
                     var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, customActionToExecute.CustomAction);
-                    return JsonHtml("ExecuteAction", model);
+                    return await JsonHtml("ExecuteAction", model);
                 }
 
                 return Json(new { Url = customActionToExecute.CustomAction.FullUrl, PreActionUrl = customActionToExecute.CustomAction.PreActionFullUrl });
@@ -62,10 +66,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (customActionToExecute.CustomAction.Action.IsInterface)
                 {
-                    return new JsonNetResult<object>(new { success = false, message = ex.Message });
+                    return Json(new { success = false, message = ex.Message });
                 }
 
-                return new JsonResult { Data = MessageResult.Error(ex.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+                return Json(MessageResult.Error(ex.Message));
             }
         }
 
@@ -115,9 +119,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
         }
 
-        private static void CreateLogs(string actionCode, int[] ids, int? parentEntityId)
+        private void CreateLogs(string actionCode, int[] ids, int? parentEntityId)
         {
-            var backendLog = DependencyResolver.Current.GetService<IBackendActionLogRepository>();
+            var backendLog = _serviceProvider.GetRequiredService<IBackendActionLogRepository>();
             BackendActionContext.SetCurrent(actionCode, ids.Select(n => n.ToString()), parentEntityId);
 
             var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, backendLog);
@@ -128,11 +132,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActions)]
         [BackendActionContext(ActionCode.CustomActions)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var initList = _service.InitList(parentId);
             var model = CustomActionListViewModel.Create(initList, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -154,11 +158,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
-        public ActionResult New(string tabId, int parentId)
+        public async Task<ActionResult> New(string tabId, int parentId)
         {
             var action = _service.New();
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -167,11 +171,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, int id, FormCollection collection)
         {
             var action = _service.NewForSave();
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -182,19 +186,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveCustomAction });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActionsProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.CustomAction, "id")]
         [BackendActionContext(ActionCode.CustomActionsProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var action = _service.Read(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.CustomActionsProperties)]
@@ -203,11 +207,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateCustomAction)]
         [BackendActionContext(ActionCode.UpdateCustomAction)]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var action = _service.ReadForUpdate(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -215,7 +219,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateCustomAction });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]

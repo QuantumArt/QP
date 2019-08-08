@@ -49,6 +49,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return Json(data, JsonSettingsRegistry.CamelCaseSettings);
         }
 
+        protected JsonResult JsonMicrosoftDate(object data)
+        {
+            return Json(data, JsonSettingsRegistry.MicrosoftDateSettings);
+        }
+
         protected async Task<string> RenderPartialView(string viewName, object model)
         {
             if (string.IsNullOrEmpty(viewName))

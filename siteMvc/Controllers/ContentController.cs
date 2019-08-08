@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -42,11 +43,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = ContentService.InitList(parentId);
             var model = ContentListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -67,11 +68,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualContents)]
         [BackendActionContext(ActionCode.VirtualContents)]
-        public ActionResult VirtualIndex(string tabId, int parentId)
+        public async Task<ActionResult> VirtualIndex(string tabId, int parentId)
         {
             var result = ContentService.InitList(parentId, true);
             var model = ContentListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -91,11 +92,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContent)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewContent)]
-        public ActionResult New(string tabId, int parentId, int? groupId)
+        public async Task<ActionResult> New(string tabId, int parentId, int? groupId)
         {
             var content = ContentService.New(parentId, groupId);
             var model = ContentViewModel.Create(content, tabId, parentId);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -104,13 +105,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContent)]
         [BackendActionContext(ActionCode.AddNewContent)]
         [BackendActionLog]
-        [ValidateInput(false)]
-        public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, string backendActionCode, FormCollection collection)
         {
             var content = ContentService.New(parentId, null);
             var model = ContentViewModel.Create(content, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -129,13 +129,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = backendActionCode });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -143,13 +143,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ContentProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "id")]
         [BackendActionContext(ActionCode.ContentProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? groupChanged = null)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode, bool? groupChanged = null)
         {
             var content = ContentService.Read(id);
             var model = ContentViewModel.Create(content, tabId, parentId);
             model.GroupChanged = groupChanged ?? false;
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.ContentProperties)]
@@ -158,13 +158,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateContent)]
         [BackendActionContext(ActionCode.UpdateContent)]
         [BackendActionLog]
-        [ValidateInput(false)]
-        public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
         {
             var content = ContentService.ReadForUpdate(id);
             var model = ContentViewModel.Create(content, tabId, parentId);
             var oldGroupId = model.Data.GroupId;
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -180,13 +179,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = backendActionCode, groupChanged = oldGroupId != model.Data.GroupId });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -194,11 +193,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContentGroup)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewContentGroup)]
-        public ActionResult NewGroup(string tabId, int parentId)
+        public async Task<ActionResult> NewGroup(string tabId, int parentId)
         {
             var group = ContentService.NewGroup(parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [HttpPost, Record]
@@ -207,11 +206,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContentGroup)]
         [BackendActionContext(ActionCode.AddNewContentGroup)]
         [BackendActionLog]
-        public ActionResult NewGroup(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewGroup(string tabId, int parentId, FormCollection collection)
         {
             var group = ContentService.NewGroupForSave(parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -220,19 +219,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("GroupProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveContentGroup });
             }
 
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.ContentGroupProperties)]
         [BackendActionContext(ActionCode.ContentGroupProperties)]
-        public ActionResult GroupProperties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> GroupProperties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var group = ContentService.ReadGroup(id, parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [HttpPost, Record(ActionCode.ContentGroupProperties)]
@@ -241,12 +240,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateContentGroup)]
         [BackendActionContext(ActionCode.UpdateContentGroup)]
         [BackendActionLog]
-        public ActionResult GroupProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> GroupProperties(string tabId, int parentId, int id, FormCollection collection)
         {
             var group = ContentService.ReadGroupForUpdate(id, parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -254,7 +253,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("GroupProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateContentGroup });
             }
 
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [HttpPost, Record]
@@ -300,20 +299,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        public ActionResult SearchBlock(int id, string actionCode, string hostId)
+        public async Task<ActionResult> SearchBlock(int id, string actionCode, string hostId)
         {
             var model = new ContentSearchBlockViewModel(id, actionCode, hostId);
-            return JsonHtml("SearchBlock", model);
+            return await JsonHtml("SearchBlock", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentLibrary)]
         [BackendActionContext(ActionCode.ContentLibrary)]
-        public ActionResult Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
+        public async Task<ActionResult> Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
         {
             var result = ContentService.Library(id, subFolder);
             var model = LibraryViewModel.Create(result, tabId, id, filterFileTypeId, allowUpload, LibraryMode.Content);
-            return JsonHtml("Library", model);
+            return await JsonHtml("Library", model);
         }
 
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "gridParentId")]
@@ -345,19 +344,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
             );
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
+                success = true,
+                data = new ListResult<FileListItem>
                 {
-                    success = true,
-                    data = new ListResult<FileListItem>
-                    {
-                        Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
-                        TotalRecords = serviceResult.TotalRecords
-                    }
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                    Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
+                    TotalRecords = serviceResult.TotalRecords
+                }
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -365,17 +360,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult _FolderPath(int folderId)
         {
             var folder = ContentFolderService.GetById(folderId);
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    path = folder.PathInfo.Path,
-                    url = folder.PathInfo.Url,
-                    libraryPath = folder.Path
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                path = folder.PathInfo.Path,
+                url = folder.PathInfo.Url,
+                libraryPath = folder.Path
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -384,14 +375,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             if (contentId == null)
             {
-                return new JsonResult
+                return Json(new
                 {
-                    Data = new
-                    {
-                        success = true
-                    },
-                    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-                };
+                    success = true
+                });
             }
 
             if (contentId == 0 && fieldId.HasValue)
@@ -411,15 +398,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 fieldFilter = f => !f.IsNew && f.Id != fieldId.Value;
             }
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    data = content.RelateableFields.Where(fieldFilter).Select(f => new { id = f.Id, text = f.Name })
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                data = content.RelateableFields.Where(fieldFilter).Select(f => new { id = f.Id, text = f.Name })
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -432,29 +415,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 throw new ArgumentException(string.Format(ContentStrings.ContentNotFound, contentId));
             }
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    data = content.Fields
-                        .Where(f => f.IsClassifier)
-                        .OrderBy(f => f.Id)
-                        .Select(f => new { id = f.Id, text = f.Name })
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                data = content.Fields
+                    .Where(f => f.IsClassifier)
+                    .OrderBy(f => f.Id)
+                    .Select(f => new { id = f.Id, text = f.Name })
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Select(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> Select(string tabId, int parentId, int[] IDs)
         {
             var result = ContentService.InitList(parentId);
             var model = new ContentSelectableListViewModel(result, tabId, parentId, IDs);
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -480,11 +459,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
-        public ActionResult SelectForObjectContainer(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForObjectContainer(string tabId, int parentId, int id)
         {
             var result = ContentService.InitListForObject();
             var model = new ObjectContentViewModel(result, tabId, parentId, new[] { id }, ContentSelectMode.ForContainer);
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -510,11 +489,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
-        public ActionResult SelectForObjectForm(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForObjectForm(string tabId, int parentId, int id)
         {
             var result = ContentService.InitListForObject();
             var model = new ObjectContentViewModel(result, tabId, parentId, new[] { id }, ContentSelectMode.ForForm);
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -540,11 +519,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
-        public ActionResult SelectForJoin(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForJoin(string tabId, int parentId, int id)
         {
             var result = ContentService.InitList(parentId);
             var model = new JoinContentViewModel(result, tabId, parentId, new[] { id });
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -571,11 +550,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]
-        public ActionResult SelectForField(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForField(string tabId, int parentId, int id)
         {
             var result = ContentService.InitList(parentId);
             ContentSelectableListViewModel model = new FieldContentViewModel(result, tabId, parentId, new[] { id });
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -603,11 +582,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs)
         {
             var result = ContentService.InitList(parentId);
             var model = new ContentSelectableListViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
@@ -631,7 +610,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForCustomAction(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForCustomAction(string tabId, int parentId, int[] IDs)
         {
             var result = ContentService.InitList(parentId);
             var model = new CustomActionContentViewModel(result, tabId, parentId, IDs)
@@ -639,7 +618,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 IsMultiple = true
             };
 
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
@@ -668,11 +647,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
         {
             var result = ContentService.InitList(parentId);
             var model = new WorkflowContentViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
@@ -698,11 +677,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForUnion(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForUnion(string tabId, int parentId, int[] IDs)
         {
             var result = ContentService.InitList(parentId);
             var model = new UnionContentViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
@@ -723,10 +702,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetContentFormScript(int contentId) => new JSendResponse
+        public ActionResult GetContentFormScript(int contentId) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
             Data = _contentRepository.GetById(contentId).FormScript
-        };
+        });
     }
 }

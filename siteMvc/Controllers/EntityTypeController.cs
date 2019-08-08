@@ -1,4 +1,4 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
@@ -9,19 +9,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult GetByCode(string entityTypeCode)
         {
             var entityType = EntityTypeService.GetByCode(entityTypeCode);
-            return Json(entityType, JsonRequestBehavior.AllowGet);
+            return Json(entityType);
         }
 
         public JsonResult GetCodeById(int entityTypeId)
         {
             var code = EntityTypeService.GetCodeById(entityTypeId);
-            return Json(code, JsonRequestBehavior.AllowGet);
+            return Json(code);
         }
 
         public JsonResult GetParentCodeByCode(string entityTypeCode)
         {
             var parentEntityTypeCode = EntityTypeService.GetParentCodeByCode(entityTypeCode);
-            return Json(parentEntityTypeCode, JsonRequestBehavior.AllowGet);
+            return Json(parentEntityTypeCode);
         }
     }
 }

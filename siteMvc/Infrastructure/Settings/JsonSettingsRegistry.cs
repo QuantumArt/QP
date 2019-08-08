@@ -10,5 +10,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Settings
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
+
+        public static JsonSerializerSettings MicrosoftDateSettings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+        };
     }
 }

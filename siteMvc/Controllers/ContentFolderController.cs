@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -14,11 +16,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentFolder)]
         [BackendActionContext(ActionCode.AddNewContentFolder)]
-        public ActionResult New(string tabId, int parentId, int id)
+        public async Task<ActionResult> New(string tabId, int parentId, int id)
         {
             var folder = ContentFolderService.New(parentId, id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         [HttpPost]
@@ -28,12 +30,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewContentFolder)]
         [BackendActionLog]
         [Record]
-        public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, int id, FormCollection collection)
         {
             var folder = ContentFolderService.NewForSave(parentId, id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -42,19 +44,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSiteFolder });
             }
 
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentFolderProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "id")]
         [BackendActionContext(ActionCode.ContentFolderProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var folder = ContentFolderService.Read(id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         [HttpPost, Record(ActionCode.ContentFolderProperties)]
@@ -63,11 +65,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateContentFolder)]
         [BackendActionContext(ActionCode.UpdateContentFolder)]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var folder = ContentFolderService.ReadForUpdate(id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -76,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
 
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         public ActionResult RemovePreAction(int parentId, int id) => Json(ContentFolderService.RemovePreAction(id));
@@ -98,12 +100,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ContentFileProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "parentId")]
         [BackendActionContext(ActionCode.ContentFileProperties)]
-        public ActionResult FileProperties(string tabId, int parentId, string id, string successfulActionCode)
+        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, string successfulActionCode)
         {
             var file = ContentFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, false);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("FileProperties", model);
+            return await JsonHtml("FileProperties", model);
         }
 
         [HttpPost]
@@ -112,11 +114,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.ContentFolder, "parentId")]
         [BackendActionContext(ActionCode.UpdateContentFile)]
         [BackendActionLog]
-        public ActionResult FileProperties(string tabId, int parentId, string id, FormCollection collection)
+        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, FormCollection collection)
         {
             var file = ContentFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, false);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -124,7 +126,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("FileProperties", new { tabId, parentId, id = model.Id, successfulActionCode = ActionCode.UpdateContentFile });
             }
 
-            return JsonHtml("FileProperties", model);
+            return await JsonHtml("FileProperties", model);
         }
 
         [HttpPost]

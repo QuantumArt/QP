@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Web;
+using Microsoft.AspNetCore.Http;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -12,14 +12,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
     {
         internal static string GetAssemblyVersion() => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
 
-        internal static string GetBackendUrl(HttpContextBase context)
+        internal static string GetBackendUrl(HttpContext context)
         {
             if (context.IsXmlDbUpdateReplayAction())
             {
-                return context.Items.Contains(HttpContextItems.BackendUrlContext) ? context.Items[HttpContextItems.BackendUrlContext].ToString() : string.Empty;
+                return context.Items.ContainsKey(HttpContextItems.BackendUrlContext) ? context.Items[HttpContextItems.BackendUrlContext].ToString() : string.Empty;
             }
 
-            return $"{context.Request.Url?.Scheme}://{context.Request.Url?.Host}:{context.Request.Url?.Port}{context.Request.ApplicationPath}/";
+            // TODO: review GetBackendUrl
+            return $"{context.Request.Scheme}://{context.Request.Host.Host}:{context.Request.Host.Port}{context.Request.PathBase}/";
         }
 
         internal static HashSet<string> GetDbIdentityInsertOptions(bool generateNewFieldIds, bool generateNewContentIds)
