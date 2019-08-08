@@ -1,4 +1,4 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -12,60 +12,44 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult GetByCode(string actionCode)
         {
             var action = BackendActionService.GetByCode(actionCode);
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    action
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                action
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetCodeById(int actionId)
         {
             var actionCode = BackendActionService.GetCodeById(actionId);
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    actionCode
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                actionCode
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetEntityTypeIdToActionListItemsDictionary()
         {
             var dictionary = BackendActionService.GetEntityTypeIdToActionListItemsDictionary();
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    dictionary
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                dictionary
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetStatusesList(string actionCode, string entityId, int parentEntityId, bool? boundToExternal)
         {
             var result = int.TryParse(entityId, out var idResult) ? BackendActionService.GetStatusesList(actionCode, idResult, parentEntityId) : null;
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    actionStatuses = result
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                actionStatuses = result
+            });
         }
     }
 }

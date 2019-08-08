@@ -1,5 +1,6 @@
 using System.Linq;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.Audit;
@@ -32,9 +33,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ActionLog)]
         [BackendActionContext(ActionCode.ActionLog)]
-        public ActionResult Actions(string tabId, int parentId)
+        public async Task<ActionResult> Actions(string tabId, int parentId)
         {
             var model = ActionLogAreaViewModel.Create(tabId, parentId);
+
             model.ActionTypeList = _actionLogService.GetActionTypeList()
                 .Select(t => new QPSelectListItem { Text = Translator.Translate(t.NotTranslatedName), Value = t.Code, Selected = false })
                 .OrderBy(itm => itm.Text)
@@ -50,7 +52,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 .OrderBy(itm => itm.Text)
                 .ToArray();
 
-            return JsonHtml("Actions", model);
+            return await JsonHtml("Actions", model);
         }
 
         [ActionAuthorize(ActionCode.ActionLog)]
@@ -80,7 +82,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ButtonTrace)]
         [BackendActionContext(ActionCode.ButtonTrace)]
-        public ActionResult ButtonTrace(string tabId, int parentId) => JsonHtml("ButtonTraceIndex", ButtonTraceAreaViewModel.Create(tabId, parentId));
+        public async Task<ActionResult> ButtonTrace(string tabId, int parentId)
+        {
+            return await JsonHtml("ButtonTraceIndex", ButtonTraceAreaViewModel.Create(tabId, parentId));
+        }
 
         [ActionAuthorize(ActionCode.ButtonTrace)]
         [BackendActionContext(ActionCode.ButtonTrace)]
@@ -102,10 +107,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.RemovedEntities)]
         [BackendActionContext(ActionCode.RemovedEntities)]
-        public ActionResult RemovedEntities(string tabId, int parentId)
+        public async Task<ActionResult> RemovedEntities(string tabId, int parentId)
         {
             var model = RemovedEntitiesAreaViewModel.Create(tabId, parentId);
-            return JsonHtml("RemovedEntities", model);
+            return await JsonHtml("RemovedEntities", model);
         }
 
         [ActionAuthorize(ActionCode.RemovedEntities)]
@@ -120,10 +125,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SuccessfulSession)]
         [BackendActionContext(ActionCode.SuccessfulSession)]
-        public ActionResult SucessfullSessions(string tabId, int parentId)
+        public async Task<ActionResult> SucessfullSessions(string tabId, int parentId)
         {
             var model = SucessfullSessionsAreaViewModel.Create(tabId, parentId);
-            return JsonHtml("SucessfullSessions", model);
+            return await JsonHtml("SucessfullSessions", model);
         }
 
         [ActionAuthorize(ActionCode.SuccessfulSession)]
@@ -138,10 +143,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.FailedSession)]
         [BackendActionContext(ActionCode.FailedSession)]
-        public ActionResult FailedSessions(string tabId, int parentId)
+        public async Task<ActionResult> FailedSessions(string tabId, int parentId)
         {
             var model = FailedSessionsAreaViewModel.Create(tabId, parentId);
-            return JsonHtml("FailedSessions", model);
+            return await JsonHtml("FailedSessions", model);
         }
 
         [ActionAuthorize(ActionCode.FailedSession)]

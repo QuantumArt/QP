@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -23,22 +25,24 @@ using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    [ValidateInput(false)]
     public class ArticleController : QPController
     {
-        public ArticleController(IArticleService dbArticleService)
+        private readonly IServiceProvider _serviceProvider;
+
+        public ArticleController(IArticleService dbArticleService, IServiceProvider serviceProvider)
             : base(dbArticleService)
         {
+            _serviceProvider = serviceProvider;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
-        public ActionResult Index(string tabId, int parentId, bool? boundToExternal)
+        public async Task<ActionResult> Index(string tabId, int parentId, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
             var model = ArticleListViewModel.Create(articleList, parentId, tabId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -55,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int[] filterIds,
             string orderBy)
         {
-            var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
 
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
@@ -75,12 +79,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArchiveArticles)]
         [BackendActionContext(ActionCode.ArchiveArticles)]
-        public ActionResult ArchiveIndex(string tabId, int parentId, bool? boundToExternal)
+        public async Task<ActionResult> ArchiveIndex(string tabId, int parentId, bool? boundToExternal)
         {
             var articleList = ArticleService.InitArchiveList(parentId);
             var model = ArticleListViewModel.Create(articleList, parentId, tabId);
             model.ShowArchive = true;
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -97,7 +101,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int[] filterIds,
             string orderBy)
         {
-            var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
@@ -116,21 +120,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
-        public ActionResult Tree(string tabId, int parentId, bool? boundToExternal)
+        public async Task<ActionResult> Tree(string tabId, int parentId, bool? boundToExternal)
         {
             var result = ArticleService.InitTree(parentId, false, boundToExternal);
             var model = ArticleListViewModel.Create(result, parentId, tabId);
-            return JsonHtml("Tree", model);
+            return await JsonHtml("Tree", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
-        public ActionResult Select(string tabId, int parentId, int id, bool? boundToExternal)
+        public async Task<ActionResult> Select(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
             var model = ArticleListViewModel.Create(articleList, parentId, tabId, false, true, id);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         /// <param name="IDs">
@@ -152,7 +156,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string orderBy,
             int IDs = 0)
         {
-            var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
@@ -170,11 +174,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
-        public ActionResult SelectTree(string tabId, int parentId, int id, bool? boundToExternal)
+        public async Task<ActionResult> SelectTree(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var result = ArticleService.InitTree(parentId, false, boundToExternal);
             var model = ArticleListViewModel.Create(result, parentId, tabId, false, true, new[] { id });
-            return JsonHtml("Tree", model);
+            return await JsonHtml("Tree", model);
         }
 
         [HttpPost]
@@ -182,11 +186,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs, bool? boundToExternal)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
             var model = ArticleListViewModel.Create(articleList, parentId, tabId, true, true, IDs);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -205,7 +209,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int[] filterIds,
             string orderBy)
         {
-            var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
+            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
@@ -226,20 +230,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectTree(string tabId, int parentId, int[] IDs, bool? boundToExternal)
+        public async Task<ActionResult> MultipleSelectTree(string tabId, int parentId, int[] IDs, bool? boundToExternal)
         {
             var result = ArticleService.InitTree(parentId, true, boundToExternal);
             var model = ArticleListViewModel.Create(result, parentId, tabId, true, true, IDs);
-            return JsonHtml("Tree", model);
+            return await JsonHtml("Tree", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticleStatus)]
         [BackendActionContext(ActionCode.ArticleStatus)]
-        public ActionResult StatusHistoryList(string tabId, int parentId)
+        public async Task<ActionResult> StatusHistoryList(string tabId, int parentId)
         {
             var model = ArticleStatusHistoryListViewModel.Create(tabId, parentId);
-            return JsonHtml("StatusHistoryList", model);
+            return await JsonHtml("StatusHistoryList", model);
         }
 
         [HttpPost]
@@ -261,23 +265,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ViewVirtualArticle)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]
         [BackendActionContext(ActionCode.ViewVirtualArticle)]
-        public ActionResult VirtualProperties(string tabId, int parentId, int id, bool? boundToExternal)
+        public async Task<ActionResult> VirtualProperties(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var data = ArticleService.ReadVirtual(id, parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
             model.IsVirtual = true;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ViewArchiveArticle)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]
         [BackendActionContext(ActionCode.ViewArchiveArticle)]
-        public ActionResult ArchiveProperties(string tabId, int parentId, int id, bool? boundToExternal)
+        public async Task<ActionResult> ArchiveProperties(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var data = ArticleService.ReadArchive(id, parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ConnectionScope]
@@ -285,11 +289,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
         [BackendActionContext(ActionCode.AddNewArticle)]
-        public ActionResult New(string tabId, int parentId, int? fieldId, int? articleId, bool? isChild, bool? boundToExternal)
+        public async Task<ActionResult> New(string tabId, int parentId, int? fieldId, int? articleId, bool? isChild, bool? boundToExternal)
         {
             var data = ArticleService.New(parentId, fieldId, articleId, isChild, boundToExternal);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, ActionName("New"), Record]
@@ -298,13 +302,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [BackendActionContext(ActionCode.AddNewArticle)]
         [BackendActionLog]
-        public ActionResult NewPost(string tabId, int parentId, string backendActionCode, bool? boundToExternal)
+        public async Task<ActionResult> NewPost(string tabId, int parentId, string backendActionCode, bool? boundToExternal)
         {
             var data = ArticleService.NewForSave(parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
+
             model.Validate(ModelState);
+
             if (ModelState.IsValid)
             {
                 try
@@ -333,12 +339,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (ActionNotAllowedException nae)
                 {
-                    ModelState.AddModelError("OperationIsNotAllowedForAggregated", nae);
-                    return JsonHtml("Properties", model);
+                    ModelState.TryAddModelException("OperationIsNotAllowedForAggregated", nae);
+                    return await JsonHtml("Properties", model);
                 }
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [RequestHeader(RequestHeaders.XRequestedWith, "XMLHttpRequest")]
@@ -346,11 +352,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.EditArticle)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]
         [BackendActionContext(ActionCode.EditArticle)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? boundToExternal)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode, bool? boundToExternal)
         {
             var data = ArticleService.Read(id, parentId, successfulActionCode);
             var model = ArticleViewModel.Create(data, parentId, tabId, successfulActionCode, boundToExternal);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, ActionName("Properties"), Record(ActionCode.EditArticle)]
@@ -359,7 +365,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateArticle)]
         [BackendActionContext(ActionCode.UpdateArticle)]
         [BackendActionLog]
-        public ActionResult PropertiesPost(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal)
+        public async Task<ActionResult> PropertiesPost(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal)
         {
             var data = ArticleService.ReadForUpdate(id, parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
@@ -367,8 +373,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             // ReSharper disable once PossibleInvalidOperationException
             PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
+
             model.Validate(ModelState);
+
             if (ModelState.IsValid)
             {
                 try
@@ -398,11 +406,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (ActionNotAllowedException nae)
                 {
                     ModelState.AddModelError("OperationIsNotAllowedForAggregated", nae.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -619,32 +627,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetAggregatedArticle(int id, int parentId, int aggregatedContentId)
+        public async Task<ActionResult> GetAggregatedArticle(int id, int parentId, int aggregatedContentId)
         {
             ViewBag.AggregatedArticle = ArticleService.GetAggregatedArticle(id, parentId, aggregatedContentId);
-            return JsonCamelCaseHtml("_AggregatedArticle");
+            return await JsonCamelCaseHtml("_AggregatedArticle");
         }
 
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult GetContextQuery(int id, string currentContext) => Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
+        public ActionResult GetContextQuery(int id, string currentContext) => Json(ArticleService.GetContextQuery(id, currentContext));
 
         [ConnectionScope]
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter) => new JSendResponse
+        public ActionResult GetParentIds(List<int> ids, int fieldId, string filter) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
             Data = ArticleService.GetParentIds(ids, fieldId)
-        };
+        });
 
         [ConnectionScope]
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter) => new JSendResponse
+        public ActionResult GetChildArticleIds(List<int> ids, int fieldId, string filter) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
             Data = ArticleService.GetChildArticles(ids, fieldId, filter)
-        };
+        });
     }
 }

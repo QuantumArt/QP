@@ -1,4 +1,5 @@
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -20,10 +21,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult TreeView(string tabId)
+        public async Task<ActionResult> TreeView(string tabId)
         {
             var model = ActionPermissionsTreeViewModel.Create(tabId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]

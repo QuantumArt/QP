@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
@@ -18,7 +20,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticlePermissions)]
         [BackendActionContext(ActionCode.ArticlePermissions)]
-        public override ActionResult Index(string tabId, int parentId) => base.Index(tabId, parentId);
+        public override async Task<ActionResult> Index(string tabId, int parentId)
+        {
+            return await base.Index(tabId, parentId);
+        }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.ArticlePermissions)]
@@ -38,7 +43,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewArticlePermission)]
         [BackendActionContext(ActionCode.AddNewArticlePermission)]
-        public override ActionResult New(string tabId, int parentId) => base.New(tabId, parentId);
+        public override async Task<ActionResult> New(string tabId, int parentId)
+        {
+            return await base.New(tabId, parentId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -47,12 +55,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewArticlePermission)]
         [BackendActionLog]
         [Record]
-        public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
+        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        {
+            return await base.New(tabId, parentId, collection);
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticlePermissionProperties)]
         [BackendActionContext(ActionCode.ArticlePermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode) => base.Properties(tabId, parentId, id, successfulActionCode);
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
+        {
+            return await base.Properties(tabId, parentId, id, successfulActionCode);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -61,7 +75,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateArticlePermission)]
         [BackendActionLog]
         [Record(ActionCode.ArticlePermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection) => base.Properties(tabId, parentId, id, collection);
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        {
+            return await base.Properties(tabId, parentId, id, collection);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -85,7 +102,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChildArticlePermissions)]
         [BackendActionContext(ActionCode.ChildArticlePermissions)]
-        public override ActionResult ChildIndex(string tabId, int parentId) => base.ChildIndex(tabId, parentId);
+        public override async Task<ActionResult> ChildIndex(string tabId, int parentId)
+        {
+            return await base.ChildIndex(tabId, parentId);
+        }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.ChildArticlePermissions)]
@@ -104,7 +124,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleChangeChildArticlePermissions)]
         [BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override ActionResult MultipleChangeAsChild(string tabId, int parentId, int[] IDs, int? userId, int? groupId) => base.MultipleChangeAsChild(tabId, parentId, IDs, userId, groupId);
+        public override async Task<ActionResult> MultipleChangeAsChild(string tabId, int parentId, int[] IDs, int? userId, int? groupId)
+        {
+            return await base.MultipleChangeAsChild(tabId, parentId, IDs, userId, groupId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -113,12 +136,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
         [BackendActionLog]
         [Record]
-        public override ActionResult SaveMultipleChangeAsChild(string tabId, int parentId, FormCollection collection) => base.SaveMultipleChangeAsChild(tabId, parentId, collection);
+        public override async Task<ActionResult> SaveMultipleChangeAsChild(string tabId, int parentId, FormCollection collection)
+        {
+            return await base.SaveMultipleChangeAsChild(tabId, parentId, collection);
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeAllChildArticlePermissions)]
         [BackendActionContext(ActionCode.ChangeAllChildArticlePermissions)]
-        public override ActionResult AllChangeAsChild(string tabId, int parentId, int? userId, int? groupId) => base.AllChangeAsChild(tabId, parentId, userId, groupId);
+        public override async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, int? userId, int? groupId)
+        {
+            return await base.AllChangeAsChild(tabId, parentId, userId, groupId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -127,12 +156,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ChangeAllChildArticlePermissions)]
         [BackendActionLog]
         [Record(ActionCode.ChangeAllChildArticlePermissions)]
-        public override ActionResult AllChangeAsChild(string tabId, int parentId, FormCollection collection) => base.AllChangeAsChild(tabId, parentId, collection);
+        public override async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, FormCollection collection)
+        {
+            return await base.AllChangeAsChild(tabId, parentId, collection);
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeChildArticlePermission)]
         [BackendActionContext(ActionCode.ChangeChildArticlePermission)]
-        public override ActionResult ChangeAsChild(string tabId, int parentId, int id, int? userId, int? groupId) => base.ChangeAsChild(tabId, parentId, id, userId, groupId);
+        public override async Task<ActionResult> ChangeAsChild(string tabId, int parentId, int id, int? userId, int? groupId)
+        {
+            return await base.ChangeAsChild(tabId, parentId, id, userId, groupId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -141,7 +176,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ChangeChildArticlePermission)]
         [BackendActionLog]
         [Record(ActionCode.ChangeChildArticlePermission)]
-        public override ActionResult ChangeAsChild(string tabId, int parentId, FormCollection collection) => base.ChangeAsChild(tabId, parentId, collection);
+        public override async Task<ActionResult> ChangeAsChild(string tabId, int parentId, FormCollection collection)
+        {
+            return await base.ChangeAsChild(tabId, parentId, collection);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
