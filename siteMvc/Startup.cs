@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
@@ -58,6 +59,14 @@ namespace Quantumart.QP8.WebMvc
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // used by Session middleware
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.Cookie.IsEssential = true;
+            });
+
             services
                 .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
@@ -209,6 +218,8 @@ namespace Quantumart.QP8.WebMvc
             // TODO: review static files
             app.UseStaticFiles("/Content");
             app.UseStaticFiles("/Scripts");
+
+            app.UseSession();
 
             app.UseSignalR(routes =>
             {
