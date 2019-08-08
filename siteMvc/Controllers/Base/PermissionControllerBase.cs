@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
-using Quantumart.QP8.BLL;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 
@@ -22,11 +22,11 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
 
         protected abstract string ControllerName { get; }
 
-        public virtual ActionResult Index(string tabId, int parentId)
+        public virtual async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = Service.InitList(parentId);
             var model = PermissionListViewModel.Create(result, tabId, parentId, Service, ControllerName);
-            return JsonHtml("EntityPermissionIndex", model);
+            return await JsonHtml("EntityPermissionIndex", model);
         }
 
         public virtual ActionResult _Index(
@@ -41,20 +41,22 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        public virtual ActionResult New(string tabId, int parentId)
+        public virtual async Task<ActionResult> New(string tabId, int parentId)
         {
             var permission = Service.New(parentId);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service);
-            return JsonHtml("EntityPermissionProperties", model);
+            return await JsonHtml("EntityPermissionProperties", model);
         }
 
-        public virtual ActionResult New(string tabId, int parentId, FormCollection collection)
+        public virtual async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
         {
             var permission = Service.New(parentId);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
+
             model.Validate(ModelState);
+
             if (ModelState.IsValid)
             {
                 try
@@ -66,28 +68,30 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
                 catch (ActionNotAllowedException nae)
                 {
                     ModelState.AddModelError("OperationIsNotAllowedForAggregated", nae.Message);
-                    return JsonHtml("EntityPermissionProperties", model);
+                    return await JsonHtml("EntityPermissionProperties", model);
                 }
             }
 
-            return JsonHtml("EntityPermissionProperties", model);
+            return await JsonHtml("EntityPermissionProperties", model);
         }
 
-        public virtual ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public virtual async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var permission = Service.Read(id);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("EntityPermissionProperties", model);
+            return await JsonHtml("EntityPermissionProperties", model);
         }
 
-        public virtual ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public virtual async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var permission = Service.ReadForUpdate(id);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
+
             model.Validate(ModelState);
+
             if (ModelState.IsValid)
             {
                 try
@@ -98,11 +102,11 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
                 catch (ActionNotAllowedException nae)
                 {
                     ModelState.AddModelError("OperationIsNotAllowedForAggregated", nae.Message);
-                    return JsonHtml("EntityPermissionProperties", model);
+                    return await JsonHtml("EntityPermissionProperties", model);
                 }
             }
 
-            return JsonHtml("EntityPermissionProperties", model);
+            return await JsonHtml("EntityPermissionProperties", model);
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]

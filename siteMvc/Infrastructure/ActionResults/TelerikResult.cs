@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;

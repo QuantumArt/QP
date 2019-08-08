@@ -1,6 +1,7 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
@@ -31,7 +32,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
             if (key.StartsWith(Field.Prefix))
             {
                 // динамические поля - без префикса, но надо установить Value для Telerik
-                modelState.SetModelValue(key, new ValueProviderResult(propertyError.PropertyValue, propertyError.PropertyValue, CultureInfo.InvariantCulture));
+                modelState.SetModelValue(key, new ValueProviderResult(propertyError.PropertyValue, CultureInfo.InvariantCulture));
             }
             else
             {
