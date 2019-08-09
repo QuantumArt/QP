@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Helpers;
@@ -15,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class VisualEditorConfigController : QPController
     {
-        public JsonCamelCaseResult<JSendResponse> LoadVeConfig(int fieldId, int siteId)
+        public JsonResult LoadVeConfig(int fieldId, int siteId)
         {
             var result = new JSendResponse { Status = JSendStatus.Success };
 
@@ -69,10 +68,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 result.Message = "Непредвиденная ошибка на сервере";
             }
 
-            return result;
+            return JsonCamelCase(result);
         }
 
         [HttpPost]
-        public ActionResult AspellCheck(string text) => View(new AspellCheckVm(text));
+        public ActionResult AspellCheck(string text)
+        {
+            return View(new AspellCheckVm(text));
+        }
     }
 }

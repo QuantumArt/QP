@@ -3,19 +3,23 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Web.Mvc;
-using System.Web.SessionState;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    [SessionState(SessionStateBehavior.Disabled)]
     public class ThumbnailController : QPController
     {
-        public FileResult _SiteFileThumbnail(int folderId, string fileName) => GetThumbnailResult(SiteFolderService.GetPath(folderId, fileName));
+        public FileResult _SiteFileThumbnail(int folderId, string fileName)
+        {
+            return GetThumbnailResult(SiteFolderService.GetPath(folderId, fileName));
+        }
 
-        public FileResult _ContentFileThumbnail(int folderId, string fileName) => GetThumbnailResult(ContentFolderService.GetPath(folderId, fileName));
+        public FileResult _ContentFileThumbnail(int folderId, string fileName)
+        {
+            return GetThumbnailResult(ContentFolderService.GetPath(folderId, fileName));
+        }
 
         private FileResult GetThumbnailResult(string path)
         {

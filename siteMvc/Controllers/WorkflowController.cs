@@ -1,3 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -6,15 +12,10 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -30,11 +31,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Workflows)]
         [BackendActionContext(ActionCode.Workflows)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = _workflowService.InitList(parentId);
             var model = WorkflowListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -51,12 +52,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.WorkflowProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Workflow, "id")]
         [BackendActionContext(ActionCode.WorkflowProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var workflow = _workflowService.ReadProperties(id);
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.WorkflowProperties)]
@@ -66,12 +67,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateWorkflow)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Workflow, "id")]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var workflow = _workflowService.ReadPropertiesForUpdate(id);
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -83,18 +84,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateWorkflow });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewWorkflow)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewWorkflow)]
-        public ActionResult New(string tabId, int parentId)
+        public async Task<ActionResult> New(string tabId, int parentId)
         {
             var workflow = _workflowService.NewWorkflowProperties(parentId);
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -104,12 +105,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewWorkflow)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
         {
             var workflow = _workflowService.NewWorkflowPropertiesForUpdate(parentId);
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
 
             if (ModelState.IsValid)
@@ -120,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveWorkflow });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -129,7 +130,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveWorkflow)]
         [BackendActionContext(ActionCode.RemoveWorkflow)]
         [BackendActionLog]
-        public ActionResult Remove(int id) => JsonMessageResult(_workflowService.Remove(id));
+        public ActionResult Remove(int id)
+        {
+            return JsonMessageResult(_workflowService.Remove(id));
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
@@ -151,7 +155,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
             }
 
-            return Json(contentAccessSummary.ToString(), JsonRequestBehavior.AllowGet);
+            return Json(contentAccessSummary.ToString());
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -176,7 +180,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
             }
 
-            return Json(contentAccessSummary, JsonRequestBehavior.AllowGet);
+            return Json(contentAccessSummary);
         }
     }
 }

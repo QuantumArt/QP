@@ -1,4 +1,6 @@
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -22,11 +24,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserGroups)]
         [BackendActionContext(ActionCode.UserGroups)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = _service.InitList(parentId);
             var model = UserGroupListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -47,20 +49,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserGroups)]
         [BackendActionContext(ActionCode.UserGroups)]
-        public ActionResult Tree(string tabId, int parentId)
+        public async Task<ActionResult> Tree(string tabId, int parentId)
         {
             var result = _service.InitTree(parentId);
             var model = UserGroupTreeViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Tree", model);
+            return await JsonHtml("Tree", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectUserGroup)]
         [BackendActionContext(ActionCode.SelectUserGroup)]
-        public ActionResult Select(string tabId, int parentId, int id)
+        public async Task<ActionResult> Select(string tabId, int parentId, int id)
         {
             var model = UserGroupSelectableListViewModel.Create(tabId, parentId, new[] { id });
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -86,11 +88,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewUserGroup)]
         [BackendActionContext(ActionCode.AddNewUserGroup)]
-        public ActionResult New(string tabId, int parentId)
+        public async Task<ActionResult> New(string tabId, int parentId)
         {
             var group = _service.NewProperties();
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -99,12 +101,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewUserGroup)]
         [BackendActionContext(ActionCode.AddNewUserGroup)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
         {
             var group = _service.NewProperties();
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -113,7 +115,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveUserGroup });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -133,13 +135,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserGroupProperties)]
         [BackendActionContext(ActionCode.UserGroupProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var group = _service.ReadProperties(id);
             ViewData[SpecialKeys.IsEntityReadOnly] = group.IsReadOnly;
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost]
@@ -149,11 +151,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateUserGroup)]
         [BackendActionLog]
         [Record(ActionCode.UserGroupProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var group = _service.ReadProperties(id);
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -161,7 +163,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateUserGroup });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost]
@@ -177,6 +179,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        public ActionResult RemovePreAction(int id) => Json(_service.RemovePreAction(id));
+        public ActionResult RemovePreAction(int id)
+        {
+            return Json(_service.RemovePreAction(id));
+        }
     }
 }

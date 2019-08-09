@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
@@ -28,11 +30,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Users)]
         [BackendActionContext(ActionCode.Users)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = _service.InitList(parentId);
             var model = UserListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -52,10 +54,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        public ActionResult SearchBlock(string hostId)
+        public async Task<ActionResult> SearchBlock(string hostId)
         {
             var model = new UserSearchBlockViewModel(hostId);
-            return JsonHtml("SearchBlock", model);
+            return await JsonHtml("SearchBlock", model);
         }
 
         [HttpPost]
@@ -63,10 +65,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs)
         {
             var model = UserSelectableListViewModel.Create(tabId, parentId, IDs, true);
-            return JsonHtml("MultipleSelectIndex", model);
+            return await JsonHtml("MultipleSelectIndex", model);
         }
 
         [HttpPost]
@@ -87,10 +89,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectUser)]
         [BackendActionContext(ActionCode.SelectUser)]
-        public ActionResult Select(string tabId, int parentId, int id)
+        public async Task<ActionResult> Select(string tabId, int parentId, int id)
         {
             var model = UserSelectableListViewModel.Create(tabId, parentId, new[] { id }, false);
-            return JsonHtml("MultipleSelectIndex", model);
+            return await JsonHtml("MultipleSelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -116,11 +118,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
-        public ActionResult New(string tabId, int parentId)
+        public async Task<ActionResult> New(string tabId, int parentId)
         {
             var user = _service.GetUserToAdd();
             var model = UserViewModel.Create(user, tabId, parentId, _service);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -129,12 +131,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
         {
             var user = _service.GetUserToAdd();
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -144,18 +146,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveUser });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserProperties)]
         [BackendActionContext(ActionCode.UserProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var user = _service.ReadProperties(id);
             var model = UserViewModel.Create(user, tabId, parentId, _service);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.UserProperties)]
@@ -164,12 +166,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateUser)]
         [BackendActionContext(ActionCode.UpdateUser)]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var user = _service.ReadProperties(id);
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -178,7 +180,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateUser });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -207,23 +209,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result.Message);
         }
 
-#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
-
-        // TODO: RENAME
-        public ActionResult Profile(string tabId, int parentId, string successfulActionCode)
+        public async Task<ActionResult> Profile(string tabId, int parentId, string successfulActionCode)
         {
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Profile", model);
+            return await JsonHtml("Profile", model);
         }
 
         [HttpPost]
-        public ActionResult Profile(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> Profile(string tabId, int parentId, FormCollection collection)
         {
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -231,27 +230,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Profile", new { successfulActionCode = ActionCode.UpdateProfile });
             }
 
-            return JsonHtml("Profile", model);
+            return await JsonHtml("Profile", model);
         }
 
         [HttpGet]
-        public ActionResult ChangePassword()
+        public async Task<ActionResult> ChangePassword()
         {
             string tabId = "0"; int parentId = 0;
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
-            return JsonHtml("ChangePasswordPopup", model);
+            return await JsonHtml("ChangePasswordPopup", model);
         }
 
         [HttpPost]
-        public ActionResult ChangePassword(string tabId, User currentUser)
+        public async Task<ActionResult> ChangePassword(string tabId, User currentUser)
         {
             var parentId = 0;
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             user.NewPassword = currentUser.NewPassword;
             user.NewPasswordCopy = currentUser.NewPasswordCopy;
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -261,7 +260,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { success = true, isChanging = true });
 
             }
-            return JsonHtml("ChangePasswordPopup", model);
+            return await JsonHtml("ChangePasswordPopup", model);
         }
     }
 }
