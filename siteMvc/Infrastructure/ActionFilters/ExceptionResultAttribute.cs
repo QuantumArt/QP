@@ -65,7 +65,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         private static bool IsAjaxRequest(ActionContext filterContext)
         {
-            return filterContext.HttpContext.Request.Headers[RequestHeaders.XRequestedWith] == "XMLHttpRequest";
+            return filterContext.HttpContext.Request.IsAjaxRequest();
         }
 
         private static bool ShouldBeHandled(ExceptionContext filterContext)

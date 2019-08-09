@@ -135,7 +135,7 @@ namespace Quantumart.QP8.Security
         public static bool ShouldUseWindowsAuthentication(string currentIp)
         {
             var result = false;
-            var qpWindowsAuthConfig = QPConfiguration.WebConfigSection.Authentication.WindowsAuthentication;
+            var qpWindowsAuthConfig = QPConfiguration.AppConfigSection.Authentication.WindowsAuthentication;
             if (qpWindowsAuthConfig != null)
             {
                 result = qpWindowsAuthConfig.IpRanges.Cast<IpRangeElement>().Any(range => CheckIpRange(currentIp, range.BeginIp, range.EndIp));
@@ -168,7 +168,7 @@ namespace Quantumart.QP8.Security
         public static string CompleteAuthentication(QpUser user)
         {
             FormsAuthenticationTicket ticket;
-            if (QPConfiguration.WebConfigSection.Authentication.AllowSaveUserInformationInCookie)
+            if (QPConfiguration.AppConfigSection.Authentication.AllowSaveUserInformationInCookie)
             {
                 ticket = CreateAuthenticationTicket(user.Name, user);
             }
@@ -184,7 +184,7 @@ namespace Quantumart.QP8.Security
             return FormsAuthentication.GetRedirectUrl(string.Empty, false);
         }
 
-        public static string WindowsAuthenticationUrl => QPConfiguration.WebConfigSection.Authentication.WindowsAuthentication.LoginUrl;
+        public static string WindowsAuthenticationUrl => QPConfiguration.AppConfigSection.Authentication.WindowsAuthentication.LoginUrl;
 
         public static string LogOut()
         {

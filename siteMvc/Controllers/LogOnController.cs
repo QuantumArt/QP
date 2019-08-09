@@ -1,5 +1,6 @@
-﻿using System.Linq;
-using System.Web.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
@@ -12,25 +13,26 @@ using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    [ValidateInput(false)]
     public class LogOnController : QPController
     {
         [DisableBrowserCache]
         [ResponseHeader(ResponseHeaders.QpNotAuthenticated, "True")]
-        public ActionResult Index(DirectLinkOptions directLinkOptions)
+        public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions)
         {
-            if (!Request.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(Request.UserHostAddress))
+            string userIpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+
+            if (!User.Identity.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(userIpAddress))
             {
                 return Redirect(GetAuthorizationUrl(directLinkOptions));
             }
 
             FillViewBagData();
-            return LogOnView();
+            return await LogOnView();
         }
 
         [HttpPost]
         [DisableBrowserCache]
-        public ActionResult Index(DirectLinkOptions directLinkOptions, LogOnCredentials data)
+        public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions, LogOnCredentials data)
         {
             try
             {
@@ -63,7 +65,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             FillViewBagData();
-            return LogOnView();
+            return await LogOnView();
         }
 
         [DisableBrowserCache]
@@ -86,6 +88,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             ViewBag.CustomerCodes = QPConfiguration.GetCustomerCodes().Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
         }
 
-        private ActionResult LogOnView() => Request.IsAjaxRequest() ? JsonHtml("Popup", null) : View();
+        private async Task<ActionResult> LogOnView()
+        {
+            if (Request.IsAjaxRequest())
+            {
+                return await JsonHtml("Popup", null);
+            }
+            return View();
+        }
     }
 }
