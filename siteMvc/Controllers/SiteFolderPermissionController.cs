@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
@@ -18,7 +20,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteFolderPermissions)]
         [BackendActionContext(ActionCode.SiteFolderPermissions)]
-        public override ActionResult Index(string tabId, int parentId) => base.Index(tabId, parentId);
+        public override async Task<ActionResult> Index(string tabId, int parentId)
+        {
+            return await base.Index(tabId, parentId);
+        }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.SiteFolderPermissions)]
@@ -38,7 +43,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSiteFolderPermission)]
         [BackendActionContext(ActionCode.AddNewSiteFolderPermission)]
-        public override ActionResult New(string tabId, int parentId) => base.New(tabId, parentId);
+        public override async Task<ActionResult> New(string tabId, int parentId)
+        {
+            return await base.New(tabId, parentId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -47,12 +55,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewSiteFolderPermission)]
         [BackendActionLog]
         [Record]
-        public override ActionResult New(string tabId, int parentId, FormCollection collection) => base.New(tabId, parentId, collection);
+        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        {
+            return await base.New(tabId, parentId, collection);
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteFolderPermissionProperties)]
         [BackendActionContext(ActionCode.SiteFolderPermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode) => base.Properties(tabId, parentId, id, successfulActionCode);
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
+        {
+            return await base.Properties(tabId, parentId, id, successfulActionCode);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -61,7 +75,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateSiteFolderPermission)]
         [BackendActionLog]
         [Record(ActionCode.SiteFolderPermissionProperties)]
-        public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection) => base.Properties(tabId, parentId, id, collection);
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        {
+            return await base.Properties(tabId, parentId, id, collection);
+        }
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -23,11 +25,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Pages)]
         [BackendActionContext(ActionCode.Pages)]
-        public ActionResult IndexPages(string tabId, int parentId)
+        public async Task<ActionResult> IndexPages(string tabId, int parentId)
         {
             var result = _pageService.InitPageList(parentId);
             var model = PageListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -44,11 +46,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewPage)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Page, "parentId")]
         [BackendActionContext(ActionCode.AddNewPage)]
-        public ActionResult NewPage(string tabId, int parentId)
+        public async Task<ActionResult> NewPage(string tabId, int parentId)
         {
             var page = _pageService.NewPageProperties(parentId);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -57,11 +59,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewPage)]
         [BackendActionContext(ActionCode.AddNewPage)]
         [BackendActionLog]
-        public ActionResult NewPage(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewPage(string tabId, int parentId, FormCollection collection)
         {
             var page = _pageService.NewPagePropertiesForUpdate(parentId);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -70,20 +72,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("PageProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SavePage });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Page, "id")]
         [BackendActionContext(ActionCode.PageProperties)]
-        public ActionResult PageProperties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> PageProperties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var page = _pageService.ReadPageProperties(id);
             ViewData[SpecialKeys.IsEntityReadOnly] = page.LockedByAnyoneElse;
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost]
@@ -93,11 +95,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdatePage)]
         [BackendActionLog]
         [Record(ActionCode.PageProperties)]
-        public ActionResult PageProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> PageProperties(string tabId, int parentId, int id, FormCollection collection)
         {
             var page = _pageService.ReadPagePropertiesForUpdate(id);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -105,7 +107,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("PageProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdatePageTemplate });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -115,7 +117,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemovePage)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePage(int parentId, int[] IDs) => JsonMessageResult(_pageService.MultipleRemovePage(IDs));
+        public ActionResult MultipleRemovePage(int parentId, int[] IDs)
+        {
+            return JsonMessageResult(_pageService.MultipleRemovePage(IDs));
+        }
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -143,12 +148,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectPageForObjectForm)]
         [BackendActionContext(ActionCode.SelectPageForObjectForm)]
-        public ActionResult SelectPages(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectPages(string tabId, int parentId, int id)
         {
             var template = _pageService.ReadPageTemplateProperties(parentId);
             var result = _pageService.InitPageListForSite(template.SiteId);
             var model = new PageSelectableListViewModel(result, tabId, parentId, new[] { id });
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
         /// <param name="IDs">
@@ -167,11 +172,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult AssemblePagePreAction(int id) => JsonMessageResult(_pageService.AssemblePagePreAction(id));
+        public ActionResult AssemblePagePreAction(int id)
+        {
+            return JsonMessageResult(_pageService.AssemblePagePreAction(id));
+        }
 
         [HttpPost]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePagePreAction(int[] IDs) => JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
+        public ActionResult MultipleAssemblePagePreAction(int[] IDs)
+        {
+            return JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -179,7 +190,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssemblePage)]
         [BackendActionContext(ActionCode.AssemblePage)]
         [BackendActionLog]
-        public ActionResult AssemblePage(int id) => JsonMessageResult(_pageService.AssemblePage(id));
+        public ActionResult AssemblePage(int id)
+        {
+            return JsonMessageResult(_pageService.AssemblePage(id));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -188,7 +202,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleAssemblePage)]
         [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePage(int[] IDs) => JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
+        public ActionResult MultipleAssemblePage(int[] IDs)
+        {
+            return JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

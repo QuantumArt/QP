@@ -2,7 +2,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Mime;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -29,11 +31,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Sites)]
         [BackendActionContext(ActionCode.Sites)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = SiteService.InitList(parentId);
             var model = SiteListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -51,11 +53,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectSites)]
         [BackendActionContext(ActionCode.MultipleSelectSites)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs)
         {
             var result = SiteService.MultipleInitList(parentId);
             var model = SiteListViewModel.Create(result, tabId, parentId, true, IDs);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -74,17 +76,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SearchInArticles)]
         [EntityAuthorize(ActionTypeCode.Search, EntityTypeCode.Site, "id")]
         [BackendActionContext(ActionCode.SearchInArticles)]
-        public ActionResult SearchInArticles(string tabId, int parentId, int id, string query)
+        public async Task<ActionResult> SearchInArticles(string tabId, int parentId, int id, string query)
         {
             var model = SearchInArticlesListViewModel.Create(id, tabId, parentId);
             model.Query = query;
-            return JsonHtml("SearchInArticles", model);
+            return await JsonHtml("SearchInArticles", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.SearchInArticles)]
         [BackendActionContext(ActionCode.SearchInArticles)]
-        [ValidateInput(false)]
         public ActionResult _SearchInArticles(
             string tabId, int parentId, int id, int page, int pageSize, string orderBy, string searchQuery)
         {
@@ -96,11 +97,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSite)]
         [BackendActionContext(ActionCode.AddNewSite)]
-        public ActionResult New(string tabId, int parentId)
+        public async Task<ActionResult> New(string tabId, int parentId)
         {
             var site = SiteService.New();
             var model = SiteViewModel.Create(site, tabId, parentId);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -109,13 +110,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewSite)]
         [BackendActionContext(ActionCode.AddNewSite)]
         [BackendActionLog]
-        [ValidateInput(false)]
-        public ActionResult New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
         {
             var site = SiteService.NewForSave();
             var model = SiteViewModel.Create(site, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -124,20 +124,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSite });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Site, "id")]
         [BackendActionContext(ActionCode.SiteProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var site = SiteService.Read(id);
             ViewData[SpecialKeys.IsEntityReadOnly] = site.LockedByAnyoneElse;
             var model = SiteViewModel.Create(site, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost]
@@ -146,14 +146,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateSite)]
         [BackendActionContext(ActionCode.UpdateSite)]
         [BackendActionLog]
-        [ValidateInput(false)]
         [Record(ActionCode.SiteProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var site = SiteService.ReadForUpdate(id);
             var model = SiteViewModel.Create(site, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -161,17 +160,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteLibrary)]
         [BackendActionContext(ActionCode.SiteLibrary)]
-        public ActionResult Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
+        public async Task<ActionResult> Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
         {
             var result = SiteService.Library(id, subFolder);
             var model = LibraryViewModel.Create(result, tabId, id, filterFileTypeId, allowUpload, LibraryMode.Site);
-            return JsonHtml("Library", model);
+            return await JsonHtml("Library", model);
         }
 
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "gridParentId")]
@@ -206,19 +205,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     FileNameFilter = fileNameFilter
                 });
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
+                success = true,
+                data = new ListResult<FileListItem>
                 {
-                    success = true,
-                    data = new ListResult<FileListItem>
-                    {
-                        Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
-                        TotalRecords = serviceResult.TotalRecords
-                    }
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                    Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
+                    TotalRecords = serviceResult.TotalRecords
+                }
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -226,17 +221,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult _FolderPath(int folderId)
         {
             var folder = SiteFolderService.GetById(folderId);
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    path = folder.PathInfo.Path,
-                    url = folder.PathInfo.Url,
-                    libraryPath = folder.Path
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                path = folder.PathInfo.Path,
+                url = folder.PathInfo.Url,
+                libraryPath = folder.Path
+            });
         }
 
         [HttpPost]
@@ -269,10 +260,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AssembleContents)]
         [BackendActionContext(ActionCode.AssembleContents)]
         [BackendActionLog]
-        public ActionResult AssembleContents(int id) => Json(SiteService.AssembleContents(id));
+        public ActionResult AssembleContents(int id)
+        {
+            return Json(SiteService.AssembleContents(id));
+        }
 
         [HttpPost]
-        public ActionResult AssembleContentsPreAction(int id) => Json(SiteService.AssembleContentsPreAction(id));
+        public ActionResult AssembleContentsPreAction(int id)
+        {
+            return Json(SiteService.AssembleContentsPreAction(id));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

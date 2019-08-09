@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -24,11 +26,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.StatusTypes)]
         [BackendActionContext(ActionCode.StatusTypes)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = _statusTypeService.InitList(parentId);
             var model = StatusTypeListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -44,12 +46,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.StatusTypeProperties)]
         [BackendActionContext(ActionCode.StatusTypeProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var status = _statusTypeService.ReadProperties(id);
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost]
@@ -59,12 +61,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateStatusType)]
         [BackendActionLog]
         [Record(ActionCode.StatusTypeProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var status = _statusTypeService.ReadPropertiesForUpdate(id);
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -72,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateVisualEditorPlugin });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -80,11 +82,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewStatusType)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewStatusType)]
-        public ActionResult New(string tabId, int parentId)
+        public async Task<ActionResult> New(string tabId, int parentId)
         {
             var status = _statusTypeService.NewStatusTypeProperties(parentId);
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -94,12 +96,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewStatusType)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
         {
             var status = _statusTypeService.NewStatusTypePropertiesForUpdate(parentId);
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
 
-            TryUpdateModel(model);
+            await TryUpdateModelAsync(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
@@ -108,7 +110,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveStatusType });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -117,18 +119,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RemoveStatusType)]
         [BackendActionContext(ActionCode.RemoveStatusType)]
         [BackendActionLog]
-        public ActionResult Remove(int id) => Json(_statusTypeService.Remove(id));
+        public ActionResult Remove(int id)
+        {
+            return Json(_statusTypeService.Remove(id));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
         {
             _statusTypeService.InitList(parentId);
             var model = new StatusTypeSelectableListViewModel(tabId, parentId, IDs);
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
