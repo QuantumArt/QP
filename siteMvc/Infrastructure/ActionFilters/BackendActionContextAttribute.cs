@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
@@ -16,6 +21,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
         private readonly string _entityMultiIdParamName;
         private readonly string _actionCode;
 
+        /// <summary>
+        /// If <paramref name="actionCode"/> is null then it taken from RouteData.Values["command"]
+        /// </summary>
         public BackendActionContextAttribute(string actionCode, string entitySingleIdParamName = "id", string entityMultiIdParamName = "IDs", string parentEntityIdParamName = "parentId")
         {
             Order = FilterOrder;
@@ -25,21 +33,24 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             _actionCode = actionCode;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext filterContext, ActionExecutionDelegate next)
         {
-            base.OnActionExecuting(filterContext);
+            IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
+            ControllerContext controllerContext = ((Controller)filterContext.Controller).ControllerContext;
+            IValueProvider valueProvider = await CompositeValueProvider.CreateAsync(controllerContext);
+
             var stringEntityIDs = new List<string>();
-            var vpr = filterContext.Controller.ValueProvider.GetValue(_entitySingleIdParamName);
-            if (vpr != null)
+
+            if (int.TryParse(valueProvider.GetValue(_entitySingleIdParamName).FirstValue, out int entityId))
             {
-                stringEntityIDs.Add(vpr.AttemptedValue);
+                stringEntityIDs.Add(entityId.ToString());
             }
             else
             {
-                if (filterContext.ActionParameters.ContainsKey(_entityMultiIdParamName))
+                if (filterContext.ActionArguments.ContainsKey(_entityMultiIdParamName))
                 {
-                    var ids = filterContext.ActionParameters[_entityMultiIdParamName] as IEnumerable<int>;
-                    var strIds = filterContext.ActionParameters[_entityMultiIdParamName] as IEnumerable<string>;
+                    var ids = filterContext.ActionArguments[_entityMultiIdParamName] as IEnumerable<int>;
+                    var strIds = filterContext.ActionArguments[_entityMultiIdParamName] as IEnumerable<string>;
                     if (ids != null)
                     {
                         stringEntityIDs.AddRange(ids.Select(id => id.ToString()));
@@ -52,22 +63,31 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             }
 
             int? parentEntityId = null;
-            vpr = filterContext.Controller.ValueProvider.GetValue(_parentEntityIdParamName);
-            if (!string.IsNullOrEmpty(vpr?.AttemptedValue))
+
+            if (int.TryParse(valueProvider.GetValue(_parentEntityIdParamName).FirstValue, out int parentId))
             {
-                if (int.TryParse(vpr.AttemptedValue, out var peid))
-                {
-                    parentEntityId = peid;
-                }
+                parentEntityId = parentId;
             }
 
-            BackendActionContext.SetCurrent(_actionCode, stringEntityIDs, parentEntityId);
-        }
+            string actionCode = _actionCode;
 
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
-        {
-            BackendActionContext.ResetCurrent();
-            base.OnActionExecuted(filterContext);
+            if (actionCode == null)
+            {
+                var getActionCode = serviceProvider.GetRequiredService<Func<string, IActionCode>>();
+                var command = (string)filterContext.RouteData.Values["command"];
+                actionCode = getActionCode(command).ActionCode;
+            }
+
+            BackendActionContext.SetCurrent(actionCode, stringEntityIDs, parentEntityId);
+
+            try
+            {
+                await next();
+            }
+            finally
+            {
+                BackendActionContext.ResetCurrent();
+            }
         }
     }
 }

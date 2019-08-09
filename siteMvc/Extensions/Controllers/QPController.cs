@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
