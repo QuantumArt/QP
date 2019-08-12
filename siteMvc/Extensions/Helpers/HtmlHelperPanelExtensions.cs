@@ -1,27 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
     public static class HtmlHelperPanelExtensions
     {
-        public class Panel : IDisposable
+        private class Panel : IDisposable
         {
             private bool _disposed;
-            private readonly HtmlHelper _html;
+            private readonly IHtmlHelper _html;
 
-            public Panel(HtmlHelper html)
+            public Panel(IHtmlHelper html)
             {
-                if (html == null)
-                {
-                    throw new ArgumentNullException(nameof(html));
-                }
-
-                _html = html;
+                _html = html ?? throw new ArgumentNullException(nameof(html));
             }
 
             public void Dispose()
@@ -41,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
         }
 
-        public static Panel BeginPanel(this HtmlHelper html, string id, bool isView, bool isUniqId, Dictionary<string, object> htmlAttributes = null, bool reverse = false)
+        public static IDisposable BeginPanel(this IHtmlHelper html, string id, bool isView, bool isUniqId, Dictionary<string, object> htmlAttributes = null, bool reverse = false)
         {
             var display = isView ? "block" : "none";
 
@@ -57,14 +53,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var attrs = string.Join(" ", htmlAttributes.Select(p => $"{p.Key}={p.Value}"));
 
-            html.ViewContext.Writer.Write("<div style=\"display:{1}\" id=\"{0}\" {2}>", isUniqId ? id : html.UniqueId(id), display, attrs);
+            html.ViewContext.Writer.Write(
+                "<div style=\"display:{1}\" id=\"{0}\" {2}>", isUniqId ? id : html.UniqueId(id), display, attrs);
 
             return new Panel(html);
         }
 
-        public static Panel BeginPanel(this HtmlHelper html, string id) => BeginPanel(html, id, false, false);
+        public static IDisposable BeginPanel(this IHtmlHelper html, string id)
+        {
+            return BeginPanel(html, id, false, false);
+        }
 
-        public static Panel BeginPanel(this HtmlHelper html, string id, bool disableControls)
+        public static IDisposable BeginPanel(this IHtmlHelper html, string id, bool disableControls)
         {
             var htmlAttributes = new Dictionary<string, object>(0);
             if (disableControls)
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return BeginPanel(html, id, false, false, htmlAttributes);
         }
 
-        public static Panel BeginPanel(this HtmlHelper html, Dictionary<string, object> htmlAttributes = null)
+        public static IDisposable BeginPanel(this IHtmlHelper html, Dictionary<string, object> htmlAttributes = null)
         {
             if (htmlAttributes == null)
             {
@@ -87,15 +87,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return new Panel(html);
         }
 
-        public static Panel BeginDocumentPadding(this HtmlHelper html) => BeginPanel(html, new Dictionary<string, object> { { "class", "documentPadding" } });
+        public static IDisposable BeginDocumentPadding(this IHtmlHelper html)
+        {
+            return BeginPanel(html, new Dictionary<string, object> { { "class", "documentPadding" } });
+        }
 
         /// <summary>
         /// Генерирует начальную часть панели для свертывания/развертывания
         /// </summary>
         [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
-        public static Panel BeginPanel<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, TValue selectedValue, bool disableControls = false, Dictionary<string, object> htmlAttributes = null)
+        public static IDisposable BeginPanel<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, TValue selectedValue, bool disableControls = false, Dictionary<string, object> htmlAttributes = null)
         {
-            var id = QPSelectListItem.GetDependentPanelId(ExpressionHelper.GetExpressionText(expression), selectedValue.ToString());
+            var id = QPSelectListItem.GetDependentPanelId(
+                ExpressionHelper.GetExpressionText(expression),
+                selectedValue.ToString());
+
             if (htmlAttributes == null)
             {
                 htmlAttributes = new Dictionary<string, object>(0);
@@ -113,7 +119,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// Генерирует конечную часть панели для свертывания/развертывания
         /// </summary>
         /// <param name="html">HTML-хелпер</param>
-        public static void EndPanel(this HtmlHelper html)
+        public static void EndPanel(this IHtmlHelper html)
         {
             html.ViewContext.Writer.Write("</div>");
         }

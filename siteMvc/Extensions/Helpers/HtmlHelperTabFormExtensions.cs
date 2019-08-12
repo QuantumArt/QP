@@ -1,6 +1,5 @@
 using System;
-using System.Web.Mvc;
-using System.Web.Mvc.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
@@ -9,19 +8,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
     public static class HtmlHelperTabFormExtensions
     {
-        public class TabForm : IDisposable
+        private class TabForm : IDisposable
         {
             private bool _disposed;
-            private readonly HtmlHelper _html;
+            private readonly IHtmlHelper _html;
 
-            public TabForm(HtmlHelper html)
+            public TabForm(IHtmlHelper html)
             {
-                if (html == null)
-                {
-                    throw new ArgumentNullException(nameof(html));
-                }
-
-                _html = html;
+                _html = html ?? throw new ArgumentNullException(nameof(html));
             }
 
             public void Dispose()
@@ -44,7 +38,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// Генерирует начальную часть контейнера стандартной формы QP8
         /// </summary>
         /// <returns>объект типа TabForm</returns>
-        public static TabForm BeginTabForm(this HtmlHelper html, ViewModel model, string actionName = null, string controlerName = null, object routeValues = null)
+        public static IDisposable BeginTabForm(
+            this IHtmlHelper html,
+            ViewModel model,
+            string actionName = null,
+            string controlerName = null,
+            object routeValues = null)
         {
             if (string.IsNullOrWhiteSpace(actionName) || string.IsNullOrWhiteSpace(controlerName))
             {
@@ -60,7 +59,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             writer.WriteLine(@"<div class=""editingForm"" id=""{0}"">", html.UniqueId("editingForm"));
             writer.WriteLine(@"<div class=""formLayout"">");
 
-            var summary = html.ValidationSummary(GlobalStrings.ErrorSummary_FormErrors, new { id = model.ValidationSummaryId, style = "margin-top: 0.5em;" });
+            var summary = html.ValidationSummary(
+                GlobalStrings.ErrorSummary_FormErrors,
+                new { id = model.ValidationSummaryId, style = "margin-top: 0.5em;" });
+
             if (summary != null)
             {
                 writer.Write(summary.ToString());
@@ -73,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// Генерирует конечную часть контейнера стандартной формы QP8
         /// </summary>
         /// <param name="html">HTML-хелпер</param>
-        public static void EndTabForm(this HtmlHelper html)
+        public static void EndTabForm(this IHtmlHelper html)
         {
             var writer = html.ViewContext.Writer;
             writer.WriteLine("<input type=\"hidden\" name=\"{0}\" />", Default.ActionCodeHiddenName);

@@ -5,8 +5,10 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Web.Mvc;
-using System.Web.Mvc.Html;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
@@ -16,6 +18,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 
@@ -71,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public const string TimeTextboxClassName = "time";
         public const string DateTimeTextboxClassName = "datetime";
 
-        internal static Dictionary<string, object> QpHtmlProperties<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, EditorType type, int index = -1)
+        internal static Dictionary<string, object> QpHtmlProperties<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, EditorType type, int index = -1)
         {
             var data = source.GetMetaData(expression);
             var name = ExpressionHelper.GetExpressionText(expression);
@@ -79,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.QpHtmlProperties(name, maxlength, type, index);
         }
 
-        internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string name, int maxlength, EditorType type, int index = -1)
+        internal static Dictionary<string, object> QpHtmlProperties(this IHtmlHelper source, string name, int maxlength, EditorType type, int index = -1)
         {
             var htmlAttributes = new Dictionary<string, object> { { "id", source.UniqueId(name, index) } };
             switch (type)
@@ -126,7 +129,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return htmlAttributes;
         }
 
-        internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string id, Field field, int index, bool isReadOnly, string contentFieldName = null)
+        internal static Dictionary<string, object> QpHtmlProperties(this IHtmlHelper source, string id, Field field, int index, bool isReadOnly, string contentFieldName = null)
         {
             var htmlAttributes = new Dictionary<string, object> { { "id", source.UniqueId(id, index) } };
             htmlAttributes.AddData("exact_type", field.ExactType.ToString());
@@ -198,7 +201,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return (attrs ?? throw new InvalidOperationException()).Any() ? attrs[0] : null;
         }
 
-        public static MvcHtmlString QpLabel(this HtmlHelper html, string id, string title, bool withColon = true, string tooltip = null)
+        public static IHtmlContent QpLabel(this IHtmlHelper html, string id, string title, bool withColon = true, string tooltip = null)
         {
             var label = new TagBuilder("label");
             label.MergeAttribute("for", id);
@@ -206,28 +209,37 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 label.MergeAttribute("title", tooltip);
             }
-
-            label.InnerHtml = !string.IsNullOrWhiteSpace(title) ? title + (withColon ? ":" : string.Empty) : string.Empty;
-            return MvcHtmlString.Create(label.ToString());
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                label.InnerHtml.AppendHtml(title);
+                if (withColon)
+                {
+                    label.InnerHtml.AppendHtml(":");
+                }
+            }
+            return label;
         }
 
-        public static string FileUpload(this HtmlHelper source, string id)
+        public static IHtmlContent FileUpload(this IHtmlHelper source, string id)
         {
             var tb = new TagBuilder("div");
             tb.MergeAttribute("id", source.UniqueId(id + "_upload"));
 
-            tb.MergeAttribute("class", "l-pl-uploader-container");
+            tb.AddCssClass("l-pl-uploader-container");
             tb.MergeAttribute("style", "display:inline-block;");
+
             var pbTb = new TagBuilder("div");
             pbTb.AddCssClass("lop-pbar-container");
             pbTb.MergeAttribute("style", "height: 18px;");
-            pbTb.InnerHtml = "<div class=\"lop-pbar\"></div>";
-            tb.InnerHtml = $"<div id={source.UniqueId("uploadBtn_") + id} class=\"t-button pl_upload_button\"><span>{LibraryStrings.Upload}</span></div>{pbTb}";
+            pbTb.InnerHtml.AppendHtml("<div class=\"lop-pbar\"></div>");
 
-            return tb.ToString();
+            tb.InnerHtml.AppendHtml($"<div id={source.UniqueId("uploadBtn_") + id} class=\"t-button pl_upload_button\"><span>{LibraryStrings.Upload}</span></div>");
+            tb.InnerHtml.AppendHtml(pbTb);
+
+            return tb;
         }
 
-        private static string ImgButton(string id, string title, string cssClassName)
+        private static IHtmlContent ImgButton(string id, string title, string cssClassName)
         {
             var img = new TagBuilder("img");
             img.MergeAttribute("src", PathUtility.Combine(SitePathHelper.GetCommonRootImageFolderUrl(), "0.gif"));
@@ -235,17 +247,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var div = new TagBuilder("div");
             div.MergeAttribute("id", id);
             div.MergeAttribute("title", title);
-            div.MergeAttribute("class", cssClassName);
-            div.InnerHtml = img.ToString();
+            div.AddCssClass(cssClassName);
+            div.InnerHtml.AppendHtml(img);
 
-            return div.ToString();
+            return div;
         }
 
-        internal static string FileDownload(this HtmlHelper source, string id) => ImgButton(source.UniqueId(id + "_download"), GlobalStrings.ViewDownload, DownloadButtonClassName);
+        internal static IHtmlContent FileDownload(this IHtmlHelper source, string id) => ImgButton(source.UniqueId(id + "_download"), GlobalStrings.ViewDownload, DownloadButtonClassName);
 
-        internal static string ImagePreview(this HtmlHelper source, string id) => ImgButton(source.UniqueId(id + "_preview"), GlobalStrings.Preview, PreviewButtonClassName);
+        internal static IHtmlContent ImagePreview(this IHtmlHelper source, string id) => ImgButton(source.UniqueId(id + "_preview"), GlobalStrings.Preview, PreviewButtonClassName);
 
-        public static string ImageLibrary(this HtmlHelper source, string id) => ImgButton(source.UniqueId(id + "_library"), GlobalStrings.Library, LibraryButtonClassName);
+        public static IHtmlContent ImageLibrary(this IHtmlHelper source, string id) => ImgButton(source.UniqueId(id + "_library"), GlobalStrings.Library, LibraryButtonClassName);
 
         private static string DateTimePart(object value, string formatString, DateTime? defaultValue)
         {
@@ -257,17 +269,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return defaultValue?.ToString(formatString) ?? string.Empty;
         }
 
-        public static MvcHtmlString Div(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes)
+        public static IHtmlContent Div(this IHtmlHelper source, string id, string value, Dictionary<string, object> htmlAttributes)
         {
             var tb = new TagBuilder("div");
             tb.MergeAttribute("id", source.UniqueId(id));
             tb.MergeAttributes(htmlAttributes);
-            tb.InnerHtml = value.ToString();
+            tb.InnerHtml.AppendHtml(value);
 
-            return MvcHtmlString.Create(tb.ToString());
+            return tb;
         }
 
-        public static MvcHtmlString VersionText(this HtmlHelper source, string id, string value)
+        public static IHtmlContent VersionText(this IHtmlHelper source, string id, string value)
         {
             var properties = new Dictionary<string, object> { { "class", VersionTextClassName }, { "name", id } };
             if (string.IsNullOrEmpty(value))
@@ -278,22 +290,22 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.Div(id, value, properties);
         }
 
-        public static MvcHtmlString VersionArea(this HtmlHelper source, string id, string value)
+        public static IHtmlContent VersionArea(this IHtmlHelper source, string id, string value)
         {
             var properties = new Dictionary<string, object> { { "class", VersionAreaClassName }, { "name", id }, { "style", "overflow : auto" } };
             return source.Div(id, value, properties);
         }
 
-        public static MvcHtmlString Span(this HtmlHelper source, string id, object value)
+        public static IHtmlContent Span(this IHtmlHelper source, string id, string value)
         {
             var tb = new TagBuilder("span");
             tb.MergeAttribute("id", id);
-            tb.InnerHtml = value.ToString();
+            tb.InnerHtml.AppendHtml(value);
 
-            return MvcHtmlString.Create(tb.ToString());
+            return tb;
         }
 
-        public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
+        public static IHtmlContent NumericTextBox(this IHtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
         {
             double? doubleValue = Converter.ToNullableDouble(value ?? source.ViewData.Eval(name));
 
@@ -325,18 +337,22 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             increment.MergeAttribute("href", "#");
             increment.MergeAttribute("tabindex", "-1");
             increment.MergeAttribute("title", GlobalStrings.IncreaseValue);
-            increment.SetInnerText("Increment");
+            increment.InnerHtml.AppendHtml("Increment");
 
             var decrement = new TagBuilder("a");
             decrement.AddCssClass("t-link t-icon t-arrow-down");
             decrement.MergeAttribute("href", "#");
             decrement.MergeAttribute("tabindex", "-1");
             decrement.MergeAttribute("title", GlobalStrings.DecreaseValue);
-            decrement.SetInnerText("Decrement");
+            decrement.InnerHtml.AppendHtml("Decrement");
+
+            widget.InnerHtml.AppendHtml(input);
+            widget.InnerHtml.AppendHtml(increment);
+            widget.InnerHtml.AppendHtml(decrement);
 
             var script = new TagBuilder("script");
             script.MergeAttribute("type", "text/javascript");
-            script.InnerHtml = $@"
+            script.InnerHtml.AppendHtml($@"
               $('#{inputId}').tTextBox({{
                 val: {doubleValue?.ToString() ?? "null"},
                 step: 1,
@@ -346,20 +362,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 groupSize: 3,
                 negative: 1,
                 type: 'numeric',
-              }});";
+              }});");
 
-            var sb = new StringBuilder();
-            sb.Append(widget.ToString(TagRenderMode.StartTag));
-            sb.Append(input.ToString(TagRenderMode.SelfClosing));
-            sb.Append(increment.ToString(TagRenderMode.Normal));
-            sb.Append(decrement.ToString(TagRenderMode.Normal));
-            sb.Append(widget.ToString(TagRenderMode.EndTag));
-            sb.Append(script.ToString(TagRenderMode.Normal));
-
-            return MvcHtmlString.Create(sb.ToString());
+            var html = new HtmlContentBuilder();
+            html.AppendHtml(widget);
+            html.AppendHtml(script);
+            return html;
         }
 
-        public static MvcHtmlString Relation(this HtmlHelper source, string id, IEnumerable<QPSelectListItem> list, ControlOptions options, RelationType relationType, bool isListOverflow, EntityDataListArgs entityDataListArgs)
+        public static IHtmlContent Relation(this IHtmlHelper source, string id, IEnumerable<QPSelectListItem> list, ControlOptions options, RelationType relationType, bool isListOverflow, EntityDataListArgs entityDataListArgs)
         {
             if (relationType == RelationType.OneToMany)
             {
@@ -369,7 +380,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return !isListOverflow ? source.QpCheckBoxList(id, list, options, entityDataListArgs) : source.QpMultipleItemPicker(id, list.ToList(), options, entityDataListArgs);
         }
 
-        public static MvcHtmlString SingleItemPickerFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, QPSelectListItem selected, EntityDataListArgs entityDataListArgs, ControlOptions options)
+        public static IHtmlContent SingleItemPickerFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, QPSelectListItem selected, EntityDataListArgs entityDataListArgs, ControlOptions options)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
             IEnumerable<QPSelectListItem> list = null;
@@ -381,7 +392,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.QpSingleItemPicker(name, list, options, entityDataListArgs);
         }
 
-        public static MvcHtmlString QpCheckBox(this HtmlHelper source, string name, object value, bool isChecked, Dictionary<string, object> htmlAttributes)
+        public static IHtmlContent QpCheckBox(this IHtmlHelper source, string name, object value, bool isChecked, Dictionary<string, object> htmlAttributes)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -402,22 +413,23 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 box.MergeAttribute("checked", "checked");
             }
-
             box.MergeAttributes(htmlAttributes);
-            var hidden = new TagBuilder("input");
 
+            var hidden = new TagBuilder("input");
             hidden.MergeAttribute("type", "hidden");
             hidden.MergeAttribute("name", name);
             hidden.MergeAttribute("value", "false");
 
-            return MvcHtmlString.Create(box + hidden.ToString());
+            var html = new HtmlContentBuilder();
+            html.AppendHtml(box);
+            html.AppendHtml(hidden);
+            return html;
         }
 
-        public static MvcHtmlString Warning(this HtmlHelper source, string message) => source.Warning(new[] { new MvcHtmlString(message) });
-
-        public static MvcHtmlString Warning(this HtmlHelper source, IList<MvcHtmlString> messages)
+        public static IHtmlContent Warning(this IHtmlHelper source, params string[] messages)
         {
-            var url = new UrlHelper(source.ViewContext.RequestContext);
+            var url = new UrlHelper(source.ViewContext);
+
             var wrapper = new TagBuilder("div");
             wrapper.AddCssClass("warning");
 
@@ -425,17 +437,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             img.AddCssClass("w-item");
             img.MergeAttribute("src", url.Content("~/Content/QP8/exclamation.png"));
 
-            var messageSpans = new List<TagBuilder>(messages.Count);
+            wrapper.InnerHtml.AppendHtml(img);
+
             foreach (var message in messages)
             {
                 var text = new TagBuilder("span");
                 text.AddCssClass("w-item");
-                text.InnerHtml = message.ToHtmlString();
-                messageSpans.Add(text);
+                text.InnerHtml.Append(message);
+
+                wrapper.InnerHtml.AppendHtml(text);
             }
 
-            wrapper.InnerHtml = img.ToString(TagRenderMode.SelfClosing) + string.Join(string.Empty, messageSpans);
-            return MvcHtmlString.Create(wrapper.ToString());
+            return wrapper;
         }
 
         /// <summary>
@@ -447,7 +460,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="optionLabel">текст пустого элемента</param>
         /// <param name="options">дополнительные настройки раскрывающегося списка</param>
         /// <returns>код раскрывающегося списка</returns>
-        public static MvcHtmlString QpDropDownList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, string optionLabel, ControlOptions options) => source.QpDropDownList(name, list, optionLabel, options, new EntityDataListArgs());
+        public static IHtmlContent QpDropDownList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, string optionLabel, ControlOptions options) => source.QpDropDownList(name, list, optionLabel, options, new EntityDataListArgs());
 
         /// <summary>
         /// Генерирует код раскрывающегося списка
@@ -459,7 +472,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="options">дополнительные настройки раскрывающегося списка</param>
         /// <param name="entityDataListArgs">свойства списка сущностей</param>
         /// <returns>код раскрывающегося списка</returns>
-        public static MvcHtmlString QpDropDownList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, string optionLabel, ControlOptions options, EntityDataListArgs entityDataListArgs)
+        public static IHtmlContent QpDropDownList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, string optionLabel, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
             var qpSelectListItems = list.ToList();
             options.SetDropDownOptions(name, source.UniqueId(name), qpSelectListItems, entityDataListArgs);
@@ -476,7 +489,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="list">список элементов списка</param>
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options) =>
+        public static IHtmlContent QpRadioButtonList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options) =>
             source.QpRadioButtonList(name, list, options, null);
 
         /// <summary>
@@ -488,7 +501,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="repeatDirection">направление списка</param>
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options) =>
+        public static IHtmlContent QpRadioButtonList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options) =>
             source.QpRadioButtonList(name, list, repeatDirection, options, null);
 
         /// <summary>
@@ -500,7 +513,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <param name="entityDataListArgs">свойства списка сущностей</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs) =>
+        public static IHtmlContent QpRadioButtonList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs) =>
             source.QpRadioButtonList(name, list, RepeatDirection.Horizontal, options, entityDataListArgs);
 
         /// <summary>
@@ -513,7 +526,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="options">дополнительные настройки списка радио-кнопок</param>
         /// <param name="entityDataListArgs">свойства списка сущностей</param>
         /// <returns>код списка радио-кнопок</returns>
-        public static MvcHtmlString QpRadioButtonList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options, EntityDataListArgs entityDataListArgs)
+        public static IHtmlContent QpRadioButtonList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
             var div = new TagBuilder("div");
             var qpSelectListItems = list.ToList();
@@ -521,12 +534,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.SetRadioButtonListOptions(name, source.UniqueId(name), qpSelectListItems, repeatDirection, entityDataListArgs);
             div.MergeAttributes(options.HtmlAttributes);
 
-            var sb = new StringBuilder();
-            sb.AppendLine("<ul>");
+            var ul = new TagBuilder("ul");
 
-            var itemIndex = 0;
-            foreach (var item in qpSelectListItems)
+            for (int itemIndex = 0; itemIndex < qpSelectListItems.Count; itemIndex++)
             {
+                var item = qpSelectListItems[itemIndex];
+
                 var itemId = source.UniqueId(name, itemIndex);
 
                 var radioButtonHtmlAttributes = new Dictionary<string, object> { { "id", itemId } };
@@ -541,19 +554,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     radioButtonHtmlAttributes.Add(DataContentFieldName, contentFieldName);
                 }
 
-                sb.Append("<li>");
-                sb.Append(source.RadioButton(name, item.Value, item.Selected, radioButtonHtmlAttributes));
-                sb.Append(" ");
-                sb.Append(source.QpLabel(itemId, item.Text, false));
-                sb.Append("</li>");
-                sb.AppendLine();
+                var li = new TagBuilder("li");
+                li.InnerHtml.AppendHtml(source.RadioButton(name, item.Value, item.Selected, radioButtonHtmlAttributes));
+                li.InnerHtml.AppendHtml(" ");
+                li.InnerHtml.AppendHtml(source.QpLabel(itemId, item.Text, false));
 
-                itemIndex++;
+                ul.InnerHtml.AppendHtml(li);
             }
 
-            sb.AppendLine("</ul>");
-            div.InnerHtml = sb.ToString();
-            return MvcHtmlString.Create(div.ToString());
+            div.InnerHtml.AppendHtml(ul);
+
+            return div;
         }
 
         /// <summary>
@@ -567,7 +578,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="entityDataListArgs">свойства списка сущностей</param>
         /// <param name="asArray">asArray</param>
         /// <returns>код списка чекбоксов</returns>
-        public static MvcHtmlString QpCheckBoxList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs, RepeatDirection repeatDirection = RepeatDirection.Vertical, bool asArray = false)
+        public static IHtmlContent QpCheckBoxList(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs, RepeatDirection repeatDirection = RepeatDirection.Vertical, bool asArray = false)
         {
             var qpSelectListItems = list.ToList();
             var div = new TagBuilder("div");
@@ -577,12 +588,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             div.MergeAttributes(options.HtmlAttributes);
 
-            var sb = new StringBuilder();
-            sb.AppendLine("<ul>");
+            var ul = new TagBuilder("ul");
 
-            var itemIndex = 0;
-            foreach (var item in qpSelectListItems)
+            for (int itemIndex = 0; itemIndex < qpSelectListItems.Count; itemIndex++)
             {
+                var item = qpSelectListItems[itemIndex];
+
                 var htmlAttributes = source.QpHtmlProperties(name, 0, EditorType.Checkbox, itemIndex);
                 if (!options.Enabled)
                 {
@@ -598,25 +609,25 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 htmlAttributes.AddCssClass(CheckboxListItemClassName);
                 htmlAttributes.AddCssClass(NoTrackChangeInputClass);
 
-                sb.Append("<li>");
-                sb.Append(source.QpCheckBox(asArray ? string.Concat(name, "[", itemIndex, "]") : name, item.Value, item.Selected, htmlAttributes));
-                sb.Append(" ");
+                var li = new TagBuilder("li");
+                li.InnerHtml.AppendHtml(source.QpCheckBox(
+                    asArray ? string.Concat(name, "[", itemIndex, "]") : name, item.Value, item.Selected, htmlAttributes));
+                li.InnerHtml.AppendHtml(" ");
                 if (entityDataListArgs != null && entityDataListArgs.ShowIds)
                 {
-                    sb.Append(GetIdLink(item.Value));
+                    li.InnerHtml.AppendHtml(GetIdLink(item.Value));
                 }
+                                li.InnerHtml.AppendHtml(source.QpLabel(source.UniqueId(name, itemIndex), item.Text, false));
 
-                sb.Append(source.QpLabel(source.UniqueId(name, itemIndex), item.Text, false));
-                sb.AppendLine("</li>");
-                itemIndex++;
+                ul.InnerHtml.AppendHtml(li);
             }
 
-            sb.AppendLine("</ul>");
-            div.InnerHtml = sb.ToString();
-            return MvcHtmlString.Create(div.ToString());
+            div.InnerHtml.AppendHtml(ul);
+
+            return div;
         }
 
-        public static MvcHtmlString QpSingleItemPicker(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs, bool ignoreIdSet = false)
+        public static IHtmlContent QpSingleItemPicker(this IHtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs, bool ignoreIdSet = false)
         {
             var item = list?.FirstOrDefault(i => i.Selected);
             var itemValue = item?.Value ?? string.Empty;
@@ -641,70 +652,72 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.SetSinglePickerOptions(name, wrapperId, entityDataListArgs, ignoreIdSet);
             wrapper.MergeAttributes(options.HtmlAttributes);
 
-            var htmlBuilder = new StringBuilder();
-            htmlBuilder.Append(GetSingleItemDisplayValue(itemText, itemValue, entityDataListArgs != null && entityDataListArgs.ShowIds));
-            var htmlAttributes = new Dictionary<string, object>();
+            wrapper.InnerHtml.AppendHtml(GetSingleItemDisplayValue(itemText, itemValue, entityDataListArgs != null && entityDataListArgs.ShowIds));
+
+            var hiddenAttributes = new Dictionary<string, object>();
+
             if (!ignoreIdSet)
             {
-                htmlAttributes.Add("id", valueId);
+                hiddenAttributes.Add("id", valueId);
             }
             else
             {
-                htmlAttributes.Add("data-bind", "value: " + name + "Id" + " , attr :{ id: '" + source.UniqueId(name) + "' + $index(), name: '" + source.UniqueId(name) + "' + $index()}");
+                hiddenAttributes.Add("data-bind", "value: " + name + "Id" + " , attr :{ id: '" + source.UniqueId(name) + "' + $index(), name: '" + source.UniqueId(name) + "' + $index()}");
             }
 
             if (contentFieldName != null)
             {
-                htmlAttributes.Add(DataContentFieldName, contentFieldName);
+                hiddenAttributes.Add(DataContentFieldName, contentFieldName);
             }
 
-            htmlAttributes.Add("class", "stateField");
-            htmlBuilder.Append(source.Hidden(name, itemValue, htmlAttributes));
-            wrapper.InnerHtml = htmlBuilder.ToString();
+            hiddenAttributes.Add("class", "stateField");
 
-            return MvcHtmlString.Create(wrapper.ToString());
+            wrapper.InnerHtml.AppendHtml(source.Hidden(name, itemValue, hiddenAttributes));
+
+            return wrapper;
         }
 
-        private static string GetSingleItemDisplayValue(string text, string value, bool showIds)
+        private static IHtmlContent GetSingleItemDisplayValue(string text, string value, bool showIds)
         {
             var wrapper = new TagBuilder("span");
             wrapper.AddCssClass("displayField");
 
-            var htmlBuilder = new StringBuilder();
             if (showIds)
             {
-                htmlBuilder.Append(GetIdLink(value));
+                wrapper.InnerHtml.AppendHtml(GetIdLink(value));
             }
 
             var textWrapper = new TagBuilder("span");
             textWrapper.AddCssClass("title");
-            textWrapper.SetInnerText(text);
-            htmlBuilder.Append(textWrapper);
-            wrapper.InnerHtml = htmlBuilder.ToString();
+            textWrapper.InnerHtml.Append(text);
 
-            return wrapper.ToString();
+            wrapper.InnerHtml.AppendHtml(textWrapper);
+
+            return wrapper;
         }
 
-        private static string GetIdLink(string value)
+        private static IHtmlContent GetIdLink(string value)
         {
             if (string.IsNullOrEmpty(value))
             {
-                return string.Empty;
+                return HtmlString.Empty;
             }
 
             var idLinkBuilder = new TagBuilder("a");
             idLinkBuilder.AddCssClass("js");
             idLinkBuilder.Attributes.Add("href", "javascript:void(0)");
-            idLinkBuilder.SetInnerText(value);
+            idLinkBuilder.InnerHtml.Append(value);
 
             var idBuilder = new TagBuilder("span");
             idBuilder.AddCssClass("idLink");
-            idBuilder.InnerHtml = $"({idLinkBuilder})";
+            idBuilder.InnerHtml.AppendHtml("(");
+            idBuilder.InnerHtml.AppendHtml(idLinkBuilder);
+            idBuilder.InnerHtml.AppendHtml(")");
 
-            return idBuilder.ToString();
+            return idBuilder;
         }
 
-        private static MvcHtmlString QpMultipleItemPicker(this HtmlHelper source, string name, ICollection<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
+        private static IHtmlContent QpMultipleItemPicker(this IHtmlHelper source, string name, IReadOnlyList<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
             var wrapper = new TagBuilder("div");
             options.SetMultiplePickerOptions(name, source.UniqueId(name), entityDataListArgs);
@@ -713,58 +726,57 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             wrapper.MergeAttributes(options.HtmlAttributes);
 
-            var sb = new StringBuilder();
-            if (list != null && list.Count >= QPConfiguration.WebConfigSection.RelationCountLimit)
+            if (list != null && list.Count >= QPConfiguration.AppConfigSection.RelationCountLimit)
             {
                 var value = string.Join(",", list.Select(n => n.Value).ToArray());
-                sb.AppendLine(source.Hidden(name, value, new { @class = MultiplePickerOverflowHiddenValue, id = source.UniqueId(name) }).ToString());
+                wrapper.InnerHtml.AppendHtml(source.Hidden(name, value, new { @class = MultiplePickerOverflowHiddenValue, id = source.UniqueId(name) }).ToString());
             }
 
-            sb.AppendLine("<ul>");
-            if (list != null && list.Count < QPConfiguration.WebConfigSection.RelationCountLimit)
+            var ul = new TagBuilder("ul");
+            if (list != null && list.Count < QPConfiguration.AppConfigSection.RelationCountLimit)
             {
-                var itemIndex = 0;
-                foreach (var item in list)
+                for (int itemIndex = 0; itemIndex < list.Count; itemIndex++)
                 {
-                    var htmlAttributes = source.QpHtmlProperties(name, 0, EditorType.Checkbox, itemIndex);
+                    var item = list[itemIndex];
+
+                    var liAttributes = source.QpHtmlProperties(name, 0, EditorType.Checkbox, itemIndex);
                     if (!options.Enabled)
                     {
-                        AddReadOnlyToHtmlAttributes(EditorType.Checkbox, htmlAttributes);
+                        AddReadOnlyToHtmlAttributes(EditorType.Checkbox, liAttributes);
                     }
 
                     if (contentFieldName != null)
                     {
-                        htmlAttributes.Add(DataContentFieldName, contentFieldName);
+                        liAttributes.Add(DataContentFieldName, contentFieldName);
                     }
 
-                    htmlAttributes.RemoveCssClass(SimpleCheckboxClassName);
-                    htmlAttributes.AddCssClass(MultiplePickerItemCheckboxClassName);
-                    htmlAttributes.AddCssClass(NoTrackChangeInputClass);
+                    liAttributes.RemoveCssClass(SimpleCheckboxClassName);
+                    liAttributes.AddCssClass(MultiplePickerItemCheckboxClassName);
+                    liAttributes.AddCssClass(NoTrackChangeInputClass);
 
-                    sb.Append("<li>");
-                    sb.Append(source.QpCheckBox(name, item.Value, item.Selected, htmlAttributes));
-                    sb.Append(" ");
+                    var li = new TagBuilder("li");
+                    li.InnerHtml.AppendHtml(source.QpCheckBox(name, item.Value, item.Selected, liAttributes));
+                    li.InnerHtml.AppendHtml(" ");
                     if (entityDataListArgs.ShowIds)
                     {
-                        sb.Append(GetIdLink(item.Value));
+                        li.InnerHtml.AppendHtml(GetIdLink(item.Value));
                     }
+                    li.InnerHtml.AppendHtml(source.QpLabel(source.UniqueId(name, itemIndex), item.Text, false));
 
-                    sb.Append(source.QpLabel(source.UniqueId(name, itemIndex), item.Text, false));
-                    sb.AppendLine("</li>");
-                    itemIndex++;
+                    ul.InnerHtml.AppendHtml(li);
                 }
             }
 
-            sb.AppendLine("</ul>");
-            wrapper.InnerHtml = sb.ToString();
-            return MvcHtmlString.Create(wrapper.ToString());
+            wrapper.InnerHtml.AppendHtml(ul);
+
+            return wrapper;
         }
 
-        public static MvcHtmlString QpTextBox(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes) => source.TextBox(id, value, htmlAttributes);
+        public static IHtmlContent QpTextBox(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes) => source.TextBox(id, value, htmlAttributes);
 
-        public static MvcHtmlString QpTextArea(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes) => source.TextArea(id, value.ToString(), htmlAttributes);
+        public static IHtmlContent QpTextArea(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes) => source.TextArea(id, value.ToString(), htmlAttributes);
 
-        public static MvcHtmlString VisualEditor(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, bool forceReadOnly)
+        public static IHtmlContent VisualEditor(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, bool forceReadOnly)
         {
             SetVisualEditorAttributes(htmlAttributes, field, forceReadOnly);
             return VisualEditor(
@@ -774,7 +786,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             );
         }
 
-        public static MvcHtmlString VisualEditorFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field)
+        public static IHtmlContent VisualEditorFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field)
         {
             var htmlAttributes = source.QpHtmlProperties(expression, EditorType.VisualEditor);
             SetVisualEditorAttributes(htmlAttributes, field, false);
@@ -785,19 +797,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             );
         }
 
-        private static MvcHtmlString VisualEditor(MvcHtmlString ve, bool isExpanded, bool useTexteditor)
+        // TODO: review generated VisualEditor markup
+        private static IHtmlContent VisualEditor(IHtmlContent ve, bool isExpanded, bool useTexteditor)
         {
             var sb = new StringBuilder();
-            sb.AppendLine(@"<div class='visualEditorToolbar'><ul class='linkButtons group'>");
+            sb.AppendLine("<div class='visualEditorToolbar'><ul class='linkButtons group'>");
 
-            const string itemTemplate = @"<li style='display: {1};' class='{0}'>
-                    <span class='linkButton actionLink'>
-                        <a href='javascript:void(0);'>
-                            <span class='icon {0}'><img src='/Backend/Content/Common/0.gif'></span>
-                            <span class='text'>{2}</span>
-                        </a>
-                    </span>
-                </li>";
+            const string itemTemplate = "<li style='display: {1};' class='{0}'>" +
+                "<span class='linkButton actionLink'>"+
+                    "<a href='javascript:void(0);'>" +
+                        "<span class='icon {0}'><img src='/Backend/Content/Common/0.gif'></span>" +
+                        "<span class='text'>{2}</span>" +
+                    "</a>"+
+                "</span>" +
+            "</li>";
 
             sb.AppendFormatLine(itemTemplate, "expand", isExpanded || useTexteditor ? "none" : "block", GlobalStrings.ShowVisualEditor);
             sb.AppendFormatLine(itemTemplate, "collapse", "none", GlobalStrings.HideVisualEditor);
@@ -810,13 +823,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             sb.AppendLine("</ul></div>");
             sb.AppendLine("<div class='visualEditorContainer'>");
-            sb.AppendLine(ve.ToString());
+            ve.WriteToStringBuilder(sb);
             sb.AppendLine("</div>");
 
             var componentTag = new TagBuilder("div");
             componentTag.AddCssClass(VisualEditorComponentClassName);
-            componentTag.InnerHtml = sb.ToString();
-            return MvcHtmlString.Create(componentTag.ToString());
+            componentTag.InnerHtml.AppendHtml(sb.ToString());
+            return componentTag;
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -841,13 +854,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static bool ContainsReadOnly(IReadOnlyDictionary<string, object> htmlAttributes) => htmlAttributes != null && (htmlAttributes.ContainsKey("readonly") || htmlAttributes.ContainsKey("disabled"));
 
-        public static MvcHtmlString DateTime(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false) => source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.DateTime, readOnly);
+        public static IHtmlContent DateTime(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false) => source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.DateTime, readOnly);
 
-        public static MvcHtmlString Date(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false) => source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.Date, readOnly);
+        public static IHtmlContent Date(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false) => source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.Date, readOnly);
 
-        public static MvcHtmlString Time(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false) => source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.Time, readOnly);
+        public static IHtmlContent Time(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false) => source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.Time, readOnly);
 
-        private static MvcHtmlString DateTimePicker(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
+        private static IHtmlContent DateTimePicker(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
         {
             DateTime? dateTime = ToDateTime(value ?? source.ViewData.Eval(id));
 
@@ -858,13 +871,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var wrap = new TagBuilder("div");
             wrap.AddCssClass("t-picker-wrap");
+            widget.InnerHtml.AppendHtml(wrap);
 
             var input = new TagBuilder("input");
             input.AddCssClass("t-input");
             input.MergeAttribute("id", inputId);
             input.MergeAttribute("name", id);
             input.MergeAttribute("type", "text");
-
+            wrap.InnerHtml.AppendHtml(input);
+            
             if (isReadOnly)
             {
                 input.MergeAttribute("disabled", "disabled");
@@ -876,16 +891,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var select = new TagBuilder("span");
             select.AddCssClass("t-select");
+            wrap.InnerHtml.AppendHtml(select);
 
             var openCalendar = new TagBuilder("span");
             openCalendar.AddCssClass("t-icon t-icon-calendar");
             openCalendar.MergeAttribute("title", "Open the calendar");
-            openCalendar.SetInnerText("Open the calendar");
+            openCalendar.InnerHtml.Append("Open the calendar");
 
             var openTime = new TagBuilder("span");
             openTime.AddCssClass("t-icon t-icon-clock");
             openTime.MergeAttribute("title", "Open the time view");
-            openTime.SetInnerText("Open the time view");
+            openTime.InnerHtml.Append("Open the time view");
 
             var script = new TagBuilder("script");
             script.MergeAttribute("type", "text/javascript");
@@ -896,8 +912,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     widget.AddCssClass("t-datetimepicker");
                     input.AddCssClass(DateTimeTextboxClassName);
                     input.MergeAttribute("value", dateTime?.ToString("g"));
-                    select.InnerHtml = openCalendar.ToString() + openTime.ToString();
-                    script.InnerHtml = $@"
+                    select.InnerHtml.AppendHtml(openCalendar);
+                    select.InnerHtml.AppendHtml(openTime);
+                    script.InnerHtml.AppendHtml($@"
                       $('#{inputId}').tDateTimePicker({{
                         format: '{CurrentDateFormat('g')}',
                         minValue: new Date(1899, 11, 31),
@@ -906,49 +923,43 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         endTimeValue: {ToJavaScriptDate(System.DateTime.Today)},
                         interval: 30,
                         selectedValue: {ToJavaScriptDate(dateTime)},
-                      }});";
+                      }});");
                     break;
                 case DateTimePickerMode.Date:
                     widget.AddCssClass("t-datepicker");
                     input.AddCssClass(DateTextboxClassName);
                     input.MergeAttribute("value", dateTime?.ToString("d"));
-                    select.InnerHtml = openCalendar.ToString();
-                    script.InnerHtml = $@"
+                    select.InnerHtml.AppendHtml(openCalendar);
+                    script.InnerHtml.AppendHtml($@"
                       $('#{inputId}').tDatePicker({{
                         format: '{CurrentDateFormat('d')}',
                         minValue: new Date(1899, 11, 31),
                         maxValue: new Date(2100, 0, 1),
                         selectedValue: {ToJavaScriptDate(dateTime?.Date)},
-                      }});";
+                      }});");
                     break;
                 case DateTimePickerMode.Time:
                     widget.AddCssClass("t-timepicker");
                     input.AddCssClass(TimeTextboxClassName);
                     input.MergeAttribute("value", dateTime?.ToString("t"));
-                    select.InnerHtml = openTime.ToString();
-                    script.InnerHtml = $@"
+                    select.InnerHtml.AppendHtml(openTime);
+                    script.InnerHtml.AppendHtml($@"
                       $('#{inputId}').tTimePicker({{
                         format: '{CurrentDateFormat('t')}',
                         minValue: {ToJavaScriptDate(System.DateTime.Today)},
                         maxValue: {ToJavaScriptDate(System.DateTime.Today)},
                         interval: 30,
                         selectedValue: {ToJavaScriptDate(dateTime)},
-                      }});";
+                      }});");
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
-            var sb = new StringBuilder();
-            sb.Append(widget.ToString(TagRenderMode.StartTag));
-            sb.Append(wrap.ToString(TagRenderMode.StartTag));
-            sb.Append(input.ToString(TagRenderMode.SelfClosing));
-            sb.Append(select.ToString(TagRenderMode.Normal));
-            sb.Append(wrap.ToString(TagRenderMode.EndTag));
-            sb.Append(widget.ToString(TagRenderMode.EndTag));
-            sb.Append(script.ToString(TagRenderMode.Normal));
-
-            return MvcHtmlString.Create(sb.ToString());
+            var html = new HtmlContentBuilder();
+            html.AppendHtml(widget);
+            html.AppendHtml(script);
+            return html;
         }
 
         private static DateTime? ToDateTime(object value)
@@ -983,7 +994,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return CultureInfo.CurrentCulture.DateTimeFormat.GetAllDateTimePatterns(format).First();
         }
 
-        public static MvcHtmlString File(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, int? entityId, ArticleVersion version, bool? isReadOnly = null, bool? allowUpload = null, bool allowPreview = true, bool allowDownload = true)
+        public static IHtmlContent File(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, int? entityId, ArticleVersion version, bool? isReadOnly = null, bool? allowUpload = null, bool allowPreview = true, bool allowDownload = true)
         {
             var readOnly = isReadOnly ?? field.ExactType == FieldExactTypes.DynamicImage || ContainsReadOnly(htmlAttributes);
             var shouldAllowUpload = allowUpload ?? !readOnly;
@@ -996,39 +1007,35 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var tb = source.FileWrapper(id, fieldId, field, entityId, version, readOnly, shouldAllowUpload);
-            tb.InnerHtml = source.FileContents(id, value, htmlAttributes, allowLibrary, shouldAllowUpload, allowPreview, allowDownload);
+            tb.InnerHtml.AppendHtml(source.FileContents(id, value, htmlAttributes, allowLibrary, shouldAllowUpload, allowPreview, allowDownload));
 
-            return MvcHtmlString.Create(tb.ToString());
+            return tb;
         }
 
-        private static string FileContents(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool allowLibrary, bool allowUpload, bool allowPreview, bool allowDownload)
+        private static IHtmlContent FileContents(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool allowLibrary, bool allowUpload, bool allowPreview, bool allowDownload)
         {
-            var sb = new StringBuilder();
-            sb.Append(source.QpTextBox(id, value, htmlAttributes));
+            var html = new HtmlContentBuilder();
+            html.AppendHtml(source.QpTextBox(id, value, htmlAttributes));
             if (allowPreview)
             {
-                sb.Append(source.ImagePreview(id));
+                html.AppendHtml(source.ImagePreview(id));
             }
-
             if (allowDownload)
             {
-                sb.Append(source.FileDownload(id));
+                html.AppendHtml(source.FileDownload(id));
             }
-
             if (allowLibrary)
             {
-                sb.Append(source.ImageLibrary(id));
+                html.AppendHtml(source.ImageLibrary(id));
             }
-
             if (allowUpload)
             {
-                sb.Append(source.FileUpload(id));
+                html.AppendHtml(source.FileUpload(id));
             }
-
-            return sb.ToString();
+            return html;
         }
 
-        internal static TagBuilder FileWrapper(this HtmlHelper source, string id, string fieldId, Field field, int? entityId, ArticleVersion version, bool readOnly, bool allowUpload)
+        internal static TagBuilder FileWrapper(this IHtmlHelper source, string id, string fieldId, Field field, int? entityId, ArticleVersion version, bool readOnly, bool allowUpload)
         {
             var isVersion = version != null;
             var tb = new TagBuilder("div");
@@ -1068,24 +1075,24 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return tb;
         }
 
-        public static MvcHtmlString UnlockLink(this HtmlHelper source, LockableEntityViewModel model) => source.BackendActionLink(model.UnlockId, model.UnlockText, model.Data.Id, model.Data.Name, model.ParentEntityId, ActionTypeCode.ChangeLock, model.CaptureLockActionCode);
+        public static IHtmlContent UnlockLink(this IHtmlHelper source, LockableEntityViewModel model) => source.BackendActionLink(model.UnlockId, model.UnlockText, model.Data.Id, model.Data.Name, model.ParentEntityId, ActionTypeCode.ChangeLock, model.CaptureLockActionCode);
 
-        public static MvcHtmlString SelectAllLink(this HtmlHelper source, ListViewModel model) => source.BackendActionLink(model.SelectAllId, GlobalStrings.SelectAll, 0, string.Empty, model.ParentEntityId, ActionTypeCode.SelectAll, string.Empty, ActionTargetType.NewTab, true);
+        public static IHtmlContent SelectAllLink(this IHtmlHelper source, ListViewModel model) => source.BackendActionLink(model.SelectAllId, GlobalStrings.SelectAll, 0, string.Empty, model.ParentEntityId, ActionTypeCode.SelectAll, string.Empty, ActionTargetType.NewTab, true);
 
-        public static MvcHtmlString UnselectLink(this HtmlHelper source, ListViewModel model) => source.BackendActionLink(model.UnselectId, GlobalStrings.CancelSelection, 0, string.Empty, model.ParentEntityId, ActionTypeCode.DeselectAll, string.Empty, ActionTargetType.NewTab, true);
+        public static IHtmlContent UnselectLink(this IHtmlHelper source, ListViewModel model) => source.BackendActionLink(model.UnselectId, GlobalStrings.CancelSelection, 0, string.Empty, model.ParentEntityId, ActionTypeCode.DeselectAll, string.Empty, ActionTargetType.NewTab, true);
 
-        public static MvcHtmlString ParentPermissionLink(this HtmlHelper source, ChildEntityPermissionListViewModel model) => source.BackendActionLink(model.UniqueId("chlpActionLink"), EntityPermissionStrings.ParentEntityPermission, 0, string.Empty, model.ParentEntityId, ActionTypeCode.List, model.ParentPermissionsListAction, ActionTargetType.NewTab, true);
+        public static IHtmlContent ParentPermissionLink(this IHtmlHelper source, ChildEntityPermissionListViewModel model) => source.BackendActionLink(model.UniqueId("chlpActionLink"), EntityPermissionStrings.ParentEntityPermission, 0, string.Empty, model.ParentEntityId, ActionTypeCode.List, model.ParentPermissionsListAction, ActionTargetType.NewTab, true);
 
-        public static MvcHtmlString AddNewItemLink(this HtmlHelper source, ListViewModel model) => source.BackendActionLink(model.AddNewItemLinkId, model.AddNewItemText, 0, string.Empty, model.ParentEntityId, ActionTypeCode.AddNew, model.AddNewItemActionCode, ActionTargetType.NewTab, true);
+        public static IHtmlContent AddNewItemLink(this IHtmlHelper source, ListViewModel model) => source.BackendActionLink(model.AddNewItemLinkId, model.AddNewItemText, 0, string.Empty, model.ParentEntityId, ActionTypeCode.AddNew, model.AddNewItemActionCode, ActionTargetType.NewTab, true);
 
-        public static MvcHtmlString SimpleAddActionLink(this HtmlHelper source, string text) => MvcHtmlString.Create(@"<span class=""linkButton actionLink""><a href=""javascript:void(0);""><span class=""icon add""> " + $@"<img src=""/Backend/Content/Common/0.gif""></span><span class=""text"">{text}</span></a></span>");
+        public static IHtmlContent SimpleAddActionLink(this IHtmlHelper source, string text) => new HtmlString(@"<span class=""linkButton actionLink""><a href=""javascript:void(0);""><span class=""icon add""> " + $@"<img src=""/Backend/Content/Common/0.gif""></span><span class=""text"">{text}</span></a></span>");
 
-        public static MvcHtmlString AggregationListFor<TValue>(this HtmlHelper source, string name, IEnumerable<TValue> list, string bindings, Dictionary<string, string> additionalData = null)
+        public static IHtmlContent AggregationListFor<TValue>(this IHtmlHelper source, string name, IEnumerable<TValue> list, string bindings, Dictionary<string, string> additionalData = null)
         {
             var div = new TagBuilder("div");
             div.MergeAttribute("id", source.UniqueId(name + "_aggregationlist"));
             div.AddCssClass(AggregationListClassName);
-            div.InnerHtml = $@"<div class =""{AggregationListContainerClassName}""></div>" + $@"<input type=""hidden"" name=""AggregationListItems{name.Replace(".", string.Empty)}"" class=""{AggregationListResultClassName}"">";
+            div.InnerHtml.AppendHtml($@"<div class =""{AggregationListContainerClassName}""></div>" + $@"<input type=""hidden"" name=""AggregationListItems{name.Replace(".", string.Empty)}"" class=""{AggregationListResultClassName}""/>");
             div.MergeDataAttribute("aggregation_list_data", JsonConvert.SerializeObject(list));
             div.MergeDataAttribute("aggregation_list_item_fields", bindings);
             if (additionalData != null)
@@ -1098,24 +1105,24 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             div.MergeDataAttribute("field_name", name);
-            return MvcHtmlString.Create(div.ToString());
+            return div;
         }
 
-        public static MvcHtmlString VersionTextFor<TValue>(this HtmlHelper source, string name, TValue text) => source.VersionText(source.UniqueId(name + "_versionText"), text.ToString());
+        public static IHtmlContent VersionTextFor<TValue>(this IHtmlHelper source, string name, TValue text) => source.VersionText(source.UniqueId(name + "_versionText"), text.ToString());
 
-        public static MvcHtmlString VersionAreaFor<TValue>(this HtmlHelper source, string name, TValue text) => source.VersionArea(source.UniqueId(name + "_versionText"), text.ToString());
+        public static IHtmlContent VersionAreaFor<TValue>(this IHtmlHelper source, string name, TValue text) => source.VersionArea(source.UniqueId(name + "_versionText"), text.ToString());
 
-        public static MvcHtmlString WorkflowFor<TValue>(this HtmlHelper source, string name, IEnumerable<TValue> list)
+        public static IHtmlContent WorkflowFor<TValue>(this IHtmlHelper source, string name, IEnumerable<TValue> list)
         {
             var div = new TagBuilder("div");
             div.MergeAttribute("id", source.UniqueId(name + "_workflow_control"));
             div.AddCssClass(WorkflowControlClassName);
             div.MergeDataAttribute("workflow_list_data", JsonConvert.SerializeObject(list));
-            div.InnerHtml = $@"<div class =""{WorkflowContainerClassName}""></div>";
-            return MvcHtmlString.Create(div.ToString());
+            div.InnerHtml.Append($@"<div class =""{WorkflowContainerClassName}""></div>");
+            return div;
         }
 
-        public static MvcHtmlString BackendActionLink(this HtmlHelper source, string id, string text, int entityId, string entityName, int parentEntityId, string actionTypeCode, string actionCode, ActionTargetType actionTargetType = ActionTargetType.NewTab, bool returnListElement = false)
+        public static IHtmlContent BackendActionLink(this IHtmlHelper source, string id, string text, int entityId, string entityName, int parentEntityId, string actionTypeCode, string actionCode, ActionTargetType actionTargetType = ActionTargetType.NewTab, bool returnListElement = false)
         {
             var span = new TagBuilder("span");
             span.MergeAttribute("id", id);
@@ -1164,62 +1171,64 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             sb.Append("</span>");
             sb.AppendFormat(@"<span class=""text"">{0}</span>", text);
             sb.Append("</a>");
-            span.InnerHtml = sb.ToString();
 
-            var result = span.ToString();
+            span.InnerHtml.AppendHtml(sb.ToString());
+
             if (returnListElement)
             {
-                result = @"<li class=""doctab-title__element"">" + result + "</li>";
+                var li = new TagBuilder("li");
+                li.AddCssClass("doctab-title__element");
+                li.InnerHtml.AppendHtml(span);
+                return li;
             }
-
-            return MvcHtmlString.Create(result);
+            return span;
         }
 
-        public static MvcHtmlString QpTextBox<TModel>(this HtmlHelper<TModel> source, string fieldName, string fieldValue, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent QpTextBox<TModel>(this IHtmlHelper<TModel> source, string fieldName, string fieldValue, Dictionary<string, object> htmlAttributes = null)
         {
             var htmlProperties = source.QpHtmlProperties(fieldName, 0, EditorType.Textbox);
             htmlProperties.Merge(htmlAttributes, true);
             return source.TextBox(fieldName, fieldValue, htmlProperties);
         }
 
-        public static MvcHtmlString QpTextBoxFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent QpTextBoxFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
         {
             var htmlProperties = source.QpHtmlProperties(expression, EditorType.Textbox);
             htmlProperties.Merge(htmlAttributes, true);
             return source.TextBoxFor(expression, htmlProperties);
         }
 
-        public static MvcHtmlString QpTextAreaFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent QpTextAreaFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
         {
             var htmlProperties = source.QpHtmlProperties(expression, EditorType.TextArea).Merge(htmlAttributes, true);
             return source.TextAreaFor(expression, htmlProperties);
         }
 
-        public static MvcHtmlString DateTimeFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
+        public static IHtmlContent DateTimeFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
         {
-            var data = source.GetMetaData(expression);
+            var data = source.GetModelExplorer(expression);
             return source.DateTime(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
         }
 
-        public static MvcHtmlString DateFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
+        public static IHtmlContent DateFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
         {
-            var data = source.GetMetaData(expression);
+            var data = source.GetModelExplorer(expression);
             return source.Date(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
         }
 
-        public static MvcHtmlString TimeFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
+        public static IHtmlContent TimeFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
         {
-            var data = source.GetMetaData(expression);
+            var data = source.GetModelExplorer(expression);
             return source.Time(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
         }
 
-        public static MvcHtmlString NumericFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, int decimalDigits = 0, double? minValue = null, double? maxValue = null, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent NumericFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, int decimalDigits = 0, double? minValue = null, double? maxValue = null, Dictionary<string, object> htmlAttributes = null)
         {
-            var data = source.GetMetaData(expression);
+            var data = source.GetModelExplorer(expression);
             return source.NumericTextBox(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Numeric).Merge(htmlAttributes, true), decimalDigits, minValue, maxValue);
         }
 
-        public static MvcHtmlString FileFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes)
+        public static IHtmlContent FileFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
             var htmlProperties = source.QpHtmlProperties(expression, EditorType.File);
@@ -1227,7 +1236,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.File(name, null, htmlProperties, field, null, null, false, true, false, false);
         }
 
-        public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null, bool forceReadOnly = false)
+        public static IHtmlContent QpCheckBoxFor<TModel>(this IHtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null, bool forceReadOnly = false)
         {
             var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);
             if (!string.IsNullOrWhiteSpace(toggleId))
@@ -1251,7 +1260,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.CheckBoxFor(expression, htmlProperties);
         }
 
-        public static MvcHtmlString QpDropDownListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes, SelectOptions dropDownOptions)
+        public static IHtmlContent QpDropDownListFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes, SelectOptions dropDownOptions)
         {
             var qpSelectListItems = list.ToList();
             var options = new ControlOptions { Enabled = !source.IsReadOnly() && !dropDownOptions.ReadOnly };
@@ -1265,7 +1274,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.DropDownListFor(expression, showedList, options.HtmlAttributes);
         }
 
-        public static MvcHtmlString QpRadioButtonListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection = RepeatDirection.Horizontal, EntityDataListArgs entityDataListArgs = null, ControlOptions options = null)
+        public static IHtmlContent QpRadioButtonListFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, RepeatDirection repeatDirection = RepeatDirection.Horizontal, EntityDataListArgs entityDataListArgs = null, ControlOptions options = null)
         {
             var div = new TagBuilder("div");
             var qpSelectListItems = list.ToList();
@@ -1277,32 +1286,28 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             localOptions.SetRadioButtonListOptions(name, id, qpSelectListItems, repeatDirection, entityDataListArgs);
             div.MergeAttributes(localOptions.HtmlAttributes);
 
-            var sb = new StringBuilder();
-            sb.AppendLine("<ul>");
-
-            var itemIndex = 0;
-            foreach (var item in qpSelectListItems)
+            var ul = new TagBuilder("ul");
+            for (int itemIndex = 0; itemIndex < qpSelectListItems.Count; itemIndex++)
             {
+                var item = qpSelectListItems[itemIndex];
+
                 var htmlAttributes = source.QpHtmlProperties(expression, EditorType.RadioButton, itemIndex);
                 if (!localOptions.Enabled)
                 {
                     htmlAttributes = AddReadOnlyToHtmlAttributes(EditorType.RadioButton, htmlAttributes);
                 }
 
-                sb.Append("<li>");
-                sb.Append(source.RadioButtonFor(expression, item.Value, htmlAttributes));
-                sb.Append(" ");
-                sb.Append(source.QpLabelFor(expression, item.Text, false, itemIndex));
-                sb.AppendLine("</li>");
-                itemIndex++;
+                var li = new TagBuilder("li");
+                li.InnerHtml.AppendHtml(source.RadioButtonFor(expression, item.Value, htmlAttributes));
+                li.InnerHtml.AppendHtml(" ");
+                li.InnerHtml.AppendHtml(source.QpLabelFor(expression, item.Text, false, itemIndex));
+                ul.InnerHtml.AppendHtml(li);
             }
-
-            sb.AppendLine("</ul>");
-            div.InnerHtml = sb.ToString();
-            return MvcHtmlString.Create(div.ToString());
+            div.InnerHtml.AppendHtml(ul);
+            return div;
         }
 
-        public static MvcHtmlString QpCheckBoxListFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IList<QPCheckedItem>>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
+        public static IHtmlContent QpCheckBoxListFor<TModel>(this IHtmlHelper<TModel> source, Expression<Func<TModel, IList<QPCheckedItem>>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
         {
             var qpSelectListItems = list.ToList();
             var name = ExpressionHelper.GetExpressionText(expression);
@@ -1317,7 +1322,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 item.Selected = false;
             }
 
-            if (source.GetMetaData(expression).Model is IList<QPCheckedItem> propertyValue && propertyValue.Count > 0)
+            if (source.GetModelExplorer(expression).Model is IList<QPCheckedItem> propertyValue && propertyValue.Count > 0)
             {
                 var checkedValues = propertyValue.Select(i => i.Value).Intersect(qpSelectListItems.Select(b => b.Value)).ToList();
                 foreach (var item in qpSelectListItems)
@@ -1329,8 +1334,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.QpCheckBoxList(name, qpSelectListItems, options, entityDataListArgs, repeatDirection, true);
         }
 
-        public static MvcHtmlString CheckBoxTreeFor<TModel>(
-            this HtmlHelper<TModel> source,
+        public static IHtmlContent CheckBoxTreeFor<TModel>(
+            this IHtmlHelper<TModel> source,
             Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
             string entityTypeCode,
             int? parentEntityId,
@@ -1347,7 +1352,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.AddData("tree_name", name);
             options.AddData("show_checkbox", bool.TrueString.ToLowerInvariant());
 
-            if (source.GetMetaData(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
+            if (source.GetModelExplorer(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
             {
                 var selectedIDsString = string.Join(";", propertyValue.Select(i => i.Value));
                 options.AddData("selected_ids", selectedIDsString);
@@ -1362,14 +1367,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var script = new TagBuilder("script");
             script.MergeAttribute("type", "text/javascript");
-            script.InnerHtml = $"$('#{widget.Attributes["id"]}').tTreeView();";
+            script.InnerHtml.AppendHtml($"$('#{widget.Attributes["id"]}').tTreeView();");
 
-            string htmlString = widget.ToString() + script.ToString();
-
-            return MvcHtmlString.Create(htmlString);
+            var html = new HtmlContentBuilder();
+            html.AppendHtml(widget);
+            html.AppendHtml(script);
+            return html;
         }
 
-        public static MvcHtmlString VirtualFieldTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent VirtualFieldTreeFor<TModel>(this IHtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)
         {
             var options = new Dictionary<string, object>();
             options.AddData("virtual_content_id", virtualContentId);
@@ -1377,15 +1383,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.CheckBoxTreeFor(expression, EntityTypeCode.Field, parentEntityId, ActionCode.Fields, false, options);
         }
 
-        public static MvcHtmlString MultipleItemPickerFor<TModel>(this HtmlHelper<TModel> source, string name, IEnumerable<QPSelectListItem> selectedItemList, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent MultipleItemPickerFor<TModel>(this IHtmlHelper<TModel> source, string name, IEnumerable<QPSelectListItem> selectedItemList, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes = null)
         {
             var options = new ControlOptions { Enabled = !source.IsReadOnly() };
             options.HtmlAttributes.Merge(htmlAttributes, true);
             return source.Relation(name, selectedItemList, options, RelationType.ManyToMany, true, entityDataListArgs);
         }
 
-        public static MvcHtmlString MultipleItemPickerFor<TModel>(
-            this HtmlHelper<TModel> source,
+        public static IHtmlContent MultipleItemPickerFor<TModel>(
+            this IHtmlHelper<TModel> source,
             Expression<Func<TModel, IEnumerable<int>>> expression,
             IEnumerable<ListItem> selectedItemList,
             EntityDataListArgs entityDataListArgs,
@@ -1397,7 +1403,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             htmlAttributes
         );
 
-        public static MvcHtmlString UnionContentsFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<int>>> expression, IEnumerable<ListItem> selectedItemList, int siteId, Dictionary<string, object> htmlAttributes = null)
+        public static IHtmlContent UnionContentsFor<TModel>(this IHtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<int>>> expression, IEnumerable<ListItem> selectedItemList, int siteId, Dictionary<string, object> htmlAttributes = null)
         {
             var entityDataListArgs = new EntityDataListArgs
             {
@@ -1412,7 +1418,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes);
         }
 
-        public static IEnumerable<QPSelectListItem> List(this HtmlHelper source, IEnumerable<ListItem> list) => list.Select(n => new QPSelectListItem
+        public static IEnumerable<QPSelectListItem> List(this IHtmlHelper source, IEnumerable<ListItem> list) => list.Select(n => new QPSelectListItem
         {
             Text = n.Text,
             Value = n.Value,
@@ -1421,11 +1427,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             Selected = n.Selected
         });
 
-        public static string FormatAsTime(this HtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "T", defaultValue);
+        public static string FormatAsTime(this IHtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "T", defaultValue);
 
-        public static string FormatAsDate(this HtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "d", defaultValue);
+        public static string FormatAsDate(this IHtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "d", defaultValue);
 
-        public static string FormatAsDateTime(this HtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "G", defaultValue);
+        public static string FormatAsDateTime(this IHtmlHelper source, object value, DateTime? defaultValue = null) => DateTimePart(value, "G", defaultValue);
 
         private static Dictionary<string, object> AddReadOnlyToHtmlAttributes(EditorType type, Dictionary<string, object> htmlAttributes)
         {
