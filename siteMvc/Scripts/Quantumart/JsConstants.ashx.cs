@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
 
         public void ProcessRequest(HttpContext context)
         {
-            var currentTheme = context.Session[HttpContextSession.CurrentCssTheme].ToString();
+            var currentTheme = QPConfiguration.AppConfigSection.DefaultTheme;
             var constants = new StringBuilder();
 
             constants.AppendLine("Type.registerNamespace(\"Quantumart.QP8.Enums\");");
