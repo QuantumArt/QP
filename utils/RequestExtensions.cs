@@ -1,10 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Web;
+using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Quantumart.QP8.Utils
 {
-#if !NET_STANDARD
 	public static class RequestExtensions
 	{
 		/// <summary>
@@ -12,10 +10,11 @@ namespace Quantumart.QP8.Utils
 		/// </summary>
 		/// <param name="name">название параметра</param>
 		/// <returns>результат проверки (true - присутствует в строке запроса; false - не присутствует)</returns>
+        [Obsolete]
 		public static bool CheckParameterPresenceInQueryString(this HttpRequest source, string name)
 		{
 			bool result = false; // результирующая переменная
-			string rawQueryString = source.ServerVariables["QUERY_STRING"]; // необработанная строка запроса URL
+			string rawQueryString = source.QueryString.Value; // необработанная строка запроса URL
 
 			if (rawQueryString.Length > 0)
 			{
@@ -72,5 +71,4 @@ namespace Quantumart.QP8.Utils
 			return result;
 		}
 	}
-#endif
 }

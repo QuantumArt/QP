@@ -1,5 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using System.Web;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System.Text.RegularExpressions;
 
 namespace Quantumart.QP8.Utils
 {
@@ -7,13 +9,16 @@ namespace Quantumart.QP8.Utils
     {
         private static readonly Regex UrlFormatRegExp = new Regex(@"^[a-zA-Z0-9\+\.-]+:");
 
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public static bool CheckUrlFormatIsValid(string url)
         {
             return UrlFormatRegExp.IsMatch(url);
         }
 
-        #if !NET_STANDARD
-        // Преобразуется относительный URL в абсолютный (с точки зрения приложения) [без домена]
+        /// <summary>
+        /// Преобразуется относительный URL в абсолютный (с точки зрения приложения) [без домена]
+        /// </summary>
         public static string ToAbsolute(string url)
         {
             var result = string.Empty;
@@ -22,9 +27,11 @@ namespace Quantumart.QP8.Utils
                 url = url.Trim();
                 if (url.Length > 0)
                 {
-                    if (!CheckUrlFormatIsValid(url) && HttpContext.Current != null && url.StartsWith("~/"))
+                    if (!CheckUrlFormatIsValid(url) && HttpContext != null && url.StartsWith("~/"))
                     {
-                        result = VirtualPathUtility.ToAbsolute(url);
+                        var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
+
+                        result = hostingEnvironment.ContentRootPath + url.Substring(1);
                     }
                     else
                     {
@@ -35,7 +42,6 @@ namespace Quantumart.QP8.Utils
 
             return result;
         }
-        #endif
 
         public static bool IsQueryEmpty(string url)
         {
