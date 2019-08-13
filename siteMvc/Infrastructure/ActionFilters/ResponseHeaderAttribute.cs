@@ -1,5 +1,5 @@
 using System;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {

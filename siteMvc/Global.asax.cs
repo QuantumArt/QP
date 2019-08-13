@@ -179,14 +179,10 @@ namespace Quantumart.QP8.WebMvc
             var exсeption = Server.GetLastError();
             if (exсeption != null)
             {
+                // TODO: review uncaught error logging
                 Logger.Log.SetContext(LoggerData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
                 Logger.Log.Fatal("Application_Error", exсeption);
             }
-        }
-
-        protected void Application_EndRequest(object sender, EventArgs e)
-        {
-            ConnectionScopeAttribute.DisposeScopes();
         }
     }
 }

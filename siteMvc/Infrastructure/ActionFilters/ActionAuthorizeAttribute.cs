@@ -1,7 +1,6 @@
 using System;
 using System.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -11,8 +10,17 @@ using Quantumart.QP8.Security;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
-    public class ActionAuthorizeAttribute : Attribute, IAuthorizationFilter
+    /// <remarks>
+    /// We don't use <see cref="IAuthorizationFilter"/> because controller and
+    /// exception filters are not initialized during .OnAuthorization() execution
+    /// </summary>
+    public class ActionAuthorizeAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// Execute before any ActionFilter to simulate <see cref="IAuthorizationFilter"/> behaviour
+        /// </summary>
+        public static readonly int FilterOrder = ConnectionScopeAttribute.FilterOrder - 1;
+
         private readonly string _actionCode;
 
         /// <summary>
@@ -20,17 +28,18 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
         /// </summary>
         public ActionAuthorizeAttribute(string actionCode)
         {
+            Order = FilterOrder;
             _actionCode = actionCode;
         }
 
-        public void OnAuthorization(AuthorizationFilterContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var serviceProvider = filterContext.HttpContext.RequestServices;
-
             if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
             {
                 throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
             }
+
+            IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
 
             string actionCode = _actionCode;
 
@@ -47,6 +56,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 throw new SecurityException(string.Format(GlobalStrings.ActionIsNotAccessible, action.Name));
             }
+
+            base.OnActionExecuting(filterContext);
         }
     }
 }

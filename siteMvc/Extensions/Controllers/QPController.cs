@@ -127,7 +127,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             });
         }
 
-        protected static bool IsError(HttpContext context)
+        public static bool IsError(HttpContext context)
         {
             IFormCollection form = context.Request.Form;
 

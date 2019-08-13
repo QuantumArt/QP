@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 
@@ -10,17 +11,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
     public class BackendActionLogAttribute : ActionFilterAttribute
     {
         public static readonly int FilterOrder = BackendActionContextAttribute.FilterOrder + 1;
-        private readonly IBackendActionLogRepository _repository;
+        private IBackendActionLogRepository _repository;
         private IEnumerable<BackendActionLog> _logs;
 
         public BackendActionLogAttribute()
         {
             Order = FilterOrder;
-            _repository = DependencyResolver.Current.GetService<IBackendActionLogRepository>();
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            _repository = filterContext.HttpContext.RequestServices.GetRequiredService<IBackendActionLogRepository>();
             _logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _repository);
             base.OnActionExecuting(filterContext);
         }

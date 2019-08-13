@@ -29,18 +29,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.ActionPermissions)]
         [BackendActionContext(ActionCode.ActionPermissions)]
-        public override ActionResult _Index(
-            string tabId,
-            int parentId,
-            int page,
-            int pageSize,
-            string orderBy) => base._Index(
-                tabId,
-                parentId,
-                page,
-                pageSize,
-                orderBy);
-
         public override ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
             return base._Index(tabId, parentId, page, pageSize, orderBy);

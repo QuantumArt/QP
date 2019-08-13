@@ -82,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
             try
             {
-                await next();
+                await next.Invoke();
             }
             finally
             {
