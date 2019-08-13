@@ -7,7 +7,7 @@ ALTER FUNCTION [dbo].[qp_correct_data] (
 AS
 BEGIN
 	declare @num numeric, @err numeric
-	declare @return_data nvarchar(3500)
+	declare @return_data nvarchar(max)
 	if @type_id in (1, 7, 8, 12) begin
 		set @return_data = left(@data, @length)
 	end
