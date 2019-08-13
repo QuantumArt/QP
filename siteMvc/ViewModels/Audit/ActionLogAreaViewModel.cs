@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
@@ -24,11 +24,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 
         public IEnumerable<QPSelectListItem> ActionList { get; internal set; }
 
-        public MvcHtmlString ActionTypeListJson
+        public IHtmlContent ActionTypeListJson
         {
             get
             {
-                return MvcHtmlString.Create(JsonConvert.SerializeObject(ActionTypeList.Select(at => new
+                return new HtmlString(JsonConvert.SerializeObject(ActionTypeList.Select(at => new
                 {
                     value = at.Value,
                     text = at.Text
@@ -36,11 +36,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
             }
         }
 
-        public MvcHtmlString ActionListJson
+        public IHtmlContent ActionListJson
         {
             get
             {
-                return MvcHtmlString.Create(JsonConvert.SerializeObject(ActionList.Select(at => new
+                return new HtmlString(JsonConvert.SerializeObject(ActionList.Select(at => new
                 {
                     value = at.Value,
                     text = at.Text
@@ -50,11 +50,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 
         public IEnumerable<QPSelectListItem> EntityTypeList { get; internal set; }
 
-        public MvcHtmlString EntityTypeListJson
+        public IHtmlContent EntityTypeListJson
         {
             get
             {
-                return MvcHtmlString.Create(JsonConvert.SerializeObject(EntityTypeList.Select(at => new
+                return new HtmlString(JsonConvert.SerializeObject(EntityTypeList.Select(at => new
                 {
                     value = at.Value,
                     text = at.Text

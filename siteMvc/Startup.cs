@@ -141,10 +141,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient(provider => new AssembleTemplateFromFormatController(new AssembleTemplateService()))
                 .AddTransient(provider => new AssembleTemplateFromObjectController(new AssembleTemplateService()))
                 .AddTransient(provider => new AssembleTemplateFromObjectListController(new AssembleTemplateService()))
-                .AddTransient(provider => new RebuildVirtualContentsController(new RebuildVirtualContentsService()))
-                .AddTransient(provider => new MultistepController(
-                    provider.GetRequiredService<Func<string, IMultistepActionService>>(),
-                    provider.GetRequiredService<Func<string, IActionCode>>()));
+                .AddTransient(provider => new RebuildVirtualContentsController(new RebuildVirtualContentsService()));
 
             // permission controllers
             services

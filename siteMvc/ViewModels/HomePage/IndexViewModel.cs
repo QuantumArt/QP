@@ -1,5 +1,5 @@
 using System.Dynamic;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Html;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
@@ -29,7 +29,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
             get
             {
                 var configTitle = QPConfiguration.ApplicationTitle.Replace("{release}", Default.ReleaseNumber);
-                var instanceName = QPConfiguration.WebConfigSection.InstanceName;
+                var instanceName = QPConfiguration.AppConfigSection.InstanceName;
                 if (!string.IsNullOrEmpty(configTitle) && !string.IsNullOrEmpty(instanceName))
                 {
                     return instanceName + " " + configTitle;
@@ -39,7 +39,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
             }
         }
 
-        public MvcHtmlString BackendComponentOptions
+        public IHtmlContent BackendComponentOptions
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
                     result.DirectLinkOptions = _directLinkOptions;
                 }
 
-                return MvcHtmlString.Create(((object)result).ToJsonLog());
+                return new HtmlString(((object)result).ToJsonLog());
             }
         }
     }

@@ -5,8 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Html;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 {
@@ -16,16 +15,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         private readonly StringBuilder _checkerResults = new StringBuilder();
 
-        public MvcHtmlString TextInputsVar => MvcHtmlString.Create(_textInputs);
+        public IHtmlContent TextInputsVar => new HtmlString(_textInputs);
 
-        public MvcHtmlString CheckerResults => MvcHtmlString.Create(_checkerResults.ToString());
+        public IHtmlContent CheckerResults => new HtmlString(_checkerResults.ToString());
 
         public AspellCheckVm(string inputs)
         {
             _textInputs = inputs;
 
             // ReSharper disable once AssignNullToNotNullAttribute
-            var text = new Regex("<[^>]+>").Replace(HttpUtility.UrlDecode(_textInputs), " ");
+            var text = new Regex("<[^>]+>").Replace(WebUtility.UrlDecode(_textInputs), " ");
             var lines = text.Split(new[] { '\n' }, StringSplitOptions.None);
 
             var requestText = new StringBuilder();
