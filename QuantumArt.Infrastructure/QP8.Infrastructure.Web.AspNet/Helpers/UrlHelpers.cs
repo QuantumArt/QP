@@ -1,7 +1,7 @@
 using System;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace QP8.Infrastructure.Web.AspNet.Helpers
@@ -17,9 +17,9 @@ namespace QP8.Infrastructure.Web.AspNet.Helpers
                 url = url.Trim();
                 if (url.StartsWith("~/"))
                 {
-                    var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
+                    var urlHelper = HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
 
-                    url = hostingEnvironment.ContentRootPath + url.Substring(1);
+                    url = urlHelper.Content(url);
                 }
 
                 var baseUri = new Uri(GetBaseUrl());

@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 
@@ -29,9 +29,9 @@ namespace Quantumart.QP8.Utils
                 {
                     if (!CheckUrlFormatIsValid(url) && HttpContext != null && url.StartsWith("~/"))
                     {
-                        var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
+                        var urlHelper = HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
 
-                        result = hostingEnvironment.ContentRootPath + url.Substring(1);
+                        result = urlHelper.Content(url);
                     }
                     else
                     {
