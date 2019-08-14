@@ -12,7 +12,7 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
         [Test]
         public void TryConvertToSqlDateString_NotNullTimeAndCorrectFormat_CorrectResult()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             var result = Converter.TryConvertToSqlDateString("5/17/2011", new TimeSpan(23, 59, 59), out var sqlDateString, out var dateTime);
 
             Assert.IsTrue(result);
@@ -24,7 +24,7 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
         [Test]
         public void TryConvertToSqlDateString_NullTimeAndCorrectFormat_CorrectResult()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             var result = Converter.TryConvertToSqlDateString("5/17/2011", null, out var sqlDateString, out var dateTime);
 
             Assert.IsTrue(result);

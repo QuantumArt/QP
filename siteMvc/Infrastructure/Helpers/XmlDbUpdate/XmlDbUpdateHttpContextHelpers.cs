@@ -96,7 +96,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
             });
 
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
+            CultureInfo.CurrentCulture = cultureInfo;
             return controller;
         }
 

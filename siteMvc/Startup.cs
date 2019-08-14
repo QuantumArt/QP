@@ -39,6 +39,9 @@ using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.Security;
+using Quantumart.QP8.Configuration;
+using System.Globalization;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -75,6 +78,7 @@ namespace Quantumart.QP8.WebMvc
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
+            // TODO: review authenticaton and CultireInfo in SignalR
             services
                 .AddSignalR()
                 .AddJsonProtocol(options => {
@@ -196,25 +200,33 @@ namespace Quantumart.QP8.WebMvc
                     .GetRequiredService(actionCodeTypes[command]));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider provider)
+        public void Configure(IApplicationBuilder app, IServiceProvider provider)
         {
-            RegisterMappings();
-
             QPContext.SetServiceProvider(provider);
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // TODO: review Shared/Error.cshtml
-                app.UseExceptionHandler("/Error");
-            }
+            RegisterMappings();
+
+            // TODO: implement exception handler
+            //app.UseExceptionHandler();
 
             // TODO: review static files
             app.UseStaticFiles("/Content");
             app.UseStaticFiles("/Scripts");
+
+            //app.UseAuthentication();
+
+            app.Use(async (context, next) =>
+            {
+                string cultureName = context.User.Identity is QpIdentity userIdentity
+                    ? userIdentity.CultureName
+                    : QPConfiguration.AppConfigSection.Globalization.DefaultCulture;
+
+                var cultureInfo = new CultureInfo(cultureName);
+                CultureInfo.CurrentUICulture = cultureInfo;
+                CultureInfo.CurrentCulture = cultureInfo;
+
+                await next.Invoke();
+            });
 
             app.UseSession();
 

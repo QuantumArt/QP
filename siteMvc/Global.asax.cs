@@ -169,9 +169,8 @@ namespace Quantumart.QP8.WebMvc
                 : QPConfiguration.WebConfigSection.Globalization.DefaultCulture;
 
             var cultureInfo = new CultureInfo(cultureName);
-            // TODO: propper handle cuture in async code
-            Thread.CurrentThread.CurrentUICulture = cultureInfo;
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(cultureInfo.Name);
+            CultureInfo.CurrentUICulture = cultureInfo;
+            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(cultureInfo.Name);
         }
 
         protected void Application_Error(object sender, EventArgs e)

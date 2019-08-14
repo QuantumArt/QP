@@ -2273,7 +2273,9 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
 
         private static void ProcessGetFilterTest(IEnumerable<FilterParserTestData> testDataCollection)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo previousCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
             foreach (var testData in testDataCollection)
             {
                 try
@@ -2307,7 +2309,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                 }
             }
 
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = previousCulture;
         }
     }
 }

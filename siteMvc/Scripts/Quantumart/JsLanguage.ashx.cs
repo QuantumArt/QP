@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Threading;
 using System.Web;
 using System.Web.SessionState;
 using Quantumart.QP8.BLL.Helpers;
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
         {
             var response = context.Response;
             var server = context.Server;
-            var cultureName = Thread.CurrentThread.CurrentCulture.Name.ToLowerInvariant();
+            var cultureName = CultureInfo.CurrentCulture.Name.ToLowerInvariant();
             var useMinifiedScripts = !HttpContext.Current.IsDebuggingEnabled;
 
             response.ContentType = "text/javascript";
