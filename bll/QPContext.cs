@@ -1,19 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Common;
-
 // using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Session;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Npgsql;
-#if !NET_STANDARD
-using System.Web;
-#endif
-
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Facades;
@@ -33,6 +30,8 @@ namespace Quantumart.QP8.BLL
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class QPContext
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public static QPModelDataContext EFContext
         {
@@ -105,17 +104,12 @@ namespace Quantumart.QP8.BLL
                 return _externalContextStorage.GetValue<T>(key);
             }
 
-#if NET_STANDARD
-            return threadStorageData;
-#else
-
-            if (HttpContext.Current == null)
+            if (HttpContext == null)
             {
                 return threadStorageData;
             }
 
-            return (T)HttpContext.Current.Items[key];
-#endif
+            return (T)HttpContext.Items[key];
         }
 
         private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
@@ -130,18 +124,14 @@ namespace Quantumart.QP8.BLL
                 _externalContextStorage.SetValue(value, key);
             }
 
-#if NET_STANDARD
-            threadStorage = value;
-#else
-            if (HttpContext.Current == null)
+            if (HttpContext == null)
             {
                 threadStorage = value;
             }
             else
             {
-                HttpContext.Current.Items[key] = value;
+                HttpContext.Items[key] = value;
             }
- #endif
         }
 
         internal static Dictionary<int, Field> GetFieldCache() => GetValueFromStorage(_fieldCache, HttpContextItems.FieldCache);
@@ -359,13 +349,12 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentUserId, HttpContextItems.CurrentUserIdKey);
-#if !NET_STANDARD
+
                 if (result == null)
                 {
-                    result = (HttpContext.Current.User.Identity as QpIdentity)?.Id;
+                    result = (HttpContext.User.Identity as QpIdentity)?.Id;
                     SetCurrentUserIdValueToStorage(result);
                 }
-#endif
 
                 return result ?? 0;
             }
@@ -394,13 +383,12 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentSessionId, HttpContextItems.CurrentSessionIdKey);
-                #if !NET_STANDARD
+                
                 if (result == null)
                 {
-                    result = (HttpContext.Current.User.Identity as QpIdentity)?.SessionId;
+                    result = (HttpContext.User.Identity as QpIdentity)?.SessionId;
                     SetCurrentSessionIdValueToStorage(result);
                 }
-                #endif
 
                 return result ?? 0;
             }
@@ -474,25 +462,22 @@ namespace Quantumart.QP8.BLL
             set => SetValueToStorage(ref _isLive, value, HttpContextItems.IsLiveKey);
         }
 
-#if !NET_STANDARD
-        public static string CurrentUserName => (HttpContext.Current.User.Identity as QpIdentity)?.Name;
-#endif
+        public static string CurrentUserName => (HttpContext.User.Identity as QpIdentity)?.Name;
 
         public static string CurrentCustomerCode
         {
             get
             {
                 var result = GetValueFromStorage(_currentCustomerCode, HttpContextItems.CurrentCustomerCodeKey);
-#if !NET_STANDARD
+
                 if (result == null)
                 {
-                    if (HttpContext.Current != null && CurrentUserIdentity != null)
+                    if (HttpContext != null && CurrentUserIdentity != null)
                     {
                         result = CurrentUserIdentity.CustomerCode;
                         SetCurrentCustomerCodeValueToStorage(result);
                     }
                 }
-#endif
 
                 return result;
             }
@@ -516,26 +501,24 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentSqlVersion, HttpContextItems.CurrentSqlVersionKey);
-#if !NET_STANDARD
-                if (result == null && HttpContext.Current != null && CurrentUserIdentity != null)
+
+                if (result == null && HttpContext != null && CurrentUserIdentity != null)
                 {
                     result = Common.GetSqlServerVersion(QPConnectionScope.Current.DbConnection);
                     SetCurrentSqlVersionValueToStorage(result);
                 }
-#endif
 
                 return result;
             }
             set => SetCurrentSqlVersionValueToStorage(value);
         }
-#if !NET_STANDARD
-        public static QpIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QpIdentity : null;
-#endif
 
+        public static QpIdentity CurrentUserIdentity =>
+            HttpContext != null && HttpContext.User != null ? HttpContext.User.Identity as QpIdentity : null;
+        
         public static string CurrentDbConnectionString
         {
             get => CurrentDbConnectionInfo?.ConnectionString;
-
             set => CurrentDbConnectionInfo = new QpConnectionInfo(value, DatabaseType.SqlServer);
         }
 
@@ -605,14 +588,12 @@ namespace Quantumart.QP8.BLL
                         }
 
                         resultUser.SessionId = CreateSuccessfulSession(user, dbContext);
-#if !NET_STANDARD
-                        var context = HttpContext.Current;
-                        if (context != null)
+
+                        if (HttpContext != null)
                         {
-                            context.Items[HttpContextItems.DbContext] = dbContext;
+                            HttpContext.Items[HttpContextItems.DbContext] = dbContext;
                             QP7Service.SetPassword(data.Password);
                         }
-#endif
                     }
                     else
                     {
@@ -672,8 +653,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-#if !NET_STANDARD
-
         public static string LogOut()
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
@@ -689,11 +668,17 @@ namespace Quantumart.QP8.BLL
 
                 var loginUrl = AuthenticationHelper.LogOut();
                 transaction.Complete();
-                HttpContext.Current.Session.Abandon();
+
+                // AspNetCore equivalent of Session.Abandon()
+                HttpContext.Session.Clear();
+                if (HttpContext.Request.Cookies.ContainsKey(SessionDefaults.CookieName))
+                {
+                    HttpContext.Response.Cookies.Delete(SessionDefaults.CookieName);
+                }
+
                 return loginUrl;
             }
         }
-#endif
 
         private static int CreateSuccessfulSession(User user, QPModelDataContext dbContext)
         {
@@ -710,10 +695,8 @@ namespace Quantumart.QP8.BLL
                 Login = user.Name.Left(20),
                 UserId = user.Id,
                 StartTime = currentDt,
-#if !NET_STANDARD
-                Browser = HttpContext.Current.Request.ServerVariables[RequestServerVariables.HttpUserAgent].Left(255),
-                IP = HttpContext.Current.Request.UserHostAddress,
-#endif
+                Browser = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString().Left(255),
+                IP = GetUserIpAddress(),
                 ServerName = Environment.MachineName.Left(255)
             };
 
@@ -745,16 +728,26 @@ namespace Quantumart.QP8.BLL
                 Login = data.UserName.Left(20),
                 UserId = null,
                 StartTime = DateTime.Now,
-#if !NET_STANDARD
-                Browser = HttpContext.Current.Request.ServerVariables[RequestServerVariables.HttpUserAgent].Left(255),
-                IP = HttpContext.Current.Request.UserHostAddress,
-#endif
+                Browser = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString().Left(255),
+                IP = GetUserIpAddress(),
                 ServerName = Environment.MachineName.Left(255)
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.Entry(sessionsLogDal).State = EntityState.Added;
             dbContext.SaveChanges();
+        }
+
+        private static string GetUserIpAddress()
+        {
+            string ipAddress = HttpContext.Request.Headers["X-Forwarded-For"];
+
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            }
+
+            return ipAddress;
         }
 
         public static IServiceProvider ServiceProvider { get; private set; }
