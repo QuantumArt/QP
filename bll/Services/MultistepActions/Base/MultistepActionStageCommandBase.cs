@@ -1,7 +1,7 @@
-#if !NET_STANDARD
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -12,6 +12,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
 {
     public abstract class MultistepActionStageCommandBase : IMultistepActionStageCommand
     {
+        protected static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public int ContentId { get; private set; }
 
         public int ItemCount { get; private set; }
@@ -26,7 +28,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
 
         protected MultistepActionStageCommandBase()
         {
-            Messages = (List<MessageResult>)HttpContext.Current.Session[HttpContextSession.MultistepActionStageCommandSettings] ?? new List<MessageResult>();
+            Messages = HttpContext.Session.GetValue<List<MessageResult>>(HttpContextSession.MultistepActionStageCommandSettings) ?? new List<MessageResult>();
         }
 
         protected MultistepActionStageCommandBase(int contentId, int itemCount, int[] ids)
@@ -71,7 +73,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             if (result != null)
             {
                 Messages.Add(result);
-                HttpContext.Current.Session[HttpContextSession.MultistepActionStageCommandSettings] = Messages;
+                HttpContext.Session.SetValue(HttpContextSession.MultistepActionStageCommandSettings, Messages);
             }
 
             string additionalInfo = null;
@@ -87,8 +89,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
 
         public static void TearDown()
         {
-            HttpContext.Current.Session.Remove(HttpContextSession.MultistepActionStageCommandSettings);
+            HttpContext.Session.Remove(HttpContextSession.MultistepActionStageCommandSettings);
         }
     }
 }
-#endif

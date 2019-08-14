@@ -1,8 +1,7 @@
-#if !NET_STANDARD
-using System.Web;
-#endif
-
 using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Utils;
 
@@ -21,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository
         public static string RELATIVE_APP_DATA_PATH = @"\App_Data";
         public static string RELATIVE_APP_CODE_PATH = @"\App_Code";
 
-#if !NET_STANDARD
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
         /// <summary>
         /// Возвращает URL, по которому расположен бэкенд
@@ -40,8 +39,17 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>путь</returns>
         internal static string GetDirectoryPathToCopy()
         {
-            var rootUrl = GetCurrentRootUrl();
-            return HttpContext.Current == null || string.IsNullOrEmpty(rootUrl) ? string.Empty : HttpContext.Current.Server.MapPath(rootUrl + RELATIVE_PATH_TO_COPY);
+            string rootUrl = GetCurrentRootUrl();
+
+            if (HttpContext == null || string.IsNullOrEmpty(rootUrl))
+            {
+                return string.Empty;
+            }
+
+            var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
+
+            // TODO: review resolver directory path
+            return hostingEnvironment.ContentRootFileProvider.GetFileInfo(rootUrl + RELATIVE_PATH_TO_COPY).PhysicalPath;
         }
 
         /// <summary>
@@ -157,7 +165,6 @@ namespace Quantumart.QP8.BLL.Repository
         internal static string GetThemeAjaxLoaderIconsImageFolderUrl(string themeName) =>
             Url.ToAbsolute("~/Content/" + themeName + "/icons/ajax_loaders/");
 
-#endif
         public static void CreateDirectories(string basePath)
         {
             Directory.CreateDirectory(basePath);

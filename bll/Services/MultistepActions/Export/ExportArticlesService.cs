@@ -1,8 +1,8 @@
-#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             settingsParams.ContentId = content.Id;
-            HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] = settingsParams;
+            HttpContext.Session.SetValue(HttpContextSession.ExportSettingsSessionKey, settingsParams);
         }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public override void TearDown()
         {
-            HttpContext.Current.Session.Remove(HttpContextSession.ExportSettingsSessionKey);
+            HttpContext.Session.Remove(HttpContextSession.ExportSettingsSessionKey);
             base.TearDown();
         }
 
@@ -117,7 +117,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         private static int[] GetArticleIds(int[] ids, int contentId, bool isArchive = false)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
+            var settings = HttpContext.Session.GetValue<ExportSettings>(HttpContextSession.ExportSettingsSessionKey);
             var orderBy = string.IsNullOrEmpty(settings.OrderByField) ? FieldName.ContentItemId : settings.OrderByField;
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy, isArchive);
         }
@@ -127,4 +127,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         ).ToArray();
     }
 }
-#endif

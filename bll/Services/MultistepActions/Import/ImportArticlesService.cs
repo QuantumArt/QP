@@ -1,7 +1,8 @@
 #if !NET_STANDARD
 using System;
 using System.IO;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
@@ -37,12 +38,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             }
 
             importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
-            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = importSettings;
+            HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, importSettings);
         }
 
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             try
             {
                 var fileReader = new FileReader(settings);
@@ -77,7 +78,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public override void TearDown()
         {
-            var importSettings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var importSettings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             RemoveFileFromTemp();
 
             var logData = new
@@ -89,14 +90,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             };
 
             _importLogger.Info($"Articles import was finished {logData.ToJsonLog()}");
-            HttpContext.Current.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
+            HttpContext.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
 
             base.TearDown();
         }
 
         private static void RemoveFileFromTemp()
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             RemoveTempFiles(settings);
         }
 

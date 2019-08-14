@@ -1,7 +1,7 @@
-#if !NET_STANDARD
 using System;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -15,6 +15,8 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class FieldDefaultValueService : IFieldDefaultValueService
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 20;
 
         public MessageResult PreAction(int fieldId)
@@ -50,7 +52,7 @@ namespace Quantumart.QP8.BLL.Services
                 Symmetric = field.ContentLink.Symmetric
             };
 
-            HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext] = context;
+            HttpContext.Session.SetValue(HttpContextSession.FieldDefaultValueServiceProcessingContext, context);
             return new MultistepActionSettings
             {
                 Stages = new[]
@@ -67,7 +69,8 @@ namespace Quantumart.QP8.BLL.Services
 
         public MultistepActionStepResult Step(int step)
         {
-            var context = (FieldDefaultValueContext)HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext];
+            var context = HttpContext.Session.GetValue<FieldDefaultValueContext>(HttpContextSession.FieldDefaultValueServiceProcessingContext);
+
             var idsForStep = context.ProcessedContentItemIds
                 .Skip(step * ItemsPerStep)
                 .Take(ItemsPerStep)
@@ -86,9 +89,11 @@ namespace Quantumart.QP8.BLL.Services
 
         public void TearDown()
         {
-            var context = (FieldDefaultValueContext)HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext];
+            var context = HttpContext.Session.GetValue<FieldDefaultValueContext>(HttpContextSession.FieldDefaultValueServiceProcessingContext);
+
             ContentRepository.UpdateContentModification(context.ContentId);
-            HttpContext.Current.Session.Remove(HttpContextSession.FieldDefaultValueServiceProcessingContext);
+
+            HttpContext.Session.Remove(HttpContextSession.FieldDefaultValueServiceProcessingContext);
         }
 
         private static bool IsDefaultValueDefined(int fieldId)
@@ -102,7 +107,6 @@ namespace Quantumart.QP8.BLL.Services
             return !string.IsNullOrEmpty(field.Default);
         }
 
-        private static bool HasAlreadyRun() => HttpContext.Current.Session[HttpContextSession.FieldDefaultValueServiceProcessingContext] != null;
+        private static bool HasAlreadyRun() => HttpContext.Session.HasKey(HttpContextSession.FieldDefaultValueServiceProcessingContext);
     }
 }
-#endif

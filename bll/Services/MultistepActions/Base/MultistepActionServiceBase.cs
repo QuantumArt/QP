@@ -1,7 +1,6 @@
-#if !NET_STANDARD
 using System;
 using System.Linq;
-using System.Web;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
 
@@ -61,7 +60,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             }
 
             var context = CreateContext(parentId, id, ids, boundToExternal);
-            HttpContext.Current.Session[ContextSessionKey] = context;
+            HttpContext.Session.SetValue(ContextSessionKey, context);
 
             return CreateActionSettings(parentId, id);
         }
@@ -77,4 +76,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
         public abstract string ActionCode { get; }
     }
 }
-#endif

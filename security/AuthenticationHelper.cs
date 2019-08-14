@@ -17,9 +17,9 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.Security
 {
-#if !NET_STANDARD
     public static class AuthenticationHelper
     {
+#if !NET_STANDARD
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, string userData = null)
         {
             var config = (AuthenticationSection)HttpContext.Current.GetSection(WebConfigSections.SystemWebAuthentication);
@@ -191,6 +191,8 @@ namespace Quantumart.QP8.Security
             FormsAuthentication.SignOut();
             return FormsAuthentication.LoginUrl;
         }
-    }
+#else
+        public static string LogOut() => throw new NotImplementedException();
 #endif
+    }
 }

@@ -1,7 +1,8 @@
 #if !NET_STANDARD
 using System;
 using System.IO;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants.Mvc;
@@ -23,7 +24,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public override void SetupWithParams(int parentId, int oldSiteId, IMultistepActionParams settingsParams)
         {
-            HttpContext.Current.Session[CopySiteContextSessionKey] = settingsParams;
+            HttpContext.Session.SetValue(CopySiteContextSessionKey, settingsParams);
         }
 
         public override MultistepActionSettings Setup(int parentId, int siteId, bool? boundToExternal)
@@ -40,7 +41,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             var siteArticlesCount = ContentRepository.GetArticlesCountOnSite(siteId);
             var siteTemplatesElementsCount = ObjectRepository.GetTemplatesElementsCountOnSite(siteId);
 
-            var prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(CopySiteContextSessionKey);
             if (prms.DoNotCopyArticles != null)
             {
                 siteArticlesCount = ContentRepository.GetArticlesCountToCopy(prms.DoNotCopyArticles.Value, site.Id);
@@ -108,7 +109,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         private void RemoveTempFiles()
         {
-            var prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(CopySiteContextSessionKey);
             if (prms != null)
             {
                 File.Delete(prms.PathForFileWithLinks);

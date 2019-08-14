@@ -1,10 +1,8 @@
-#if !NET_STANDARD
-using System.Web;
-#endif
-
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Constants.Mvc;
 
@@ -12,6 +10,8 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 {
     internal static class BackendActionCache
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private static IEnumerable<BackendAction> _actions;
         private static IEnumerable<CustomAction> _customActions;
 
@@ -19,21 +19,17 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             get
             {
-#if NET_STANDARD
-                return _actions ?? (_actions = LoadActions());
-#else
-                if (HttpContext.Current == null || HttpContext.Current.Session == null)
+                if (HttpContext == null || HttpContext.Session == null)
                 {
                     return _actions ?? (_actions = LoadActions());
                 }
 
-                if (HttpContext.Current.Session[HttpContextSession.BackendActionCache] == null)
+                if (!HttpContext.Session.HasKey(HttpContextSession.BackendActionCache))
                 {
-                    HttpContext.Current.Session[HttpContextSession.BackendActionCache] = LoadActions();
+                    HttpContext.Session.SetValue(HttpContextSession.BackendActionCache, LoadActions());
                 }
 
-                return HttpContext.Current.Session[HttpContextSession.BackendActionCache] as IEnumerable<BackendAction>;
-#endif
+                return HttpContext.Session.GetValue<IEnumerable<BackendAction>>(HttpContextSession.BackendActionCache);
             }
         }
 
@@ -67,41 +63,32 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         {
             get
             {
-#if NET_STANDARD
-                return _customActions ?? (_customActions = LoadCustomActions());
-#else
-                if (HttpContext.Current == null || HttpContext.Current.Session == null)
+                if (HttpContext == null || HttpContext.Session == null)
                 {
                     return _customActions ?? (_customActions = LoadCustomActions());
                 }
 
-                if (HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] == null)
+                if (!HttpContext.Session.HasKey(HttpContextSession.BackendCustomActionCache))
                 {
-                    HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] = LoadCustomActions();
+                    HttpContext.Session.SetValue(HttpContextSession.BackendCustomActionCache, LoadCustomActions());
                 }
 
-                return HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] as IEnumerable<CustomAction>;
-#endif
+                return HttpContext.Session.GetValue<IEnumerable<CustomAction>>(HttpContextSession.BackendCustomActionCache);
             }
         }
 
         public static void Reset()
         {
-#if NET_STANDARD
-            _actions = null;
-            _customActions = null;
-#else
-            if (HttpContext.Current == null || HttpContext.Current.Session == null)
+            if (HttpContext == null || HttpContext.Session == null)
             {
                 _actions = null;
                 _customActions = null;
             }
             else
             {
-                HttpContext.Current.Session.Remove(HttpContextSession.BackendActionCache);
-                HttpContext.Current.Session.Remove(HttpContextSession.BackendCustomActionCache);
+                HttpContext.Session.Remove(HttpContextSession.BackendActionCache);
+                HttpContext.Session.Remove(HttpContextSession.BackendCustomActionCache);
             }
-#endif
         }
     }
 }

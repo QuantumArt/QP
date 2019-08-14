@@ -1,5 +1,6 @@
 #if !NET_STANDARD
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -8,6 +9,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteTemlatesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 1;
 
         public int SiteId { get; set; }
@@ -29,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             SiteName = siteName;
             TemplatesElementsCount = elementsCount;
 
-            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(HttpContextSession.CopySiteServiceSettings);
             NewSiteId = prms.DestinationSiteId;
         }
 

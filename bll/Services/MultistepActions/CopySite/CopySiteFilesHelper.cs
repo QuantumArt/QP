@@ -1,11 +1,11 @@
-#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants.Mvc;
@@ -14,6 +14,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteFilesHelper
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const string ContentVersionFolder = "_qp7_article_files_versions";
         private readonly Site _source;
         private readonly Site _destination;
@@ -26,7 +28,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public static int FilesCount(Site source) => GetAllFilesPaths(source).Count;
 
-        private static CopySiteSettings Settings => (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+        private static CopySiteSettings Settings => HttpContext.Session.GetValue<CopySiteSettings>(HttpContextSession.CopySiteServiceSettings);
 
         public static long GetAllFileSize(Site source)
         {
@@ -211,4 +213,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         private static List<string> GetAllFiles() => File.ReadAllLines(Settings.PathForFileWithFilesToCopy).ToList();
     }
 }
-#endif

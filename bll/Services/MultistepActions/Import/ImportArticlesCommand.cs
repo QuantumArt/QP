@@ -1,7 +1,8 @@
 #if !NET_STANDARD
 using System;
 using System.Transactions;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Factories;
@@ -17,6 +18,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private readonly ILog _importLogger;
 
         private const int ItemsPerStep = 20;
@@ -48,7 +51,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public MultistepActionStepResult Step(int step)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             Ensure.NotNull(settings);
 
             var reader = new CsvReader(SiteId, ContentId, settings);

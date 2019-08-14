@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Web;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
@@ -23,6 +25,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvReader
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private readonly int _siteId;
         private readonly int _contentId;
         private readonly FileReader _reader;
@@ -873,16 +877,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static void SaveUpdatedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             settings?.UpdatedArticleIds.AddRange(articleIds);
-            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
+            HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, settings);
         }
 
         private static void SaveInsertedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             settings?.InsertedArticleIds.AddRange(articleIds);
-            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
+            HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, settings);
         }
 
         private List<int> GetExistingArticleIds(List<int> articlesIdList) => ArticleRepository.CheckForArticleExistence(articlesIdList, string.Empty, _contentId);
@@ -1018,7 +1022,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public void CopyFileToTempDir()
         {
-            var fileInfo = new FileInfo(HttpUtility.UrlDecode(_settings.UploadFilePath) ?? string.Empty);
+            var fileInfo = new FileInfo(WebUtility.UrlDecode(_settings.UploadFilePath) ?? string.Empty);
             if (fileInfo.Exists)
             {
                 var newFileUploadPath = $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";

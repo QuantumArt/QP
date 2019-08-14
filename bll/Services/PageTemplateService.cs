@@ -1,5 +1,4 @@
 #if !NET_STANDARD
-
 using System;
 using System.Collections.Generic;
 using System.IO;

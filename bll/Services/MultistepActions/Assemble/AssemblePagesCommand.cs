@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -15,6 +16,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
     internal class AssemblePagesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const string PageTemplate = "\"{0}/{1}\"";
         private const int ItemsPerStep = 5;
 
@@ -56,17 +59,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                 token = QP7Service.Authenticate();
             }
 
-            HttpContext.Current.Session[HttpContextSession.AssemblePagesCommandProcessingContext] = new AssemblePagesCommandContext
-            {
-                Pages = pagesIds.ToArray(),
-                QP7Token = token,
-                MissedPages = new Dictionary<string, List<PageInfo>>()
-            };
+            HttpContext.Session.SetValue(
+                HttpContextSession.AssemblePagesCommandProcessingContext,
+                new AssemblePagesCommandContext
+                {
+                    Pages = pagesIds.ToArray(),
+                    QP7Token = token,
+                    MissedPages = new Dictionary<string, List<PageInfo>>()
+                });
         }
 
         internal static void TearDown()
         {
-            HttpContext.Current.Session[HttpContextSession.AssemblePagesCommandProcessingContext] = null;
+            HttpContext.Session.Remove(HttpContextSession.AssemblePagesCommandProcessingContext);
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -85,7 +90,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
         public MultistepActionStepResult Step(int step)
         {
-            var context = HttpContext.Current.Session[HttpContextSession.AssemblePagesCommandProcessingContext] as AssemblePagesCommandContext;
+            var context = HttpContext.Session.GetValue<AssemblePagesCommandContext>(HttpContextSession.AssemblePagesCommandProcessingContext);
+
             var pages = context.Pages
                 .Skip(step * ItemsPerStep)
                 .Take(ItemsPerStep)
@@ -150,4 +156,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
     }
 }
 #endif
-

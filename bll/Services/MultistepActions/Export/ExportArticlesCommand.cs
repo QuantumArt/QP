@@ -1,6 +1,6 @@
-#if !NET_STANDARD
 using System.Collections.Generic;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -12,6 +12,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     internal class ExportArticlesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 20;
 
         public int ContentId { get; }
@@ -56,7 +58,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         public MultistepActionStepResult Step(int step)
         {
             var content = ContentRepository.GetById(ContentId);
-            var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
+            var settings = HttpContext.Session.GetValue<ExportSettings>(HttpContextSession.ExportSettingsSessionKey);
             Ensure.NotNull(content, string.Format(ContentStrings.ContentNotFound, ContentId));
             Ensure.NotNull(settings);
 
@@ -71,4 +73,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         }
     }
 }
-#endif
