@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
+using System.Net;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Configuration;
@@ -33,7 +33,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         {
             get
             {
-                var url = HttpUtility.UrlDecode(UploadFilePath) ?? string.Empty;
+                var url = WebUtility.UrlDecode(UploadFilePath) ?? string.Empty;
                 var fileInfo = new FileInfo(url);
                 return $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
             }
@@ -90,7 +90,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new DirectoryNotFoundException();
             }
 
-            return HttpUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\_temp\\{FileName}");
+            return WebUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\_temp\\{FileName}");
         }
 
         public bool IsWorkflowAssigned { get; set; }
