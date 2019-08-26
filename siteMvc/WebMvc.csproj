@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <!-- <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects> -->
-    <!-- <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType> -->
-    <!-- <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration> -->
-    <!-- <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform> -->
-    <!-- <SchemaVersion>2.0</SchemaVersion> -->
-    <!-- <ProjectGuid>{8BE1BB60-1938-45E8-BAFB-1D008D62059C}</ProjectGuid> -->
-    <!-- <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids> -->
-    <!-- <OutputType>Library</OutputType> -->
-    <!-- <AppDesignerFolder>Properties</AppDesignerFolder> -->
-    <!-- <PrecompileRazorFiles>true</PrecompileRazorFiles> -->
-    <!-- <BuildWithScript>false</BuildWithScript> -->
-    <!-- <SccProjectName>SAK</SccProjectName> -->
-    <!-- <SccLocalPath>SAK</SccLocalPath> -->
-    <!-- <SccAuxPath>SAK</SccAuxPath> -->
-    <!-- <SccProvider>SAK</SccProvider> -->
-    <!-- <UseIISExpress>false</UseIISExpress> -->
-    <!-- <OldToolsVersion>4.0</OldToolsVersion> -->
-    <!-- <UpgradeBackupLocation /> -->
-    <!-- <IISExpressSSLPort /> -->
-    <!-- <IISExpressAnonymousAuthentication /> -->
-    <!-- <IISExpressWindowsAuthentication /> -->
-    <!-- <IISExpressUseClassicPipelineMode /> -->
-    <!-- <TargetFrameworkProfile /> -->
-    <!-- <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked> -->
-    <!-- <UseGlobalApplicationHostFile /> -->
-    <!-- <NuGetPackageImportStamp></NuGetPackageImportStamp> -->
-    <!-- <Use64BitIISExpress /> -->
     <AssemblyName>Quantumart.QP8.WebMvc</AssemblyName>
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <MvcBuildViews>true</MvcBuildViews>
@@ -66,7 +39,7 @@
 
     <!-- TODO: remove Microsoft.AspNet.Mvc reference later -->
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" PrivateAssets="None" />
-    
+
     <!-- TODO: review deps -->
     <!-- <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc">
       <HintPath>$(SolutionDir)packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
@@ -368,18 +341,9 @@
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\**" Exclude="Content\build\**" />
-    <Content Include="Scripts\**" Exclude="Scripts\build\**;Scripts\**\*.cs;Scripts\**\*.ts" />
     <TypeScriptCompile Include="Scripts\**\*.ts" />
-    <Content Include="Views\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Views\_ViewImports.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Update="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>
@@ -387,31 +351,12 @@
       <DependentUpon>JsConstants.ashx</DependentUpon>
     </Compile>
     <Content Include="gulpfile.babel.js" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="webpack.config.js" />
-    <None Include="App.config" />
-    <None Include="NLog.xsd" />
-    <None Include="packages.config" />
-    <None Include="Settings.StyleCop" />
     <Content Include="ToCopy\default\container_code_cs.txt" />
     <Content Include="ToCopy\default\container_code_vb.txt" />
     <Content Include="ToCopy\default\container_presentation.txt" />
     <Content Include="ToCopy\default\generic_code_cs.txt" />
     <Content Include="ToCopy\default\generic_code_vb.txt" />
-    <Content Include="Global.asax" />
-    <Content Include="tsconfig.json" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />

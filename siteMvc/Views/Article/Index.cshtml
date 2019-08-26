@@ -1,4 +1,5 @@
-﻿@using Quantumart.QP8.Resources
+﻿@using Newtonsoft.Json
+@using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 @using Quantumart.QP8.Constants.Mvc
 @using Quantumart.QP8.BLL.Helpers
@@ -58,7 +59,7 @@
         }
         return className;
       };
-      var columnsData = @Html.Raw(Json.Encode(Model.GetDynamicColumns()));
+      var columnsData = @Html.Raw(JsonConvert.SerializeObject(Model.GetDynamicColumns()));
       var dynamicColumns = columnsData.map(function (c, i) {
         return {
           field: c.Field,

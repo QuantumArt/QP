@@ -7,7 +7,7 @@
 	{
 		<div class="directLink">
 			@{
-				var url =  Url.Action(string.Empty, string.Empty, Model.DirectLinkOptions, Request.Url.Scheme);
+				var url =  Url.Action(string.Empty, string.Empty, Model.DirectLinkOptions, Html.ViewContext.HttpContext.Request.Scheme);
 			}
 
 			<dl class="row">

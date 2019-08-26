@@ -5,13 +5,13 @@
 @if (Model.Data.WorkFlowId.HasValue)
 {
 	if (Model.ShowUnbindButton)
-	{ 
-		@Html.Warning(new[] 
+	{
+		@Html.Warning(new[]
 		{
-			new MvcHtmlString(string.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name)), 			
-			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
+			string.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name),
+			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification).ToString()
 		})
-	}	
+	}
 }
 
 @using (Html.BeginTabForm(Model))
@@ -38,7 +38,7 @@
 	{
         @Html.CheckBoxFieldFor(s => s.Data.ForCreate)
         @Html.CheckBoxFieldFor(s => s.Data.ForModify)
-        @Html.CheckBoxFieldFor(s => s.Data.ForRemove)		
+        @Html.CheckBoxFieldFor(s => s.Data.ForRemove)
         @Html.CheckBoxFieldFor(s => s.Data.ForStatusChanged, htmlAttributes: new Dictionary<string, object> { { "class", "nfp-status checkbox" } })
 		@Html.CheckBoxFieldFor(s => s.Data.ForStatusPartiallyChanged, htmlAttributes: new Dictionary<string, object> { { "class", "nfp-status checkbox" } })
 		@Html.CheckBoxFieldFor(s => s.Data.ForFrontend)
@@ -52,19 +52,19 @@
 	@using (Html.BeginFieldGroup(NotificationStrings.Sender))
  {
         @Html.CheckBoxFieldFor(s => s.Data.FromDefaultName, "DefaultSenderNamePanel", false, new Dictionary<string, object> {
-                                                                                   { 
+                                                                                   {
                                                                                        "class", "checkbox nfp-useDefaultSenderNameCheckbox"
                                                                                    }
                                                                                    })
 	 using (Html.BeginPanel("DefaultSenderNamePanel"))
-	 { 
+	 {
             @Html.DisplayFieldFor(s => s.Data.DefaultSenderName)
 	 }
-        
+
         <div class = "nfp-senderNamePanel">
             @Html.TextBoxFieldFor(s => s.Data.FromUserName)
         </div>
-    
+
         @Html.CheckBoxFieldFor(s => s.Data.FromBackenduser, "FromBackendUserPanel", false, new Dictionary<string, object> {
                                                                                    {
                                                                                        "class", "checkbox nfp-useBackendEmailCheckbox"
@@ -165,12 +165,12 @@
 }
 
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
-	
+<script type="text/javascript">
+
     @(Model.ContextObjectName).setInitializedCallback(function() {
 		this.viewMediator = new Quantumart.QP8.BackendNotificationPropertiesMediator('@(Html.UniqueId("editingForm"))');
 	});
-    
+
     @(Model.ContextObjectName).setTerminatingCallback(function() {
         this.viewMediator.dispose();
         this.viewMediator = null;

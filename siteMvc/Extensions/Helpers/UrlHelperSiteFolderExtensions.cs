@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Configuration;
@@ -16,7 +17,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся изображения указанной темы</returns>
-        public static string GetThemeRootImageFolderUrl(this UrlHelper url)
+        public static string GetThemeRootImageFolderUrl(this IUrlHelper url)
         {
             return SitePathHelper.GetThemeRootImageFolderUrl(GetCurrentTheme());
         }
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся маленькие пиктограммы указанной темы</returns>
-        public static string GetThemeSmallIconsImageFolderUrl(this UrlHelper url)
+        public static string GetThemeSmallIconsImageFolderUrl(this IUrlHelper url)
         {
             return SitePathHelper.GetThemeSmallIconsImageFolderUrl(GetCurrentTheme());
         }
@@ -36,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// </summary>
         /// <param name="url">URL хелпер</param>
         /// <returns>путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы</returns>
-        public static string GetThemeAjaxLoaderIconsImageFolderUrl(this UrlHelper url)
+        public static string GetThemeAjaxLoaderIconsImageFolderUrl(this IUrlHelper url)
         {
             return SitePathHelper.GetThemeAjaxLoaderIconsImageFolderUrl(GetCurrentTheme());
         }

@@ -88,7 +88,7 @@
 
   <script type="text/javascript">
     CKEDITOR.timestamp = '@DateTime.Now.Ticks';
-    var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+    var isDebugMode = false; /* Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled) ; */
     var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
     Url.SetRootPath("@Url.Content("~/")");
 

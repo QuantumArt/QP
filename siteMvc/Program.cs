@@ -15,7 +15,6 @@ namespace Quantumart.QP8.WebMvc
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .SuppressStatusMessages(true)
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.ClearProviders();

@@ -4,9 +4,9 @@
 
 @using (Html.BeginTabForm(Model))
 {
-    
+
     @Html.Partial("Locking", Model)
-            
+
 	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
@@ -15,16 +15,16 @@
         @Html.TextBoxFieldFor(s => s.Data.CustomClass)
         @Html.TextBoxFieldFor(s => s.Data.Folder)
         @Html.CheckBoxFieldFor(s => s.Data.GenerateTrace, "WarningPanel")
-        
+
         <dl class="row">
 	    <dt class="label">
 	    <dd class="field">
-	    
+
         @using (Html.BeginPanel("WarningPanel"))
         {
-            @Html.Warning(new[] 
+            @Html.Warning(new[]
 		    {
-			    new MvcHtmlString(TemplateStrings.WarningString)
+			    TemplateStrings.WarningString
 		    })
         }
 
@@ -32,42 +32,42 @@
 	    </dd>
         </dl>
     }
-    
+
     using (Html.BeginFieldGroup(TemplateStrings.ViewStateParameters))
 	{
         @Html.CheckBoxFieldFor(s => s.Data.EnableViewState)
         @Html.CheckBoxFieldFor(s => s.Data.ApplyToExistingObjects)
     }
-    
+
     using (Html.BeginFieldGroup(TemplateStrings.Caching))
 	{
         @Html.CheckBoxFieldFor(s => s.Data.SendNocacheHeaders)
         @Html.CheckBoxFieldFor(s => s.Data.SendLastModifiedHeader)
-        @Html.CheckBoxFieldFor(s => s.Data.ProxyCache, htmlAttributes: new Dictionary<string, object> {{"class", "checkbox simple-checkbox display-cache-hours"}})        
+        @Html.CheckBoxFieldFor(s => s.Data.ProxyCache, htmlAttributes: new Dictionary<string, object> {{"class", "checkbox simple-checkbox display-cache-hours"}})
         @Html.CheckBoxFieldFor(s => s.Data.BrowserCaching, htmlAttributes: new Dictionary<string, object> {{"class", "checkbox simple-checkbox display-cache-hours"}})
         <div class="cache-hours-container">
             @Html.NumericFieldFor(s => s.Data.CacheHours, 1, 100)
         </div>
     }
-    
+
     using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))
 	{
         @Html.SelectFieldFor(model => model.Data.Charset, Html.List(Model.Charsets))
         @Html.SelectFieldFor(model => model.Data.Locale, Html.List(Model.Locales))
 	}
-	
+
     @Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 
 }
 
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
-	
+<script type="text/javascript">
+
     @(Model.ContextObjectName).setInitializedCallback(function() {
 		this.viewMediator = new Quantumart.QP8.BackendPagePropertiesMediator('@(Html.UniqueId("editingForm"))');
 	});
-    
+
     @(Model.ContextObjectName).setTerminatingCallback(function() {
         this.viewMediator.dispose();
         this.viewMediator = null;

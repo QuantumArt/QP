@@ -1,15 +1,17 @@
-﻿@using Quantumart.QP8.Constants
+﻿@using Microsoft.AspNetCore.Html
+@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
+@using HtmlString = System.Web.HtmlString
 @model Quantumart.QP8.WebMvc.ViewModels.EntityPermissions.PermissionListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
   if (Model.ShowDisableArticlePermissionForContentWarning)
   {
-    @Html.Warning(new[]
+    @Html.Warning(new []
     {
-      new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled),
-      Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
+      EntityPermissionStrings.ContentArticlePermissionIsDisabled,
+      Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions).ToString()
     })
   }
 
