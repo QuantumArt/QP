@@ -42,6 +42,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Configuration;
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -200,20 +201,28 @@ namespace Quantumart.QP8.WebMvc
                     .GetRequiredService(actionCodeTypes[command]));
         }
 
-        public void Configure(IApplicationBuilder app, IServiceProvider provider)
+        public void Configure(IApplicationBuilder app, IServiceProvider provider, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(new GlobalExceptionHandler(loggerFactory).Action);
+
+            }
+
             QPContext.SetServiceProvider(provider);
 
             RegisterMappings();
 
-            // TODO: implement exception handler
-            //app.UseExceptionHandler();
 
             // TODO: review static files
             app.UseStaticFiles("/Content");
             app.UseStaticFiles("/Scripts");
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.Use(async (context, next) =>
             {
