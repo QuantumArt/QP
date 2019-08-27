@@ -28,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>URL бэкенда</returns>
         internal static string GetCurrentRootUrl()
         {
-            QPublishingSection qpConfig = QPConfiguration.AppConfigSection;
+            var qpConfig = QPConfiguration.Options;
             return qpConfig == null ? string.Empty : qpConfig.BackendUrl;
         }
 

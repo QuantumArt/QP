@@ -16,13 +16,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             Value = value;
         }
 
-        public override void OnResultExecuted(ResultExecutedContext filterContext)
+        public override void OnResultExecuting(ResultExecutingContext context)
         {
-            base.OnResultExecuted(filterContext);
-            if (string.IsNullOrEmpty(filterContext.HttpContext.Response.Headers[Name]))
+
+            if (string.IsNullOrEmpty(context.HttpContext.Response.Headers[Name]))
             {
-                filterContext.HttpContext.Response.Headers.Add(Name, Value);
+                context.HttpContext.Response.Headers.Add(Name, Value);
             }
+            base.OnResultExecuting(context);
         }
     }
 }

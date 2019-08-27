@@ -19,7 +19,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Site;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class SiteController : QPController
+    public class SiteController : AuthQpController
     {
         private readonly ISearchInArticlesService _searchInArticlesService;
 

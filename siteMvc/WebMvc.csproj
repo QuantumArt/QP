@@ -5,7 +5,7 @@
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <MvcBuildViews>true</MvcBuildViews>
     <TargetFramework>net471</TargetFramework>
-    <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**;Content\build\**;Scripts\build\**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**</DefaultItemExcludes>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <Copyright>Copyright © 2007-2019 Quantum Art</Copyright>
@@ -358,10 +358,13 @@
     <Content Include="ToCopy\default\generic_code_cs.txt" />
     <Content Include="ToCopy\default\generic_code_vb.txt" />
   </ItemGroup>
+  
   <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    <None Update="Scripts\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Update="Content\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
   </ItemGroup>
-  <!-- <ItemGroup>
+
+    <!-- <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

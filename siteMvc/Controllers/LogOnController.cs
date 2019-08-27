@@ -10,18 +10,26 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using Refit;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class LogOnController : QPController
     {
+        private AuthenticationHelper _helper;
+
+        public LogOnController(AuthenticationHelper helper)
+        {
+            _helper = helper;
+        }
+
         [DisableBrowserCache]
         [ResponseHeader(ResponseHeaders.QpNotAuthenticated, "True")]
         public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions)
         {
-            string userIpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            string userIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
-            if (!User.Identity.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(userIpAddress))
+            if (!User.Identity.IsAuthenticated && _helper.ShouldUseWindowsAuthentication(userIpAddress))
             {
                 return Redirect(GetAuthorizationUrl(directLinkOptions));
             }
@@ -45,7 +53,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid && data.User != null)
             {
-                AuthenticationHelper.CompleteAuthentication(data.User);
+                _helper.SignIn(data.User);
                 if (Request.IsAjaxRequest())
                 {
                     return Json(new
@@ -80,7 +88,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Redirect(loginUrl);
         }
 
-        private static string GetAuthorizationUrl(DirectLinkOptions directLinkOptions) => directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl;
+        private string GetAuthorizationUrl(DirectLinkOptions directLinkOptions)
+        {
+            var url = Options.Authentication.WinLogonUrl;
+            return directLinkOptions != null ? directLinkOptions.AddToUrl(url) : url;
+        }
 
         private void FillViewBagData()
         {

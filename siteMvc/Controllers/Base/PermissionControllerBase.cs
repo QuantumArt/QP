@@ -11,7 +11,7 @@ using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers.Base
 {
-    public abstract class PermissionControllerBase : QPController
+    public abstract class PermissionControllerBase : AuthQpController
     {
         protected readonly IPermissionService Service;
 

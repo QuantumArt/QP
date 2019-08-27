@@ -383,7 +383,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var result = GetValueFromStorage(_currentSessionId, HttpContextItems.CurrentSessionIdKey);
-                
+
                 if (result == null)
                 {
                     result = (HttpContext.User.Identity as QpIdentity)?.SessionId;
@@ -515,7 +515,7 @@ namespace Quantumart.QP8.BLL
 
         public static QpIdentity CurrentUserIdentity =>
             HttpContext != null && HttpContext.User != null ? HttpContext.User.Identity as QpIdentity : null;
-        
+
         public static string CurrentDbConnectionString
         {
             get => CurrentDbConnectionInfo?.ConnectionString;
@@ -548,7 +548,7 @@ namespace Quantumart.QP8.BLL
 
         public static bool CheckCustomerCode(string customerCode)
         {
-            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name")?.Value).Contains(customerCode);
+            return QPConfiguration.GetCustomerCodes().Contains(customerCode);
         }
 
         public static QpUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
@@ -666,7 +666,7 @@ namespace Quantumart.QP8.BLL
                     CommonSecurity.ClearUserToken(scope.DbConnection, CurrentUserId, CurrentSessionId);
                 }
 
-                var loginUrl = AuthenticationHelper.LogOut();
+                new AuthenticationHelper(new HttpContextAccessor() {HttpContext = HttpContext}, QPConfiguration.Options).SignOut();
                 transaction.Complete();
 
                 // AspNetCore equivalent of Session.Abandon()
@@ -676,7 +676,7 @@ namespace Quantumart.QP8.BLL
                     HttpContext.Response.Cookies.Delete(SessionDefaults.CookieName);
                 }
 
-                return loginUrl;
+                return QPConfiguration.Options.BackendUrl;
             }
         }
 

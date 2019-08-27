@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
@@ -15,7 +14,7 @@ using Quantumart.QP8.WebMvc.ViewModels.HomePage;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class HomeController : QPController
+    public class HomeController : AuthQpController
     {
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));

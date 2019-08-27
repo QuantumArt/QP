@@ -726,14 +726,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             wrapper.MergeAttributes(options.HtmlAttributes);
 
-            if (list != null && list.Count >= QPConfiguration.AppConfigSection.RelationCountLimit)
+            if (list != null && list.Count >= QPConfiguration.Options.RelationCountLimit)
             {
                 var value = string.Join(",", list.Select(n => n.Value).ToArray());
                 wrapper.InnerHtml.AppendHtml(source.Hidden(name, value, new { @class = MultiplePickerOverflowHiddenValue, id = source.UniqueId(name) }).ToString());
             }
 
             var ul = new TagBuilder("ul");
-            if (list != null && list.Count < QPConfiguration.AppConfigSection.RelationCountLimit)
+            if (list != null && list.Count < QPConfiguration.Options.RelationCountLimit)
             {
                 for (int itemIndex = 0; itemIndex < list.Count; itemIndex++)
                 {
@@ -879,7 +879,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             input.MergeAttribute("name", id);
             input.MergeAttribute("type", "text");
             wrap.InnerHtml.AppendHtml(input);
-            
+
             if (isReadOnly)
             {
                 input.MergeAttribute("disabled", "disabled");

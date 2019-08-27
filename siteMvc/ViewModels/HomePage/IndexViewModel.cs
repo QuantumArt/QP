@@ -29,7 +29,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
             get
             {
                 var configTitle = QPConfiguration.ApplicationTitle.Replace("{release}", Default.ReleaseNumber);
-                var instanceName = QPConfiguration.AppConfigSection.InstanceName;
+                var instanceName = QPConfiguration.Options.InstanceName;
                 if (!string.IsNullOrEmpty(configTitle) && !string.IsNullOrEmpty(instanceName))
                 {
                     return instanceName + " " + configTitle;

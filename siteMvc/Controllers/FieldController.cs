@@ -6,6 +6,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -17,10 +18,10 @@ using Quantumart.QP8.WebMvc.ViewModels.Field;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class FieldController : QPController
+    public class FieldController : AuthQpController
     {
-        public FieldController(IArticleService dbArticleService)
-            : base(dbArticleService)
+        public FieldController(IArticleService dbArticleService, QPublishingOptions options)
+            : base(dbArticleService, options)
         {
         }
 

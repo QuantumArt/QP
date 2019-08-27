@@ -12,6 +12,7 @@ using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Utils;
@@ -25,12 +26,12 @@ using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ArticleController : QPController
+    public class ArticleController : AuthQpController
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public ArticleController(IArticleService dbArticleService, IServiceProvider serviceProvider)
-            : base(dbArticleService)
+        public ArticleController(IArticleService dbArticleService, IServiceProvider serviceProvider, QPublishingOptions options)
+            : base(dbArticleService, options)
         {
             _serviceProvider = serviceProvider;
         }

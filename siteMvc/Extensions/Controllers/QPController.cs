@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,6 +30,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
     {
         protected IArticleService DbArticleService;
 
+        protected QPublishingOptions Options;
+
         protected QPController()
         {
             // TODO: review logger context
@@ -36,10 +39,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             Logger.Log.SetAsyncContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
         }
 
-        protected QPController(IArticleService dbArticleService)
+        protected QPController(IArticleService dbArticleService, QPublishingOptions options)
             : this()
         {
             DbArticleService = dbArticleService;
+            Options = options;
         }
 
         protected JsonResult JsonCamelCase(object data)
@@ -300,7 +304,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                 .ToArray();
 
             if (validatedFormIds.Length > 0 &&
-                validatedFormIds.Length <= (QPConfiguration.AppConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
+                validatedFormIds.Length <= Options.RelationCountLimit)
             {
                 var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
                     .Where(g => g != Guid.Empty)

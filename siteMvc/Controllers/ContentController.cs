@@ -31,7 +31,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Workflow;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ContentController : QPController
+    public class ContentController : AuthQpController
     {
         private readonly IContentRepository _contentRepository;
 
@@ -539,7 +539,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             int IDs = 0)
         {
-          
+
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var listCommand = GetListCommand(page, pageSize, orderBy);

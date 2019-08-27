@@ -29,7 +29,7 @@ namespace Quantumart.QP8.Configuration
 
         internal static string _configServiceToken;
 
-        internal static int? _commandTimeout;
+        public static QPublishingOptions Options { get; set; }
 
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
@@ -223,9 +223,9 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
-                    if (!string.IsNullOrEmpty(AppConfigSection?.QpConfigPath))
+                    if (!string.IsNullOrEmpty(Options.QpConfigPath))
                     {
-                        _configPath = AppConfigSection.QpConfigPath;
+                        _configPath = Options.QpConfigPath;
                     }
                     else
                     {
@@ -255,9 +255,9 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceUrl == null)
                 {
-                    if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigUrl))
+                    if (!String.IsNullOrEmpty(Options.QpConfigUrl))
                     {
-                        _configServiceUrl = AppConfigSection.QpConfigUrl;
+                        _configServiceUrl = Options.QpConfigUrl;
                     }
                     else
                     {
@@ -275,9 +275,9 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceToken == null)
                 {
-                    if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigToken))
+                    if (!String.IsNullOrEmpty(Options.QpConfigToken))
                     {
-                        _configServiceToken = AppConfigSection.QpConfigToken;
+                        _configServiceToken = Options.QpConfigToken;
                     }
                     else
                     {
@@ -289,32 +289,8 @@ namespace Quantumart.QP8.Configuration
             set { _configServiceToken = value; }
         }
 
-        public static int CommandTimeout
-        {
-            get
-            {
-                if (_commandTimeout == null)
-                {
-                    if (AppConfigSection?.CommandTimeout != null)
-                    {
-                        _commandTimeout = AppConfigSection.CommandTimeout;
-                    }
-                    else
-                    {
-                        _commandTimeout = 0;
-                    }
-                }
-                return _commandTimeout.Value;
-            }
-        }
+        public static int CommandTimeout => Options.CommandTimeout;
 
-        [Obsolete("Use AppConfigSection instead")]
-        public static QPublishingSection WebConfigSection => AppConfigSection;
-
-        /// <summary>
-        /// Возвращает кастомную конфигурационную секцию в файле app.config
-        /// </summary>
-        public static QPublishingSection AppConfigSection => ConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 
         public static void SetAppSettings(DbConnectorSettings settings)
         {

@@ -13,13 +13,10 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Extensions.ValidatorProviders;
-using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
-using Quantumart.QP8.WebMvc.Infrastructure.ValueProviders;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
@@ -95,8 +92,6 @@ namespace Quantumart.QP8.WebMvc
 
         internal static void RegisterValueProviders()
         {
-            ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
-            ValueProviderFactories.Factories.Add(new JsonNetValueProviderFactory());
         }
 
         internal static void UnregisterModelValidatorProviders()
@@ -166,7 +161,7 @@ namespace Quantumart.QP8.WebMvc
         {
             var cultureName = HttpContext.Current.User.Identity is QpIdentity userIdentity
                 ? userIdentity.CultureName
-                : QPConfiguration.WebConfigSection.Globalization.DefaultCulture;
+                : QPConfiguration.Options.Globalization.DefaultCulture;
 
             var cultureInfo = new CultureInfo(cultureName);
             CultureInfo.CurrentUICulture = cultureInfo;

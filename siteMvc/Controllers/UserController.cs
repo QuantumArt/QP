@@ -6,6 +6,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -17,12 +18,12 @@ using Quantumart.QP8.WebMvc.ViewModels.User;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class UserController : QPController
+    public class UserController : AuthQpController
     {
         private readonly IUserService _service;
 
-        public UserController(IUserService service, IArticleService dbArticleService)
-            : base(dbArticleService)
+        public UserController(IUserService service, IArticleService dbArticleService, QPublishingOptions options)
+            : base(dbArticleService, options)
         {
             _service = service;
         }

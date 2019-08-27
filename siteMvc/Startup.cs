@@ -42,6 +42,10 @@ using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Configuration;
 using System.Globalization;
+using System.IO;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace Quantumart.QP8.WebMvc
@@ -63,8 +67,26 @@ namespace Quantumart.QP8.WebMvc
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var qpOptions = new QPublishingOptions();
+            Configuration.Bind("Properties", qpOptions);
+            services.AddSingleton(qpOptions);
+            QPConfiguration.Options = qpOptions;
+
             // used by Session middleware
             services.AddDistributedMemoryCache();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                    options.LoginPath = new PathString("/Logon");
+                    options.LogoutPath = new PathString("/Logon/Logout");
+                    options.SlidingExpiration = true;
+                });
+
+            services.AddOptions();
+            services.AddHttpContextAccessor();
 
             services.AddSession(options =>
             {
@@ -89,6 +111,7 @@ namespace Quantumart.QP8.WebMvc
 
             // services
             services
+                .AddTransient<AuthenticationHelper>()
                 .AddSingleton<ISearchGrammarParser, IronySearchGrammarParser>()
                 .AddTransient<IStopWordList, StopWordList>()
                 .AddTransient<IArticleSearchRepository, ArticleSearchRepository>()
@@ -210,25 +233,32 @@ namespace Quantumart.QP8.WebMvc
             else
             {
                 app.UseExceptionHandler(new GlobalExceptionHandler(loggerFactory).Action);
-
             }
 
-            QPContext.SetServiceProvider(provider);
-
-            RegisterMappings();
-
-
-            // TODO: review static files
-            app.UseStaticFiles("/Content");
-            app.UseStaticFiles("/Scripts");
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Scripts")),
+                RequestPath =  "/Scripts"
+            });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Content")),
+                RequestPath =  "/Content"
+            });
 
             app.UseAuthentication();
+            QPContext.SetServiceProvider(provider);
+            RegisterMappings();
 
             app.Use(async (context, next) =>
             {
                 string cultureName = context.User.Identity is QpIdentity userIdentity
                     ? userIdentity.CultureName
-                    : QPConfiguration.AppConfigSection.Globalization.DefaultCulture;
+                    : QPConfiguration.Options.Globalization.DefaultCulture;
 
                 var cultureInfo = new CultureInfo(cultureName);
                 CultureInfo.CurrentUICulture = cultureInfo;

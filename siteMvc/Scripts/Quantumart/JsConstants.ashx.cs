@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
 
         public void ProcessRequest(HttpContext context)
         {
-            var currentTheme = QPConfiguration.AppConfigSection.DefaultTheme;
+            var currentTheme = QPConfiguration.Options.DefaultTheme;
             var constants = new StringBuilder();
 
             constants.AppendLine("Type.registerNamespace(\"Quantumart.QP8.Enums\");");
@@ -233,7 +233,7 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
 
             // Константы серверного окружения
             constants.AppendLine("// Константы серверного окружения");
-            constants.AppendLine($"window.MAX_UPLOAD_SIZE_BYTES = {QPConfiguration.WebConfigSection.UploadMaxSize * 1024 * 1024}");
+            constants.AppendLine($"window.MAX_UPLOAD_SIZE_BYTES = {QPConfiguration.Options.UploadMaxSize * 1024 * 1024}");
 
             // Типы вхождения в диапазон
             constants.AppendLine("// Типы вхождения в диапазон");

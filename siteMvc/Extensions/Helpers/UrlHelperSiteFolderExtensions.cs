@@ -9,7 +9,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
     {
         private static string GetCurrentTheme()
         {
-            return QPConfiguration.AppConfigSection.DefaultTheme;
+            return QPConfiguration.Options.DefaultTheme;
         }
 
         /// <summary>
