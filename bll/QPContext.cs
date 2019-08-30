@@ -488,7 +488,7 @@ namespace Quantumart.QP8.BLL
 
         public static bool CheckCustomerCode(string customerCode)
         {
-            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name")?.Value).Contains(customerCode);
+            return QPConfiguration.GetCustomerCodes().Contains(customerCode);
         }
 
         public static QpUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
