@@ -63,7 +63,7 @@ namespace Quantumart.QP8.BLL.Services
         public QP7Token Authenticate(string applicationPath)
         {
             var customerCode = QPContext.CurrentCustomerCode;
-            var userName = QPContext.CurrentUserIdentity.Name;
+            var userName = QPContext.CurrentUserName;
             var password = HttpContext.Session.GetValue<string>(HttpContextSession.Qp7Password);
 
             return Authenticate(userName, password, customerCode, applicationPath);

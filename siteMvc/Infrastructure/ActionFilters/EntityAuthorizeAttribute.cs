@@ -36,10 +36,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext filterContext, ActionExecutionDelegate next)
         {
-            if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
-            {
-                throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
-            }
+            // if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
+            // {
+            //     throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
+            // }
 
             IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
             ControllerContext controllerContext = ((Controller)filterContext.Controller).ControllerContext;

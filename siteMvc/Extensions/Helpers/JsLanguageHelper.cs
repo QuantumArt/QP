@@ -1,18 +1,23 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Web;
-using System.Web.SessionState;
+using System.Text;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
+namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
-    public class JsLanguage : IHttpHandler, IReadOnlySessionState
+    public class JsLanguageHelper
     {
         private const string LangScriptFolderPath = "/Scripts/Quantumart/languages/";
+        private IHostingEnvironment _environment;
 
-        public bool IsReusable => false;
+        public JsLanguageHelper(IHostingEnvironment environment)
+        {
+            _environment = environment;
+        }
 
         private readonly List<string> _scriptFileNames = new List<string>
         {
@@ -45,24 +50,23 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
             "BackendChangePasswordWindow.Lang.js"
         };
 
-        public void ProcessRequest(HttpContext context)
+        public string GetResult()
         {
-            var response = context.Response;
-            var server = context.Server;
+            var sb = new StringBuilder();
             var cultureName = CultureInfo.CurrentCulture.Name.ToLowerInvariant();
-            var useMinifiedScripts = !HttpContext.Current.IsDebuggingEnabled;
 
-            response.ContentType = "text/javascript";
             foreach (var scriptFileName in _scriptFileNames)
             {
-                response.Write(GetLanguageScriptCode(server, scriptFileName, cultureName, useMinifiedScripts));
+                sb.Append(GetLanguageScriptCode(scriptFileName, cultureName, false));
             }
+
+            return sb.ToString();
         }
 
-        private string GetLanguageScriptCode(HttpServerUtility server, string scriptName, string cultureName, bool useMinifiedScript)
+        private string GetLanguageScriptCode(string scriptName, string cultureName, bool useMinifiedScript)
         {
             var scriptCode = string.Empty;
-            var scriptPath = GetLanguageScriptPath(server, scriptName, cultureName, useMinifiedScript);
+            var scriptPath = GetLanguageScriptPath(scriptName, cultureName, useMinifiedScript);
 
             if (scriptPath.Length > 0)
             {
@@ -72,15 +76,15 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
             return scriptCode;
         }
 
-        private string GetLanguageScriptPath(HttpServerUtility server, string scriptName, string cultureName, bool useMinifiedScript)
+        private string GetLanguageScriptPath(string scriptName, string cultureName, bool useMinifiedScript)
         {
             var scriptPath = string.Empty;
             var scriptNameWithoutExtension = Path.GetFileNameWithoutExtension(scriptName);
             var scriptExtension = Path.GetExtension(scriptName);
-            var neutralScriptPath = GetPhysicalFilePath(server, scriptName);
-            var neutralMinifiedScriptPath = GetPhysicalFilePath(server, scriptNameWithoutExtension + (useMinifiedScript ? ".min" : "") + scriptExtension);
-            var localizedScriptPath = GetPhysicalFilePath(server, scriptNameWithoutExtension + (cultureName.Length > 0 ? "." + cultureName : "") + scriptExtension);
-            var localizedMinifiedScriptPath = GetPhysicalFilePath(server, scriptNameWithoutExtension + (cultureName.Length > 0 ? "." + cultureName : "") + (useMinifiedScript ? ".min" : "") + scriptExtension);
+            var neutralScriptPath = GetPhysicalFilePath(scriptName);
+            var neutralMinifiedScriptPath = GetPhysicalFilePath(scriptNameWithoutExtension + (useMinifiedScript ? ".min" : "") + scriptExtension);
+            var localizedScriptPath = GetPhysicalFilePath(scriptNameWithoutExtension + (cultureName.Length > 0 ? "." + cultureName : "") + scriptExtension);
+            var localizedMinifiedScriptPath = GetPhysicalFilePath(scriptNameWithoutExtension + (cultureName.Length > 0 ? "." + cultureName : "") + (useMinifiedScript ? ".min" : "") + scriptExtension);
             if (cultureName.Length > 0)
             {
                 if (useMinifiedScript && File.Exists(localizedMinifiedScriptPath))
@@ -102,6 +106,11 @@ namespace Quantumart.QP8.WebMvc.Scripts.Quantumart
             return File.Exists(neutralScriptPath) ? neutralScriptPath : scriptPath;
         }
 
-        public string GetPhysicalFilePath(HttpServerUtility server, string scriptName) => server.MapPath(PathUtility.Combine(SitePathHelper.GetCurrentRootUrl(), LangScriptFolderPath, scriptName));
+        public string GetPhysicalFilePath(string scriptName)
+        {
+            return _environment.ContentRootFileProvider.GetFileInfo(
+                PathUtility.Combine(LangScriptFolderPath, scriptName)
+            ).PhysicalPath;
+        }
     }
 }

@@ -480,6 +480,10 @@ div.dateTimeWrapper .dateTimeCheckboxWrapper
   line-height: 1.2em;
 }
 
+.formLayout .validation-summary-valid {
+  display: none;
+}
+
 .formLayout textarea.visualEditor
 {
   width:100%;

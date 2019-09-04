@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
@@ -79,13 +80,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [DisableBrowserCache]
         public ActionResult LogOut(DirectLinkOptions directLinkOptions)
         {
-            var loginUrl = QPContext.LogOut();
-            if (directLinkOptions != null)
-            {
-                loginUrl = directLinkOptions.AddToUrl(loginUrl);
-            }
-
-            return Redirect(loginUrl);
+            QPContext.LogOut();
+            return RedirectToAction("Index");
         }
 
         private string GetAuthorizationUrl(DirectLinkOptions directLinkOptions)

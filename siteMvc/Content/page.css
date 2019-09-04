@@ -28,6 +28,10 @@ BODY {
 .loginFormLayout .validation-summary-errors {
   margin-top: 0.5em;
 }
+
+.loginFormLayout .validation-summary-valid {
+  display: none;
+}
 /*#endregion*/
 
 /*#region Two column layuot*/

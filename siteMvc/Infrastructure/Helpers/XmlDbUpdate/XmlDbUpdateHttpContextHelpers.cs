@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -31,7 +32,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ParentId = Current.ParentEntityId ?? 0,
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
-                ExecutedBy = (httpContext.User.Identity as QpIdentity)?.Name,
+                ExecutedBy = QPContext.CurrentUserName,
                 Ids = httpContext.Items.Contains(HttpContextItems.FromId)
                     ? new[] { httpContext.Items[HttpContextItems.FromId].ToString() }
                     : Current.Entities.Select(n => n.StringId).ToArray(),
@@ -106,7 +107,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 new HttpRequest(string.Empty, backendUrl, string.Empty),
                 new HttpResponse(new StringWriter()));
 
-            var principal = GetQpPrincipal(userId);
+            var principal = GetPrincipal(userId);
             var httpContext = new Mock<HttpContextBase>();
             httpContext.Setup(c => c.Request).Returns(GetHttpRequestMock(action));
             httpContext.Setup(c => c.Session).Returns(new HttpSessionMock());
@@ -290,11 +291,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
-        private static QpPrincipal GetQpPrincipal(int userId)
+        private static ClaimsPrincipal GetPrincipal(int userId)
         {
             var user = new UserService().ReadProfile(userId);
-            var identity = new QpIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false, false);
-            return new QpPrincipal(identity, new string[] { });
+            var qpUser = new QpUser() { Id = user.Id, Name = user.Name, CustomerCode = QPContext.CurrentCustomerCode, LanguageId = user.LanguageId };
+            return AuthenticationHelper.GetClaimsPrincipal(qpUser);
         }
 
         private static T GetContextData<T>(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);

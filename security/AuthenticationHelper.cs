@@ -21,13 +21,23 @@ namespace Quantumart.QP8.Security
 
         public async void SignIn(QpUser user)
         {
+            var principal = GetClaimsPrincipal(user);
+            var authProperties = new AuthenticationProperties();
+            await _httpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                authProperties);
+        }
+
+        public static ClaimsPrincipal GetClaimsPrincipal(QpUser user)
+        {
             List<Claim> claims = new List<Claim>
             {
                 new Claim("Id", user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, string.Join(";", user.Roles)),
                 new Claim("CustomerCode", user.CustomerCode),
-                new Claim("LanguageId", user.CustomerCode),
+                new Claim("LanguageId", user.LanguageId.ToString()),
                 new Claim("CultureName", user.CultureName),
                 new Claim("MustChangePassword", user.MustChangePassword.ToString()),
                 new Claim(ClaimTypes.Sid, user.SessionId.ToString())
@@ -36,11 +46,8 @@ namespace Quantumart.QP8.Security
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperties = new AuthenticationProperties();
-            await _httpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+            return new ClaimsPrincipal(claimsIdentity);
+
         }
 
         public async void SignOut()

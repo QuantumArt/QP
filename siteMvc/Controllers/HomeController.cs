@@ -5,6 +5,7 @@ using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -16,6 +17,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class HomeController : AuthQpController
     {
+        private JsLanguageHelper _languageHelper;
+        private JsConstantsHelper _constantsHelper;
+
+        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper)
+        {
+            _languageHelper = languageHelper;
+            _constantsHelper = constantsHelper;
+        }
+
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
 
@@ -29,6 +39,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var model = ViewModel.Create<AboutViewModel>(tabId, parentId);
             return await JsonHtml("About", model);
+        }
+
+        public ActionResult Lang()
+        {
+            return Content(_languageHelper.GetResult(), "text/javascript");
+        }
+
+        public ActionResult Constants()
+        {
+            return Content(_constantsHelper.GetResult(), "text/javascript");
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

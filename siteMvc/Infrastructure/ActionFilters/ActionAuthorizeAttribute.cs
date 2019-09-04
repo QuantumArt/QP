@@ -34,10 +34,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
-            {
-                throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
-            }
+            // if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
+            // {
+            //     throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
+            // }
 
             IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
 

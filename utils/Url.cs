@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Utils
         /// <summary>
         /// Преобразуется относительный URL в абсолютный (с точки зрения приложения) [без домена]
         /// </summary>
-        public static string ToAbsolute(string url)
+        public static string ToAbsolute(IUrlHelper urlHelper, string url)
         {
             var result = string.Empty;
             if (url != null)
@@ -27,10 +27,8 @@ namespace Quantumart.QP8.Utils
                 url = url.Trim();
                 if (url.Length > 0)
                 {
-                    if (!CheckUrlFormatIsValid(url) && HttpContext != null && url.StartsWith("~/"))
+                    if (!CheckUrlFormatIsValid(url) && url.StartsWith("~/"))
                     {
-                        var urlHelper = HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
-
                         result = urlHelper.Content(url);
                     }
                     else

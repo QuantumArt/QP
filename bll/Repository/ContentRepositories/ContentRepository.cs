@@ -168,9 +168,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     SortExpression = cmd.SortExpression,
                     StartRecord = cmd.StartRecord,
                     PageSize = cmd.PageSize,
-#if !NET_STANDARD
-                    LanguageId = QPContext.CurrentUserIdentity.LanguageId,
-#endif
+                    LanguageId = QPContext.CurrentLanguageId,
                     CustomFilter = filter.CustomFilter
                 };
 

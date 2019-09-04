@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,8 +24,12 @@ namespace Quantumart.QP8.WebMvc
                 .AddJsonFile("hosting.json", optional: true, reloadOnChange: true)
                 .Build();
 
+            var location = Assembly.GetEntryAssembly()?.Location;
+            var contentRoot = location != null ? Path.GetDirectoryName(location) : Directory.GetCurrentDirectory();
+
             var builder = WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(config)
+                .UseContentRoot(contentRoot)
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.ClearProviders();

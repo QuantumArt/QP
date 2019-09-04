@@ -5,6 +5,8 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Transactions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
@@ -352,7 +354,8 @@ namespace Quantumart.QP8.BLL
 
                 if (result == null)
                 {
-                    result = (HttpContext.User.Identity as QpIdentity)?.Id;
+                    var claimValue = HttpContext.User.FindFirst("Id")?.Value;
+                    result = claimValue == null ? 0 : int.Parse(claimValue);
                     SetCurrentUserIdValueToStorage(result);
                 }
 
@@ -386,7 +389,8 @@ namespace Quantumart.QP8.BLL
 
                 if (result == null)
                 {
-                    result = (HttpContext.User.Identity as QpIdentity)?.SessionId;
+                    var claimValue = HttpContext.User.FindFirst(ClaimTypes.Sid).Value;
+                    result = claimValue == null ? 0 : int.Parse(claimValue);
                     SetCurrentSessionIdValueToStorage(result);
                 }
 
@@ -462,7 +466,25 @@ namespace Quantumart.QP8.BLL
             set => SetValueToStorage(ref _isLive, value, HttpContextItems.IsLiveKey);
         }
 
-        public static string CurrentUserName => (HttpContext.User.Identity as QpIdentity)?.Name;
+        public static string CurrentUserName => HttpContext.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
+        public static string CurrentCultureName
+        {
+            get
+            {
+                var claim = HttpContext.User.FindFirst("CultureName");
+                return claim != null ? claim.Value : QPConfiguration.Options.Globalization.DefaultCulture;
+            }
+        }
+
+        public static int CurrentLanguageId
+        {
+            get
+            {
+                var claim = HttpContext.User.FindFirst("LanguageId");
+                return claim != null ? int.Parse(claim.Value) : QPConfiguration.Options.Globalization.DefaultLanguageId;
+            }
+        }
 
         public static string CurrentCustomerCode
         {
@@ -472,9 +494,10 @@ namespace Quantumart.QP8.BLL
 
                 if (result == null)
                 {
-                    if (HttpContext != null && CurrentUserIdentity != null)
+                    var claim = HttpContext.User.FindFirst("CustomerCode");
+                    if (claim != null)
                     {
-                        result = CurrentUserIdentity.CustomerCode;
+                        result = claim.Value;
                         SetCurrentCustomerCodeValueToStorage(result);
                     }
                 }
@@ -502,7 +525,7 @@ namespace Quantumart.QP8.BLL
             {
                 var result = GetValueFromStorage(_currentSqlVersion, HttpContextItems.CurrentSqlVersionKey);
 
-                if (result == null && HttpContext != null && CurrentUserIdentity != null)
+                if (result == null)
                 {
                     result = Common.GetSqlServerVersion(QPConnectionScope.Current.DbConnection);
                     SetCurrentSqlVersionValueToStorage(result);
@@ -512,9 +535,6 @@ namespace Quantumart.QP8.BLL
             }
             set => SetCurrentSqlVersionValueToStorage(value);
         }
-
-        public static QpIdentity CurrentUserIdentity =>
-            HttpContext != null && HttpContext.User != null ? HttpContext.User.Identity as QpIdentity : null;
 
         public static string CurrentDbConnectionString
         {

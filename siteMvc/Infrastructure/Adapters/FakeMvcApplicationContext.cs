@@ -13,12 +13,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
     {
         internal FakeMvcApplicationContext()
         {
-            MvcApplication.RegisterModelBinders();
-            MvcApplication.RegisterModelValidatorProviders();
+            //MvcApplication.RegisterModelBinders();
+            //MvcApplication.RegisterModelValidatorProviders();
             CheatBuildManager();
 
             //MvcApplication.RegisterUnity();
-            MvcApplication.RegisterRoutes(new RouteCollection());
+            //MvcApplication.RegisterRoutes(new RouteCollection());
         }
 
         private static void CheatBuildManager()
@@ -33,15 +33,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
                 fieldInfo?.SetValue(manager, true);
 
                 var field = typeof(BuildManager).GetField("_topLevelReferencedAssemblies", BindingFlags.NonPublic | BindingFlags.Instance);
-                field?.SetValue(manager, new List<Assembly> { typeof(MvcApplication).Assembly });
+                //field?.SetValue(manager, new List<Assembly> { typeof(MvcApplication).Assembly });
             }
         }
 
         public void Dispose()
         {
-            MvcApplication.UnregisterModelBinders();
-            MvcApplication.UnregisterModelValidatorProviders();
-            MvcApplication.UnregisterRoutes();
+            //MvcApplication.UnregisterModelBinders();
+            //MvcApplication.UnregisterModelValidatorProviders();
+            //MvcApplication.UnregisterRoutes();
         }
     }
 }
+

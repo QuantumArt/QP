@@ -45,8 +45,11 @@ using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -88,6 +91,13 @@ namespace Quantumart.QP8.WebMvc
             services.AddOptions();
             services.AddHttpContextAccessor();
 
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper>(x => {
+                var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+                var factory = x.GetRequiredService<IUrlHelperFactory>();
+                return factory.GetUrlHelper(actionContext);
+            });
+
             services.AddSession(options =>
             {
                 options.Cookie.IsEssential = true;
@@ -112,6 +122,8 @@ namespace Quantumart.QP8.WebMvc
             // services
             services
                 .AddTransient<AuthenticationHelper>()
+                .AddTransient<JsLanguageHelper>()
+                .AddTransient<JsConstantsHelper>()
                 .AddSingleton<ISearchGrammarParser, IronySearchGrammarParser>()
                 .AddTransient<IStopWordList, StopWordList>()
                 .AddTransient<IArticleSearchRepository, ArticleSearchRepository>()
@@ -256,10 +268,8 @@ namespace Quantumart.QP8.WebMvc
 
             app.Use(async (context, next) =>
             {
-                string cultureName = context.User.Identity is QpIdentity userIdentity
-                    ? userIdentity.CultureName
-                    : QPConfiguration.Options.Globalization.DefaultCulture;
-
+                var claim = context.User.FindFirst("CultureName");
+                var cultureName = claim != null ? claim.Value : QPConfiguration.Options.Globalization.DefaultCulture;
                 var cultureInfo = new CultureInfo(cultureName);
                 CultureInfo.CurrentUICulture = cultureInfo;
                 CultureInfo.CurrentCulture = cultureInfo;

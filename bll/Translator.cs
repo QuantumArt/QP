@@ -15,21 +15,19 @@ namespace Quantumart.QP8.BLL
         public static string Translate(string phrase)
         {
 
-#if !NET_STANDARD
-            if (!string.IsNullOrWhiteSpace(phrase) && QPContext.CurrentUserIdentity != null)
+            if (!string.IsNullOrWhiteSpace(phrase))
             {
                 var dictionaries = Dictionaries.Value;
                 var keyPhrase = phrase.ToLowerInvariant();
                 if (dictionaries.ContainsKey(keyPhrase))
                 {
-                    return dictionaries[keyPhrase].ContainsKey(QPContext.CurrentUserIdentity.LanguageId)
-                        ? dictionaries[keyPhrase][QPContext.CurrentUserIdentity.LanguageId]
+                    return dictionaries[keyPhrase].ContainsKey(QPContext.CurrentLanguageId)
+                        ? dictionaries[keyPhrase][QPContext.CurrentLanguageId]
                         : phrase;
                 }
 
                 return phrase;
             }
-#endif
             return phrase;
         }
 
