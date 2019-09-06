@@ -219,9 +219,9 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             return GetList(ids, true).Select(c => new ListItem(c.Id.ToString(), c.SiteId == currentSiteId ? c.Name : $"{c.Site.Name}.{c.Name}"));
         }
 
-        internal static IEnumerable<int> GetChangeDisabledIDs()
+        internal static int[] GetChangeDisabledIDs()
         {
-            return Converter.ToInt32Collection(QPContext.EFContext.ContentSet.Where(c => c.DisableChangingActions).Select(c => c.Id).ToArray());
+            return Converter.ToInt32Collection(QPContext.EFContext.ContentSet.Where(c => c.DisableChangingActions).Select(c => c.Id)).ToArray();
         }
 
         private static Content GetByIdFromCache(int id)

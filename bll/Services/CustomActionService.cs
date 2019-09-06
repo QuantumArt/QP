@@ -36,9 +36,9 @@ namespace Quantumart.QP8.BLL.Services
 
         IEnumerable<ListItem> GetEntityTypeList();
 
-        IEnumerable<Site> GetSites(IEnumerable<int> siteIDs);
+        IEnumerable<Site> GetSites(CustomAction action);
 
-        IEnumerable<Content> GetContents(IEnumerable<int> contentIDs);
+        IEnumerable<Content> GetContents(CustomAction action);
 
         CustomActionInitListResult InitList(int parentId);
 
@@ -91,13 +91,10 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public IEnumerable<Site> GetSites(IEnumerable<int> siteIDs) => SiteRepository.GetList(siteIDs);
-
-        public IEnumerable<Content> GetContents(IEnumerable<int> contentIDs) => ContentRepository.GetList(contentIDs);
-
         public CustomAction Read(int id)
         {
             var action = CustomActionRepository.GetById(id);
+
             if (action == null)
             {
                 throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, id));
@@ -243,13 +240,13 @@ namespace Quantumart.QP8.BLL.Services
 
             if (!IsEntityTypeSiteDescendants(entityType.Id))
             {
-                customAction.Sites = Enumerable.Empty<Site>();
+                customAction.SiteIds = new int[] {};
                 customAction.SiteExcluded = false;
             }
 
             if (!IsEntityTypeContentDescendants(entityType.Id))
             {
-                customAction.Contents = Enumerable.Empty<Content>();
+                customAction.ContentIds = new int[] {};
                 customAction.ContentExcluded = false;
             }
 
@@ -292,6 +289,16 @@ namespace Quantumart.QP8.BLL.Services
                 .Select(i => new ListItem(i.Value, Translator.Translate(i.Text), i.DependentItemIDs))
                 .OrderBy(n => n.Text)
                 .ToArray();
+        }
+
+        public IEnumerable<Site> GetSites(CustomAction action)
+        {
+            return SiteRepository.GetList(action.SiteIds);
+        }
+
+        public IEnumerable<Content> GetContents(CustomAction action)
+        {
+            return ContentRepository.GetList(action.ContentIds, true);
         }
 
         public CustomActionInitListResult InitList(int parentId) => new CustomActionInitListResult

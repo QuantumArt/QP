@@ -1,39 +1,64 @@
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
-    internal static class BackendActionCache
+    public static class BackendActionCache
     {
-        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+        private static readonly object Locker = new object();
 
-        private static IEnumerable<BackendAction> _actions;
-        private static IEnumerable<CustomAction> _customActions;
+        private static readonly Dictionary<string, List<BackendAction>> ActionCache
+            = new Dictionary<string, List<BackendAction>>();
+        private static readonly Dictionary<string, List<CustomAction>> CustomActionCache
+            = new Dictionary<string, List<CustomAction>>();
 
-        public static IEnumerable<BackendAction> Actions
+        private static string CurrentKey => $"{QPContext.CurrentCustomerCode}__{QPContext.CurrentUserId}";
+
+        private static string CurrentKeyPrefix => $"{QPContext.CurrentCustomerCode}__";
+
+
+        public static List<BackendAction> Actions
         {
             get
             {
-                if (HttpContext == null || HttpContext.Session == null)
+                if (!ActionCache.TryGetValue(CurrentKey, out var actions))
                 {
-                    return _actions ?? (_actions = LoadActions());
+                    lock (Locker)
+                    {
+                        if (!ActionCache.TryGetValue(CurrentKey, out actions))
+                        {
+                            actions = LoadActions();
+                            ActionCache[CurrentKey] = actions;
+                        }
+                    }
                 }
-
-                if (!HttpContext.Session.HasKey(HttpContextSession.BackendActionCache))
-                {
-                    HttpContext.Session.SetValue(HttpContextSession.BackendActionCache, LoadActions());
-                }
-
-                return HttpContext.Session.GetValue<IEnumerable<BackendAction>>(HttpContextSession.BackendActionCache);
+                return actions;
             }
         }
 
-        private static IEnumerable<BackendAction> LoadActions() => MapperFacade.BackendActionMapper.GetBizList(
+        public static List<CustomAction> CustomActions
+        {
+            get
+            {
+                if (!CustomActionCache.TryGetValue(CurrentKey, out var actions))
+                {
+                    var backendActions = Actions;
+                    lock (Locker)
+                    {
+                        if (!CustomActionCache.TryGetValue(CurrentKey, out actions))
+                        {
+                            actions = LoadCustomActions(backendActions);
+                            CustomActionCache[CurrentKey] = actions;
+                        }
+                    }
+                }
+                return actions;
+            }
+        }
+
+        private static List<BackendAction> LoadActions() => MapperFacade.BackendActionMapper.GetBizList(
             QPContext.EFContext.BackendActionSet
                 .Include(x => x.EntityType)
                 .Include(x => x.EntityType.Parent)
@@ -47,47 +72,46 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 .ToList()
         );
 
-        private static IEnumerable<CustomAction> LoadCustomActions() => MapperFacade.CustomActionMapper.GetBizList(
-            QPContext.EFContext.CustomActionSet
-                .Include(b => b.Action.EntityType.ContextMenu)
-                .Include(b => b.Action.ToolbarButtons)
-                .Include(b => b.Action.ContextMenuItems)
-                .Include(b => b.Action.ActionType.PermissionLevel)
-                .Include(b => b.Action.ExcludesBinds).ThenInclude(x => x.Excludes)
-                .Include(b => b.ContentCustomActionBinds).ThenInclude(x => x.Content)
-                .Include(b => b.SiteCustomActionBinds).ThenInclude(x => x.Site)
-                .ToList()
-        );
-
-        public static IEnumerable<CustomAction> CustomActions
+        private static List<CustomAction> LoadCustomActions(List<BackendAction> backendActions)
         {
-            get
+            var customActions = MapperFacade.CustomActionMapper.GetBizList(
+                QPContext.EFContext.CustomActionSet
+                    .Include(b => b.ContentCustomActionBinds)
+                    .Include(b => b.SiteCustomActionBinds)
+                    .ToList()
+            );
+
+            foreach (var c in customActions)
             {
-                if (HttpContext == null || HttpContext.Session == null)
-                {
-                    return _customActions ?? (_customActions = LoadCustomActions());
-                }
+                c.Action = backendActions.FirstOrDefault(n => n.Id == c.ActionId);
+            }
 
-                if (!HttpContext.Session.HasKey(HttpContextSession.BackendCustomActionCache))
-                {
-                    HttpContext.Session.SetValue(HttpContextSession.BackendCustomActionCache, LoadCustomActions());
-                }
+            return customActions;
+        }
 
-                return HttpContext.Session.GetValue<IEnumerable<CustomAction>>(HttpContextSession.BackendCustomActionCache);
+        public static void ResetForUser()
+        {
+            lock (Locker)
+            {
+                ActionCache.Remove(CurrentKey);
+                CustomActionCache.Remove(CurrentKey);
             }
         }
 
-        public static void Reset()
+        public static void ResetForCustomerCode()
         {
-            if (HttpContext == null || HttpContext.Session == null)
+            lock (Locker)
             {
-                _actions = null;
-                _customActions = null;
-            }
-            else
-            {
-                HttpContext.Session.Remove(HttpContextSession.BackendActionCache);
-                HttpContext.Session.Remove(HttpContextSession.BackendCustomActionCache);
+                var keysToRemove = ActionCache.Keys.Where(n => n.StartsWith(CurrentKeyPrefix)).ToArray();
+                foreach (var key in keysToRemove)
+                {
+                    ActionCache.Remove(key);
+                }
+                var keysToRemove2 = CustomActionCache.Keys.Where(n => n.StartsWith(CurrentKeyPrefix)).ToArray();
+                foreach (var key in keysToRemove2)
+                {
+                    CustomActionCache.Remove(key);
+                }
             }
         }
     }

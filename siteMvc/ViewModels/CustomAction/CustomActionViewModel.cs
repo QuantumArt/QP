@@ -37,8 +37,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
                 Order = Data.Order;
             }
 
-            SelectedSiteIDs = Data.Sites.Select(s => s.Id).ToArray();
-            SelectedContentIDs = Data.Contents.Select(c => c.Id).ToArray();
+            SelectedSiteIDs = Data.SiteIds.ToArray();
+            SelectedContentIDs = Data.ContentIds.ToArray();
             SelectedActions = Data.ParentActions?.Select(c => new QPCheckedItem { Value = c.ToString() }).ToList() ?? Enumerable.Empty<QPCheckedItem>().ToList();
         }
 
@@ -47,8 +47,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
             Data.Action.TypeId = CustomActionTypeId ?? 0;
             Data.Action.EntityTypeId = CustomActionEntityTypeId ?? 0;
             Data.Order = Order ?? 0;
-            Data.Sites = _service.GetSites(SelectedSiteIDs);
-            Data.Contents = _service.GetContents(SelectedContentIDs);
+            Data.SiteIds = SelectedSiteIDs;
+            Data.ContentIds = SelectedContentIDs;
         }
 
         public override void Validate(ModelStateDictionary modelState)
@@ -84,7 +84,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         {
             get
             {
-                return Data.Sites
+                return _service.GetSites(Data)
                     .Select(s => new ListItem(s.Id.ToString(), s.Name))
                     .ToArray();
             }
@@ -94,7 +94,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         {
             get
             {
-                return Data.Contents
+                return _service.GetContents(Data)
                     .Select(s => new ListItem(s.Id.ToString(), $"{s.Site.Name}.{s.Name}"))
                     .ToArray();
             }

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Newtonsoft.Json;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -26,8 +29,6 @@ namespace Quantumart.QP8.BLL
                 WindowWidth = 500
             },
             ShowInMenu = true,
-            Sites = Enumerable.Empty<Site>(),
-            Contents = Enumerable.Empty<Content>()
         };
 
         public override void Validate()
@@ -146,9 +147,9 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public IEnumerable<Content> Contents { get; set; }
+        public IEnumerable<int> ContentIds { get; set; }
 
-        public IEnumerable<Site> Sites { get; set; }
+        public IEnumerable<int> SiteIds { get; set; }
 
         public string SessionId { get; set; }
 

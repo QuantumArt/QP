@@ -307,7 +307,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static IHtmlContent NumericTextBox(this IHtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
         {
-            double? doubleValue = Converter.ToNullableDouble(value ?? source.ViewData.Eval(name));
+            double? doubleValue = Converter.ToNullableDouble(value ?? (source.ViewData.Any() ? source.ViewData.Eval(name) : null));
 
             string inputId = htmlAttributes["id"].ToString();
             string inputClass = htmlAttributes["class"].ToString();
@@ -862,7 +862,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static IHtmlContent DateTimePicker(this IHtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
         {
-            DateTime? dateTime = ToDateTime(value ?? source.ViewData.Eval(id));
+            DateTime? dateTime = ToDateTime(value ?? (source.ViewData.Any() ? source.ViewData.Eval(id) : null));
 
             string inputId = htmlAttributes["id"].ToString();
 

@@ -49,7 +49,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
                             var visibleBySite = false;
                             var visibleByContent = false;
 
-                            if (ca.Sites.Any(s => s != null && s.Id == parentSiteInfo?.Id)) // сайт выбран для текущего Custom Action
+                            if (ca.SiteIds.Any(s => s == parentSiteInfo?.Id)) // сайт выбран для текущего Custom Action
                             {
                                 visibleBySite = ca.SiteExcluded;
                             }
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
                             {
                                 if (parentContentInfo != null)
                                 {
-                                    if (ca.Contents.Any(c => c.Id == parentContentInfo.Id)) // контент выбран для текущего Custom Action
+                                    if (ca.ContentIds.Any(c => c == parentContentInfo.Id)) // контент выбран для текущего Custom Action
                                     {
                                         visibleByContent = ca.ContentExcluded;
                                     }

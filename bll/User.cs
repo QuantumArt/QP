@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL
 
         public User()
         {
-            _contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => QPContext.ServiceProvider.GetRequiredService<IUserService>().GetContentDefaultFilters(Id));
+            _contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => UserRepository.GetContentDefaultFilters(Id));
             EnableContentGroupingInTree = true;
         }
 
@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("Password", NameResourceType = typeof(UserStrings))]
         public string Password { get; set; }
-        
+
         [LocalizedDisplayName("NewPassword", NameResourceType = typeof(UserStrings))]
         [RequiredValidator("MustChangePassword", MessageTemplateResourceName = "NewPasswordNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
         public string NewPassword { get; set; }
@@ -188,7 +188,7 @@ namespace Quantumart.QP8.BLL
         {
             return UserRepository.NewPasswordMathCurrentPassword(userId, newPassword);
         }
- 
+
         public void DoCustomBinding()
         {
             VMode = false;
@@ -248,7 +248,7 @@ namespace Quantumart.QP8.BLL
                 if (NewPassword != NewPasswordCopy)
                 {
                     errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordAndCopyDoesntMatch);
-                }               
+                }
             }
 
             if (!errors.IsEmpty)

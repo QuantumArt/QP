@@ -104,49 +104,44 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             var dalDb = entities.CustomActionSet
-                .Include(x => x.ContentCustomActionBinds).ThenInclude(y=> y.Content)
-                .Include(x => x.SiteCustomActionBinds).ThenInclude(y => y.Site)
+                .Include(x => x.ContentCustomActionBinds)
+                .Include(x => x.SiteCustomActionBinds)
                 .Single(a => a.Id == customAction.Id);
 
-            var inmemorySiteIDs = new HashSet<decimal>(customAction.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
+            var inmemorySiteIDs = new HashSet<decimal>(customAction.SiteIds.Select(bs => Converter.ToDecimal(bs)));
+            var dalSiteBinds = dalDb.SiteCustomActionBinds.ToArray();
             var indbSiteIDs = new HashSet<decimal>(dalDb.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
-            foreach (var s in dalDb.SiteCustomActionBinds.ToArray())
+            var dalSiteBindsToRemove = dalSiteBinds.Where(n => !inmemorySiteIDs.Contains(n.SiteId)).ToArray();
+            var dalSiteBindsToCreate = customAction.SiteIds.Where(n => !indbSiteIDs.Contains(n)).Select(
+                n => new SiteCustomActionBindDAL { CustomAction = dal, SiteId = n }
+            );
+            foreach (var s in dalSiteBindsToRemove)
             {
-                if (!inmemorySiteIDs.Contains(s.Site.Id))
-                {
-                    entities.SiteSet.Attach(s.Site);
-                    dalDb.SiteCustomActionBinds.Remove(s);
-                }
+                dal.SiteCustomActionBinds.Remove(s);
             }
-            foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
+
+            foreach (var c in dalSiteBindsToCreate)
             {
-                if (!indbSiteIDs.Contains(s.Id))
-                {
-                    entities.SiteSet.Attach(s);
-                    var bind = new SiteCustomActionBindDAL {CustomAction = dal, Site = s};
-                    dal.SiteCustomActionBinds.Add(bind);
-                }
+                dal.SiteCustomActionBinds.Add(c);
             }
 
             // Binded Contents
-            var inmemoryContentIDs = new HashSet<decimal>(customAction.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-            var indbContentIDs = new HashSet<decimal>(dalDb.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-            foreach (var s in dalDb.ContentCustomActionBinds.ToArray())
+            var inmemoryContentIDs = new HashSet<decimal>(customAction.ContentIds.Select(bs => Converter.ToDecimal(bs)));
+            var dalBinds = dalDb.ContentCustomActionBinds.ToArray();
+            var indbContentIDs = new HashSet<decimal>(dalBinds.Select(bs => Converter.ToDecimal(bs.ContentId)));
+            var dalBindsToRemove = dalBinds.Where(n => !inmemoryContentIDs.Contains(n.ContentId)).ToArray();
+            var dalbindsToCreate = customAction.ContentIds.Where(n => !indbContentIDs.Contains(n)).Select(
+                n => new ContentCustomActionBindDAL { CustomAction = dal, ContentId = n }
+            );
+
+            foreach (var r in dalBindsToRemove)
             {
-                if (!inmemoryContentIDs.Contains(s.Content.Id))
-                {
-                    entities.ContentSet.Attach(s.Content);
-                    dalDb.ContentCustomActionBinds.Remove(s);
-                }
+                dal.ContentCustomActionBinds.Remove(r);
             }
-            foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
+
+            foreach (var c in dalbindsToCreate)
             {
-                if (!indbContentIDs.Contains(s.Id))
-                {
-                    entities.ContentSet.Attach(s);
-                    var bind = new ContentCustomActionBindDAL { CustomAction = dal, Content = s };
-                    dal.ContentCustomActionBinds.Add(bind);
-                }
+                dal.ContentCustomActionBinds.Add(c);
             }
 
             entities.SaveChanges();
@@ -157,7 +152,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             SetBottomSeparator(customAction.Action.EntityType.ContextMenu.Id);
             var updated = MapperFacade.CustomActionMapper.GetBizObject(dal);
-            BackendActionCache.Reset();
+            BackendActionCache.ResetForCustomerCode();
 
             return updated;
         }
@@ -207,19 +202,15 @@ namespace Quantumart.QP8.BLL.Repository
                 entities.Entry(item).State = EntityState.Added;
             }
 
-            var siteLinksToAdd = MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList());
-            foreach (var item in siteLinksToAdd)
+            foreach (var item in customAction.SiteIds)
             {
-                entities.SiteSet.Attach(item);
-                var bind = new SiteCustomActionBindDAL { Site = item, CustomAction = customActionDal };
+                var bind = new SiteCustomActionBindDAL { SiteId = item, CustomAction = customActionDal };
                 customActionDal.SiteCustomActionBinds.Add(bind);
             }
 
-            var contentLinksToAdd = MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList());
-            foreach (var item in contentLinksToAdd)
+            foreach (var item in customAction.ContentIds)
             {
-                entities.ContentSet.Attach(item);
-                var bind = new ContentCustomActionBindDAL { Content = item, CustomAction = customActionDal };
+                var bind = new ContentCustomActionBindDAL { ContentId = item, CustomAction = customActionDal };
                 customActionDal.ContentCustomActionBinds.Add(bind);
             }
 
@@ -234,7 +225,7 @@ namespace Quantumart.QP8.BLL.Repository
             SetBottomSeparator(contextMenuId);
 
             var updated = MapperFacade.CustomActionMapper.GetBizObject(customActionDal);
-            BackendActionCache.Reset();
+            BackendActionCache.ResetForCustomerCode();
             return updated;
         }
 
@@ -274,7 +265,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             SetBottomSeparator(contextMenuId);
-            BackendActionCache.Reset();
+            BackendActionCache.ResetForCustomerCode();
         }
 
         internal static CustomAction Copy(CustomAction action)

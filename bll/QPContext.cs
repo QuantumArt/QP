@@ -19,6 +19,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -695,6 +696,8 @@ namespace Quantumart.QP8.BLL
                 {
                     HttpContext.Response.Cookies.Delete(SessionDefaults.CookieName);
                 }
+
+                BackendActionCache.ResetForUser();
 
                 return QPConfiguration.Options.BackendUrl;
             }

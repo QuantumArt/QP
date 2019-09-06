@@ -11,34 +11,25 @@ namespace Quantumart.QP8.DAL
 {
     public static class TreeMenu
     {
-        public static IEnumerable<DataRow> GetTreeChildNodes(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin)
+        public static IEnumerable<DataRow> GetTreeChildNodes(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin, string customerCode, bool enableContentGrouping)
         {
-            var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, false);
+            var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, customerCode, enableContentGrouping, false);
 
             return string.IsNullOrWhiteSpace(query) ? Enumerable.Empty<DataRow>() : Common.GetDataRows(connection, query);
         }
 
-        public static long GetTreeChildNodesCount(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin)
+        public static long GetTreeChildNodesCount(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin, string customerCode, bool enableContentGrouping)
         {
-            var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, true);
+            var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, customerCode, enableContentGrouping, true);
             return string.IsNullOrWhiteSpace(query) ? 0 : Common.ExecuteScalarLong(connection, query);
         }
 
 
-
-        private static string GetSqlQuery(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin, bool countOnly = false)
+        private static string GetSqlQuery(QPModelDataContext context, DbConnection connection, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId, int userId, bool isAdmin, string customerCode, bool enableContentGrouping, bool countOnly = false)
         {
-            var user = context.UserSet.SingleOrDefault(x => x.Id == userId);
 
 
-
-            var enableContentGrouping = (entityTypeCode != EntityTypeCode.Content && entityTypeCode != EntityTypeCode.VirtualContent)
-                || user.EnableContentGroupingInTree;
-
-            var entityTypes = context.EntityTypeSet
-                .Include(x => x.Parent)
-                .Include(x => x.CancelAction)
-                .Include(x => x.ContextMenu);
+            var entityTypes = EntityTypeCache.GetEntityTypes(context, customerCode, userId);
             var entityType = entityTypes.FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
 
             var parentGroupCode = entityType == null || !enableContentGrouping
@@ -47,7 +38,7 @@ namespace Quantumart.QP8.DAL
 
 
 
-            var realParentId = isGroup ? GetParentEntityId(context, connection, (decimal)parentEntityId, entityTypeCode) : parentEntityId;
+            var realParentId = isGroup ? GetParentEntityId(context, connection, (decimal)parentEntityId, entityTypeCode, customerCode, userId) : parentEntityId;
 
             var currentIsGroup = false;
             string currentGroupItemCode = null;
@@ -73,7 +64,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
 
-            var newEntityType = entityTypes.FirstOrDefault(x => x.Code.Equals(newEntityTypeCode, StringComparison.InvariantCultureIgnoreCase));
+            var newEntityType =  entityTypes.FirstOrDefault(x => x.Code.Equals(newEntityTypeCode, StringComparison.InvariantCultureIgnoreCase));
 
             var realParentIdStr = realParentId.HasValue ? realParentId.ToString() : "NULL";
             var iconField = newEntityType?.IconField ?? "NULL";
@@ -91,7 +82,7 @@ namespace Quantumart.QP8.DAL
             var selectSb = new StringBuilder();
             var whereSb = new StringBuilder();
             var orderSb = new StringBuilder();
-            var sql = string.Empty;
+            string sql;
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(context);
 
             var useSecurity = UseSecurity(isAdmin, databaseType);
@@ -182,7 +173,7 @@ namespace Quantumart.QP8.DAL
                     "AS icon,\n" +
                     $"{SqlQuerySyntaxHelper.NullableDbValue(databaseType, newEntityType?.DefaultActionId)} AS default_action_id,\n" +
                     $"{SqlQuerySyntaxHelper.NullableDbValue(databaseType, newEntityType?.ContextMenuId)} as context_menu_id,\n" +
-                    $"{SqlQuerySyntaxHelper.ToBoolSql(databaseType, string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))} as is_recurring,\n" +
+                    $"{SqlQuerySyntaxHelper.ToBoolSql(databaseType, !string.IsNullOrWhiteSpace(newEntityType?.RecurringIdField))} as is_recurring,\n" +
                     "i.id,\n" +
                     "i.title,\n" +
                     "i.sortorder\n" +
@@ -373,9 +364,10 @@ namespace Quantumart.QP8.DAL
         }
 
 
-        private static decimal? GetParentEntityId(QPModelDataContext context, DbConnection connection, decimal entityId, string entityTypeCode)
+        private static decimal? GetParentEntityId(QPModelDataContext context, DbConnection connection, decimal entityId, string entityTypeCode, string customerCode, int userId)
         {
-            var entity = context.EntityTypeSet.FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
+            var entity = EntityTypeCache.GetEntityTypes(context, customerCode, userId)
+                .FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase));
             if (entity?.Source == null || entity.IdField == null)
             {
                 return null;

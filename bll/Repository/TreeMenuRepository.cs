@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -18,6 +20,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="parentEntityId">идентификатор родительской сущности</param>
         /// <param name="isFolder">признак является ли узел директорией</param>
         /// <param name="loadChildNodes">признак, разрешающий предварительную загрузку первого уровня дочерних узлов</param>
+        /// <param name="isGroup"></param>
         /// <returns>узел дерева</returns>
         internal static TreeNode GetNode(string entityTypeCode, int entityId, int? parentEntityId, bool isFolder, bool isGroup = false, string groupItemCode = null, bool loadChildNodes = false)
         {
@@ -76,7 +79,7 @@ namespace Quantumart.QP8.BLL.Repository
                     var chdIDs = ContentRepository.GetChangeDisabledIDs();
                     if (chdIDs.Any())
                     {
-                        nodesList = nodesList.Where(c => !chdIDs.Contains(c.Id)).ToArray();
+                        nodesList = nodesList.Where(c => !chdIDs.Contains(c.Id)).ToList();
                     }
                 }
 
@@ -85,7 +88,7 @@ namespace Quantumart.QP8.BLL.Repository
                     var firstNode = nodesList.First();
                     if (firstNode.Code == EntityTypeCode.ContentGroup)
                     {
-                        var siteId = firstNode.ParentId.Value;
+                        var siteId = firstNode.ParentId ?? 0;
                         var defaultGroupId = ContentRepository.GetDefaultGroupId(siteId);
                         var defaultNode = nodesList.SingleOrDefault(n => n.Id == defaultGroupId);
                         if (defaultNode != null)
@@ -120,13 +123,24 @@ namespace Quantumart.QP8.BLL.Repository
             return input.EndsWith("s") || input.EndsWith("x") ? $"{input}es" : $"{input}s";
         }
 
-        private static IEnumerable<TreeNode> GetNodesList(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId)
+        public static bool IsEntityTypeParent(string code)
         {
-            var nodesList = Enumerable.Empty<TreeNode>();
+            return EntityTypeCache.IsParentType(
+                QPContext.EFContext, QPContext.CurrentCustomerCode, QPContext.CurrentLanguageId, code
+            );
+        }
+
+        private static List<TreeNode> GetNodesList(string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId)
+        {
             using (var scope = new QPConnectionScope())
             {
                 var ctx = QPContext.EFContext;
                 var connection = scope.DbConnection;
+                var user = ctx.UserSet.SingleOrDefault(x => x.Id == QPContext.CurrentUserId);
+                var enableContentGrouping = (entityTypeCode != EntityTypeCode.Content && entityTypeCode != EntityTypeCode.VirtualContent)
+                || user.EnableContentGroupingInTree;
+
+                var areChildNodesParents = AreChildNodesParents(entityTypeCode, isFolder, isGroup, groupItemCode, enableContentGrouping);
 
                 var dataRows = TreeMenu.GetTreeChildNodes(
                         ctx,
@@ -138,50 +152,61 @@ namespace Quantumart.QP8.BLL.Repository
                         groupItemCode,
                         entityId,
                         QPContext.CurrentUserId,
-                        QPContext.IsAdmin)
+                        QPContext.IsAdmin,
+                        QPContext.CurrentCustomerCode,
+                        enableContentGrouping
+                        )
                     .ToList();
-                nodesList = MapperFacade.TreeNodeMapper.GetBizList(dataRows);
-                var index = 0;
+
+                var nodesList = MapperFacade.TreeNodeMapper.GetBizList(dataRows);
                 foreach (var node in nodesList)
                 {
-                    string countSql = null;
-                    if (node.IsFolder)
-                    {
-                        var count = TreeMenu.GetTreeChildNodesCount(
-                            ctx,
-                            connection,
-                            node.Code,
-                            node.ParentId,
-                            true,
-                            node.IsGroup,
-                            node.GroupItemCode,
-                            0,
-                            QPContext.CurrentUserId,
-                            QPContext.IsAdmin);
-
-                        node.HasChildren = count > 0;
-                    }
-                    else //if (index == 0 || node.IsRecurring || node.IsGroup)
-                    {
-                        var count = TreeMenu.GetTreeChildNodesCount(
-                            ctx,
-                            connection,
-                            node.Code,
-                            node.Id,
-                            false,
-                            node.IsGroup,
-                            node.GroupItemCode,
-                            0,
-                            QPContext.CurrentUserId,
-                            QPContext.IsAdmin);
-                        node.HasChildren = count > 0;
-                    }
-
-                    index++;
+                    node.HasChildren = GetNodeHasChildren(node, ctx, connection, enableContentGrouping, areChildNodesParents);
                 }
 
                 return nodesList;
             }
+        }
+
+        private static bool AreChildNodesParents(string entityTypeCode, bool isFolder, bool isGroup, string groupItemCode, bool enableContentGrouping)
+        {
+            var result = false;
+            result = isFolder && IsEntityTypeParent(entityTypeCode)
+                || isGroup && IsEntityTypeParent(groupItemCode);
+
+            if (isFolder && entityTypeCode == EntityTypeCode.Content || entityTypeCode == EntityTypeCode.VirtualContent && enableContentGrouping)
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        private static bool GetNodeHasChildren(TreeNode node, QPModelDataContext ctx, DbConnection connection, bool enableContentGrouping, bool areChildNodesParents)
+        {
+            bool result = false;
+            if (areChildNodesParents)
+            {
+                result = true;
+            }
+            else if (node.Code == EntityTypeCode.CustomerCode || node.IsFolder || node.IsRecurring || node.IsGroup)
+            {
+                var count = TreeMenu.GetTreeChildNodesCount(
+                    ctx,
+                    connection,
+                    node.Code,
+                    node.IsFolder ? node.ParentId : node.Id,
+                    node.IsFolder,
+                    node.IsGroup,
+                    node.GroupItemCode,
+                    0,
+                    QPContext.CurrentUserId,
+                    QPContext.IsAdmin,
+                    QPContext.CurrentCustomerCode,
+                    enableContentGrouping);
+                result = count > 0;
+            }
+            return result;
         }
     }
 }

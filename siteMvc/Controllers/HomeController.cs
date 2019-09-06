@@ -27,7 +27,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [DisableBrowserCache]
-        public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
+        public ActionResult Index(DirectLinkOptions directLinkOptions)
+        {
+            DbService.ResetUserCache();
+            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
+        }
 
         public async Task<ActionResult> Home(string tabId, int parentId)
         {

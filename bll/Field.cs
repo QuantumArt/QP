@@ -659,7 +659,7 @@ namespace Quantumart.QP8.BLL
         public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
         [LocalizedDisplayName("BackwardFieldId", NameResourceType = typeof(FieldStrings))]
-        public int? BackwardRelateToFieldId => BackwardField.Id;
+        public int? BackwardRelateToFieldId => BackwardField?.Id;
 
         /// <summary>
         /// Поля которые ссылаются на данное поле связью O2M
