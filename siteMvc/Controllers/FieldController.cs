@@ -61,7 +61,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewField)]
         [BackendActionContext(ActionCode.AddNewField)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, string backendActionCode, IFormCollection collection)
         {
             var content = FieldService.New(parentId, null);
             var model = FieldViewModel.Create(content, tabId, parentId);
@@ -69,7 +69,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var oldBackward = model.Data.BackwardField;
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try
@@ -128,7 +129,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateField)]
         [BackendActionContext(ActionCode.UpdateField)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, IFormCollection collection)
         {
             var field = FieldService.ReadForUpdate(id);
             var model = FieldViewModel.Create(field, tabId, parentId);
@@ -138,7 +139,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var oldBackward = model.Data.BackwardField;
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try
@@ -207,14 +209,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateVirtualField)]
         [BackendActionContext(ActionCode.UpdateVirtualField)]
         [BackendActionLog]
-        public async Task<ActionResult> VirtualProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> VirtualProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var field = FieldService.ReadForUpdate(id);
             var model = FieldViewModel.Create(field, tabId, parentId);
             var oldOrder = model.Data.Order;
             var oldViewInList = model.Data.ViewInList;
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try

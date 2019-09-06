@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -132,13 +132,13 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// имя файла с расширением
         /// </summary>
-        [LocalizedDisplayName("FileName", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "FileName", ResourceType = typeof(LibraryStrings))]
         public string Name { get; set; }
 
         /// <summary>
         /// расширение файла (с точкой)
         /// </summary>
-        [LocalizedDisplayName("Extension", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "Extension", ResourceType = typeof(LibraryStrings))]
         public string Extension { get; set; }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Размеры изображения (только для картинок)
         /// </summary>
-        [LocalizedDisplayName("Dimensions", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "Dimensions", ResourceType = typeof(LibraryStrings))]
         public string Dimensions
         {
             get
@@ -185,14 +185,14 @@ namespace Quantumart.QP8.BLL
         /// Дата создания файла
         /// </summary>
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Created", ResourceType = typeof(EntityObjectStrings))]
         public DateTime Created { get; set; }
 
         /// <summary>
         /// Дата модификации файла
         /// </summary>
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Modified", ResourceType = typeof(EntityObjectStrings))]
         public DateTime Modified { get; set; }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Имя типа файла
         /// </summary>
-        [LocalizedDisplayName("FileType", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "FileType", ResourceType = typeof(LibraryStrings))]
         public string FileTypeName => GetTypeName(FileType);
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Quantumart.QP8.BLL
         /// <returns></returns>
         public static string GetTypeExtensions(FolderFileType type) => fileExtensionsDictionary[type];
 
-        [LocalizedDisplayName("Size", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "Size", ResourceType = typeof(LibraryStrings))]
         public string Size
         {
             get

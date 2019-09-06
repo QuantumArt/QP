@@ -40,10 +40,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
             Data.Init(_service.Repository);
         }
 
-        internal void DoCustomBinding()
-        {
-            Data.DoCustomBinding();
-        }
 
         public override string EntityTypeCode => _settings.EntityTypeCode;
 

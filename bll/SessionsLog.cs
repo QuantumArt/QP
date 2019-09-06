@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Quantumart.QP8.BLL
 {
@@ -15,43 +15,43 @@ namespace Quantumart.QP8.BLL
 
         public int SessionId { get; set; }
 
-        [LocalizedDisplayName("UserLogin", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "UserLogin", ResourceType = typeof(AuditStrings))]
         public string Login { get; set; }
 
         public int? UserId { get; set; }
 
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("SessionStartTime", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "SessionStartTime", ResourceType = typeof(AuditStrings))]
         public DateTime StartTime { get; set; }
 
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("SessionEndTime", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "SessionEndTime", ResourceType = typeof(AuditStrings))]
         public DateTime? EndTime { get; set; }
 
-        [LocalizedDisplayName("IP", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "IP", ResourceType = typeof(AuditStrings))]
         public string IP { get; set; }
 
-        [LocalizedDisplayName("Browser", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "Browser", ResourceType = typeof(AuditStrings))]
         public string Browser { get; set; }
 
-        [LocalizedDisplayName("ServerName", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ServerName", ResourceType = typeof(AuditStrings))]
         public string ServerName { get; set; }
 
-        [LocalizedDisplayName("AutoLogged", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "AutoLogged", ResourceType = typeof(AuditStrings))]
         public int AutoLogged { get; set; }
 
         public string Sid { get; set; }
 
-        [LocalizedDisplayName("IsQP7", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "IsQP7", ResourceType = typeof(AuditStrings))]
         public bool IsQP7 { get; set; }
 
         #region Caulculated
 
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("FailedTime", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "FailedTime", ResourceType = typeof(AuditStrings))]
         public DateTime FailedTime => StartTime;
 
-        [LocalizedDisplayName("Duration", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "Duration", ResourceType = typeof(AuditStrings))]
         public string Duration
         {
             get

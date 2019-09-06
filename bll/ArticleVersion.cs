@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using Newtonsoft.Json;
@@ -11,7 +12,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -215,7 +215,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Имя версии (используется в режиме просмотра)
         /// </summary>
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
         public string ExpandedName => Id == CurrentVersionId ? ArticleStrings.CurrentVersion : string.Format(ArticleStrings.VersionN, Id);
 
         /// <summary>

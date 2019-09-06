@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -10,7 +12,7 @@ using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -34,7 +36,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             return viewModel;
         }
 
-        public new BLL.Field Data
+        public BLL.Field Data
         {
             get => (BLL.Field)EntityData;
             set => EntityData = value;
@@ -59,13 +61,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public IList<QPCheckedItem> InCombinationWith { get; set; }
 
-        [LocalizedDisplayName("InputMaskType", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "InputMaskType", ResourceType = typeof(FieldStrings))]
         public InputMaskTypes InputMaskType { get; set; }
 
-        [LocalizedDisplayName("InputMask", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "InputMask", ResourceType = typeof(FieldStrings))]
         public int? MaskTemplateId { get; set; }
 
-        [LocalizedDisplayName("DynamicImageMode", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DynamicImageMode", ResourceType = typeof(FieldStrings))]
         public DynamicImageMode DynamicImageSizeMode { get; set; }
 
         private string _entityTypeCode = Constants.EntityTypeCode.Field;
@@ -137,13 +139,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public EntityDataListArgs InCombinationWithEventArgs => new EntityDataListArgs { MaxListHeight = 200 };
 
-        [LocalizedDisplayName("ParentField", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ParentField", ResourceType = typeof(FieldStrings))]
         public string ParentFieldName => Data.ParentField == null ? string.Empty : Data.ParentField.Name;
 
-        [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ListItem> DefaultCommandsListItems { get; private set; }
 
-        [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeCommands { get; set; }
 
         public int[] ActiveVeCommandsIds
@@ -160,10 +162,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public IEnumerable<ListItem> AllFormatsListItems { get; private set; }
 
-        [LocalizedDisplayName("Styles", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Styles", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeStyles { get; set; }
 
-        [LocalizedDisplayName("Formats", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Formats", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeFormats { get; set; }
 
         public string AggregationListItemsDataExternalCssItems { get; set; }
@@ -564,13 +566,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public QPSelectListItem BackwardRelateTo => Data.IsBackwardFieldExists ? new QPSelectListItem { Value = Data.BackwardField.Id.ToString(), Text = Data.BackwardField.Name, Selected = true } : null;
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> DefaultArticleIds { get; set; }
 
         public IEnumerable<ListItem> DefaultArticleListItems { get; set; }
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
             if (!string.IsNullOrWhiteSpace(AggregationListItemsDataExternalCssItems))
             {
                 Data.ExternalCssItems = JsonConvert.DeserializeObject<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);

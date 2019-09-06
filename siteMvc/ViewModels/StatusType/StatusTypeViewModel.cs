@@ -8,7 +8,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.StatusType
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewStatusType : Constants.ActionCode.StatusTypeProperties;
 
-        public new BLL.StatusType Data
+        public BLL.StatusType Data
         {
             get => (BLL.StatusType)EntityData;
             set => EntityData = value;

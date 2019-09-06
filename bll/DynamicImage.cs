@@ -1,10 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Gif;
@@ -183,18 +183,18 @@ namespace Quantumart.QP8.BLL
 
         public int Id { get; set; }
 
-        [LocalizedDisplayName("DynamicImageHeigth", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DynamicImageHeigth", ResourceType = typeof(FieldStrings))]
         public short Height { get; set; }
 
-        [LocalizedDisplayName("DynamicImageWidth", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DynamicImageWidth", ResourceType = typeof(FieldStrings))]
         public short Width { get; set; }
 
         public bool MaxSize { get; set; }
 
-        [LocalizedDisplayName("DynamicImageQuality", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DynamicImageQuality", ResourceType = typeof(FieldStrings))]
         public short? Quality { get; set; }
 
-        [LocalizedDisplayName("DynamicImageType", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DynamicImageType", ResourceType = typeof(FieldStrings))]
         public string Type { get; set; }
 
         public bool IsNew => Id == default(int);

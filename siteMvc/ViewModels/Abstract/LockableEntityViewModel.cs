@@ -5,7 +5,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class LockableEntityViewModel : EntityViewModel
     {
-        public new LockableEntityObject Data
+        public LockableEntityObject LockableData
         {
             get => (LockableEntityObject)EntityData;
             set => EntityData = value;

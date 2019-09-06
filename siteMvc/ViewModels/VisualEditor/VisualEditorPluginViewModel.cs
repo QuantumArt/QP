@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
@@ -31,7 +31,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public static VisualEditorPluginViewModel Create(VisualEditorPlugin plugin, string tabId, int parentId) => Create<VisualEditorPluginViewModel>(plugin, tabId, parentId);
 
-        [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<object> VeCommandsDisplay
         {
             get
@@ -45,17 +45,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             }
         }
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
             _jsonCommands = JsonConvert.DeserializeObject<List<VisualEditorCommand>>(AggregationListItemsVeCommandsDisplay);
             Data.DoCustomBinding(_jsonCommands);
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
             _jsonCommands.ForEach(x => x.IsInvalid = false);
-            modelState.Clear();
-            base.Validate(modelState);
+            base.Validate();
         }
     }
 }

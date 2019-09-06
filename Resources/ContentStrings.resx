@@ -121,7 +121,7 @@
     <value>Invalid additional context class name</value>
   </data>
   <data name="AddContextClassNameLengthExceeded" xml:space="preserve">
-    <value>The length of additional context class name should not exceed {5} characters</value>
+    <value>The length of additional context class name should not exceed {1} characters</value>
   </data>
   <data name="AddContextClassNameNonUnique" xml:space="preserve">
     <value>Additional context class name is already in using in the site</value>
@@ -181,7 +181,7 @@
     <value>Description</value>
   </data>
   <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
-    <value>The length of description should not exceed {5} characters</value>
+    <value>The length of description should not exceed {1} characters</value>
   </data>
   <data name="EnableArticlesPermissions" xml:space="preserve">
     <value>Enable articles permissions</value>
@@ -190,10 +190,10 @@
     <value>Enable Site Sharing</value>
   </data>
   <data name="FriendlyPluralMaxLengthExceeded" xml:space="preserve">
-    <value>The length of plural friendly name should not exceed {5} characters</value>
+    <value>The length of plural friendly name should not exceed {1} characters</value>
   </data>
   <data name="FriendlySingularMaxLengthExceeded" xml:space="preserve">
-    <value>The length of singular friendly name should not exceed {5} characters</value>
+    <value>The length of singular friendly name should not exceed {1} characters</value>
   </data>
   <data name="Group" xml:space="preserve">
     <value>Group</value>
@@ -205,7 +205,7 @@
     <value>Invalid content group name</value>
   </data>
   <data name="GroupNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of content group name should not exceed {5} characters</value>
+    <value>The length of content group name should not exceed {1} characters</value>
   </data>
   <data name="GroupNameNonUnique" xml:space="preserve">
     <value>Content group name is already in using on the site</value>
@@ -265,7 +265,7 @@
     <value>Invalid content name</value>
   </data>
   <data name="NameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of content name should not exceed {5} characters</value>
+    <value>The length of content name should not exceed {1} characters</value>
   </data>
   <data name="NameNonUnique" xml:space="preserve">
     <value>Content name is already in using on the site</value>
@@ -283,7 +283,7 @@
     <value>Invalid plural LINQ name</value>
   </data>
   <data name="NamePluralMaxLengthExceeded" xml:space="preserve">
-    <value>The length of plural LINQ name should not exceed {5} characters</value>
+    <value>The length of plural LINQ name should not exceed {1} characters</value>
   </data>
   <data name="NamePluralNonUnique" xml:space="preserve">
     <value>Plural LINQ name is already in using on the site</value>
@@ -301,7 +301,7 @@
     <value>Invalid singular LINQ name</value>
   </data>
   <data name="NameSingularMaxLengthExceeded" xml:space="preserve">
-    <value>The length of singular LINQ name should not exceed {5} characters</value>
+    <value>The length of singular LINQ name should not exceed {1} characters</value>
   </data>
   <data name="NameSingularNonUnique" xml:space="preserve">
     <value>Singular LINQ name name is already in using on the site</value>

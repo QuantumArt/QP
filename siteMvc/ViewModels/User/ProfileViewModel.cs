@@ -10,17 +10,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public class ProfileViewModel : UserViewModelBase
     {
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
-            try
-            {
-                Data.ProfileValidate();
-            }
-            catch (RulesException ex)
-            {
-                ex.Extend(modelState, "Data");
-                IsValid = false;
-            }
+            Data.ProfileValidate();
         }
 
         public static ProfileViewModel Create(BLL.User user, string tabId, int parentId, IUserService service)

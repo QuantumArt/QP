@@ -1,26 +1,26 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class ButtonTrace
     {
-        [LocalizedDisplayName("ButtonName", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ButtonName", ResourceType = typeof(AuditStrings))]
         public string ButtonName { get; set; }
 
-        [LocalizedDisplayName("TabName", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "TabName", ResourceType = typeof(AuditStrings))]
         public string TabName { get; set; }
 
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("ExecutionTime", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ExecutionTime", ResourceType = typeof(AuditStrings))]
         public DateTime ActivatedTime { get; set; }
 
         public int UserId { get; set; }
 
-        [LocalizedDisplayName("UserLogin", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "UserLogin", ResourceType = typeof(AuditStrings))]
         public string UserLogin { get; set; }
     }
 }

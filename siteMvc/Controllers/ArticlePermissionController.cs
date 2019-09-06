@@ -55,7 +55,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewArticlePermission)]
         [BackendActionLog]
         [Record]
-        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             return await base.New(tabId, parentId, collection);
         }
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateArticlePermission)]
         [BackendActionLog]
         [Record(ActionCode.ArticlePermissionProperties)]
-        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             return await base.Properties(tabId, parentId, id, collection);
         }
@@ -136,7 +136,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
         [BackendActionLog]
         [Record]
-        public override async Task<ActionResult> SaveMultipleChangeAsChild(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> SaveMultipleChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
             return await base.SaveMultipleChangeAsChild(tabId, parentId, collection);
         }
@@ -156,7 +156,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ChangeAllChildArticlePermissions)]
         [BackendActionLog]
         [Record(ActionCode.ChangeAllChildArticlePermissions)]
-        public override async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
             return await base.AllChangeAsChild(tabId, parentId, collection);
         }
@@ -176,7 +176,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ChangeChildArticlePermission)]
         [BackendActionLog]
         [Record(ActionCode.ChangeChildArticlePermission)]
-        public override async Task<ActionResult> ChangeAsChild(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> ChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
             return await base.ChangeAsChild(tabId, parentId, collection);
         }

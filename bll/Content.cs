@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using QP8.Infrastructure.Logging;
@@ -15,7 +17,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 
 namespace Quantumart.QP8.BLL
 {
@@ -305,67 +307,67 @@ namespace Quantumart.QP8.BLL
 
         public int[] ForceLinkIds { get; set; }
 
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(ContentStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Name", NameResourceType = typeof(ContentStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Name", ResourceType = typeof(ContentStrings))]
         public override string Name { get; set; }
 
-        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Description", NameResourceType = typeof(ContentStrings))]
+        [StringLength(512, ErrorMessageResourceName = "DescriptionMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Description", ResourceType = typeof(ContentStrings))]
         public override string Description { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlyPluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Plural", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FriendlyPluralMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Plural", ResourceType = typeof(ContentStrings))]
         public string FriendlyPluralName { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlySingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Singular", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FriendlySingularMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Singular", ResourceType = typeof(ContentStrings))]
         public string FriendlySingularName { get; set; }
 
-        [LocalizedDisplayName("EnableArticlesPermissions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "EnableArticlesPermissions", ResourceType = typeof(ContentStrings))]
         public bool AllowItemsPermission { get; set; }
 
-        [LocalizedDisplayName("Group", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "Group", ResourceType = typeof(ContentStrings))]
         public int GroupId { get; set; }
 
-        [LocalizedDisplayName("EnableSiteSharing", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "EnableSiteSharing", ResourceType = typeof(ContentStrings))]
         public bool IsShared { get; set; }
 
-        [LocalizedDisplayName("ArchiveOnRemoval", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ArchiveOnRemoval", ResourceType = typeof(ContentStrings))]
         public bool AutoArchive { get; set; }
 
-        [LocalizedDisplayName("CreateVersions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "CreateVersions", ResourceType = typeof(ContentStrings))]
         public bool UseVersionControl { get; set; }
 
-        [LocalizedDisplayName("MaximumNumberOfStoredVersions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "MaximumNumberOfStoredVersions", ResourceType = typeof(ContentStrings))]
         public int MaxNumOfStoredVersions { get; set; }
 
-        [LocalizedDisplayName("ArticlesNumberPerPage", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ArticlesNumberPerPage", ResourceType = typeof(ContentStrings))]
         public int PageSize { get; set; }
 
-        [LocalizedDisplayName("MapAsClass", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "MapAsClass", ResourceType = typeof(ContentStrings))]
         public bool MapAsClass { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameSingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NameSingularInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("NameSingular", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameSingularMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "NameSingularInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "NameSingular", ResourceType = typeof(ContentStrings))]
         public string NetName { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NamePluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NamePluralInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("NamePlural", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NamePluralMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "NamePluralInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "NamePlural", ResourceType = typeof(ContentStrings))]
         public string NetPluralName { get; set; }
 
-        [LocalizedDisplayName("UseDefaultFiltration", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UseDefaultFiltration", ResourceType = typeof(ContentStrings))]
         public bool UseDefaultFiltration { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "AddContextClassNameLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "AddContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("AdditionalContextClassName", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "AddContextClassNameLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.FullQualifiedNetName, ErrorMessageResourceName = "AddContextClassNameInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "AdditionalContextClassName", ResourceType = typeof(ContentStrings))]
         public string AdditionalContextClassName { get; set; }
 
-        [LocalizedDisplayName("VirtualType", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "VirtualType", ResourceType = typeof(ContentStrings))]
         public int VirtualType { get; set; }
 
         /// <summary>
@@ -374,7 +376,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public int StoredVirtualType { get; set; }
 
-        [LocalizedDisplayName("JoinRoot", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "JoinRoot", ResourceType = typeof(ContentStrings))]
         public int? JoinRootId { get; set; }
 
         public string Query { get; set; }
@@ -383,28 +385,28 @@ namespace Quantumart.QP8.BLL
 
         public int SiteId { get; set; }
 
-        [LocalizedDisplayName("XamlValidation", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "XamlValidation", ResourceType = typeof(ContentStrings))]
         public string XamlValidation { get; set; }
 
-        [LocalizedDisplayName("DisableXamlValidation", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "DisableXamlValidation", ResourceType = typeof(ContentStrings))]
         public bool DisableXamlValidation { get; set; }
 
-        [LocalizedDisplayName("CreateDefaultXAMLValidation", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "CreateDefaultXAMLValidation", ResourceType = typeof(ContentStrings))]
         public bool CreateDefaultXamlValidation { get; set; }
 
-        [LocalizedDisplayName("ParentContent", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ParentContent", ResourceType = typeof(ContentStrings))]
         public int? ParentContentId { get; set; }
 
-        [LocalizedDisplayName("UseForContext", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UseForContext", ResourceType = typeof(ContentStrings))]
         public bool UseForContext { get; set; }
 
-        [LocalizedDisplayName("ForReplication", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ForReplication", ResourceType = typeof(ContentStrings))]
         public bool ForReplication { get; set; }
 
-        [LocalizedDisplayName("DisableChangingActions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "DisableChangingActions", ResourceType = typeof(ContentStrings))]
         public bool DisableChangingActions { get; set; }
 
-        [LocalizedDisplayName("FormScript", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "FormScript", ResourceType = typeof(ContentStrings))]
         public string FormScript { get; set; }
 
         public int[] NewVirtualFieldIds { get; set; }
@@ -583,7 +585,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// ID базовых контентов для построения Union-контента
         /// </summary>
-        [LocalizedDisplayName("UnionSourceContents", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UnionSourceContents", ResourceType = typeof(ContentStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> UnionSourceContentIDs
         {
             get => _unionContentIDs.Value;
@@ -593,17 +596,23 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Текст запроста для User Query контента
         /// </summary>
-        [LocalizedDisplayName("UserQuery", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UserQuery", ResourceType = typeof(ContentStrings))]
         public string UserQuery { get; set; }
 
         /// <summary>
         /// Текст альтернативного запроста для united view из User Query контента
         /// </summary>
-        [LocalizedDisplayName("UserQueryAlternative", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UserQueryAlternative", ResourceType = typeof(ContentStrings))]
         public string UserQueryAlternative { get; set; }
 
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+
+            if (!UseVersionControl)
+            {
+                MaxNumOfStoredVersions = 0;
+            }
+
             if (!MapAsClass)
             {
                 NetName = null;

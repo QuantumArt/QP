@@ -110,13 +110,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewSite)]
         [BackendActionContext(ActionCode.AddNewSite)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var site = SiteService.NewForSave();
             var model = SiteViewModel.Create(site, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = SiteService.Save(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);
@@ -147,13 +148,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateSite)]
         [BackendActionLog]
         [Record(ActionCode.SiteProperties)]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var site = SiteService.ReadForUpdate(id);
             var model = SiteViewModel.Create(site, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = SiteService.Update(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);

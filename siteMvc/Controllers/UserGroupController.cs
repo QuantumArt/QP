@@ -101,13 +101,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewUserGroup)]
         [BackendActionContext(ActionCode.AddNewUserGroup)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var group = _service.NewProperties();
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _service.SaveProperties(model.Data);
@@ -151,12 +152,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateUserGroup)]
         [BackendActionLog]
         [Record(ActionCode.UserGroupProperties)]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var group = _service.ReadProperties(id);
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _service.UpdateProperties(model.Data);

@@ -30,13 +30,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewContentFolder)]
         [BackendActionLog]
         [Record]
-        public async Task<ActionResult> New(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, int id, IFormCollection collection)
         {
             var folder = ContentFolderService.NewForSave(parentId, id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = ContentFolderService.Save(model.Data);
@@ -65,12 +66,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateContentFolder)]
         [BackendActionContext(ActionCode.UpdateContentFolder)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var folder = ContentFolderService.ReadForUpdate(id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = ContentFolderService.Update(model.Data);
@@ -114,12 +116,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.ContentFolder, "parentId")]
         [BackendActionContext(ActionCode.UpdateContentFile)]
         [BackendActionLog]
-        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, FormCollection collection)
+        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, IFormCollection collection)
         {
             var file = ContentFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, false);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 ContentFolderService.SaveFile(model.File);

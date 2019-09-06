@@ -18,9 +18,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
 
-    <!-- TODO: remove Microsoft.AspNet.Mvc reference later -->
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" PrivateAssets="None" />
-
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" PrivateAssets="None" />
@@ -43,7 +40,6 @@
     <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj" />
     <ProjectReference Include="$(SolutionDir)security\Security.csproj" />
     <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
-    <ProjectReference Include="$(SolutionDir)validators\Validators.csproj" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.Unity\QP8.Infrastructure.Logging.Unity.csproj" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web.AspNet\QP8.Infrastructure.Web.AspNet.csproj" />

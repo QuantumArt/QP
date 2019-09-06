@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Helpers.VisualEditor;
@@ -6,7 +7,6 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
@@ -32,24 +32,24 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
             return this;
         }
 
-        [LocalizedDisplayName("Tag", NameResourceType = typeof(VisualEditorStrings))]
-        [MaxLengthValidator(20, MessageTemplateResourceName = "TagMaxLengthExceeded", MessageTemplateResourceType = typeof(VisualEditorStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "TagNotEntered", MessageTemplateResourceType = typeof(VisualEditorStrings))]
-        [FormatValidator(RegularExpressions.InvalidFieldName, Negated = true, MessageTemplateResourceName = "TagInvalidFormat", MessageTemplateResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Tag", ResourceType = typeof(VisualEditorStrings))]
+        [StringLength(20, ErrorMessageResourceName = "TagMaxLengthExceeded", ErrorMessageResourceType = typeof(VisualEditorStrings))]
+        [Required(ErrorMessageResourceName = "TagNotEntered", ErrorMessageResourceType = typeof(VisualEditorStrings))]
+        [RegularExpression(RegularExpressions.FieldName, ErrorMessageResourceName = "TagInvalidFormat", ErrorMessageResourceType = typeof(VisualEditorStrings))]
         public string Tag { get; set; }
 
-        [LocalizedDisplayName("Order", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Order", ResourceType = typeof(VisualEditorStrings))]
         public int Order { get; set; }
 
-        [MaxLengthValidator(20, MessageTemplateResourceName = "OverrideTagMaxLengthExceeded", MessageTemplateResourceType = typeof(VisualEditorStrings))]
-        [FormatValidator(RegularExpressions.InvalidFieldName, Negated = true, MessageTemplateResourceName = "OverrideTagInvalidFormat", MessageTemplateResourceType = typeof(VisualEditorStrings))]
-        [LocalizedDisplayName("OverridesTag", NameResourceType = typeof(VisualEditorStrings))]
+        [StringLength(20, ErrorMessageResourceName = "OverrideTagMaxLengthExceeded", ErrorMessageResourceType = typeof(VisualEditorStrings))]
+        [RegularExpression(RegularExpressions.FieldName, ErrorMessageResourceName = "OverrideTagInvalidFormat", ErrorMessageResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "OverridesTag", ResourceType = typeof(VisualEditorStrings))]
         public string OverridesTag { get; set; }
 
-        [LocalizedDisplayName("IsFormat", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "IsFormat", ResourceType = typeof(VisualEditorStrings))]
         public bool IsFormat { get; set; }
 
-        [LocalizedDisplayName("IsSystem", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "IsSystem", ResourceType = typeof(VisualEditorStrings))]
         public bool IsSystem { get; set; }
 
         public string Attributes { get; set; }
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         private InitPropertyValue<IEnumerable<VeStyleAggregationListItem>> _stylesItems;
 
-        [LocalizedDisplayName("Styles", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Styles", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<VeStyleAggregationListItem> StylesItems
         {
             get => _stylesItems.Value;
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         private InitPropertyValue<IEnumerable<VeStyleAggregationListItem>> _attributeItems;
 
-        [LocalizedDisplayName("Attributes", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Attributes", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<VeStyleAggregationListItem> AttributeItems
         {
             get => _attributeItems.Value;
@@ -147,7 +147,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
                 item.Invalid = true;
             }
 
-            if (!string.IsNullOrWhiteSpace(item.Name) && Regex.IsMatch(item.Name, RegularExpressions.InvalidEntityName))
+            if (!string.IsNullOrWhiteSpace(item.Name) && !Regex.IsMatch(item.Name, RegularExpressions.EntityName))
             {
                 errors.ErrorForModel(string.Format(VisualEditorStrings.VeStyleAggrListItemNameInvalidFormat, typeName, index));
                 item.Invalid = true;

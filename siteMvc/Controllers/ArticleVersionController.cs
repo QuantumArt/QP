@@ -87,14 +87,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RestoreArticleVersion)]
         [BackendActionContext(ActionCode.RestoreArticleVersion)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, IFormCollection collection)
         {
             var version = ArticleVersionService.Read(id);
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
 
             await TryUpdateModelAsync(model);
-
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

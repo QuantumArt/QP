@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using Newtonsoft.Json;
@@ -17,7 +18,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QP8.BLL
@@ -188,14 +188,14 @@ namespace Quantumart.QP8.BLL
 
         private InitPropertyValue<int[]> _defaultArticleIds;
 
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-        [FormatValidator(RegularExpressions.InvalidFieldName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(EntityObjectStrings))]
+        [RegularExpression(RegularExpressions.FieldName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         public override string Name { get; set; }
 
-        [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
-        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Description", ResourceType = typeof(EntityObjectStrings))]
+        [StringLength(512, ErrorMessageResourceName = "DescriptionMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         public override string Description { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Field;
@@ -208,40 +208,40 @@ namespace Quantumart.QP8.BLL
 
         public int? OrderFieldId { get; set; }
 
-        [LocalizedDisplayName("TreeSortingField", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "TreeSortingField", ResourceType = typeof(FieldStrings))]
         public int? TreeOrderFieldId { get; set; }
 
-        [LocalizedDisplayName("ListSortingField", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ListSortingField", ResourceType = typeof(FieldStrings))]
         public int? ListOrderFieldId { get; set; }
 
         public int FieldTitleCount { get; set; }
 
-        [LocalizedDisplayName("TreeFieldTitleCount", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "TreeFieldTitleCount", ResourceType = typeof(FieldStrings))]
         public int TreeFieldTitleCount { get; set; }
 
-        [LocalizedDisplayName("ListFieldTitleCount", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ListFieldTitleCount", ResourceType = typeof(FieldStrings))]
         public int ListFieldTitleCount { get; set; }
 
-        [LocalizedDisplayName("ListFieldTitleCount", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ListFieldTitleCount", ResourceType = typeof(FieldStrings))]
         public int ListO2MFieldTitleCount { get; set; }
 
         public bool IncludeRelationsInTitle { get; set; }
 
-        [LocalizedDisplayName("ListIncludeRelationsInTitle", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ListIncludeRelationsInTitle", ResourceType = typeof(FieldStrings))]
         public bool ListO2MIncludeRelationsInTitle { get; set; }
 
-        [LocalizedDisplayName("ListIncludeRelationsInTitle", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ListIncludeRelationsInTitle", ResourceType = typeof(FieldStrings))]
         public bool ListIncludeRelationsInTitle { get; set; }
 
-        [LocalizedDisplayName("TreeIncludeRelationsInTitle", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "TreeIncludeRelationsInTitle", ResourceType = typeof(FieldStrings))]
         public bool TreeIncludeRelationsInTitle { get; set; }
 
         public bool OrderByTitle { get; set; }
 
-        [LocalizedDisplayName("TreeOrderByTitle", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "TreeOrderByTitle", ResourceType = typeof(FieldStrings))]
         public bool TreeOrderByTitle { get; set; }
 
-        [LocalizedDisplayName("ListOrderByTitle", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ListOrderByTitle", ResourceType = typeof(FieldStrings))]
         public bool ListOrderByTitle { get; set; }
 
         public int ContentId { get; set; }
@@ -274,8 +274,8 @@ namespace Quantumart.QP8.BLL
 
         public string FormatMask { get; set; }
 
-        [LocalizedDisplayName("InputMask", NameResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "InputMaskMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "InputMask", ResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "InputMaskMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string InputMask { get; set; }
 
         public string DefaultValue { get; set; }
@@ -284,137 +284,137 @@ namespace Quantumart.QP8.BLL
 
         public FieldType Type { get; set; }
 
-        [LocalizedDisplayName("RelationId", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "RelationId", ResourceType = typeof(FieldStrings))]
         public int? RelationId { get; set; }
 
-        [LocalizedDisplayName("BackRelationId", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "BackRelationId", ResourceType = typeof(FieldStrings))]
         public int? BackRelationId { get; set; }
 
-        [LocalizedDisplayName("Indexed", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Indexed", ResourceType = typeof(FieldStrings))]
         public bool Indexed { get; set; }
 
-        [LocalizedDisplayName("Order", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Order", ResourceType = typeof(FieldStrings))]
         public int Order { get; set; }
 
-        [LocalizedDisplayName("Required", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Required", ResourceType = typeof(FieldStrings))]
         public bool Required { get; set; }
 
-        [LocalizedDisplayName("RelationCondition", NameResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "RelationConditionMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "RelationCondition", ResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "RelationConditionMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string RelationCondition { get; set; }
 
-        [LocalizedDisplayName("ViewInList", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ViewInList", ResourceType = typeof(FieldStrings))]
         public bool ViewInList { get; set; }
 
-        [LocalizedDisplayName("RenameMatched", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "RenameMatched", ResourceType = typeof(FieldStrings))]
         public bool RenameMatched { get; set; }
 
-        [LocalizedDisplayName("PEnterMode", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "PEnterMode", ResourceType = typeof(FieldStrings))]
         public bool PEnterMode
         {
             get => VisualEditFieldParams.PEnterMode;
             set => VisualEditFieldParams.PEnterMode = value;
         }
 
-        [LocalizedDisplayName("UseEnglishQuotes", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseEnglishQuotes", ResourceType = typeof(FieldStrings))]
         public bool UseEnglishQuotes
         {
             get => VisualEditFieldParams.UseEnglishQuotes;
             set => VisualEditFieldParams.UseEnglishQuotes = value;
         }
 
-        [LocalizedDisplayName("DisableListAutoWrap", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DisableListAutoWrap", ResourceType = typeof(FieldStrings))]
         public bool DisableListAutoWrap
         {
             get => VisualEditFieldParams.DisableListAutoWrap;
             set => VisualEditFieldParams.DisableListAutoWrap = value;
         }
 
-        [LocalizedDisplayName("DisableVersionControl", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DisableVersionControl", ResourceType = typeof(FieldStrings))]
         public bool DisableVersionControl { get; set; }
 
-        [LocalizedDisplayName("BaseImage", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "BaseImage", ResourceType = typeof(FieldStrings))]
         public int? BaseImageId { get; set; }
 
-        [LocalizedDisplayName("ReadOnly", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ReadOnly", ResourceType = typeof(FieldStrings))]
         public bool ReadOnly { get; set; }
 
         public string DefaultBlobValue { get; set; }
 
         public int? LinkId { get; set; }
 
-        [LocalizedDisplayName("UseSiteLibrary", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseSiteLibrary", ResourceType = typeof(FieldStrings))]
         public bool UseSiteLibrary { get; set; }
 
-        [LocalizedDisplayName("SubFolder", NameResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "SubFolderMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.RelativeWindowsFolderPath, MessageTemplateResourceName = "SubFolderInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "SubFolder", ResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "SubFolderMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.RelativeWindowsFolderPath, ErrorMessageResourceName = "SubFolderInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
         [Example(@"\subfolder1\subfolder2")]
         public string SubFolder { get; set; }
 
         public int? PersistentId { get; set; }
 
-        [MaxLengthValidator(300, MessageTemplateResourceName = "FriendlyNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
-        [LocalizedDisplayName("FriendlyName", NameResourceType = typeof(FieldStrings))]
+        [StringLength(300, ErrorMessageResourceName = "FriendlyNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
+        [Display(Name = "FriendlyName", ResourceType = typeof(FieldStrings))]
         public string FriendlyName { get; set; }
 
-        [LocalizedDisplayName("DocType", NameResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "DocTypeMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "DocType", ResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "DocTypeMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string DocType { get; set; }
 
-        [LocalizedDisplayName("FullPage", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "FullPage", ResourceType = typeof(FieldStrings))]
         public bool FullPage { get; set; }
 
-        [LocalizedDisplayName("OnScreen", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "OnScreen", ResourceType = typeof(FieldStrings))]
         public bool OnScreen { get; set; }
 
-        [LocalizedDisplayName("MapAsProperty", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "MapAsProperty", ResourceType = typeof(FieldStrings))]
         public bool MapAsProperty { get; set; }
 
-        [LocalizedDisplayName("LinqPropertyName", NameResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "LinqPropertyNameInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "LinqPropertyNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "LinqPropertyName", ResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "LinqPropertyNameInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "LinqPropertyNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string LinqPropertyName { get; set; }
 
-        [LocalizedDisplayName("LinqBackPropertyName", NameResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "LinqBackPropertyNameInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "LinqBackPropertyNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "LinqBackPropertyName", ResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "LinqBackPropertyNameInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "LinqBackPropertyNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string LinqBackPropertyName { get; set; }
 
-        [LocalizedDisplayName("IsInteger", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "IsInteger", ResourceType = typeof(FieldStrings))]
         public bool IsInteger { get; set; }
 
-        [LocalizedDisplayName("IsLong", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "IsLong", ResourceType = typeof(FieldStrings))]
         public bool IsLong { get; set; }
 
-        [LocalizedDisplayName("IsDecimal", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "IsDecimal", ResourceType = typeof(FieldStrings))]
         public bool IsDecimal { get; set; }
 
         public int Size { get; set; }
 
         public int? JoinId { get; set; }
 
-        [LocalizedDisplayName("AutoExpand", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "AutoExpand", ResourceType = typeof(FieldStrings))]
         public bool AutoExpand { get; set; }
 
-        [LocalizedDisplayName("AutoLoad", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "AutoLoad", ResourceType = typeof(FieldStrings))]
         public bool AutoLoad { get; set; }
 
-        [LocalizedDisplayName("RebuildVirtualContents", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "RebuildVirtualContents", ResourceType = typeof(FieldStrings))]
         public bool RebuildVirtualContents { get; set; }
 
         internal bool HasAnyAggregators => _hasAnyAggregators.Value;
 
-        [LocalizedDisplayName("EnumValues", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "EnumValues", ResourceType = typeof(FieldStrings))]
         public IEnumerable<StringEnumItem> StringEnumItems { get; set; }
 
-        [LocalizedDisplayName("ShowAsRadioButtons", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ShowAsRadioButtons", ResourceType = typeof(FieldStrings))]
         public bool ShowAsRadioButtons { get; set; }
 
-        [LocalizedDisplayName("UseForDefaultFiltration", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseForDefaultFiltration", ResourceType = typeof(FieldStrings))]
         public bool UseForDefaultFiltration { get; set; }
 
-        [LocalizedDisplayName("UseInChildContentFilter", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseInChildContentFilter", ResourceType = typeof(FieldStrings))]
         public bool UseInChildContentFilter { get; set; }
 
         public Content Content { get; set; }
@@ -466,7 +466,7 @@ namespace Quantumart.QP8.BLL
 
         public string RelationFilter => SqlFilterComposer.Compose(UseRelationCondition ? "(" + RelationCondition + ")" : "", DefaultRelationFilter);
 
-        [LocalizedDisplayName("FieldType", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "FieldType", ResourceType = typeof(FieldStrings))]
         public FieldExactTypes ExactType
         {
             get => _exactType.Value;
@@ -510,14 +510,14 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        [LocalizedDisplayName("IsUnique", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "IsUnique", ResourceType = typeof(FieldStrings))]
         public bool IsUnique
         {
             get => _isUnique.Value;
             set => _isUnique.Value = value;
         }
 
-        [LocalizedDisplayName("RelateTo", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "RelateTo", ResourceType = typeof(FieldStrings))]
         public int? RelateToContentId
         {
             get => _relateToContentId.Value;
@@ -526,26 +526,26 @@ namespace Quantumart.QP8.BLL
 
         public Content RelatedToContent => RelateToContentId.HasValue ? _contentRepository.GetById(RelateToContentId.Value) : null;
 
-        [LocalizedDisplayName("TextBoxRows", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "TextBoxRows", ResourceType = typeof(FieldStrings))]
         public int TextBoxRows { get; set; }
 
-        [LocalizedDisplayName("HighlightType", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "HighlightType", ResourceType = typeof(FieldStrings))]
         public string HighlightType { get; set; }
 
-        [LocalizedDisplayName("MaxDataListItemCount", NameResourceType = typeof(FieldStrings))]
-        [RangeValueValidator(0, 100, MessageTemplateResourceName = "MaxDataItemCountNotInRange", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "MaxDataListItemCount", ResourceType = typeof(FieldStrings))]
+        [Range(0, 100, ErrorMessageResourceName = "MaxDataItemCountNotInRange", ErrorMessageResourceType = typeof(FieldStrings))]
         public int MaxDataListItemCount { get; set; }
 
-        [LocalizedDisplayName("VisualEditorHeight", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "VisualEditorHeight", ResourceType = typeof(FieldStrings))]
         public int VisualEditorHeight { get; set; }
 
-        [LocalizedDisplayName("DecimalPlaces", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DecimalPlaces", ResourceType = typeof(FieldStrings))]
         public int DecimalPlaces { get; set; }
 
-        [LocalizedDisplayName("StringSize", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "StringSize", ResourceType = typeof(FieldStrings))]
         public int StringSize { get; set; }
 
-        [LocalizedDisplayName("UseInputMask", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseInputMask", ResourceType = typeof(FieldStrings))]
         public bool UseInputMask { get; set; }
 
         public DynamicImage DynamicImage
@@ -658,7 +658,7 @@ namespace Quantumart.QP8.BLL
 
         public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
-        [LocalizedDisplayName("BackwardFieldId", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "BackwardFieldId", ResourceType = typeof(FieldStrings))]
         public int? BackwardRelateToFieldId => BackwardField?.Id;
 
         /// <summary>
@@ -666,43 +666,43 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public IEnumerable<Field> RelatedO2MFields => IsNew ? Enumerable.Empty<Field>() : _fieldRepository.GetRelatedO2MFields(Id);
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public string StringDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public double? NumericDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public int? ClassifierDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public bool BooleanDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public DateTime? DateDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public TimeSpan? TimeDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public DateTime? DateTimeDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public string TextBoxDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public string VisualEditDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public string FileDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public string O2MDefaultValue { get; set; }
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public string M2MDefaultValue { get; set; }
 
-        [LocalizedDisplayName("RootElementClass", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "RootElementClass", ResourceType = typeof(VisualEditorStrings))]
         public string RootElementClass
         {
             get => VisualEditFieldParams.RootElementClass;
@@ -715,7 +715,7 @@ namespace Quantumart.QP8.BLL
             set => VisualEditFieldParams.ExternalCss = value;
         }
 
-        [LocalizedDisplayName("ExternalCss", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "ExternalCss", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ExternalCss> ExternalCssItems
         {
             get => _externalCssItems.Value;
@@ -750,29 +750,29 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        [LocalizedDisplayName("BackwardFieldName", NameResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "BackwardFieldNameInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "BackwardFieldNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "BackwardFieldName", ResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "BackwardFieldNameInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "BackwardFieldNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string NewM2MBackwardFieldName { get; set; }
 
-        [LocalizedDisplayName("BackwardFieldName", NameResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "BackwardFieldNameInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "BackwardFieldNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "BackwardFieldName", ResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "BackwardFieldNameInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "BackwardFieldNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string NewO2MBackwardFieldName { get; set; }
 
-        [LocalizedDisplayName("UseRelationCondition", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseRelationCondition", ResourceType = typeof(FieldStrings))]
         public bool UseRelationCondition { get; set; }
 
-        [LocalizedDisplayName("UseForTree", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseForTree", ResourceType = typeof(FieldStrings))]
         public bool UseForTree { get; set; }
 
-        [LocalizedDisplayName("AutoCheckChildren", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "AutoCheckChildren", ResourceType = typeof(FieldStrings))]
         public bool AutoCheckChildren { get; set; }
 
-        [LocalizedDisplayName("UseRelationSecurity", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseRelationSecurity", ResourceType = typeof(FieldStrings))]
         public bool UseRelationSecurity { get; set; }
 
-        [LocalizedDisplayName("CopyPermissionsToChildren", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "CopyPermissionsToChildren", ResourceType = typeof(FieldStrings))]
         public bool CopyPermissionsToChildren { get; set; }
 
         /// <summary>
@@ -817,22 +817,22 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Можно ли изменять поле для существующей статьи
         /// </summary>
-        [LocalizedDisplayName("Changeable", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Changeable", ResourceType = typeof(FieldStrings))]
         public bool Changeable { get; set; }
 
-        [LocalizedDisplayName("UseTypeSecurity", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseTypeSecurity", ResourceType = typeof(FieldStrings))]
         public bool UseTypeSecurity { get; set; }
 
         /// <summary>
         /// Являеться ли поле агреггатором
         /// </summary>
-        [LocalizedDisplayName("Aggregated", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Aggregated", ResourceType = typeof(FieldStrings))]
         public bool Aggregated { get; set; }
 
         /// <summary>
         /// ID cвязанного классификатора если поле является агреггатором
         /// </summary>
-        [LocalizedDisplayName("ClassifierId", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ClassifierId", ResourceType = typeof(FieldStrings))]
         public int? ClassifierId { get; set; }
 
         /// <summary>
@@ -840,28 +840,28 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool IsClassifier { get; set; }
 
-        [LocalizedDisplayName("ParentField", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "ParentField", ResourceType = typeof(FieldStrings))]
         public int? ParentFieldId { get; set; }
 
-        [LocalizedDisplayName("Override", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Override", ResourceType = typeof(FieldStrings))]
         public bool Override { get; set; }
 
-        [LocalizedDisplayName("Hide", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Hide", ResourceType = typeof(FieldStrings))]
         public bool Hide { get; set; }
 
-        [LocalizedDisplayName("UseForContext", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseForContext", ResourceType = typeof(FieldStrings))]
         public bool UseForContext { get; set; }
 
-        [LocalizedDisplayName("OptimizeForHierarchy", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "OptimizeForHierarchy", ResourceType = typeof(FieldStrings))]
         public bool OptimizeForHierarchy { get; set; }
 
-        [LocalizedDisplayName("IsLocalization", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "IsLocalization", ResourceType = typeof(FieldStrings))]
         public bool IsLocalization { get; set; }
 
-        [LocalizedDisplayName("UseSeparateReverseViews", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseSeparateReverseViews", ResourceType = typeof(FieldStrings))]
         public bool UseSeparateReverseViews { get; set; }
 
-        [LocalizedDisplayName("UseForVariations", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "UseForVariations", ResourceType = typeof(FieldStrings))]
         public bool UseForVariations { get; set; }
 
         public IEnumerable<Field> ChildFields => _childFields.Value;
@@ -2955,7 +2955,7 @@ namespace Quantumart.QP8.BLL
 
         public IEnumerable<Content> GetAggregatedContents() => IsClassifier ? _fieldRepository.GetAggregatableContentsForClassifier(this) : null;
 
-        [LocalizedDisplayName("DefaultValue", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public int[] DefaultArticleIds
         {
             get => _defaultArticleIds.Value;

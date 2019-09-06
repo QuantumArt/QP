@@ -59,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public async Task<ActionResult> FileFields(int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> FileFields(int parentId, int id, IFormCollection collection)
         {
             var model = new ImportViewModel();
             await TryUpdateModelAsync(model);
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public async Task<ActionResult> SetupWithParams(int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> SetupWithParams(int parentId, int id, IFormCollection collection)
         {
             var model = new ImportViewModel();
             await TryUpdateModelAsync(model);

@@ -66,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ConnectionScope]
         [BackendActionLog]
         [Record]
-        public async Task<ActionResult> SetupWithParams(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> SetupWithParams(string tabId, int parentId, int id, IFormCollection collection)
         {
             var newSite = SiteService.NewForSave();
             var model = CreateLikeSiteModel.Create(newSite, tabId, parentId);
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             var sourceSite = SiteService.Read(id);
             model.Data.AssemblingType = sourceSite.AssemblingType;
-            model.Validate(ModelState);
+            TryValidateModel(model);
 
             var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
             if (ModelState.IsValid)

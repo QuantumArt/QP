@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -14,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
     {
         private ICustomActionService _service;
 
-        public new BLL.CustomAction Data
+        public BLL.CustomAction Data
         {
             get => (BLL.CustomAction)EntityData;
             set => EntityData = value;
@@ -42,8 +44,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
             SelectedActions = Data.ParentActions?.Select(c => new QPCheckedItem { Value = c.ToString() }).ToList() ?? Enumerable.Empty<QPCheckedItem>().ToList();
         }
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
+
             Data.Action.TypeId = CustomActionTypeId ?? 0;
             Data.Action.EntityTypeId = CustomActionEntityTypeId ?? 0;
             Data.Order = Order ?? 0;
@@ -51,12 +55,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
             Data.ContentIds = SelectedContentIDs;
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override IEnumerable<ValidationResult> ValidateViewModel()
         {
-            base.Validate(modelState);
             if (Data.Action.EntityTypeId > 0 && Data.ShowInToolbar && !SelectedActions.Any())
             {
-                modelState.AddModelError("SelectedActions", CustomActionStrings.ToolbarButtonParentActionNotSelected);
+                yield return new ValidationResult(CustomActionStrings.ToolbarButtonParentActionNotSelected, new[] {"SelectedActions"});
             }
         }
 
@@ -112,35 +115,37 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
 
         public string PreActionPanelElementId => UniqueId("preActionPanel");
 
-        [LocalizedDisplayName("CustomActionType", NameResourceType = typeof(CustomActionStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "ActionTypeNotSelected", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "CustomActionType", ResourceType = typeof(CustomActionStrings))]
+        [Required(ErrorMessageResourceName = "ActionTypeNotSelected", ErrorMessageResourceType = typeof(CustomActionStrings))]
         public int? CustomActionTypeId { get; set; }
 
-        [LocalizedDisplayName("CustomActionEntityType", NameResourceType = typeof(CustomActionStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "EntityTypeNotSelected", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "CustomActionEntityType", ResourceType = typeof(CustomActionStrings))]
+        [Required(ErrorMessageResourceName = "EntityTypeNotSelected", ErrorMessageResourceType = typeof(CustomActionStrings))]
         public int? CustomActionEntityTypeId { get; set; }
 
-        [LocalizedDisplayName("SiteSelectionMode", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "SiteSelectionMode", ResourceType = typeof(CustomActionStrings))]
         public SelectionMode SiteSelectionMode
         {
             get => Data.SiteExcluded ? SelectionMode.HideExceptSelected : SelectionMode.ShowExpectSelected;
             set => Data.SiteExcluded = value == SelectionMode.HideExceptSelected;
         }
 
-        [LocalizedDisplayName("ContentSelectionMode", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "ContentSelectionMode", ResourceType = typeof(CustomActionStrings))]
         public SelectionMode ContentSelectionMode
         {
             get => Data.ContentExcluded ? SelectionMode.HideExceptSelected : SelectionMode.ShowExpectSelected;
             set => Data.ContentExcluded = value == SelectionMode.HideExceptSelected;
         }
 
-        [LocalizedDisplayName("SelectedSiteIDs", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "SelectedSiteIDs", ResourceType = typeof(CustomActionStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> SelectedSiteIDs { get; set; }
 
-        [LocalizedDisplayName("SelectedContentIDs", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "SelectedContentIDs", ResourceType = typeof(CustomActionStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> SelectedContentIDs { get; set; }
 
-        [LocalizedDisplayName("ToolbarButtonParentActionId", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "ToolbarButtonParentActionId", ResourceType = typeof(CustomActionStrings))]
         public IList<QPCheckedItem> SelectedActions { get; set; }
 
         public int[] SelectedActionsIds
@@ -150,7 +155,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
 
         public string SelectedActionsString => string.Join(",", SelectedActionsIds);
 
-        [LocalizedDisplayName("Order", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "Order", ResourceType = typeof(CustomActionStrings))]
         public int? Order { get; set; }
     }
 }

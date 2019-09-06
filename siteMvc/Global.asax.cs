@@ -134,25 +134,8 @@ namespace Quantumart.QP8.WebMvc
             ModelBinders.Binders.Add(typeof(ArticleVersionViewModel), new ArticleVersionViewModelBinder());
             ModelBinders.Binders.Add(typeof(ArticleSchedule), new ArticleScheduleModelBinder());
             ModelBinders.Binders.Add(typeof(RecurringSchedule), new RecurringScheduleModelBinder());
-            ModelBinders.Binders.Add(typeof(Site), new SiteModelBinder());
-            ModelBinders.Binders.Add(typeof(Content), new ContentModelBinder());
-            ModelBinders.Binders.Add(typeof(WorkflowViewModel), new WorkflowModelBinder());
-            ModelBinders.Binders.Add(typeof(FieldViewModel), new FieldViewModelBinder());
-            ModelBinders.Binders.Add(typeof(VirtualContentViewModel), new VirtualContentViewModelBinder());
-            ModelBinders.Binders.Add(typeof(CustomActionViewModel), new CustomActionViewModelBinder());
             ModelBinders.Binders.Add(typeof(QPCheckedItem), new QpCheckedItemModelBinder());
             ModelBinders.Binders.Add(typeof(IList<QPCheckedItem>), new QpCheckedItemListModelBinder());
-            ModelBinders.Binders.Add(typeof(UserViewModel), new UserViewModelBinder());
-            ModelBinders.Binders.Add(typeof(UserGroupViewModel), new UserGroupViewModelBinder());
-            ModelBinders.Binders.Add(typeof(PermissionViewModel), new PermissionViewModelBinder());
-            ModelBinders.Binders.Add(typeof(NotificationViewModel), new NotificationViewModelBinder());
-            ModelBinders.Binders.Add(typeof(VisualEditorPluginViewModel), new VisualEditorPluginViewModelBinder());
-            ModelBinders.Binders.Add(typeof(VisualEditorStyleViewModel), new VisualEditorStyleViewModelBinder());
-            ModelBinders.Binders.Add(typeof(SiteViewModel), new SiteViewModelBinder());
-            ModelBinders.Binders.Add(typeof(UserDefaultFilter), new UserDefaultFilterBinder());
-            ModelBinders.Binders.Add(typeof(PageTemplateViewModel), new PageTemplateViewModelBinder());
-            ModelBinders.Binders.Add(typeof(ObjectViewModel), new ObjectViewModelBinder());
-            ModelBinders.Binders.Add(typeof(DbViewModel), new DbViewModelBinder());
 
             ModelBinders.Binders.DefaultBinder = new QpModelBinder();
         }

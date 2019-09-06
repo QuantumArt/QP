@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
@@ -26,22 +26,22 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         private readonly IPageTemplateService _service;
 
-        [LocalizedDisplayName("Function", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Function", ResourceType = typeof(TemplateStrings))]
         public int? SelectedFunction { get; set; }
 
-        [LocalizedDisplayName("ContainerProp", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ContainerProp", ResourceType = typeof(TemplateStrings))]
         public int? SelectedContainerProp { get; set; }
 
-        [LocalizedDisplayName("PageObject", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "PageObject", ResourceType = typeof(TemplateStrings))]
         public int? SelectedPageObject { get; set; }
 
-        [LocalizedDisplayName("TemplateObject", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "TemplateObject", ResourceType = typeof(TemplateStrings))]
         public int? SelectedTemplateObject { get; set; }
 
-        [LocalizedDisplayName("RestTemplateObject", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "RestTemplateObject", ResourceType = typeof(TemplateStrings))]
         public int? SelectedRestObject { get; set; }
 
-        [LocalizedDisplayName("Field", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Field", ResourceType = typeof(TemplateStrings))]
         public int? SelectdField { get; set; }
 
         public IEnumerable<ListItem> Functions { get; set; }

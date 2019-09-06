@@ -61,13 +61,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateStatusType)]
         [BackendActionLog]
         [Record(ActionCode.StatusTypeProperties)]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var status = _statusTypeService.ReadPropertiesForUpdate(id);
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _statusTypeService.UpdateProperties(model.Data);
@@ -96,13 +97,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewStatusType)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var status = _statusTypeService.NewStatusTypePropertiesForUpdate(parentId);
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _statusTypeService.SaveProperties(model.Data);

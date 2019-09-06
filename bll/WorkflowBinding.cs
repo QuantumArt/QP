@@ -1,9 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -29,10 +28,10 @@ namespace Quantumart.QP8.BLL
             IsAsync = true;
         }
 
-        [LocalizedDisplayName("Workflow", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "Workflow", ResourceType = typeof(ContentStrings))]
         public int WorkflowId { get; set; }
 
-        [LocalizedDisplayName("SplitArticles", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "SplitArticles", ResourceType = typeof(ContentStrings))]
         public bool IsAsync { get; set; }
 
         public bool IsAssigned => WorkflowId != UnassignedId;

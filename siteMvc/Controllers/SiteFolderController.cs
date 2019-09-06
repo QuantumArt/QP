@@ -30,13 +30,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewSiteFolder)]
         [BackendActionContext(ActionCode.AddNewSiteFolder)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, int id, IFormCollection collection)
         {
             var folder = SiteFolderService.NewForSave(parentId, id);
             var model = SiteFolderViewModel.Create(folder, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = SiteFolderService.Save(model.Data);
@@ -66,12 +66,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateSiteFolder)]
         [BackendActionLog]
         [Record]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var folder = SiteFolderService.ReadForUpdate(id);
             var model = SiteFolderViewModel.Create(folder, tabId, parentId);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = SiteFolderService.Update(model.Data);
@@ -117,12 +117,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "parentId")]
         [BackendActionContext(ActionCode.UpdateSiteFile)]
         [BackendActionLog]
-        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, FormCollection collection)
+        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, IFormCollection collection)
         {
             var file = SiteFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, true);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 SiteFolderService.SaveFile(model.File);

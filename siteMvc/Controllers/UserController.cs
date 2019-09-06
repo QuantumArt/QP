@@ -132,13 +132,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var user = _service.GetUserToAdd();
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _service.SaveProperties(model.Data);
@@ -167,13 +168,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateUser)]
         [BackendActionContext(ActionCode.UpdateUser)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var user = _service.ReadProperties(id);
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _service.UpdateProperties(model.Data);
@@ -219,12 +221,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Profile(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> Profile(string tabId, int parentId, IFormCollection collection)
         {
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 _service.UpdateProfile(model.Data);
@@ -252,7 +255,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             user.NewPasswordCopy = currentUser.NewPasswordCopy;
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data.MustChangePassword = false;

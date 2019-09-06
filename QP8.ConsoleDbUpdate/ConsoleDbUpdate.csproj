@@ -355,9 +355,6 @@
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Utils.dll">
       <Link>References\Quantumart.QP8.Utils.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Validators.dll">
-      <Link>References\Quantumart.QP8.Validators.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.WebMvc.dll">
       <Link>References\Quantumart.QP8.WebMvc.dll</Link>
     </EmbeddedResource>

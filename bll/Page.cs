@@ -1,47 +1,47 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class Page : LockableEntityObject
     {
-        [RequiredValidator(MessageTemplateResourceName = "FileNameRequired", MessageTemplateResourceType = typeof(TemplateStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "FileNameMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
-        [FormatValidator(RegularExpressions.FileName, Negated = false, MessageTemplateResourceName = "FileNameInvalidFormat", MessageTemplateResourceType = typeof(TemplateStrings))]
-        [LocalizedDisplayName("FileName", NameResourceType = typeof(TemplateStrings))]
+        [Required(ErrorMessageResourceName = "FileNameRequired", ErrorMessageResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FileNameMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
+        [RegularExpression(RegularExpressions.FileName, ErrorMessageResourceName = "FileNameInvalidFormat", ErrorMessageResourceType = typeof(TemplateStrings))]
+        [Display(Name = "FileName", ResourceType = typeof(TemplateStrings))]
         public string FileName { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "CustomClassMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
-        [LocalizedDisplayName("CustomClass", NameResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "CustomClassMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClass", ResourceType = typeof(TemplateStrings))]
         public string CustomClass { get; set; }
 
-        [LocalizedDisplayName("FolderName", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "FolderName", ResourceType = typeof(TemplateStrings))]
         public string Folder { get; set; }
 
-        [LocalizedDisplayName("GenerateTrace", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "GenerateTrace", ResourceType = typeof(TemplateStrings))]
         public bool GenerateTrace { get; set; }
 
-        [LocalizedDisplayName("EnableViewState", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "EnableViewState", ResourceType = typeof(TemplateStrings))]
         public bool EnableViewState { get; set; }
 
-        [LocalizedDisplayName("SendNoCacheHeader", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SendNoCacheHeader", ResourceType = typeof(TemplateStrings))]
         public bool SendNocacheHeaders { get; set; }
 
-        [LocalizedDisplayName("SendLastModifiedHeader", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SendLastModifiedHeader", ResourceType = typeof(TemplateStrings))]
         public bool SendLastModifiedHeader { get; set; }
 
-        [LocalizedDisplayName("ProxyCaching", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ProxyCaching", ResourceType = typeof(TemplateStrings))]
         public bool ProxyCache { get; set; }
 
-        [LocalizedDisplayName("Charset", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Charset", ResourceType = typeof(TemplateStrings))]
         public string Charset { get; set; }
 
-        [LocalizedDisplayName("Locale", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Locale", ResourceType = typeof(TemplateStrings))]
         public int Locale { get; set; }
 
         public int LastAssembledBy { get; set; }
@@ -50,7 +50,7 @@ namespace Quantumart.QP8.BLL
 
         public DateTime Assembled { get; set; }
 
-        [LocalizedDisplayName("ExpiresIn", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ExpiresIn", ResourceType = typeof(TemplateStrings))]
         public int CacheHours { get; set; }
 
         public override string LockedByAnyoneElseMessage => string.Format(TemplateStrings.PageLockedByAnyoneElse, LockedBy);
@@ -74,12 +74,12 @@ namespace Quantumart.QP8.BLL
 
         public override int ParentEntityId => TemplateId;
 
-        [LocalizedDisplayName("ApplyToExistingObjects", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ApplyToExistingObjects", ResourceType = typeof(TemplateStrings))]
         public bool ApplyToExistingObjects { get; set; }
 
         public PageTemplate PageTemplate { get; set; }
 
-        [LocalizedDisplayName("BrowserCaching", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "BrowserCaching", ResourceType = typeof(TemplateStrings))]
         public bool BrowserCaching { get; set; }
 
         public override void Validate()

@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class UserStrings {
@@ -223,7 +223,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of e-mail should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of e-mail should not exceed {1} characters!.
         /// </summary>
         public static string EmailMaxLengthExceeded {
             get {
@@ -268,7 +268,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of first name should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of first name should not exceed {1} characters!.
         /// </summary>
         public static string FirstNameMaxLengthExceeded {
             get {
@@ -313,7 +313,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of last name should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of last name should not exceed {1} characters!.
         /// </summary>
         public static string LastNameMaxLengthExceeded {
             get {
@@ -358,7 +358,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of login should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of login should not exceed {1} characters!.
         /// </summary>
         public static string LoginLengthExceeded {
             get {
@@ -493,7 +493,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of NT-login should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of NT-login should not exceed {1} characters!.
         /// </summary>
         public static string NtLoginLengthExceeded {
             get {

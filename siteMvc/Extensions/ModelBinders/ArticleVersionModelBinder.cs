@@ -1,11 +1,14 @@
-﻿using System.Web.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
-    public class ArticleVersionViewModelBinder : QpModelBinder
+    public class ArticleVersionViewModelBinder : IModelBinder
     {
-        protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
+
+        public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             if (bindingContext.Model is ArticleVersionViewModel model)
             {
@@ -21,8 +24,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                     ArticleViewModelBinder.UpdateFieldValues(bindingContext, aggArticle.FieldValues, true);
                 }
             }
-
-            base.OnModelUpdated(controllerContext, bindingContext);
+            return Task.CompletedTask;
         }
     }
 }

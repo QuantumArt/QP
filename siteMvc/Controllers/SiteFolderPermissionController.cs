@@ -55,7 +55,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewSiteFolderPermission)]
         [BackendActionLog]
         [Record]
-        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             return await base.New(tabId, parentId, collection);
         }
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateSiteFolderPermission)]
         [BackendActionLog]
         [Record(ActionCode.SiteFolderPermissionProperties)]
-        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             return await base.Properties(tabId, parentId, id, collection);
         }

@@ -13,15 +13,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
     {
         public readonly string ClassBlock = "class";
 
-        public new BLL.Content Data
+        public BLL.Content Data
         {
             get => (BLL.Content)EntityData;
             set => EntityData = value;
         }
 
-        public List<ListItem> Groups
+        public List<ListItem> GetGroups()
         {
-            get { return Data.Site.ContentGroups.Select(n => new ListItem(n.Id.ToString(), n.Name)).ToList(); }
+             return ContentService.GetSiteContentGroups(Data.SiteId).Select(n => new ListItem(n.Id.ToString(), n.Name)).ToList();
         }
 
         public bool GroupChanged { get; set; }

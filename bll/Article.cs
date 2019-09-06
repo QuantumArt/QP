@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -19,7 +20,6 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -88,21 +88,21 @@ namespace Quantumart.QP8.BLL
 
         public bool Splitted { get; set; }
 
-        [LocalizedDisplayName("Status", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
         public int StatusTypeId { get; set; }
 
-        [LocalizedDisplayName("DelayPublication", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "DelayPublication", ResourceType = typeof(ArticleStrings))]
         public bool Delayed { get; set; }
 
-        [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "UniqueId", ResourceType = typeof(ArticleStrings))]
         public Guid? UniqueId { get; set; }
 
         public string UniqueIdStr => UniqueId.HasValue ? UniqueId.ToString() : "";
 
-        [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "CancelSplit", ResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
 
-        [LocalizedDisplayName("LeaveComment", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "LeaveComment", ResourceType = typeof(ArticleStrings))]
         public string Comment { get; set; }
 
         public Dictionary<string, string> PredefinedValues { get; set; }
@@ -1548,7 +1548,7 @@ namespace Quantumart.QP8.BLL
         }
 
 
-    private int GetContentIdForArticle()
+        private int GetContentIdForArticle()
         {
             if (_parentContentId == 0 || CollaborativePublishedArticle != 0 )
             {
@@ -1556,6 +1556,12 @@ namespace Quantumart.QP8.BLL
             }
             return _parentContentId;
         }
+
+        public override void DoCustomBinding()
+        {
+            Schedule.DoCustomBinding();
+        }
+
     }
 
     public enum ArticleClearType
@@ -1563,4 +1569,6 @@ namespace Quantumart.QP8.BLL
         EmptyValue = 0,
         DefaultValue = 1
     }
+
+
 }

@@ -56,7 +56,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewEntityTypePermission)]
         [BackendActionLog]
         [Record]
-        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             return await base.New(tabId, parentId, collection);
         }
@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateEntityTypePermission)]
         [BackendActionLog]
         [Record(ActionCode.EntityTypePermissionProperties)]
-        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             return await base.Properties(tabId, parentId, id, collection);
         }
@@ -114,7 +114,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateEntityTypePermissionChanges)]
         [BackendActionContext(ActionCode.UpdateEntityTypePermissionChanges)]
         [BackendActionLog]
-        public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
+        public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, IFormCollection collection)
         {
             return await base.Change(tabId, parentId, userId, groupId, collection);
         }

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -11,10 +11,10 @@ namespace Quantumart.QP8.BLL
     {
         public int SiteId { get; set; }
 
-        [LocalizedDisplayName("ApplyRulesByDefault", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "ApplyRulesByDefault", ResourceType = typeof(WorkflowStrings))]
         public bool ApplyByDefault { get; set; }
 
-        [LocalizedDisplayName("CreateAutoNotifications", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "CreateAutoNotifications", ResourceType = typeof(WorkflowStrings))]
         public bool CreateDefaultNotification { get; set; }
 
         public List<WorkflowRule> WorkflowRules { get; set; }

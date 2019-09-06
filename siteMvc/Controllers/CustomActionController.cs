@@ -171,12 +171,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, int id, IFormCollection collection)
         {
             var action = _service.NewForSave();
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _service.Save(model.Data, model.SelectedActionsIds);
@@ -207,12 +208,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateCustomAction)]
         [BackendActionContext(ActionCode.UpdateCustomAction)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var action = _service.ReadForUpdate(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _service.Update(model.Data, model.SelectedActionsIds);
@@ -237,7 +239,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CreateLikeCustomAction)]
         [BackendActionContext(ActionCode.CreateLikeCustomAction)]
         [BackendActionLog]
-        public ActionResult Copy(string tabId, int parentId, int id, FormCollection collection)
+        public ActionResult Copy(string tabId, int parentId, int id, IFormCollection collection)
         {
             var action = _service.ReadForUpdate(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);

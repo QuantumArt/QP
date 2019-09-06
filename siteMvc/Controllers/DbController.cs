@@ -13,7 +13,7 @@ using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
+//using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -61,13 +61,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateDbSettings)]
         [BackendActionContext(ActionCode.UpdateDbSettings)]
         [BackendActionLog]
-        public async Task<ActionResult> Settings(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> Settings(string tabId, int parentId, IFormCollection collection)
         {
             var db = DbService.ReadSettingsForUpdate();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
+            model.DoCustomBinding();
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 object message = null;
@@ -77,7 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     if (model.OverrideRecordsFile)
                     {
                         var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
-                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), currentDbVersion);
+                        //XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), currentDbVersion);
                     }
 
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)

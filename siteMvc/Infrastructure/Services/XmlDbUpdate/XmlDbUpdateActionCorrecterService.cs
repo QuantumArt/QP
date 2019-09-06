@@ -12,7 +12,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
+//using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
@@ -140,20 +140,20 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             // 5. Main Ids Correction
             // 6. Parent Id Correction
 
-            if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
-            {
-                action = CorrectEntryUniqueIdsValue(action);
-                if (useGuidSubstitution)
-                {
-                    action = SubstituteArticleIdsFromGuids(action);
-                }
-                else if (XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
-                {
-                    action.UniqueId = new[] { Guid.NewGuid() };
-                    var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
-                    action.Form[uniqueIdFieldName] = action.UniqueId.Single().ToString();
-                }
-            }
+            // if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
+            // {
+            //     action = CorrectEntryUniqueIdsValue(action);
+            //     if (useGuidSubstitution)
+            //     {
+            //         action = SubstituteArticleIdsFromGuids(action);
+            //     }
+            //     else if (XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
+            //     {
+            //         action.UniqueId = new[] { Guid.NewGuid() };
+            //         var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
+            //         action.Form[uniqueIdFieldName] = action.UniqueId.Single().ToString();
+            //     }
+            // }
 
             var entityTypeCode = action.BackendAction.EntityType.Code == EntityTypeCode.ArchiveArticle
                 ? EntityTypeCode.Article
@@ -174,13 +174,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction CorrectEntryUniqueIdsValue(XmlDbUpdateRecordedAction action)
         {
-            if (XmlDbUpdateQpActionHelpers.IsArticleAndStoreUniqueIdInForm(action.Code))
-            {
-                action = CorrectFormUniqueId(action);
-            }
-
-            action.UniqueId = action.UniqueId.Select(g => CorrectUniqueIdValue(EntityTypeCode.Article, g)).ToArray();
-            return action;
+            // if (XmlDbUpdateQpActionHelpers.IsArticleAndStoreUniqueIdInForm(action.Code))
+            // {
+            //     action = CorrectFormUniqueId(action);
+            // }
+            //
+            // action.UniqueId = action.UniqueId.Select(g => CorrectUniqueIdValue(EntityTypeCode.Article, g)).ToArray();
+            // return action;
+            return null;
         }
 
         private IEnumerable<string> CorrectIdsValue(string entityTypeCode, IEnumerable<string> ids)
@@ -202,9 +203,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction CorrectFormUniqueId(XmlDbUpdateRecordedAction action)
         {
-            var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
-            CorrectUniqueIdFormValues(action.Form, uniqueIdFieldName);
-            return action;
+            // var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
+            // CorrectUniqueIdFormValues(action.Form, uniqueIdFieldName);
+            // return action;
+            return null;
         }
 
         private Guid CorrectUniqueIdValue(string entityTypeCode, Guid value)
@@ -465,20 +467,21 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction SubstituteArticleIdsFromGuids(XmlDbUpdateRecordedAction action)
         {
-            Ensure.Equal(action.UniqueId.Length, action.Ids.Length, "Amount of uniqueIds and ids should be equal");
-            if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
-            {
-                action.ResultId = GetArticleResultIdByGuidOrDefault(action);
-            }
-
-            if (!XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
-            {
-                action.Ids = _dbActionService.GetArticleIdsByGuids(action.UniqueId)
-                    .Select(g => g.ToString())
-                    .ToArray();
-            }
-
-            return action;
+            // Ensure.Equal(action.UniqueId.Length, action.Ids.Length, "Amount of uniqueIds and ids should be equal");
+            // if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
+            // {
+            //     action.ResultId = GetArticleResultIdByGuidOrDefault(action);
+            // }
+            //
+            // if (!XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
+            // {
+            //     action.Ids = _dbActionService.GetArticleIdsByGuids(action.UniqueId)
+            //         .Select(g => g.ToString())
+            //         .ToArray();
+            // }
+            //
+            // return action;
+            return null;
         }
 
         private void AddIdsToReplace(string oldIdsCommaString, HttpContextBase context, string key)
@@ -537,15 +540,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void AddResultIds(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
         {
-            if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
-            {
-                var entityTypeCode = action.BackendAction.EntityType.Code != EntityTypeCode.VirtualContent ? action.BackendAction.EntityType.Code : EntityTypeCode.Content;
-                var resultId = action.ResultId != default(int) ? action.ResultId : int.Parse(action.Ids.First());
-                AddIdToReplace(entityTypeCode, resultId, httpContext, HttpContextItems.ResultId);
-
-                var resultUniqueId = action.ResultUniqueId != Guid.Empty ? action.ResultUniqueId : action.UniqueId.First();
-                AddUniqueIdToReplace(entityTypeCode, resultUniqueId, httpContext, HttpContextItems.ResultGuid);
-            }
+            // if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
+            // {
+            //     var entityTypeCode = action.BackendAction.EntityType.Code != EntityTypeCode.VirtualContent ? action.BackendAction.EntityType.Code : EntityTypeCode.Content;
+            //     var resultId = action.ResultId != default(int) ? action.ResultId : int.Parse(action.Ids.First());
+            //     AddIdToReplace(entityTypeCode, resultId, httpContext, HttpContextItems.ResultId);
+            //
+            //     var resultUniqueId = action.ResultUniqueId != Guid.Empty ? action.ResultUniqueId : action.UniqueId.First();
+            //     AddUniqueIdToReplace(entityTypeCode, resultUniqueId, httpContext, HttpContextItems.ResultGuid);
+            // }
         }
 
         private void AddUniqueIdToReplace(string entityTypeCode, Guid uniqueId, Guid newUniqueId)

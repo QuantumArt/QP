@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -17,7 +18,6 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
@@ -184,8 +184,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static int GetMaxLength(Type sourceType, string propertyName)
         {
-            var attr = GetCustomAttribute(sourceType, propertyName, typeof(MaxLengthValidatorAttribute));
-            return ((MaxLengthValidatorAttribute)attr)?.UpperBound ?? 0;
+            var attr = GetCustomAttribute(sourceType, propertyName, typeof(MaxLengthAttribute));
+            return ((MaxLengthAttribute)attr)?.Length ?? 0;
         }
 
         internal static string GetExampleText(Type sourceType, string propertyName)
@@ -1075,7 +1075,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return tb;
         }
 
-        public static IHtmlContent UnlockLink(this IHtmlHelper source, LockableEntityViewModel model) => source.BackendActionLink(model.UnlockId, model.UnlockText, model.Data.Id, model.Data.Name, model.ParentEntityId, ActionTypeCode.ChangeLock, model.CaptureLockActionCode);
+        public static IHtmlContent UnlockLink(this IHtmlHelper source, LockableEntityViewModel model) => source.BackendActionLink(model.UnlockId, model.UnlockText, model.LockableData.Id, model.LockableData.Name, model.ParentEntityId, ActionTypeCode.ChangeLock, model.CaptureLockActionCode);
 
         public static IHtmlContent SelectAllLink(this IHtmlHelper source, ListViewModel model) => source.BackendActionLink(model.SelectAllId, GlobalStrings.SelectAll, 0, string.Empty, model.ParentEntityId, ActionTypeCode.SelectAll, string.Empty, ActionTargetType.NewTab, true);
 

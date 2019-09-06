@@ -1,39 +1,36 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
-    [HasSelfValidation]
     public abstract class EntityObject : BizObject
     {
-        [LocalizedDisplayName("ID", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "ID", ResourceType = typeof(EntityObjectStrings))]
         public int Id { get; set; }
 
         public int ForceId { get; set; }
 
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(EntityObjectStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         public virtual string Name { get; set; }
 
-        [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
-        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Description", ResourceType = typeof(EntityObjectStrings))]
+        [StringLength(512, ErrorMessageResourceName = "DescriptionMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         public virtual string Description { get; set; }
 
-        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Created", ResourceType = typeof(EntityObjectStrings))]
         public DateTime Created { get; set; }
 
-        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Modified", ResourceType = typeof(EntityObjectStrings))]
         public virtual DateTime Modified { get; set; }
 
         public int LastModifiedBy { get; set; }
@@ -47,13 +44,18 @@ namespace Quantumart.QP8.BLL
             set { }
         }
 
-        [LocalizedDisplayName("LastModifiedBy", NameResourceType = typeof(EntityObjectStrings))]
+        public virtual void DoCustomBinding()
+        {
+
+        }
+
+        [Display(Name = "LastModifiedBy", ResourceType = typeof(EntityObjectStrings))]
         public string LastModifiedByUserToDisplay => LastModifiedByUser == null ? string.Empty : LastModifiedByUser.DisplayName;
 
-        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Created", ResourceType = typeof(EntityObjectStrings))]
         public string CreatedToDisplay => Created.ValueToDisplay();
 
-        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Modified", ResourceType = typeof(EntityObjectStrings))]
         public string ModifiedToDisplay => Modified.ValueToDisplay();
 
         public bool IsNew => Id == 0;
@@ -98,7 +100,6 @@ namespace Quantumart.QP8.BLL
 
         protected virtual RulesException Validate(RulesException errors)
         {
-            SaveResults(errors, ValidationFactory.CreateValidator(GetType()).Validate(this));
             ValidateSecurity(errors);
             ValidateUnique(errors);
             return errors;
@@ -186,22 +187,6 @@ namespace Quantumart.QP8.BLL
             }
 
             return errors;
-        }
-
-        private static void SaveResults(RulesException ex, IEnumerable<ValidationResult> validationResults)
-        {
-            if (validationResults != null)
-            {
-                foreach (var validationResult in validationResults)
-                {
-                    if (validationResult.NestedValidationResults != null)
-                    {
-                        SaveResults(ex, validationResult.NestedValidationResults);
-                    }
-
-                    ex.Error(validationResult.Key, string.Empty, validationResult.Message);
-                }
-            }
         }
     }
 }

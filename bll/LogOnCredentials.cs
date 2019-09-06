@@ -1,7 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -9,17 +9,17 @@ namespace Quantumart.QP8.BLL
     {
         private string _userName;
 
-        [LocalizedDisplayName("UserName", NameResourceType = typeof(LogOnStrings))]
+        [Display(Name = "UserName", ResourceType = typeof(LogOnStrings))]
         public string UserName
         {
             get => UseAutoLogin ? NtUserName : _userName;
             set => _userName = value;
         }
 
-        [LocalizedDisplayName("Password", NameResourceType = typeof(LogOnStrings))]
+        [Display(Name = "Password", ResourceType = typeof(LogOnStrings))]
         public string Password { get; set; }
 
-        [LocalizedDisplayName("CustomerCode", NameResourceType = typeof(LogOnStrings))]
+        [Display(Name = "CustomerCode", ResourceType = typeof(LogOnStrings))]
         public string CustomerCode { get; set; }
 
         public bool UseAutoLogin { get; set; }

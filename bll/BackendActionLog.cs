@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL
         public int? UserId { get; set; }
 
         [JsonConverter(typeof(DateTimeConverter))]
-        [LocalizedDisplayName("ExecutionTime", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ExecutionTime", ResourceType = typeof(AuditStrings))]
         public DateTime ExecutionTime { get; set; }
 
         public string ActionTypeCode { get; set; }
@@ -29,32 +29,32 @@ namespace Quantumart.QP8.BLL
         public string EntityTypeCode { get; set; }
         public int? EntityId { get; set; }
 
-        [LocalizedDisplayName("IsApi", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "IsApi", ResourceType = typeof(AuditStrings))]
         public bool IsApi { get; set; }
 
-        [LocalizedDisplayName("EntityStringId", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "EntityStringId", ResourceType = typeof(AuditStrings))]
         public string EntityStringId { get; set; }
 
-        [LocalizedDisplayName("ParentEntityId", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ParentEntityId", ResourceType = typeof(AuditStrings))]
         public int? ParentEntityId { get; set; }
 
-        [LocalizedDisplayName("EntityTitle", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "EntityTitle", ResourceType = typeof(AuditStrings))]
         public string EntityTitle { get; set; }
 
         #endregion
 
-        #region Text Properties	
+        #region Text Properties
 
-        [LocalizedDisplayName("UserLogin", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "UserLogin", ResourceType = typeof(AuditStrings))]
         public string UserLogin { get; set; }
 
-        [LocalizedDisplayName("ActionTypeName", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ActionTypeName", ResourceType = typeof(AuditStrings))]
         public string ActionTypeName { get; set; }
 
-        [LocalizedDisplayName("ActionName", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "ActionName", ResourceType = typeof(AuditStrings))]
         public string ActionName { get; set; }
 
-        [LocalizedDisplayName("EntityTypeName", NameResourceType = typeof(AuditStrings))]
+        [Display(Name = "EntityTypeName", ResourceType = typeof(AuditStrings))]
         public string EntityTypeName { get; set; }
 
         #endregion

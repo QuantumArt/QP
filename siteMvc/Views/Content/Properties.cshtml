@@ -9,7 +9,7 @@
     @Html.TextBoxFieldFor(s => s.Data.Name)
     @Html.TextAreaFieldFor(s => s.Data.Description)
     @Html.SelectFieldFor(s => s.Data.ParentContentId, Html.List(Model.GetContentsForParent()), Model.SelectParentOptions)
-    @Html.SelectFieldFor(s => s.Data.GroupId, Html.List(Model.Groups), Model.SelectGroupOptions)
+    @Html.SelectFieldFor(s => s.Data.GroupId, Html.List(Model.GetGroups()), Model.SelectGroupOptions)
     @Html.NumericFieldFor(s => s.Data.PageSize, Content.MinPageSize, Content.MaxPageSize)
     @Html.CheckBoxFieldFor(s => s.Data.AllowItemsPermission)
     @Html.CheckBoxFieldFor(s => s.Data.AutoArchive)

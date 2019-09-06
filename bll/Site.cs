@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
@@ -12,11 +12,9 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
-    [HasSelfValidation]
     public class Site : LockableEntityObject
     {
         public static readonly string DefaultContextClassName = "QPDataContext";
@@ -43,193 +41,189 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Название сущности
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
         public override string Name { get; set; }
 
         /// <summary>
         /// Описание сущности
         /// </summary>
-        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("Description", NameResourceType = typeof(SiteStrings))]
+        [StringLength(512, ErrorMessageResourceName = "DescriptionMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [Display(Name = "Description", ResourceType = typeof(SiteStrings))]
         public override string Description { get; set; }
 
         /// <summary>
         /// Тип сборки
         /// </summary>
-        [LocalizedDisplayName("AssemblingType", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "AssemblingType", ResourceType = typeof(SiteStrings))]
         public string AssemblingType { get; set; }
 
         /// <summary>
         /// Признак, разрешающий использование пользовательских сессий
         /// </summary>
-        [LocalizedDisplayName("AllowUserSessions", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "AllowUserSessions", ResourceType = typeof(SiteStrings))]
         public bool AllowUserSessions { get; set; }
 
         /// <summary>
         /// Признак, разрешающий собирать страницы для предварительного просмотра и уведомлений в Основном режиме
         /// </summary>
-        [LocalizedDisplayName("AssemblePreviewAndNotificationsInLiveModeOnly", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "AssemblePreviewAndNotificationsInLiveModeOnly", ResourceType = typeof(SiteStrings))]
         public bool AssembleFormatsInLive { get; set; }
 
         /// <summary>
         /// признак работы сайта в основном режиме
         /// </summary>
-        [LocalizedDisplayName("SiteMode", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "SiteMode", ResourceType = typeof(SiteStrings))]
         public bool IsLive { get; set; }
 
         /// <summary>
         /// DNS
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "DnsNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "DnsMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.DomainName, MessageTemplateResourceName = "DnsInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("Dns", NameResourceType = typeof(SiteStrings))]
+        [Required(ErrorMessageResourceName = "DnsNotEntered", ErrorMessageResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "DnsMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.DomainName, ErrorMessageResourceName = "DnsInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
+        [Display(Name = "Dns", ResourceType = typeof(SiteStrings))]
         [Example("localhost")]
         public string Dns { get; set; }
 
         /// <summary>
         /// Признак, разрещающий замену Url-Placeholder
         /// </summary>
-        [LocalizedDisplayName("ReplaceUrlsInDB", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ReplaceUrlsInDB", ResourceType = typeof(SiteStrings))]
         public bool ReplaceUrlsInDB { get; set; }
 
 
         /// <summary>
         /// Признак использования отдельного DNS
         /// </summary>
-        [LocalizedDisplayName("UseSeparateDnsForStageMode", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "UseSeparateDnsForStageMode", ResourceType = typeof(SiteStrings))]
         public bool SeparateDns { get; set; }
 
         /// <summary>
         /// DNS для тестового режима
         /// </summary>
-        [MaxLengthValidator(255, MessageTemplateResourceName = "StageDnsMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.DomainName, MessageTemplateResourceName = "StageDnsInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("StageDns", NameResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "StageDnsMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.DomainName, ErrorMessageResourceName = "StageDnsInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
+        [Display(Name = "StageDns", ResourceType = typeof(SiteStrings))]
         public string StageDns { get; set; }
 
         /// <summary>
         /// URL загрузки
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "UploadUrlNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "UploadUrlMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "UploadUrlInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [Required(ErrorMessageResourceName = "UploadUrlNotEntered", ErrorMessageResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "UploadUrlMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.RelativeWebFolderUrl, ErrorMessageResourceName = "UploadUrlInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/upload/")]
-        [LocalizedDisplayName("UploadUrl", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "UploadUrl", ResourceType = typeof(SiteStrings))]
         public string UploadUrl { get; set; }
 
         /// <summary>
         /// Признак, разрешающий использовать абсолютный URL закачки
         /// </summary>
-        [LocalizedDisplayName("UseAbsoluteUploadUrl", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "UseAbsoluteUploadUrl", ResourceType = typeof(SiteStrings))]
         public bool UseAbsoluteUploadUrl { get; set; }
 
         /// <summary>
         /// префикс URL загрузки
         /// </summary>
-        [MaxLengthValidator(255, MessageTemplateResourceName = "UploadUrlPrefixMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWebFolderUrl, MessageTemplateResourceName = "UploadUrlPrefixInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("UploadUrlPrefix", NameResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "UploadUrlPrefixMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWebFolderUrl, ErrorMessageResourceName = "UploadUrlPrefixInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
+        [Display(Name = "UploadUrlPrefix", ResourceType = typeof(SiteStrings))]
         public string UploadUrlPrefix { get; set; }
 
         /// <summary>
         /// Путь загрузки
         /// </summary>
-        [RequiredValidator(MessageTemplateResourceName = "UploadDirNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "UploadDirMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "UploadDirInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [Required(ErrorMessageResourceName = "UploadDirNotEntered", ErrorMessageResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "UploadDirMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "UploadDirInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\upload")]
-        [LocalizedDisplayName("UploadPath", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "UploadPath", ResourceType = typeof(SiteStrings))]
         public string UploadDir { get; set; }
 
         /// <summary>
         /// Виртуальный путь расположения страниц в Основном режиме
         /// </summary>
-        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "LiveVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "LiveVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "LiveVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "StageDirectoryMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.RelativeWebFolderUrl, ErrorMessageResourceName = "LiveVirtualRootInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/")]
-        [LocalizedDisplayName("LiveVirtualRoot", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "LiveVirtualRoot", ResourceType = typeof(SiteStrings))]
         public string LiveVirtualRoot { get; set; }
 
         /// <summary>
         /// Путь расположения страниц в Основном режиме
         /// </summary>
-        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "LiveDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "LiveDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "LiveDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "LiveDirectoryMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "LiveDirectoryInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net")]
-        [LocalizedDisplayName("LiveDirectory", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "LiveDirectory", ResourceType = typeof(SiteStrings))]
         public string LiveDirectory { get; set; }
 
         /// <summary>
         /// Признак, разрешающий использовать тестовую папку
         /// </summary>
-        [LocalizedDisplayName("ForceTestDirectory", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ForceTestDirectory", ResourceType = typeof(SiteStrings))]
         public bool ForceTestDirectory { get; set; }
 
         /// <summary>
         /// Тестовая папка
         /// </summary>
-        [MaxLengthValidator(255, MessageTemplateResourceName = "TestDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "TestDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("TestDirectory", NameResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "TestDirectoryMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "TestDirectoryInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
+        [Display(Name = "TestDirectory", ResourceType = typeof(SiteStrings))]
         public string TestDirectory { get; set; }
 
         /// <summary>
         /// Виртуальный путь расположения страниц в Тестовом режиме
         /// </summary>
-        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "StageVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "StageVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, DependPropertyName, true, MessageTemplateResourceName = "StageVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "StageVirtualRootMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.RelativeWebFolderUrl, ErrorMessageResourceName = "StageVirtualRootInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/stage/")]
-        [LocalizedDisplayName("StageVirtualRoot", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "StageVirtualRoot", ResourceType = typeof(SiteStrings))]
         public string StageVirtualRoot { get; set; }
 
         /// <summary>
         /// Путь расположения страниц в Тестовом режиме
         /// </summary>
-        [RequiredValidator(DependPropertyName, true, MessageTemplateResourceName = "StageDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, DependPropertyName, true,  MessageTemplateResourceName = "StageDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, DependPropertyName, true, MessageTemplateResourceName = "StageDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "StageDirectoryMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "StageDirectoryInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\stage")]
-        [LocalizedDisplayName("StageDirectory", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "StageDirectory", ResourceType = typeof(SiteStrings))]
         public string StageDirectory { get; set; }
 
         /// <summary>
         /// Путь расположения файлов сборок для Основного режима
         /// </summary>
-        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "AssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, DependPropertyName, true, MessageTemplateResourceName = "AssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "AssemblyPathMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "AssemblyPathInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\bin")]
-        [LocalizedDisplayName("LiveAssemblyPath", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "LiveAssemblyPath", ResourceType = typeof(SiteStrings))]
         public string AssemblyPath { get; set; }
 
         /// <summary>
         /// Путь расположения файлов сборок для Тестового режима
         /// </summary>
-        [MaxLengthValidator(255, DependPropertyName, true, MessageTemplateResourceName = "StageAssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, DependPropertyName, true, MessageTemplateResourceName = "StageAssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "StageAssemblyPathMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "StageAssemblyPathInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\stage\bin")]
-        [LocalizedDisplayName("StageAssemblyPath", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "StageAssemblyPath", ResourceType = typeof(SiteStrings))]
         public string StageAssemblyPath { get; set; }
 
-        [LocalizedDisplayName("ForceAssemble", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ForceAssemble", ResourceType = typeof(SiteStrings))]
         public bool ForceAssemble { get; set; }
 
         /// <summary>
         /// Отображение рамки объекта в режиме OnScreen
         /// </summary>
-        [LocalizedDisplayName("OnScreenObjectBorder", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "OnScreenObjectBorder", ResourceType = typeof(SiteStrings))]
         public int OnScreenObjectBorder { get; set; }
 
         /// <summary>
         /// Отображение рамки поля в режиме OnScreen
         /// </summary>
-        [LocalizedDisplayName("OnScreenFieldBorder", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "OnScreenFieldBorder", ResourceType = typeof(SiteStrings))]
         public int OnScreenFieldBorder { get; set; }
 
         /// <summary>
@@ -240,87 +234,87 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Разрешает импортировать файл отображения в базу данных
         /// </summary>
-        [LocalizedDisplayName("ImportMappingToDb", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ImportMappingToDb", ResourceType = typeof(SiteStrings))]
         public bool ImportMappingToDb { get; set; }
 
         /// <summary>
         /// Разрешает использовать прямое отображение из базы данных
         /// </summary>
-        [LocalizedDisplayName("ProceedMappingWithDb", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ProceedMappingWithDb", ResourceType = typeof(SiteStrings))]
         public bool ProceedMappingWithDb { get; set; }
 
-        [LocalizedDisplayName("ConnectionStringName", NameResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "ConnectionStringNameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "ConnectionStringNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [Display(Name = "ConnectionStringName", ResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "ConnectionStringNameMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "ConnectionStringNameInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         public string ConnectionStringName { get; set; }
 
-        [LocalizedDisplayName("ReplaceUrls", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ReplaceUrls", ResourceType = typeof(SiteStrings))]
         public bool ReplaceUrls { get; set; }
 
-        [LocalizedDisplayName("UseLongUrls", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "UseLongUrls", ResourceType = typeof(SiteStrings))]
         public bool UseLongUrls { get; set; }
 
-        [LocalizedDisplayName("Namespace", NameResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NamespaceMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "NamespaceInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [Display(Name = "Namespace", ResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NamespaceMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.FullQualifiedNetName, ErrorMessageResourceName = "NamespaceInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         public string Namespace { get; set; }
 
-        [LocalizedDisplayName("ContextClassName", NameResourceType = typeof(SiteStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "ContextClassNameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "ContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [Display(Name = "ContextClassName", ResourceType = typeof(SiteStrings))]
+        [StringLength(255, ErrorMessageResourceName = "ContextClassNameMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "ContextClassNameInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         public string ContextClassName { get; set; }
 
-        [LocalizedDisplayName("SendNotifications", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "SendNotifications", ResourceType = typeof(SiteStrings))]
         public bool SendNotifications { get; set; }
 
-        [LocalizedDisplayName("PEnterMode", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "PEnterMode", ResourceType = typeof(SiteStrings))]
         public bool PEnterMode { get; set; }
 
-        [LocalizedDisplayName("UseEnglishQuotes", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "UseEnglishQuotes", ResourceType = typeof(SiteStrings))]
         public bool UseEnglishQuotes { get; set; }
 
-        [LocalizedDisplayName("DisableListAutoWrap", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "DisableListAutoWrap", ResourceType = typeof(SiteStrings))]
         public bool DisableListAutoWrap { get; set; }
 
-        [LocalizedDisplayName("DbIndependent", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "DbIndependent", ResourceType = typeof(SiteStrings))]
         public bool ProceedDbIndependentGeneration { get; set; }
 
-        [LocalizedDisplayName("MapFileOnly", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "MapFileOnly", ResourceType = typeof(SiteStrings))]
         public bool GenerateMapFileOnly { get; set; }
 
-        [LocalizedDisplayName("EnableOnScreen", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "EnableOnScreen", ResourceType = typeof(SiteStrings))]
         public bool EnableOnScreen { get; set; }
 
-        [LocalizedDisplayName("ExternalUrl", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ExternalUrl", ResourceType = typeof(SiteStrings))]
         public string ExternalUrl { get; set; }
 
         public string ExternalCss { get; set; }
 
         private readonly InitPropertyValue<IEnumerable<ExternalCss>> _externalCssItems;
 
-        [LocalizedDisplayName("ExternalCss", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "ExternalCss", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ExternalCss> ExternalCssItems
         {
             get => _externalCssItems.Value;
             set => _externalCssItems.Value = value;
         }
 
-        [LocalizedDisplayName("RootElementClass", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "RootElementClass", ResourceType = typeof(VisualEditorStrings))]
         public string RootElementClass { get; set; }
 
-        [LocalizedDisplayName("XamlDictionaries", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "XamlDictionaries", ResourceType = typeof(SiteStrings))]
         public string XamlDictionaries { get; set; }
 
-        [LocalizedDisplayName("ContentFormScript", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ContentFormScript", ResourceType = typeof(SiteStrings))]
         public string ContentFormScript { get; set; }
 
-        [LocalizedDisplayName("CreateDefaultXamlDictionary", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "CreateDefaultXamlDictionary", ResourceType = typeof(SiteStrings))]
         public bool CreateDefaultXamlDictionary { get; set; }
 
-        [LocalizedDisplayName("DownloadEfSource", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "DownloadEfSource", ResourceType = typeof(SiteStrings))]
         public bool DownloadEfSource { get; set; }
 
-        [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "ExternalDevelopment", ResourceType = typeof(SiteStrings))]
         public bool ExternalDevelopment { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Site;
@@ -374,9 +368,6 @@ namespace Quantumart.QP8.BLL
 
         public string FullyQualifiedContextClassName => GetFullyQualifiedName(Namespace, ContextClassName);
 
-        public IEnumerable<ContentGroup> ContentGroups => ContentRepository.GetSiteContentGroups(Id);
-
-        public IEnumerable<Workflow> Workflows => WorkflowRepository.GetSiteWorkflows(Id);
 
         public override void Validate()
         {
@@ -420,7 +411,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Выполняет нестандартный биндинг (после стандартного)
         /// </summary>
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
             const CorrectSlashMode dirMode = CorrectSlashMode.RemoveLastSlash | CorrectSlashMode.ConvertSlashesToBackSlashes;
             const CorrectSlashMode urlMode = CorrectSlashMode.ReplaceDoubleSlashes | CorrectSlashMode.ConvertBackSlashesToSlashes | CorrectSlashMode.WrapToSlashes;
@@ -587,7 +578,7 @@ namespace Quantumart.QP8.BLL
                 SitePathRepository.CreateDirectories(StageDirectory);
             }
             SitePathRepository.CreateUploadDirectories(UploadDir);
-            if (IsDotNet )                
+            if (IsDotNet )
             {
                 if (!ExternalDevelopment)
                 {
@@ -612,6 +603,26 @@ namespace Quantumart.QP8.BLL
 
         private void ValidateConditionalRequirements(RulesException<Site> errors)
         {
+            if (!ExternalDevelopment)
+            {
+                if (string.IsNullOrEmpty(LiveVirtualRoot))
+                {
+                    errors.ErrorFor(s => s.LiveVirtualRoot, SiteStrings.LiveVirtualRootNotEntered);
+                }
+                if (string.IsNullOrEmpty(StageVirtualRoot))
+                {
+                    errors.ErrorFor(s => s.StageVirtualRoot, SiteStrings.StageVirtualRootNotEntered);
+                }
+                if (string.IsNullOrEmpty(LiveDirectory))
+                {
+                    errors.ErrorFor(s => s.LiveDirectory, SiteStrings.LiveDirectoryNotEntered);
+                }
+                if (string.IsNullOrEmpty(StageDirectory))
+                {
+                    errors.ErrorFor(s => s.StageDirectory, SiteStrings.StageDirectoryNotEntered);
+                }
+            }
+
             if (SeparateDns && string.IsNullOrEmpty(StageDns))
             {
                 errors.ErrorFor(s => s.StageDns, SiteStrings.StageDnsNotEntered);

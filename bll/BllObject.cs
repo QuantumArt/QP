@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Helpers;
@@ -6,7 +7,6 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -22,36 +22,36 @@ namespace Quantumart.QP8.BLL
 
         private readonly int _GenericTypeId = ObjectType.GetGeneric().Id;
 
-        [LocalizedDisplayName("ParentTemplateObject", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ParentTemplateObject", ResourceType = typeof(TemplateStrings))]
         public int? ParentObjectId { get; set; }
 
-        [LocalizedDisplayName("Type", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Type", ResourceType = typeof(TemplateStrings))]
         public int TypeId { get; set; }
 
-        [LocalizedDisplayName("Global", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Global", ResourceType = typeof(TemplateStrings))]
         public bool Global { get; set; }
 
-        [LocalizedDisplayName("DefaultFormat", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "DefaultFormat", ResourceType = typeof(TemplateStrings))]
         public int? DefaultFormatId { get; set; }
 
         public IEnumerable<ObjectFormat> ChildObjectFormats { get; set; }
 
-        [LocalizedDisplayName("EnableViewState", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "EnableViewState", ResourceType = typeof(TemplateStrings))]
         public bool EnableViewState { get; set; }
 
-        [LocalizedDisplayName("DisableAutoDataBinding", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "DisableAutoDataBinding", ResourceType = typeof(TemplateStrings))]
         public bool DisableDatabind { get; set; }
 
-        [LocalizedDisplayName("CustomClass", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClass", ResourceType = typeof(TemplateStrings))]
         public string ControlCustomClass { get; set; }
 
-        [LocalizedDisplayName("UseDefaultValues", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "UseDefaultValues", ResourceType = typeof(TemplateStrings))]
         public bool UseDefaultValues { get; set; }
 
-        [LocalizedDisplayName("NetClassName", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetClassName", ResourceType = typeof(TemplateStrings))]
         public string NetName { get; set; }
 
-        [LocalizedDisplayName("EnableOnScreen", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "EnableOnScreen", ResourceType = typeof(TemplateStrings))]
         public bool AllowStageEdit { get; set; }
 
         public ObjectFormat DefaultFormat { get; set; }
@@ -351,7 +351,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        [LocalizedDisplayName("OverrideTemplateObject", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "OverrideTemplateObject", ResourceType = typeof(TemplateStrings))]
         public bool OverrideTemplateObject { get; set; }
 
         public bool IsObjectContainerType => TypeId == 2;

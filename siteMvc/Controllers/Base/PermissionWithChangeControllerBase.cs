@@ -25,14 +25,14 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("ActionPermissionChange", model);
         }
 
-        public virtual async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
+        public virtual async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, IFormCollection collection)
         {
             var permission = ChangeService.ReadOrDefaultForChange(parentId, userId, groupId);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service, ChangeService.ViewModelSettings);
 
             await TryUpdateModelAsync(model);
-
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

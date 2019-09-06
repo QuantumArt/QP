@@ -1,8 +1,8 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
@@ -15,13 +15,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         public override string ActionCode => Constants.ActionCode.About;
 
-        [LocalizedDisplayName("ProductName", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "ProductName", ResourceType = typeof(HomeStrings))]
         public string Product => string.Format(HomeStrings.ProductValue, Default.ReleaseNumber, DateTime.Now.Year);
 
-        [LocalizedDisplayName("DBName", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "DBName", ResourceType = typeof(HomeStrings))]
         public string DbName => DbRepository.GetDbName();
 
-        [LocalizedDisplayName("DBServerName", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "DBServerName", ResourceType = typeof(HomeStrings))]
         public string DbServerName => DbRepository.GetDbServerName();
     }
 }

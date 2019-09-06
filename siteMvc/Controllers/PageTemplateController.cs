@@ -60,13 +60,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewPageTemplate)]
         [BackendActionContext(ActionCode.AddNewPageTemplate)]
         [BackendActionLog]
-        public async Task<ActionResult> NewPageTemplate(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewPageTemplate(string tabId, int parentId, IFormCollection collection)
         {
             var template = _pageTemplateService.NewPageTemplatePropertiesForUpdate(parentId);
             var model = PageTemplateViewModel.Create(template, tabId, parentId, _pageTemplateService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _pageTemplateService.SavePageTemplateProperties(model.Data);
@@ -97,13 +98,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdatePageTemplate)]
         [BackendActionLog]
         [Record(ActionCode.PageTemplateProperties)]
-        public async Task<ActionResult> PageTemplateProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> PageTemplateProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var template = _pageTemplateService.ReadPageTemplatePropertiesForUpdate(id);
             var model = PageTemplateViewModel.Create(template, tabId, parentId, _pageTemplateService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _pageTemplateService.UpdatePageTemplateProperties(model.Data);

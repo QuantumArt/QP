@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class ObjectFormat : LockableEntityObject
     {
-        [LocalizedDisplayName("CodeBehind", NameResourceType = typeof(ObjectFormatStrings))]
+        [Display(Name = "CodeBehind", ResourceType = typeof(ObjectFormatStrings))]
         public string CodeBehind { get; set; }
 
-        [LocalizedDisplayName("Presentation", NameResourceType = typeof(ObjectFormatStrings))]
+        [Display(Name = "Presentation", ResourceType = typeof(ObjectFormatStrings))]
         public string FormatBody { get; set; }
 
         public int ObjectId { get; set; }
@@ -33,10 +33,10 @@ namespace Quantumart.QP8.BLL
 
         public bool AssemblePreviewInStage { get; set; }
 
-        [LocalizedDisplayName("NetClassName", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetClassName", ResourceType = typeof(TemplateStrings))]
         public string NetFormatName { get; set; }
 
-        [LocalizedDisplayName("NetLanguage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetLanguage", ResourceType = typeof(TemplateStrings))]
         public int? NetLanguageId { get; set; }
 
         public IEnumerable<Notification> Notifications { get; set; }

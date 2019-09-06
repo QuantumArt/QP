@@ -1,14 +1,11 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Newtonsoft.Json;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -98,31 +95,31 @@ namespace Quantumart.QP8.BLL
             return existingOrders.Any() ? Enumerable.Range(beginRange, existingOrders.Max() + 1).Except(existingOrders).Min() : 1;
         }
 
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-        [FormatValidator(RegularExpressions.InvalidFieldName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(EntityObjectStrings))]
+        [RegularExpression(RegularExpressions.FieldName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         public override string Name { get; set; }
 
-        [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
-        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Description", ResourceType = typeof(EntityObjectStrings))]
+        [StringLength(512, ErrorMessageResourceName = "DescriptionMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         public override string Description { get; set; }
 
-        [LocalizedDisplayName("Alias", NameResourceType = typeof(CustomActionStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "AliasExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "AliasInvalidFormat", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "Alias", ResourceType = typeof(CustomActionStrings))]
+        [StringLength(255, ErrorMessageResourceName = "AliasExceeded", ErrorMessageResourceType = typeof(CustomActionStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "AliasInvalidFormat", ErrorMessageResourceType = typeof(CustomActionStrings))]
 
         public string Alias { get; set; }
 
         public int ActionId { get; set; }
 
-        [LocalizedDisplayName("Url", NameResourceType = typeof(CustomActionStrings))]
-        [MaxLengthValidator(512, MessageTemplateResourceName = "UrlMaxLengthExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "UrlNotEntered", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "Url", ResourceType = typeof(CustomActionStrings))]
+        [StringLength(512, ErrorMessageResourceName = "UrlMaxLengthExceeded", ErrorMessageResourceType = typeof(CustomActionStrings))]
+        [Required(ErrorMessageResourceName = "UrlNotEntered", ErrorMessageResourceType = typeof(CustomActionStrings))]
         public string Url { get; set; }
 
-        [LocalizedDisplayName("IconUrl", NameResourceType = typeof(CustomActionStrings))]
-        [MaxLengthValidator(512, MessageTemplateResourceName = "IconUrlMaxLengthExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "IconUrl", ResourceType = typeof(CustomActionStrings))]
+        [StringLength(512, ErrorMessageResourceName = "IconUrlMaxLengthExceeded", ErrorMessageResourceType = typeof(CustomActionStrings))]
         public string IconUrl { get; set; }
 
         public int Order { get; set; }
@@ -131,10 +128,10 @@ namespace Quantumart.QP8.BLL
 
         public bool ContentExcluded { get; set; }
 
-        [LocalizedDisplayName("ShowInMenu", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "ShowInMenu", ResourceType = typeof(CustomActionStrings))]
         public bool ShowInMenu { get; set; }
 
-        [LocalizedDisplayName("ShowInToolbar", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "ShowInToolbar", ResourceType = typeof(CustomActionStrings))]
         public bool ShowInToolbar { get; set; }
 
         public BackendAction Action

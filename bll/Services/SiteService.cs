@@ -15,6 +15,7 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using QP.ConfigurationService.Models;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 
 namespace Quantumart.QP8.BLL.Services
 {

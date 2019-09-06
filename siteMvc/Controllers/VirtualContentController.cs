@@ -41,12 +41,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewVirtualContents)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var content = VirtualContentService.NewForSave(parentId);
             var model = VirtualContentViewModel.Create(content, tabId, parentId);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try
@@ -111,13 +112,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateVirtualContent)]
         [BackendActionContext(ActionCode.UpdateVirtualContent)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, IFormCollection collection)
         {
             var content = VirtualContentService.ReadForUpdate(id);
             var model = VirtualContentViewModel.Create(content, tabId, parentId);
             var oldGroupId = model.Data.GroupId;
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -8,16 +8,16 @@ namespace Quantumart.QP8.BLL
     {
         public int ObjectId { get; set; }
 
-        [LocalizedDisplayName("Content", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Content", ResourceType = typeof(TemplateStrings))]
         public int? ContentId { get; set; } //nullable для работы формы new object
 
-        [LocalizedDisplayName("GenerateCode", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "GenerateCode", ResourceType = typeof(TemplateStrings))]
         public bool GenerateUpdateScript { get; set; }
 
-        [LocalizedDisplayName("NetLanguage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetLanguage", ResourceType = typeof(TemplateStrings))]
         public int NetLanguageId { get; set; }
 
-        [LocalizedDisplayName("SubmissionResponsePage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SubmissionResponsePage", ResourceType = typeof(TemplateStrings))]
         public int? ThankYouPageId { get; set; }
 
         public Content Content { get; set; }

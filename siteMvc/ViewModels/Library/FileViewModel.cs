@@ -33,17 +33,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
 
         public override string ActionCode => IsSite ? Constants.ActionCode.SiteFileProperties : Constants.ActionCode.ContentFileProperties;
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
-            try
-            {
-                File.Validate();
-            }
-            catch (RulesException ex)
-            {
-                ex.Extend(modelState, "Data");
-                IsValid = false;
-            }
+            File.Validate();
         }
 
         public override string Id => File.Name;

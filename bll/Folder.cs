@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -7,7 +8,6 @@ using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -24,9 +24,9 @@ namespace Quantumart.QP8.BLL
 
         protected abstract FolderFactory GetFactory();
 
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(FolderStrings))]
-        [FormatValidator(RegularExpressions.InvalidFolderName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(FolderStrings))]
-        [LocalizedDisplayName("Name", NameResourceType = typeof(FolderStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(FolderStrings))]
+        [RegularExpression(RegularExpressions.FolderName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(FolderStrings))]
+        [Display(Name = "Name", ResourceType = typeof(FolderStrings))]
         public override string Name { get; set; }
 
         public override IEnumerable<EntityObject> Children

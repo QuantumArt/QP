@@ -133,7 +133,7 @@
     <value>Псевдоним</value>
   </data>
   <data name="AliasExceeded" xml:space="preserve">
-    <value>Длина псевдонима не должна превышать {5} символов!</value>
+    <value>Длина псевдонима не должна превышать {1} символов!</value>
   </data>
   <data name="AliasInvalidFormat" xml:space="preserve">
     <value>Недопустимый формат псевдонима</value>
@@ -148,7 +148,7 @@
     <value>Фраза подтверждения</value>
   </data>
   <data name="ConfirmPhraseLengthExceeded" xml:space="preserve">
-    <value>Длина фразы подтверждения не должна превышать {5} символов!</value>
+    <value>Длина фразы подтверждения не должна превышать {1} символов!</value>
   </data>
   <data name="ContentSelectionMode" xml:space="preserve">
     <value>Режим выбора контентов</value>
@@ -187,7 +187,7 @@
     <value>Недопустимый формат URL иконки</value>
   </data>
   <data name="IconUrlMaxLengthExceeded" xml:space="preserve">
-    <value>Длина URL иконки не должна превышать {5} символов!</value>
+    <value>Длина URL иконки не должна превышать {1} символов!</value>
   </data>
   <data name="IsInterface" xml:space="preserve">
     <value>Интерфейс</value>
@@ -247,7 +247,7 @@
     <value>Недопустимый формат URL</value>
   </data>
   <data name="UrlMaxLengthExceeded" xml:space="preserve">
-    <value>Длина URL не должна превышать {5} символов!</value>
+    <value>Длина URL не должна превышать {1} символов!</value>
   </data>
   <data name="UrlNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите URL</value>

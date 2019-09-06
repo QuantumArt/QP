@@ -55,7 +55,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("ChildEntityPermissionProperties", model);
         }
 
-        public virtual async Task<ActionResult> SaveMultipleChangeAsChild(string tabId, int parentId, FormCollection collection)
+        public virtual async Task<ActionResult> SaveMultipleChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
             return await SaveAsChild(tabId, parentId, model => { ChildContentService.MultipleChange(parentId, model.EntityIDs.ToList(), model.Data); });
         }
@@ -72,7 +72,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("ChildEntityPermissionProperties", model);
         }
 
-        public virtual async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, FormCollection collection)
+        public virtual async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
             return await SaveAsChild(tabId, parentId, model => { ChildContentService.ChangeAll(parentId, model.Data); });
         }
@@ -84,7 +84,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("ChildEntityPermissionProperties", model);
         }
 
-        public virtual async Task<ActionResult> ChangeAsChild(string tabId, int parentId, FormCollection collection)
+        public virtual async Task<ActionResult> ChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
             return await SaveAsChild(tabId, parentId, model => { ChildContentService.Change(parentId, model.EntityIDs.FirstOrDefault(), model.Data); });
         }

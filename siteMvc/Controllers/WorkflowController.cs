@@ -67,13 +67,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateWorkflow)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Workflow, "id")]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var workflow = _workflowService.ReadPropertiesForUpdate(id);
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 var oldIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
@@ -105,13 +106,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewWorkflow)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var workflow = _workflowService.NewWorkflowPropertiesForUpdate(parentId);
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

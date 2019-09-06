@@ -48,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewActionPermission)]
         [BackendActionContext(ActionCode.AddNewActionPermission)]
         [BackendActionLog]
-        public override async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public override async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             return await base.New(tabId, parentId, collection);
         }
@@ -67,7 +67,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateActionPermission)]
         [BackendActionContext(ActionCode.UpdateActionPermission)]
         [BackendActionLog]
-        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public override async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             return await base.Properties(tabId, parentId, id, collection);
         }
@@ -103,7 +103,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateActionPermissionChanges)]
         [BackendActionContext(ActionCode.UpdateActionPermissionChanges)]
         [BackendActionLog]
-        public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
+        public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, IFormCollection collection)
         {
             return await base.Change(tabId, parentId, userId, groupId, collection);
         }

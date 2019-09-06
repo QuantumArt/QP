@@ -32,14 +32,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public static VisualEditorStyleViewModel Create(VisualEditorStyle style, string tabId, int parentId) => Create<VisualEditorStyleViewModel>(style, tabId, parentId);
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
             _jsonStyles = JsonConvert.DeserializeObject<List<VeStyleAggregationListItem>>(AggregationListItemsDataStylesItems);
             _jsonAttributes = JsonConvert.DeserializeObject<List<VeStyleAggregationListItem>>(AggregationListItemsDataAttributeItems);
             Data.DoCustomBinding(_jsonStyles, _jsonAttributes);
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
             foreach (var attr in Data.AttributeItems)
             {
@@ -50,8 +50,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             {
                 style.Invalid = false;
             }
-
-            base.Validate(modelState);
+            base.Validate();
         }
     }
 }

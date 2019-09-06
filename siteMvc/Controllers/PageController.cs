@@ -59,12 +59,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewPage)]
         [BackendActionContext(ActionCode.AddNewPage)]
         [BackendActionLog]
-        public async Task<ActionResult> NewPage(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewPage(string tabId, int parentId, IFormCollection collection)
         {
             var page = _pageService.NewPagePropertiesForUpdate(parentId);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _pageService.SavePageProperties(model.Data);
@@ -95,12 +96,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdatePage)]
         [BackendActionLog]
         [Record(ActionCode.PageProperties)]
-        public async Task<ActionResult> PageProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> PageProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var page = _pageService.ReadPagePropertiesForUpdate(id);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _pageService.UpdatePageProperties(model.Data);

@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class FieldStrings {
@@ -205,7 +205,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Backward Field Name should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of Backward Field Name should not exceed {1} characters!.
         /// </summary>
         public static string BackwardFieldNameMaxLengthExceeded {
             get {
@@ -565,7 +565,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of DocType should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of DocType should not exceed {1} characters!.
         /// </summary>
         public static string DocTypeMaxLengthExceeded {
             get {
@@ -835,7 +835,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of field friendly name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of field friendly name should not exceed {1} characters.
         /// </summary>
         public static string FriendlyNameMaxLengthExceeded {
             get {
@@ -898,7 +898,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Input Mask should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of Input Mask should not exceed {1} characters!.
         /// </summary>
         public static string InputMaskMaxLengthExceeded {
             get {
@@ -1006,7 +1006,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of LINQ Back Property Name should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of LINQ Back Property Name should not exceed {1} characters!.
         /// </summary>
         public static string LinqBackPropertyNameMaxLengthExceeded {
             get {
@@ -1069,7 +1069,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of LINQ Property Name should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of LINQ Property Name should not exceed {1} characters!.
         /// </summary>
         public static string LinqPropertyNameMaxLengthExceeded {
             get {
@@ -1249,7 +1249,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of LINQ Junction Class Name (singular) should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of LINQ Junction Class Name (singular) should not exceed {1} characters!.
         /// </summary>
         public static string NetLinkNameMaxLengthExceeded {
             get {
@@ -1303,7 +1303,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of LINQ Junction Class Name (plural) should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of LINQ Junction Class Name (plural) should not exceed {1} characters!.
         /// </summary>
         public static string NetPluralLinkNameMaxLengthExceeded {
             get {
@@ -1546,7 +1546,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Relation Condition should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of Relation Condition should not exceed {1} characters!.
         /// </summary>
         public static string RelationConditionMaxLengthExceeded {
             get {
@@ -1708,7 +1708,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of File Subfolder name should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of File Subfolder name should not exceed {1} characters!.
         /// </summary>
         public static string SubFolderMaxLengthExceeded {
             get {

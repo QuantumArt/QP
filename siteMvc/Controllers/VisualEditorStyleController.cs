@@ -59,13 +59,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionContext(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var style = _visualEditorService.ReadVisualEditorStylePropertiesForUpdate(id);
             var model = VisualEditorStyleViewModel.Create(style, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _visualEditorService.UpdateVisualEditorStyleProperties(model.Data);
@@ -102,13 +103,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionContext(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var style = _visualEditorService.NewVisualEditorStylePropertiesForUpdate(parentId);
             var model = VisualEditorStyleViewModel.Create(style, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _visualEditorService.SaveVisualEditorStyleProperties(model.Data);

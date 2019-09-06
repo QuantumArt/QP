@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -62,6 +64,26 @@ namespace Quantumart.QP8.BLL
 
             newEx.ErrorForModel(sb.ToString());
             throw newEx;
+        }
+
+        public IEnumerable<ValidationResult> GetValidationResults(string prefix)
+        {
+            prefix = string.IsNullOrEmpty(prefix) ? string.Empty : prefix + ".";
+            var criticalErrors = Errors.Where(n => n.Critical).ToList();
+            foreach (var error in criticalErrors)
+            {
+                var members = new[] { prefix + error.PropertyName };
+                yield return new ValidationResult(error.Message, members) ;
+            }
+
+            if (!criticalErrors.Any())
+            {
+                foreach (var error in Errors.Where(n => !n.Critical))
+                {
+                    var members = new[] { prefix + error.PropertyName };
+                    yield return new ValidationResult(error.Message, members);
+                }
+            }
         }
     }
 

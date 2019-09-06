@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,6 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -18,7 +18,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleViewModel : LockableEntityViewModel
     {
-        public new BLL.Article Data
+        public BLL.Article Data
         {
             get => (BLL.Article)EntityData;
             set => EntityData = value;
@@ -255,8 +255,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         internal static BLL.Content GetContentById(int? contentId) => contentId.HasValue ? ContentService.Read(contentId.Value) : null;
 
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
+
             Data.VariationListItems = JsonConvert.DeserializeObject<List<ArticleVariationListItem>>(VariationModel);
             Data.CollaborativePublishedArticle = CheckedCollaborativeArticle.Any()
                 ? CheckedCollaborativeArticle.Select(s=>int.Parse(s.Value)).FirstOrDefault()
@@ -279,7 +281,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             }
         }
 
-        [LocalizedDisplayName("CollaborativePublication", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "CollaborativePublication", ResourceType = typeof(ArticleStrings))]
         public IList<QPCheckedItem> CheckedCollaborativeArticle { get; set; }
 
         public IEnumerable<ListItem> CollaborativePublishedArticlesList => new ListItem[] {

@@ -83,13 +83,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewPageObject)]
         [BackendActionContext(ActionCode.AddNewPageObject)]
         [BackendActionLog]
-        public async Task<ActionResult> NewPageObject(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewPageObject(string tabId, int parentId, IFormCollection collection)
         {
             var obj = _objectService.NewObjectPropertiesForUpdate(parentId, true);
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
@@ -118,13 +119,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewTemplateObject)]
         [BackendActionContext(ActionCode.AddNewTemplateObject)]
         [BackendActionLog]
-        public async Task<ActionResult> NewTemplateObject(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewTemplateObject(string tabId, int parentId, IFormCollection collection)
         {
             var obj = _objectService.NewObjectPropertiesForUpdate(parentId, false);
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
@@ -168,13 +170,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdatePageObject)]
         [Record(ActionCode.PageObjectProperties)]
         [BackendActionLog]
-        public async Task<ActionResult> PageObjectProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> PageObjectProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var obj = _objectService.ReadObjectPropertiesForUpdate(id);
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues
@@ -208,13 +211,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateTemplateObject)]
         [Record(ActionCode.TemplateObjectProperties)]
         [BackendActionLog]
-        public async Task<ActionResult> TemplateObjectProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> TemplateObjectProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var obj = _objectService.ReadObjectPropertiesForUpdate(id);
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues

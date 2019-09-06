@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -363,17 +362,20 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<EntityInfo> GetParentsChain(string entityTypeCode, long entityId, long? parentEntityId = null, bool oneLevel = false)
         {
             var result = GetParentsChainInternal(entityTypeCode, entityId, parentEntityId, oneLevel);
-            var customerCodeInfo = result?.SingleOrDefault(n => n.Code == EntityTypeCode.CustomerCode);
-            if (customerCodeInfo != null)
+            if (result != null)
             {
-                customerCodeInfo.Title = QPContext.CurrentCustomerCode;
-            }
+                var customerCodeInfo = result.SingleOrDefault(n => n.Code == EntityTypeCode.CustomerCode);
+                if (customerCodeInfo != null)
+                {
+                    customerCodeInfo.Title = QPContext.CurrentCustomerCode;
+                }
 
-            result.ForEach(x =>
-            {
-                x.Title = Translator.Translate(x.Title);
-                x.EntityTypeName = Translator.Translate(x.EntityTypeName);
-            });
+                foreach (var item in result)
+                {
+                    item.Title = Translator.Translate(item.Title);
+                    item.EntityTypeName = Translator.Translate(item.EntityTypeName);
+                }
+            }
 
             return result;
         }
@@ -383,9 +385,6 @@ namespace Quantumart.QP8.BLL.Repository
             string code;
 
             var defaultActionCode = "";
-            string folderDefaultActionCode;
-
-
 
             var result = new List<Tuple<EntityInfo, string>>();
 
@@ -476,15 +475,15 @@ namespace Quantumart.QP8.BLL.Repository
                     level++;
                 }
 
-                result.Where(x => !string.IsNullOrWhiteSpace(x.Item2)).ForEach(x =>
+                var tuples = result.Where(x => !string.IsNullOrWhiteSpace(x.Item2)).ToArray();
+                foreach (var tuple in tuples)
                 {
-
-                    var parentFolder = result.FirstOrDefault(y => y.Item1.Id == x.Item1.ParentId);
+                    var parentFolder = result.FirstOrDefault(y => y.Item1.Id == tuple.Item1.ParentId);
                     if (parentFolder != null)
                     {
-                        parentFolder.Item1.ActionCode = x.Item2;
+                        parentFolder.Item1.ActionCode = tuple.Item2;
                     }
-                });
+                }
 
                 return result.Select(x => x.Item1).ToList();
             }

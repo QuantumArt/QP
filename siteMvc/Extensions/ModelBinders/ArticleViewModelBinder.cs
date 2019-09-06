@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
@@ -10,17 +12,20 @@ using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
-    public class ArticleViewModelBinder : QpModelBinder
+    public class ArticleViewModelBinder : IModelBinder
     {
-        protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
-        {
-            var model = bindingContext.Model as ArticleViewModel;
-            model.DoCustomBinding();
-            UpdateArticle(model.Data, controllerContext, bindingContext);
-            base.OnModelUpdated(controllerContext, bindingContext);
-        }
 
-        protected void UpdateArticle(Article item, ControllerContext controllerContext, ModelBindingContext bindingContext)
+        public Task BindModelAsync(ModelBindingContext bindingContext)
+        {
+            if (bindingContext.Model is ArticleViewModel model)
+            {
+                model.DoCustomBinding();
+                UpdateArticle(model.Data, bindingContext);
+            }
+
+            return Task.CompletedTask;
+        }
+        protected void UpdateArticle(Article item, ModelBindingContext bindingContext)
         {
             if (item.UseVariations)
             {
@@ -111,7 +116,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
         private static string GetValue(ModelBindingContext bindingContext, string fieldName)
         {
             var value = bindingContext.ValueProvider.GetValue(fieldName);
-            return value?.AttemptedValue.Trim() ?? string.Empty;
+            return value.FirstValue.Trim();
         }
 
         private static string GetBooleanValue(ModelBindingContext bindingContext, string fieldName)
@@ -127,5 +132,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             var rawGuid = GetValue(bindingContext, fieldName);
             return string.IsNullOrWhiteSpace(rawGuid) ? Guid.NewGuid() : GuidHelpers.GetGuidOrDefault(rawGuid);
         }
+
+
     }
 }

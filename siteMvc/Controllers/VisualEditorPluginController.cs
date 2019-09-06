@@ -60,13 +60,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateVisualEditorPlugin)]
         [BackendActionContext(ActionCode.UpdateVisualEditorPlugin)]
         [BackendActionLog]
-        public async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var plugin = _visualEditorService.ReadVisualEditorPluginPropertiesForUpdate(id);
             var model = VisualEditorPluginViewModel.Create(plugin, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 var oldIds = model.Data.VeCommands.Select(n => n.Id).ToArray();
@@ -107,13 +108,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionContext(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionLog]
-        public async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var plugin = _visualEditorService.NewVisualEditorPluginPropertiesForUpdate(parentId);
             var model = VisualEditorPluginViewModel.Create(plugin, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _visualEditorService.SaveVisualEditorPluginProperties(model.Data);

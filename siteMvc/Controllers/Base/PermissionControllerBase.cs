@@ -48,14 +48,15 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("EntityPermissionProperties", model);
         }
 
-        public virtual async Task<ActionResult> New(string tabId, int parentId, FormCollection collection)
+        public virtual async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var permission = Service.New(parentId);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service);
 
             await TryUpdateModelAsync(model);
+            model.DoCustomBinding();
 
-            model.Validate(ModelState);
+            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {
@@ -83,14 +84,15 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("EntityPermissionProperties", model);
         }
 
-        public virtual async Task<ActionResult> Properties(string tabId, int parentId, int id, FormCollection collection)
+        public virtual async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var permission = Service.ReadForUpdate(id);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service);
 
             await TryUpdateModelAsync(model);
+            model.DoCustomBinding();
 
-            model.Validate(ModelState);
+            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

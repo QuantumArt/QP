@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Extensions;
@@ -9,7 +10,6 @@ using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
@@ -26,10 +26,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public bool AllowUpload => true;
 
-        [LocalizedDisplayName("ImportNoHeaders", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "ImportNoHeaders", ResourceType = typeof(MultistepActionStrings))]
         public bool NoHeaders { get; set; }
 
-        [LocalizedDisplayName("ImportAction", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "ImportAction", ResourceType = typeof(MultistepActionStrings))]
         public int ImportAction { get; set; } = (int)CsvImportMode.InsertAndUpdate;
 
         public List<ListItem> ImportActions => new List<ListItem>
@@ -41,10 +41,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             new ListItem(((int)CsvImportMode.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
         };
 
-        [LocalizedDisplayName("UniqueFieldToUpdate", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "UniqueFieldToUpdate", ResourceType = typeof(MultistepActionStrings))]
         public string UniqueFieldToUpdate { get; set; }
 
-        [LocalizedDisplayName("UniqueContentFieldToUpdate", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "UniqueContentFieldToUpdate", ResourceType = typeof(MultistepActionStrings))]
         public string UniqueContentFieldId { get; set; }
 
         public List<ListItem> UniqueContentFieldsToUpdate
@@ -64,14 +64,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public BLL.Field UniqueContentField { get; set; }
 
-        [LocalizedDisplayName("DownloadedFile", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "DownloadedFile", ResourceType = typeof(MultistepActionStrings))]
         public string FileName { get; set; } = MultistepActionStrings.NoFile;
 
         public List<KeyValuePair<string, BLL.Field>> NewFieldsList { get; set; }
 
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
 
-        public void SetCorrespondingFieldName(FormCollection collection)
+        public void SetCorrespondingFieldName(IFormCollection collection)
         {
             NewFieldsList = new List<KeyValuePair<string, BLL.Field>>();
             UniqueAggregatedFieldsToUpdate = new Dictionary<int, string>();

@@ -141,12 +141,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewPageObjectFormat)]
         [BackendActionContext(ActionCode.AddNewPageObjectFormat)]
         [BackendActionLog]
-        public async Task<ActionResult> NewPageObjectFormat(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewPageObjectFormat(string tabId, int parentId, IFormCollection collection)
         {
             var format = _formatService.NewPageObjectFormatPropertiesForUpdate(parentId, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, true);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.SaveObjectFormatProperties(model.Data);
@@ -174,12 +175,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewTemplateObjectFormat)]
         [BackendActionContext(ActionCode.AddNewTemplateObjectFormat)]
         [BackendActionLog]
-        public async Task<ActionResult> NewTemplateObjectFormat(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewTemplateObjectFormat(string tabId, int parentId, IFormCollection collection)
         {
             var format = _formatService.NewTemplateObjectFormatPropertiesForUpdate(parentId, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, false);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.SaveObjectFormatProperties(model.Data);
@@ -210,12 +212,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdatePageObjectFormat)]
         [BackendActionLog]
         [Record(ActionCode.PageObjectFormatProperties)]
-        public async Task<ActionResult> PageObjectFormatProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> PageObjectFormatProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var format = _formatService.ReadPageObjectFormatPropertiesForUpdate(id, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, true);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.UpdateObjectFormatProperties(model.Data);
@@ -245,12 +248,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateTemplateObjectFormat)]
         [BackendActionLog]
         [Record(ActionCode.TemplateObjectFormatProperties)]
-        public async Task<ActionResult> TemplateObjectFormatProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> TemplateObjectFormatProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var format = _formatService.ReadTemplateObjectFormatPropertiesForUpdate(id, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, false);
             await TryUpdateModelAsync(model);
-            model.Validate(ModelState);
+            model.DoCustomBinding();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.UpdateObjectFormatProperties(model.Data);

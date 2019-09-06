@@ -106,7 +106,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Alias should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of Alias should not exceed {1} characters!.
         /// </summary>
         public static string AliasExceeded {
             get {
@@ -151,7 +151,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Confirm Phrase should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of Confirm Phrase should not exceed {1} characters!.
         /// </summary>
         public static string ConfirmPhraseLengthExceeded {
             get {
@@ -268,7 +268,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Icon URL should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of Icon URL should not exceed {1} characters!.
         /// </summary>
         public static string IconUrlMaxLengthExceeded {
             get {
@@ -439,7 +439,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of URL should not exceed {5} characters!.
+        ///   Looks up a localized string similar to The length of URL should not exceed {1} characters!.
         /// </summary>
         public static string UrlMaxLengthExceeded {
             get {
