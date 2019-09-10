@@ -792,4 +792,7 @@
   <data name="BackwardFieldId" xml:space="preserve">
     <value>Обратное поле</value>
   </data>
+  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
+    <value>Обратное поле не может быть создано для агрегированного поля</value>
+  </data>
 </root>
