@@ -28,12 +28,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ArticleController : AuthQpController
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly ArticleFullTextSearchQueryParser _parser;
 
-        public ArticleController(IArticleService dbArticleService, IServiceProvider serviceProvider, QPublishingOptions options)
+        public ArticleController(IArticleService dbArticleService, ArticleFullTextSearchQueryParser parser, QPublishingOptions options)
             : base(dbArticleService, options)
         {
-            _serviceProvider = serviceProvider;
+            _parser = parser;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -60,7 +60,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int[] filterIds,
             string orderBy)
         {
-            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
 
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
@@ -70,7 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 searchQuery,
                 null,
                 customFilter,
-                ftsParser,
+                _parser,
                 onlyIds,
                 filterIds);
 
@@ -102,7 +101,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int[] filterIds,
             string orderBy)
         {
-            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
@@ -111,7 +109,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 searchQuery,
                 null,
                 customFilter,
-                ftsParser,
+                _parser,
                 onlyIds,
                 filterIds);
 
@@ -157,7 +155,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string orderBy,
             int IDs = 0)
         {
-            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
@@ -166,7 +163,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 searchQuery,
                 null,
                 customFilter,
-                ftsParser,
+                _parser,
                 onlyIds);
 
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
@@ -210,7 +207,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int[] filterIds,
             string orderBy)
         {
-            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
@@ -220,7 +216,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 searchQuery,
                 null,
                 customFilter,
-                ftsParser,
+                _parser,
                 onlyIds);
 
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);

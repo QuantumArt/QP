@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions;
+using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -11,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IMultistepActionService _service;
 
-        public RemoveSiteController(IMultistepActionService service)
+        public RemoveSiteController(RemoveSiteService service)
         {
             _service = service;
         }

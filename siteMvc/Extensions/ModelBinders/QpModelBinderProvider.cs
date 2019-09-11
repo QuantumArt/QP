@@ -1,9 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using QA.Validation.Xaml.Adapters;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
-using Quantumart.QP8.WebMvc.ViewModels.User;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
@@ -29,6 +28,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             if (context.Metadata.ModelType == typeof(ArticleVersionViewModel))
             {
                 return new ArticleVersionViewModelBinder();
+            }
+
+            if (context.Metadata.ModelType == typeof(QPCheckedItem))
+            {
+                return new QpCheckedItemModelBinder();
             }
 
             return null;

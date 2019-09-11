@@ -727,7 +727,7 @@ export class BackendEntityEditor extends Observable {
       builder
         .cat(`<li><span id="${options.id}" class="linkButton actionLink">`)
         .cat('<a href="javascript:void(0);">')
-        .cat(`<span class="icon ${options.class}"><img src="/Backend/Content/Common/0.gif"></span>`)
+        .cat(`<span class="icon ${options.class}"><img src="Content/Common/0.gif"></span>`)
         .cat(`<span class="text">${options.title}</span>`)
         .cat('</a></span></li>');
 

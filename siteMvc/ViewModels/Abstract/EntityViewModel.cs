@@ -97,6 +97,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         {
             var result = new List<ValidationResult>();
 
+            DoCustomBinding();
+
             try
             {
                 Validate();

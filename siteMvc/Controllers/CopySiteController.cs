@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private readonly IMultistepActionService _multistepService;
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public CopySiteController(IMultistepActionService multistepService)
+        public CopySiteController(CopySiteService multistepService)
         {
             _multistepService = multistepService ?? throw new ArgumentNullException(nameof(multistepService));
         }

@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private readonly IMultistepActionService _service;
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public ExportSelectedArticlesController(IMultistepActionService service)
+        public ExportSelectedArticlesController(ExportArticlesService service)
         {
             _service = service;
         }

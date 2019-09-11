@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -104,11 +104,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
         [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeCommands { get; set; }
 
+        [ValidateNever]
         public int[] ActiveVeCommandsIds
         {
             get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); }
         }
 
+        [ValidateNever]
         public int[] ActiveVeStyleIds
         {
             get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); }
@@ -127,6 +129,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
         public override void DoCustomBinding()
         {
             base.DoCustomBinding();
+
+            ActiveVeStyles = ActiveVeStyles?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeFormats = ActiveVeFormats?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeCommands = ActiveVeCommands?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+
             if (!string.IsNullOrEmpty(AggregationListItemsDataExternalCssItems))
             {
                 Data.ExternalCssItems = JsonConvert.DeserializeObject<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);

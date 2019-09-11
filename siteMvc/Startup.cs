@@ -49,7 +49,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -104,7 +106,11 @@ namespace Quantumart.QP8.WebMvc
             });
 
             services
-                .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddMvc(options =>
+                {
+                    options.ModelBinderProviders.Insert(0, new QpModelBinderProvider());
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -166,36 +172,37 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IObjectService, ObjectService>()
                 .AddTransient<IFormatService, FormatService>();
 
-            // multistep action controllers
-            services
-                .AddTransient(provider => new ClearContentController(new ClearContentService()))
-                .AddTransient(provider => new RemoveContentController(new RemoveContentService()))
-                .AddTransient(provider => new ImportArticlesController(new ImportArticlesService()))
-                .AddTransient(provider => new ExportArticlesController(new ExportArticlesService()))
-                .AddTransient(provider => new ExportSelectedArticlesController(new ExportArticlesService()))
-                .AddTransient(provider => new ExportSelectedArchiveArticlesController(new ExportArticlesService()))
-                .AddTransient(provider => new CopySiteController(new CopySiteService()))
-                .AddTransient(provider => new RemoveSiteController(new RemoveSiteService()))
-                .AddTransient(provider => new AssembleSiteController(new AssembleSiteService()))
-                .AddTransient(provider => new AssembleTemplateBaseController(new AssembleTemplateService()))
-                .AddTransient(provider => new AssembleTemplateFromFormatController(new AssembleTemplateService()))
-                .AddTransient(provider => new AssembleTemplateFromObjectController(new AssembleTemplateService()))
-                .AddTransient(provider => new AssembleTemplateFromObjectListController(new AssembleTemplateService()))
-                .AddTransient(provider => new RebuildVirtualContentsController(new RebuildVirtualContentsService()));
 
-            // permission controllers
+            // // multistep action controllers
+            // services
+            //     .AddTransient<ClearContentService>()
+            //     .AddTransient<RemoveContentService>()
+            //     .AddTransient<ImportArticlesService>()
+            //     .AddTransient<ExportArticlesService>()
+            //     .AddTransient<CopySiteService>()
+            //     .AddTransient<RemoveSiteService>()
+            //     .AddTransient<AssembleSiteService>()
+            //     .AddTransient<AssembleTemplateService>()
+            //     .AddTransient<RebuildVirtualContentsService>();
+
             services
-                .AddTransient(provider => new WorkflowPermissionController(new WorkflowPermissionService()))
-                .AddTransient(provider => new SitePermissionController(new SitePermissionService()))
-                .AddTransient(provider => new SiteFolderPermissionController(new SiteFolderPermissionService()))
-                .AddTransient(provider => new ContentPermissionController(
-                    new ContentPermissionService(), new ChildContentPermissionService()))
-                .AddTransient(provider => new ArticlePermissionController(
-                    new ArticlePermissionService(), new ChildArticlePermissionService()))
-                .AddTransient(provider => new EntityTypePermissionController(
-                    new EntityTypePermissionService(), new EntityTypePermissionChangeService()))
-                .AddTransient(provider => new ActionPermissionController(
-                    new ActionPermissionService(), new ActionPermissionChangeService()));
+                .AddTransient<WorkflowPermissionService>()
+                .AddTransient<SitePermissionService>()
+                .AddTransient<SiteFolderPermissionService>()
+                .AddTransient<ContentPermissionService>()
+                .AddTransient<ChildContentPermissionService>()
+                .AddTransient<ArticlePermissionService>()
+                .AddTransient<ChildArticlePermissionService>()
+                .AddTransient<EntityTypePermissionService>()
+                .AddTransient<EntityTypePermissionChangeService>()
+                .AddTransient<ActionPermissionService>()
+                .AddTransient<ActionPermissionChangeService>()
+                ;
+
+            services
+                .AddTransient<ISearchGrammarParser, IronySearchGrammarParser>()
+                .AddTransient<ArticleFullTextSearchQueryParser>()
+                ;
 
             RegisterMultistepActionServices(services);
         }

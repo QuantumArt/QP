@@ -116,8 +116,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = SiteViewModel.Create(site, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = SiteService.Save(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);
@@ -154,8 +153,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = SiteViewModel.Create(site, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = SiteService.Update(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);

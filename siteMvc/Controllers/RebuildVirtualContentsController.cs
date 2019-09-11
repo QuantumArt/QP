@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions;
+using Quantumart.QP8.BLL.Services.MultistepActions.Rebuild;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -11,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IMultistepActionService _service;
 
-        public RebuildVirtualContentsController(IMultistepActionService service)
+        public RebuildVirtualContentsController(RebuildVirtualContentsService service)
         {
             _service = service;
         }

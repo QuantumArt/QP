@@ -17,11 +17,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class EntityObjectController : QPController
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly ArticleFullTextSearchQueryParser _parser;
 
-        public EntityObjectController(IServiceProvider serviceProvider)
+        public EntityObjectController(ArticleFullTextSearchQueryParser parser)
         {
-            _serviceProvider = serviceProvider;
+            _parser = parser;
         }
 
         public JsonResult CheckExistence(string entityTypeCode, int entityId)
@@ -56,8 +56,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery)
         {
-            var ftsParser = _serviceProvider.GetRequiredService<ArticleFullTextSearchQueryParser>();
-            var data = EntityObjectService.GetEntityTreeItems(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser);
+            var data = EntityObjectService.GetEntityTreeItems(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, _parser);
             return Json(data);
         }
 

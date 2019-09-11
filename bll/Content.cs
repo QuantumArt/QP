@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using QP8.Infrastructure.Logging;
@@ -476,18 +478,32 @@ namespace Quantumart.QP8.BLL
 
         public bool HasAnyNotification => ContentRepository.HasAnyNotifications(Id);
 
+        [BindNever]
+        [ValidateNever]
+
         public bool HasAggregatedFields
         {
             get { return Fields.Any(f => f.Aggregated); }
         }
 
+        [BindNever]
+        [ValidateNever]
         public Content BaseAggregationContent => _baseAggregationContent.Value;
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Content> AggregatedContents => _aggregatedContents.Value;
 
+        [BindNever]
+        [ValidateNever]
         public Field TreeField => _treeField.Value;
 
+        [BindNever]
+        [ValidateNever]
         public Field VariationField => _variationField.Value;
+
+        [BindNever]
+        [ValidateNever]
 
         internal IEnumerable<Field> FieldsForCreateLike
         {
@@ -501,8 +517,12 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<ContentConstraint> Constraints => _constraints ?? (_constraints = IsNew ? Enumerable.Empty<ContentConstraint>() : ContentConstraintRepository.GetConstraintsByContentId(Id));
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Field> Fields
         {
             get
@@ -520,17 +540,20 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Поля на которые могу ссылаться другие поля через O2M связь
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Field> RelateableFields
         {
             get { return Fields.Where(f => f.IsRelateable).Select(f => f); }
         }
 
+        [BindNever]
+        [ValidateNever]
         public ContentGroup Group => _contentGroup.Value;
 
         [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
         public ContentWorkflowBind WorkflowBinding
         {
             get
@@ -545,6 +568,8 @@ namespace Quantumart.QP8.BLL
             set => _workflowBinding = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public Site Site
         {
             get => _site ?? (_site = SiteRepository.GetById(SiteId));
@@ -557,34 +582,39 @@ namespace Quantumart.QP8.BLL
 
         public override PathInfo PathInfo => RootContentsPathInfo.GetSubPathInfo(Id.ToString());
 
+
+        [BindNever]
+        [ValidateNever]
         public override EntityObject Parent => Site;
 
+
+        [BindNever]
+        [ValidateNever]
         public Content ParentContent => _parentContent.Value;
 
+
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Content> ChildContents => _childContents.Value;
 
-        /// <summary>
-        /// Виртуальные поля контента
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<VirtualFieldNode> VirtualJoinFieldNodes
         {
             get => _virtualJoinFieldNodes.Value;
             set => _virtualJoinFieldNodes.Value = value;
         }
 
-        /// <summary>
-        /// Дочерние виртуальные контенты
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Content> VirtualSubContents => _virtualSubContents.Value;
 
-        /// <summary>
-        /// Схема view виртуального контента типа User Query
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         internal IEnumerable<UserQueryColumn> UserQueryContentViewSchema => _userQueryContentViewSchema.Value;
 
-        /// <summary>
-        /// ID базовых контентов для построения Union-контента
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         [Display(Name = "UnionSourceContents", ResourceType = typeof(ContentStrings))]
         [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> UnionSourceContentIDs

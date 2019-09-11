@@ -109,9 +109,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var content = ContentService.New(parentId, null);
             var model = ContentViewModel.Create(content, tabId, parentId);
-            model.DoCustomBinding();
+
             await TryUpdateModelAsync(model);
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -163,9 +163,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var content = ContentService.ReadForUpdate(id);
             var model = ContentViewModel.Create(content, tabId, parentId);
             var oldGroupId = model.Data.GroupId;
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -211,9 +211,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var group = ContentService.NewGroupForSave(parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = ContentService.SaveGroup(model.Data);
@@ -246,9 +246,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var group = ContentService.ReadGroupForUpdate(id, parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = ContentService.UpdateGroup(model.Data);

@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -24,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public ImportArticlesController(IMultistepActionService service)
+        public ImportArticlesController(ImportArticlesService service)
         {
             _service = service;
         }

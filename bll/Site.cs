@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using QA.Validation.Xaml;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
@@ -17,6 +18,8 @@ namespace Quantumart.QP8.BLL
 {
     public class Site : LockableEntityObject
     {
+        private ComplexTypeModelBinder _binder;
+        private DecimalModelBinder _dBinder;
         public static readonly string DefaultContextClassName = "QPDataContext";
 
         public static readonly string DefaultConnectionStringName = "qp_database";
@@ -372,7 +375,6 @@ namespace Quantumart.QP8.BLL
         public override void Validate()
         {
             var errors = new RulesException<Site>();
-
             base.Validate(errors);
             ValidateConditionalRequirements(errors);
             ValidateExternalCss(errors);
@@ -578,7 +580,7 @@ namespace Quantumart.QP8.BLL
                 SitePathRepository.CreateDirectories(StageDirectory);
             }
             SitePathRepository.CreateUploadDirectories(UploadDir);
-            if (IsDotNet )
+            if (IsDotNet)
             {
                 if (!ExternalDevelopment)
                 {

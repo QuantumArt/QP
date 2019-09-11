@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
@@ -45,15 +46,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             string controlerName = null,
             object routeValues = null)
         {
-            if (string.IsNullOrWhiteSpace(actionName) || string.IsNullOrWhiteSpace(controlerName))
-            {
-                // ReSharper disable once Mvc.ActionNotResolved
-                html.BeginForm();
-            }
-            else
-            {
-                html.BeginForm(actionName, controlerName, routeValues);
-            }
+            html.BeginForm(actionName, controlerName, routeValues);
 
             var writer = html.ViewContext.Writer;
             writer.WriteLine(@"<div class=""editingForm"" id=""{0}"">", html.UniqueId("editingForm"));
@@ -65,7 +58,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (summary != null)
             {
-                writer.Write(summary.ToString());
+                writer.Write(summary.ToHtmlEncodedString());
             }
 
             return new TabForm(html);

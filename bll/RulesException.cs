@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
@@ -66,13 +68,30 @@ namespace Quantumart.QP8.BLL
             throw newEx;
         }
 
+        private string GetPropertyName(LambdaExpression expr)
+        {
+            var member = expr.Body as MemberExpression;
+            if (member == null)
+            {
+                throw new ArgumentException($"Expression '{expr}' refers to a method, not a property.");
+            }
+
+            var propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+            {
+                throw new ArgumentException($"Expression '{expr}' refers to a field, not a property.");
+            }
+
+            return member.Member.Name;
+        }
+
         public IEnumerable<ValidationResult> GetValidationResults(string prefix)
         {
             prefix = string.IsNullOrEmpty(prefix) ? string.Empty : prefix + ".";
             var criticalErrors = Errors.Where(n => n.Critical).ToList();
             foreach (var error in criticalErrors)
             {
-                var members = new[] { prefix + error.PropertyName };
+                var members = new[] { prefix + GetPropertyName(error.Property) };
                 yield return new ValidationResult(error.Message, members) ;
             }
 
@@ -80,7 +99,7 @@ namespace Quantumart.QP8.BLL
             {
                 foreach (var error in Errors.Where(n => !n.Critical))
                 {
-                    var members = new[] { prefix + error.PropertyName };
+                    var members = new[] { prefix + GetPropertyName(error.Property) };
                     yield return new ValidationResult(error.Message, members);
                 }
             }
