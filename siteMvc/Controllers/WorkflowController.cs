@@ -73,8 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 var oldIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
@@ -112,8 +111,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

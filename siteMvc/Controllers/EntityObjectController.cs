@@ -86,7 +86,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetParentIdsForTree(string entityTypeCode, int[] ids)
+        public JsonResult GetParentIdsForTree([FromBody]string entityTypeCode, [FromBody]int[] ids)
         {
             return Json(EntityObjectService.GetParentIdsForTree(entityTypeCode, ids));
         }

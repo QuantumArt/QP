@@ -66,8 +66,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = VisualEditorPluginViewModel.Create(plugin, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 var oldIds = model.Data.VeCommands.Select(n => n.Id).ToArray();
@@ -114,8 +112,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = VisualEditorPluginViewModel.Create(plugin, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _visualEditorService.SaveVisualEditorPluginProperties(model.Data);

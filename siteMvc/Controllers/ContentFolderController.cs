@@ -36,8 +36,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = ContentFolderService.Save(model.Data);
@@ -70,9 +68,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var folder = ContentFolderService.ReadForUpdate(id);
             var model = ContentFolderViewModel.Create(folder, tabId, parentId);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = ContentFolderService.Update(model.Data);
@@ -121,8 +119,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var file = ContentFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, false);
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 ContentFolderService.SaveFile(model.File);

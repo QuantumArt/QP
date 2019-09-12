@@ -67,8 +67,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _statusTypeService.UpdateProperties(model.Data);
@@ -103,8 +102,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = StatusTypeViewModel.Create(status, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _statusTypeService.SaveProperties(model.Data);

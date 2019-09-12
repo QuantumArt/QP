@@ -175,9 +175,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var action = _service.NewForSave();
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _service.Save(model.Data, model.SelectedActionsIds);
@@ -212,9 +212,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var action = _service.ReadForUpdate(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _service.Update(model.Data, model.SelectedActionsIds);

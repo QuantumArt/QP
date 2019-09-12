@@ -295,7 +295,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         protected void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
         {
-            string formIdsValue = HttpContext.Request.Form[formIdsKey];
+            string formIdsValue = HttpContext.Request.Form[formIdsKey].ToString();
 
             int[] validatedFormIds = formIdsValue
                 .Split(',')

@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -8,6 +10,8 @@ namespace Quantumart.QP8.BLL
 {
     public abstract class LockableEntityObject : EntityObject
     {
+        [ValidateNever]
+        [BindNever]
         public virtual User LockedByUser { get; set; }
 
         public DateTime Locked { get; set; }

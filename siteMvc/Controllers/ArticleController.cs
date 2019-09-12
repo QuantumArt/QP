@@ -305,8 +305,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {
@@ -371,8 +369,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

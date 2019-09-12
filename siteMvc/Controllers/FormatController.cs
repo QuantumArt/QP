@@ -145,9 +145,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var format = _formatService.NewPageObjectFormatPropertiesForUpdate(parentId, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, true);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.SaveObjectFormatProperties(model.Data);
@@ -180,8 +180,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var format = _formatService.NewTemplateObjectFormatPropertiesForUpdate(parentId, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, false);
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.SaveObjectFormatProperties(model.Data);
@@ -216,9 +214,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var format = _formatService.ReadPageObjectFormatPropertiesForUpdate(id, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, true);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.UpdateObjectFormatProperties(model.Data);
@@ -252,9 +250,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var format = _formatService.ReadTemplateObjectFormatPropertiesForUpdate(id, _formatService.IsSiteDotNetByObjectId(parentId));
             var model = ObjectFormatViewModel.Create(format, tabId, parentId, _formatService, false);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _formatService.UpdateObjectFormatProperties(model.Data);

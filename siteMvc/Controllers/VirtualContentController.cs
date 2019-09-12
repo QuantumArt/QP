@@ -46,8 +46,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var content = VirtualContentService.NewForSave(parentId);
             var model = VirtualContentViewModel.Create(content, tabId, parentId);
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try
@@ -118,8 +116,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = VirtualContentViewModel.Create(content, tabId, parentId);
             var oldGroupId = model.Data.GroupId;
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 try

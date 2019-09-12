@@ -138,8 +138,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _service.SaveProperties(model.Data);
@@ -174,8 +173,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _service.UpdateProperties(model.Data);
@@ -226,8 +224,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var user = _service.ReadProfile(QPContext.CurrentUserId);
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 _service.UpdateProfile(model.Data);
@@ -254,9 +250,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             user.NewPassword = currentUser.NewPassword;
             user.NewPasswordCopy = currentUser.NewPasswordCopy;
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data.MustChangePassword = false;

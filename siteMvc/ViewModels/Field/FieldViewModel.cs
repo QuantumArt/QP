@@ -575,6 +575,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         public override void DoCustomBinding()
         {
             base.DoCustomBinding();
+
+            InCombinationWith = InCombinationWith?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeStyles = ActiveVeStyles?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeFormats = ActiveVeFormats?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeCommands = ActiveVeCommands?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+
+            Data.DefaultArticleIds = DefaultArticleIds.ToArray();
+            Data.ActiveVeStyleIds = ActiveVeStyleIds;
+            Data.ActiveVeCommandIds = ActiveVeCommandsIds;
+
             if (!string.IsNullOrWhiteSpace(AggregationListItemsDataExternalCssItems))
             {
                 Data.ExternalCssItems = JsonConvert.DeserializeObject<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);
@@ -582,9 +592,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             }
 
             Data.ParseStringEnumJson(AggregationListItemsDataStringEnumItems);
-            Data.DefaultArticleIds = DefaultArticleIds.ToArray();
-            Data.ActiveVeStyleIds = ActiveVeStyleIds;
-            Data.ActiveVeCommandIds = ActiveVeCommandsIds;
+
         }
 
         public EntityDataListArgs EntityDataListArgs => new EntityDataListArgs

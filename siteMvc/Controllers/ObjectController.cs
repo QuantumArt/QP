@@ -89,8 +89,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
@@ -125,8 +123,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
@@ -176,8 +172,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues
@@ -217,8 +211,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues

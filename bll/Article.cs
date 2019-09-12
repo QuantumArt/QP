@@ -6,6 +6,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
@@ -107,6 +110,8 @@ namespace Quantumart.QP8.BLL
 
         public Dictionary<string, string> PredefinedValues { get; set; }
 
+        [ValidateNever]
+
         public override string Name
         {
             get
@@ -133,6 +138,7 @@ namespace Quantumart.QP8.BLL
 
         public override bool IsReadOnly => ViewType != ArticleViewType.Normal && ViewType != ArticleViewType.PreviewVersion;
 
+        [ValidateNever]
         public string AliasForTree
         {
             get
@@ -157,6 +163,7 @@ namespace Quantumart.QP8.BLL
 
         public bool UseInVariationUpdate { get; set; }
 
+        [ValidateNever]
         public Dictionary<string, RulesException<Article>> VariationsErrorModel { get; set; }
 
         internal string BackupPath => GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
@@ -197,11 +204,13 @@ namespace Quantumart.QP8.BLL
 
         public bool UseVariations => Content.VariationField != null;
 
+        [ValidateNever]
         public IEnumerable<FieldValue> VariationContextFieldValues
         {
             get { return FieldValues.Where(n => n.Field.UseForContext).OrderBy(n => n.Field.Order); }
         }
 
+        [ValidateNever]
         public IEnumerable<FieldValue> VariationEditableFieldValues
         {
             get { return FieldValues.Where(n => !n.Field.UseForContext && !n.Field.UseForVariations); }
@@ -258,12 +267,17 @@ namespace Quantumart.QP8.BLL
 
         public bool IsVariation => !string.IsNullOrEmpty(VariationContext);
 
+        [ValidateNever]
         public Content Content { get; set; }
 
+        [ValidateNever]
         public StatusType Status { get; set; }
 
+        [ValidateNever]
         public override EntityObject Parent => Content;
 
+        [BindNever]
+        [ValidateNever]
         public ArticleWorkflowBind WorkflowBinding
         {
             get => _workflowBinding ?? (_workflowBinding = WorkflowRepository.GetArticleWorkflow(this));
@@ -271,6 +285,7 @@ namespace Quantumart.QP8.BLL
         }
 
         [JsonIgnore]
+        [ValidateNever]
         public List<FieldValue> FieldValues
         {
             get => _fieldValues ?? LoadFieldValues();
@@ -278,6 +293,8 @@ namespace Quantumart.QP8.BLL
         }
 
         [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
         public List<FieldValue> LiveFieldValues
         {
             get => _liveFieldValues ?? LoadLiveFieldValues();
@@ -334,40 +351,56 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public WorkflowBind Workflow => WorkflowBinding.IsAssigned ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Article> AggregatedArticles
         {
             get => _aggregatedArticles.Value;
             set => _aggregatedArticles.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Article> LiveAggregatedArticles
         {
             get => _liveAggregatedArticles.Value;
             set => _liveAggregatedArticles.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public List<Article> VariationArticles
         {
             get => _variationArticles.Value;
             set => _variationArticles.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<ArticleVariationListItem> VariationListItems
         {
             get => _variationListItems.Value;
             set => _variationListItems.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<ArticleContextListItem> ContextListItems
         {
             get => _contextListItems.Value;
             set => _contextListItems.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public int CollaborativePublishedArticle { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public int ParentContentId
         {
             get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
@@ -1559,6 +1592,21 @@ namespace Quantumart.QP8.BLL
 
         public override void DoCustomBinding()
         {
+            if (!Workflow.IsAssigned || !Workflow.IsAsync || !Workflow.CurrentUserHasWorkflowMaxWeight || StatusTypeId == Workflow.MaxStatus.Id)
+            {
+                CancelSplit = false;
+            }
+
+            if (Workflow.IsAssigned)
+            {
+                if (StatusTypeId != Workflow.MaxStatus.Id)
+                {
+                    Delayed = false;
+                }
+            }
+
+            Visible = Schedule.IsVisible || Delayed;
+
             Schedule.DoCustomBinding();
         }
 

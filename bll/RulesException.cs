@@ -73,13 +73,13 @@ namespace Quantumart.QP8.BLL
             var member = expr.Body as MemberExpression;
             if (member == null)
             {
-                throw new ArgumentException($"Expression '{expr}' refers to a method, not a property.");
+                return "";
             }
 
             var propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
             {
-                throw new ArgumentException($"Expression '{expr}' refers to a field, not a property.");
+                return "";
             }
 
             return member.Member.Name;
@@ -91,18 +91,39 @@ namespace Quantumart.QP8.BLL
             var criticalErrors = Errors.Where(n => n.Critical).ToList();
             foreach (var error in criticalErrors)
             {
-                var members = new[] { prefix + GetPropertyName(error.Property) };
-                yield return new ValidationResult(error.Message, members) ;
+                yield return GetValidationResultFromRuleViolation(prefix, error);
             }
 
             if (!criticalErrors.Any())
             {
                 foreach (var error in Errors.Where(n => !n.Critical))
                 {
-                    var members = new[] { prefix + GetPropertyName(error.Property) };
-                    yield return new ValidationResult(error.Message, members);
+                    yield return GetValidationResultFromRuleViolation(prefix, error);
                 }
             }
+        }
+
+        private ValidationResult GetValidationResultFromRuleViolation(string prefix, RuleViolation error)
+        {
+            var name = GetPropertyName(prefix, error);
+            var members = new[] { name };
+            return new ValidationResult(error.Message, members);
+        }
+
+        private string GetPropertyName(string prefix, RuleViolation error)
+        {
+            if (error.Property != null)
+            {
+                var name = GetPropertyName(error.Property);
+                return string.IsNullOrEmpty(name) ? "" : prefix + name;
+            }
+
+            if (error.PropertyName != null)
+            {
+               return error.PropertyName;
+            }
+
+            return "";
         }
     }
 

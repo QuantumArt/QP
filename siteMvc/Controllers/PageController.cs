@@ -63,9 +63,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var page = _pageService.NewPagePropertiesForUpdate(parentId);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _pageService.SavePageProperties(model.Data);
@@ -100,9 +100,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var page = _pageService.ReadPagePropertiesForUpdate(id);
             var model = PageViewModel.Create(page, tabId, parentId, _pageService);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _pageService.UpdatePageProperties(model.Data);

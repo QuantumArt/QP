@@ -69,8 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var oldBackward = model.Data.BackwardField;
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -139,8 +138,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var oldBackward = model.Data.BackwardField;
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -215,9 +213,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = FieldViewModel.Create(field, tabId, parentId);
             var oldOrder = model.Data.Order;
             var oldViewInList = model.Data.ViewInList;
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 try

@@ -70,9 +70,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var format = _notificationService.ReadNotificationTemplateFormatForUpdate(id);
             var template = _notificationService.ReadPageTemplateByObjectFormatId(id);
             var model = NotificationTemplateFormatViewModel.Create(format, tabId, parentId, template.Id, template.SiteId);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _notificationService.UpdateNotificationTemplateFormat(model.Data);
@@ -103,9 +103,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var notification = _notificationService.NewNotificationPropertiesForUpdate(parentId);
             var model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -154,8 +154,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var notification = _notificationService.ReadNotificationPropertiesForUpdate(id);
             var model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _notificationService.UpdateNotificationProperties(model.Data, model.CreateDefaultFormat, CommonHelpers.GetBackendUrl(HttpContext));

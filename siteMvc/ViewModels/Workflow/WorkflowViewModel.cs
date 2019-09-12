@@ -143,6 +143,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public override void DoCustomBinding()
         {
+            ActiveStatuses = ActiveStatuses?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+
             _workflowRules = JsonConvert.DeserializeObject<List<WorkflowRuleItem>>(WorkflowsWorkflowRulesDisplay);
             Data.DoCustomBinding(_workflowRules);
         }

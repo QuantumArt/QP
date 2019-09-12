@@ -10,28 +10,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Settings;
+using LogLevel = NLog.LogLevel;
+using LogManager = NLog.LogManager;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     public class ExceptionResultAttribute : ExceptionFilterAttribute
     {
         private readonly ExceptionResultMode _mode;
+        private readonly Logger _logger;
 
         public ExceptionResultAttribute(ExceptionResultMode mode)
         {
             _mode = mode;
+            _logger = LogManager.GetLogger(GetType().ToString());
         }
 
         public override async Task OnExceptionAsync(ExceptionContext filterContext)
@@ -50,7 +52,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 filterContext.Result = await GetContentResult(filterContext);
             }
 
-            Logger.Log.Error($"Поймали exception со следующим URL: {filterContext.HttpContext.Request.GetDisplayUrl()}", filterContext.Exception);
+            _logger.Log(LogLevel.Error, filterContext.Exception,  $"Поймали exception со следующим URL: {filterContext.HttpContext.Request.GetDisplayUrl()}");
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();
@@ -103,7 +105,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 case ExceptionResultMode.JSendResponse:
                     if (ex is XmlDbUpdateLoggingException || ex is XmlDbUpdateReplayActionException)
                     {
-                        Logger.Log.Warn("There was an exception at XmlDbUpdateService: ", ex);
+                        _logger.Log(LogLevel.Warn, "There was an exception at XmlDbUpdateService: ", ex);
 
                         return new JsonResult(new JSendResponse
                         {
@@ -112,7 +114,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                         }, JsonSettingsRegistry.CamelCaseSettings);
                     }
 
-                    Logger.Log.Error("There was an exception: ", ex);
+                    _logger.Log(LogLevel.Error, "There was an exception: ", ex);
                     return new JsonResult(new JSendResponse
                     {
                         Status = JSendStatus.Error,

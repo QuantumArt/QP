@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
@@ -15,19 +17,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.Metadata.ModelType == typeof(ArticleViewModel))
+            if (context.Metadata.ModelType == typeof(List<FieldValue>))
             {
-                 return new ArticleViewModelBinder();
+                 return new FieldValuesModelBinder();
             }
 
-            if (context.Metadata.ModelType == typeof(ArticleVersionViewModel))
+            if (context.Metadata.ModelType == typeof(Guid?))
             {
-                return new ArticleVersionViewModelBinder();
-            }
-
-            if (context.Metadata.ModelType == typeof(ArticleVersionViewModel))
-            {
-                return new ArticleVersionViewModelBinder();
+                return new GuidModelBinder();
             }
 
             if (context.Metadata.ModelType == typeof(QPCheckedItem))

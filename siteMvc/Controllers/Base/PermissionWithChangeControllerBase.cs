@@ -31,8 +31,6 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service, ChangeService.ViewModelSettings);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
 
             if (ModelState.IsValid)
             {

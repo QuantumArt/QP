@@ -81,6 +81,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
         public override void DoCustomBinding()
         {
             base.DoCustomBinding();
+
+            SelectedGroups = SelectedGroups?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
             Data.Groups = SelectedGroups.Any() ? Service.GetUserGroups(Converter.ToInt32Collection(SelectedGroups.Select(g => g.Value).ToArray())) : Enumerable.Empty<BLL.UserGroup>();
         }
     }

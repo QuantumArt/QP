@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
@@ -47,6 +48,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         public override void DoCustomBinding()
         {
             base.DoCustomBinding();
+
+            SelectedActions = SelectedActions?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
 
             Data.Action.TypeId = CustomActionTypeId ?? 0;
             Data.Action.EntityTypeId = CustomActionEntityTypeId ?? 0;
@@ -148,11 +151,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         [Display(Name = "ToolbarButtonParentActionId", ResourceType = typeof(CustomActionStrings))]
         public IList<QPCheckedItem> SelectedActions { get; set; }
 
+        [ValidateNever]
         public int[] SelectedActionsIds
         {
             get { return SelectedActions.Select(c => int.Parse(c.Value)).ToArray(); }
         }
 
+        [ValidateNever]
         public string SelectedActionsString => string.Join(",", SelectedActionsIds);
 
         [Display(Name = "Order", ResourceType = typeof(CustomActionStrings))]

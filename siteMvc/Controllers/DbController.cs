@@ -65,11 +65,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var db = DbService.ReadSettingsForUpdate();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
-            model.DoCustomBinding();
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 object message = null;

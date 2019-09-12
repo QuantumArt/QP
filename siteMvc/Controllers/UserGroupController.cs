@@ -107,8 +107,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _service.SaveProperties(model.Data);
@@ -156,9 +155,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var group = _service.ReadProperties(id);
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
+
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = _service.UpdateProperties(model.Data);

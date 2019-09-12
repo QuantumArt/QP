@@ -6,6 +6,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -120,6 +122,8 @@ namespace Quantumart.QP8.BLL
 
         public bool You => QPContext.CurrentUserId == Id;
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<UserGroup> Groups { get; set; }
 
         private readonly InitPropertyValue<IEnumerable<UserDefaultFilter>> _contentDefaultFilters;

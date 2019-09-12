@@ -66,8 +66,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = PageTemplateViewModel.Create(template, tabId, parentId, _pageTemplateService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _pageTemplateService.SavePageTemplateProperties(model.Data);
@@ -104,8 +102,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = PageTemplateViewModel.Create(template, tabId, parentId, _pageTemplateService);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _pageTemplateService.UpdatePageTemplateProperties(model.Data);

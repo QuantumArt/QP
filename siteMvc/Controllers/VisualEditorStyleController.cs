@@ -65,8 +65,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = VisualEditorStyleViewModel.Create(style, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _visualEditorService.UpdateVisualEditorStyleProperties(model.Data);
@@ -109,8 +107,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = VisualEditorStyleViewModel.Create(style, tabId, parentId);
 
             await TryUpdateModelAsync(model);
-            model.DoCustomBinding();
-            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 model.Data = _visualEditorService.SaveVisualEditorStyleProperties(model.Data);
