@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
@@ -53,6 +54,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Constants()
         {
             return Content(_constantsHelper.GetResult(), "text/javascript");
+        }
+
+        public ActionResult TestValidation()
+        {
+            var result = new ProcessRemoteValidationIf();
+            return Content(result.ToString());
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

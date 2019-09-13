@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -45,34 +46,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetChildList(
-            string entityTypeCode,
-            int? parentEntityId,
-            int? entityId,
-            bool returnSelf,
-            string filter,
-            string hostFilter,
-            string selectItemIDs,
-            [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery)
+        public JsonResult GetChildList([FromBody]ChildListQuery query)
         {
-            var data = EntityObjectService.GetEntityTreeItems(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, _parser);
+            query.Parser = _parser;
+            var data = EntityObjectService.GetEntityTreeItems(query);
             return Json(data);
         }
 
         [HttpPost]
-        public JsonResult GetSimpleList(string entityTypeCode, int parentEntityId, int? entityId, int? listId, int selectionMode, int[] selectedEntitiesIDs, string filter, int testEntityId = 0)
+        public JsonResult GetSimpleList([FromBody]SimpleListQuery query)
         {
-            return Json(EntityObjectService.SimpleList(
-                entityTypeCode,
-                parentEntityId,
-                entityId > 0 ? entityId : null,
-                listId > 0 ? listId : null,
-                (ListSelectionMode)Enum.Parse(typeof(ListSelectionMode), selectionMode.ToString()),
-                selectedEntitiesIDs,
-                filter,
-                testEntityId
-            ));
+            return Json(EntityObjectService.SimpleList(query));
         }
 
         public JsonResult GetName(string entityTypeCode, int entityId, int? parentEntityId)
@@ -86,9 +70,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetParentIdsForTree([FromBody]string entityTypeCode, [FromBody]int[] ids)
+        public JsonResult GetParentIdsForTree([FromBody]ParentIdsForTreeQuery query)
         {
-            return Json(EntityObjectService.GetParentIdsForTree(entityTypeCode, ids));
+            return Json(EntityObjectService.GetParentIdsForTree(query));
         }
 
         public JsonResult GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode)

@@ -413,24 +413,24 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return SqlFilterComposer.Compose(contextQueryParams.Select(q => string.Format(string.IsNullOrEmpty(q.Value) ? "c.[{0}] IS NULL" : "c.[{0}] = {1}", fields.Single(n => n.Id == q.FieldId).Name, q.Value)));
         }
 
-        internal static List<ListItem> GetSimpleList(int contentId, int? articleId, int? fieldId, ListSelectionMode selectionMode, int[] selectedArticleIDs, string filter, int testArticleId)
+        internal static List<ListItem> GetSimpleList(SimpleListQuery query)
         {
             using (var scope = new QPConnectionScope())
             {
-                var field = fieldId.HasValue ? FieldRepository.GetById(fieldId.Value) : null;
-                var fields = ContentRepository.GetDisplayFields(contentId, field).ToList();
+                var field = query.ListId != 0 ? FieldRepository.GetById(query.ListId) : null;
+                var fields = ContentRepository.GetDisplayFields(query.ParentEntityId, field).ToList();
                 var displayExpression = GetDisplayExpression(fields);
                 var isMany = field != null && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation);
                 var orderByExpression = isMany
                     ? GetSimpleListOrderExpression(field, fields)
                     : string.Empty;
 
-                var selection = new HashSet<int>(selectedArticleIDs ?? new int[] { });
-                if (testArticleId != 0 && articleId.HasValue && isMany)
+                var selection = new HashSet<int>(query.SelectedEntitiesIds ?? new int[] { });
+                if (query.TestEntityId != 0 && query.EntityId != 0 && isMany)
                 {
                     var testResult = field.ExactType == FieldExactTypes.M2MRelation && field.LinkId.HasValue
                         ? Common.TestM2MValue(
-                            scope.DbConnection, field.LinkId.Value, articleId.Value, testArticleId
+                            scope.DbConnection, field.LinkId.Value, query.EntityId, query.TestEntityId
                         )
                         : Common.TestM2OValue(
                             scope.DbConnection, new Common.FieldInfo()
@@ -438,38 +438,38 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                                 Id = field.BackRelation.Id,
                                 ContentId = field.BackRelation.ContentId,
                                 Name = field.BackRelation.Name
-                            }, articleId.Value, testArticleId
+                            }, query.EntityId, query.TestEntityId
                         );
 
                     if (testResult)
                     {
-                        selection.Add(testArticleId);
+                        selection.Add(query.TestEntityId);
                     }
                     else
                     {
-                        selection.Remove(testArticleId);
+                        selection.Remove(query.TestEntityId);
                     }
                 }
 
                 var isUserAdmin = QPContext.IsAdmin;
-                var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.List);
+                var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, query.ParentEntityId, ActionTypeCode.List);
                 if (!availableForList)
                 {
-                    filter = SqlFilterComposer.Compose(filter, "1 = 0");
+                    query.Filter = SqlFilterComposer.Compose(query.Filter, "1 = 0");
                 }
 
 
-                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);
+                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
                     QPContext.EFContext,
                     QPConnectionScope.Current.DbConnection,
                     QPContext.CurrentUserId,
-                    contentId,
+                    query.ParentEntityId,
                     displayExpression,
-                    selectionMode,
+                    query.SelectionMode,
                     PermissionLevel.List,
-                    filter,
+                    query.Filter,
                     useSecurity,
                     selection.ToArray(),
                     null,

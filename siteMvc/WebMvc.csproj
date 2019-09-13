@@ -57,5 +57,8 @@
     <None Include="*.config" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
     <None Include="appsettings*.json" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />    
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Infrastructure\Converters" />
+  </ItemGroup>
 
 </Project>

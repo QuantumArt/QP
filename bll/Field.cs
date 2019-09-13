@@ -12,6 +12,7 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
@@ -2767,7 +2768,15 @@ namespace Quantumart.QP8.BLL
             if (!string.IsNullOrEmpty(value) && RelateToContentId != null)
             {
                 var ids = value.Split(",".ToCharArray()).Select(int.Parse).ToArray();
-                return ArticleRepository.GetSimpleList(RelateToContentId.Value, null, Id, ListSelectionMode.OnlySelectedItems, ids, null, 0);
+                return ArticleRepository.GetSimpleList(
+                    new SimpleListQuery()
+                    {
+                        ParentEntityId = RelateToContentId.Value,
+                        EntityId = Id,
+                        SelectionMode = ListSelectionMode.OnlySelectedItems,
+                        SelectedEntitiesIds = ids
+                    }
+                );
             }
 
             return null;
@@ -2964,7 +2973,14 @@ namespace Quantumart.QP8.BLL
 
         public IEnumerable<ListItem> DefaultArticleListItems => !RelateToContentId.HasValue
             ? new List<ListItem>()
-            : ArticleRepository.GetSimpleList(RelateToContentId.Value, 0, Id, ListSelectionMode.OnlySelectedItems, DefaultArticleIds.ToArray(), "", 0);
+            : ArticleRepository.GetSimpleList(new SimpleListQuery()
+            {
+                ParentEntityId = RelateToContentId.Value,
+                ListId = Id,
+                SelectionMode = ListSelectionMode.OnlySelectedItems,
+                SelectedEntitiesIds = DefaultArticleIds.ToArray()
+            }
+        );
 
         public bool HasArticles => _fieldRepository.FieldHasArticles(ContentId);
 

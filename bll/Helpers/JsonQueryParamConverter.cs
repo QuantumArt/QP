@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Quantumart.QP8.BLL;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Converters
+namespace Quantumart.QP8.BLL.Helpers
 {
     internal class JsonQueryParamConverter : JsonConverter
     {

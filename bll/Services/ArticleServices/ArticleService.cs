@@ -166,7 +166,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return new ListResult<StatusHistoryListItem> { Data = dt, TotalRecords = totalRecords };
         }
 
-        public static List<ListItem> SimpleList(int contentId, int articleId, int fieldId, ListSelectionMode selectionMode, int[] selectedArticleIDs, string filter) => ArticleRepository.GetSimpleList(contentId, articleId, fieldId, selectionMode, selectedArticleIDs, filter, 0);
+        public static List<ListItem> SimpleList(SimpleListQuery query) => ArticleRepository.GetSimpleList(query);
 
         public static ArticleInitTreeResult InitTree(int contentId, bool isMultipleSelection, bool? boundToExternal)
         {

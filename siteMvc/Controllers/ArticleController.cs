@@ -9,6 +9,7 @@ using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services.ArticleServices;
@@ -22,6 +23,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -183,31 +185,28 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs, bool? boundToExternal)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
-            var model = ArticleListViewModel.Create(articleList, parentId, tabId, true, true, IDs);
+            var model = ArticleListViewModel.Create(articleList, parentId, tabId, true, true, selModel.Ids);
             return await JsonHtml("Index", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
             string tabId,
             int parentId,
             int page,
             int pageSize,
-            string IDs,
+            [FromForm(Name="IDs")]string ids,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
             string customFilter,
             bool? onlyIds,
-            int[] filterIds,
             string orderBy)
         {
-            var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
+            var selectedArticleIDs = Converter.ToInt32Collection(ids, ',');
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.List(
                 parentId,
@@ -226,11 +225,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectTree(string tabId, int parentId, int[] IDs, bool? boundToExternal)
+        public async Task<ActionResult> MultipleSelectTree(string tabId, int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
             var result = ArticleService.InitTree(parentId, true, boundToExternal);
-            var model = ArticleListViewModel.Create(result, parentId, tabId, true, true, IDs);
+            var model = ArticleListViewModel.Create(result, parentId, tabId, true, true, selModel.Ids);
             return await JsonHtml("Tree", model);
         }
 
@@ -447,21 +445,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveArticle)]
         [BackendActionContext(ActionCode.MultipleRemoveArticle)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int parentId, int[] IDs, bool? boundToExternal)
+        public ActionResult MultipleRemove(int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var articlesToRemove = ArticleRepository.GetByIds(IDs);
+            var articlesToRemove = ArticleRepository.GetByIds(selModel.Ids);
             var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
 
             // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
             PersistFromIds(idsToRemove, guidsToRemove);
 
-            return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
+            return JsonMessageResult(ArticleService.Remove(parentId, selModel.Ids, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePreAction(int parentId, int[] IDs, bool? boundToExternal) => JsonMessageResult(ArticleService.MultipleRemovePreAction(parentId, IDs));
+        public ActionResult MultipleRemovePreAction(int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
+        {
+            return JsonMessageResult(ArticleService.MultipleRemovePreAction(parentId, selModel.Ids));
+        }
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -486,16 +485,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveFromArchive(int parentId, int[] IDs, bool? boundToExternal)
+        public ActionResult MultipleRemoveFromArchive(int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var articlesToRemove = ArticleRepository.GetByIds(IDs);
+            var articlesToRemove = ArticleRepository.GetByIds(selModel.Ids);
             var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
 
             // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
             PersistFromIds(idsToRemove, guidsToRemove);
-            return JsonMessageResult(ArticleService.Remove(parentId, IDs, true, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
+            return JsonMessageResult(ArticleService.Remove(parentId, selModel.Ids, true, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
         [HttpPost, Record]
@@ -538,21 +536,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultiplePublishArticles)]
         [BackendActionContext(ActionCode.MultiplePublishArticles)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultiplePublish(int parentId, int[] IDs, bool? boundToExternal)
+        public ActionResult MultiplePublish(int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var articlesToRemove = ArticleRepository.GetByIds(IDs);
+            var articlesToRemove = ArticleRepository.GetByIds(selModel.Ids);
             var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
 
             // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
 
             PersistFromIds(idsToRemove, guidsToRemove);
-            return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
+            return JsonMessageResult(ArticleService.Publish(parentId, selModel.Ids, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultiplePublishPreAction(int[] IDs, bool? boundToExternal) => JsonMessageResult(null);
+        public ActionResult MultiplePublishPreAction([FromBody]SelectedItemsViewModel selModel, bool? boundToExternal) => JsonMessageResult(null);
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -560,21 +556,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionContext(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleMoveToArchive(int parentId, int[] IDs, bool? boundToExternal)
+        public ActionResult MultipleMoveToArchive(int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var articlesToArchive = ArticleRepository.GetByIds(IDs);
+            var articlesToArchive = ArticleRepository.GetByIds(selModel.Ids);
             var idsToRemove = articlesToArchive.Select(atr => atr.Id).ToArray();
 
             // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToArchive.Select(atr => atr.UniqueId.Value).ToArray();
 
             PersistFromIds(idsToRemove, guidsToRemove);
-            return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
+            return JsonMessageResult(ArticleService.MoveToArchive(parentId, selModel.Ids, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleMoveToArchivePreAction(int[] IDs, bool? boundToExternal) => JsonMessageResult(ArticleService.MultipleMoveToArchivePreAction(IDs));
+        public ActionResult MultipleMoveToArchivePreAction([FromBody]SelectedItemsViewModel selModel, bool? boundToExternal) => JsonMessageResult(ArticleService.MultipleMoveToArchivePreAction(selModel.Ids));
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -582,17 +576,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRestoreFromArchive(int parentId, int[] IDs, bool? boundToExternal)
+        public ActionResult MultipleRestoreFromArchive(int parentId, [FromBody]SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var articlesToRestore = ArticleRepository.GetByIds(IDs);
+            var articlesToRestore = ArticleRepository.GetByIds(selModel.Ids);
             var idsToRemove = articlesToRestore.Select(atr => atr.Id).ToArray();
 
             // ReSharper disable once PossibleInvalidOperationException
             var guidsToRemove = articlesToRestore.Select(atr => atr.UniqueId.Value).ToArray();
 
             PersistFromIds(idsToRemove, guidsToRemove);
-            return JsonMessageResult(ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
+            return JsonMessageResult(ArticleService.RestoreFromArchive(parentId, selModel.Ids, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
         [HttpPost]

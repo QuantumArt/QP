@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -297,14 +298,14 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static int[] GetParentIdsForTree(string entityTypeCode, int[] ids)
+        internal static int[] GetParentIdsForTree(ParentIdsForTreeQuery query)
         {
             using (var scope = new QPConnectionScope())
             {
 
-                if (entityTypeCode == EntityTypeCode.Article)
+                if (query.EntityTypeCode == EntityTypeCode.Article)
                 {
-                    var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => ids.Contains((int)x.Id))?.ContentId;
+                    var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => query.Ids.Contains((int)x.Id))?.ContentId;
                     if (contentId == null) return new int[0];
                     var selfRelationFieldId = QPContext.EFContext.FieldSet.FirstOrDefault(x => x.ContentId == contentId && x.UseForTree)?.Id;
                     if (selfRelationFieldId == null)
@@ -326,16 +327,13 @@ namespace Quantumart.QP8.BLL.Repository
                     if (selfRelationFieldId == null) return new int[0];
 
                     var selfRelationFieldName = FieldRepository.GetById((int)selfRelationFieldId.Value)?.Name;
-                    return Common.GetParentEntityIdsForTree(scope.DbConnection, entityTypeCode, ids, contentId, selfRelationFieldName, null, null, null);
+                    return Common.GetParentEntityIdsForTree(scope.DbConnection, query.EntityTypeCode, query.Ids, contentId, selfRelationFieldName, null, null, null);
                 }
-                else
-                {
-                    var entity = EntityTypeRepository.GetByCode(entityTypeCode);
-                    if (string.IsNullOrWhiteSpace(entity?.Source) || string.IsNullOrWhiteSpace(entity?.IdField) || string.IsNullOrWhiteSpace(entity?.RecurringIdField)) return new int[0];
 
-                    return Common.GetParentEntityIdsForTree(scope.DbConnection, entityTypeCode, ids, null, null, entity.Source, entity.IdField, entity.RecurringIdField);
+                var entity = EntityTypeRepository.GetByCode(query.EntityTypeCode);
+                if (string.IsNullOrWhiteSpace(entity?.Source) || string.IsNullOrWhiteSpace(entity?.IdField) || string.IsNullOrWhiteSpace(entity?.RecurringIdField)) return new int[0];
 
-                }
+                return Common.GetParentEntityIdsForTree(scope.DbConnection, query.EntityTypeCode, query.Ids, null, null, entity.Source, entity.IdField, entity.RecurringIdField);
 
             }
         }

@@ -6,6 +6,7 @@ using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
@@ -83,7 +84,14 @@ namespace Quantumart.QP8.BLL.Repository
         {
             if (entityTypeCode == EntityTypeCode.Article && parentEntityId.HasValue && parentEntityId != 0)
             {
-                return ArticleRepository.GetSimpleList(parentEntityId.Value, null, null, ListSelectionMode.OnlySelectedItems, entitiesIDs.ToArray(), null, 0);
+                return ArticleRepository.GetSimpleList(
+                    new SimpleListQuery()
+                    {
+                        ParentEntityId = parentEntityId.Value,
+                        SelectionMode = ListSelectionMode.OnlySelectedItems,
+                        SelectedEntitiesIds = entitiesIDs.ToArray()
+                    }
+                );
             }
 
             using (var scope = new QPConnectionScope())

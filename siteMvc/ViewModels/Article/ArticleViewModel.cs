@@ -245,7 +245,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var list = new List<ListItem>();
             if (!isListOverflow || selectedArticleIDs.Length != 0)
             {
-                list = ArticleService.SimpleList(contentId, articleId, fieldId, mode, selectedArticleIDs, filter);
+                list = ArticleService.SimpleList(
+                    new SimpleListQuery()
+                    {
+                        ParentEntityId = contentId,
+                        EntityId = articleId,
+                        ListId = fieldId,
+                        SelectionMode = mode,
+                        SelectedEntitiesIds = selectedArticleIDs,
+                        Filter = filter
+                    });
             }
 
             return new RelationListResult { IsListOverflow = isListOverflow, Items = list };

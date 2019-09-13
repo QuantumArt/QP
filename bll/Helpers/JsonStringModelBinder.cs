@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Infrastructure.Converters;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
+namespace Quantumart.QP8.BLL.Helpers
 {
     public class JsonStringModelBinder<T> : IModelBinder
     {
@@ -23,16 +21,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 
             var incomingString = val.FirstValue;
 
-            try
-            {
                 bindingContext.Result = ModelBindingResult.Success(typeof(T) == typeof(IList<ArticleSearchQueryParam>)
                     ? JsonConvert.DeserializeObject<T>(incomingString, new JsonQueryParamConverter())
                     : JsonConvert.DeserializeObject<T>(incomingString));
-            }
-            catch (Exception exp)
-            {
-                bindingContext.ModelState.AddModelError(key, string.Format($"{key} is not valid.{Environment.NewLine}{exp.Message}"));
-            }
 
             return Task.CompletedTask;
         }
