@@ -5,7 +5,7 @@
   const settings = {
     pluginName: 'Typographer',
     pluginDesc: 'Типографер',
-    iconPath: '/Backend/Scripts/Quantumart/ckeditor/typographer/images/typographer.gif'
+    iconPath: window.APPLICATION_ROOT_URL + 'Scripts/Quantumart/ckeditor/typographer/images/typographer.gif'
   };
 
   // eslint-disable-next-line max-statements

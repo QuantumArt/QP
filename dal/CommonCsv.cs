@@ -159,7 +159,7 @@ namespace Quantumart.QP8.DAL
                         ,doc.col.value('./@guid', 'uniqueidentifier') UNIQUE_ID
                         FROM @xml.nodes('ITEMS/ITEM') doc(col)
 
-                    UPDATE CONTENT_ITEM SET ci.UNIQUE_ID = i.UNIQUE_ID FROM CONTENT_ITEM ci INNER JOIN @NewIds i
+                    UPDATE CONTENT_ITEM SET UNIQUE_ID = i.UNIQUE_ID FROM CONTENT_ITEM ci INNER JOIN @NewIds i
                     on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
                 " : $@"
                 WITH new AS

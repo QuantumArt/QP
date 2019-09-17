@@ -25,14 +25,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         }
 
         [ValidateNever]
+        [BindNever]
         public bool IsNew => EntityData.IsNew;
 
         public override MainComponentType MainComponentType => MainComponentType.Editor;
 
         [ValidateNever]
+        [BindNever]
         public override string MainComponentId => UniqueId("Editor");
 
         [ValidateNever]
+        [BindNever]
         public override ExpandoObject MainComponentParameters
         {
             get
@@ -48,6 +51,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         }
 
         [ValidateNever]
+        [BindNever]
         public override ExpandoObject MainComponentOptions
         {
             get
@@ -70,12 +74,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         public override DocumentContextState DocumentContextState => string.IsNullOrWhiteSpace(SuccesfulActionCode) ? DocumentContextState.Loaded : DocumentContextState.Saved;
 
         [ValidateNever]
+        [BindNever]
         public virtual string Id => EntityData.Id.ToString();
 
         [ValidateNever]
+        [BindNever]
         public virtual string Name => EntityData.Name;
 
         [ValidateNever]
+        [BindNever]
         public virtual DirectLinkOptions DirectLinkOptions
         {
             get

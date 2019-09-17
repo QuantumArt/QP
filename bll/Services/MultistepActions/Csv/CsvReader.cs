@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml.Linq;
+using Flurl.Util;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
@@ -14,6 +15,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -58,8 +60,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _csvLines = _reader.Lines.Where(s => !s.Skip).Skip(step * itemsPerStep).Take(itemsPerStep).ToArray();
             _initNumber = _csvLines.First().Number - 1;
             _titleHeaders = MultistepActionHelper.GetFileFields(_importSettings, _reader);
-            InitFields();
-            ConvertCsvLinesToArticles();
+            var fields = FieldRepository.GetList(_importSettings.FieldsList.Select(n => n.Value))
+                .ToDictionary(n => n.Id.ToString(), m => m);
+            InitFields(fields);
+            ConvertCsvLinesToArticles(fields);
             WriteArticlesToDb();
             processedItemsCount = _csvLines.Count();
         }
@@ -132,7 +136,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return articlesToUpdate;
         }
 
-        private void ConvertCsvLinesToArticles()
+        private void ConvertCsvLinesToArticles(Dictionary<string, Field> fields)
         {
             foreach (var line in _csvLines)
             {
@@ -169,13 +173,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 if (!article.BaseArticle.FieldValues.Any() && _aggregatedContentsMap.Where(w => w.Key != article.BaseArticle.Id).Any())
                 {
-                    var classifierFields = _importSettings.FieldsList.Where(w => w.Value.IsClassifier).Select(s => s.Value);
+                    var classifierFields = fields.Where(w => w.Value.IsClassifier).Select(n => n.Value).ToArray();
 
                     foreach (var classifier in classifierFields)
                     {
                         foreach (var classifierContentId in _aggregatedContentsMap.Where(w => w.Key != classifier.ContentId).Select(s => s.Key))
                         {
-                            if (_importSettings.FieldsList.Where(w => w.Key != "-1" && w.Value.ContentId == classifierContentId).Any())
+                            if (_importSettings.FieldsList.Where(w => w.Key != "-1" && fields[w.Key].ContentId == classifierContentId).Any())
                             {
                                 AddExtensionArticle(article, classifier, classifierContentId, fieldValues, line);
                             }
@@ -312,8 +316,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             var fieldIndex = _titleHeaders.IndexOf(fieldName);
             Ensure.NotEqual(fieldIndex, -1, ImportStrings.UniqueNotSpecified);
+            var field = (_importSettings.UniqueContentFieldId != 0) ? FieldRepository.GetById(_importSettings.UniqueContentFieldId) : null;
 
-            if (_importSettings.UniqueContentField == null || article.ContentId != _contentId)
+            if (field == null || article.ContentId != _contentId)
             {
                 var dbId = 0;
                 if (!string.IsNullOrEmpty(fieldValues[fieldIndex]) && !int.TryParse(fieldValues[fieldIndex], out dbId))
@@ -331,8 +336,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var value = PrepareValue(fieldValues[fieldIndex]);
                 if (value != "NULL" && !string.IsNullOrEmpty(value) && value != "\"\"")
                 {
-                    var fieldDbValue = new FieldValue { Field = _importSettings.UniqueContentField };
-                    FormatFieldValue(_importSettings.UniqueContentField, value, ref fieldDbValue);
+
+                    var fieldDbValue = new FieldValue { Field = field };
+                    FormatFieldValue(field, value, ref fieldDbValue);
                     _uniqueValuesList.Add(fieldDbValue.Value);
                 }
                 else
@@ -378,7 +384,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private ExtendedArticleList GetArticles(ExtendedArticleList articlesList, bool onlyExisting)
         {
             ExtendedArticleList existingArticles;
-            if (_importSettings.UniqueContentField == null)
+            var uniqueField = FieldRepository.GetById(_importSettings.UniqueContentFieldId);
+            if (uniqueField == null)
             {
                 var existingIds = GetExistingArticleIds(articlesList.GetBaseArticleIds());
                 existingArticles = articlesList.Filter(a => !onlyExisting ^ existingIds.Contains(a.Id));
@@ -386,7 +393,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             else
             {
                 existingArticles = new ExtendedArticleList(articlesList);
-                var existingIdsMap = GetExistingArticleIdsMap(_uniqueValuesList, _importSettings.UniqueContentField.Name);
+                var existingIdsMap = GetExistingArticleIdsMap(_uniqueValuesList, uniqueField.Name);
                 for (var i = 0; i < articlesList.Count; i++)
                 {
                     var article = articlesList[i];
@@ -991,15 +998,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return columnIndexes.Select(k => k.ToString()).ToList();
         }
 
-        private void InitFields()
+        private void InitFields(Dictionary<string, Field> fields)
         {
-            _fieldsMap = _importSettings
-                .FieldsList.Select(f => f.Value)
+            _fieldsMap = fields.Select(f => f.Value)
                 .GroupBy(f => f.ContentId)
                 .Select(g => g)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
-            _headersMap = _importSettings.FieldsList.ToDictionary(f => f.Value, f => _titleHeaders.FindIndex(s => s == f.Key));
+            _headersMap = fields.ToDictionary(f => f.Value, f => _titleHeaders.FindIndex(s => s == f.Value.Name));
             _aggregatedContentsMap = ContentRepository.GetAggregatedContents(_contentId).ToDictionary(c => c.Id, c => c);
             _articlesListFromCsv = new ExtendedArticleList();
             _uniqueValuesList = new List<string>();

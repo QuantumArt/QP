@@ -6032,6 +6032,8 @@ order by ActionDate desc
                 ").ToList();
             var query = string.Join(" UNION ", queryParts);
 
+            var result = new Dictionary<int, Dictionary<int, int>>();
+            if (string.IsNullOrEmpty(query)) return result;
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -6040,7 +6042,7 @@ order by ActionDate desc
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var result = new Dictionary<int, Dictionary<int, int>>();
+
                     while (reader.Read())
                     {
                         var id = Converter.ToInt32(reader["Id"]);

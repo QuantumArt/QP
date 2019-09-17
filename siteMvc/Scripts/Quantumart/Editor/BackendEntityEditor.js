@@ -648,7 +648,7 @@ export class BackendEntityEditor extends Observable {
       }
 
       const $div = $('<div/>', options);
-      $div.append($('<img/>', { src: '/Backend/Content/Common/0.gif' }));
+      $div.append($('<img/>', { src: 'Content/Common/0.gif' }));
 
       if (newSettings.url) {
         $div.css({ 'background-image': `url(${newSettings.url})`, 'background-color': 'transparent' });

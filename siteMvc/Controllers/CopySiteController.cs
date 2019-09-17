@@ -111,7 +111,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult TearDown(bool isError)
         {
             _multistepService.TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

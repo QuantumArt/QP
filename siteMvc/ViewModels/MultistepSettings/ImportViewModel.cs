@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.ModelBinding;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Enums.Csv;
@@ -47,6 +49,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         [Display(Name = "UniqueContentFieldToUpdate", ResourceType = typeof(MultistepActionStrings))]
         public string UniqueContentFieldId { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public List<ListItem> UniqueContentFieldsToUpdate
         {
             get
@@ -62,18 +66,22 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             }
         }
 
+        [ValidateNever]
+        [BindNever]
         public BLL.Field UniqueContentField { get; set; }
 
         [Display(Name = "DownloadedFile", ResourceType = typeof(MultistepActionStrings))]
         public string FileName { get; set; } = MultistepActionStrings.NoFile;
 
-        public List<KeyValuePair<string, BLL.Field>> NewFieldsList { get; set; }
+        [ValidateNever]
+        [BindNever]
+        public List<KeyValuePair<string, int>> NewFieldsList { get; set; }
 
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
 
         public void SetCorrespondingFieldName(IFormCollection collection)
         {
-            NewFieldsList = new List<KeyValuePair<string, BLL.Field>>();
+            NewFieldsList = new List<KeyValuePair<string, int>>();
             UniqueAggregatedFieldsToUpdate = new Dictionary<int, string>();
             foreach (var key in collection.Keys.Where(s => s.StartsWith(FieldPrefix)))
             {
@@ -88,11 +96,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                 {
                     if (int.TryParse(key.Replace(FieldPrefix, string.Empty), out var fieldId))
                     {
-                        var field = FieldRepository.GetById(fieldId);
-                        if (field != null)
-                        {
-                            NewFieldsList.Add(new KeyValuePair<string, BLL.Field>(collection[key], field));
-                        }
+                        NewFieldsList.Add(new KeyValuePair<string, int>(collection[key], fieldId));
                     }
                 }
             }
@@ -111,13 +115,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             LineSeparator = ((CsvLineSeparator)int.Parse(LineSeparator)).Description(),
             FileName = FileName,
             UniqueFieldToUpdate = UniqueFieldToUpdate,
-            UniqueContentField = UniqueContentField,
+            UniqueContentFieldId = UniqueContentField?.Id ?? 0,
             NoHeaders = NoHeaders,
             ImportAction = ImportAction,
             FieldsList = NewFieldsList,
             UniqueAggregatedFieldsToUpdate = UniqueAggregatedFieldsToUpdate
         };
 
+        [ValidateNever]
+        [BindNever]
         public ImportFieldGroupViewModel FieldGroup
         {
             get
@@ -220,6 +226,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public List<ExtendedListItem> Fields { get; }
 
+        [ValidateNever]
         public List<ImportFieldGroupViewModel> Groups { get; }
     }
 }

@@ -51,10 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public async Task<ActionResult> Settings(string tabId, int parentId, int id)
         {
-            return await JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
-            {
-                ContentId = id
-            });
+            return await JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel { ContentId = id });
         }
 
         [HttpPost]
@@ -63,7 +60,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public async Task<ActionResult> FileFields(int parentId, int id, IFormCollection collection)
         {
-            var model = new ImportViewModel();
+            var model = new ImportViewModel() { ContentId = id };
             await TryUpdateModelAsync(model);
 
             model.SetCorrespondingFieldName(collection);
@@ -85,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public async Task<ActionResult> SetupWithParams(int parentId, int id, IFormCollection collection)
         {
-            var model = new ImportViewModel();
+            var model = new ImportViewModel() { ContentId = id };
             await TryUpdateModelAsync(model);
 
             model.SetCorrespondingFieldName(collection);
@@ -106,7 +103,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult TearDown(bool isError)
         {
             _service.TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

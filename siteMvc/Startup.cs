@@ -45,6 +45,7 @@ using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
@@ -77,6 +78,10 @@ namespace Quantumart.QP8.WebMvc
             Configuration.Bind("Properties", qpOptions);
             services.AddSingleton(qpOptions);
             QPConfiguration.Options = qpOptions;
+
+            var formOptions = new FormOptions();
+            Configuration.Bind("Form", formOptions);
+            services.AddSingleton(formOptions);
 
             // used by Session middleware
             services.AddDistributedMemoryCache();

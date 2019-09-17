@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult TearDown(string command)
         {
             _getService(command).TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

@@ -67,6 +67,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
                         }
 
+                        settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
+
                         var logData = new
                         {
                             settings.Id,
@@ -76,6 +78,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                         };
 
                         _importLogger.Trace($"Import articles step: {step}. Settings: {logData.ToJsonLog()}");
+
                         result.ProcessedItemsCount = processedItemsCount;
                         result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";
                     }

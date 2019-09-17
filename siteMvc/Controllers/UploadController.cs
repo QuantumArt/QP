@@ -1,8 +1,14 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
@@ -10,6 +16,7 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using FileIO = System.IO.File;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -17,14 +24,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class UploadController : QPController
     {
         private readonly IBackendActionLogRepository _logger;
+        private readonly FormOptions _formOptions;
 
-        public UploadController(IBackendActionLogRepository logger)
+        public UploadController(IBackendActionLogRepository logger, FormOptions formOptions)
         {
             _logger = logger;
+            _formOptions = formOptions;
         }
 
         [HttpPost]
-        public async Task<ActionResult> UploadChunk(int? chunk, int? chunks, string name, string destinationUrl)
+        public async Task<ActionResult> UploadChunk(
+            IFormFile file, int? chunk, int? chunks, string name, string destinationUrl
+        )
         {
             if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
             {
@@ -48,7 +59,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             chunks = chunks ?? 1;
             PathSecurityResult securityResult;
 
-            var fileUpload = Request.Form.Files[0];
             var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
             var destPath = Path.Combine(destinationUrl, name);
 
@@ -66,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     using (var fileStream = new FileStream(destPath, FileMode.Create))
                     {
-                        await fileUpload.CopyToAsync(fileStream);
+                        await file.CopyToAsync(fileStream);
                     }
                 }
                 catch (Exception ex)
@@ -82,7 +92,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     using (var fileStream = new FileStream(tempPath, chunk == 0 ? FileMode.Create : FileMode.Append))
                     {
-                       await fileUpload.CopyToAsync(fileStream);
+                       await file.CopyToAsync(fileStream);
                     }
                 }
                 catch (Exception ex)

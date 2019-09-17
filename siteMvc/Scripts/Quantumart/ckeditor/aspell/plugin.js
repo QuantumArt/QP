@@ -5,10 +5,10 @@
   CKEDITOR.aspellSettings = {
     pluginName: 'Spellchecker',
     pluginDesc: 'Проверка орфографии',
-    spellCheckScriptPath: '/Backend/VisualEditorConfig/AspellCheck',
-    spellcheckerHtmlPath: '/Backend/Scripts/Quantumart/ckeditor/aspell/spellerpages/spellchecker.html',
-    spellcheckerJsPath: '/Backend/Scripts/Quantumart/ckeditor/aspell/spellerpages/spellChecker.js',
-    spellcheckerDialogJsPath: '/Backend/Scripts/Quantumart/ckeditor/aspell/dialogs/aspell.js'
+    spellCheckScriptPath: window.APPLICATION_ROOT_URL + 'VisualEditorConfig/AspellCheck',
+    spellcheckerHtmlPath: window.APPLICATION_ROOT_URL + 'Scripts/Quantumart/ckeditor/aspell/spellerpages/spellchecker.html',
+    spellcheckerJsPath: window.APPLICATION_ROOT_URL + 'Scripts/Quantumart/ckeditor/aspell/spellerpages/spellChecker.js',
+    spellcheckerDialogJsPath: window.APPLICATION_ROOT_URL + 'Scripts/Quantumart/ckeditor/aspell/dialogs/aspell.js'
   };
 
   CKEDITOR.plugins.add(CKEDITOR.aspellSettings.pluginName, {

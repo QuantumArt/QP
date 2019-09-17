@@ -12,9 +12,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportSettings : IMultistepActionParams
     {
-        private int SiteId { get; }
+        public int SiteId { get; set; }
 
-        private int ContentId { get; }
+        public int ContentId { get; set; }
 
         public ImportSettings(int siteId, int contentId)
         {
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             InsertedArticleIds = new List<int>();
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
         public string UploadFilePath => GetUploadFilePath();
 
@@ -70,13 +70,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public bool UpdateAndInsert { get; set; }
 
-        public Field UniqueContentField { get; set; }
+        public int UniqueContentFieldId { get; set; }
 
         public string UniqueFieldToUpdate { get; set; } = string.Empty;
 
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
 
-        public List<KeyValuePair<string, Field>> FieldsList { get; set; }
+        public List<KeyValuePair<string, int>> FieldsList { get; set; }
 
         public List<int> UpdatedArticleIds { get; set; }
 

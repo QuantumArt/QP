@@ -165,7 +165,7 @@ namespace Quantumart.QP8.BLL.Services
                 }.Assemble();
 
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
-                return MessageResult.Download($"/Backend/Site/GetClassesZip/{id}");
+                return MessageResult.Download($"~/Site/GetClassesZip/{id}");
             }
 
             new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType).Assemble();

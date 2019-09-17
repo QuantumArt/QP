@@ -50,7 +50,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult TearDown(bool isError)
         {
             Service.TearDown();
-            return null;
+            return Json(null);
         }
     }
 }
