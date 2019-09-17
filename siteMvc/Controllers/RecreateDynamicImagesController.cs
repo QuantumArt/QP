@@ -4,6 +4,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -29,10 +30,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int step)
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
         {
-            var stepResult = _service.Step(step);
-            return Json(stepResult);
+            return Json(_service.Step(model.Step));
         }
 
         [HttpPost]

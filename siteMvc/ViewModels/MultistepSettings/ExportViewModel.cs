@@ -11,6 +11,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public ExportViewModel()
         {
             AllFields = true;
+            CustomFields = new int[] { };
+            FieldsToExpand = new int[] { };
+            Ids = new int[] { };
         }
 
         public bool IsArchive { get; set; }

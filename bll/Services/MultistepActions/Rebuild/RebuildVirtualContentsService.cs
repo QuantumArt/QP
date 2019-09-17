@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
@@ -11,8 +10,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
 {
     public sealed class RebuildVirtualContentsService : MultistepActionServiceAbstract
     {
-        private RebuildVirtualContentViewsCommand _rebuildViewsCommand;
-        private RebuildUserQueryCommand _rebuildUserQueryCommand;
 
         public override MultistepActionSettings Setup(int siteId, int contentId, bool? boundToExternal)
         {
@@ -29,33 +26,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
                 rebuildedViewSubContents = helper.TraverseForUpdateVirtualSubContents(content);
             }
 
-            _rebuildViewsCommand = new RebuildVirtualContentViewsCommand(contentId, content.Name, rebuildedViewSubContents);
-            _rebuildViewsCommand.Setup();
+            var rebuildViewsCommand = new RebuildVirtualContentViewsCommand(contentId, content.Name, rebuildedViewSubContents);
+            rebuildViewsCommand.Setup();
+            Commands.Add(rebuildViewsCommand);
 
-            _rebuildUserQueryCommand = new RebuildUserQueryCommand(contentId, content.Name, rebuildedViewSubContents);
-            _rebuildUserQueryCommand.Setup();
+            var rebuildUserQueryCommand = new RebuildUserQueryCommand(contentId, content.Name, rebuildedViewSubContents);
+            rebuildUserQueryCommand.Setup();
+            Commands.Add(rebuildUserQueryCommand);
 
             return base.Setup(siteId, contentId, boundToExternal);
         }
-
-        protected override MultistepActionSettings CreateActionSettings(int siteId, int contentId) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _rebuildViewsCommand.GetStageSettings(),
-                _rebuildUserQueryCommand.GetStageSettings()
-            }
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int siteId, int contentId, bool? boundToExternal) => new MultistepActionServiceContext
-        {
-            CommandStates = new[]
-            {
-                _rebuildViewsCommand.GetState(),
-                _rebuildUserQueryCommand.GetState()
-            }
-        };
-
         protected override string ContextSessionKey => HttpContextSession.RebuildUserQueryProcessingContext;
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
@@ -85,4 +65,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
         public const int RebuildUserQueries = 2;
     }
 }
-#endif

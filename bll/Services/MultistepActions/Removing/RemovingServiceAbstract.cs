@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
@@ -36,4 +35,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         public const int RemoveSite = 5;
     }
 }
-#endif

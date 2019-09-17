@@ -11,6 +11,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -38,12 +39,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public async Task<ActionResult> Settings(string tabId, int parentId, [Bind(Prefix = "IDs")] int[] ids)
+        public async Task<ActionResult> Settings(string tabId, int parentId, [FromBody] SelectedItemsViewModel model)
         {
             return await JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
             {
                 ContentId = parentId,
-                Ids = ids,
+                Ids = model.Ids,
                 IsArchive = true
             });
         }
@@ -52,16 +53,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public ActionResult Setup(int parentId, [Bind(Prefix = "IDs")] int[] ids, bool? boundToExternal)
+        public ActionResult Setup(int parentId, [FromBody] SelectedItemsViewModel model, bool? boundToExternal)
         {
-            return Json(_service.Setup(parentId, 0, ids, boundToExternal, true));
+            return Json(_service.Setup(parentId, 0, model.Ids, boundToExternal, true));
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public JsonResult SetupWithParams(int parentId, int[] ids, ExportViewModel model)
+        public JsonResult SetupWithParams(int parentId, [FromBody] ExportViewModel model)
         {
             var settings = new ExportSettings
             {
@@ -75,22 +76,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (!settings.AllFields)
             {
-                settings.CustomFieldIds = model.CustomFields ?? Enumerable.Empty<int>().ToArray();
+                settings.CustomFieldIds = model.CustomFields.ToList();
                 settings.ExcludeSystemFields = model.ExcludeSystemFields;
             }
 
-            settings.isArchive = true;
-            settings.FieldIdsToExpand = model.FieldsToExpand ?? Enumerable.Empty<int>().ToArray();
-            _service.SetupWithParams(parentId, ids, settings);
+            settings.IsArchive = true;
+            settings.FieldIdsToExpand = model.FieldsToExpand.ToList();
+            _service.SetupWithParams(parentId, model.Ids, settings);
             return JsonCamelCase(new JSendResponse { Status = JSendStatus.Success });
         }
 
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step)
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
         {
-            return Json(_service.Step(stage, step));
+            return Json(_service.Step(model.Stage, model.Step));
         }
 
         [HttpPost]

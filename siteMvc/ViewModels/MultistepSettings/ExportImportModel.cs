@@ -57,6 +57,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public override string ActionCode => throw new NotImplementedException();
 
+        public override void DoCustomBinding()
+        {
+        }
+
+        public override void Validate()
+        {
+        }
+
         public IEnumerable<ListItem> GetList(IEnumerable<int> ids)
         {
             var result = Enumerable.Empty<ListItem>();

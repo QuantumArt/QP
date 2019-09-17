@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
@@ -55,4 +54,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         }
     }
 }
-#endif

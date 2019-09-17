@@ -15,6 +15,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -96,7 +97,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
+        {
+            return Json(_service.Step(model.Stage, model.Step));
+        }
 
         [HttpPost]
         public ActionResult TearDown(bool isError)

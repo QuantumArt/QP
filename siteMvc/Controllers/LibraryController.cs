@@ -9,10 +9,13 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -73,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult ExportFileDownload(int id, string fileName)
         {
             var currentSite = SiteService.Read(id);
-            var folderForUpload = $@"{currentSite.LiveDirectory}\temp\";
+            var folderForUpload = $@"{currentSite.UploadDir}\{CsvWriter.FolderForUpload}\";
             var inf = new PathInfo
             {
                 Path = folderForUpload
@@ -118,11 +121,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (!string.IsNullOrEmpty(path))
             {
-                Response.Headers.Add(
-                    ResponseHeaders.ContentDispositionKey,
-                    string.Format(ContentDispositionTemplate, WebUtility.UrlEncode(fileName)));
+                var dir = Path.GetDirectoryName(path);
+                var provider = new PhysicalFileProvider(dir);
+                var fileInfo = provider.GetFileInfo(fileName);
+                var readStream = fileInfo.CreateReadStream();
 
-                return File(path, MimeTypes.OctetStream);
+                return File(readStream, MimeTypes.OctetStream, fileName);
             }
 
             return null;

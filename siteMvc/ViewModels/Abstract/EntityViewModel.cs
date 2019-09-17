@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
@@ -23,12 +24,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             return model;
         }
 
+        [ValidateNever]
         public bool IsNew => EntityData.IsNew;
 
         public override MainComponentType MainComponentType => MainComponentType.Editor;
 
+        [ValidateNever]
         public override string MainComponentId => UniqueId("Editor");
 
+        [ValidateNever]
         public override ExpandoObject MainComponentParameters
         {
             get
@@ -43,6 +47,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             }
         }
 
+        [ValidateNever]
         public override ExpandoObject MainComponentOptions
         {
             get
@@ -64,10 +69,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public override DocumentContextState DocumentContextState => string.IsNullOrWhiteSpace(SuccesfulActionCode) ? DocumentContextState.Loaded : DocumentContextState.Saved;
 
+        [ValidateNever]
         public virtual string Id => EntityData.Id.ToString();
 
+        [ValidateNever]
         public virtual string Name => EntityData.Name;
 
+        [ValidateNever]
         public virtual DirectLinkOptions DirectLinkOptions
         {
             get

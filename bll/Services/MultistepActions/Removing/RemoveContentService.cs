@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,9 +10,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public sealed class RemoveContentService : RemovingServiceAbstract
     {
-        private ClearContentCommand _clearCommand;
-        private RemoveContentCommand _removeCommand;
-
         public override MultistepActionSettings Setup(int siteId, int contentId, bool? boundToExternal)
         {
             var content = ContentRepository.GetById(contentId);
@@ -43,28 +39,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
                 contentName = row.Field<string>("CONTENT_NAME");
             }
 
-            _clearCommand = new ClearContentCommand(siteId, contentId, contentName, itemCount);
-            _removeCommand = new RemoveContentCommand(siteId, contentId, contentName);
+            Commands.Add(new ClearContentCommand(siteId, contentId, contentName, itemCount));
+            Commands.Add(new RemoveContentCommand(siteId, contentId, contentName));
             return base.Setup(siteId, contentId, boundToExternal);
         }
-
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _clearCommand.GetStageSettings(),
-                _removeCommand.GetStageSettings()
-            }
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext
-        {
-            CommandStates = new[]
-            {
-                _clearCommand.GetState(),
-                _removeCommand.GetState()
-            }
-        };
     }
 }
-#endif

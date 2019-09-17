@@ -512,11 +512,7 @@ BackendLibrary.generateActionUrl = function (actionName, urlParams) {
 
   if (urlParams) {
     const html = new $.telerik.stringBuilder();
-
-    html.cat(window.APPLICATION_ROOT_URL);
-    html.cat('/Library/');
-    html.cat(actionName);
-    html.cat(`/${urlParams.id || 0}`);
+    html.cat(`/Library/${actionName}/${urlParams.id || 0}`);
     html.cat(`?fileName=${urlParams.fileName}`);
     html.cat(`&isVersion=${urlParams.isVersion || false}`);
     html.catIf(`&entityTypeCode=${urlParams.entityTypeCode}`, urlParams.entityTypeCode);

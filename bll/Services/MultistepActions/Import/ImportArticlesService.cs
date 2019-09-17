@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +16,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesService : MultistepActionServiceAbstract
     {
-        private ImportArticlesCommand _command;
-
         private readonly ILog _importLogger;
 
         public ImportArticlesService()
@@ -50,7 +47,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 fileReader.CopyFileToTempDir();
 
                 var linesTotalCount = fileReader.RowsCount();
-                _command = new ImportArticlesCommand(parentId, id, linesTotalCount);
+                Commands.Add(new ImportArticlesCommand(parentId, id, linesTotalCount));
 
                 return base.Setup(parentId, id, boundToExternal);
             }
@@ -59,16 +56,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new ImportException(ex.Message, ex, settings);
             }
         }
-
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _command.GetStageSettings()
-            }
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext { CommandStates = new[] { _command.GetState() } };
 
         protected override string ContextSessionKey => HttpContextSession.ImportContextSessionKey;
 
@@ -115,4 +102,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         }
     }
 }
-#endif

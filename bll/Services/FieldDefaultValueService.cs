@@ -53,18 +53,15 @@ namespace Quantumart.QP8.BLL.Services
             };
 
             HttpContext.Session.SetValue(HttpContextSession.FieldDefaultValueServiceProcessingContext, context);
-            return new MultistepActionSettings
-            {
-                Stages = new[]
+            var result = new MultistepActionSettings();
+            result.Stages.Add(new MultistepStageSettings()
                 {
-                    new MultistepStageSettings
-                    {
-                        Name = FieldStrings.ApplyDefaultValueStageName,
-                        StepCount = stepCount,
-                        ItemCount = itemCount
-                    }
+                    Name = FieldStrings.ApplyDefaultValueStageName,
+                    StepCount = stepCount,
+                    ItemCount = itemCount
                 }
-            };
+            );
+            return result;
         }
 
         public MultistepActionStepResult Step(int step)

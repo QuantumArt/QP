@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
@@ -90,4 +89,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         };
     }
 }
-#endif

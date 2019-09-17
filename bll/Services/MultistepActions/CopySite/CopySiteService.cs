@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
@@ -52,50 +51,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 siteTemplatesElementsCount = 0;
             }
 
-            _copySiteSettingsCommand = new CopySiteSettingsCommand(siteId, site.Name);
-            _copySiteContentsCommand = new CopySiteContentsCommand(siteId, site.Name, contentCount);
-            _copySiteVirtualContentsCommand = new CopySiteVirtualContentsCommand(siteId, site.Name, virtualContentCount);
-            _copySiteContentLinksCommand = new CopySiteContentLinksCommand(siteId, site.Name, siteContentLinksCount);
-            _copySiteArticlesCommand = new CopySiteArticlesCommand(siteId, site.Name, siteArticlesCount);
-            _copySiteItemLinksCommand = new CopySiteItemLinksCommand(siteId, siteArticlesCount);
-            _copySiteUpdateArticleIdsCommand = new CopySiteUpdateArticleIdsCommand(siteId, siteArticlesCount);
-            _copySiteTemplatesCommand = new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount);
-            _copySiteFilesCommand = new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles);
+            Commands.Add(new CopySiteSettingsCommand(siteId, site.Name));
+            Commands.Add(new CopySiteContentsCommand(siteId, site.Name, contentCount));
+            Commands.Add(new CopySiteVirtualContentsCommand(siteId, site.Name, virtualContentCount));
+            Commands.Add(new CopySiteContentLinksCommand(siteId, site.Name, siteContentLinksCount));
+            Commands.Add(new CopySiteArticlesCommand(siteId, site.Name, siteArticlesCount));
+            Commands.Add(new CopySiteItemLinksCommand(siteId, siteArticlesCount));
+            Commands.Add(new CopySiteUpdateArticleIdsCommand(siteId, siteArticlesCount));
+            Commands.Add(new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount));
+            Commands.Add(new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles));
 
             return base.Setup(parentId, siteId, boundToExternal);
         }
-
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _copySiteSettingsCommand.GetStageSettings(),
-                _copySiteContentsCommand.GetStageSettings(),
-                _copySiteVirtualContentsCommand.GetStageSettings(),
-                _copySiteContentLinksCommand.GetStageSettings(),
-                _copySiteArticlesCommand.GetStageSettings(),
-                _copySiteItemLinksCommand.GetStageSettings(),
-                _copySiteUpdateArticleIdsCommand.GetStageSettings(),
-                _copySiteTemplatesCommand.GetStageSettings(),
-                _copySiteFilesCommand.GetStageSettings()
-            }
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext
-        {
-            CommandStates = new[]
-            {
-                _copySiteSettingsCommand.GetState(),
-                _copySiteContentsCommand.GetState(),
-                _copySiteVirtualContentsCommand.GetState(),
-                _copySiteContentLinksCommand.GetState(),
-                _copySiteArticlesCommand.GetState(),
-                _copySiteItemLinksCommand.GetState(),
-                _copySiteUpdateArticleIdsCommand.GetState(),
-                _copySiteTemplatesCommand.GetState(),
-                _copySiteFilesCommand.GetState()
-            }
-        };
 
         protected string CopySiteContextSessionKey => HttpContextSession.CopySiteServiceSettings;
 
@@ -118,4 +85,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         }
     }
 }
-#endif

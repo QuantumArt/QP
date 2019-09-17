@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
@@ -49,4 +48,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         public const int CopySiteUpdateArticleIds = 10;
     }
 }
-#endif

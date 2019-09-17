@@ -10029,9 +10029,11 @@ order by ActionDate desc
                     CONTENT_ITEM_ID
                 from
                     content_{contentId}_united a {WithNoLock(dbType)}
-                    {(ids == null
-                        ? string.Empty
-                        : $"join {IdList(dbType, "@ids", "ids")} on a.CONTENT_ITEM_ID = ids.Id"
+                    {(
+                        ids != null && ids.Any()
+                        ? $"join {IdList(dbType, "@ids", "ids")} on a.CONTENT_ITEM_ID = ids.Id"
+                        : string.Empty
+
                     )}
                 WHERE
                    {SqlQuerySyntaxHelper.CastToBool(dbType, "a.archive")} = @archive
@@ -10042,7 +10044,7 @@ order by ActionDate desc
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (ids != null)
+                if (ids != null && ids.Any())
                 {
                     cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 }

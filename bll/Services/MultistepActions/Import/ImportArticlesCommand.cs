@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.Transactions;
 using Microsoft.AspNetCore.Http;
@@ -100,4 +99,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         };
     }
 }
-#endif
+

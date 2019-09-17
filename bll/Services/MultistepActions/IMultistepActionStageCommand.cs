@@ -9,5 +9,9 @@
         /// Выполняет команду для шага
         /// </summary>
         MultistepActionStepResult Step(int step);
+
+        MultistepStageSettings GetStageSettings();
+
+        MultistepActionStageCommandState GetState();
     }
 }

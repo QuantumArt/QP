@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.Resources;
@@ -53,4 +52,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         #endregion
     }
 }
-#endif

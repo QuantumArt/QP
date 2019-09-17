@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -68,18 +67,15 @@ namespace Quantumart.QP8.BLL.Services
 
                 var itemCount = dataRows.Length;
                 var stepCount = MultistepActionHelper.GetStepCount(itemCount, ItemsPerStep);
-                return new MultistepActionSettings
-                {
-                    Stages = new[]
+                var result = new MultistepActionSettings();
+                result.Stages.Add(new MultistepStageSettings
                     {
-                        new MultistepStageSettings
-                        {
-                            Name = FieldStrings.RecreateDynamicImagesStageName,
-                            StepCount = stepCount,
-                            ItemCount = itemCount
-                        }
+                        Name = FieldStrings.RecreateDynamicImagesStageName,
+                        StepCount = stepCount,
+                        ItemCount = itemCount
                     }
-                };
+                );
+                return result;
             }
 
             return null;
@@ -158,4 +154,3 @@ namespace Quantumart.QP8.BLL.Services
         }
     }
 }
-#endif

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
@@ -50,6 +51,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
     {
         protected static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
+        protected List<IMultistepActionStageCommand> Commands = new List<IMultistepActionStageCommand>();
+
         public virtual MessageResult PreAction(int parentId, int id) => null;
 
         public virtual MessageResult PreAction(int parentId, int id, int[] ids) => null;
@@ -93,9 +96,26 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
             HttpContext.Session.Remove(ContextSessionKey);
         }
 
-        protected abstract MultistepActionSettings CreateActionSettings(int parentId, int id);
+        protected virtual MultistepActionSettings CreateActionSettings(int parentId, int id)
+        {
+            var result = new MultistepActionSettings() { ParentId = parentId };
+            foreach (var cmd in Commands)
+            {
+                result.Stages.Add(cmd.GetStageSettings());
+            }
+            return result;
+        }
 
-        protected abstract MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal);
+        protected virtual MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
+        {
+            var result = new MultistepActionServiceContext();
+            foreach (var cmd in Commands)
+            {
+                result.CommandStates.Add(cmd.GetState());
+            }
+            return result;
+        }
+
 
         protected abstract string ContextSessionKey { get; }
 

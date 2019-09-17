@@ -11,6 +11,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -52,7 +53,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        public JsonResult SetupWithParams(int parentId, int id, ExportViewModel model)
+        public JsonResult SetupWithParams(int parentId, int id, [FromBody] ExportViewModel model)
         {
             var settings = new ExportSettings
             {
@@ -66,11 +67,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (!settings.AllFields)
             {
-                settings.CustomFieldIds = model.CustomFields.ToArray();
+                settings.CustomFieldIds = model.CustomFields.ToList();
                 settings.ExcludeSystemFields = model.ExcludeSystemFields;
             }
 
-            settings.FieldIdsToExpand = model.FieldsToExpand ?? Enumerable.Empty<int>().ToArray();
+            settings.FieldIdsToExpand = model.FieldsToExpand.ToList();
 
             _service.SetupWithParams(parentId, id, settings);
             return JsonCamelCase(new JSendResponse { Status = JSendStatus.Success });
@@ -79,7 +80,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
+        {
+            return Json(_service.Step(model.Stage, model.Step));
+        }
 
         [HttpPost]
         public void TearDown(bool isError)

@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -72,4 +71,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         };
     }
 }
-#endif

@@ -9,7 +9,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
     [Serializable]
     public class MultistepActionServiceContext
     {
-        public MultistepActionStageCommandState[] CommandStates { get; set; }
+        public MultistepActionServiceContext()
+        {
+            CommandStates = new List<MultistepActionStageCommandState>();
+        }
+        public List<MultistepActionStageCommandState> CommandStates { get; set; }
     }
 
     /// <summary>
@@ -25,9 +29,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
         public int Id { get; set; }
 
-        public int[] Ids { get; set; }
+        public List<int> Ids { get; set; }
 
-        public IEnumerable<Content> ExtensionContents { get; set; }
+        public List<int> ExtensionContentIds { get; set; }
 
         public bool? BoundToExternal { get; set; }
 

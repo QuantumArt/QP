@@ -41,8 +41,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
         public void Initialize(MultistepActionStageCommandState state)
         {
             ContentId = state.ParentId;
-            ItemCount = state.Ids.Length;
-            Ids = state.Ids;
+            ItemCount = state.Ids.Count;
+            Ids = state.Ids.ToArray();
             BoundToExternal = state.BoundToExternal;
             ItemsPerStep = state.ItemsPerStep;
         }
@@ -51,10 +51,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
         {
             ParentId = ContentId,
             Id = 0,
-            Ids = Ids,
-            ExtensionContents = ContentRepository.GetList(
-                ContentRepository.GetReferencedAggregatedContentIds(ContentId, Ids ?? new int[0])
-            ).ToArray(),
+            Ids = Ids.ToList(),
+            ExtensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(ContentId, Ids).ToList(),
             BoundToExternal = BoundToExternal,
             ItemsPerStep = ItemsPerStep
         };

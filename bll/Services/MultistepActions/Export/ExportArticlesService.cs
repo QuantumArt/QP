@@ -13,8 +13,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportArticlesService : MultistepActionServiceAbstract
     {
-        private ExportArticlesCommand _command;
-
         public void SetupWithParams(int parentId, int id, int[] ids, ExportSettings settingsParams)
         {
             var contentId = ids == null ? id : parentId;
@@ -25,6 +23,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             settingsParams.ContentId = content.Id;
+            settingsParams.SiteId = content.SiteId;
             HttpContext.Session.SetValue(HttpContextSession.ExportSettingsSessionKey, settingsParams);
         }
 
@@ -44,7 +43,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive)
         {
-            var contentId = ids == null ? id : parentId;
+            var contentId = ids != null && ids.Any() ? parentId : id;
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
@@ -52,25 +51,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             var articleIds = GetArticleIds(ids, content.Id, isArchive);
-            var articleExtensionContents = GetArticleExtensionContents(articleIds, content.Id, isArchive);
-            _command = new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContents);
-
+            var articleExtensionContentIds = GetArticleExtensionContentIds(articleIds, content.Id, isArchive);
+            Commands.Add(new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContentIds));
             return base.Setup(content.SiteId, content.Id, boundToExternal);
-        }
-
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _command.GetStageSettings()
-            },
-            ParentId = parentId
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
-        {
-            var commandState = _command.GetState();
-            return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
         }
 
         protected override string ContextSessionKey { get; } = HttpContextSession.ExportContextSessionKey;
@@ -122,8 +105,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy, isArchive);
         }
 
-        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId, bool isArchive) => ContentRepository.GetList(
-            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0], isArchive)
-        ).ToArray();
+        private static int[] GetArticleExtensionContentIds(int[] ids, int contentId, bool isArchive) =>
+            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0], isArchive).ToArray();
     }
 }

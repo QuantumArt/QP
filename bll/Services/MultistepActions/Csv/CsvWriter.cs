@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvWriter
     {
-        private const string FolderForUpload = "temp";
+        public const string FolderForUpload = "temp";
         private const string IdentifierFieldName = FieldName.ContentItemId;
 
         private const string FieldNameHeaderTemplate = "{0}.{1}";
@@ -46,13 +46,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public bool CsvReady => _itemsPerStep * (_step + 1) >= _ids.Length;
 
-        public string CopyFileToTempSiteLiveDirectory()
+        public string CopyFileToTempUploadDirectory()
         {
             var fileInfo = new FileInfo(_settings.UploadFilePath);
             if (fileInfo.Exists)
             {
                 var currentSite = SiteRepository.GetById(_siteId);
-                var uploadDir = $@"{currentSite.LiveDirectory}\{FolderForUpload}";
+                var uploadDir = $@"{currentSite.UploadDir}\{FolderForUpload}";
                 if (!Directory.Exists(uploadDir))
                 {
                     Directory.CreateDirectory(uploadDir);
@@ -78,7 +78,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 UpdateExportSettings();
                 WriteFieldNames();
             }
-
             WriteFieldValues();
             return _processedItemsCount;
         }
@@ -266,9 +265,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             Array.Copy(_ids, StartFrom - 1, stepIds, 0, stepLength);
 
             var orderBy = string.IsNullOrEmpty(_settings.OrderByField) ? IdentifierFieldName : _settings.OrderByField;
-            var archive = _settings.isArchive ? "1": "0";
+            var archive = _settings.IsArchive ? "1": "0";
             var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = {archive}";
-            return ArticleRepository.GetArticlesForExport(_contentId, _settings.Extensions, sb.ToString(), filter, 1, _itemsPerStep, orderBy, fieldsToExpand);
+            return ArticleRepository.GetArticlesForExport(_contentId, _settings.ExtensionsStr, sb.ToString(), filter, 1, _itemsPerStep, orderBy, fieldsToExpand);
         }
 
         private static IEnumerable<string> GetParts(ExportSettings.FieldSetting field)
@@ -461,10 +460,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private void UpdateExportSettings()
         {
-            _settings.FieldNames = GetFieldNames(_extensionContents);
-            _settings.HeaderNames = GetHeaderNames(_extensionContents);
-            _settings.Extensions = GetExtensions(_extensionContents);
-            _settings.extensionsList = _extensionContents.Select(s => new ExportSettings.Extension { ContentId = s.Id, Fields = s.Fields});
+            _settings.FieldNames = GetFieldNames(_extensionContents).ToList();
+            _settings.HeaderNames = GetHeaderNames(_extensionContents).ToList();
+            _settings.ExtensionsStr = GetExtensions(_extensionContents);
+            _settings.Extensions = _extensionContents.Select(s => new ExportSettings.Extension { ContentId = s.Id, Fields = s.Fields.ToList()}).ToList();
+
         }
     }
 }
