@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult ExportFileDownload(int id, string fileName)
         {
             var currentSite = SiteService.Read(id);
-            var folderForUpload = $@"{currentSite.UploadDir}\{CsvWriter.FolderForUpload}\";
+            var folderForUpload = $@"{currentSite.UploadDir}\{CsvWriter.FolderForDownload}\";
             var inf = new PathInfo
             {
                 Path = folderForUpload
@@ -122,10 +122,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (!string.IsNullOrEmpty(path))
             {
                 var dir = Path.GetDirectoryName(path);
-                var provider = new PhysicalFileProvider(dir);
-                var fileInfo = provider.GetFileInfo(fileName);
-                var readStream = fileInfo.CreateReadStream();
-
+                var readStream = new PhysicalFileProvider(dir).GetFileInfo(fileName).CreateReadStream();
                 return File(readStream, MimeTypes.OctetStream, fileName);
             }
 

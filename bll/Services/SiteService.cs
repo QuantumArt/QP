@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 #if !NET_STANDARD
 using Quantumart.QP8.Assembling;
 #endif
@@ -21,6 +24,9 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class SiteService
     {
+
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public static SiteInitListResult InitList(int parentId) => new SiteInitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewSite)
@@ -104,7 +110,6 @@ namespace Quantumart.QP8.BLL.Services
             SiteRepository.Delete(id);
             return null;
         }
-#if !NET_STANDARD
         public static MessageResult AssembleContentsPreAction(int id)
         {
             var site = SiteRepository.GetById(id);
@@ -149,7 +154,7 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     File.Delete(site.TempArchiveForClasses);
                 }
-
+#if !NET_STANDARD
                 new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType)
                 {
                     SiteRoot = liveTempDirectory,
@@ -163,15 +168,16 @@ namespace Quantumart.QP8.BLL.Services
                     IsLive = false,
                     DisableClassGeneration = site.DownloadEfSource
                 }.Assemble();
-
+#endif
+                var urlHelper =  HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
-                return MessageResult.Download($"~/Site/GetClassesZip/{id}");
+                return MessageResult.Download(urlHelper.Content($"~/Site/GetClassesZip/{id}"));
             }
-
+#if !NET_STANDARD
             new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType).Assemble();
+#endif
             return null;
         }
-#endif
 
         public static void Cancel(int id)
         {

@@ -189,33 +189,33 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine();
 
             // Костанты URL`ов
-            constants.AppendLine($"window.APPLICATION_ROOT_URL = \"{Url.ToAbsolute(_urlHelper, "~/")}\"");
+            constants.AppendLine($"window.APPLICATION_ROOT_URL = \"{_urlHelper.Content( "~/")}\"");
 
             // Константы URL`ов контроллеров
             constants.AppendLine("// Константы URL`ов контроллеров");
-            constants.AppendLine($"window.CONTROLLER_URL_TREE_MENU = \"{Url.ToAbsolute(_urlHelper,"~/TreeMenu/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_CONTEXT_MENU = \"{Url.ToAbsolute(_urlHelper,"~/ContextMenu/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_TOOLBAR = \"{Url.ToAbsolute(_urlHelper,"~/Toolbar/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_ENTITY_TYPE = \"{Url.ToAbsolute(_urlHelper,"~/EntityType/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_ENTITY_OBJECT = \"{Url.ToAbsolute(_urlHelper,"~/EntityObject/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_BACKEND_ACTION = \"{Url.ToAbsolute(_urlHelper,"~/BackendAction/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_BACKEND_ACTION_TYPE = \"{Url.ToAbsolute(_urlHelper, "~/BackendActionType/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK = \"{Url.ToAbsolute(_urlHelper, "~/ArticleSearchBlock/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_WORKFLOW = \"{Url.ToAbsolute(_urlHelper, "~/Workflow/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK = \"{Url.ToAbsolute(_urlHelper, "~/Content/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_SITE = \"{Url.ToAbsolute(_urlHelper, "~/Site/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_CONTENT = \"{Url.ToAbsolute(_urlHelper, "~/Content/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_ARTICLE = \"{Url.ToAbsolute(_urlHelper, "~/Article/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_THUMBNAIL = \"{Url.ToAbsolute(_urlHelper, "~/Thumbnail/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_FIELD = \"{Url.ToAbsolute(_urlHelper,"~/Field/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_VIRTUAL_CONTENT = \"{Url.ToAbsolute(_urlHelper,"~/VirtualContent/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_USER = \"{Url.ToAbsolute(_urlHelper,"~/User/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_ACTION_PERMISSION_TREE = \"{Url.ToAbsolute(_urlHelper,"~/ActionPermissionTree/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_LOGON = \"{Url.ToAbsolute(_urlHelper,"~/LogOn/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_WINLOGON = \"{Url.ToAbsolute(_urlHelper,"~/WinLogOn/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_PAGE_TEMPLATE = \"{Url.ToAbsolute(_urlHelper,"~/PageTemplate/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_CUSTOM_ACTION = \"{Url.ToAbsolute(_urlHelper,"~/CustomAction/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_AUTH = \"{Url.ToAbsolute(_urlHelper,"~/LogOn/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_TREE_MENU = \"{_urlHelper.Content("~/TreeMenu/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_CONTEXT_MENU = \"{_urlHelper.Content("~/ContextMenu/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_TOOLBAR = \"{_urlHelper.Content("~/Toolbar/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_ENTITY_TYPE = \"{_urlHelper.Content("~/EntityType/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_ENTITY_OBJECT = \"{_urlHelper.Content("~/EntityObject/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_BACKEND_ACTION = \"{_urlHelper.Content("~/BackendAction/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_BACKEND_ACTION_TYPE = \"{_urlHelper.Content( "~/BackendActionType/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK = \"{_urlHelper.Content( "~/ArticleSearchBlock/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_WORKFLOW = \"{_urlHelper.Content( "~/Workflow/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK = \"{_urlHelper.Content( "~/Content/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_SITE = \"{_urlHelper.Content( "~/Site/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_CONTENT = \"{_urlHelper.Content( "~/Content/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_ARTICLE = \"{_urlHelper.Content( "~/Article/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_THUMBNAIL = \"{_urlHelper.Content( "~/Thumbnail/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_FIELD = \"{_urlHelper.Content("~/Field/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_VIRTUAL_CONTENT = \"{_urlHelper.Content("~/VirtualContent/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_USER = \"{_urlHelper.Content("~/User/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_ACTION_PERMISSION_TREE = \"{_urlHelper.Content("~/ActionPermissionTree/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_LOGON = \"{_urlHelper.Content("~/LogOn/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_WINLOGON = \"{_urlHelper.Content("~/WinLogOn/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_PAGE_TEMPLATE = \"{_urlHelper.Content("~/PageTemplate/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_CUSTOM_ACTION = \"{_urlHelper.Content("~/CustomAction/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_AUTH = \"{_urlHelper.Content("~/LogOn/")}\"");
             constants.AppendLine();
 
             // Константы URL`ов директорий с рисунками

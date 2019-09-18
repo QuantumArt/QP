@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvWriter
     {
-        public const string FolderForUpload = "temp";
+        public const string FolderForDownload = "temp\\download";
         private const string IdentifierFieldName = FieldName.ContentItemId;
 
         private const string FieldNameHeaderTemplate = "{0}.{1}";
@@ -52,7 +52,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (fileInfo.Exists)
             {
                 var currentSite = SiteRepository.GetById(_siteId);
-                var uploadDir = $@"{currentSite.UploadDir}\{FolderForUpload}";
+                var uploadDir = $@"{currentSite.UploadDir}\{FolderForDownload}";
                 if (!Directory.Exists(uploadDir))
                 {
                     Directory.CreateDirectory(uploadDir);

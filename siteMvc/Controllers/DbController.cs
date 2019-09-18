@@ -2,6 +2,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
@@ -115,7 +116,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public FileResult GetRecordedUserActions()
         {
             var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(QPContext.GetRecordXmlFilePath()):yyyy-MM-dd_HH-mm-ss}.xml";
-            return File(QPContext.GetRecordXmlFilePath(), MediaTypeNames.Application.Octet, fileName);
+            var readStream = new PhysicalFileProvider(QPContext.GetRecordXmlFilePath()).GetFileInfo(fileName).CreateReadStream();
+            return File(readStream, MediaTypeNames.Application.Octet, fileName);
         }
 
         [HttpPost]

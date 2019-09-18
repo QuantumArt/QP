@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -287,7 +289,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public FileResult GetClassesZip(int id)
         {
             var name = SiteService.Read(id).TempArchiveForClasses;
-            return File(name, MediaTypeNames.Application.Octet, $"{id}.zip");
+            var dir = Path.GetDirectoryName(name);
+            var fileName = Path.GetFileName(name);
+            var readStream = new PhysicalFileProvider(dir).GetFileInfo(fileName).CreateReadStream();
+            return File(readStream, MediaTypeNames.Application.Octet, $"{id}.zip");
         }
     }
 }

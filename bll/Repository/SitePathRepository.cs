@@ -131,7 +131,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         /// <returns>путь к директории, в которой хранятся изображения общие для всех тем</returns>
         internal static string GetCommonRootImageFolderUrl() =>
-            Url.ToAbsolute(GetUrlHelper(), "~/Content/Common/");
+            GetUrlHelper().Content("~/Content/Common/");
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся изображения указанной темы
@@ -139,7 +139,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="themeName">название темы</param>
         /// <returns>путь к директории, в которой хранятся изображения указанной темы</returns>
         internal static string GetThemeRootImageFolderUrl(string themeName) =>
-            Url.ToAbsolute(GetUrlHelper(), "~/Content/" + themeName + "/");
+            GetUrlHelper().Content("~/Content/" + themeName + "/");
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы указанной темы
@@ -147,21 +147,21 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="themeName">название темы</param>
         /// <returns>путь к директории, в которой хранятся маленькие пиктограммы указанной темы</returns>
         internal static string GetThemeSmallIconsImageFolderUrl(string themeName) =>
-            Url.ToAbsolute(GetUrlHelper(), "~/Content/" + themeName + "/icons/16x16/");
+            GetUrlHelper().Content( "~/Content/" + themeName + "/icons/16x16/");
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы типов файлов
         /// </summary>
         /// <param name="themeName">название темы</param>
         internal static string GetThemeSmallFileTypeIconFolderUrl(string themeName) =>
-            Url.ToAbsolute(GetUrlHelper(), "~/Content/" + themeName + "/icons/16x16/file_types/");
+            GetUrlHelper().Content( "~/Content/" + themeName + "/icons/16x16/file_types/");
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся большие пиктограммы типов файлов
         /// </summary>
         /// <param name="themeName">название темы</param>
         internal static string GetThemeBigFileTypeIconFolderUrl(string themeName) =>
-            Url.ToAbsolute(GetUrlHelper(), "~/Content/" + themeName + "/icons/64x64/file_types/");
+            GetUrlHelper().Content( "~/Content/" + themeName + "/icons/64x64/file_types/");
 
         /// <summary>
         /// Возвращает путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы
@@ -169,7 +169,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="themeName">название темы</param>
         /// <returns>путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы</returns>
         internal static string GetThemeAjaxLoaderIconsImageFolderUrl(string themeName) =>
-            Url.ToAbsolute(GetUrlHelper(), "~/Content/" + themeName + "/icons/ajax_loaders/");
+            GetUrlHelper().Content( "~/Content/" + themeName + "/icons/ajax_loaders/");
 
         public static void CreateDirectories(string basePath)
         {
