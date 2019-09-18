@@ -12,7 +12,7 @@
     </dl>
     using (Html.BeginPanel("NewParamPanel"))
     {
-        <dl><dd>@Html.QpRadioButtonListFor(s => s.Data.PermissionLevelId, Html.List(Model.GetPermissionLevels()))</dd></dl>
+        <dl><dd>@Html.QpRadioButtonListFor(s => s.Data.PermissionLevelId, Html.List(Model.PermissionLevels))</dd></dl>
         if (Model.IsPropagateable)
         {
             <dl>
@@ -55,7 +55,7 @@
         @Html.HiddenFor(m => m.Data.GroupId)
     }
 
-    foreach (var eid in Model.EntityIDs)
+    foreach (var eid in Model.EntityIds)
     {
         @Html.Hidden("EntityIDs", eid);
     }

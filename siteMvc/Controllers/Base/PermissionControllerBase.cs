@@ -7,6 +7,7 @@ using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers.Base
@@ -105,8 +106,10 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return await JsonHtml("EntityPermissionProperties", model);
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public virtual ActionResult MultipleRemove(int parentId, int[] IDs) => JsonMessageResult(Service.MultipleRemove(parentId, IDs));
+        public virtual ActionResult MultipleRemove(int parentId, [FromBody] SelectedItemsViewModel model)
+        {
+            return JsonMessageResult(Service.MultipleRemove(parentId, model.Ids));
+        }
 
         public virtual ActionResult Remove(int parentId, int id) => JsonMessageResult(Service.Remove(parentId, id));
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -12,6 +13,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers.Base
@@ -47,17 +49,16 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public virtual async Task<ActionResult> MultipleChangeAsChild(string tabId, int parentId, int[] IDs, int? userId, int? groupId)
+        public virtual async Task<ActionResult> MultipleChangeAsChild(string tabId, int parentId, [FromBody] SelectedItemsViewModel idsModel, int? userId, int? groupId)
         {
             var permission = ChildEntityPermission.Create(ChildContentService, parentId, userId, groupId);
-            var model = ChildEntityPermissionViewModel.Create(permission, tabId, parentId, MultipleChangeAction, ControllerName, "SaveMultipleChangeAsChild", ChildContentService, userId, groupId, IDs);
+            var model = ChildEntityPermissionViewModel.Create(permission, tabId, parentId, MultipleChangeAction, ControllerName, "SaveMultipleChangeAsChild", ChildContentService, userId, groupId, idsModel.Ids);
             return await JsonHtml("ChildEntityPermissionProperties", model);
         }
 
         public virtual async Task<ActionResult> SaveMultipleChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
-            return await SaveAsChild(tabId, parentId, model => { ChildContentService.MultipleChange(parentId, model.EntityIDs.ToList(), model.Data); });
+            return await SaveAsChild(tabId, parentId, model => { ChildContentService.MultipleChange(parentId, model.EntityIds, model.Data); });
         }
 
         public virtual async Task<ActionResult> AllChangeAsChild(string tabId, int parentId, int? userId, int? groupId)
@@ -86,7 +87,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
 
         public virtual async Task<ActionResult> ChangeAsChild(string tabId, int parentId, IFormCollection collection)
         {
-            return await SaveAsChild(tabId, parentId, model => { ChildContentService.Change(parentId, model.EntityIDs.FirstOrDefault(), model.Data); });
+            return await SaveAsChild(tabId, parentId, model => { ChildContentService.Change(parentId, model.EntityIds.FirstOrDefault(), model.Data); });
         }
 
         protected abstract string SaveChildPermissionAction { get; }
@@ -102,7 +103,9 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
         {
             if (TempData.ContainsKey(GetChildEntityPermissionModelKey(tabId, parentId)))
             {
-                var model = TempData[GetChildEntityPermissionModelKey(tabId, parentId)] as ChildEntityPermissionViewModel;
+                var model = JsonConvert.DeserializeObject<ChildEntityPermissionViewModel>(
+                    TempData[GetChildEntityPermissionModelKey(tabId, parentId)].ToString()
+                );
                 return await JsonHtml("ChildEntityPermissionProperties", model);
             }
 
@@ -128,7 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
                     return await JsonHtml("ChildEntityPermissionProperties", model);
                 }
 
-                TempData[GetChildEntityPermissionModelKey(tabId, parentId)] = model;
+                TempData[GetChildEntityPermissionModelKey(tabId, parentId)] = JsonConvert.SerializeObject(model);
                 return Redirect("SaveAsChild", new { tabId, parentId });
             }
             catch
@@ -140,8 +143,10 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
 
         private static string GetChildEntityPermissionModelKey(string tabId, int parentId) => $"ChildEntityPermissionViewModel_{tabId}_{parentId}";
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public virtual ActionResult MultipleRemoveAsChild(int parentId, int[] IDs, int? userId, int? groupId) => JsonMessageResult(ChildContentService.MultipleRemove(parentId, IDs, userId, groupId));
+        public virtual ActionResult MultipleRemoveAsChild(int parentId, [FromBody] SelectedItemsViewModel model, int? userId, int? groupId)
+        {
+            return JsonMessageResult(ChildContentService.MultipleRemove(parentId, model.Ids, userId, groupId));
+        }
 
         public virtual ActionResult AllRemoveAsChild(int parentId, int? userId, int? groupId)
         {

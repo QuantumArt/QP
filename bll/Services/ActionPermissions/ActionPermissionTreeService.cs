@@ -5,64 +5,46 @@ using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Services.ActionPermissions
 {
-    public interface IActionPermissionTreeService
-    {
-        /// <summary>
-        /// Возвращает список нодов для уровня
-        /// </summary>
-        /// <param name="entityTypeId">Если = 0 то список EntityType иначе список Action для EntityType</param>
-        /// <param name="userId"></param>
-        /// <param name="groupId"></param>
-        /// <returns></returns>
-        IEnumerable<ActionPermissionTreeNode> GetTreeNodes(int? entityTypeId, int? userId, int? groupId);
-
-        /// <summary>
-        /// Возвращает нод и его дочернии
-        /// </summary>
-        /// <param name="entityTypeId"></param>
-        /// <param name="actionId"></param>
-        /// <param name="userId"></param>
-        /// <param name="groupId"></param>
-        /// <returns></returns>
-        ActionPermissionTreeNode GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId);
-    }
-
     public class ActionPermissionTreeService : IActionPermissionTreeService
     {
-        public IEnumerable<ActionPermissionTreeNode> GetTreeNodes(int? entityTypeId, int? userId, int? groupId)
+        public IEnumerable<ActionPermissionTreeNode> GetTreeNodes(PermissionTreeQuery query)
         {
-            if (!userId.HasValue && !groupId.HasValue)
+            if (!query.UserId.HasValue && !query.GroupId.HasValue)
             {
                 return Enumerable.Empty<ActionPermissionTreeNode>();
             }
 
-            if (entityTypeId.HasValue)
+            if (query.EntityTypeId.HasValue)
             {
-                return ActionPermissionTreeRepository.GetActionTreeNodes(entityTypeId.Value, userId, groupId).OrderBy(n => n.Text);
+                return ActionPermissionTreeRepository.GetActionTreeNodes(
+                    query.EntityTypeId.Value, query.UserId, query.GroupId
+                ).OrderBy(n => n.Text);
             }
 
-            return ActionPermissionTreeRepository.GetEntityTypeTreeNodes(userId, groupId).OrderBy(n => n.Text);
+            return ActionPermissionTreeRepository.GetEntityTypeTreeNodes(
+                query.UserId, query.GroupId
+             ).OrderBy(n => n.Text);
         }
 
-        public ActionPermissionTreeNode GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId)
+        public ActionPermissionTreeNode GetTreeNode(PermissionTreeQuery query)
         {
-            if (!userId.HasValue && !groupId.HasValue)
+            if (!query.UserId.HasValue && !query.GroupId.HasValue)
             {
                 return null;
             }
 
             ActionPermissionTreeNode result = null;
-            if (entityTypeId.HasValue && !actionId.HasValue)
+            if (query.EntityTypeId.HasValue && !query.ActionId.HasValue)
             {
-                result = ActionPermissionTreeRepository.GetEntityTypeTreeNodes(userId, groupId, entityTypeId).FirstOrDefault();
+                result = ActionPermissionTreeRepository.GetEntityTypeTreeNodes(query.UserId, query.GroupId, query.EntityTypeId).FirstOrDefault();
                 if (result != null)
                 {
-                    result.Children = ActionPermissionTreeRepository.GetActionTreeNodes(entityTypeId.Value, userId, groupId);
+                    result.Children = ActionPermissionTreeRepository.GetActionTreeNodes(query.EntityTypeId.Value, query.UserId, query.GroupId);
                 }
             }
-            else if (entityTypeId.HasValue && actionId.HasValue)
+            else if (query.EntityTypeId.HasValue && query.ActionId.HasValue)
             {
-                result = ActionPermissionTreeRepository.GetActionTreeNodes(entityTypeId.Value, userId, groupId, actionId).FirstOrDefault();
+                result = ActionPermissionTreeRepository.GetActionTreeNodes(query.EntityTypeId.Value, query.UserId, query.GroupId, query.ActionId).FirstOrDefault();
             }
 
             return result;

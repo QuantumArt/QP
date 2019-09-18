@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using QA.Validation.Xaml.ListTypes;
 using Quantumart.QP8.BLL.Helpers;
@@ -261,12 +263,16 @@ namespace Quantumart.QP8.BLL
 
         public int[] NewVirtualFieldIds { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public int[] ActiveVeCommandIds
         {
             get => _activeVeCommandIds.Value;
             set => _activeVeCommandIds.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public int[] ActiveVeStyleIds
         {
             get => _activeVeStyleIds.Value;
@@ -418,10 +424,16 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "UseInChildContentFilter", ResourceType = typeof(FieldStrings))]
         public bool UseInChildContentFilter { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public Content Content { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public Field Relation => _relation.Value;
 
+        [ValidateNever]
+        [BindNever]
         public Field BackRelation
         {
             get => _backRelation.Value;
@@ -622,6 +634,8 @@ namespace Quantumart.QP8.BLL
 
         public int LibraryParentEntityId => UseSiteLibrary ? 0 : Content.SiteId;
 
+        [ValidateNever]
+        [BindNever]
         public ContentConstraint Constraint
         {
             get => _constraint.Value;
@@ -637,6 +651,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Обратное поле
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public Field M2MBackwardField
         {
             get => _m2MBackwardField.Value;
@@ -646,6 +662,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Обратное поле
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public Field O2MBackwardField
         {
             get => _o2MBackwardField.Value;
@@ -865,8 +883,12 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "UseForVariations", ResourceType = typeof(FieldStrings))]
         public bool UseForVariations { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<Field> ChildFields => _childFields.Value;
 
+        [ValidateNever]
+        [BindNever]
         public Field ParentField
         {
             get => _parentField.Value;

@@ -8,12 +8,13 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class EntityTypePermissionController : PermissionWithChangeControllerBase
     {
-        public EntityTypePermissionController(IPermissionService service, IActionPermissionChangeService changeService)
+        public EntityTypePermissionController(EntityTypePermissionService service, EntityTypePermissionChangeService changeService)
             : base(service, changeService)
         {
         }
@@ -89,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override ActionResult MultipleRemove(int parentId, int[] IDs) => base.MultipleRemove(parentId, IDs);
+        public override ActionResult MultipleRemove(int parentId, [FromBody] SelectedItemsViewModel model) => base.MultipleRemove(parentId, model);
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

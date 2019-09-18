@@ -1,4 +1,4 @@
-using System.Web.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;

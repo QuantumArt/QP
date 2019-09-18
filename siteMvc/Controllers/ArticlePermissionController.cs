@@ -7,12 +7,13 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ArticlePermissionController : PermissionWithChildControllerBase
     {
-        public ArticlePermissionController(IPermissionService service, IChildEntityPermissionService childContentService)
+        public ArticlePermissionController(ArticlePermissionService service, ChildArticlePermissionService childContentService)
             : base(service, childContentService)
         {
         }
@@ -87,8 +88,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveArticlePermission)]
         [BackendActionLog]
         [Record]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override ActionResult MultipleRemove(int parentId, int[] IDs) => base.MultipleRemove(parentId, IDs);
+        public override ActionResult MultipleRemove(int parentId, [FromBody] SelectedItemsViewModel model)
+        {
+            return base.MultipleRemove(parentId, model);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -123,10 +126,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleChangeChildArticlePermissions)]
         [BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override async Task<ActionResult> MultipleChangeAsChild(string tabId, int parentId, int[] IDs, int? userId, int? groupId)
+        public override async Task<ActionResult> MultipleChangeAsChild(string tabId, int parentId, [FromBody] SelectedItemsViewModel model, int? userId, int? groupId)
         {
-            return await base.MultipleChangeAsChild(tabId, parentId, IDs, userId, groupId);
+            return await base.MultipleChangeAsChild(tabId, parentId, model, userId, groupId);
         }
 
         [HttpPost]
@@ -188,8 +190,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveChildArticlePermissions)]
         [BackendActionLog]
         [Record]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override ActionResult MultipleRemoveAsChild(int parentId, int[] IDs, int? userId, int? groupId) => base.MultipleRemoveAsChild(parentId, IDs, userId, groupId);
+        public override ActionResult MultipleRemoveAsChild(int parentId, [FromBody] SelectedItemsViewModel model, int? userId, int? groupId)
+        {
+            return base.MultipleRemoveAsChild(parentId, model, userId, groupId);
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

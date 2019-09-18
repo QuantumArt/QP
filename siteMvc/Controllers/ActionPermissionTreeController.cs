@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -31,12 +32,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult GetTreeNodes(int? entityTypeId, int? userId, int? groupId) => Json(_service.GetTreeNodes(entityTypeId, userId, groupId));
+        public ActionResult GetTreeNodes([FromBody] PermissionTreeQuery model)
+        {
+            return Json(_service.GetTreeNodes(model));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId) => Json(_service.GetTreeNode(entityTypeId, actionId, userId, groupId));
+        public ActionResult GetTreeNode([FromBody] PermissionTreeQuery model)
+        {
+            return Json(_service.GetTreeNode(model));
+        }
     }
 }

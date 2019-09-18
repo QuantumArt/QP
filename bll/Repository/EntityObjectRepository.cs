@@ -509,13 +509,13 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 return null;
             }
-            else
-            {
-                using (var scope = new QPConnectionScope())
-                {
-                    return Common.GetStringFieldValue(scope.DbConnection, entity.TitleField, entity.Source, entity.IdField, entityId.Value);
-                }
 
+            var titleField = !string.IsNullOrEmpty(entity.TitleField) ? entity.TitleField : $"{entity.Source}_id";
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetStringFieldValue(
+                    scope.DbConnection, titleField, entity.Source, entity.IdField, entityId.Value
+                );
             }
         }
 

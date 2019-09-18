@@ -7,12 +7,13 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class SiteFolderPermissionController : PermissionControllerBase
     {
-        public SiteFolderPermissionController(IPermissionService service)
+        public SiteFolderPermissionController(SiteFolderPermissionService service)
             : base(service)
         {
         }
@@ -86,8 +87,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveSiteFolderPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveSiteFolderPermission)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public override ActionResult MultipleRemove(int parentId, int[] IDs) => base.MultipleRemove(parentId, IDs);
+        public override ActionResult MultipleRemove(int parentId, [FromBody] SelectedItemsViewModel model) => base.MultipleRemove(parentId, model);
 
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

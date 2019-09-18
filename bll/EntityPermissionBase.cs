@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
@@ -16,6 +18,8 @@ namespace Quantumart.QP8.BLL
 
         public override int ParentEntityId { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public override string Name
         {
             get { return null; }

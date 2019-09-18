@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
+using System.Web.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -148,18 +150,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeCommands { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public int[] ActiveVeCommandsIds
         {
             get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); }
         }
 
+        [ValidateNever]
+        [BindNever]
         public int[] ActiveVeStyleIds
         {
             get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); }
         }
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<ListItem> AllStylesListItems { get; private set; }
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<ListItem> AllFormatsListItems { get; private set; }
 
         [Display(Name = "Styles", ResourceType = typeof(VisualEditorStrings))]
@@ -592,6 +602,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             }
 
             Data.ParseStringEnumJson(AggregationListItemsDataStringEnumItems);
+
+            Update();
 
         }
 

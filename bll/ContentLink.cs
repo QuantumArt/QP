@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -45,6 +47,8 @@ namespace Quantumart.QP8.BLL
 
         private Content _content;
 
+        [BindNever]
+        [ValidateNever]
         public Content Content
         {
             get => _content ?? (_content = ContentRepository.GetById(LContentId));
