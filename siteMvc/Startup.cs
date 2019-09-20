@@ -180,19 +180,6 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
                 ;
 
-
-            // // multistep action controllers
-            // services
-            //     .AddTransient<ClearContentService>()
-            //     .AddTransient<RemoveContentService>()
-            //     .AddTransient<ImportArticlesService>()
-            //     .AddTransient<ExportArticlesService>()
-            //     .AddTransient<CopySiteService>()
-            //     .AddTransient<RemoveSiteService>()
-            //     .AddTransient<AssembleSiteService>()
-            //     .AddTransient<AssembleTemplateService>()
-            //     .AddTransient<RebuildVirtualContentsService>();
-
             services
                 .AddTransient<WorkflowPermissionService>()
                 .AddTransient<SitePermissionService>()
@@ -275,6 +262,14 @@ namespace Quantumart.QP8.WebMvc
                     AppDomain.CurrentDomain.BaseDirectory,
                     "Content")),
                 RequestPath =  "/Content"
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "plugins")),
+                RequestPath =  "/plugins"
             });
 
             app.UseAuthentication();

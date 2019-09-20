@@ -54,6 +54,8 @@
     <None Update="Scripts\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Update="Content\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Update="ToCopy\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Include="$(SolutionDir)\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />
+    <None Include="$(SolutionDir)\QP.Custom\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />    
     <None Include="*.config" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
     <None Include="appsettings*.json" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />    
   </ItemGroup>
