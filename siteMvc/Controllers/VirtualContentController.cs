@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -16,9 +17,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class VirtualContentController : QPController
     {
         [HttpPost]
-        public JsonResult GetChildFieldList(int virtualContentId, int? joinedContentId, string entityId, string selectItemIDs, string parentAlias)
+        public JsonResult GetChildFieldList([FromBody] ChildFieldListQuery model)
         {
-            var entityList = VirtualContentService.GetChildFieldList(virtualContentId, joinedContentId, entityId, selectItemIDs, parentAlias);
+            var entityList = VirtualContentService.GetChildFieldList(model);
             return Json(entityList);
         }
 

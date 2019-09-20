@@ -36,12 +36,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Execute(string tabId, int parentId, int[] ids, string actionCode)
+        public async Task<ActionResult> Execute(string tabId, int parentId, [FromBody] CustomActionQuery query)
         {
             CustomActionPrepareResult customActionToExecute = null;
             try
             {
-                customActionToExecute = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
+                customActionToExecute = _service.PrepareForExecuting(tabId, parentId, query);
                 Logger.Log.Debug($"Executing custom action url: {customActionToExecute.CustomAction.FullUrl}");
 
                 if (!customActionToExecute.IsActionAccessable)
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (customActionToExecute.CustomAction.Action.IsInterface)
                 {
-                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, customActionToExecute.CustomAction);
+                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, query.Ids, customActionToExecute.CustomAction);
                     return await JsonHtml("ExecuteAction", model);
                 }
 

@@ -2794,7 +2794,7 @@ namespace Quantumart.QP8.BLL
                     new SimpleListQuery()
                     {
                         ParentEntityId = RelateToContentId.Value,
-                        EntityId = Id,
+                        EntityId = Id.ToString(),
                         SelectionMode = ListSelectionMode.OnlySelectedItems,
                         SelectedEntitiesIds = ids
                     }

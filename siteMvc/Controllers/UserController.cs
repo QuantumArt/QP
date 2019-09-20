@@ -15,6 +15,7 @@ using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.User;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -66,23 +67,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
-            var model = UserSelectableListViewModel.Create(tabId, parentId, IDs, true);
+            var model = UserSelectableListViewModel.Create(tabId, parentId, selModel.Ids, true);
             return await JsonHtml("MultipleSelectIndex", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
-            string tabId, string IDs, int page, int pageSize, string orderBy,
+            string tabId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
-            var selectedIDs = Converter.ToInt32Collection(IDs, ',');
+            var selectedIDs = Converter.ToInt32Collection(ids, ',');
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = _service.List(listCommand, filter, selectedIDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
@@ -244,7 +243,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> ChangePassword(string tabId, User currentUser)
+        public async Task<ActionResult> ChangePassword(string tabId, [FromBody] User currentUser)
         {
             var parentId = 0;
             var user = _service.ReadProfile(QPContext.CurrentUserId);

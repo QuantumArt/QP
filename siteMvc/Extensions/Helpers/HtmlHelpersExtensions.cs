@@ -1324,7 +1324,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (source.GetModelExplorer(expression).Model is IList<QPCheckedItem> propertyValue && propertyValue.Count > 0)
             {
-                var checkedValues = propertyValue.Select(i => i.Value).Intersect(qpSelectListItems.Select(b => b.Value)).ToList();
+                var checkedValues = propertyValue.Where(n => n != null).Select(i => i.Value).Intersect(qpSelectListItems.Select(b => b.Value)).ToList();
                 foreach (var item in qpSelectListItems)
                 {
                     item.Selected = checkedValues.Contains(item.Value);

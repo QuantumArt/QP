@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.Constants;
 
@@ -12,7 +13,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
         public int ParentEntityId { get; set; }
 
         [BindProperty(Name="entityId")]
-        public int EntityId { get; set; }
+        public string EntityId { get; set; }
 
         [BindProperty(Name="listId")]
         public int ListId { get; set; }
@@ -29,7 +30,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
         [BindProperty(Name="testEntityId")]
         public int TestEntityId { get; set; }
 
-        public int? ActualEntityId => EntityId == 0 ? (int?)null : EntityId;
+        public int? ActualEntityId => String.IsNullOrEmpty(EntityId) ? (int?)null : int.Parse(EntityId);
 
         public int? ActualListId => ListId == 0 ? (int?)null : ListId;
 

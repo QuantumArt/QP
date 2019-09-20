@@ -7,6 +7,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -138,10 +139,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "parentId")]
         [BackendActionContext(ActionCode.MultipleRemoveSiteFile)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveFiles(int parentId, string[] IDs)
+        public ActionResult MultipleRemoveFiles(int parentId, [FromBody] SelectedFilesViewModel selModel)
         {
-            var result = SiteFolderService.RemoveFiles(parentId, IDs);
+            var result = SiteFolderService.RemoveFiles(parentId, selModel.Names);
             return Json(result);
         }
 

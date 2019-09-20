@@ -110,7 +110,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             var inmemorySiteIDs = new HashSet<decimal>(customAction.SiteIds.Select(bs => Converter.ToDecimal(bs)));
             var dalSiteBinds = dalDb.SiteCustomActionBinds.ToArray();
-            var indbSiteIDs = new HashSet<decimal>(dalDb.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
+            var indbSiteIDs = new HashSet<decimal>(dalSiteBinds.Select(bs => bs.SiteId));
             var dalSiteBindsToRemove = dalSiteBinds.Where(n => !inmemorySiteIDs.Contains(n.SiteId)).ToArray();
             var dalSiteBindsToCreate = customAction.SiteIds.Where(n => !indbSiteIDs.Contains(n)).Select(
                 n => new SiteCustomActionBindDAL { CustomAction = dal, SiteId = n }
@@ -128,7 +128,7 @@ namespace Quantumart.QP8.BLL.Repository
             // Binded Contents
             var inmemoryContentIDs = new HashSet<decimal>(customAction.ContentIds.Select(bs => Converter.ToDecimal(bs)));
             var dalBinds = dalDb.ContentCustomActionBinds.ToArray();
-            var indbContentIDs = new HashSet<decimal>(dalBinds.Select(bs => Converter.ToDecimal(bs.ContentId)));
+            var indbContentIDs = new HashSet<decimal>(dalBinds.Select(bs => bs.ContentId));
             var dalBindsToRemove = dalBinds.Where(n => !inmemoryContentIDs.Contains(n.ContentId)).ToArray();
             var dalbindsToCreate = customAction.ContentIds.Where(n => !indbContentIDs.Contains(n)).Select(
                 n => new ContentCustomActionBindDAL { CustomAction = dal, ContentId = n }

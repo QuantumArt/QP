@@ -10,6 +10,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.StatusType;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -128,23 +129,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForWorkflow(
+            string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel
+        )
         {
             _statusTypeService.InitList(parentId);
-            var model = new StatusTypeSelectableListViewModel(tabId, parentId, IDs);
+            var model = new StatusTypeSelectableListViewModel(tabId, parentId, selModel.Ids);
             return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForWorkflow(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = _statusTypeService.ListForWorkflow(listCommand, Converter.ToInt32Collection(IDs, ','), parentId);
+            var serviceResult = _statusTypeService.ListForWorkflow(listCommand, Converter.ToInt32Collection(ids, ','), parentId);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
     public class HtAreaToolbarViewModel
     {
@@ -9,10 +11,13 @@
             TemplateId = templateId;
         }
 
+        [BindProperty(Name = "presentationOrCodeBehind")]
         public bool PresentationOrCodeBehind { get; set; }
 
+        [BindProperty(Name = "formatId")]
         public int? FormatId { get; set; }
 
+        [BindProperty(Name = "templateId")]
         public int? TemplateId { get; set; }
     }
 }

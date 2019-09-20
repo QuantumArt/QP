@@ -249,7 +249,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                     new SimpleListQuery()
                     {
                         ParentEntityId = contentId,
-                        EntityId = articleId,
+                        EntityId = articleId.ToString(),
                         ListId = fieldId,
                         SelectionMode = mode,
                         SelectedEntitiesIds = selectedArticleIDs,

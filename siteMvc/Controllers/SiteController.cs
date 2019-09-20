@@ -17,6 +17,7 @@ using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.Site;
 
@@ -55,21 +56,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectSites)]
         [BackendActionContext(ActionCode.MultipleSelectSites)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = SiteService.MultipleInitList(parentId);
-            var model = SiteListViewModel.Create(result, tabId, parentId, true, IDs);
+            var model = SiteListViewModel.Create(result, tabId, parentId, true, selModel.Ids);
             return await JsonHtml("Index", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectSites)]
         [BackendActionContext(ActionCode.MultipleSelectSites)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
+        public ActionResult _MultipleSelect(string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy)
         {
-            var selectedSiteIDs = Converter.ToInt32Collection(IDs, ',');
+            var selectedSiteIDs = Converter.ToInt32Collection(ids, ',');
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = SiteService.List(listCommand, selectedSiteIDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);

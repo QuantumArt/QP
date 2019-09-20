@@ -13,6 +13,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -255,10 +256,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemovePageObject)]
         [BackendActionContext(ActionCode.MultipleRemovePageObject)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePageObject(int parentId, int[] IDs)
+        public ActionResult MultipleRemovePageObject(int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
-            return JsonMessageResult(_objectService.MultipleRemovePageObject(IDs));
+            return JsonMessageResult(_objectService.MultipleRemovePageObject(selModel.Ids));
         }
 
         [HttpPost, Record]
@@ -267,10 +267,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionContext(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveTemplateObject(int parentId, int[] IDs)
+        public ActionResult MultipleRemoveTemplateObject(int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
-            return JsonMessageResult(_objectService.MultipleRemoveTemplateObject(IDs));
+            return JsonMessageResult(_objectService.MultipleRemoveTemplateObject(selModel.Ids));
         }
 
         [HttpPost]
@@ -308,17 +307,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePageObjectPreAction(int[] IDs)
+        public ActionResult MultipleAssemblePageObjectPreAction([FromBody] SelectedItemsViewModel selModel)
         {
-            return Json(_objectService.MultipleAssembleObjectPreAction(IDs));
+            return Json(_objectService.MultipleAssembleObjectPreAction(selModel.Ids));
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleTemplateObjectPreAction(int[] IDs)
+        public ActionResult MultipleAssembleTemplateObjectPreAction([FromBody] SelectedItemsViewModel selModel)
         {
-            return Json(_objectService.MultipleAssembleObjectPreAction(IDs));
+            return Json(_objectService.MultipleAssembleObjectPreAction(selModel.Ids));
         }
 
         [HttpPost]
@@ -349,10 +346,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleAssembleTemplateObject)]
         [BackendActionContext(ActionCode.MultipleAssembleTemplateObject)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssembleTemplateObject(int[] IDs)
+        public ActionResult MultipleAssembleTemplateObject([FromBody] SelectedItemsViewModel selModel)
         {
-            return Json(_objectService.MultipleAssembleObject(IDs));
+            return Json(_objectService.MultipleAssembleObject(selModel.Ids));
         }
 
         [HttpPost]
@@ -361,10 +357,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleAssemblePageObject)]
         [BackendActionContext(ActionCode.MultipleAssemblePageObject)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePageObject(int[] IDs)
+        public ActionResult MultipleAssemblePageObject([FromBody] SelectedItemsViewModel selModel)
         {
-            return Json(_objectService.MultipleAssembleObject(IDs));
+            return Json(_objectService.MultipleAssembleObject(selModel.Ids));
         }
 
         [HttpPost]

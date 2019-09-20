@@ -136,7 +136,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetFieldsByContentId(int contentId)
+        public JsonResult GetFieldsByContentId([FromBody] int contentId)
         {
             var content = _pageTemplateService.GetContentById(contentId);
             var statuses = _pageTemplateService.GetStatusIdsByContentId(contentId, out var hasWorkflow);
@@ -308,21 +308,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetDefaultCode(int formatId)
+        public JsonResult GetDefaultCode([FromBody] int formatId)
         {
             var defaultCode = _pageTemplateService.ReadDefaultCode(formatId);
             return Json(new { success = true, code = defaultCode });
         }
 
         [HttpPost]
-        public JsonResult GetDefaultPresentation(int formatId)
+        public JsonResult GetDefaultPresentation([FromBody] int formatId)
         {
             var defaultCode = _pageTemplateService.ReadDefaultPresentation(formatId);
             return Json(new { success = true, code = defaultCode });
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetInsertPopUpMarkUp(int templateId, int? formatId, bool presentationOrCodeBehind)
+        public async Task<ActionResult> GetInsertPopUpMarkUp([FromBody] HtAreaToolbarViewModel model)
         {
             int? languageId;
             string assemblingType;
@@ -330,11 +330,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int? pageId = null;
             int? contentId = null;
 
-            if (formatId.HasValue)
+            if (model.FormatId.HasValue)
             {
-                var format = _pageTemplateService.ReadFormatProperties(formatId.Value, true, false);
+                var format = _pageTemplateService.ReadFormatProperties(model.FormatId.Value, true, false);
                 languageId = format.NetLanguageId;
-                assemblingType = _pageTemplateService.ReadPageTemplateProperties(templateId).Site.AssemblingType;
+                assemblingType = _pageTemplateService.ReadPageTemplateProperties(model.TemplateId.Value).Site.AssemblingType;
 
                 var obj = _pageTemplateService.ReadObjectProperties(format.ObjectId, false);
                 isContainer = obj.IsObjectContainerType;
@@ -352,7 +352,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
             else
             {
-                var template = _pageTemplateService.ReadPageTemplateProperties(templateId);
+                var template = _pageTemplateService.ReadPageTemplateProperties(model.TemplateId.Value);
                 languageId = template.NetLanguageId;
                 assemblingType = template.Site.AssemblingType;
                 isContainer = false;
@@ -361,17 +361,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             return Json(new
             {
-                html = await RenderPartialView("InsertPopupWindow", new InsertPopupViewModel(templateId, languageId, assemblingType, presentationOrCodeBehind, isContainer, isForm, contentId, pageId, _pageTemplateService))
+                html = await RenderPartialView("InsertPopupWindow", new InsertPopupViewModel(
+                    model.TemplateId.Value, languageId, assemblingType, model.PresentationOrCodeBehind, isContainer, isForm, contentId, pageId, _pageTemplateService
+                ))
             });
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> GetHTAToolbarMarkUp(bool presentationOrCodeBehind, int? formatId, int? templateId)
+        public async Task<ActionResult> GetHtaToolbarMarkUp([FromBody] HtAreaToolbarViewModel model)
         {
             return Json(new
             {
-                html = await RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
+                html = await RenderPartialView("HTAreaToolbar", model)
             });
         }
     }

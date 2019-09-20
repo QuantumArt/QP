@@ -166,48 +166,47 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> RelationSearch(int parentEntityId, int fieldID, int[] IDs, string elementIdPrefix)
+        public async Task<ActionResult> RelationSearch([FromBody] RelationSearchViewModel model)
         {
-            IDs = IDs ?? new int[0];
+            ViewBag.IsNullCheckBoxElementID = $"{model.ElementIdPrefix}_isNullCheckBox";
+            ViewBag.InverseCheckBoxElementID = $"{model.ElementIdPrefix}_inverseCheckBox";
+            ViewBag.UnionAllCheckBoxElementID = $"{model.ElementIdPrefix}_unionAllCheckBox";
+            ViewBag.RelationElementID = $"{model.ElementIdPrefix}_relation";
+            ViewBag.SelectorElementID = $"{model.ElementIdPrefix}_selector";
+            ViewBag.RelationTextAreaElementID = $"{model.ElementIdPrefix}_relationTextArea";
 
-            ViewBag.IsNullCheckBoxElementID = $"{elementIdPrefix}_isNullCheckBox";
-            ViewBag.InverseCheckBoxElementID = $"{elementIdPrefix}_inverseCheckBox";
-            ViewBag.UnionAllCheckBoxElementID = $"{elementIdPrefix}_unionAllCheckBox";
-            ViewBag.RelationElementID = $"{elementIdPrefix}_relation";
-            ViewBag.SelectorElementID = $"{elementIdPrefix}_selector";
-            ViewBag.RelationTextAreaElementID = $"{elementIdPrefix}_relationTextArea";
-
-            if (fieldID == (int)ServiceFieldType.LastModifiedBy)
+            if (model.FieldId == (int)ServiceFieldType.LastModifiedBy)
             {
                 ViewBag.Users = _articleSearchService.GetAllUsersList().Select(u => new QPSelectListItem
                 {
                     Text = u.LogOn,
                     Value = u.Id.ToString(),
-                    Selected = IDs.Contains(u.Id)
+                    Selected = model.Ids.Contains(u.Id)
                 }).ToArray();
 
                 return await JsonHtml("UserRelation", null);
             }
 
-            if (fieldID == (int)ServiceFieldType.StatusType)
+            if (model.FieldId == (int)ServiceFieldType.StatusType)
             {
-                ViewBag.StatusTypes = _articleSearchService.GetStatusListByContentId(parentEntityId).Select(s => new QPSelectListItem
+                ViewBag.StatusTypes = _articleSearchService.GetStatusListByContentId(model.ParentEntityId)
+                    .Select(s => new QPSelectListItem
                 {
                     Text = s.Name,
                     Value = s.Id.ToString(),
-                    Selected = IDs.Contains(s.Id)
+                    Selected = model.Ids?.Contains(s.Id) ?? false
                 }).ToArray();
 
                 return await JsonHtml("StatusTypeRelation", null);
             }
 
-            var field = _articleSearchService.GetFieldByID(fieldID);
+            var field = _articleSearchService.GetFieldByID(model.FieldId);
             if (field == null)
             {
                 return Json(new { success = true, view = string.Empty });
             }
 
-            ViewBag.ItemList = IDs.Length > 0 ? _articleSearchService.GetSimpleList(field, IDs) : Enumerable.Empty<ListItem>();
+            ViewBag.ItemList = model.Ids?.Length > 0 ? _articleSearchService.GetSimpleList(field, model.Ids) : Enumerable.Empty<ListItem>();
             ViewBag.Field = field;
             ViewBag.HasRelatedHierarchyContent = field.RelatedToContent != null && field.RelatedToContent.Fields.Any(f => f.UseForTree);
 

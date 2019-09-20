@@ -86,7 +86,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveSitePermission)]
         [BackendActionContext(ActionCode.MultipleRemoveSitePermission)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, [FromBody] SelectedItemsViewModel model)
         {
             return base.MultipleRemove(parentId, model);

@@ -367,7 +367,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please inter Login!.
+        ///   Looks up a localized string similar to Please enter Login!.
         /// </summary>
         public static string LoginNotEntered {
             get {

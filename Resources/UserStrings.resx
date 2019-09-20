@@ -220,7 +220,7 @@
     <value>The length of login should not exceed {1} characters!</value>
   </data>
   <data name="LoginNotEntered" xml:space="preserve">
-    <value>Please inter Login!</value>
+    <value>Please enter Login!</value>
   </data>
   <data name="LoginNotUnique" xml:space="preserve">
     <value>Login is already in using!</value>

@@ -426,11 +426,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     : string.Empty;
 
                 var selection = new HashSet<int>(query.SelectedEntitiesIds ?? new int[] { });
-                if (query.TestEntityId != 0 && query.EntityId != 0 && isMany)
+                if (query.TestEntityId != 0 && query.ActualEntityId.HasValue && isMany)
                 {
                     var testResult = field.ExactType == FieldExactTypes.M2MRelation && field.LinkId.HasValue
                         ? Common.TestM2MValue(
-                            scope.DbConnection, field.LinkId.Value, query.EntityId, query.TestEntityId
+                            scope.DbConnection, field.LinkId.Value, query.ActualEntityId.Value, query.TestEntityId
                         )
                         : Common.TestM2OValue(
                             scope.DbConnection, new Common.FieldInfo()
@@ -438,7 +438,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                                 Id = field.BackRelation.Id,
                                 ContentId = field.BackRelation.ContentId,
                                 Name = field.BackRelation.Name
-                            }, query.EntityId, query.TestEntityId
+                            }, query.ActualEntityId.Value, query.TestEntityId
                         );
 
                     if (testResult)

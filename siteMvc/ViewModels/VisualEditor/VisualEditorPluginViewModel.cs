@@ -20,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewVisualEditorPlugin : Constants.ActionCode.VisualEditorPluginProperties;
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string AggregationListItemsVeCommandsDisplay { get; set; }
 
         public new VisualEditorPlugin Data

@@ -1833,29 +1833,29 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// возвращает рутовые поля
         /// </summary>
-        internal IEnumerable<EntityTreeItem> GetRootFieldList(int virtualContentId, int? joinedContentId, string selectItemIDs)
+        internal IEnumerable<EntityTreeItem> GetRootFieldList(ChildFieldListQuery query)
         {
             Content content;
-            if (virtualContentId > 0)
+            if (query.VirtualContentId > 0)
             {
-                content = ContentRepository.GetById(virtualContentId);
+                content = ContentRepository.GetById(query.VirtualContentId);
 
                 // если id реального контента отличается от значения из БД для текущего виртуального контента,
                 // то получаем поля выбранного пользователем контента
-                if (joinedContentId.HasValue && (!content.JoinRootId.HasValue || content.JoinRootId.Value != joinedContentId.Value))
+                if (query.JoinedContentId.HasValue && (!content.JoinRootId.HasValue || content.JoinRootId.Value != query.JoinedContentId.Value))
                 {
-                    content = ContentRepository.GetById(joinedContentId.Value);
+                    content = ContentRepository.GetById(query.JoinedContentId.Value);
                 }
             }
             else
             {
-                content = ContentRepository.GetById(joinedContentId.Value);
+                content = ContentRepository.GetById(query.JoinedContentId.Value);
             }
 
             IEnumerable<EntityTreeItem> GetChildren(Field f, string eid, string alias)
             {
                 // если у поля есть выбранные подчиненные поля на любом уровне иерархии, то получаем дочернии поля
-                if (f.ExactType == FieldExactTypes.O2MRelation && !string.IsNullOrWhiteSpace(selectItemIDs) && selectItemIDs.IndexOf(eid.TrimEnd(']') + ".", 0, StringComparison.InvariantCultureIgnoreCase) > 0)
+                if (f.ExactType == FieldExactTypes.O2MRelation && !string.IsNullOrWhiteSpace(query.Ids) && query.Ids.IndexOf(eid.TrimEnd(']') + ".", 0, StringComparison.InvariantCultureIgnoreCase) > 0)
                 {
                     return GetChildFieldList(eid, alias, GetChildren);
                 }

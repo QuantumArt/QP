@@ -7,6 +7,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -134,10 +135,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.ContentFolder, "parentId")]
         [BackendActionContext(ActionCode.MultipleRemoveContentFile)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveFiles(int parentId, string[] IDs)
+        public ActionResult MultipleRemoveFiles(int parentId, [FromBody] SelectedFilesViewModel model)
         {
-            var result = ContentFolderService.RemoveFiles(parentId, IDs);
+            var result = ContentFolderService.RemoveFiles(parentId, model.Names);
             return Json(result);
         }
 
@@ -147,11 +147,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.ContentFolder, "parentId")]
         [BackendActionContext(ActionCode.RemoveContentFile)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult RemoveFile(int parentId, string id)
         {
-            string[] IDs = { id };
-            var result = ContentFolderService.RemoveFiles(parentId, IDs);
+            string[] ids = { id };
+            var result = ContentFolderService.RemoveFiles(parentId, ids);
             return Json(result);
         }
     }

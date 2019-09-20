@@ -312,7 +312,7 @@ export class BackendEntityEditor extends Observable {
       this._formElement = $form.get(0);
       if (!$q.isNullOrWhiteSpace(this._validationSummaryElementId)) {
         const $validationSummary = $(`#${this._validationSummaryElementId}`);
-        this._formHasErrors = $validationSummary.length > 0 && $validationSummary.find('UL').length > 0;
+        this._formHasErrors = $validationSummary.length > 0 && $validationSummary.hasClass("validation-summary-errors");
       }
 
       if (this._formHasErrors) {

@@ -97,6 +97,7 @@ namespace Quantumart.QP8.BLL
 
         public override string EntityTypeCode => Constants.EntityTypeCode.User;
 
+        [ValidateNever]
         public override string Name => LogOn;
 
         public override string Description => DisplayName;

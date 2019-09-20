@@ -12,6 +12,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -61,10 +62,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CompareArticleVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
         [BackendActionContext(ActionCode.CompareArticleVersions)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> Compare(string tabId, int parentId, int[] IDs, bool? boundToExternal)
+        public async Task<ActionResult> Compare(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var version = ArticleVersionService.GetMergedVersion(IDs, parentId);
+            var version = ArticleVersionService.GetMergedVersion(selModel.Ids, parentId);
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
             model.ViewType = ArticleVersionViewType.CompareVersions;
             return await JsonHtml("Properties", model);
@@ -128,10 +128,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveArticleVersion)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleVersion)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int[] IDs, bool? boundToExternal)
+        public ActionResult MultipleRemove([FromBody] SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var result = ArticleVersionService.MultipleRemove(IDs, boundToExternal);
+            var result = ArticleVersionService.MultipleRemove(selModel.Ids, boundToExternal);
             return JsonMessageResult(result);
         }
     }

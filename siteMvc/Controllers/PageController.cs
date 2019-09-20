@@ -9,6 +9,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -118,10 +119,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemovePage)]
         [BackendActionContext(ActionCode.MultipleRemovePage)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePage(int parentId, int[] IDs)
+        public ActionResult MultipleRemovePage(int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
-            return JsonMessageResult(_pageService.MultipleRemovePage(IDs));
+            return JsonMessageResult(_pageService.MultipleRemovePage(selModel.Ids));
         }
 
         [HttpPost, Record]
@@ -180,10 +180,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePagePreAction(int[] IDs)
+        public ActionResult MultipleAssemblePagePreAction([FromBody] SelectedItemsViewModel selModel)
         {
-            return JsonMessageResult(_pageService.MultipleAssemblePagePreAction(IDs));
+            return JsonMessageResult(_pageService.MultipleAssemblePagePreAction(selModel.Ids));
         }
 
         [HttpPost]
@@ -203,10 +202,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleAssemblePage)]
         [BackendActionContext(ActionCode.MultipleAssemblePage)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleAssemblePage(int[] IDs)
+        public ActionResult MultipleAssemblePage([FromBody] SelectedItemsViewModel selModel)
         {
-            return JsonMessageResult(_pageService.MultipleAssemblePage(IDs));
+            return JsonMessageResult(_pageService.MultipleAssemblePage(selModel.Ids));
         }
 
         [HttpPost]

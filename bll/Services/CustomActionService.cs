@@ -11,39 +11,6 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public interface ICustomActionService
-    {
-        CustomActionPrepareResult PrepareForExecuting(string code, string tabId, IEnumerable<int> ids, int parentId);
-
-        ListResult<CustomActionListItem> List(ListCommand listCommand);
-
-        CustomAction Read(int id);
-
-        CustomAction ReadForUpdate(int id);
-
-        CustomAction Update(CustomAction customAction, int[] selectedActionsIds);
-
-        CustomAction New();
-
-        CustomAction NewForSave();
-
-        CustomAction Save(CustomAction customAction, int[] selectedActionsIds);
-
-        MessageResult Remove(int id);
-
-        IEnumerable<ListItem> GetActionTypeList();
-
-        IEnumerable<ListItem> GetEntityTypeList();
-
-        IEnumerable<Site> GetSites(CustomAction action);
-
-        IEnumerable<Content> GetContents(CustomAction action);
-
-        CustomActionInitListResult InitList(int parentId);
-
-        CopyResult Copy(int id, int[] selectedActionsIds);
-    }
-
     public class CustomActionService : ICustomActionService
     {
         private const string ControllerActionUrl = @"~/CustomAction/Execute/";
@@ -61,9 +28,9 @@ namespace Quantumart.QP8.BLL.Services
             ActionTypeList = new Lazy<IEnumerable<ListItem>>(LoadActionTypeList, true);
         }
 
-        public CustomActionPrepareResult PrepareForExecuting(string code, string hostId, IEnumerable<int> ids, int parentId)
+        public CustomActionPrepareResult PrepareForExecuting(string hostId, int parentId, CustomActionQuery query)
         {
-            var action = CustomActionRepository.GetByCode(code);
+            var action = CustomActionRepository.GetByCode(query.ActionCode);
             var session = _repository.GetCurrent();
             if (session == null)
             {
@@ -74,10 +41,10 @@ namespace Quantumart.QP8.BLL.Services
             _repository.Update(session);
 
             action.SessionId = session.Sid;
-            action.Ids = ids;
+            action.Ids = query.Ids;
             action.ParentId = parentId;
 
-            return SecurityCheck(new CustomActionPrepareResult { CustomAction = action }, action, ids);
+            return SecurityCheck(new CustomActionPrepareResult { CustomAction = action }, action, query.Ids);
         }
 
         public ListResult<CustomActionListItem> List(ListCommand cmd)

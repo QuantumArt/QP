@@ -154,7 +154,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
         [ValidateNever]
         public int[] SelectedActionsIds
         {
-            get { return SelectedActions.Select(c => int.Parse(c.Value)).ToArray(); }
+            get { return SelectedActions.Where(n => n != null).Select(c => int.Parse(c.Value)).ToArray(); }
         }
 
         [ValidateNever]

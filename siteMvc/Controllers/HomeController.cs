@@ -10,6 +10,7 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 using Quantumart.QP8.WebMvc.ViewModels.HomePage;
@@ -109,10 +110,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UnlockArticles)]
         [BackendActionContext(ActionCode.UnlockArticles)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult UnlockArticles(int[] IDs)
+        public ActionResult UnlockArticles([FromBody] SelectedItemsViewModel selModel)
         {
-            ArticleService.UnlockArticles(IDs);
+            ArticleService.UnlockArticles(selModel.Ids);
             return Json(null);
         }
     }

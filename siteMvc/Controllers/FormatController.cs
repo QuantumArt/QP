@@ -9,6 +9,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -319,10 +320,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CompareTemplateObjectFormatVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "parentId")]
         [BackendActionContext(ActionCode.CompareTemplateObjectFormatVersions)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> CompareTemplateObjectFormatVersions(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> CompareTemplateObjectFormatVersions(
+            string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel
+        )
         {
-            var version = _formatService.GetMergedObjectFormatVersion(IDs, parentId, false);
+            var version = _formatService.GetMergedObjectFormatVersion(selModel.Ids, parentId, false);
             var model = ObjectFormatVersionCompareViewModel.Create(version, tabId, parentId, false);
             ViewData[SpecialKeys.IsEntityReadOnly] = true;
             return await JsonHtml("CompareObjectFormatVersionProperties", model);
@@ -333,10 +335,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ComparePageObjectFormatVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormat, "parentId")]
         [BackendActionContext(ActionCode.ComparePageObjectFormatVersions)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> ComparePageObjectFormatVersions(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> ComparePageObjectFormatVersions(
+            string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel
+        )
         {
-            var version = _formatService.GetMergedObjectFormatVersion(IDs, parentId, true);
+            var version = _formatService.GetMergedObjectFormatVersion(selModel.Ids, parentId, true);
             var model = ObjectFormatVersionCompareViewModel.Create(version, tabId, parentId, true);
             ViewData[SpecialKeys.IsEntityReadOnly] = true;
             ViewData[SpecialKeys.IsEntityReadOnly] = true;
@@ -376,8 +379,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemoveTemplateObjectFormatVersion)]
         [BackendActionLog]
         [Record]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveTemplateObjectFormatVersion(int parentId, int[] IDs) => JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
+        public ActionResult MultipleRemoveTemplateObjectFormatVersion(int parentId,[FromBody] SelectedItemsViewModel selModel)
+        {
+            return JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(selModel.Ids));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -404,8 +409,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.MultipleRemovePageObjectFormatVersion)]
         [BackendActionLog]
         [Record]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePageObjectFormatVersion(int parentId, int[] IDs) => JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(IDs));
+        public ActionResult MultipleRemovePageObjectFormatVersion(int parentId, [FromBody] SelectedItemsViewModel selModel)
+        {
+            return JsonMessageResult(_formatService.MultipleRemoveObjectFormatVersion(selModel.Ids));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

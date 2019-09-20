@@ -22,6 +22,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
@@ -431,11 +432,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> Select(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> Select(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new ContentSelectableListViewModel(result, tabId, parentId, IDs);
+            var model = new ContentSelectableListViewModel(result, tabId, parentId, selModel.Ids);
             return await JsonHtml("SelectIndex", model);
         }
 
@@ -584,27 +584,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new ContentSelectableListViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
+            var model = new ContentSelectableListViewModel(result, tabId, parentId, selModel.Ids) { IsMultiple = true };
             return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ContentService.List(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = ContentService.List(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -612,11 +610,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectForCustomAction(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForCustomAction(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new CustomActionContentViewModel(result, tabId, parentId, IDs)
+            var model = new CustomActionContentViewModel(result, tabId, parentId, selModel.Ids)
             {
                 IsMultiple = true
             };
@@ -627,9 +624,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForCustomAction(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             string customFilter)
@@ -641,7 +637,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ContentService.ListForCustomAction(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = ContentService.ListForCustomAction(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -649,20 +645,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForWorkflow(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new WorkflowContentViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
+            var model = new WorkflowContentViewModel(result, tabId, parentId, selModel.Ids) { IsMultiple = true };
             return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForWorkflow(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             string customFilter)
@@ -671,7 +665,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter.SiteId = parentId;
             filter.CustomFilter = customFilter;
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ContentService.ListForWorkflow(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = ContentService.ListForWorkflow(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -679,27 +673,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectForUnion(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForUnion(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new UnionContentViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
+            var model = new UnionContentViewModel(result, tabId, parentId, selModel.Ids) { IsMultiple = true };
             return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForUnion(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy,
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ContentService.ListForUnion(filter, listCommand, Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = ContentService.ListForUnion(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 

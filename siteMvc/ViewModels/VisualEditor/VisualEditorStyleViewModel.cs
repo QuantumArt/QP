@@ -24,10 +24,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             set => EntityData = value;
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string AggregationListItemsDataAttributeItems { get; set; }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string AggregationListItemsDataStylesItems { get; set; }
 
         public static VisualEditorStyleViewModel Create(VisualEditorStyle style, string tabId, int parentId) => Create<VisualEditorStyleViewModel>(style, tabId, parentId);

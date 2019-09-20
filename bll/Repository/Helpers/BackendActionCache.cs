@@ -69,6 +69,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 .Include(x => x.NextSuccessfulAction)
                 .Include(x => x.NextFailedAction)
                 .Include(x => x.ExcludesBinds).ThenInclude(x => x.Excludes)
+                .Include(x => x.ToolbarButtons)
                 .ToList()
         );
 

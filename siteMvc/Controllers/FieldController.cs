@@ -14,6 +14,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -277,10 +278,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveField)]
         [BackendActionContext(ActionCode.MultipleRemoveField)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int[] IDs)
+        public ActionResult MultipleRemove([FromBody] SelectedItemsViewModel selModel)
         {
-            var result = FieldService.MultipleRemove(IDs);
+            var result = FieldService.MultipleRemove(selModel.Ids);
             return JsonMessageResult(result);
         }
 
@@ -288,11 +288,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectForExport(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForExport(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = FieldService.InitList(parentId);
-            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExport)
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, selModel.Ids, ActionCode.MultipleSelectFieldForExport)
             {
                 IsMultiple = true
             };
@@ -303,12 +302,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForExport(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = FieldService.ListForExport(listCommand, parentId, Converter.ToInt32Collection(IDs, ','));
+            var serviceResult = FieldService.ListForExport(listCommand, parentId, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -316,11 +314,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForExportExpanded(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = FieldService.InitList(parentId);
-            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExportExpanded)
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, selModel.Ids, ActionCode.MultipleSelectFieldForExportExpanded)
             {
                 IsMultiple = true
             };
@@ -331,13 +328,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForExportExpanded(
-            string tabId, int parentId, string IDs, int page, int pageSize, string orderBy)
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = FieldService.ListForExportExpanded(
-                listCommand, parentId, Converter.ToInt32Collection(IDs, ','));
+                listCommand, parentId, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
