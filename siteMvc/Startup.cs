@@ -90,7 +90,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddCookie(options =>
                 {
                     options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(qpOptions.CookieTimeout);
                     options.LoginPath = new PathString("/Logon");
                     options.LogoutPath = new PathString("/Logon/Logout");
                     options.SlidingExpiration = true;
@@ -108,6 +108,8 @@ namespace Quantumart.QP8.WebMvc
 
             services.AddSession(options =>
             {
+                options.IdleTimeout = TimeSpan.FromSeconds(qpOptions.SessionTimeout);
+                options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
 

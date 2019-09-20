@@ -11,6 +11,8 @@ namespace Quantumart.QP8.Configuration
             CommandTimeout = 120;
             Authentication = new Authentication();
             Globalization = new Globalization();
+            CookieTimeout = 1440;
+            SessionTimeout = 60;
         }
 
         public string BackendUrl { get; set; }
@@ -20,6 +22,7 @@ namespace Quantumart.QP8.Configuration
         public int UploadMaxSize  { get; set; }
 
         public string InstanceName { get; set; }
+
         public string QpConfigPath { get; set; }
 
         public string QpConfigUrl { get; set; }
@@ -29,6 +32,10 @@ namespace Quantumart.QP8.Configuration
         public int RelationCountLimit { get; set; }
 
         public int CommandTimeout { get; set; }
+
+        public int CookieTimeout { get; set; }
+
+        public int SessionTimeout { get; set; }
 
         public bool Set500ForHandledExceptions { get; set; }
 
