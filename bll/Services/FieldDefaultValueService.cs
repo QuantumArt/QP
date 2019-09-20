@@ -43,12 +43,12 @@ namespace Quantumart.QP8.BLL.Services
             var stepCount = MultistepActionHelper.GetStepCount(itemCount, ItemsPerStep);
             var context = new FieldDefaultValueContext
             {
-                ProcessedContentItemIds = itemIdsToProcess.ToArray(),
+                ProcessedContentItemIds = itemIdsToProcess.ToList(),
                 ContentId = contentId,
                 FieldId = fieldId,
                 IsBlob = field.IsBlob,
                 IsM2M = field.ExactType == FieldExactTypes.M2MRelation,
-                DefaultArticles = field.DefaultArticleIds.ToArray(),
+                DefaultArticles = field.DefaultArticleIds.ToList(),
                 Symmetric = field.ContentLink.Symmetric
             };
 

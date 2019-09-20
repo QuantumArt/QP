@@ -16,27 +16,6 @@ using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public interface IRecreateDynamicImagesService
-    {
-        MultistepActionSettings SetupAction(int contentId, int fieldId);
-
-        MultistepActionStepResult Step(int step);
-
-        void TearDown();
-    }
-
-    [Serializable]
-    public class RecreateDynamicImagesContext
-    {
-        public int ContentId { get; set; }
-
-        public int FieldId { get; set; }
-
-        public Tuple<int, string>[] ArticleData { get; set; }
-
-        public HashSet<string> ProcessedImages { get; set; }
-    }
-
     public class RecreateDynamicImagesService : IRecreateDynamicImagesService
     {
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
@@ -59,8 +38,7 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     FieldId = fieldId,
                     ContentId = contentId,
-                    ArticleData = dataRows.Select(r => Tuple.Create(Converter.ToInt32(r.Field<decimal>("ID")), r.Field<string>("DATA"))).ToArray(),
-                    ProcessedImages = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+                    ArticleData = dataRows.Select(r => Tuple.Create(Converter.ToInt32(r.Field<decimal>("ID")), r.Field<string>("DATA"))).ToList(),
                 };
 
                 HttpContext.Session.SetValue(HttpContextSession.RecreateDynamicImagesServiceProcessingContext, context);
@@ -84,8 +62,8 @@ namespace Quantumart.QP8.BLL.Services
         public MultistepActionStepResult Step(int step)
         {
             var context = HttpContext.Session.GetValue<RecreateDynamicImagesContext>(HttpContextSession.RecreateDynamicImagesServiceProcessingContext);
-
-            IEnumerable<Tuple<int, string>> dataForStep = context.ArticleData.Skip(step * ItemsPerStep).Take(ItemsPerStep).ToArray();
+            var currentProcessedImages = new HashSet<string>(context.ProcessedImages);
+            var dataForStep = context.ArticleData.Skip(step * ItemsPerStep).Take(ItemsPerStep).ToArray();
 
             var flds = GetFields(context.FieldId);
             var dimg = flds.Item1.DynamicImage;
@@ -104,9 +82,10 @@ namespace Quantumart.QP8.BLL.Services
                         var newValue = dimg.GetValue(dimg.GetDesiredFileName(dfs.Item2));
                         RecreateDynamicImagesRepository.UpdateDynamicFieldValue(dimg.Field.Id, dfs.Item1, newValue);
 
-                        if (!context.ProcessedImages.Contains(dfs.Item2))
+                        if (!currentProcessedImages.Contains(dfs.Item2))
                         {
                             dimg.CreateDynamicImage(baseImagePathInfo.GetPath(dfs.Item2), dfs.Item2);
+                            currentProcessedImages.Add(dfs.Item2);
                             context.ProcessedImages.Add(dfs.Item2);
                         }
                         transaction.Complete();
