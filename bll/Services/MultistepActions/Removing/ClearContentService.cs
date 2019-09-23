@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.Data;
 using System.Linq;
@@ -65,4 +64,3 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 
     }
 }
-#endif

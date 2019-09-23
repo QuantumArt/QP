@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Web.Compilation;
-using System.Web.Routing;
 using AutoMapper;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
@@ -22,18 +19,18 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
 
         private static void CheatBuildManager()
         {
-            var memberInfo = typeof(BuildManager).GetField("_theBuildManager", BindingFlags.NonPublic | BindingFlags.Static);
-            if (memberInfo != null)
-            {
-                var manager = memberInfo.GetValue(null);
-                typeof(BuildManager).GetProperty("PreStartInitStage", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 2, null);
-
-                var fieldInfo = typeof(BuildManager).GetField("_topLevelFilesCompiledStarted", BindingFlags.NonPublic | BindingFlags.Instance);
-                fieldInfo?.SetValue(manager, true);
-
-                var field = typeof(BuildManager).GetField("_topLevelReferencedAssemblies", BindingFlags.NonPublic | BindingFlags.Instance);
+            // var memberInfo = typeof(BuildManager).GetField("_theBuildManager", BindingFlags.NonPublic | BindingFlags.Static);
+            // if (memberInfo != null)
+            // {
+            //     var manager = memberInfo.GetValue(null);
+            //     typeof(BuildManager).GetProperty("PreStartInitStage", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 2, null);
+            //
+            //     var fieldInfo = typeof(BuildManager).GetField("_topLevelFilesCompiledStarted", BindingFlags.NonPublic | BindingFlags.Instance);
+            //     fieldInfo?.SetValue(manager, true);
+            //
+            //     var field = typeof(BuildManager).GetField("_topLevelReferencedAssemblies", BindingFlags.NonPublic | BindingFlags.Instance);
                 //field?.SetValue(manager, new List<Assembly> { typeof(MvcApplication).Assembly });
-            }
+            //}
         }
 
         public void Dispose()

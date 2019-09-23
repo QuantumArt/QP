@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-//using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
@@ -80,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return action;
         }
 
-        public XmlDbUpdateRecordedAction PostActionCorrections(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
+        public XmlDbUpdateRecordedAction PostActionCorrections(XmlDbUpdateRecordedAction action, HttpContext httpContext)
         {
             AddResultIds(action, httpContext);
             switch (action.BackendAction.Code)
@@ -484,9 +482,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return null;
         }
 
-        private void AddIdsToReplace(string oldIdsCommaString, HttpContextBase context, string key)
+        private void AddIdsToReplace(string oldIdsCommaString, HttpContext context, string key)
         {
-            if (context.Items.Contains(key))
+            if (context.Items.ContainsKey(key))
             {
                 IReadOnlyList<int> oldIds = oldIdsCommaString?.ToIntArray();
                 IReadOnlyList<int> newIds = context.Items[key]?.ToString().ToIntArray();
@@ -530,15 +528,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void AddIdToReplace(string entityTypeCode, int id, HttpContextBase context, string key)
+        private void AddIdToReplace(string entityTypeCode, int id, HttpContext context, string key)
         {
-            if (context.Items.Contains(key))
+            if (context.Items.ContainsKey(key))
             {
                 AddIdToReplace(entityTypeCode, id, int.Parse(context.Items[key].ToString()));
             }
         }
 
-        private void AddResultIds(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
+        private void AddResultIds(XmlDbUpdateRecordedAction action, HttpContext httpContext)
         {
             // if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
             // {
@@ -574,9 +572,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void AddUniqueIdToReplace(string entityTypeCode, Guid uniqueId, HttpContextBase context, string key)
+        private void AddUniqueIdToReplace(string entityTypeCode, Guid uniqueId, HttpContext context, string key)
         {
-            if (context.Items.Contains(key))
+            if (context.Items.ContainsKey(key))
             {
                 AddUniqueIdToReplace(entityTypeCode, uniqueId, Guid.Parse(context.Items[key].ToString()));
             }

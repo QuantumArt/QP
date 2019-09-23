@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Resources;

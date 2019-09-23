@@ -1,6 +1,5 @@
 using System.Linq;
-using System.Web;
-using System.Web.Routing;
+using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
@@ -12,7 +11,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
     public class XmlDbUpdateHttpContextProcessor : IXmlDbUpdateHttpContextProcessor
     {
-        public HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution)
+        public HttpContext PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution)
         {
             // Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
             // var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();

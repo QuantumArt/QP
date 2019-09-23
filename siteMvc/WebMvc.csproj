@@ -4,7 +4,7 @@
     <AssemblyName>Quantumart.QP8.WebMvc</AssemblyName>
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <MvcBuildViews>true</MvcBuildViews>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFrameworks>net471;netcoreapp2.2</TargetFrameworks>
     <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**</DefaultItemExcludes>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
@@ -62,5 +62,9 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Converters" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
+    <DefineConstants>NET_STANDARD</DefineConstants>
+  </PropertyGroup>
 
 </Project>

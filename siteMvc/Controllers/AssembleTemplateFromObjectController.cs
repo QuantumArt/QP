@@ -1,5 +1,5 @@
+#if !NET_STANDARD
 using Microsoft.AspNetCore.Mvc;
-using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Assemble;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -34,3 +34,4 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
     }
 }
+#endif

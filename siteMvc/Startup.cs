@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
@@ -25,16 +24,9 @@ using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.BLL.Services.MultistepActions;
-using Quantumart.QP8.BLL.Services.MultistepActions.Assemble;
 using Quantumart.QP8.BLL.Services.MultistepActions.Base;
-using Quantumart.QP8.BLL.Services.MultistepActions.CopySite;
-using Quantumart.QP8.BLL.Services.MultistepActions.Export;
-using Quantumart.QP8.BLL.Services.MultistepActions.Import;
-using Quantumart.QP8.BLL.Services.MultistepActions.Rebuild;
-using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Utils.FullTextSearch;
-using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
@@ -177,8 +169,10 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<IWorkflowService, WorkflowService>()
                     .AddTransient<IStatusTypeService, StatusTypeService>()
                     .AddTransient<IPageTemplateService, PageTemplateService>()
+#if !NET_STANDARD
                     .AddTransient<IPageService, PageService>()
                     .AddTransient<IObjectService, ObjectService>()
+#endif
                     .AddTransient<IFormatService, FormatService>()
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
                 ;

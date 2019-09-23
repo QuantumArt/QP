@@ -1,8 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
+#if !NET_STANDARD
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -234,3 +233,4 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
     }
 }
+#endif
