@@ -272,7 +272,7 @@ export class Backend {
       this._initializeSignOut();
     });
 
-    //this._initializeSignalrHubs();
+    this._initializeSignalrHubs();
   }
 
   _error() {
