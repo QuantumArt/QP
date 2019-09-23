@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using QA.Validation.Xaml;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
@@ -41,7 +43,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [DisableBrowserCache]
-        public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions, LogOnCredentials data)
+        public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions, LogOnCredentials data, string returnUrl)
         {
             try
             {
@@ -65,9 +67,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     });
                 }
 
-                if (directLinkOptions != null && directLinkOptions.IsDefined())
+                if (!string.IsNullOrEmpty(returnUrl))
                 {
-                    return RedirectToAction("Index", "Home", directLinkOptions);
+                    return LocalRedirect(returnUrl);
                 }
 
                 return RedirectToAction("Index", "Home");

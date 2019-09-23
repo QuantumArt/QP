@@ -117,6 +117,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddMvc(options =>
                 {
                     options.ModelBinderProviders.Insert(0, new QpModelBinderProvider());
+                    options.EnableEndpointRouting = false;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
