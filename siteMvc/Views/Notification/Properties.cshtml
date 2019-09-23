@@ -6,11 +6,10 @@
 {
 	if (Model.ShowUnbindButton)
 	{
-		@Html.Warning(new[]
-		{
-			string.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name),
-			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification).ToString()
-		})
+		@Html.Warning(
+		  Html.Raw(string.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name)),
+			Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
+		)
 	}
 }
 

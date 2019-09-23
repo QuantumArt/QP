@@ -4,12 +4,12 @@
 
 @if (!Model.Data.IsUpdatableWithWorkflow)
 {
-    @Html.Warning(Model.WorkflowWarning)
+    @Html.Warning(Html.Raw(Model.WorkflowWarning))
 }
 
 @if (Model.Data.ViewType == ArticleViewType.ReadOnlyBecauseOfRelationSecurity)
 {
-    @Html.Warning(Model.RelationSecurityWarning)
+    @Html.Warning(Html.Raw(Model.RelationSecurityWarning))
 }
 
 @using (Html.BeginTabForm(Model))

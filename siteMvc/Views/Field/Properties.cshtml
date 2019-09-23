@@ -125,7 +125,7 @@
             @Html.CheckBoxFieldFor(s => s.Data.RebuildVirtualContents, "RebuildVirtualContents", true)
             using (Html.BeginPanel("RebuildVirtualContents"))
             {
-                @Html.Warning(FieldStrings.DisablingRebuildIsDangerous)
+                @Html.Warning(Html.Raw(FieldStrings.DisablingRebuildIsDangerous))
             }
         }
 
@@ -231,7 +231,7 @@
                 {
                     @Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
                 }
-        
+
                 @Html.NumericFieldFor(s => s.Data.MaxDataListItemCount)
 
                 using (Html.BeginPanel("O2MDefault"))
@@ -263,7 +263,7 @@
                         if (!Model.Data.IsBackwardFieldExists)
                         {
                             @Html.TextBoxFieldFor(s => s.Data.NewM2MBackwardFieldName)
-                        }                       
+                        }
                     }
                 }
 
@@ -290,7 +290,7 @@
                         if (!Model.Data.IsBackwardFieldExists)
                         {
                             @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-                        }                    
+                        }
                     }
                 }
 
@@ -313,7 +313,7 @@
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2ORelation, true))
             {
-                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()), new Dictionary<string, object> { { "id", Model.BackRelationSelectElementId } })                 
+                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()), new Dictionary<string, object> { { "id", Model.BackRelationSelectElementId } })
             }
 
             using (Html.BeginPanel("ListOrderOptions"))

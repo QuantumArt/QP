@@ -426,7 +426,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return html;
         }
 
-        public static IHtmlContent Warning(this IHtmlHelper source, params string[] messages)
+        public static IHtmlContent Warning(this IHtmlHelper source, params IHtmlContent[] messages)
         {
             var url = new UrlHelper(source.ViewContext);
 
@@ -443,7 +443,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var text = new TagBuilder("span");
                 text.AddCssClass("w-item");
-                text.InnerHtml.Append(message);
+                text.InnerHtml.AppendHtml(message);
 
                 wrapper.InnerHtml.AppendHtml(text);
             }

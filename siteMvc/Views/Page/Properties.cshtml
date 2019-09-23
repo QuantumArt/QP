@@ -22,10 +22,7 @@
 
         @using (Html.BeginPanel("WarningPanel"))
         {
-            @Html.Warning(new[]
-		    {
-			    TemplateStrings.WarningString
-		    })
+            @Html.Warning(Html.Raw(TemplateStrings.WarningString))
         }
 
         <em class="validators"></em>
