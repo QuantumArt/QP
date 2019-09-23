@@ -154,7 +154,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                     return null;
                 }
 
-                var fieldId = p.FieldID ?? string.Empty;
+                var fieldId = p.FieldId ?? string.Empty;
                 var paramName = "@field" + fieldId.Replace("-", "_");
                 var values = ((object[])p.QueryParams[4]).Select(n => int.Parse(n.ToString())).ToArray();
                 if (values.Length == 1)
@@ -793,7 +793,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             }
 
             var values = ((object[])p.QueryParams[0]).Select(n => int.Parse(n.ToString())).ToArray();
-            var fieldId = p.FieldID ?? string.Empty;
+            var fieldId = p.FieldId ?? string.Empty;
             var paramName = "@field" + fieldId.Replace("-", "_");
 
             if (values.Length == 1)
@@ -847,14 +847,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
         private static string GetTableAlias(ArticleSearchQueryParam p)
         {
-            if (string.IsNullOrEmpty(p.ContentID))
+            if (string.IsNullOrEmpty(p.ContentId))
             {
                 return ContentTableAlias;
             }
 
-            return string.IsNullOrEmpty(p.ReferenceFieldID)
-                ? ContentTableAlias + "_" + p.ContentID
-                : ContentTableAlias + "_" + p.ContentID + "_" + p.ReferenceFieldID;
+            return string.IsNullOrEmpty(p.ReferenceFieldId)
+                ? ContentTableAlias + "_" + p.ContentId
+                : ContentTableAlias + "_" + p.ContentId + "_" + p.ReferenceFieldId;
         }
     }
 }

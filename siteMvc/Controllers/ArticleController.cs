@@ -626,7 +626,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ConnectionScope]
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public ActionResult GetParentIds(List<int> ids, int fieldId, string filter) => JsonCamelCase(new JSendResponse
+        public ActionResult GetParentIds(int[] ids, int fieldId, string filter) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
             Data = ArticleService.GetParentIds(ids, fieldId)
@@ -635,7 +635,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ConnectionScope]
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public ActionResult GetChildArticleIds(List<int> ids, int fieldId, string filter) => JsonCamelCase(new JSendResponse
+        public ActionResult GetChildArticleIds(int[] ids, int fieldId, string filter) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
             Data = ArticleService.GetChildArticles(ids, fieldId, filter)

@@ -68,7 +68,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,string,222",
+                            FieldId = "1,string,222",
                             QueryParams = new object[] { "test" }
                         }
                     },
@@ -85,7 +85,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,,222",
+                            FieldId = "1,,222",
                             QueryParams = new object[] { "test" }
                         }
                     },
@@ -102,7 +102,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,2,3",
+                            FieldId = "1,2,3",
                             QueryParams = null
                         }
                     },
@@ -118,7 +118,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,2,3",
+                            FieldId = "1,2,3",
                             QueryParams = new object[] { }
                         }
                     },
@@ -134,7 +134,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,2,3",
+                            FieldId = "1,2,3",
                             QueryParams = new object[] { 1 }
                         }
                     },
@@ -159,7 +159,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,2,3",
+                            FieldId = "1,2,3",
                             QueryParams = new object[] { "test" }
                         }
                     },
@@ -230,7 +230,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,2,3",
+                            FieldId = "1,2,3",
                             QueryParams = new object[] { null }
                         }
                     },
@@ -247,7 +247,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1,2,3",
+                            FieldId = "1,2,3",
                             QueryParams = new object[] { "" }
                         }
                     },
@@ -273,7 +273,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = " 1, 2,3 ",
+                            FieldId = " 1, 2,3 ",
                             QueryParams = new object[] { "test" }
                         }
                     },
@@ -292,7 +292,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                         new ArticleSearchQueryParam
                         {
                             SearchType = ArticleFieldSearchType.FullText,
-                            FieldID = "1",
+                            FieldId = "1",
                             QueryParams = new object[] { "test" }
                         }
                     },

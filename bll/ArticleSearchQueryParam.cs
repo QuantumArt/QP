@@ -1,17 +1,19 @@
+using Newtonsoft.Json;
+
 namespace Quantumart.QP8.BLL
 {
     public class ArticleSearchQueryParam
     {
         public ArticleFieldSearchType SearchType { get; set; }
 
-        // ReSharper disable once InconsistentNaming
-        public string FieldID { get; set; }
+        [JsonProperty("FieldID")]
+        public string FieldId { get; set; }
 
-        // ReSharper disable once InconsistentNaming
-        public string ReferenceFieldID { get; set; }
+        [JsonProperty("ReferenceFieldID")]
+        public string ReferenceFieldId { get; set; }
 
-        // ReSharper disable once InconsistentNaming
-        public string ContentID { get; set; }
+        [JsonProperty("ContentID")]
+        public string ContentId { get; set; }
 
         public string FieldColumn { get; set; }
 

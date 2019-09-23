@@ -44,14 +44,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             var allIds = false;
             int[] ids = null;
-            if (string.IsNullOrWhiteSpace(processedParam.FieldID))
+            if (string.IsNullOrWhiteSpace(processedParam.FieldId))
             {
                 allIds = true;
             }
             else
             {
                 // получить ID, все что не число будет преобразовано в -1000
-                ids = Converter.ToInt32Collection(processedParam.FieldID, ',', true, -1000);
+                ids = Converter.ToInt32Collection(processedParam.FieldId, ',', true, -1000);
                 if (ids.Length == 0)
                 {
                     throw new ArgumentException("FieldID");

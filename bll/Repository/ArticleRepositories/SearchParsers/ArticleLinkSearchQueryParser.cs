@@ -62,9 +62,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 throw new ArgumentException("Undefined search paramenter type: " + param.SearchType);
             }
 
-            Ensure.NotNullOrWhiteSpace(param.FieldID, "FieldId");
+            Ensure.NotNullOrWhiteSpace(param.FieldId, "FieldId");
 
-            var fieldId = int.Parse(param.FieldID);
+            var fieldId = int.Parse(param.FieldId);
             Ensure.That<InvalidCastException>(param.QueryParams[0] is object[]);
             Ensure.That<InvalidCastException>(param.QueryParams[1] is bool);
             Ensure.That<InvalidCastException>(param.QueryParams[2] is bool);
@@ -84,19 +84,19 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 values = ((object[])param.QueryParams[0]).Select(Convert.ToInt32);
             }
 
-            var field = _articleSearchRepository.GetFieldByID(fieldId);
+            var field = _articleSearchRepository.GetFieldById(fieldId);
             var linkedId = field.LinkId ?? field.BackRelationId;
             if (!linkedId.HasValue)
             {
                 throw new ApplicationException("Не удалость получить LinkedId для поля с id = " + fieldId);
             }
 
-            if (!int.TryParse(param.ContentID, out var extensionContentId))
+            if (!int.TryParse(param.ContentId, out var extensionContentId))
             {
                 extensionContentId = 0;
             }
 
-            if (!int.TryParse(param.ReferenceFieldID, out var referenceFieldId))
+            if (!int.TryParse(param.ReferenceFieldId, out var referenceFieldId))
             {
                 referenceFieldId = 0;
             }

@@ -66,7 +66,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, false }
                     },
 
@@ -74,7 +74,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, false }
                     },
 
@@ -82,14 +82,14 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, false }
                     },
                     new ArticleSearchQueryParam
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, false, false }
                     }
                 },
@@ -105,7 +105,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "TesT", false }
                     },
 
@@ -113,7 +113,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/18/2011", "5/17/2011", false }
                     },
 
@@ -121,14 +121,14 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 AM", false }
                     },
                     new ArticleSearchQueryParam
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 1, 0, false, false }
                     },
                     new ArticleSearchQueryParam
@@ -271,7 +271,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, false }
                     }
                 },
@@ -286,7 +286,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "", false }
                     }
                 },
@@ -301,7 +301,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "test", false }
                     }
                 },
@@ -316,7 +316,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, false }
                     }
                 },
@@ -331,7 +331,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", false }
                     }
                 },
@@ -346,7 +346,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.Text,
                         FieldColumn = "Text",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "  ' [ % _ TesT  ", false }
                     }
                 },
@@ -477,7 +477,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "erkerekj", "", false }
                     }
                 },
@@ -506,7 +506,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "sksfdkgj", false }
                     }
                 },
@@ -536,7 +536,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "5/17/2011", "5/17/2011", null }
                     }
                 },
@@ -580,7 +580,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, null, false }
                     }
                 },
@@ -595,7 +595,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "", "", false }
                     }
                 },
@@ -610,7 +610,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "5/17/2011", null, false }
                     }
                 },
@@ -625,7 +625,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "5/17/2011", "", true }
                     }
                 },
@@ -641,7 +641,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, "5/17/2011", false }
                     }
                 },
@@ -656,7 +656,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "", "5/17/2011", false }
                     }
                 },
@@ -671,7 +671,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "5/17/2011", "5/17/2011", false }
                     }
                 },
@@ -686,7 +686,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, false }
                     }
                 },
@@ -701,7 +701,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "", false }
                     }
                 },
@@ -716,7 +716,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/17/2011", null, false }
                     }
                 },
@@ -731,7 +731,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/17/2011", "", false }
                     }
                 },
@@ -747,7 +747,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, "5/17/2011", false }
                     }
                 },
@@ -762,7 +762,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "5/17/2011", false }
                     }
                 },
@@ -777,7 +777,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/17/2011", "5/17/2011", false }
                     }
                 },
@@ -792,7 +792,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/17/2011", "5/18/2011", false }
                     }
                 },
@@ -807,7 +807,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/18/2011", "5/17/2011", false }
                     }
                 },
@@ -822,7 +822,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, true }
                     }
                 },
@@ -837,7 +837,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "", true }
                     }
                 },
@@ -852,7 +852,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/17/2011", null, true }
                     }
                 },
@@ -867,7 +867,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "5/17/2011", "5/17/2011", true }
                     }
                 },
@@ -883,7 +883,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, "5/17/2011", true }
                     }
                 },
@@ -898,7 +898,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "5/17/2011", true }
                     }
                 },
@@ -1029,7 +1029,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "erkerekj", "", false }
                     }
                 },
@@ -1058,7 +1058,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "sksfdkgj", false }
                     }
                 },
@@ -1101,7 +1101,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.DateRange,
                         FieldColumn = "Date",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "10:58:41 PM", "10:58:41 PM", null }
                     }
                 },
@@ -1130,7 +1130,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, null, false }
                     }
                 },
@@ -1145,7 +1145,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "", "", true }
                     }
                 },
@@ -1160,7 +1160,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "10:58:41 PM", null, false }
                     }
                 },
@@ -1175,7 +1175,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "10:58:41 PM", "", false }
                     }
                 },
@@ -1191,7 +1191,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, "10:58:41 PM", false }
                     }
                 },
@@ -1206,7 +1206,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "", "10:58:41 PM", false }
                     }
                 },
@@ -1221,7 +1221,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, "10:58:41 PM", "10:58:41 PM", false }
                     }
                 },
@@ -1236,7 +1236,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, false }
                     }
                 },
@@ -1251,7 +1251,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "", false }
                     }
                 },
@@ -1266,7 +1266,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", null, false }
                     }
                 },
@@ -1281,7 +1281,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", "", false }
                     }
                 },
@@ -1297,7 +1297,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, "10:58:41 PM", false }
                     }
                 },
@@ -1312,7 +1312,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "10:58:41 PM", false }
                     }
                 },
@@ -1327,7 +1327,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 PM", false }
                     }
                 },
@@ -1342,7 +1342,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 AM", "10:58:41 PM", false }
                     }
                 },
@@ -1357,7 +1357,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 AM", false }
                     }
                 },
@@ -1372,7 +1372,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, true }
                     }
                 },
@@ -1387,7 +1387,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "", "", false, true }
                     }
                 },
@@ -1402,7 +1402,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", null, true }
                     }
                 },
@@ -1418,7 +1418,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.TimeRange,
                         FieldColumn = "Time",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, "10:58:41 PM", "10:58:41 AM", true }
                     }
                 },
@@ -1621,7 +1621,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, null, false, false }
                     }
                 },
@@ -1636,7 +1636,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, 1, null, true, false }
                     }
                 },
@@ -1652,7 +1652,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, null, 1, true, false }
                     }
                 },
@@ -1668,7 +1668,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { true, 0, 1, false, false }
                     }
                 },
@@ -1683,7 +1683,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, false, false }
                     }
                 },
@@ -1698,7 +1698,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 1, null, false, false }
                     }
                 },
@@ -1714,7 +1714,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, 1, false, false }
                     }
                 },
@@ -1730,7 +1730,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 1, 1, false, false }
                     }
                 },
@@ -1746,7 +1746,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 0, 1, false, false }
                     }
                 },
@@ -1762,7 +1762,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 1, 0, false, false }
                     }
                 },
@@ -1777,7 +1777,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, null, null, true, false }
                     }
                 },
@@ -1792,7 +1792,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 1, null, true, false }
                     }
                 },
@@ -1808,7 +1808,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL.Repository.Articles
                     {
                         SearchType = ArticleFieldSearchType.NumericRange,
                         FieldColumn = "Number",
-                        FieldID = "1",
+                        FieldId = "1",
                         QueryParams = new object[] { false, 1, 2, true, false }
                     }
                 },

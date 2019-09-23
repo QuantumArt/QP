@@ -245,7 +245,7 @@ namespace Quantumart.QP8.BLL.Services
                 });
         }
 
-        public Field GetFieldByID(int fieldID) => articleSearchRepository.GetFieldByID(fieldID);
+        public Field GetFieldByID(int fieldID) => articleSearchRepository.GetFieldById(fieldID);
 
         /// <summary>
         /// Определяет тип поиска по полю

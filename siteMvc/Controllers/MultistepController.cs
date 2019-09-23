@@ -4,6 +4,7 @@ using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -19,9 +20,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(null)]
-        public ActionResult PreAction(string command, int parentId, int[] IDs)
+        public ActionResult PreAction(string command, int parentId, [FromBody] SelectedItemsViewModel model)
         {
-            return Json(_getService(command).PreAction(parentId, 0, IDs));
+            return Json(_getService(command).PreAction(parentId, 0, model.Ids));
         }
 
         [HttpPost]
@@ -30,17 +31,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(null)]
         [BackendActionLog]
         [Record]
-        public ActionResult Setup(string command, int parentId, int[] IDs, bool? boundToExternal)
+        public ActionResult Setup(string command, int parentId, [FromBody] SelectedItemsViewModel model, bool? boundToExternal)
         {
-            return Json(_getService(command).Setup(parentId, 0, IDs, boundToExternal));
+            return Json(_getService(command).Setup(parentId, 0, model.Ids, boundToExternal));
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(null)]
-        public ActionResult Step(string command, int stage, int step)
+        public ActionResult Step(string command, [FromBody] MultiStepActionViewModel model)
         {
-            return Json(_getService(command).Step(stage, step));
+            return Json(_getService(command).Step(model.Stage, model.Step));
         }
 
         [HttpPost]

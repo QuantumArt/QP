@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
@@ -21,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         {
             IsVirtual = false;
             IsViewChangable = true;
-            HostUID = Guid.NewGuid().ToString();
+            HostUid = Guid.NewGuid().ToString();
         }
 
         public static T Create<T>(string tabId, int parentId)
@@ -52,7 +53,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             {
                 dynamic result = new ExpandoObject();
                 result.hostId = DocumentHostId;
-                result.hostUID = HostUID;
+                result.hostUID = HostUid;
                 result.isWindow = IsWindow;
                 result.parentEntityId = ParentEntityId;
                 result.entityTypeCode = EntityTypeCode;
@@ -74,8 +75,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public string ValidationSummaryId => UniqueId("Summary");
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public string HostUID { get; }
+        [JsonProperty("HostUID")]
+        public string HostUid { get; }
 
         public bool IsWindow => HtmlHelperFieldExtensions.IsWindow(TabId);
 

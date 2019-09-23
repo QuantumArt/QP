@@ -116,10 +116,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
             else
             {
-                extensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
+                extensionContentIds = searchQueryParams.Select(p => p.ContentId).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
                 contentReferences = searchQueryParams
-                    .Where(p => !string.IsNullOrEmpty(p.ContentID) && !string.IsNullOrEmpty(p.ReferenceFieldID))
-                    .Select(p => new ContentReference(int.Parse(p.ContentID), int.Parse(p.ReferenceFieldID)))
+                    .Where(p => !string.IsNullOrEmpty(p.ContentId) && !string.IsNullOrEmpty(p.ReferenceFieldId))
+                    .Select(p => new ContentReference(int.Parse(p.ContentId), int.Parse(p.ReferenceFieldId)))
                     .ToArray();
             }
 

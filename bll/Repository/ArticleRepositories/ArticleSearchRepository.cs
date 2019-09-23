@@ -22,14 +22,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <summary>
         /// Получить поле по ID
         /// </summary>
-        // ReSharper disable once InconsistentNaming
-        Field GetFieldByID(int fieldId);
+        Field GetFieldById(int fieldId);
 
         /// <summary>
         /// Получить LinkedID поля по его ID
         /// </summary>
-        // ReSharper disable once InconsistentNaming
-        int? GetFieldLinkedID(int fieldId);
+        int? GetFieldLinkedId(int fieldId);
 
         /// <summary>
         /// Возвращает список всех пользователей
@@ -70,11 +68,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return new Field[0];
         }
 
-        public Field GetFieldByID(int fieldId) => FieldRepository.GetById(fieldId);
+        public Field GetFieldById(int fieldId) => FieldRepository.GetById(fieldId);
 
-        public int? GetFieldLinkedID(int fieldId)
+        public int? GetFieldLinkedId(int fieldId)
         {
-            var field = GetFieldByID(fieldId);
+            var field = GetFieldById(fieldId);
             if (field == null)
             {
                 return null;

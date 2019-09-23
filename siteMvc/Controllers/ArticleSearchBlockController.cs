@@ -139,20 +139,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по строковому перечислению.
         /// </summary>
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> StringEnum(string elementIdPrefix, int fieldID)
+        public async Task<ActionResult> StringEnum(string elementIdPrefix, [FromQuery(Name = "fieldID")]int fieldId)
         {
             ViewBag.QueryDropDownListID = elementIdPrefix + "_queryDropDownList";
             ViewBag.IsNullCheckBoxID = elementIdPrefix + "_isNullCheckBox";
-            var model = FieldService.Read(fieldID).StringEnumItems.Select(o => new QPSelectListItem { Value = o.Value, Text = o.Alias }).ToList();
+            var model = FieldService.Read(fieldId).StringEnumItems.Select(o => new QPSelectListItem { Value = o.Value, Text = o.Alias }).ToList();
             return await JsonHtml("StringEnum", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public async Task<ActionResult> ContentsListForClassifier(string elementIdPrefix, int fieldID)
+        public async Task<ActionResult> ContentsListForClassifier(string elementIdPrefix, [FromQuery(Name = "fieldID")]int fieldId)
         {
-            var classifier = FieldService.Read(fieldID);
+            var classifier = FieldService.Read(fieldId);
             ViewBag.ElementIdPrefix = elementIdPrefix;
             ViewBag.ContentElementID = string.Format("{0}_contentID", ViewBag.ElementIdPrefix);
             ViewBag.IsNullCheckBoxElementID = string.Format("{0}_isNullCheckBox", ViewBag.ElementIdPrefix);
@@ -165,7 +163,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// </summary>
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public async Task<ActionResult> RelationSearch([FromBody] RelationSearchViewModel model)
         {
             ViewBag.IsNullCheckBoxElementID = $"{model.ElementIdPrefix}_isNullCheckBox";
