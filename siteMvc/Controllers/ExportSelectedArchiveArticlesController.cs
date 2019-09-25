@@ -16,7 +16,7 @@ using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ExportSelectedArchiveArticlesController : QPController
+    public class ExportSelectedArchiveArticlesController : AuthQpController
     {
         private readonly IMultistepActionService _service;
         private const string FolderForTemplate = "MultistepSettingsTemplates";
@@ -30,9 +30,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArchiveArticles)]
         [BackendActionContext(ActionCode.ExportArchiveArticles)]
-        public ActionResult PreSettings(int parentId, int[] ids)
+        public ActionResult PreSettings(int parentId, [FromBody] SelectedItemsViewModel model)
         {
-            return Json(_service.MultistepActionSettings(parentId, 0, ids));
+            return Json(_service.MultistepActionSettings(parentId, 0, model.Ids));
         }
 
         [HttpPost]

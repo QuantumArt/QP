@@ -8,7 +8,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class FieldDefaultValueController : QPController
+    public class FieldDefaultValueController : AuthQpController
     {
         private readonly IFieldDefaultValueService _service;
 

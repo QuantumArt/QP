@@ -14,7 +14,7 @@ using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class VirtualContentController : QPController
+    public class VirtualContentController : AuthQpController
     {
         [HttpPost]
         public JsonResult GetChildFieldList([FromBody] ChildFieldListQuery model)

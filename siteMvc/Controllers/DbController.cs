@@ -22,7 +22,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class DbController : QPController
+    public class DbController : AuthQpController
     {
         private readonly ICommunicationService _communicationService;
         private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;

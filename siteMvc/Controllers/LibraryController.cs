@@ -25,7 +25,7 @@ using SixLabors.Primitives;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class LibraryController : QPController
+    public class LibraryController : AuthQpController
     {
         private const string ContentDispositionTemplate = "attachment; filename=\"{0}\"; filename*=UTF-8''{0}";
         private const int DefaultSvgWidth = 800;

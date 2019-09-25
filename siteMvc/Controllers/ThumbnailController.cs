@@ -9,7 +9,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ThumbnailController : QPController
+    public class ThumbnailController : AuthQpController
     {
         public FileResult _SiteFileThumbnail(int folderId, string fileName)
         {

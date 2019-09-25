@@ -4,7 +4,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ContextMenuController : QPController
+    public class ContextMenuController : AuthQpController
     {
         public JsonResult GetByCode(string menuCode, bool loadItems = false)
         {

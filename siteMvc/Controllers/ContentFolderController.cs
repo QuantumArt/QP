@@ -12,7 +12,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Library;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ContentFolderController : QPController
+    public class ContentFolderController : AuthQpController
     {
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentFolder)]

@@ -17,7 +17,7 @@ using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ArticleVersionController : QPController
+    public class ArticleVersionController : AuthQpController
     {
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticleVersions)]

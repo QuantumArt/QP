@@ -12,7 +12,7 @@ using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class UserGroupController : QPController
+    public class UserGroupController : AuthQpController
     {
         private readonly IUserGroupService _service;
 

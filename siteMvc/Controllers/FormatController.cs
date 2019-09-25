@@ -14,7 +14,7 @@ using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class FormatController : QPController
+    public class FormatController : AuthQpController
     {
         private readonly IFormatService _formatService;
 

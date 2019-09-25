@@ -15,7 +15,7 @@ using Quantumart.QP8.WebMvc.ViewModels.StatusType;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class StatusTypeController : QPController
+    public class StatusTypeController : AuthQpController
     {
         private readonly IStatusTypeService _statusTypeService;
 

@@ -8,7 +8,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class RecreateDynamicImagesController : QPController
+    public class RecreateDynamicImagesController : AuthQpController
     {
         private readonly IRecreateDynamicImagesService _service;
 

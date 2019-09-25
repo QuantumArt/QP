@@ -18,7 +18,7 @@ using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class CopySiteController : QPController
+    public class CopySiteController : AuthQpController
     {
         private readonly IMultistepActionService _multistepService;
         private const string FolderForTemplate = "MultistepSettingsTemplates";

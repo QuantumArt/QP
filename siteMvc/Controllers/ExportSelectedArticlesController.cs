@@ -16,7 +16,7 @@ using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ExportSelectedArticlesController : QPController
+    public class ExportSelectedArticlesController : AuthQpController
     {
         private readonly IMultistepActionService _service;
         private const string FolderForTemplate = "MultistepSettingsTemplates";

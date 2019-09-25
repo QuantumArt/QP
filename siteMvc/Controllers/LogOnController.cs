@@ -39,7 +39,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [DisableBrowserCache]
-        public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions, LogOnCredentials data, string returnUrl)
+        public async Task<ActionResult> Index(LogOnCredentials data, string returnUrl)
+        {
+            return await PostIndex(data, returnUrl);
+        }
+
+        [HttpPost]
+        [DisableBrowserCache]
+        public async Task<ActionResult> JsonIndex([FromBody] LogOnCredentials data, string returnUrl)
+        {
+            return await PostIndex(data, returnUrl);
+        }
+
+        private async Task<ActionResult> PostIndex(LogOnCredentials data, string returnUrl)
         {
             try
             {
@@ -100,7 +112,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 return await JsonHtml("Popup", null);
             }
-            return View();
+            return View("Index");
         }
     }
 }

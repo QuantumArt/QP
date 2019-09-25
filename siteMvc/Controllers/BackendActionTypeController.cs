@@ -4,7 +4,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class BackendActionTypeController : QPController
+    public class BackendActionTypeController : AuthQpController
     {
         public JsonResult GetCodeByActionCode(string actionCode)
         {

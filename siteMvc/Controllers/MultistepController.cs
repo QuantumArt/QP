@@ -8,7 +8,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class MultistepController : QPController
+    public class MultistepController : AuthQpController
     {
         private readonly Func<string, IMultistepActionService> _getService;
 

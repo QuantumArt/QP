@@ -20,7 +20,7 @@ using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ImportArticlesController : QPController
+    public class ImportArticlesController : AuthQpController
     {
         private readonly IMultistepActionService _service;
 

@@ -10,7 +10,7 @@ using Quantumart.QP8.WebMvc.ViewModels.ActionPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ActionPermissionTreeController : QPController
+    public class ActionPermissionTreeController : AuthQpController
     {
         private readonly IActionPermissionTreeService _service;
 

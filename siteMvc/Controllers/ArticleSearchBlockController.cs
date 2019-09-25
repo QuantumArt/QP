@@ -13,7 +13,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ArticleSearchBlockController : QPController
+    public class ArticleSearchBlockController : AuthQpController
     {
         private readonly IArticleSearchService _articleSearchService;
 

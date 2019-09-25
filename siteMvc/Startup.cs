@@ -85,6 +85,7 @@ namespace Quantumart.QP8.WebMvc
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(qpOptions.CookieTimeout);
                     options.LoginPath = new PathString("/Logon");
                     options.LogoutPath = new PathString("/Logon/Logout");
+                    options.AccessDeniedPath = new PathString("/Logon");
                     options.SlidingExpiration = true;
                 });
 

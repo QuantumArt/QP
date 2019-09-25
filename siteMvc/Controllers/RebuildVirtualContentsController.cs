@@ -9,7 +9,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class RebuildVirtualContentsController : QPController
+    public class RebuildVirtualContentsController : AuthQpController
     {
         private readonly IMultistepActionService _service;
 

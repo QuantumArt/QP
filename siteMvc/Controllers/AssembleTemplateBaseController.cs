@@ -10,7 +10,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class AssembleTemplateBaseController : QPController
+    public class AssembleTemplateBaseController : AuthQpController
     {
         protected readonly IMultistepActionService Service;
 

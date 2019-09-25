@@ -24,7 +24,7 @@ using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class CustomActionController : QPController
+    public class CustomActionController : AuthQpController
     {
         private readonly ICustomActionService _service;
         private readonly IServiceProvider _serviceProvider;

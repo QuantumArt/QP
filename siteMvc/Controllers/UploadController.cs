@@ -21,7 +21,7 @@ using FileIO = System.IO.File;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class UploadController : QPController
+    public class UploadController : AuthQpController
     {
         private readonly IBackendActionLogRepository _logger;
         private readonly FormOptions _formOptions;

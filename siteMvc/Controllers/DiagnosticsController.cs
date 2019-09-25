@@ -4,7 +4,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class DiagnosticsController : QPController
+    public class DiagnosticsController : AuthQpController
     {
         public async Task<ActionResult> Index()
         {

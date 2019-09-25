@@ -9,7 +9,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class RemoveContentController : QPController
+    public class RemoveContentController : AuthQpController
     {
         private readonly IMultistepActionService _service;
 

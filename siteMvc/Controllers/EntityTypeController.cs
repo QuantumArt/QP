@@ -4,7 +4,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class EntityTypeController : QPController
+    public class EntityTypeController : AuthQpController
     {
         public JsonResult GetByCode(string entityTypeCode)
         {

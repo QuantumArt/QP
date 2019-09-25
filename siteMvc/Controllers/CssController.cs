@@ -6,7 +6,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class CssController : QPController
+    public class CssController : AuthQpController
     {
         private readonly IStatusTypeService _statusTypeService;
 

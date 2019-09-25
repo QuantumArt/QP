@@ -4,7 +4,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ToolbarController : QPController
+    public class ToolbarController : AuthQpController
     {
         public JsonResult GetToolbarButtonListByActionCode(string actionCode, string entityId, string parentEntityId, bool? boundToExternal)
         {

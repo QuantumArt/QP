@@ -16,7 +16,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Audit;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ActionLogController : QPController
+    public class ActionLogController : AuthQpController
     {
         private readonly IBackendActionLogService _actionLogService;
         private readonly IButtonTraceService _buttonTraceService;

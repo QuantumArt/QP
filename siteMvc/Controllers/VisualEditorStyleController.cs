@@ -12,7 +12,7 @@ using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class VisualEditorStyleController : QPController
+    public class VisualEditorStyleController : AuthQpController
     {
         private readonly IVisualEditorService _visualEditorService;
 

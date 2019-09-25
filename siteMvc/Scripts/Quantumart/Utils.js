@@ -471,10 +471,9 @@ $q.getJsonFromUrl = function getJsonFromUrl(method, url, params, async, allowCac
     url,
     data,
     async,
-    cache: allowCaching,
-    error: callbackError || $q.processGenericAjaxError
+    cache: allowCaching
   };
-
+  settings.error = $q.ajaxCallbackDecorator(callbackError || $q.processGenericAjaxError, settings, true);
   settings.success = $q.ajaxCallbackDecorator(callbackSuccess, settings);
   return $q.decorateDeferred($.ajax(settings), $q.ajaxCallbackDecorator, settings);
 };
@@ -617,14 +616,18 @@ $q.getTypeNameForJson = function getTypeNameForJson(typeName) {
 };
 
 $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
-  let errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
-  if (jqXHR.status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
-    errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
-  } else if (jqXHR.status === 500) {
-    errorMessage = $l.Common.ajaxDataReceivingErrorMessage;
+  if (jqXHR && jqXHR.status && jqXHR.getResponseHeader)
+  {
+    let errorMessage = String.format($l.Common.ajaxGenericErrorMessage, jqXHR.status);
+
+    if (jqXHR.status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
+      errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
+    } else if (jqXHR.status === 500) {
+      errorMessage = $l.Common.ajaxDataReceivingErrorMessage;
+    }
+    window.alert(errorMessage);
   }
 
-  window.alert(errorMessage);
 };
 
 $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
@@ -667,8 +670,17 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
   return html.string();
 };
 
-$q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings) {
+$q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings, forError) {
   if (callback) {
+    if (forError)
+    {
+      return function ajaxDecorator(jqXHR, textStatus) {
+        const data = {};
+        if (!BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
+          return callback(data, textStatus, jqXHR);
+        }
+      }
+    }
     return function ajaxDecorator(data, textStatus, jqXHR) {
       if (!BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
         return callback(data, textStatus, jqXHR);

@@ -16,7 +16,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Notification;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class NotificationController : QPController
+    public class NotificationController : AuthQpController
     {
         private readonly INotificationService _notificationService;
 

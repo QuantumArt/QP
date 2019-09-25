@@ -6,7 +6,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class BackendActionController : QPController
+    public class BackendActionController : AuthQpController
     {
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetByCode(string actionCode)

@@ -19,7 +19,7 @@ using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ObjectController : QPController
+    public class ObjectController : AuthQpController
     {
         private readonly IObjectService _objectService;
 

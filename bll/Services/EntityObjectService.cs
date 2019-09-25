@@ -196,7 +196,11 @@ namespace Quantumart.QP8.BLL.Services
 
         public static void UnlockAllEntitiesLockedByCurrentUser()
         {
-            EntityObjectRepository.UnlockAllEntitiesLockedByUser(QPContext.CurrentUserId);
+            var id = QPContext.CurrentUserId;
+            if (id != 0)
+            {
+                EntityObjectRepository.UnlockAllEntitiesLockedByUser(id);
+            }
         }
 
         /// <summary>

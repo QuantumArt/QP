@@ -19,7 +19,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Workflow;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class WorkflowController : QPController
+    public class WorkflowController : AuthQpController
     {
         private readonly IWorkflowService _workflowService;
 

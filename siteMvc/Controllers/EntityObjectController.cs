@@ -11,7 +11,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class EntityObjectController : QPController
+    public class EntityObjectController : AuthQpController
     {
         private readonly ArticleFullTextSearchQueryParser _parser;
 
@@ -102,7 +102,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope]
         public JsonResult UnlockAllEntities()
         {
             EntityObjectService.UnlockAllEntitiesLockedByCurrentUser();

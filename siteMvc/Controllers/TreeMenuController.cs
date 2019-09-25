@@ -5,7 +5,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class TreeMenuController : QPController
+    public class TreeMenuController : AuthQpController
     {
         public JsonResult GetNode(string entityTypeCode, int entityId, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, bool loadChildNodes)
         {

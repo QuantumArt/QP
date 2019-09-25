@@ -12,7 +12,7 @@ using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class VisualEditorConfigController : QPController
+    public class VisualEditorConfigController : AuthQpController
     {
         public JsonResult LoadVeConfig(int fieldId, int siteId)
         {
