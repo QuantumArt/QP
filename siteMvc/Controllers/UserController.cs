@@ -251,6 +251,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             user.NewPasswordCopy = currentUser.NewPasswordCopy;
             var model = ProfileViewModel.Create(user, tabId, parentId, _service);
 
+            ModelState.Clear();
+
             await TryUpdateModelAsync(model);
 
             if (ModelState.IsValid)

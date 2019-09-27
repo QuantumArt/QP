@@ -42,6 +42,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
@@ -176,6 +177,7 @@ namespace Quantumart.QP8.WebMvc
 #endif
                     .AddTransient<IFormatService, FormatService>()
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
+                    .AddTransient<ResourceDictionary>() // preload QA.Configuration
                 ;
 
             services
