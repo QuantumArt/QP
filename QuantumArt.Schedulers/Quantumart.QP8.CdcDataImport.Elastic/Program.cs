@@ -81,7 +81,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic
             var builder = new ContainerBuilder();
             builder.RegisterModule(new QuartzAutofacFactoryModule
             {
-                ConfigurationProvider = c => new NameValueCollection
+                ConfigurationProvider = c => new Dictionary<string, StringValues>
                 {
                     { "quartz.threadPool.threadCount", "4" },
                     { "quartz.threadPool.threadNamePrefix", "CdcElasticSchedulerWorker" },

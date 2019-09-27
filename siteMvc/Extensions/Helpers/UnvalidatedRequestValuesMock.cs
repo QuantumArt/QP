@@ -16,11 +16,11 @@
 //
 //         public override HttpFileCollectionBase Files => _request.Files;
 //
-//         public override NameValueCollection Headers => _request.Headers;
+//         public override Dictionary<string, StringValues> Headers => _request.Headers;
 //
-//         public override NameValueCollection QueryString => _request.QueryString;
+//         public override Dictionary<string, StringValues> QueryString => _request.QueryString;
 //
-//         public override NameValueCollection Form => _request.Form;
+//         public override Dictionary<string, StringValues> Form => _request.Form;
 //
 //         public override string this[string field] => _request[field];
 //     }

@@ -6,7 +6,7 @@
 // {
 //     public class HttpSessionMock : HttpSessionStateBase
 //     {
-//         private readonly NameValueCollection _keyCollection = new NameValueCollection();
+//         private readonly Dictionary<string, StringValues> _keyCollection = new Dictionary<string, StringValues>();
 //         private readonly Dictionary<string, object> _objects = new Dictionary<string, object>();
 //
 //         public override object this[string name]

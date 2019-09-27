@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
+using Microsoft.Extensions.Primitives;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Utils;
@@ -45,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Models
 
         public string CustomActionCode { get; set; }
 
-        public NameValueCollection Form { get; set; }
+        public Dictionary<string, StringValues> Form { get; set; }
 
         public BackendAction BackendAction => _backendAction.Value;
 

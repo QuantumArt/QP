@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
@@ -138,20 +140,20 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             // 5. Main Ids Correction
             // 6. Parent Id Correction
 
-            // if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
-            // {
-            //     action = CorrectEntryUniqueIdsValue(action);
-            //     if (useGuidSubstitution)
-            //     {
-            //         action = SubstituteArticleIdsFromGuids(action);
-            //     }
-            //     else if (XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
-            //     {
-            //         action.UniqueId = new[] { Guid.NewGuid() };
-            //         var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
-            //         action.Form[uniqueIdFieldName] = action.UniqueId.Single().ToString();
-            //     }
-            // }
+            if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
+            {
+                action = CorrectEntryUniqueIdsValue(action);
+                if (useGuidSubstitution)
+                {
+                    action = SubstituteArticleIdsFromGuids(action);
+                }
+                else if (XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
+                {
+                    action.UniqueId = new[] { Guid.NewGuid() };
+                    var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
+                    action.Form[uniqueIdFieldName] = action.UniqueId.Single().ToString();
+                }
+            }
 
             var entityTypeCode = action.BackendAction.EntityType.Code == EntityTypeCode.ArchiveArticle
                 ? EntityTypeCode.Article
@@ -172,14 +174,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction CorrectEntryUniqueIdsValue(XmlDbUpdateRecordedAction action)
         {
-            // if (XmlDbUpdateQpActionHelpers.IsArticleAndStoreUniqueIdInForm(action.Code))
-            // {
-            //     action = CorrectFormUniqueId(action);
-            // }
-            //
-            // action.UniqueId = action.UniqueId.Select(g => CorrectUniqueIdValue(EntityTypeCode.Article, g)).ToArray();
-            // return action;
-            return null;
+            if (XmlDbUpdateQpActionHelpers.IsArticleAndStoreUniqueIdInForm(action.Code))
+            {
+                action = CorrectFormUniqueId(action);
+            }
+
+            action.UniqueId = action.UniqueId.Select(g => CorrectUniqueIdValue(EntityTypeCode.Article, g)).ToArray();
+            return action;
         }
 
         private IEnumerable<string> CorrectIdsValue(string entityTypeCode, IEnumerable<string> ids)
@@ -201,10 +202,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction CorrectFormUniqueId(XmlDbUpdateRecordedAction action)
         {
-            // var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
-            // CorrectUniqueIdFormValues(action.Form, uniqueIdFieldName);
-            // return action;
-            return null;
+            var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
+            CorrectUniqueIdFormValues(action.Form, uniqueIdFieldName);
+            return action;
         }
 
         private Guid CorrectUniqueIdValue(string entityTypeCode, Guid value)
@@ -327,10 +327,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             CorrectDynamicArticleFormIdValues(action.Form, action.ParentId);
         }
 
-        private void CorrectDynamicArticleFormIdValues(NameValueCollection form, int contentId)
+        private void CorrectDynamicArticleFormIdValues(Dictionary<string, StringValues> form, int contentId)
         {
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
-            foreach (var fieldName in form.AllKeys.Where(field => fieldRegexp.IsMatch(field)))
+            foreach (var fieldName in form.Keys.Where(field => fieldRegexp.IsMatch(field)))
             {
                 if (!int.TryParse(fieldName.Replace("field_", string.Empty), out var parsedFieldId))
                 {
@@ -338,10 +338,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 }
 
                 var correctedFieldId = CorrectIdValue(EntityTypeCode.Field, parsedFieldId);
-                var fieldValues = form[fieldName]?.Split(',').ToList();
+                var fieldValues = ((string)form[fieldName]).Split(',').ToList();
                 form.Remove(fieldName);
 
-                if (fieldValues != null)
+                if (fieldValues.Any())
                 {
                     if (_dbContentService.IsRelation(contentId, correctedFieldId))
                     {
@@ -358,10 +358,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void CorrectDynamicArticleFormGuidValues(NameValueCollection form, bool useGuidSubstitution)
+        private void CorrectDynamicArticleFormGuidValues(Dictionary<string, StringValues> form, bool useGuidSubstitution)
         {
             var uniqueFieldRegexp = new Regex(@"^field_uniqueid_\d+$", RegexOptions.Compiled);
-            foreach (var fieldName in form.AllKeys.Where(field => uniqueFieldRegexp.IsMatch(field)))
+            foreach (var fieldName in form.Keys.Where(field => uniqueFieldRegexp.IsMatch(field)))
             {
                 if (!int.TryParse(fieldName.Replace("field_uniqueid_", string.Empty), out var parsedFieldId))
                 {
@@ -373,38 +373,40 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void CorrectFormValue(string entityTypeCode, NameValueCollection form, string formKey, string jsonKey)
+        private void CorrectFormValue(string entityTypeCode, Dictionary<string, StringValues> form, string formKey, string jsonKey)
         {
             var formValue = form[formKey];
-            if (formValue != null)
+            if (string.IsNullOrEmpty(formValue))
             {
-                var collectionList = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(formValue);
-                foreach (var collection in collectionList.Where(collection => collection.ContainsKey(jsonKey)))
-                {
-                    collection[jsonKey] = CorrectIdValue(entityTypeCode, collection[jsonKey]);
-                }
-
-                form[formKey] = JsonConvert.SerializeObject(collectionList);
+                return;
             }
+
+            var collectionList = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(formValue);
+            foreach (var collection in collectionList.Where(collection => collection.ContainsKey(jsonKey)))
+            {
+                collection[jsonKey] = CorrectIdValue(entityTypeCode, collection[jsonKey]);
+            }
+
+            form[formKey] = JsonConvert.SerializeObject(collectionList);
         }
 
-        private void CorrectFormValue(string entityTypeCode, NameValueCollection form, string formKey, bool prefixSearch = false, bool joinModeReplace = false)
+        private void CorrectFormValue(string entityTypeCode, Dictionary<string, StringValues> form, string formKey, bool prefixSearch = false, bool joinModeReplace = false)
         {
             if (!prefixSearch)
             {
                 var formValue = form[formKey];
-                if (formValue != null)
+                if (!string.IsNullOrEmpty(formValue))
                 {
                     form[formKey] = CorrectIdValue(entityTypeCode, formValue);
                 }
             }
             else
             {
-                foreach (var key in form.AllKeys.Where(n => n.StartsWith(formKey)))
+                foreach (var key in form.Keys.Where(n => n.StartsWith(formKey)))
                 {
                     if (!joinModeReplace || !key.EndsWith("Index"))
                     {
-                        var values = form.GetValues(key);
+                        var values = (string[])form[key];
                         form.Remove(key);
 
                         if (values != null)
@@ -430,9 +432,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void CorrectUniqueIdFormValues(NameValueCollection form, string formUniqueIdsKey)
+        private void CorrectUniqueIdFormValues(Dictionary<string, StringValues> form, string formUniqueIdsKey)
         {
-            var formUniqueIds = form[formUniqueIdsKey]?.Split(',');
+            var formUniqueIds = ((string)form[formUniqueIdsKey]).Split(',');
             if (formUniqueIds != null)
             {
                 var correctedUniqueIds = formUniqueIds.Select(g => CorrectUniqueIdValue(EntityTypeCode.Article, Guid.Parse(g)));
@@ -440,7 +442,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void CorrectAndSubstituteArticleIdFormValues(NameValueCollection form, string formIdsKey, string formUniqueIdsKey, bool useGuidSubstitution)
+        private void CorrectAndSubstituteArticleIdFormValues(Dictionary<string, StringValues> form, string formIdsKey, string formUniqueIdsKey, bool useGuidSubstitution)
         {
             CorrectUniqueIdFormValues(form, formUniqueIdsKey);
             if (useGuidSubstitution)
@@ -449,9 +451,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private void SubstituteArticleIdFormValuesFromGuids(NameValueCollection form, string formIdKey, string formUniqueIdKey)
+        private void SubstituteArticleIdFormValuesFromGuids(Dictionary<string, StringValues> form, string formIdKey, string formUniqueIdKey)
         {
-            var formUniqueIds = form[formUniqueIdKey]?.Split(',');
+            var formUniqueIds = ((string)form[formUniqueIdKey]).Split(',');
             if (formUniqueIds != null)
             {
                 var substitutedIds = formUniqueIds
@@ -465,21 +467,20 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction SubstituteArticleIdsFromGuids(XmlDbUpdateRecordedAction action)
         {
-            // Ensure.Equal(action.UniqueId.Length, action.Ids.Length, "Amount of uniqueIds and ids should be equal");
-            // if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
-            // {
-            //     action.ResultId = GetArticleResultIdByGuidOrDefault(action);
-            // }
-            //
-            // if (!XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
-            // {
-            //     action.Ids = _dbActionService.GetArticleIdsByGuids(action.UniqueId)
-            //         .Select(g => g.ToString())
-            //         .ToArray();
-            // }
-            //
-            // return action;
-            return null;
+            Ensure.Equal(action.UniqueId.Length, action.Ids.Length, "Amount of uniqueIds and ids should be equal");
+            if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
+            {
+                action.ResultId = GetArticleResultIdByGuidOrDefault(action);
+            }
+
+            if (!XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
+            {
+                action.Ids = _dbActionService.GetArticleIdsByGuids(action.UniqueId)
+                    .Select(g => g.ToString())
+                    .ToArray();
+            }
+
+            return action;
         }
 
         private void AddIdsToReplace(string oldIdsCommaString, HttpContext context, string key)
@@ -538,15 +539,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void AddResultIds(XmlDbUpdateRecordedAction action, HttpContext httpContext)
         {
-            // if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
-            // {
-            //     var entityTypeCode = action.BackendAction.EntityType.Code != EntityTypeCode.VirtualContent ? action.BackendAction.EntityType.Code : EntityTypeCode.Content;
-            //     var resultId = action.ResultId != default(int) ? action.ResultId : int.Parse(action.Ids.First());
-            //     AddIdToReplace(entityTypeCode, resultId, httpContext, HttpContextItems.ResultId);
-            //
-            //     var resultUniqueId = action.ResultUniqueId != Guid.Empty ? action.ResultUniqueId : action.UniqueId.First();
-            //     AddUniqueIdToReplace(entityTypeCode, resultUniqueId, httpContext, HttpContextItems.ResultGuid);
-            // }
+            if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
+            {
+                var entityTypeCode = action.BackendAction.EntityType.Code != EntityTypeCode.VirtualContent ? action.BackendAction.EntityType.Code : EntityTypeCode.Content;
+                var resultId = action.ResultId != default(int) ? action.ResultId : int.Parse(action.Ids.First());
+                AddIdToReplace(entityTypeCode, resultId, httpContext, HttpContextItems.ResultId);
+
+                var resultUniqueId = action.ResultUniqueId != Guid.Empty ? action.ResultUniqueId : action.UniqueId.First();
+                AddUniqueIdToReplace(entityTypeCode, resultUniqueId, httpContext, HttpContextItems.ResultGuid);
+            }
         }
 
         private void AddUniqueIdToReplace(string entityTypeCode, Guid uniqueId, Guid newUniqueId)

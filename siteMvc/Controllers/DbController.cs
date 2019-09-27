@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -115,9 +116,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
         public FileResult GetRecordedUserActions()
         {
-            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(QPContext.GetRecordXmlFilePath()):yyyy-MM-dd_HH-mm-ss}.xml";
-            var readStream = new PhysicalFileProvider(QPContext.GetRecordXmlFilePath()).GetFileInfo(fileName).CreateReadStream();
-            return File(readStream, MediaTypeNames.Application.Octet, fileName);
+            var fileName = $"{QPContext.CurrentCustomerCode}.xml";
+            var stream = System.IO.File.Open(QPContext.GetRecordXmlFilePath(), FileMode.Open);
+            return File(stream, MediaTypeNames.Application.Octet, fileName);
         }
 
         [HttpPost]

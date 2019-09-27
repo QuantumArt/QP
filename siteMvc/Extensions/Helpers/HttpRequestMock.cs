@@ -6,17 +6,17 @@
 // {
 //     public class HttpRequestMock : HttpRequestBase
 //     {
-//         private NameValueCollection _form;
+//         private Dictionary<string, StringValues> _form;
 //         private readonly Mock<HttpFileCollectionBase> _files;
 //         private readonly Mock<HttpBrowserCapabilitiesBase> _browser;
 //
 //         public HttpRequestMock()
 //         {
-//             _form = new NameValueCollection();
+//             _form = new Dictionary<string, StringValues>();
 //             Cookies = new HttpCookieCollection();
-//             ServerVariables = new NameValueCollection();
-//             QueryString = new NameValueCollection();
-//             Headers = new NameValueCollection();
+//             ServerVariables = new Dictionary<string, StringValues>();
+//             QueryString = new Dictionary<string, StringValues>();
+//             Headers = new Dictionary<string, StringValues>();
 //             Unvalidated = new UnvalidatedRequestValuesMock(this);
 //             _files = new Mock<HttpFileCollectionBase>();
 //             _browser = new Mock<HttpBrowserCapabilitiesBase>();
@@ -26,7 +26,7 @@
 //         private const string FormContentType = "application/x-www-form-urlencoded; charset=UTF-8";
 //         private string _path = string.Empty;
 //
-//         public void SetForm(NameValueCollection value)
+//         public void SetForm(Dictionary<string, StringValues> value)
 //         {
 //             _form = value;
 //         }
@@ -36,15 +36,15 @@
 //             _path = value;
 //         }
 //
-//         public override NameValueCollection Form => _form;
+//         public override Dictionary<string, StringValues> Form => _form;
 //
 //         public override HttpCookieCollection Cookies { get; }
 //
-//         public override NameValueCollection ServerVariables { get; }
+//         public override Dictionary<string, StringValues> ServerVariables { get; }
 //
-//         public override NameValueCollection QueryString { get; }
+//         public override Dictionary<string, StringValues> QueryString { get; }
 //
-//         public override NameValueCollection Headers { get; }
+//         public override Dictionary<string, StringValues> Headers { get; }
 //
 //         public override HttpFileCollectionBase Files => _files.Object;
 //
