@@ -12,9 +12,9 @@ namespace QP8.Infrastructure.TestTools.AutoFixture.Specimens
     {
         public object Create(object request, ISpecimenContext context)
         {
-            if (request is PropertyInfo propertyInfo && propertyInfo.PropertyType == typeof(Dictionary<string, StringValues>))
+            if (request is PropertyInfo propertyInfo && propertyInfo.PropertyType == typeof(NameValueCollection))
             {
-                var nvc = new Dictionary<string, StringValues>();
+                var nvc = new NameValueCollection();
                 var dictionary = context.Create<Dictionary<string, string>>();
                 foreach (var kvp in dictionary)
                 {

@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -233,4 +232,3 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
     }
 }
-#endif

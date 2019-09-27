@@ -283,11 +283,24 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static Dictionary<string, StringValues> GetActionFields(XContainer root)
         {
-            return root.Elements().Aggregate(new Dictionary<string, StringValues>(), (seed, curr) =>
+            var result = new Dictionary<string, StringValues>();
+            foreach (var elem in root.Elements())
             {
-                seed.Add(curr.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute)?.Value, curr.Value);
-                return seed;
-            });
+                var key = elem.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute)?.Value;
+                if (!string.IsNullOrEmpty(key))
+                {
+                    if (result.ContainsKey(key))
+                    {
+                        result[key] = StringValues.Concat(result[key], elem.Value);
+                    }
+                    else
+                    {
+                        result[key] = elem.Value;
+                    }
+                }
+            }
+
+            return result;
         }
 
         private static DateTime GetExecuted(XElement action, int lcid) =>

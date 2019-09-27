@@ -13,6 +13,9 @@ using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using static Quantumart.QP8.BLL.BackendActionContext;
 using Microsoft.Extensions.Primitives;
 using QP8.Infrastructure.Extensions;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
+using HttpContext = Microsoft.AspNetCore.Http.HttpContext;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
@@ -74,204 +77,170 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return data;
         }
 
-        // internal static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
-        // {
-        //     var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
-        //     if (controller == null)
-        //     {
-        //         throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
-        //     }
-        //
-        //     controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
-        //     controller.ValueProvider = new ValueProviderCollection(new[]
-        //     {
-        //         new DictionaryValueProvider<object>(requestContext.RouteData.Values, cultureInfo),
-        //         new FormCollection(requestContext.HttpContext.Request.Form).ToValueProvider(),
-        //         new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
-        //     });
-        //
-        //     CultureInfo.CurrentCulture = cultureInfo;
-        //     return controller;
-        // }
+        internal static HttpContext BuildHttpContext(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
+        {
+            var httpContext = new DefaultHttpContext();
+            FillHttpRequest(httpContext.Request, action);
+            httpContext.User = GetPrincipal(userId);
+            var guid = useGuidSubstitution ? action.ResultUniqueId : (Guid?)null;
+            AddGlobalHttpContextVariables(httpContext, backendUrl, guid);
+            return httpContext;
+        }
 
-        // internal static HttpContext BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
-        // {
-        //     // HttpContext.Current = new HttpContext(
-        //     //     new HttpRequest(string.Empty, backendUrl, string.Empty),
-        //     //     new HttpResponse(new StringWriter()));
-        //
-        //     var principal = GetPrincipal(userId);
-        //     var httpContext = new Mock<HttpContext>();
-        //     httpContext.Setup(c => c.Request).Returns(GetHttpRequestMock(action));
-        //     httpContext.Setup(c => c.Session).Returns(new HttpSessionMock());
-        //     httpContext.Setup(c => c.Response).Returns(new Mock<HttpResponseBase>().Object);
-        //     httpContext.Setup(c => c.Response.Cookies).Returns(new HttpCookieCollection());
-        //     httpContext.Setup(c => c.Items).Returns(new Hashtable());
-        //     httpContext.Setup(c => c.Cache).Returns(HttpRuntime.Cache);
-        //     httpContext.Setup(c => c.User).Returns(principal);
-        //     HttpContext.Current.User = principal;
-        //
-        //     return useGuidSubstitution
-        //         ? AddGlobalHttpContextVariables(httpContext.Object, backendUrl, action.ResultUniqueId)
-        //         : AddGlobalHttpContextVariables(httpContext.Object, backendUrl);
-        // }
-
-        private static HttpContext AddGlobalHttpContextVariables(HttpContext httpContext, string backendUrl)
+        private static void AddGlobalHttpContextVariables(HttpContext httpContext, string backendUrl)
         {
             httpContext.Items.Add(HttpContextItems.IsReplayingXmlContext, true);
             if (!string.IsNullOrWhiteSpace(backendUrl))
             {
                 httpContext.Items.Add(HttpContextItems.BackendUrlContext, backendUrl);
             }
-
-            return httpContext;
         }
 
-        private static HttpContext AddGlobalHttpContextVariables(HttpContext httpContext, string backendUrl, Guid resultUniqueId)
+        private static void AddGlobalHttpContextVariables(HttpContext httpContext, string backendUrl, Guid? resultUniqueId)
         {
-            httpContext = AddGlobalHttpContextVariables(httpContext, backendUrl);
-            httpContext.Items.Add(HttpContextItems.XmlContextGuidSubstitution, resultUniqueId);
-            return httpContext;
+            AddGlobalHttpContextVariables(httpContext, backendUrl);
+            if (resultUniqueId.HasValue)
+            {
+                httpContext.Items.Add(HttpContextItems.XmlContextGuidSubstitution, resultUniqueId);
+            }
         }
 
-        // private static HttpRequest GetHttpRequestMock(XmlDbUpdateRecordedAction action)
-        // {
-        //     var httpRequest = new DefaultHttpRequest();
-        //     var options = QPConnectionScope.Current.IdentityInsertOptions;
-        //     var entityTypeCode = action.BackendAction.EntityType.Code;
-        //     if (entityTypeCode == EntityTypeCode.VirtualContent)
-        //     {
-        //         entityTypeCode = EntityTypeCode.Content;
-        //     }
-        //
-        //     var actionTypeCode = action.BackendAction.ActionType.Code;
-        //     httpRequest.SetForm(action.Form);
-        //     httpRequest.Form.Add(HttpContextFormConstants.Ids, string.Join(",", action.Ids));
-        //
-        //     if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
-        //     {
-        //         httpRequest.Form.Add(HttpContextFormConstants.DataForceId, action.Ids.First());
-        //     }
-        //
-        //     switch (action.Code)
-        //     {
-        //         case ActionCode.AddNewContent:
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceFieldIds, action.ChildIds);
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.ContentLink))
-        //             {
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceLinkIds, action.ChildLinkIds);
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.CreateLikeContent:
-        //             if (options.Contains(EntityTypeCode.Content))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceFieldIds, action.ChildIds);
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.ContentLink))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceLinkIds, action.ChildLinkIds);
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.CreateLikeField:
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceVirtualFieldIds, action.VirtualFieldIds);
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceChildFieldIds, action.ChildIds);
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.ContentLink))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceLinkId, action.ChildId.ToString());
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.ContentLink))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.ForceChildLinkIds, action.ChildLinkIds);
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.AddNewVirtualContents:
-        //         case ActionCode.VirtualContentProperties:
-        //         case ActionCode.VirtualFieldProperties:
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.AddNewField:
-        //         case ActionCode.FieldProperties:
-        //             if (options.Contains(EntityTypeCode.ContentLink))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.DataContentLinkForceLinkId, action.ChildId.ToString());
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceChildLinkIds, action.ChildIds);
-        //             }
-        //
-        //             if (options.Contains(EntityTypeCode.Field))
-        //             {
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
-        //                 httpRequest.Form.Add(HttpContextFormConstants.DataForceBackwardId, action.BackwardId.ToString());
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceChildFieldIds, action.ChildIds);
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.AddNewCustomAction:
-        //             httpRequest.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
-        //             if (options.Contains(EntityTypeCode.BackendAction))
-        //             {
-        //                 httpRequest.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildId.ToString());
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.AddNewVisualEditorPlugin:
-        //         case ActionCode.VisualEditorPluginProperties:
-        //             if (options.Contains(EntityTypeCode.VisualEditorCommand))
-        //             {
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceCommandIds, action.ChildIds);
-        //             }
-        //
-        //             break;
-        //
-        //         case ActionCode.AddNewWorkflow:
-        //         case ActionCode.WorkflowProperties:
-        //             if (options.Contains(EntityTypeCode.WorkflowRule))
-        //             {
-        //                 AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceRulesIds, action.ChildIds);
-        //             }
-        //
-        //             break;
-        //     }
-        //
-        //     httpRequest.SetPath(action.BackendAction.ControllerActionUrl.Replace("~", string.Empty));
-        //     return httpRequest;
-        // }
+        private static void FillHttpRequest(HttpRequest httpRequest, XmlDbUpdateRecordedAction action)
+        {
+            var options = QPConnectionScope.Current.IdentityInsertOptions;
+            var entityTypeCode = action.BackendAction.EntityType.Code;
+            if (entityTypeCode == EntityTypeCode.VirtualContent)
+            {
+                entityTypeCode = EntityTypeCode.Content;
+            }
+
+            var actionTypeCode = action.BackendAction.ActionType.Code;
+            action.Form.Add(HttpContextFormConstants.Ids, string.Join(",", action.Ids));
+
+            if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
+            {
+                action.Form.Add(HttpContextFormConstants.DataForceId, action.Ids.First());
+            }
+
+            switch (action.Code)
+            {
+                case ActionCode.AddNewContent:
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceFieldIds, action.ChildIds);
+                    }
+
+                    if (options.Contains(EntityTypeCode.ContentLink))
+                    {
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceLinkIds, action.ChildLinkIds);
+                    }
+
+                    break;
+
+                case ActionCode.CreateLikeContent:
+                    if (options.Contains(EntityTypeCode.Content))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
+                    }
+
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceFieldIds, action.ChildIds);
+                    }
+
+                    if (options.Contains(EntityTypeCode.ContentLink))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceLinkIds, action.ChildLinkIds);
+                    }
+
+                    break;
+
+                case ActionCode.CreateLikeField:
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
+                    }
+
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceVirtualFieldIds, action.VirtualFieldIds);
+                    }
+
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceChildFieldIds, action.ChildIds);
+                    }
+
+                    if (options.Contains(EntityTypeCode.ContentLink))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceLinkId, action.ChildId.ToString());
+                    }
+
+                    if (options.Contains(EntityTypeCode.ContentLink))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceChildLinkIds, action.ChildLinkIds);
+                    }
+
+                    break;
+
+                case ActionCode.AddNewVirtualContents:
+                case ActionCode.VirtualContentProperties:
+                case ActionCode.VirtualFieldProperties:
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
+                    }
+
+                    break;
+
+                case ActionCode.AddNewField:
+                case ActionCode.FieldProperties:
+                    if (options.Contains(EntityTypeCode.ContentLink))
+                    {
+                        action.Form.Add(HttpContextFormConstants.DataContentLinkForceLinkId, action.ChildId.ToString());
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceChildLinkIds, action.ChildIds);
+                    }
+
+                    if (options.Contains(EntityTypeCode.Field))
+                    {
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
+                        action.Form.Add(HttpContextFormConstants.DataForceBackwardId, action.BackwardId.ToString());
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceChildFieldIds, action.ChildIds);
+                    }
+
+                    break;
+
+                case ActionCode.AddNewCustomAction:
+                    action.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
+                    if (options.Contains(EntityTypeCode.BackendAction))
+                    {
+                        action.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildId.ToString());
+                    }
+
+                    break;
+
+                case ActionCode.AddNewVisualEditorPlugin:
+                case ActionCode.VisualEditorPluginProperties:
+                    if (options.Contains(EntityTypeCode.VisualEditorCommand))
+                    {
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceCommandIds, action.ChildIds);
+                    }
+
+                    break;
+
+                case ActionCode.AddNewWorkflow:
+                case ActionCode.WorkflowProperties:
+                    if (options.Contains(EntityTypeCode.WorkflowRule))
+                    {
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceRulesIds, action.ChildIds);
+                    }
+
+                    break;
+            }
+            httpRequest.Method = "POST";
+            httpRequest.Form = new FormCollection(action.Form);
+            httpRequest.Path = action.BackendAction.ControllerActionUrl.Replace("~", string.Empty);
+        }
 
         private static void AddListItem(Dictionary<string, StringValues> collection, string name, string commaList)
         {

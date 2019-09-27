@@ -4,7 +4,7 @@
     <AssemblyName>Quantumart.QP8.WebMvc</AssemblyName>
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <MvcBuildViews>true</MvcBuildViews>
-    <TargetFrameworks>net471;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2;net471</TargetFrameworks>
     <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**</DefaultItemExcludes>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
@@ -50,14 +50,14 @@
     <TypeScriptCompile Include="Scripts\**\*.ts" />
   </ItemGroup>
   <ItemGroup>
-  
+
     <None Update="Scripts\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Update="Content\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Update="ToCopy\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="$(SolutionDir)\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />
-    <None Include="$(SolutionDir)\QP.Custom\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />    
+    <None Include="$(SolutionDir)\QP.Custom\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />
     <None Include="*.config" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
-    <None Include="appsettings*.json" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />    
+    <None Include="appsettings*.json" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastructure\Converters" />

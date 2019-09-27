@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -388,4 +387,3 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
     }
 }
-#endif

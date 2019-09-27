@@ -15,6 +15,8 @@ using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
+
 //using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
@@ -79,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     if (model.OverrideRecordsFile)
                     {
                         var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
-                        //XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), currentDbVersion);
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), currentDbVersion);
                     }
 
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
@@ -125,20 +127,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public ActionResult ReplayRecordedUserActions(string xmlString, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution)
+        public ActionResult ReplayRecordedUserActions([FromBody] ReplayViewModel model)
         {
             var info = QPContext.CurrentDbConnectionInfo;
             new XmlDbUpdateReplayService(
                 info.ConnectionString,
                 info.DbType,
-                CommonHelpers.GetDbIdentityInsertOptions(generateNewFieldIds, generateNewContentIds),
+                CommonHelpers.GetDbIdentityInsertOptions(model.GenerateNewFieldIds, model.GenerateNewContentIds),
                 QPContext.CurrentUserId,
-                useGuidSubstitution,
+                model.UseGuidSubstitution,
                 _xmlDbUpdateLogService,
                 _appInfoRepository,
                 _actionsCorrecterService,
                 _httpContextProcessor
-            ).Process(xmlString);
+            ).Process(model.XmlString);
 
             return JsonCamelCase(new JSendResponse
             {

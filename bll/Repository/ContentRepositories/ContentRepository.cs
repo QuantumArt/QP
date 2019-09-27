@@ -288,6 +288,10 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     var binding = content.WorkflowBinding;
                     var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
 
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
+                    }
                     Common.CreateContentTables(scope.DbConnection, newContent.Id);
                     Common.CreateContentModification(scope.DbConnection, newContent.Id);
                     CommonSecurity.CreateContentAccess(scope.DbConnection, newContent.Id);

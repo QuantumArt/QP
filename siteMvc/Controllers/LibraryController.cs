@@ -127,7 +127,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return File(readStream, MimeTypes.OctetStream, fileName);
             }
 
-            return null;
+            return Json(null);
         }
 
         [HttpPost] // TODO: review UploadFile

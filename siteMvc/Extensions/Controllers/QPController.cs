@@ -98,7 +98,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     throw new AggregateException(exceptions);
                 }
 
-                return null;
+                return Json(null);
             }
 
             string view = await RenderPartialView(viewName, model);
@@ -119,7 +119,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     throw new AggregateException(exceptions);
                 }
 
-                return null;
+                return Json(null);
             }
 
             string view = await RenderPartialView(viewName, model);
@@ -142,7 +142,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return formHasError || context.Items.ContainsKey(HttpContextItems.IsError);
         }
 
-        protected ActionResult Redirect(string actionName, object routeValues) => HttpContext.IsXmlDbUpdateReplayAction() ? null : RedirectToAction(actionName, routeValues);
+        protected ActionResult Redirect(string actionName, object routeValues)
+        {
+            return HttpContext.IsXmlDbUpdateReplayAction() ? (ActionResult)new JsonResult(null) : RedirectToAction(actionName, routeValues);
+        }
 
         protected JsonResult JsonMessageResult(MessageResult result)
         {
@@ -153,7 +156,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     throw new AggregateException(new InvalidOperationException(result.Text));
                 }
 
-                return null;
+                return Json(null);
             }
 
             if (result != null && result.Type == ActionMessageType.Error)
