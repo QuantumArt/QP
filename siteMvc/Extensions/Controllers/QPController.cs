@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
@@ -133,8 +134,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public static bool IsError(HttpContext context)
         {
-            IFormCollection form = context.Request.Form;
+            if (!context.Request.HasFormContentType)
+            {
+                return false;
+            }
 
+            var form = context.Request.Form;
             bool formHasError = form != null &&
                 form.TryGetValue(HttpContextFormConstants.IsError, out var formValue) &&
                 bool.Parse(formValue);
@@ -314,7 +319,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     .Select(g => g.ToString())
                     .ToArray();
 
-                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+                HttpContext.Items.Add(formUniqueIdsKey, new StringValues(substitutedGuids));
             }
         }
 

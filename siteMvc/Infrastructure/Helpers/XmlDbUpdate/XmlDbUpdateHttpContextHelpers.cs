@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId)
             };
 
-            if (!ignoreForm)
+            if (!ignoreForm && httpContext.Request.HasFormContentType)
             {
                 var allValues = new Dictionary<string, StringValues>();
                 allValues.AddRange(httpContext.Request.Form);

@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
@@ -230,6 +232,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return result;
         }
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<ListItem> AvailableStatuses => Data.Workflow.AvailableStatuses.Select(GetStatusListItem);
 
         internal static RelationListResult GetListForRelation(BLL.Field field, string value, int articleId)
