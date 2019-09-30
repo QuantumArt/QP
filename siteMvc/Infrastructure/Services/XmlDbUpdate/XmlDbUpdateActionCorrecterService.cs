@@ -332,7 +332,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
             foreach (var fieldName in form.Keys.Where(field => fieldRegexp.IsMatch(field)))
             {
-                if (!int.TryParse(fieldName.Replace("field_", string.Empty), out var parsedFieldId))
+                var fieldId = fieldName.Replace("field_", string.Empty);
+                if (!int.TryParse(fieldId, out var parsedFieldId) || !form.ContainsKey(fieldName))
                 {
                     continue;
                 }
@@ -375,8 +376,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void CorrectFormValue(string entityTypeCode, Dictionary<string, StringValues> form, string formKey, string jsonKey)
         {
-            var formValue = form[formKey];
-            if (string.IsNullOrEmpty(formValue))
+            if (!form.TryGetValue(formKey, out var formValue))
             {
                 return;
             }
@@ -394,7 +394,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             if (!prefixSearch)
             {
-                var formValue = form[formKey];
+                if (!form.TryGetValue(formKey, out var formValue))
+                {
+                    return;
+                }
+
                 if (!string.IsNullOrEmpty(formValue))
                 {
                     form[formKey] = CorrectIdValue(entityTypeCode, formValue);
@@ -404,29 +408,28 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 foreach (var key in form.Keys.Where(n => n.StartsWith(formKey)))
                 {
-                    if (!joinModeReplace || !key.EndsWith("Index"))
+                    if (joinModeReplace && key.EndsWith("Index") || !form.ContainsKey(key))
                     {
-                        var values = (string[])form[key];
-                        form.Remove(key);
+                        continue;
+                    }
 
-                        if (values != null)
+                    var values = (string[])form[key];
+                    form.Remove(key);
+
+                    foreach (var value in values)
+                    {
+                        string newValue;
+                        if (!joinModeReplace)
                         {
-                            foreach (var value in values)
-                            {
-                                string newValue;
-                                if (!joinModeReplace)
-                                {
-                                    newValue = CorrectIdValue(entityTypeCode, value);
-                                }
-                                else
-                                {
-                                    newValue = string.Join(".", value.Replace("[", string.Empty).Replace("]", string.Empty).Split(".".ToCharArray()).Select(n => CorrectIdValue(entityTypeCode, n)));
-                                    newValue = "[" + newValue + "]";
-                                }
-
-                                form.Add(key, CorrectIdValue(entityTypeCode, newValue));
-                            }
+                            newValue = CorrectIdValue(entityTypeCode, value);
                         }
+                        else
+                        {
+                            newValue = string.Join(".", value.Replace("[", string.Empty).Replace("]", string.Empty).Split(".".ToCharArray()).Select(n => CorrectIdValue(entityTypeCode, n)));
+                            newValue = "[" + newValue + "]";
+                        }
+
+                        form.Add(key, CorrectIdValue(entityTypeCode, newValue));
                     }
                 }
             }
@@ -434,7 +437,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void CorrectUniqueIdFormValues(Dictionary<string, StringValues> form, string formUniqueIdsKey)
         {
-            var formUniqueIds = ((string)form[formUniqueIdsKey]).Split(',');
+            if (!form.TryGetValue(formUniqueIdsKey, out var formValue))
+            {
+                return;
+            }
+            var formUniqueIds = ((string)formValue).Split(',');
             if (formUniqueIds != null)
             {
                 var correctedUniqueIds = formUniqueIds.Select(g => CorrectUniqueIdValue(EntityTypeCode.Article, Guid.Parse(g)));
@@ -453,7 +460,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void SubstituteArticleIdFormValuesFromGuids(Dictionary<string, StringValues> form, string formIdKey, string formUniqueIdKey)
         {
-            var formUniqueIds = ((string)form[formUniqueIdKey]).Split(',');
+            if (!form.TryGetValue(formUniqueIdKey, out var formValue))
+            {
+                return;
+            }
+            var formUniqueIds = ((string)formValue).Split(',');
             if (formUniqueIds != null)
             {
                 var substitutedIds = formUniqueIds
