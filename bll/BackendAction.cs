@@ -183,5 +183,8 @@ namespace Quantumart.QP8.BLL
         /// Лимит объектов при превышении которого действие обрабатывается как многошаговое
         /// </summary>
         public int? EntityLimit { get; set; }
+
+
+        public BackendAction Clone() => (BackendAction)MemberwiseClone();
     }
 }

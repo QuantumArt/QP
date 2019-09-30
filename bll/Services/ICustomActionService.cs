@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Services
 
         CustomAction Read(int id);
 
-        CustomAction ReadForUpdate(int id);
+        CustomAction ReadForModify(int id);
 
         CustomAction Update(CustomAction customAction, int[] selectedActionsIds);
 

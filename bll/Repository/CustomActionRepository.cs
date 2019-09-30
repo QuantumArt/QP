@@ -39,6 +39,25 @@ namespace Quantumart.QP8.BLL.Repository
             return result;
         }
 
+        // internal static CustomAction GetRealById(int id)
+        // {
+        //     var customAction = MapperFacade.CustomActionMapper.GetBizObject(
+        //             QPContext.EFContext.CustomActionSet
+        //                 .Include(b => b.ContentCustomActionBinds)
+        //                 .Include(b => b.SiteCustomActionBinds)
+        //                 .Include(b => b.Action)
+        //                 .SingleOrDefault()
+        //         );
+        //
+        //         foreach (var c in customActions)
+        //         {
+        //             c.Action = backendActions.FirstOrDefault(n => n.Id == c.ActionId);
+        //         }
+        //
+        //         return customActions;
+        //     }
+        // }
+
         internal static CustomAction GetByCode(string code)
         {
             var result = BackendActionCache.CustomActions.SingleOrDefault(a => a.Action.Code == code);
@@ -176,6 +195,8 @@ namespace Quantumart.QP8.BLL.Repository
             var customActionDal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
             customActionDal.LastModifiedBy = QPContext.CurrentUserId;
             customActionDal.Action = actionDal;
+
+
             using (new QPConnectionScope())
             {
                 customActionDal.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
@@ -202,12 +223,14 @@ namespace Quantumart.QP8.BLL.Repository
                 entities.Entry(item).State = EntityState.Added;
             }
 
+            customActionDal.SiteCustomActionBinds = new List<SiteCustomActionBindDAL>();
             foreach (var item in customAction.SiteIds)
             {
                 var bind = new SiteCustomActionBindDAL { SiteId = item, CustomAction = customActionDal };
                 customActionDal.SiteCustomActionBinds.Add(bind);
             }
 
+            customActionDal.ContentCustomActionBinds = new List<ContentCustomActionBindDAL>();
             foreach (var item in customAction.ContentIds)
             {
                 var bind = new ContentCustomActionBindDAL { ContentId = item, CustomAction = customActionDal };
@@ -293,7 +316,7 @@ namespace Quantumart.QP8.BLL.Repository
                 index++;
                 newAlias = MutateHelper.MutateNetName(alias, index);
             }
-            while (ExistAlias(newAlias));
+            while (DoesAliasExist(newAlias));
             return newAlias;
         }
 
@@ -306,18 +329,20 @@ namespace Quantumart.QP8.BLL.Repository
                 index++;
                 newName = MutateHelper.MutateString(name, index);
             }
-            while (ExistName(newName));
+            while (DoesNameExist(newName));
             return newName;
         }
 
-        private static bool ExistName(string name)
+        private static bool DoesNameExist(string name)
         {
             return QPContext.EFContext.CustomActionSet.Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        private static bool ExistAlias(string alias)
+        private static bool DoesAliasExist(string alias)
         {
-            return QPContext.EFContext.CustomActionSet.Any(a => a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase));
+            return QPContext.EFContext.CustomActionSet.Any(
+                a => a.Alias != null && a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase)
+            );
         }
 
         private static IEnumerable<int> ExistOrders()

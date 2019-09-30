@@ -69,7 +69,10 @@ namespace Quantumart.QP8.BLL.Services
             return action;
         }
 
-        public CustomAction ReadForUpdate(int id) => Read(id);
+        public CustomAction ReadForModify(int id)
+        {
+            return Read(id).Clone();
+        }
 
         public CustomAction Update(CustomAction customAction, int[] selectedActionsIds)
         {
@@ -91,7 +94,7 @@ namespace Quantumart.QP8.BLL.Services
         public CopyResult Copy(int id, int[] selectedActionsIds)
         {
             var result = new CopyResult();
-            var action = Read(id);
+            var action = ReadForModify(id);
             action.Id = 0;
             if (action.Action != null)
             {

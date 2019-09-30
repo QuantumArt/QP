@@ -88,6 +88,15 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public CustomAction Clone()
+        {
+            var ca = (CustomAction)MemberwiseClone();
+            ca.Action = ca.Action.Clone();
+            ca.ContentIds = new List<int>(ContentIds);
+            ca.SiteIds = new List<int>(SiteIds);
+            return ca;
+        }
+
         private static int GetFreeOrder(int entityTypeId, int beginRange = 1)
         {
             // получить минимальное из неиспользуемых значений Order
@@ -193,4 +202,6 @@ namespace Quantumart.QP8.BLL
 
         public string ForceActionCode { get; set; }
     }
+
+
 }

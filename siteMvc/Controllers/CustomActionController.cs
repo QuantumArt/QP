@@ -210,7 +210,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
-            var action = _service.ReadForUpdate(id);
+            var action = _service.ReadForModify(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
 
             await TryUpdateModelAsync(model);
@@ -241,7 +241,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Copy(string tabId, int parentId, int id, IFormCollection collection)
         {
-            var action = _service.ReadForUpdate(id);
+            var action = _service.ReadForModify(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             var result = _service.Copy(id, model.SelectedActionsIds);
             return JsonMessageResult(result.Message);
