@@ -3,8 +3,8 @@
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj" />
-    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\configuration\Configuration.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Unity" Version="5.8.13" />

@@ -18,10 +18,10 @@
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
-    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
-    <ProjectReference Include="$(SolutionDir)\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
-    <ProjectReference Include="$(SolutionDir)\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
+    <ProjectReference Include="..\constants\Constants.csproj" />
+    <ProjectReference Include="..\utils\Utils.csproj" />
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <Reference Include="System.Configuration" />

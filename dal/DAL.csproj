@@ -17,14 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
-    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
-    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj" />
-    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
+    <ProjectReference Include="..\configuration\Configuration.csproj" />
+    <ProjectReference Include="..\constants\Constants.csproj" />
+    <ProjectReference Include="..\Resources\Resources.csproj" />
+    <ProjectReference Include="..\utils\Utils.csproj" />
   </ItemGroup>
- 
+
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
- 
+
 </Project>

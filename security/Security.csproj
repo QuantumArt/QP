@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj" />
-    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj" />
-    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj" />
-    <ProjectReference Include="$(SolutionDir)\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
-    <ProjectReference Include="$(SolutionDir)\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
+    <ProjectReference Include="..\configuration\Configuration.csproj" />
+    <ProjectReference Include="..\constants\Constants.csproj" />
+    <ProjectReference Include="..\utils\Utils.csproj" />
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
