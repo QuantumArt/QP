@@ -3148,9 +3148,9 @@ AS $BODY$
   		where not splitted;
 							
   		insert into item_link (link_id, item_id, linked_item_id)
-  		select i.link_id, i.linked_id, i.id 
+  		select i.link_id, i.linked_id, i.id
 		from unnest(new_ids) i, content_to_content c
-  		where i.link_id = c.link_id 
+  		where i.link_id = c.link_id and i.id <> i.linked_id
 		and not i.splitted and c.symmetric;							
 							
 		IF (array_length(new_ids, 1) > 0) THEN

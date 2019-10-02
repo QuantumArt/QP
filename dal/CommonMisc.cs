@@ -4,9 +4,11 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using NpgsqlTypes;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
@@ -664,6 +666,34 @@ WHERE content_item_id = {contentItemId}
              var dt = new DataTable();
              DataAdapterFactory.Create(cmd).Fill(dt);
              return dt.AsEnumerable().ToArray();
+         }
+
+         public static string GetDbServerName(DbConnection sqlConnection)
+         {
+             var isPostgresConnection = IsPostgresConnection(sqlConnection);
+             var result = "";
+             var query = $"select {(isPostgresConnection ? "inet_server_addr()::text" : @"@@SERVERNAME")} as server_name";
+
+             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
+             {
+                 cmd.CommandType = CommandType.Text;
+                 result = (string)cmd.ExecuteScalar();
+             }
+
+             if (isPostgresConnection)
+             {
+                 var ip = IPAddress.Parse(result.Split('/')[0]);
+                 try
+                 {
+                     result = Dns.GetHostEntry(ip).HostName;
+                 }
+                 catch (Exception ex)
+                 {
+                     Logger.Log.Error($"Cannot resolve IP Address: {ip}", ex);
+                 }
+             }
+
+             return result;
          }
     }
 }

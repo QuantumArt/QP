@@ -8,7 +8,9 @@ using System.Text;
 using System.Xml.Linq;
 using Npgsql;
 using NpgsqlTypes;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Constants;
+using LogManager = NLog.LogManager;
 
 namespace Quantumart.QP8.DAL
 {
@@ -16,6 +18,7 @@ namespace Quantumart.QP8.DAL
     {
         public static void PersistArticle(DbConnection currentDbConnection, string xml, out int id)
         {
+            var logger = LogManager.GetLogger("Common");
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(currentDbConnection);
             var ns = SqlQuerySyntaxHelper.DbSchemaName(databaseType);
             var sql = $"select id, modified from {ns}.qp_persist_article(@xml)";
@@ -23,7 +26,15 @@ namespace Quantumart.QP8.DAL
             {
                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xml", xml, databaseType));
                 var dt = new DataTable();
-                DataAdapterFactory.Create(cmd).Fill(dt);
+                try
+                {
+                    DataAdapterFactory.Create(cmd).Fill(dt);
+                }
+                catch (PostgresException ex)
+                {
+                    logger.Error($"Error while persisting article with xml: {xml}");
+                    throw;
+                }
                 id = (int)dt.Rows[0]["id"];
             }
         }
@@ -426,11 +437,14 @@ namespace Quantumart.QP8.DAL
 
         public static void AdjustManyToMany(DbConnection connection, int id, int newId)
         {
-            #warning rewrite to sequential delete and insert as we don't have update trigger in pg
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = $@"
+            var sql = dbType == DatabaseType.SqlServer ? $@"
                 update item_to_item {WithRowLock(dbType)} set l_item_id = @newId where l_item_id = @id and r_item_id = @newId;
                 delete from item_to_item {WithRowLock(dbType)} where r_item_id = @id and l_item_id = @newId;
+            " : $@"
+                insert into item_to_item(link_id, l_item_id, r_item_id) 
+                select link_id, @newId, @newId from item_to_item where l_item_id = @newId and r_item_id = @id;
+                delete from item_to_item where l_item_id = @newId and r_item_id = @id;
             ";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {

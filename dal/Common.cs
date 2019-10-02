@@ -3394,7 +3394,6 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static string GetCurrentDbVersion(DbConnection connection)
         {
-            #warning разобраться с переносом/не переносом в постгрес, пока заглушка
             if (IsPostgresConnection(connection)) return "7.9.9.0";
             using (var cmd = DbCommandFactory.Create("qp_versions", connection))
             {
@@ -10001,19 +10000,6 @@ order by ActionDate desc
         {
             var isPostgres = IsPostgresConnection(sqlConnection);
             var query = $"select {(isPostgres ? "current_database()" : "db_name()")} as name";
-            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                return (string)cmd.ExecuteScalar();
-            }
-        }
-
-        public static string GetDbServerName(DbConnection sqlConnection)
-        {
-            var isPostgresConnection = IsPostgresConnection(sqlConnection);
-            #warning разобраться, нужно ли в postgres и как получать, сейчас заглушка
-            var query = $"select {(isPostgresConnection ? "'SERVER'" : @"@@SERVERNAME")} as server_name";
-
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
