@@ -61,9 +61,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 filterContext.HttpContext.Response.StatusCode = 500;
             }
-
-            // TODO: verify 500 Errors on IIS
-            // filterContext.HttpContext.Response.TrySkipIisCustomErrors = true;
         }
 
         private static bool IsAjaxRequest(ActionContext filterContext)

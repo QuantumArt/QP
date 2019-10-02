@@ -71,13 +71,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var newSite = SiteService.NewForSave();
             var model = CreateLikeSiteModel.Create(newSite, tabId, parentId);
-
-            await TryUpdateModelAsync(model);
-
             var sourceSite = SiteService.Read(id);
             model.Data.AssemblingType = sourceSite.AssemblingType;
-            TryValidateModel(model);
-
+            await TryUpdateModelAsync(model);
             var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
             if (ModelState.IsValid)
             {

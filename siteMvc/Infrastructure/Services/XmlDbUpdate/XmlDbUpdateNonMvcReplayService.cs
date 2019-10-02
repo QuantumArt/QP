@@ -56,16 +56,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void QpInstalledProcess(string xmlString, IList<string> filePathes)
         {
-            using (new FakeMvcApplicationContext())
-            {
-                base.Process(xmlString, filePathes);
-            }
+            base.Process(xmlString, filePathes);
         }
 
         private void QpNotInstalledProcess(string xmlString, IList<string> filePathes)
         {
             using (new NonQpEnvironmentContext(ConnectionInfo))
-            using (new FakeMvcApplicationContext())
             {
                 base.Process(xmlString, filePathes);
             }

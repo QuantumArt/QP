@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -29,6 +31,8 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Name", ResourceType = typeof(FolderStrings))]
         public override string Name { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public override IEnumerable<EntityObject> Children
         {
             get
@@ -42,18 +46,27 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(Path));
+
 
         private PathInfo CreatePathInfo(string path) => Parent.PathInfo.GetSubPathInfo(path);
 
+        [BindNever]
+        [ValidateNever]
         public override bool HasChildren
         {
             get => AutoLoadChildren ? Children.Any() : _hasChildren;
             set => _hasChildren = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public override EntityObject Parent => _parent ?? (_parent = GetParent());
 
+        [BindNever]
+        [ValidateNever]
         public bool IsEmpty
         {
             get
@@ -89,6 +102,8 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool LoadAllChildren { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public FolderRepository Repository
         {
             get
@@ -103,6 +118,8 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public Folder ParentFolder => _parentFolder ?? (_parentFolder = ParentId == null ? null : Repository.GetById((int)ParentId));
 
         public string OutputName => !string.IsNullOrEmpty(Name) ? Name : LibraryStrings.RootFolder;

@@ -300,7 +300,6 @@ namespace Quantumart.QP8.WebMvc
 
         private static void RegisterRoutes(IRouteBuilder routes)
         {
-            // TODO: routes.IgnoreRoute("{resource}.ashx/{*pathInfo}");
             routes.MapRoute(
                 "MultistepAction",
                 "Multistep/{command}/{action}/{tabId}/{parentId}",

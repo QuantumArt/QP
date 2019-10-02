@@ -131,7 +131,7 @@ namespace Quantumart.QP8.BLL
         public Field()
             : this(new FieldRepository(), new ContentRepository())
         {
-            // TODO: REMOVE AND FIX AUTOMAPPER
+
         }
 
         public Field(IFieldRepository fieldRepository, IContentRepository contentRepository)
