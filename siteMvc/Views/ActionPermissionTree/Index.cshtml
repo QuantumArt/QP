@@ -3,7 +3,7 @@
 @using (Html.BeginDocumentPadding())
 {
   <div class="actionPermission" id="@Model.MainComponentId">
-    @Html.Partial("UserAndGroupSearchBlock", Model)
+    <partial name="UserAndGroupSearchBlock" model="@Model" />
     <div class="treeContainer">
       @{ string treeUniqueId = Html.UniqueId("Tree"); }
       <div class="t-widget t-treeview t-reset" id="@treeUniqueId"></div>

@@ -17,7 +17,7 @@
 		<tbody data-bind ="foreach: items">
 			<tr>
 				<td data-bind="text: $index() + 1"></td>
-				<td><select data-bind="options: $root.fields, event: { change: $root.onItemChanged }, value: Field, css: { 'input-validation-error': Invalid}"></select></td>				
+				<td><select data-bind="options: $root.fields, event: { change: $root.onItemChanged }, value: Field, css: { 'input-validation-error': Invalid}"></select></td>
 				<td><select data-bind="options: $root.orders, event: { change: $root.onItemChanged }, value: Order, css: { 'input-validation-error': Invalid}"></select></td>
                 <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
 			</tr>
@@ -50,8 +50,8 @@
 
 @using (Html.BeginTabForm(Model))
 {
-    @Html.Partial("Locking", Model)
-    
+    <partial name="Locking" model="@Model" />
+
 	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
         if (Model.IsNew && Model.Data.PageOrTemplate)
@@ -72,20 +72,20 @@
         }
         @Html.TextAreaFieldFor(s => s.Data.Description)
         @Html.SelectFieldFor(model => model.Data.TypeId, Html.List(Model.Types), htmlAttributes: new Dictionary<string, object> { { "class", "dropDownList  typeDlist" } })
-        
+
         if (!Model.Data.PageOrTemplate)
         {
             @Html.CheckBoxFieldFor(s => s.Data.Global, htmlAttributes: new Dictionary<string, object> { { "class", "checkbox simple-checkbox globalChkbx" }, { "data-visibleTypes", Model.ShowGlobalTypeIds} })
         }
-        
+
         if (!Model.IsNew) {
             @Html.SelectFieldFor(model => model.Data.DefaultFormatId, Html.List(Model.DefaultFormats), Model.SelectDefaultFormatOptions)
         }
-        
+
         @Html.CheckBoxFieldFor(s => s.Data.AllowStageEdit)
-        
+
         if (Model.Data.PageTemplate.SiteIsDotNet)
-	    {            
+	    {
             @Html.CheckBoxFieldFor(s => s.Data.EnableViewState)
             @Html.CheckBoxFieldFor(s => s.Data.DisableDatabind)
             @Html.TextBoxFieldFor(s => s.Data.ControlCustomClass)
@@ -96,7 +96,7 @@
            @Html.AggregationListFieldFor(s => s.Data.DefaultValues, Model.Data.DefaultValues, "VariableName,VariableValue")
         }
     }
-                        
+
         using (Html.BeginPanel("Publishing_Container_Panel"))
         {
         using (Html.BeginFieldGroup(TemplateStrings.Source))
@@ -123,7 +123,7 @@
                 @Html.TextBoxFieldFor(s => s.Data.Container.DynamicContentVariable)
             }
         }
-        
+
         using (Html.BeginFieldGroup(TemplateStrings.Filtering))
 	    {
             <dl data-field_form_name="Data.Container.FilterValue" class="row">
@@ -131,8 +131,8 @@
 	            <label for="tab1_Data_Container_FilterValue">@TemplateStrings.Filter</label>
 	            </dt>
 	            <dd class="field">
-                    @Html.TextAreaFor(s => s.Data.Container.FilterValue, new Dictionary<string, object> 
-					    { 						    
+                    @Html.TextAreaFor(s => s.Data.Container.FilterValue, new Dictionary<string, object>
+					    {
                             { "data-height", "102px"},
                             { "class", "textbox codeBehind highlightedTextarea simple-text " + Model.FilterHtaClass }
 					    })
@@ -140,38 +140,38 @@
 	            <em class="description">"[content_item_id] = " + NumValue("id") <br/> "[Name] = '" + StrValue("name") + "'"</em>
                 </dd>
             </dl>
-            
+
             @Html.CheckBoxFieldFor(s => s.Data.Container.ScheduleDependence)
 
             @Html.CheckBoxFieldFor(s => s.Data.Container.ShowArchived)
-            
+
             @Html.MultipleItemPickerFieldFor(x => x.ActiveStatusTypeIds, Model.ActiveStatusTypeListItems, Model.EntityDataListArgs, new Dictionary<string, object> {{ "data-published-id", Model.PublishedId }, {"data-has-workflow", Model.HasWorkflow}})
-    
+
             @Html.CheckBoxFieldFor(s => s.Data.Container.ApplySecurity, "ApplySecurityPanel")
             using (Html.BeginPanel("ApplySecurityPanel"))
-            {                                         
+            {
                 @Html.RadioFieldFor(s => s.Data.Container.UseLevelFiltration, Html.List(Model.FiltrationLevels))
-                
+
                 @Html.SelectFieldFor(model => model.Data.Container.StartLevel, Html.List(Model.PermissionLevels))
 
                 @Html.SelectFieldFor(model => model.Data.Container.EndLevel, Html.List(Model.PermissionLevels))
             }
         }
-        
+
         using (Html.BeginFieldGroup(TemplateStrings.Order))
 	    {
             @Html.RadioFieldFor(s => s.Data.Container.RotateContent, Html.List(Model.ReturnArticlesModes))
-            
+
             <div class="sortingItems">
                 @Html.AggregationListFieldFor(s => s.SortingItems, Model.SortingItems, "Field,Order", Model.Data.Container.AdditionalDataForAggregationList)
             </div>
-            
+
             @Html.CheckBoxFieldFor(s => s.Data.Container.AllowOrderDynamic, "AllowOrderDynamicPanel")
             using (Html.BeginPanel("AllowOrderDynamicPanel"))
             {
                 @Html.TextBoxFieldFor(s => s.Data.Container.OrderDynamic)
             }
-	        
+
         }
 
         using (Html.BeginFieldGroup(TemplateStrings.Paging))
@@ -179,19 +179,19 @@
             <div class="option-with-def-value">
                 @Html.RadioFieldFor(s => s.SelectionIsStarting, Html.List(Model.SelectionStartingModes))
             </div>
-    
+
             using (Html.BeginPanel("FromTheSpecialPanel"))
-            {                
+            {
                 @Html.TextBoxFieldFor(s => s.Data.Container.SelectStart)
             }
             using (Html.BeginPanel("FromTheFirstPanel"))
             {
             }
-            
+
             <div class="option-with-def-value">
                 @Html.RadioFieldFor(s => s.SelectionIncludes, Html.List(Model.SelectionIncludeModes))
             </div>
-    
+
             using (Html.BeginPanel("SpecialArticlesPanel"))
             {
                 @Html.TextBoxFieldFor(s => s.Data.Container.SelectTotal)
@@ -200,22 +200,22 @@
             {
             }
         }
-        
+
         using (Html.BeginFieldGroup(TemplateStrings.Caching))
-	    { 
+	    {
             @Html.CheckBoxFieldFor(s => s.Data.Container.EnableDataCaching, "EnableDataCachingPanel")
             using (Html.BeginPanel("EnableDataCachingPanel"))
             {
                 @Html.NumericFieldFor(s => s.Data.Container.Duration, 0, 3600)
             }
-        
+
             @Html.CheckBoxFieldFor(s => s.Data.Container.ReturnLastModified)
         }
         }
-        
-        
+
+
         using (Html.BeginPanel("Publishing_Form_Panel"))
-        {                         
+        {
             using (Html.BeginFieldGroup("FormParameters"))
             {
               @Html.SingleItemPickerFieldFor(s => s.Data.ContentForm.ContentId,
@@ -253,19 +253,19 @@
               @Html.SelectFieldFor(model => model.Data.ContentForm.NetLanguageId, Html.List(Model.NetLanguages))
             }
         }
-        
-    
-    @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+
+
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 
 }
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
-	
+<script type="text/javascript">
+
     @(Model.ContextObjectName).setInitializedCallback(function() {
 		this.viewMediator = new Quantumart.QP8.BackendTemplateObjectPropertiesMediator('@(Html.UniqueId("editingForm"))');
 	});
-    
+
     @(Model.ContextObjectName).setTerminatingCallback(function() {
         this.viewMediator.dispose();
         this.viewMediator = null;

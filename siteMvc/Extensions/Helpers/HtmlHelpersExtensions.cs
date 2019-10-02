@@ -1118,7 +1118,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             div.MergeAttribute("id", source.UniqueId(name + "_workflow_control"));
             div.AddCssClass(WorkflowControlClassName);
             div.MergeDataAttribute("workflow_list_data", JsonConvert.SerializeObject(list));
-            div.InnerHtml.Append($@"<div class =""{WorkflowContainerClassName}""></div>");
+            div.InnerHtml.AppendHtml($@"<div class =""{WorkflowContainerClassName}""></div>");
             return div;
         }
 

@@ -37,8 +37,8 @@
     @Html.AggregationListFieldFor(s => s.VeCommandsDisplay, Model.VeCommandsDisplay, "Alias,Name")
   }
 
-  @Html.Partial("Version", Model.Data)
-  @Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 }
 
 @Html.PrepareAndRunInitScript(Model)

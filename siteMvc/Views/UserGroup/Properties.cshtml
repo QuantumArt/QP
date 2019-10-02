@@ -32,8 +32,8 @@
       @Html.SelectFieldFor(model => model.ParentGroupId, Html.List(Model.GetGroupList()))
     }
 
-    @Html.Partial("Version", Model.Data)
-    @Html.Partial("EntityDirectLink", Model)
+    <partial name="Version" model="@Model.Data" />
+    <partial name="EntityDirectLink" model="@Model" />
 
 }
 

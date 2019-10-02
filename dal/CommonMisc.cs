@@ -51,7 +51,6 @@ namespace Quantumart.QP8.DAL
         {
 
             object[] parameters;
-            DatabaseType dbType;
             switch (connection)
             {
 
@@ -62,7 +61,6 @@ namespace Quantumart.QP8.DAL
                         new SqlParameter { ParameterName = "use_nt_login", DbType = DbType.Boolean, Value = useNtLogin },
                         new SqlParameter { ParameterName = "check_admin_access", DbType = DbType.Boolean, Value = checkAdminAccess }
                     };
-                    dbType = DatabaseType.SqlServer;
                     break;
                 case NpgsqlConnection _:
                     parameters = new object[] {
@@ -71,7 +69,6 @@ namespace Quantumart.QP8.DAL
                         new NpgsqlParameter { ParameterName = "use_nt_login", DbType = DbType.Boolean, Value = useNtLogin },
                         new NpgsqlParameter { ParameterName = "check_admin_access", DbType = DbType.Boolean, Value = checkAdminAccess }
                     };
-                    dbType = DatabaseType.Postgres;
                     break;
                 default:
                     throw new ApplicationException("Unknown connection type");

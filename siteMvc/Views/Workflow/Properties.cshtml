@@ -126,8 +126,8 @@
 
     @Html.WorkflowFor(s => s.WorkflowRulesDisplay, Model.WorkflowRulesDisplay)
 
-    @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+    <partial name="Version" model="@Model.Data"/>
+    <partial name="EntityDirectLink" model="@Model"/>
 
 }
 

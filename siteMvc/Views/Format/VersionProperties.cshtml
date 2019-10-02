@@ -19,8 +19,8 @@
         @Html.TextAreaFieldFor(s => s.Data.CodeBehind, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind highlightedTextarea " + HighlightModeSelectHelper.SelectMode(Model.Data.NetLanguageId) } })
 	}
 
-    @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 }
 
 @Html.PrepareAndRunInitScript(Model)

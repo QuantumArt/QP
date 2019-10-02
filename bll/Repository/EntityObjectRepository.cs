@@ -382,8 +382,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             string code;
 
-            var defaultActionCode = "";
-
             var result = new List<Tuple<EntityInfo, string>>();
 
             using (new QPConnectionScope())

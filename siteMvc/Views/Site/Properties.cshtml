@@ -25,7 +25,7 @@
 
 @using (Html.BeginTabForm(Model))
 {
-  @Html.Partial("Locking", Model)
+  <partial name="Locking" model="@Model" />
 
   using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
   {
@@ -222,8 +222,8 @@
                                   );
   }
 
-  @Html.Partial("Version", Model.Data)
-  @Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 
 }
 

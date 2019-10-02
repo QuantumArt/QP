@@ -11,16 +11,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteService : CopySiteAbstract
     {
-        private CopySiteSettingsCommand _copySiteSettingsCommand;
-        private CopySiteContentsCommand _copySiteContentsCommand;
-        private CopySiteVirtualContentsCommand _copySiteVirtualContentsCommand;
-        private CopySiteContentLinksCommand _copySiteContentLinksCommand;
-        private CopySiteArticlesCommand _copySiteArticlesCommand;
-        private CopySiteItemLinksCommand _copySiteItemLinksCommand;
-        private CopySiteUpdateArticleIdsCommand _copySiteUpdateArticleIdsCommand;
-        private CopySiteTemlatesCommand _copySiteTemplatesCommand;
-        private CopySiteFilesCommand _copySiteFilesCommand;
-
         public override void SetupWithParams(int parentId, int oldSiteId, IMultistepActionParams settingsParams)
         {
             HttpContext.Session.SetValue(CopySiteContextSessionKey, settingsParams);

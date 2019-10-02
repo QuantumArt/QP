@@ -46,6 +46,6 @@
   }
 
   <div id="@Html.UniqueId("mapping_fields_selects")" style="display:none;">
-    @Html.Partial("~/Views/Shared/MultistepSettingsTemplates/_ImportFieldGroupTemplate.cshtml", Model.FieldGroup)
+    <partial name="~/Views/Shared/MultistepSettingsTemplates/_ImportFieldGroupTemplate.cshtml" model="@Model.FieldGroup" />
   </div>
 }

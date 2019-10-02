@@ -18,8 +18,6 @@ namespace Quantumart.QP8.BLL
 {
     public class Site : LockableEntityObject
     {
-        private ComplexTypeModelBinder _binder;
-        private DecimalModelBinder _dBinder;
         public static readonly string DefaultContextClassName = "QPDataContext";
 
         public static readonly string DefaultConnectionStringName = "qp_database";

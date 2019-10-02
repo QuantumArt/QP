@@ -4,7 +4,7 @@
 
 @using (Html.BeginTabForm(Model))
 {
-    @Html.Partial("Locking", Model)
+    <partial name="Locking" model="@Model" />
 
 	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
@@ -30,8 +30,8 @@
         }
 	}
 
-    @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 }
 
 @Html.PrepareAndRunInitScript(Model)

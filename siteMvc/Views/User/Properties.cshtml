@@ -40,7 +40,7 @@
         )
     }
 
-    @Html.Partial("ContentDefaultFilters", Model)
+    <partial name="ContentDefaultFilters" model="@Model" />
 
     using (Html.BeginFieldGroup(UserStrings.ViewSettings))
     {
@@ -53,8 +53,8 @@
         @Html.CheckBoxFieldFor(n => n.Data.AllowStageEditField)
     }
 
-    @Html.Partial("Version", Model.Data)
-    @Html.Partial("EntityDirectLink", Model)
+    <partial name="Version" model="@Model.Data" />
+    <partial name="EntityDirectLink" model="@Model" />
 
 }
 

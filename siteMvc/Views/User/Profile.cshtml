@@ -13,7 +13,7 @@
         @Html.PasswordFieldFor(n => n.Data.NewPasswordCopy)
     }
 
-    @Html.Partial("ContentDefaultFilters", Model)
+    <partial name="ContentDefaultFilters" model="@Model" />
 
     using (Html.BeginFieldGroup(UserStrings.ViewSettings))
     {

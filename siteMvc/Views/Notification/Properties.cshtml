@@ -158,8 +158,8 @@
         @Html.CheckBoxFieldFor(s => s.Data.UseQaMail)
  }
 	</div>
-    @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 
 }
 
