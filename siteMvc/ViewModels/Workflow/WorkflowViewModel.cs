@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -85,6 +86,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         private InitPropertyValue<IEnumerable<BLL.Content>> _contents;
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<BLL.Content> Contents
         {
             get => _contents.Value;

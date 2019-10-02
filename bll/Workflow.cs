@@ -37,8 +37,7 @@ namespace Quantumart.QP8.BLL
                 GroupId = x.RadioChecked == "Group" ? x.GroupId : null,
                 UserId = x.RadioChecked == "User" ? x.UserId : null,
                 SuccessorStatusId = x.StId,
-                StatusType = new StatusType { Weight = x.Weight, Name = x.StName },
-                Name = x.StName
+                StatusType = new StatusType { Weight = x.Weight, Name = x.StName }
             }).ToList();
         }
 
