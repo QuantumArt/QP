@@ -488,6 +488,7 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         [ValidateNever]
+        [JsonIgnore]
         public Content BaseAggregationContent => _baseAggregationContent.Value;
 
         [BindNever]

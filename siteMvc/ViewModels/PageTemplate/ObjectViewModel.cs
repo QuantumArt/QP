@@ -91,7 +91,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             }
         }
 
-        public new BllObject Data
+        public BllObject Data
         {
             get => (BllObject)EntityData;
             set => EntityData = value;

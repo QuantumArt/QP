@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -213,13 +214,18 @@ namespace Quantumart.QP8.BLL
         {
             if (File.Exists(baseImagePath))
             {
+                var desiredFileName = GetDesiredFileName(imageValue);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    desiredFileName = desiredFileName.Replace(@"/", @"\");
+                }
                 if (!imageValue.ToUpper().EndsWith(SVG_EXTENSION))
                 {
                     using (Image<Rgba32> image = Image.Load(baseImagePath))
                     {
                         var desiredSize = GetDesiredImageSize(new Size(image.Width, image.Height));
                         image.Mutate(x => x.Resize(desiredSize.Width, desiredSize.Height));
-                        var resultPath = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace(@"/", @"\"));
+                        var resultPath = Path.Combine(PathInfo.Path, desiredFileName);
                         Directory.CreateDirectory(Path.GetDirectoryName(resultPath));
                         using (var fs = File.OpenWrite(resultPath))
                         {
@@ -259,7 +265,7 @@ namespace Quantumart.QP8.BLL
                     widthAttr.Value = desiredImageSize.Width.ToString();
                     heightAttr.Value = desiredImageSize.Height.ToString();
 
-                    var filename = Path.Combine(PathInfo.Path, GetDesiredFileName(imageValue).Replace("/", "\\"));
+                    var filename = Path.Combine(PathInfo.Path, desiredFileName);
                     xmlDocument.Save(filename);
                 }
             }

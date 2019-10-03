@@ -102,7 +102,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 case ExceptionResultMode.JSendResponse:
                     if (ex is XmlDbUpdateLoggingException || ex is XmlDbUpdateReplayActionException)
                     {
-                        _logger.Log(LogLevel.Warn, "There was an exception at XmlDbUpdateService: ", ex);
+                        _logger.Warn(ex, "There was an exception at XmlDbUpdateService: ");
 
                         return new JsonResult(new JSendResponse
                         {
@@ -111,7 +111,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                         }, JsonSettingsRegistry.CamelCaseSettings);
                     }
 
-                    _logger.Log(LogLevel.Error, "There was an exception: ", ex);
+                    _logger.Error(ex, "There was an exception: ");
                     return new JsonResult(new JSendResponse
                     {
                         Status = JSendStatus.Error,

@@ -1030,7 +1030,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var fileInfo = new FileInfo(WebUtility.UrlDecode(_settings.UploadFilePath) ?? string.Empty);
             if (fileInfo.Exists)
             {
-                var newFileUploadPath = $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
+                var newFileUploadPath = $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileInfo.Name}";
                 if (!File.Exists(newFileUploadPath))
                 {
                     File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
@@ -1044,6 +1044,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public static IEnumerable<Line> ReadFile(ImportSettings setts)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             using (var sr = new StreamReader(setts.UploadFilePath))
             {
                 string line;

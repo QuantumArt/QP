@@ -18,7 +18,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewVisualEditorStyle : Constants.ActionCode.VisualEditorStyleProperties;
 
-        public new VisualEditorStyle Data
+        public VisualEditorStyle Data
         {
             get => (VisualEditorStyle)EntityData;
             set => EntityData = value;

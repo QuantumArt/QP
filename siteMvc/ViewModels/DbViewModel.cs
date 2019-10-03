@@ -15,7 +15,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             OverrideRecordsFile = false;
         }
 
-        public new Db Data
+        public Db Data
         {
             get => (Db)EntityData;
             set => EntityData = value;

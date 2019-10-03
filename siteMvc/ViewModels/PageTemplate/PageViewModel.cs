@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string CaptureLockActionCode => Constants.ActionCode.CaptureLockPage;
 
-        public new Page Data
+        public Page Data
         {
             get => (Page)EntityData;
             set => EntityData = value;

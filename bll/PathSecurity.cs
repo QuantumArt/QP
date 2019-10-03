@@ -38,9 +38,10 @@ namespace Quantumart.QP8.BLL
         private static List<PathSecurityInfo> FindMatched(string path, List<PathSecurityInfo> input)
         {
             var result = new List<PathSecurityInfo>();
+            var sep = System.IO.Path.DirectorySeparatorChar;
             foreach (var item in input)
             {
-                if (path.StartsWith(item.Path.TrimEnd('\\') + @"\", CompareOption))
+                if (path.StartsWith(item.Path.TrimEnd(sep) + sep, CompareOption))
                 {
                     result.Add(item);
                 }
@@ -87,11 +88,12 @@ namespace Quantumart.QP8.BLL
 
         public static PathSecurityResult Check(string path)
         {
+            var sep = System.IO.Path.DirectorySeparatorChar;
             var result = new PathSecurityResult();
             var pathToFind = path;
-            if (pathToFind[pathToFind.Length - 1].ToString() != @"\")
+            if (pathToFind[pathToFind.Length - 1].ToString() != sep.ToString())
             {
-                pathToFind = pathToFind + @"\";
+                pathToFind = pathToFind + sep;
             }
 
             var site = FindFirst(pathToFind, SiteRepository.GetPaths());
@@ -101,7 +103,7 @@ namespace Quantumart.QP8.BLL
                 return result;
             }
 
-            var images = @"\images";
+            var images = $@"{sep}images";
             pathToFind = pathToFind.Replace(site.Path, string.Empty);
             if (pathToFind.StartsWith(images, CompareOption))
             {
@@ -114,7 +116,7 @@ namespace Quantumart.QP8.BLL
                 return result;
             }
 
-            var contents = new Regex(@"^\\contents\\([\d]+)");
+            var contents = new Regex($@"^\{sep}contents\{sep}([\d]+)");
             var match = contents.Match(pathToFind);
             if (match.Success)
             {

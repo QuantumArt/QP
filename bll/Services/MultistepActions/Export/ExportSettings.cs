@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -70,7 +71,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             get
             {
                 var fileName = $"content_{ContentId}_{_dateForFileName.Year}_{_dateForFileName.Month}_{_dateForFileName.Day}_{_dateForFileName.Hour}_{_dateForFileName.Minute}_{_dateForFileName.Second}.csv";
-                return $"{QPConfiguration.TempDirectory}\\{fileName}";
+                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileName}";
             }
         }
 

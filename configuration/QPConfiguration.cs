@@ -191,7 +191,14 @@ namespace Quantumart.QP8.Configuration
             {
                 if (string.IsNullOrWhiteSpace(_tempDirectory))
                 {
-                    _tempDirectory = ConfigVariable(Config.TempKey).ToLowerInvariant();
+                    if (!string.IsNullOrEmpty(Options.TempDirectory))
+                    {
+                        _tempDirectory = Options.TempDirectory;
+                    }
+                    else
+                    {
+                        _tempDirectory = ConfigVariable(Config.TempKey).ToLowerInvariant();
+                    }
                 }
 
                 return _tempDirectory;
@@ -203,7 +210,13 @@ namespace Quantumart.QP8.Configuration
 
         public static string ApplicationTitle => ConfigVariable(Config.ApplicationTitle);
 
-        public static bool AllowSelectCustomerCode => ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
+        public static bool AllowSelectCustomerCode
+        {
+            get
+            {
+                return Options.AllowSelectCustomerCode || ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
+            }
+        }
 
         public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
 

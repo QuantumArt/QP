@@ -77,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult ExportFileDownload(int id, string fileName)
         {
             var currentSite = SiteService.Read(id);
-            var folderForUpload = $@"{currentSite.UploadDir}\{CsvWriter.FolderForDownload}\";
+            var folderForUpload = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{CsvWriter.FolderForDownload}\";
             var inf = new PathInfo
             {
                 Path = folderForUpload

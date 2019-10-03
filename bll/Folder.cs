@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
+using I = System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -76,7 +76,7 @@ namespace Quantumart.QP8.BLL
                     return true;
                 }
 
-                return IsNew || !Directory.Exists(PathInfo.Path) || Directory.EnumerateFileSystemEntries(PathInfo.Path, "*", SearchOption.AllDirectories).Any();
+                return IsNew || !I.Directory.Exists(PathInfo.Path) || I.Directory.EnumerateFileSystemEntries(PathInfo.Path, "*", I.SearchOption.AllDirectories).Any();
             }
         }
 
@@ -133,9 +133,9 @@ namespace Quantumart.QP8.BLL
 
         internal void CreateInFs()
         {
-            if (!Directory.Exists(PathInfo.Path))
+            if (!I.Directory.Exists(PathInfo.Path))
             {
-                Directory.CreateDirectory(PathInfo.Path);
+                I.Directory.CreateDirectory(PathInfo.Path);
             }
         }
 
@@ -143,16 +143,16 @@ namespace Quantumart.QP8.BLL
         {
             ComputePath();
             var oldPathInfo = CreatePathInfo(StoredPath);
-            if (!Directory.Exists(PathInfo.Path) && Directory.Exists(oldPathInfo.Path))
+            if (!I.Directory.Exists(PathInfo.Path) && I.Directory.Exists(oldPathInfo.Path))
             {
-                Directory.Move(oldPathInfo.Path, PathInfo.Path);
+                I.Directory.Move(oldPathInfo.Path, PathInfo.Path);
                 StoredPath = Path;
             }
         }
 
         internal void RemoveFromFs()
         {
-            if (Directory.Exists(PathInfo.Path))
+            if (I.Directory.Exists(PathInfo.Path))
             {
                 ForceDelete(PathInfo.Path);
             }
@@ -172,7 +172,7 @@ namespace Quantumart.QP8.BLL
                 }
 
                 var childrenNames = Children.Select(n => n.Name.ToLowerInvariant()).ToList();
-                var namesToCreateInDb = new DirectoryInfo(PathInfo.Path)
+                var namesToCreateInDb = new I.DirectoryInfo(PathInfo.Path)
                     .EnumerateDirectories()
                     .Select(n => n.Name)
                     .Where(n => !childrenNames.Contains(n.ToLowerInvariant()) && !IsSpecialName(n));
@@ -188,13 +188,13 @@ namespace Quantumart.QP8.BLL
 
         public static void ForceDelete(string path)
         {
-            if (Directory.Exists(path))
+            if (I.Directory.Exists(path))
             {
-                var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
+                var directory = new I.DirectoryInfo(path) { Attributes = I.FileAttributes.Normal };
 
-                foreach (var info in directory.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+                foreach (var info in directory.EnumerateFileSystemInfos("*", I.SearchOption.AllDirectories))
                 {
-                    info.Attributes = FileAttributes.Normal;
+                    info.Attributes = I.FileAttributes.Normal;
                 }
 
                 directory.Delete(true);
@@ -203,7 +203,7 @@ namespace Quantumart.QP8.BLL
 
         protected override RulesException ValidateUnique(RulesException errors)
         {
-            if (Directory.Exists(CreatePathInfo(CreateComputedPath(Name)).Path))
+            if (I.Directory.Exists(CreatePathInfo(CreateComputedPath(Name)).Path))
             {
                 errors.Error("Name", Name, PropertyIsNotUniqueMessage);
             }
@@ -215,7 +215,7 @@ namespace Quantumart.QP8.BLL
 
         internal ListResult<FolderFile> GetFiles(ListCommand command, LibraryFileFilter filter)
         {
-            var files = new DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
+            var files = new I.DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
             var sort = string.IsNullOrEmpty(command.SortExpression) ? "Name ASC" : command.SortExpression;
             var typeFilter = filter.FileType.HasValue ? (Func<FolderFile, bool>)(f => f.FileType == filter.FileType.Value) : f => true;
             var filtered = files
@@ -239,7 +239,7 @@ namespace Quantumart.QP8.BLL
             var currentFolder = this;
             if (!string.IsNullOrEmpty(subFolder))
             {
-                var names = subFolder.Split('\\');
+                var names = subFolder.Split(I.Path.DirectorySeparatorChar);
                 var id = Id;
                 foreach (var name in names)
                 {
@@ -259,6 +259,6 @@ namespace Quantumart.QP8.BLL
             Path = CreateComputedPath(Name);
         }
 
-        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}\";
+        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}" + I.Path.DirectorySeparatorChar;
     }
 }

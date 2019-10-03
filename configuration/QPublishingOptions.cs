@@ -29,6 +29,10 @@ namespace Quantumart.QP8.Configuration
 
         public string QpConfigToken { get; set; }
 
+        public string TempDirectory { get; set; }
+
+        public bool AllowSelectCustomerCode { get; set; }
+
         public int RelationCountLimit { get; set; }
 
         public int CommandTimeout { get; set; }

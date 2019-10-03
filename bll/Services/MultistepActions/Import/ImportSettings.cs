@@ -35,7 +35,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             {
                 var url = WebUtility.UrlDecode(UploadFilePath) ?? string.Empty;
                 var fileInfo = new FileInfo(url);
-                return $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
+                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileInfo.Name}";
             }
         }
 
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             {
                 var fileName = Path.GetFileNameWithoutExtension(UploadFilePath) + "_rel";
                 var fileNameExtension = fileName + ".dat";
-                return $"{QPConfiguration.TempDirectory}\\{fileNameExtension}";
+                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileNameExtension}";
             }
         }
 
@@ -90,7 +90,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new DirectoryNotFoundException();
             }
 
-            return WebUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\_temp\\{FileName}");
+            return WebUtility.UrlDecode(ImportArticlesParams.GetUploadPath(currentSite, ContentId));
         }
 
         public bool IsWorkflowAssigned { get; set; }

@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
@@ -355,8 +357,6 @@ namespace Quantumart.QP8.BLL
 
         [Display(Name = "SubFolder", ResourceType = typeof(FieldStrings))]
         [StringLength(255, ErrorMessageResourceName = "SubFolderMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
-        [RegularExpression(RegularExpressions.RelativeWindowsFolderPath, ErrorMessageResourceName = "SubFolderInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
-        [Example(@"\subfolder1\subfolder2")]
         public string SubFolder { get; set; }
 
         public int? PersistentId { get; set; }
@@ -426,14 +426,17 @@ namespace Quantumart.QP8.BLL
 
         [ValidateNever]
         [BindNever]
+        [JsonIgnore]
         public Content Content { get; set; }
 
         [ValidateNever]
         [BindNever]
+        [JsonIgnore]
         public Field Relation => _relation.Value;
 
         [ValidateNever]
         [BindNever]
+        [JsonIgnore]
         public Field BackRelation
         {
             get => _backRelation.Value;
@@ -537,6 +540,7 @@ namespace Quantumart.QP8.BLL
             set => _relateToContentId.Value = value;
         }
 
+        [JsonIgnore]
         public Content RelatedToContent => RelateToContentId.HasValue ? _contentRepository.GetById(RelateToContentId.Value) : null;
 
         [Display(Name = "TextBoxRows", ResourceType = typeof(FieldStrings))]
@@ -653,6 +657,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [ValidateNever]
         [BindNever]
+        [JsonIgnore]
         public Field M2MBackwardField
         {
             get => _m2MBackwardField.Value;
@@ -664,6 +669,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [ValidateNever]
         [BindNever]
+        [JsonIgnore]
         public Field O2MBackwardField
         {
             get => _o2MBackwardField.Value;
@@ -1585,6 +1591,16 @@ namespace Quantumart.QP8.BLL
             if (UseInputMask && string.IsNullOrWhiteSpace(InputMask))
             {
                 errors.ErrorFor(f => f.InputMask, FieldStrings.InputMaskNotEntered);
+            }
+
+            if (!string.IsNullOrEmpty(SubFolder))
+            {
+                var winRe = new Regex(RegularExpressions.RelativeWindowsFolderPath);
+                var linuxRe = new Regex(RegularExpressions.RelativeWebFolderUrl);
+                if (!winRe.IsMatch(SubFolder) && !linuxRe.IsMatch(SubFolder))
+                {
+                    errors.ErrorFor(f => f.SubFolder, FieldStrings.SubFolderInvalidFormat);
+                }
             }
 
             ValidateRelations(errors);

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using QA.Validation.Xaml;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -139,7 +140,6 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [Required(ErrorMessageResourceName = "UploadDirNotEntered", ErrorMessageResourceType = typeof(SiteStrings))]
         [StringLength(255, ErrorMessageResourceName = "UploadDirMaxLengthExceeded", ErrorMessageResourceType = typeof(SiteStrings))]
-        [RegularExpression(RegularExpressions.AbsoluteWindowsFolderPath, ErrorMessageResourceName = "UploadDirInvalidFormat", ErrorMessageResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\upload")]
         [Display(Name = "UploadPath", ResourceType = typeof(SiteStrings))]
         public string UploadDir { get; set; }
@@ -347,19 +347,29 @@ namespace Quantumart.QP8.BLL
 
         public string CurrentUrl => IsLive ? LiveUrl : StageUrl;
 
+        [ValidateNever]
+        [BindNever]
         public string TestBinDirectory => PathUtility.Combine(TestDirectory, SitePathRepository.RELATIVE_BIN_PATH);
 
+        [ValidateNever]
+        [BindNever]
         public string AppDataDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
 
+        [ValidateNever]
+        [BindNever]
         public string AppCodeDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
 
+        [ValidateNever]
+        [BindNever]
         public string AppDataStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
 
+        [ValidateNever]
+        [BindNever]
         public string AppCodeStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
 
         public bool IsDotNet => AssemblingType == Constants.AssemblingType.AspDotNet;
 
-        public string TempDirectoryForClasses => $@"{QPConfiguration.TempDirectory}\{QPContext.CurrentCustomerCode}\{Id}";
+        public string TempDirectoryForClasses => $@"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{QPContext.CurrentCustomerCode}{Path.DirectorySeparatorChar}{Id}";
 
         public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
 
@@ -413,11 +423,12 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public override void DoCustomBinding()
         {
+            const CorrectSlashMode simpleDirMode = CorrectSlashMode.RemoveLastSlash;
             const CorrectSlashMode dirMode = CorrectSlashMode.RemoveLastSlash | CorrectSlashMode.ConvertSlashesToBackSlashes;
             const CorrectSlashMode urlMode = CorrectSlashMode.ReplaceDoubleSlashes | CorrectSlashMode.ConvertBackSlashesToSlashes | CorrectSlashMode.WrapToSlashes;
             const CorrectSlashMode absUrlMode = CorrectSlashMode.ConvertBackSlashesToSlashes | CorrectSlashMode.RemoveLastSlash;
 
-            UploadDir = PathUtility.CorrectSlashes(UploadDir, dirMode);
+            UploadDir = PathUtility.CorrectSlashes(UploadDir, simpleDirMode);
             LiveDirectory = PathUtility.CorrectSlashes(LiveDirectory, dirMode);
             StageDirectory = PathUtility.CorrectSlashes(StageDirectory, dirMode);
             TestDirectory = PathUtility.CorrectSlashes(TestDirectory, dirMode);
@@ -429,6 +440,17 @@ namespace Quantumart.QP8.BLL
             StageVirtualRoot = PathUtility.CorrectSlashes(StageVirtualRoot, urlMode);
 
             UploadUrlPrefix = PathUtility.CorrectSlashes(UploadUrlPrefix, absUrlMode);
+
+            if (ExternalDevelopment)
+            {
+                LiveDirectory = "";
+                StageDirectory = "";
+                TestDirectory = "";
+                AssemblyPath = "";
+                StageAssemblyPath = "";
+                LiveVirtualRoot = "";
+                StageVirtualRoot = "";
+            }
 
             if (CreateDefaultXamlDictionary)
             {
@@ -568,29 +590,31 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         private void CreateSiteFolders(bool isLive, bool isStage)
         {
-            if (isLive && !ExternalDevelopment)
+            if (!ExternalDevelopment)
             {
-                SitePathRepository.CreateDirectories(LiveDirectory);
-            }
-
-            if (isStage && !ExternalDevelopment)
-            {
-                SitePathRepository.CreateDirectories(StageDirectory);
-            }
-            SitePathRepository.CreateUploadDirectories(UploadDir);
-            if (IsDotNet)
-            {
-                if (!ExternalDevelopment)
+                if (isLive)
                 {
-                    if (isLive)
-                    {
-                        SitePathRepository.CreateBinDirectory(AssemblyPath);
-                    }
+                    SitePathRepository.CreateDirectories(LiveDirectory);
+                }
 
-                    if (isStage)
-                    {
-                        SitePathRepository.CreateBinDirectory(StageAssemblyPath);
-                    }
+                if (isStage)
+                {
+                    SitePathRepository.CreateDirectories(StageDirectory);
+                }
+            }
+
+            SitePathRepository.CreateUploadDirectories(UploadDir);
+
+            if (!ExternalDevelopment && IsDotNet)
+            {
+                if (isLive)
+                {
+                    SitePathRepository.CreateBinDirectory(AssemblyPath);
+                }
+
+                if (isStage)
+                {
+                    SitePathRepository.CreateBinDirectory(StageAssemblyPath);
                 }
 
                 if (!string.IsNullOrWhiteSpace(TestDirectory))
@@ -603,6 +627,14 @@ namespace Quantumart.QP8.BLL
 
         private void ValidateConditionalRequirements(RulesException<Site> errors)
         {
+            var winRe = new Regex(RegularExpressions.AbsoluteWindowsFolderPath);
+            var linuxRe = new Regex(RegularExpressions.RelativeWebFolderUrl);
+
+            if (!winRe.IsMatch(UploadDir) && !linuxRe.IsMatch(UploadDir))
+            {
+                errors.ErrorFor(s => s.UploadDir, SiteStrings.UploadDirInvalidFormat);
+            }
+
             if (!ExternalDevelopment)
             {
                 if (string.IsNullOrEmpty(LiveVirtualRoot))
@@ -628,7 +660,7 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorFor(s => s.StageDns, SiteStrings.StageDnsNotEntered);
             }
 
-            if (ForceTestDirectory && string.IsNullOrEmpty(TestDirectory))
+            if (ForceTestDirectory && string.IsNullOrEmpty(TestDirectory) && !ExternalDevelopment)
             {
                 errors.ErrorFor(s => s.TestDirectory, SiteStrings.TestDirectoryNotEntered);
             }

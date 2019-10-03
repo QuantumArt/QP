@@ -10,16 +10,17 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class SitePathRepository
     {
-        public static string RELATIVE_PATH_TO_COPY = @"\ToCopy";
-        public static string RELATIVE_PREVIEW_PATH = @"\temp\preview\objects";
-        public static string RELATIVE_NOTIFICATIONS_PATH = @"\qp_notifications";
-        public static string RELATIVE_SETTINGS_PATH = @"\qp_settings";
-        public static string RELATIVE_CONTENTS_PATH = @"\contents";
-        public static string RELATIVE_TEMPLATES_PATH = @"\templates";
-        public static string RELATIVE_IMAGES_PATH = @"\images";
-        public static string RELATIVE_BIN_PATH = @"\bin";
-        public static string RELATIVE_APP_DATA_PATH = @"\App_Data";
-        public static string RELATIVE_APP_CODE_PATH = @"\App_Code";
+        private static readonly char Sep = Path.DirectorySeparatorChar;
+        public static string RELATIVE_PATH_TO_COPY = $"{Sep}ToCopy";
+        public static string RELATIVE_PREVIEW_PATH = $"{Sep}temp{Sep}preview{Sep}objects";
+        public static string RELATIVE_NOTIFICATIONS_PATH = $"{Sep}qp_notifications";
+        public static string RELATIVE_SETTINGS_PATH = $"{Sep}qp_settings";
+        public static string RELATIVE_CONTENTS_PATH = $"{Sep}contents";
+        public static string RELATIVE_TEMPLATES_PATH = $"{Sep}templates";
+        public static string RELATIVE_IMAGES_PATH = $"{Sep}images";
+        public static string RELATIVE_BIN_PATH = $"{Sep}bin";
+        public static string RELATIVE_APP_DATA_PATH = $"{Sep}App_Data";
+        public static string RELATIVE_APP_CODE_PATH = $"{Sep}App_Code";
 
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 

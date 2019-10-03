@@ -32,7 +32,7 @@ namespace Quantumart.QP8.DAL
                 }
                 catch (PostgresException ex)
                 {
-                    logger.Error($"Error while persisting article with xml: {xml}");
+                    logger.Error($"Error while persisting article with xml: {xml}\n Query: {sql}\n Internal Query: {ex.InternalQuery}");
                     throw;
                 }
                 id = (int)dt.Rows[0]["id"];

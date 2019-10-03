@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public string AggregationListItemsVeCommandsDisplay { get; set; }
 
-        public new VisualEditorPlugin Data
+        public VisualEditorPlugin Data
         {
             get => (VisualEditorPlugin)EntityData;
             set => EntityData = value;

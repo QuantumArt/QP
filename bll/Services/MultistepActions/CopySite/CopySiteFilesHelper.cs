@@ -66,8 +66,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             }
 
             var contentsRelations = ContentRepository.GetRelationsBetweenContents(_source.Id, _destination.Id, string.Empty).ToList();
-            var contentIds = Directory.GetDirectories($"{_source.UploadDir}\\contents", ".", SearchOption.TopDirectoryOnly);
-            var contentIdsInt = contentIds.Select(s => s.Split('\\').Last());
+            var contentIds = Directory.GetDirectories($"{_source.UploadDir}{Path.DirectorySeparatorChar}contents", ".", SearchOption.TopDirectoryOnly);
+            var contentIdsInt = contentIds.Select(s => s.Split(Path.DirectorySeparatorChar).Last());
             if (!contentIds.Any())
             {
                 contentIds[0] = "0";
@@ -93,13 +93,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             }
 
             var contentsRelations = ContentRepository.GetRelationsBetweenContents(_source.Id, _destination.Id, string.Empty).ToList();
-            var contentIds = Directory.GetDirectories($"{_source.UploadDir}\\contents", ".", SearchOption.TopDirectoryOnly);
+            var contentIds = Directory.GetDirectories($"{_source.UploadDir}{Path.DirectorySeparatorChar}contents", ".", SearchOption.TopDirectoryOnly);
             if (contentIds.Length == 0)
             {
                 contentIds = new[] { "0" };
             }
 
-            var contentIdsInt = contentIds.Select(s => s.Split('\\').Last());
+            var contentIdsInt = contentIds.Select(s => s.Split(Path.DirectorySeparatorChar).Last());
             var attributesRelations = FieldRepository.GetRelationsBetweenAttributes(_source.Id, _destination.Id, string.Join(", ", contentIdsInt), false, false).ToList();
 
             var filePaths = GetAllFiles();
@@ -136,7 +136,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         private static string ReplaceSourceContentDirsToNew(string dirPath, IEnumerable<DataRow> contentsRelations, IEnumerable<DataRow> attributesRelations)
         {
-            var matchContentValues = Regex.Matches(dirPath, @"\\contents\\([\d]*)", RegexOptions.IgnoreCase);
+            var matchContentValues = Regex.Matches(dirPath, $@"{Path.DirectorySeparatorChar}contents{Path.DirectorySeparatorChar}([\d]*)", RegexOptions.IgnoreCase);
             if (matchContentValues.Count > 0)
             {
                 var sourceContentId = matchContentValues[0].Groups[1].Value;
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 if (row != null)
                 {
                     var newContentId = row["destination_content_id"].ToString();
-                    dirPath = dirPath.Replace("contents\\" + sourceContentId, "contents\\" + newContentId);
+                    dirPath = dirPath.Replace("contents" + Path.DirectorySeparatorChar + sourceContentId, "contents" + Path.DirectorySeparatorChar + newContentId);
                 }
             }
 

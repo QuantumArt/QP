@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             return model;
         }
 
-        public new ObjectFormatVersion Data
+        public ObjectFormatVersion Data
         {
             get => (ObjectFormatVersion)EntityData;
             set => EntityData = value;
@@ -39,7 +39,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string ActionCode => _pageOrTemplate ? Constants.ActionCode.ComparePageObjectFormatVersions : Constants.ActionCode.CompareTemplateObjectFormatVersions;
 
-        public new ObjectFormatVersion Data
+        public ObjectFormatVersion Data
         {
             get => (ObjectFormatVersion)EntityData;
             set => EntityData = value;

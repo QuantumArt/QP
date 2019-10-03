@@ -135,8 +135,8 @@ namespace Quantumart.QP8.BLL.Services
 
         private void ManagePageTemplateFolders(PageTemplate template, FolderManagingType type)
         {
-            var stageDirectory = template.Site.StageDirectory + "\\" + template.TemplateFolder;
-            var liveDirectory = template.Site.LiveDirectory + "\\" + template.TemplateFolder;
+            var stageDirectory = template.Site.StageDirectory + Path.DirectorySeparatorChar + template.TemplateFolder;
+            var liveDirectory = template.Site.LiveDirectory + Path.DirectorySeparatorChar + template.TemplateFolder;
 
             switch (type)
             {
@@ -188,8 +188,8 @@ namespace Quantumart.QP8.BLL.Services
                             return;
                         }
 
-                        var oldStageDirectory = oldTemplate.Site.StageDirectory + "\\" + oldFolder;
-                        var oldLiveDirectory = oldTemplate.Site.LiveDirectory + "\\" + oldFolder;
+                        var oldStageDirectory = oldTemplate.Site.StageDirectory + Path.DirectorySeparatorChar + oldFolder;
+                        var oldLiveDirectory = oldTemplate.Site.LiveDirectory + Path.DirectorySeparatorChar + oldFolder;
                         if (Directory.Exists(oldStageDirectory))
                         {
                             Directory.Move(oldStageDirectory, stageDirectory);
@@ -303,7 +303,7 @@ namespace Quantumart.QP8.BLL.Services
             var format = ObjectFormatRepository.ReadObjectFormat(formatId, true);
             var obj = ObjectRepository.GetObjectPropertiesById(format.ParentEntityId);
             var netLanguagePrefix = GetLangPrefix(format.NetLanguageId);
-            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
+            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + Path.DirectorySeparatorChar + "default" + Path.DirectorySeparatorChar;
             return ReadFileAsString(obj.IsObjectContainerType ? $"{pathToCopy}container_code_{netLanguagePrefix}.txt" : $"{pathToCopy}generic_code_{netLanguagePrefix}.txt");
         }
 
@@ -311,7 +311,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             var format = ObjectFormatRepository.ReadObjectFormat(formatId, true);
             var obj = ObjectRepository.GetObjectPropertiesById(format.ParentEntityId);
-            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
+            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + Path.DirectorySeparatorChar + "default" + Path.DirectorySeparatorChar;
             return obj.IsObjectContainerType ? ReadFileAsString($"{pathToCopy}container_presentation.txt") : string.Empty;
         }
 

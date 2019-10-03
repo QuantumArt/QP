@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvWriter
     {
-        public const string FolderForDownload = "temp\\download";
+        public static readonly string FolderForDownload = $"temp{Path.DirectorySeparatorChar}download";
         private const string IdentifierFieldName = FieldName.ContentItemId;
 
         private const string FieldNameHeaderTemplate = "{0}.{1}";
@@ -52,13 +52,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (fileInfo.Exists)
             {
                 var currentSite = SiteRepository.GetById(_siteId);
-                var uploadDir = $@"{currentSite.UploadDir}\{FolderForDownload}";
+                var uploadDir = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{FolderForDownload}";
                 if (!Directory.Exists(uploadDir))
                 {
                     Directory.CreateDirectory(uploadDir);
                 }
 
-                var newFileUploadPath = $@"{uploadDir}\{fileInfo.Name}";
+                var newFileUploadPath = $@"{uploadDir}{Path.DirectorySeparatorChar}{fileInfo.Name}";
                 File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
                 File.Delete(_settings.UploadFilePath);
 
@@ -207,6 +207,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             using (var sw = new StreamWriter(_settings.UploadFilePath, true, Encoding.GetEncoding(_settings.Encoding)))
             {
                 sw.Write(_sb.ToString());
