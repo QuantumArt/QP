@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: qp-deployment
+  namespace: qp-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp
+  template:
+    metadata:
+      labels:
+        app: qp
+    spec:
+      containers:
+      - image: spbdocker03:5000/qp:||version||
+        name: qp
+        ports:
+        - containerPort: 80
+        resources: 
+          limits:
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-service
+  namespace: qp-ns
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: qp
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: qp-ingress
+  namespace: qp-ns
+spec:
+  rules:
+  - host: qp.dev.qsupport.ru
+    http:
+      paths:
+      - backend:
+          serviceName: qp-service
+          servicePort: 80
