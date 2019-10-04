@@ -1,4 +1,5 @@
 using System;
+using System.Data.SqlClient;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
+using Npgsql;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
@@ -52,7 +54,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 filterContext.Result = await GetContentResult(filterContext);
             }
 
-            _logger.Log(LogLevel.Error, filterContext.Exception,  $"Поймали exception со следующим URL: {filterContext.HttpContext.Request.GetDisplayUrl()}");
+            var logMessage = $"Поймали exception со следующим URL: {filterContext.HttpContext.Request.GetDisplayUrl()}";
+            if (filterContext.Exception is PostgresException pgex)
+            {
+                logMessage += ". Query: " + pgex.Statement.SQL;
+            }
+
+            _logger.Log(LogLevel.Error, filterContext.Exception, logMessage);
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();

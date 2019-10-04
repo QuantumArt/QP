@@ -35,9 +35,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         protected QPController()
         {
-            // TODO: review logger context
-            //Logger.Log.SetContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
-            Logger.Log.SetAsyncContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
+            Logger.Log.SetContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
         }
 
         protected QPController(IArticleService dbArticleService, QPublishingOptions options)

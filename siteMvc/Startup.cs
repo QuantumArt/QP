@@ -42,8 +42,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using NLog;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
+using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
@@ -130,6 +133,7 @@ namespace Quantumart.QP8.WebMvc
 
             // services
             services
+                    .AddSingleton<INLogFactory, NLogFactory>()
                     .AddTransient<AuthenticationHelper>()
                     .AddTransient<JsLanguageHelper>()
                     .AddTransient<JsConstantsHelper>()
@@ -200,6 +204,7 @@ namespace Quantumart.QP8.WebMvc
                 ;
 
             RegisterMultistepActionServices(services);
+
         }
 
         private static void RegisterMultistepActionServices(IServiceCollection services)
@@ -296,6 +301,8 @@ namespace Quantumart.QP8.WebMvc
             });
 
             app.UseMvc(RegisterRoutes);
+
+            LogProvider.LogFactory = provider.GetService<INLogFactory>();
         }
 
         private static void RegisterRoutes(IRouteBuilder routes)
