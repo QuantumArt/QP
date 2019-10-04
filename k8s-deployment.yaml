@@ -21,11 +21,19 @@ spec:
           value: http://mscdev02:54321
         - name: Properties__QpConfigToken
           value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRUC5Db25maWd1cmF0aW9uU2VydmljZS5Jc3N1ZXIiLCJleHAiOjE1Nzg1ODM4NjIsImF1ZCI6IlFQLkNvbmZpZ3VyYXRpb25TZXJ2aWNlLkF1ZGllbmNlIn0.wN-we_Wezxtv3rtLn3mEQ9tZngPwfgn45Ta7kLfKO-Q
+        - name: Properties__TempDirectory
+          value: /qptemp
         ports:
         - containerPort: 80
+        volumeMounts:
+        - mountPath: /qptemp
+          name: temp-volume
         resources: 
           limits:
             memory: "256Mi"
+      volumes:
+      - name: temp-volume
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
