@@ -18,9 +18,15 @@ spec:
         name: qp
         env:
         - name: Properties__QpConfigUrl
-          value: http://mscdev02:54321
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: CONFIGURATION_SERVICE_HOST
         - name: Properties__QpConfigToken
-          value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRUC5Db25maWd1cmF0aW9uU2VydmljZS5Jc3N1ZXIiLCJleHAiOjE1Nzg1ODM4NjIsImF1ZCI6IlFQLkNvbmZpZ3VyYXRpb25TZXJ2aWNlLkF1ZGllbmNlIn0.wN-we_Wezxtv3rtLn3mEQ9tZngPwfgn45Ta7kLfKO-Q
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: CONFIGURATION_SERVICE_TOKEN
         - name: Properties__TempDirectory
           value: /qptemp
         ports:
@@ -28,12 +34,16 @@ spec:
         volumeMounts:
         - mountPath: /qptemp
           name: temp-volume
+        - mountPath: /qplibrary
+          name: library-volume
         resources: 
           limits:
             memory: "256Mi"
       volumes:
       - name: temp-volume
         emptyDir: {}
+      - name: library-volume
+        emptyDir: {} # emptydir is temporary, for check
 ---
 apiVersion: v1
 kind: Service
