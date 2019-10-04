@@ -18,7 +18,7 @@
         <td data-bind="text: $index() + 1"></td>
         <td><input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty)  data-bind="value: Name, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
         <td><input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty)  data-bind="value: ItemValue, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-        <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="@(!Model.Data.IsSystem ? "click: $root.removeItem" : string.Empty)"/></td>
+        <td><img src="@Url.Content("~/Content/QP8/icons/16x16/delete.gif")" data-bind="@(!Model.Data.IsSystem ? "click: $root.removeItem" : string.Empty)"/></td>
       </tr>
     </tbody>
   </table>
@@ -41,7 +41,7 @@
         <td data-bind="text: $index() + 1"></td>
         <td><input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty) data-bind="value: Name, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
         <td><input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty) data-bind="value: ItemValue, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-        <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="@(!Model.Data.IsSystem ? "click: $root.removeItem" : string.Empty)"/></td>
+        <td><img src="@Url.Content("~/Content/QP8/icons/16x16/delete.gif")" data-bind="@(!Model.Data.IsSystem ? "click: $root.removeItem" : string.Empty)"/></td>
       </tr>
     </tbody>
   </table>
