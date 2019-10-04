@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
@@ -99,7 +101,7 @@ namespace Quantumart.QP8.BLL
             var site = FindFirst(pathToFind, SiteRepository.GetPaths());
             if (site == null)
             {
-                result.Result = false;
+                result.Result = pathToFind.StartsWith(QPConfiguration.TempDirectory);
                 return result;
             }
 

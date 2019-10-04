@@ -44,8 +44,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             try
             {
                 var fileReader = new FileReader(settings);
-                fileReader.CopyFileToTempDir();
-
                 var linesTotalCount = fileReader.RowsCount();
                 Commands.Add(new ImportArticlesCommand(parentId, id, linesTotalCount));
 

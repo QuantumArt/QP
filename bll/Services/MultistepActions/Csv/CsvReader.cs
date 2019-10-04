@@ -1025,27 +1025,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public IEnumerable<Line> Lines => _lines.Value;
 
-        public void CopyFileToTempDir()
-        {
-            var fileInfo = new FileInfo(WebUtility.UrlDecode(_settings.UploadFilePath) ?? string.Empty);
-            if (fileInfo.Exists)
-            {
-                var newFileUploadPath = $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileInfo.Name}";
-                if (!File.Exists(newFileUploadPath))
-                {
-                    File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
-                }
-            }
-            else
-            {
-                throw new FileNotFoundException($"File {_settings.UploadFilePath} was not found.");
-            }
-        }
-
         public static IEnumerable<Line> ReadFile(ImportSettings setts)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            using (var sr = new StreamReader(setts.UploadFilePath))
+            using (var sr = new StreamReader(setts.TempFileUploadPath))
             {
                 string line;
                 var rdr = new CustomStreamReader(sr.BaseStream, Encoding.GetEncoding(setts.Encoding), setts.LineSeparator, setts.Delimiter);

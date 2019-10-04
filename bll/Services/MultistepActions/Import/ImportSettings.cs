@@ -29,25 +29,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public string UploadFilePath => GetUploadFilePath();
 
-        public string TempFileUploadPath
-        {
-            get
-            {
-                var url = WebUtility.UrlDecode(UploadFilePath) ?? string.Empty;
-                var fileInfo = new FileInfo(url);
-                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileInfo.Name}";
-            }
-        }
+        public string TempFileUploadPath => UploadFilePath + FileName;
 
-        public string TempFileForRelFields
-        {
-            get
-            {
-                var fileName = Path.GetFileNameWithoutExtension(UploadFilePath) + "_rel";
-                var fileNameExtension = fileName + ".dat";
-                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileNameExtension}";
-            }
-        }
+        public string TempFileForRelFields => UploadFilePath + Path.GetFileNameWithoutExtension(FileName) + "_rel" + ".dat";
 
         public bool ContainsO2MRelationOrM2MRelationFields
         {
