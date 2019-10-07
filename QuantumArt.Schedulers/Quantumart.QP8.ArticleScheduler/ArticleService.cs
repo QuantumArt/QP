@@ -4,10 +4,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Quantumart.QP8.ArticleScheduler.WinService
+namespace Quantumart.QP8.ArticleScheduler
 {
     #region snippet1
-    internal class ArticleService : IHostedService
+    public class ArticleService : IHostedService
     {
         private readonly ILogger _logger;
         private readonly IApplicationLifetime _appLifetime;

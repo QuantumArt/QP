@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 
@@ -17,7 +16,7 @@ namespace Quantumart.QP8.DAL
         public static DataRow[] GetRelationSecurityFields(DbConnection sqlConnection)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            const string contentLinkSql = @"
+            string contentLinkSql = $@"
                     SELECT
                         link_id AS link_id,
                         l_content_id AS content_id,
@@ -474,7 +473,7 @@ namespace Quantumart.QP8.DAL
 
         public static Dictionary<int, bool> CheckLockedBy(DbConnection dbConnection, int[] ids, int currentUserId, bool forceUnlock)
         {
-            const string sql = @"select locked_by, content_item_id from content_item ci with(nolock)
+            string sql = $@"select locked_by, content_item_id from content_item ci with(nolock)
 				inner join @ids i on i.id = ci.content_item_id where locked_by is not null and locked_by <> @userId ";
 
             var result = ids.ToDictionary(kvp => kvp, kvp => true);
@@ -569,7 +568,7 @@ namespace Quantumart.QP8.DAL
 
         public static void ClearUserToken(DbConnection dbConnection, int userId, int sessionId)
         {
-            var sql = "delete from access_token where UserId = @userId and SessionId = @sessionId";
+            var sql = $"delete from access_token where UserId = @userId and SessionId = @sessionId";
             using (var cmd = DbCommandFactory.Create(sql, dbConnection))
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
@@ -713,7 +712,6 @@ namespace Quantumart.QP8.DAL
 
         private static void GiveContentAccessToCreator(DbConnection connection, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var sql = $@"
                 INSERT INTO content_access (content_id, user_id, permission_level_id, last_modified_by, propagate_to_items)
                 SELECT content_id, last_modified_by, 1, 1, {PropagateToItems}
@@ -724,7 +722,6 @@ namespace Quantumart.QP8.DAL
 
         private static void GiveSiteAccessToCreator(DbConnection connection, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var sql = $@"
                 INSERT INTO site_access (site_id, user_id, permission_level_id, last_modified_by)
                 SELECT site_id, last_modified_by, 1, 1
@@ -735,7 +732,6 @@ namespace Quantumart.QP8.DAL
 
         public static void GiveContentAccessByPropagatingFromSite(DbConnection connection, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var sql = $@"
                 INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, last_modified_by, propagate_to_items)
                 SELECT c.content_id, ca.user_id, ca.group_id, ca.permission_level_id, 1, {PropagateToItems}
@@ -748,7 +744,6 @@ namespace Quantumart.QP8.DAL
 
         private static void GiveWorkflowAccessToCreator(DbConnection connection, int id)
         {
-            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var sql = $@"
                 INSERT INTO workflow_access (workflow_id, user_id, permission_level_id, last_modified_by)
                 SELECT workflow_id, last_modified_by, 1, 1
