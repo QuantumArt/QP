@@ -43,7 +43,8 @@ spec:
       - name: temp-volume
         emptyDir: {}
       - name: library-volume
-        emptyDir: {} # emptydir is temporary, for check
+        persistentVolumeClaim:
+          claimName: library-pvc
 ---
 apiVersion: v1
 kind: Service
