@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using I = System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
@@ -48,7 +49,7 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         [ValidateNever]
-        public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(Path));
+        public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(OsSpecificPath));
 
 
         private PathInfo CreatePathInfo(string path) => Parent.PathInfo.GetSubPathInfo(path);
@@ -84,6 +85,8 @@ namespace Quantumart.QP8.BLL
         /// Путь к директории
         /// </summary>
         public string Path { get; set; }
+
+        public string OsSpecificPath => RuntimeInformation.IsOSPlatform(OSPlatform.Windows ) ? Path : Path.Replace(@"\", @"/");
 
         /// <summary>
         /// Путь к директории полученный из БД не меняеться на основе данных формы
@@ -259,6 +262,6 @@ namespace Quantumart.QP8.BLL
             Path = CreateComputedPath(Name);
         }
 
-        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}" + I.Path.DirectorySeparatorChar;
+        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}" + @"\";
     }
 }

@@ -18,12 +18,12 @@ namespace Quantumart.QP8.BLL
 
         public PathInfo GetSubPathInfo(string folderName)
         {
-            if (folderName.IndexOf(I.Path.DirectorySeparatorChar) == 0)
+            if (folderName.IndexOf(@"\", StringComparison.Ordinal) == 0)
             {
                 folderName = folderName.Substring(1);
             }
 
-            if (!folderName.Equals(string.Empty) && folderName.LastIndexOf(I.Path.DirectorySeparatorChar) == folderName.Length - 1)
+            if (!folderName.Equals(string.Empty) && folderName.LastIndexOf(@"\", StringComparison.Ordinal) == folderName.Length - 1)
             {
                 folderName = folderName.Substring(0, folderName.Length - 1);
             }
@@ -34,10 +34,15 @@ namespace Quantumart.QP8.BLL
             }
 
             var replacedName = folderName.Replace(@"\", @"/");
-            return new PathInfo { Path = $@"{Path}{System.IO.Path.DirectorySeparatorChar}{folderName}", Url = $@"{Url}{replacedName}/" };
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                folderName = replacedName;
+            }
+            return new PathInfo { Path = $@"{Path}{I.Path.DirectorySeparatorChar}{folderName}", Url = $@"{Url}{replacedName}/" };
         }
 
-        public string GetPath(string fileName) => System.IO.Path.Combine(Path, ReplaceUp(fileName));
+        public string GetPath(string fileName) => I.Path.Combine(Path, ReplaceUp(fileName));
 
         public string GetUrl(string fileName) => $"{Url}{ReplaceUp(fileName)}";
 

@@ -369,7 +369,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 success = true,
                 path = folder.PathInfo.Path,
                 url = folder.PathInfo.Url,
-                libraryPath = folder.Path
+                libraryPath = folder.OsSpecificPath
             });
         }
 
