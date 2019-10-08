@@ -286,7 +286,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 sb.Append(@"<div class=""variationInfoItem removeItem"">");
                 sb.Append(@"<span class=""linkButton actionLink"">");
                 sb.Append(@"<span class=""icon deselectAll"">");
-                sb.Append(@"<img src=""Content/Common/0.gif"">");
+                sb.Append(@"<img src=""Static/Common/0.gif"">");
                 sb.Append(@"</span><a class=""js removeVariation"" href=""javascript:void(0);"">");
                 sb.AppendFormat(@"<span class=""text"">{0}</span>", ArticleStrings.RemoveCurrentVariation);
                 sb.Append(@"</a></span></div>");

@@ -122,7 +122,7 @@ export class BackendClassifierField extends Observable {
         aggregatedContentId
       }, this._renderAggregatedDataView.bind(this)).error($q.processGenericAjaxError);
 
-      $q.getAjax(Url.Content('~/Content/GetContentFormScript'), {
+      $q.getAjax(Url.Content('~/Static/GetContentFormScript'), {
         contentId: aggregatedContentId
       }, this._executeAggregatedDataScript.bind(this, aggregatedContentId)).error($q.processGenericAjaxError);
     } else {

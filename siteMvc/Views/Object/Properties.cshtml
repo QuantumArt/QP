@@ -19,7 +19,7 @@
 				<td data-bind="text: $index() + 1"></td>
 				<td><select data-bind="options: $root.fields, event: { change: $root.onItemChanged }, value: Field, css: { 'input-validation-error': Invalid}"></select></td>
 				<td><select data-bind="options: $root.orders, event: { change: $root.onItemChanged }, value: Order, css: { 'input-validation-error': Invalid}"></select></td>
-                <td> <img src="@Url.Content("~/Content/QP8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+                <td> <img src="@Url.Content("~/Static/QP8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
 			</tr>
 		</tbody>
 	</table>
@@ -42,7 +42,7 @@
 				<td data-bind="text: $index() + 1"></td>
 				<td><input class="textbox" data-bind="value: VariableName, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
 				<td><input class="textbox" data-bind="value: VariableValue, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-                <td> <img src="@Url.Content("~/Content/QP8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+                <td> <img src="@Url.Content("~/Static/QP8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
 			</tr>
 		</tbody>
 	</table>

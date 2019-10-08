@@ -435,7 +435,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var img = new TagBuilder("img");
             img.AddCssClass("w-item");
-            img.MergeAttribute("src", url.Content("~/Content/QP8/exclamation.png"));
+            img.MergeAttribute("src", url.Content("~/Static/QP8/exclamation.png"));
 
             wrapper.InnerHtml.AppendHtml(img);
 
@@ -806,7 +806,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             const string itemTemplate = "<li style='display: {1};' class='{0}'>" +
                 "<span class='linkButton actionLink'>"+
                     "<a href='javascript:void(0);'>" +
-                        "<span class='icon {0}'><img src='Content/Common/0.gif'></span>" +
+                        "<span class='icon {0}'><img src='Static/Common/0.gif'></span>" +
                         "<span class='text'>{2}</span>" +
                     "</a>"+
                 "</span>" +
@@ -1085,7 +1085,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static IHtmlContent AddNewItemLink(this IHtmlHelper source, ListViewModel model) => source.BackendActionLink(model.AddNewItemLinkId, model.AddNewItemText, 0, string.Empty, model.ParentEntityId, ActionTypeCode.AddNew, model.AddNewItemActionCode, ActionTargetType.NewTab, true);
 
-        public static IHtmlContent SimpleAddActionLink(this IHtmlHelper source, string text) => new HtmlString(@"<span class=""linkButton actionLink""><a href=""javascript:void(0);""><span class=""icon add""> " + $@"<img src=""Content/Common/0.gif""></span><span class=""text"">{text}</span></a></span>");
+        public static IHtmlContent SimpleAddActionLink(this IHtmlHelper source, string text) => new HtmlString(@"<span class=""linkButton actionLink""><a href=""javascript:void(0);""><span class=""icon add""> " + $@"<img src=""Static/Common/0.gif""></span><span class=""text"">{text}</span></a></span>");
 
         public static IHtmlContent AggregationListFor<TValue>(this IHtmlHelper source, string name, IEnumerable<TValue> list, string bindings, Dictionary<string, string> additionalData = null)
         {
