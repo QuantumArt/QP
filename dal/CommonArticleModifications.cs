@@ -8,15 +8,15 @@ using System.Text;
 using System.Xml.Linq;
 using Npgsql;
 using NpgsqlTypes;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Constants;
 using LogManager = NLog.LogManager;
+using NLog.Fluent;
 
 namespace Quantumart.QP8.DAL
 {
     public static partial class Common
     {
-        public static void PersistArticle(DbConnection currentDbConnection, string xml, out int id)
+        public static void PersistArticle(DbConnection currentDbConnection, string customerCode, string xml, out int id)
         {
             var logger = LogManager.GetLogger("Common");
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(currentDbConnection);
@@ -32,7 +32,12 @@ namespace Quantumart.QP8.DAL
                 }
                 catch (PostgresException ex)
                 {
-                    logger.Error($"Error while persisting article with xml: {xml}\n Query: {sql}\n Internal Query: {ex.InternalQuery}");
+                    logger.Error()
+
+                        .Message("Error while persisting article with xml: {xml}\n Query: {sql}", xml, sql)
+                        .Property("customerCode", customerCode)
+                        .Write();
+
                     throw;
                 }
                 id = (int)dt.Rows[0]["id"];

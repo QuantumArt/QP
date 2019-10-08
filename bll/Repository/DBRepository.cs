@@ -12,14 +12,20 @@ namespace Quantumart.QP8.BLL.Repository
     {
         public static Db Get()
         {
-            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.Include(x => x.LastModifiedByUser).FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(
+                QPContext.EFContext.DbSet
+                    .Include(x => x.LastModifiedByUser)
+                    .OrderBy(n => n.Id).FirstOrDefault()
+            );
             result.AppSettings = GetAppSettings();
             return result;
         }
 
         public static Db GetForUpdate()
         {
-            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(
+                QPContext.EFContext.DbSet.OrderBy(n => n.Id).FirstOrDefault()
+             );
             result.AppSettings = GetAppSettings();
             return result;
         }
@@ -47,7 +53,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetDbServerName(scope.DbConnection);
+                return Common.GetDbServerName(scope.DbConnection, QPContext.CurrentCustomerCode);
             }
         }
 

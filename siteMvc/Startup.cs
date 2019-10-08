@@ -251,7 +251,7 @@ namespace Quantumart.QP8.WebMvc
             }
             else
             {
-                app.UseExceptionHandler(new GlobalExceptionHandler(loggerFactory).Action);
+                app.UseExceptionHandler(new GlobalExceptionHandler().Action);
             }
 
             app.UseStaticFiles(new StaticFileOptions

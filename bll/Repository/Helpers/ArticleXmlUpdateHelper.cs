@@ -82,7 +82,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             int id = 0;
             using (new QPConnectionScope())
             {
-                Common.PersistArticle(QPConnectionScope.Current.DbConnection, GetXmlQuery().ToString(), out id);
+                Common.PersistArticle(QPConnectionScope.Current.DbConnection, QPContext.CurrentCustomerCode, GetXmlQuery().ToString(), out id);
             }
 
             Article = ArticleRepository.GetById(id);

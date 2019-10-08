@@ -2,16 +2,17 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Fluent;
 
 namespace Quantumart.QP8.WebMvc
 {
     public class GlobalExceptionHandler
     {
-        private readonly ILoggerFactory _factory;
-        public GlobalExceptionHandler(ILoggerFactory factory)
+        private readonly ILogger _logger;
+        public GlobalExceptionHandler()
         {
-            _factory = factory;
+            _logger = LogManager.GetLogger(GetType().FullName);
         }
 
         public void Action(IApplicationBuilder options)
@@ -23,8 +24,11 @@ namespace Quantumart.QP8.WebMvc
                 var ex = context.Features.Get<IExceptionHandlerFeature>();
                 if (ex != null)
                 {
-                    var logger = _factory.CreateLogger("Global Exception Handling");
-                    LoggerExtensions.LogError(logger, new EventId(1), ex.Error, "Unhandled exception occurs");
+                     _logger.Error()
+                         .Exception(ex.Error)
+                         .Message("Unhandled exception occurs")
+                         .Write();
+
                     var err = $"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}";
                     await context.Response.WriteAsync(err).ConfigureAwait(false);
                 }

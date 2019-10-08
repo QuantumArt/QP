@@ -146,8 +146,8 @@ namespace Quantumart.QP8.DAL.Entities
             builder.HasMany(x => x.UserQueryContents1).WithOne(y => y.Content1).HasForeignKey(y => y.VirtualContentId);
 
             builder.HasMany(x => x.USER_DEFAULT_FILTER).WithOne(y => y.Content).HasForeignKey(y => y.ContentId);
-            builder.HasOne(x => x.ParentContent).WithOne().HasForeignKey<ContentDAL>(y => y.Id);
-            builder.HasMany(x => x.ChildContents).WithOne().HasForeignKey(y => y.ParentContentId);
+            builder.HasOne(x => x.ParentContent).WithMany(y => y.ChildContents).HasForeignKey(x => x.ParentContentId);
+            builder.HasMany(x => x.ChildContents).WithOne(y => y.ParentContent).HasForeignKey(y => y.ParentContentId);
 
             builder.HasMany(x => x.ContentCustomActionBinds).WithOne(y => y.Content).HasForeignKey(y => y.ContentId);
         }

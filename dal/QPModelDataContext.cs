@@ -1,27 +1,23 @@
 using System.Data.Common;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-// using Microsoft.Extensions.Logging;
-// using Microsoft.Extensions.Logging.EventLog;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using Quantumart.QP8.DAL.Entities;
-
-// ReSharper disable UnusedMember.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable InconsistentNaming
 
 namespace Quantumart.QP8.DAL
 {
     public abstract class QPModelDataContext : DbContext
     {
-        // private static readonly LoggerFactory MyLoggerFactory
-        //     = new LoggerFactory(new[] {new EventLogLoggerProvider(new EventLogSettings{LogName="QPEFcore", SourceName="LocalQP8EfCore"})});
 
         protected readonly string _nameOrConnectionString;
         protected readonly DbConnection _connection;
 
+        public static readonly LoggerFactory MyLoggerFactory
+            = new LoggerFactory(new[] {new NLogLoggerProvider()});
+
         protected QPModelDataContext()
         {
-            // _nameOrConnectionString = "name=QP8Entities";
         }
 
         protected QPModelDataContext(string nameOrConnectionString)
@@ -133,40 +129,18 @@ namespace Quantumart.QP8.DAL
 
         public static readonly string CountColumn = "ROWS_COUNT";
 
-
-
-
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
-
             base.OnConfiguring(optionsBuilder);
-            // if (!string.IsNullOrWhiteSpace(_nameOrConnectionString))
-            // {
-            //     optionsBuilder.UseSqlServer(_nameOrConnectionString);
-            // }
-            // else if (_dbConnection != null)
-            // {
-            //     optionsBuilder.UseSqlServer(_dbConnection);
-            //
-            // }
 
-            //optionsBuilder.UseLoggerFactory(MyLoggerFactory);
-            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.UseLoggerFactory(MyLoggerFactory);
 
             // Database.SetCommandTimeout(SqlCommandFactory.CommandTimeout);
-
         }
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // modelBuilder.ApplyConfiguration(new ArticleDALConfiguration(true));
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-
             base.OnModelCreating(modelBuilder);
         }
 

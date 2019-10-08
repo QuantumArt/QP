@@ -12,10 +12,12 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
+using NLog.Fluent;
 using Npgsql;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -35,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
         public ExceptionResultAttribute(ExceptionResultMode mode)
         {
             _mode = mode;
-            _logger = LogManager.GetLogger(GetType().ToString());
+            _logger = LogManager.GetLogger(GetType().FullName);
         }
 
         public override async Task OnExceptionAsync(ExceptionContext filterContext)
@@ -54,13 +56,24 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 filterContext.Result = await GetContentResult(filterContext);
             }
 
-            var logMessage = $"Поймали exception со следующим URL: {filterContext.HttpContext.Request.GetDisplayUrl()}";
+            var url = filterContext.HttpContext.Request.GetDisplayUrl();
+
+            var logMessage = "Exception has been thrown while requesting the following URL: {url}";
+            var logBuilder = _logger.Error().Exception(filterContext.Exception);
+
             if (filterContext.Exception is PostgresException pgex)
             {
-                logMessage += ". Query: " + pgex.Statement.SQL;
+                logMessage += ". Query: {query}";
+                logBuilder.Message(logMessage, url, pgex.Statement.SQL);
+            }
+            else
+            {
+                logBuilder.Message(logMessage, url);
             }
 
-            _logger.Log(LogLevel.Error, filterContext.Exception, logMessage);
+            logBuilder.Property("customerCode", QPContext.CurrentCustomerCode);
+            logBuilder.Write();
+
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();

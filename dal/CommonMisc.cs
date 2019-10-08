@@ -12,6 +12,8 @@ using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
+using LogManager = NLog.LogManager;
+using NLog.Fluent;
 
 namespace Quantumart.QP8.DAL
 {
@@ -668,7 +670,7 @@ WHERE content_item_id = {contentItemId}
              return dt.AsEnumerable().ToArray();
          }
 
-         public static string GetDbServerName(DbConnection sqlConnection)
+         public static string GetDbServerName(DbConnection sqlConnection, string customerCode)
          {
              var isPostgresConnection = IsPostgresConnection(sqlConnection);
              var result = "";
@@ -689,7 +691,12 @@ WHERE content_item_id = {contentItemId}
                  }
                  catch (Exception ex)
                  {
-                     Logger.Log.Error($"Cannot resolve IP Address: {ip}", ex);
+                     var logger = LogManager.GetLogger("Common");
+                     logger.Error()
+                         .Exception(ex)
+                         .Message("Cannot resolve IP Address: {ip}", ip)
+                         .Property("customerCode", customerCode)
+                         .Write();
                  }
              }
 
