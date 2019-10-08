@@ -49,7 +49,7 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         [ValidateNever]
-        public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(OsSpecificPath));
+        public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(Path));
 
 
         private PathInfo CreatePathInfo(string path) => Parent.PathInfo.GetSubPathInfo(path);

@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
-    public class SelectedFilesViewModel
+    public class SelectedStringItemsViewModel
     {
         [BindProperty(Name="IDs")]
-        public string[] Names { get; set; }
+        public string[] Ids { get; set; }
     }
 }

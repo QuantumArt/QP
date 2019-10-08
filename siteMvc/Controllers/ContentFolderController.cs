@@ -135,9 +135,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.ContentFolder, "parentId")]
         [BackendActionContext(ActionCode.MultipleRemoveContentFile)]
         [BackendActionLog]
-        public ActionResult MultipleRemoveFiles(int parentId, [FromBody] SelectedFilesViewModel model)
+        public ActionResult MultipleRemoveFiles(int parentId, [FromBody] SelectedStringItemsViewModel model)
         {
-            var result = ContentFolderService.RemoveFiles(parentId, model.Names);
+            var result = ContentFolderService.RemoveFiles(parentId, model.Ids);
             return Json(result);
         }
 

@@ -130,53 +130,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(null);
         }
 
-        [HttpPost] // TODO: review UploadFile
-        public async Task<ActionResult> UploadFile(string folderPath, bool resolveFileName)
-        {
-            if (string.IsNullOrEmpty(folderPath))
-            {
-                throw new ArgumentException("Folder Path is empty");
-            }
-
-            if (!PathInfo.CheckSecurity(folderPath).Result || !CheckFolderExistence(folderPath))
-            {
-                return Json(new { proceed = false, msg = string.Format(LibraryStrings.UploadIsNotAllowed, folderPath) });
-            }
-
-            var allFileNames = new List<string>(HttpContext.Request.Form.Files.Count);
-
-            foreach (var formFile in HttpContext.Request.Form.Files)
-            {
-                var path = Path.Combine(folderPath, formFile.FileName);
-
-                if (System.IO.File.Exists(path))
-                {
-                    if (resolveFileName)
-                    {
-                        path = Path.Combine(folderPath, GetResolvingFileName(folderPath, formFile.FileName));
-                    }
-                    else
-                    {
-                        System.IO.File.SetAttributes(path, FileAttributes.Normal);
-                        System.IO.File.Delete(path);
-                    }
-                }
-
-                using (var fileStream = new FileStream(path, FileMode.Create))
-                {
-                    await formFile.CopyToAsync(fileStream);
-                }
-
-                allFileNames.Add(Path.GetFileName(path));
-            }
-
-            JsonResult result = Json(new { fileNames = allFileNames.ToArray(), proceed = true });
-
-            result.ContentType = "text/plain";
-
-            return result;
-        }
-
         [HttpPost]
         public JsonResult CheckForCrop([FromBody] CropViewModel model)
         {
