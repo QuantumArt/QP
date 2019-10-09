@@ -265,7 +265,7 @@ namespace Quantumart.QP8.WebMvc
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
-                    "Content")),
+                    "Static")),
                 RequestPath =  "/Static"
             });
 

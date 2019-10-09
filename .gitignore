@@ -247,12 +247,12 @@ worktree/
 
 
 # QP Web Assets
-siteMvc/Content/*.min.css
+siteMvc/Static/*.min.css
 siteMvc/Scripts/Quantumart/**/*.map
 siteMvc/Scripts/Quantumart/**/*.min.js
 
-!siteMvc/Content/ckeditor
-!siteMvc/Content/codemirror
+!siteMvc/Static/ckeditor
+!siteMvc/Static/codemirror
 
 
 

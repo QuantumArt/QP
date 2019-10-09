@@ -54,7 +54,7 @@
   <ItemGroup>
 
     <None Update="Scripts\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-    <None Update="Content\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+    <None Update="Static\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Update="ToCopy\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Include="..\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />
     <None Include="..\QP.Custom\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />
