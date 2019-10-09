@@ -73,7 +73,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
             {
                 if (Data.VirtualType == VirtualType.Join)
                 {
-                    Data.VirtualJoinFieldNodes = BLL.Content.VirtualFieldNode.Parse(BLL.Content.VirtualFieldNode.NormalizeFieldTreeIdSeq(JoinFields.Select(f => f.Value)));
+                    Data.VirtualJoinFieldNodes = BLL.Content.VirtualFieldNode.Parse(
+                        BLL.Content.VirtualFieldNode.NormalizeFieldTreeIdSeq(
+                            JoinFields.Where(n => n != null).Select(f => f.Value)
+                        )
+                    );
                 }
                 else
                 {

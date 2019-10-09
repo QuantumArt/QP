@@ -614,8 +614,6 @@ namespace Quantumart.QP8.BLL
         [ValidateNever]
         internal IEnumerable<UserQueryColumn> UserQueryContentViewSchema => _userQueryContentViewSchema.Value;
 
-        [BindNever]
-        [ValidateNever]
         [Display(Name = "UnionSourceContents", ResourceType = typeof(ContentStrings))]
         [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> UnionSourceContentIDs

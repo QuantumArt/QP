@@ -18,7 +18,7 @@ namespace Quantumart.QP8.Utils.Binders
             if (valueProviderResult != ValueProviderResult.None)
             {
                 bindingContext.ModelState.SetModelValue(modelName, valueProviderResult);
-                var idArr = Converter.ToIdArray(valueProviderResult.FirstValue);
+                var idArr = Converter.ToIdArray(valueProviderResult.Values);
                 bindingContext.Result = ModelBindingResult.Success(idArr);
             }
             return Task.CompletedTask;
