@@ -6,9 +6,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-#if !NET_STANDARD
 using Quantumart.QP8.Assembling;
-#endif
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -17,8 +15,6 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using QP.ConfigurationService.Models;
-using Quantumart.QP8.BLL.Repository.ContentRepositories;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -154,7 +150,6 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     File.Delete(site.TempArchiveForClasses);
                 }
-#if !NET_STANDARD
                 new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType)
                 {
                     SiteRoot = liveTempDirectory,
@@ -168,7 +163,6 @@ namespace Quantumart.QP8.BLL.Services
                     IsLive = false,
                     DisableClassGeneration = site.DownloadEfSource
                 }.Assemble();
-#endif
                 var urlHelper =  HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
                 return MessageResult.Download(urlHelper.Content($"~/Site/GetClassesZip/{id}"));

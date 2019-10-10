@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <Version>3.0.0-beta98</Version>
+    <Version>3.0.0-rc10</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Authors>Pavel Celut, Sergey Koryakin</Authors>
     <Company>Quantum Art</Company>
@@ -37,27 +37,27 @@
     <PackageReference Include="Irony" Version="1.1.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" PrivateAssets="None" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" PrivateAssets="None" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.6.0" PrivateAssets="None" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" PrivateAssets="None" />
     <PackageReference Include="Npgsql" Version="4.0.7" PrivateAssets="None" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" PrivateAssets="None" />
-    <PackageReference Include="Quantumart.AspNetCore" Version="4.0.0-beta68" PrivateAssets="None" />
+    <PackageReference Include="Quantumart.AspNetCore" Version="4.0.0-beta72" PrivateAssets="None" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" PrivateAssets="None" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" PrivateAssets="None" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" PrivateAssets="None" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" PrivateAssets="None" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" PrivateAssets="None" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" PrivateAssets="None" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" PrivateAssets="None" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" PrivateAssets="None" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" PrivateAssets="None" />
-    <PackageReference Include="System.Security.Permissions" Version="4.5.0" PrivateAssets="None" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.1" PrivateAssets="None" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.6.0" PrivateAssets="None" />
+    <PackageReference Include="System.Security.Permissions" Version="4.6.0" PrivateAssets="None" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.6.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" PrivateAssets="None" />
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
     <PackageReference Include="QA.Validation.Xaml" Version="1.3.0-portable1" PrivateAssets="None" />
     <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.3.0-portable1" PrivateAssets="None" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" PrivateAssets="None" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <Reference Include="System.DirectoryServices" />
