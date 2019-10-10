@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
@@ -24,35 +25,37 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [DisableBrowserCache]
         [ResponseHeader(ResponseHeaders.QpNotAuthenticated, "True")]
-        public async Task<ActionResult> Index(DirectLinkOptions directLinkOptions)
+        public async Task<ActionResult> Index(bool? useAutoLogin, DirectLinkOptions directLinkOptions)
         {
-            string userIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-
-            if (!User.Identity.IsAuthenticated && _helper.ShouldUseWindowsAuthentication(userIpAddress))
+            var data = new LogOnCredentials
             {
-                return Redirect(GetAuthorizationUrl(directLinkOptions));
-            }
+                UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication(),
+                NtUserName = GetCurrentUser()
+            };
 
-            FillViewBagData();
-            return await LogOnView();
+            FillViewBagData(directLinkOptions);
+            return await LogOnView(data);
         }
 
         [HttpPost]
         [DisableBrowserCache]
-        public async Task<ActionResult> Index(LogOnCredentials data, string returnUrl)
+        public async Task<ActionResult> Index(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
-            return await PostIndex(data, returnUrl);
+            return await PostIndex(useAutoLogin, data, returnUrl);
         }
 
         [HttpPost]
         [DisableBrowserCache]
-        public async Task<ActionResult> JsonIndex([FromBody] LogOnCredentials data, string returnUrl)
+        public async Task<ActionResult> JsonIndex(bool? useAutoLogin, [FromBody] LogOnCredentials data, string returnUrl)
         {
-            return await PostIndex(data, returnUrl);
+            return await PostIndex(useAutoLogin, data, returnUrl);
         }
 
-        private async Task<ActionResult> PostIndex(LogOnCredentials data, string returnUrl)
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
+            data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
+            data.NtUserName = GetCurrentUser();
+
             try
             {
                 data.Validate();
@@ -84,7 +87,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             FillViewBagData();
-            return await LogOnView();
+            return await LogOnView(data);
         }
 
         [DisableBrowserCache]
@@ -94,25 +97,29 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return RedirectToAction("Index");
         }
 
-        private string GetAuthorizationUrl(DirectLinkOptions directLinkOptions)
-        {
-            var url = Options.Authentication.WinLogonUrl;
-            return directLinkOptions != null ? directLinkOptions.AddToUrl(url) : url;
-        }
-
-        private void FillViewBagData()
+        private void FillViewBagData(DirectLinkOptions directLinkOptions = null)
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
             ViewBag.CustomerCodes = QPConfiguration.GetCustomerCodes().Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
+
+            ViewBag.AutoLoginLinkQuery = "?useAutoLogin=false";
+            if (directLinkOptions != null && directLinkOptions.IsDefined())
+            {
+                ViewBag.AutoLoginLinkQuery += "&" + directLinkOptions.ToUrlParams();
+            }
         }
 
-        private async Task<ActionResult> LogOnView()
+        private string GetCurrentUser() => HttpContext.User.Identity is WindowsIdentity wi ? wi.Name : null;
+
+        private bool IsWindowsAuthentication() => HttpContext.User.Identity is WindowsIdentity;
+
+        private async Task<ActionResult> LogOnView(LogOnCredentials data)
         {
             if (Request.IsAjaxRequest())
             {
-                return await JsonHtml("Popup", null);
+                return await JsonHtml("Popup", data);
             }
-            return View("Index");
+            return View("Index", data);
         }
     }
 }

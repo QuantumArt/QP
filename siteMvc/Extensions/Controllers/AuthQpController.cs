@@ -4,7 +4,7 @@ using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CustomerCodeSelected")]
     public class AuthQpController : QPController
     {
 

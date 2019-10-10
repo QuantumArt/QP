@@ -123,6 +123,11 @@ namespace Quantumart.QP8.WebMvc
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode"));
+            });
+
             // TODO: review authenticaton and CultireInfo in SignalR
             services
                 .AddSignalR()

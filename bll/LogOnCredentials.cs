@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
@@ -25,10 +26,10 @@ namespace Quantumart.QP8.BLL
 
         public bool UseAutoLogin { get; set; }
 
+        [BindNever]
         public string NtUserName { get; set; }
 
-        public bool? IsSilverlightInstalled { get; set; }
-
+        [BindNever]
         public QpUser User { get; set; }
 
         public void Validate()
@@ -65,11 +66,7 @@ namespace Quantumart.QP8.BLL
                 var errorCode = QpAuthenticationErrorNumber.NoErrors;
                 User = QPContext.Authenticate(this, ref errorCode, out var message);
 
-                if (User != null)
-                {
-                    User.IsSilverlightInstalled = IsSilverlightInstalled.HasValue && IsSilverlightInstalled.Value;
-                }
-                else if (errorCode == QpAuthenticationErrorNumber.AccountNotExist)
+                if (errorCode == QpAuthenticationErrorNumber.AccountNotExist)
                 {
                     errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountNotExist);
                 }

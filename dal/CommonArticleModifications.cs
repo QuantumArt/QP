@@ -33,7 +33,7 @@ namespace Quantumart.QP8.DAL
                 catch (PostgresException ex)
                 {
                     logger.Error()
-
+                        .Exception(ex)
                         .Message("Error while persisting article with xml: {xml}\n Query: {sql}", xml, sql)
                         .Property("customerCode", customerCode)
                         .Write();

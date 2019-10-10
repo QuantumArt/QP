@@ -69,13 +69,9 @@ namespace Quantumart.QP8.Security
             return cultureName;
         }
 
-        /// <summary>
-        /// Установлен ли Silverlight у пользователя
-        /// </summary>
-        public bool IsSilverlightInstalled { get; set; }
 
         private int _languageId;
-        
+
         public bool MustChangePassword { get; set; }
     }
 }

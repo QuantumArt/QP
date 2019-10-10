@@ -58,7 +58,7 @@ export class BackendLogOnWindow extends Observable {
       const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
       let method = 'GET';
       let useAutoLogin = that._getUseAutoLogin();
-      const url = that._getUrl();
+      const url = that._getUrl(evt.type === 'submit');
       let setDefaultValues = false;
 
       if (evt.type === 'submit') {
@@ -152,9 +152,12 @@ export class BackendLogOnWindow extends Observable {
     return $('span.t-in').first().text();
   }
 
-  _getUrl() {
+  _getUrl(isSubmit) {
     let url = $(this.FORM_SELECTOR).attr('action');
-    url = url.replace("?", "/JsonIndex?");
+    if (isSubmit)
+    {
+      url = url.replace("?", "/JsonIndex?");
+    }
     return url;
   }
 

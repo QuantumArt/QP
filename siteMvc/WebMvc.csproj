@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastructure\Converters" />
+    <Folder Include="Views\WinLogon" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
