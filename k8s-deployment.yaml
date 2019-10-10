@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: qp
+        logging: enabled
     spec:
       containers:
       - image: spbdocker03:5000/qp:||version||
