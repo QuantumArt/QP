@@ -577,10 +577,16 @@ namespace Quantumart.QP8.BLL
             set => _site = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public PathInfo RootVersionsLibrary => PathInfo.GetSubPathInfo(ArticleVersion.RootFolder);
 
+        [BindNever]
+        [ValidateNever]
         public PathInfo RootContentsPathInfo => Site.BasePathInfo.GetSubPathInfo("contents");
 
+        [BindNever]
+        [ValidateNever]
         public override PathInfo PathInfo => RootContentsPathInfo.GetSubPathInfo(Id.ToString());
 
 
