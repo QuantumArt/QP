@@ -1,3 +1,4 @@
+using Irony.Parsing;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
@@ -26,6 +27,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             {
                 QPContext.CurrentCustomerCode = connectionStringOrCustomerCode;
             }
+
+            QPContext.CurrentUserId = SpecialIds.AdminUserId;
         }
 
         public abstract void Process();

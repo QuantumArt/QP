@@ -180,10 +180,8 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<IWorkflowService, WorkflowService>()
                     .AddTransient<IStatusTypeService, StatusTypeService>()
                     .AddTransient<IPageTemplateService, PageTemplateService>()
-#if !NET_STANDARD
                     .AddTransient<IPageService, PageService>()
                     .AddTransient<IObjectService, ObjectService>()
-#endif
                     .AddTransient<IFormatService, FormatService>()
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
                     .AddTransient<ResourceDictionary>() // preload QA.Configuration

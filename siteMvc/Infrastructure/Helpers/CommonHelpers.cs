@@ -8,9 +8,9 @@ using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    internal static class CommonHelpers
+    public static class CommonHelpers
     {
-        internal static string GetAssemblyVersion() => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
+        public static string GetAssemblyVersion() => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
 
         internal static string GetBackendUrl(HttpContext context)
         {
@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             return $"{context.Request.Scheme}://{context.Request.Host.Host}:{context.Request.Host.Port}{context.Request.PathBase}/";
         }
 
-        internal static HashSet<string> GetDbIdentityInsertOptions(bool generateNewFieldIds, bool generateNewContentIds)
+        public static HashSet<string> GetDbIdentityInsertOptions(bool generateNewFieldIds, bool generateNewContentIds)
         {
             var identityTypes = new HashSet<string>();
             if (!generateNewFieldIds)

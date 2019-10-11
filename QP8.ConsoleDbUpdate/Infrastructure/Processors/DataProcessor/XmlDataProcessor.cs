@@ -1,3 +1,4 @@
+using System;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
@@ -18,7 +19,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             IXmlDbUpdateLogService xmlDbUpdateLogService,
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateActionCorrecterService actionCorrecterService,
-            IXmlDbUpdateHttpContextProcessor httpContextProcessor)
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IServiceProvider provider
+            )
             : base(settings)
         {
             _settings = settings;
@@ -31,7 +34,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
                 xmlDbUpdateLogService,
                 appInfoRepository,
                 actionCorrecterService,
-                httpContextProcessor);
+                httpContextProcessor,
+                provider
+                );
         }
 
         public override void Process()

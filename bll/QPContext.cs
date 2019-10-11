@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-// using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
+using System.Threading;
 using System.Transactions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
@@ -95,11 +94,11 @@ namespace Quantumart.QP8.BLL
 
         public static string GetRecordXmlFilePath() => $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
 
-        private static T GetValueFromStorage<T>(T threadStorageData, string key)
+        private static T GetValueFromStorage<T>(AsyncLocal<T> threadStorageData, string key)
         {
             if (UseThreadStorage)
             {
-                return threadStorageData;
+                return threadStorageData.Value;
             }
 
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
@@ -109,17 +108,17 @@ namespace Quantumart.QP8.BLL
 
             if (HttpContext == null)
             {
-                return threadStorageData;
+                return threadStorageData.Value;
             }
 
             return (T)HttpContext.Items[key];
         }
 
-        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
+        private static void SetValueToStorage<T>( AsyncLocal<T> threadStorage, T value, string key)
         {
             if (UseThreadStorage)
             {
-                threadStorage = value;
+                threadStorage.Value = value;
             }
 
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
@@ -129,7 +128,7 @@ namespace Quantumart.QP8.BLL
 
             if (HttpContext == null)
             {
-                threadStorage = value;
+                threadStorage.Value = value;
             }
             else
             {
@@ -139,47 +138,17 @@ namespace Quantumart.QP8.BLL
 
         internal static Dictionary<int, Field> GetFieldCache() => GetValueFromStorage(_fieldCache, HttpContextItems.FieldCache);
 
-        internal static void SetFieldCache(Dictionary<int, Field> value)
-        {
-            SetValueToStorage(ref _fieldCache, value, HttpContextItems.FieldCache);
-        }
-
         internal static Dictionary<int, StatusType> GetStatusTypeCache() => GetValueFromStorage(_statusTypeCache, HttpContextItems.StatusType);
-
-        internal static void SetStatusTypeCache(Dictionary<int, StatusType> value)
-        {
-            SetValueToStorage(ref _statusTypeCache, value, HttpContextItems.StatusType);
-        }
 
         internal static Dictionary<int, User> GetUserCache() => GetValueFromStorage(_userCache, HttpContextItems.User);
 
-        internal static void SetUserCache(Dictionary<int, User> value)
-        {
-            SetValueToStorage(ref _userCache, value, HttpContextItems.User);
-        }
-
         internal static Dictionary<int, Content> GetContentCache() => GetValueFromStorage(_contentCache, HttpContextItems.ContentCache);
-
-        internal static void SetContentCache(Dictionary<int, Content> value)
-        {
-            SetValueToStorage(ref _contentCache, value, HttpContextItems.ContentCache);
-        }
 
         internal static Dictionary<int, Site> GetSiteCache() => GetValueFromStorage(_siteCache, HttpContextItems.SiteCache);
 
-        internal static void SetSiteCache(Dictionary<int, Site> value)
-        {
-            SetValueToStorage(ref _siteCache, value, HttpContextItems.SiteCache);
-        }
-
         internal static Dictionary<int, List<int>> GetContentFieldCache() => GetValueFromStorage(_contentFieldCache, HttpContextItems.ContentFieldCache);
 
-        internal static void SetContentFieldCache(Dictionary<int, List<int>> value)
-        {
-            SetValueToStorage(ref _contentFieldCache, value, HttpContextItems.ContentFieldCache);
-        }
-
-        internal static void ClearInternalStructureCache()
+        private static void ClearInternalStructureCache()
         {
             _siteCache = null;
             _contentCache = null;
@@ -189,7 +158,7 @@ namespace Quantumart.QP8.BLL
             _userCache = null;
         }
 
-        internal static void ClearExternalStructureCache()
+        private static void ClearExternalStructureCache()
         {
             if (_externalContextStorage?.Keys != null)
             {
@@ -210,12 +179,14 @@ namespace Quantumart.QP8.BLL
 
             if (GetSiteCache() == null)
             {
-                SetSiteCache(SiteRepository.GetAll().ToDictionary(n => n.Id));
+                Dictionary<int, Site> value = SiteRepository.GetAll().ToDictionary(n => n.Id);
+                SetValueToStorage(_siteCache, value, HttpContextItems.SiteCache);
             }
 
             if (GetContentCache() == null)
             {
-                SetContentCache(ContentRepository.GetAll().ToDictionary(n => n.Id));
+                Dictionary<int, Content> value = ContentRepository.GetAll().ToDictionary(n => n.Id);
+                SetValueToStorage(_contentCache, value, HttpContextItems.ContentCache);
             }
 
             IEnumerable<Field> fields = new Field[0];
@@ -226,17 +197,20 @@ namespace Quantumart.QP8.BLL
 
             if (GetFieldCache() == null)
             {
-                SetFieldCache(fields.ToDictionary(n => n.Id));
+                Dictionary<int, Field> value = fields.ToDictionary(n => n.Id);
+                SetValueToStorage(_fieldCache, value, HttpContextItems.FieldCache);
             }
 
             if (GetStatusTypeCache() == null)
             {
-                SetStatusTypeCache(StatusTypeRepository.GetAll().ToDictionary(n => n.Id));
+                Dictionary<int, StatusType> value = StatusTypeRepository.GetAll().ToDictionary(n => n.Id);
+                SetValueToStorage(_statusTypeCache, value, HttpContextItems.StatusType);
             }
 
             if (GetUserCache() == null)
             {
-                SetUserCache(UserRepository.GetAllUsersList().ToDictionary(n => n.Id));
+                Dictionary<int, User> value = UserRepository.GetAllUsersList().ToDictionary(n => n.Id);
+                SetValueToStorage(_userCache, value, HttpContextItems.User);
             }
 
             if (GetContentFieldCache() == null)
@@ -254,97 +228,77 @@ namespace Quantumart.QP8.BLL
                     }
                 }
 
-                SetContentFieldCache(dict);
+                SetValueToStorage(_contentFieldCache, dict, HttpContextItems.ContentFieldCache);
             }
         }
 
-        [ThreadStatic]
-        private static int? _currentUserId;
+        private static readonly AsyncLocal<int?> _currentUserId = new AsyncLocal<int?>();
 
-        [ThreadStatic]
-        private static int? _currentSessionId;
+        private static readonly AsyncLocal<int?> _currentSessionId = new AsyncLocal<int?>();
 
-        [ThreadStatic]
-        private static bool? _isAdmin;
+        private static readonly AsyncLocal<bool?> _isAdmin = new AsyncLocal<bool?>();
 
-        [ThreadStatic]
-        private static int[] _currentGroupIds;
+        private static readonly AsyncLocal<int[]> _currentGroupIds = new AsyncLocal<int[]>();
 
-        [ThreadStatic]
-        private static bool? _canUnlockItems;
+        private static readonly AsyncLocal<bool?> _canUnlockItems = new AsyncLocal<bool?>();
 
-        [ThreadStatic]
-        private static bool? _isLive;
+        private static readonly AsyncLocal<bool?> _isLive = new AsyncLocal<bool?>();
 
-        [ThreadStatic]
-        private static Dictionary<int, Site> _siteCache;
+        private static AsyncLocal<Dictionary<int, Site>> _siteCache = new AsyncLocal<Dictionary<int, Site>>();
 
-        [ThreadStatic]
-        private static Dictionary<int, Content> _contentCache;
+        private static AsyncLocal<Dictionary<int, Content>> _contentCache = new AsyncLocal<Dictionary<int, Content>>();
 
-        [ThreadStatic]
-        private static Dictionary<int, Field> _fieldCache;
+        private static AsyncLocal<Dictionary<int, Field>> _fieldCache = new AsyncLocal<Dictionary<int, Field>>();
 
-        [ThreadStatic]
-        private static Dictionary<int, StatusType> _statusTypeCache;
+        private static AsyncLocal<Dictionary<int, StatusType>> _statusTypeCache = new AsyncLocal<Dictionary<int, StatusType>>();
 
-        [ThreadStatic]
-        private static Dictionary<int, User> _userCache;
+        private static AsyncLocal<Dictionary<int, User>> _userCache = new AsyncLocal<Dictionary<int, User>>();
 
-        [ThreadStatic]
-        private static Dictionary<int, List<int>> _contentFieldCache;
+        private static AsyncLocal<Dictionary<int, List<int>>> _contentFieldCache = new AsyncLocal<Dictionary<int, List<int>>>();
 
-        [ThreadStatic]
-        private static string _currentCustomerCode;
+        private static readonly AsyncLocal<string> _currentCustomerCode = new AsyncLocal<string>();
 
-        [ThreadStatic]
-        private static Version _currentSqlVersion;
+        private static readonly AsyncLocal<Version> _currentSqlVersion = new AsyncLocal<Version>();
 
-        [ThreadStatic]
-        private static QPConnectionScope _currentConnectionScope;
+        private static readonly AsyncLocal<QPConnectionScope> _currentConnectionScope = new AsyncLocal<QPConnectionScope>();
 
-        [ThreadStatic]
-        private static QpConnectionInfo _currentDbConnectionInfo;
+        private static readonly AsyncLocal<QpConnectionInfo> _currentDbConnectionInfo = new AsyncLocal<QpConnectionInfo>();
 
-        [ThreadStatic]
-        private static BackendActionContext _backendActionContext;
-
-        [ThreadStatic]
-        private static bool _useThreadStorage;
+        private static readonly AsyncLocal<BackendActionContext> _backendActionContext = new AsyncLocal<BackendActionContext>();
 
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
-            SetValueToStorage(ref _currentUserId, value, HttpContextItems.CurrentUserIdKey);
+            SetValueToStorage(_currentUserId, value, HttpContextItems.CurrentUserIdKey);
         }
 
         private static void SetCurrentSessionIdValueToStorage(int? value)
         {
-            SetValueToStorage(ref _currentSessionId, value, HttpContextItems.CurrentSessionIdKey);
+            SetValueToStorage(_currentSessionId, value, HttpContextItems.CurrentSessionIdKey);
         }
 
         private static void SetCurrentGroupIdsValueToStorage(int[] value)
         {
-            SetValueToStorage(ref _currentGroupIds, value, HttpContextItems.CurrentGroupIdsKey);
+            SetValueToStorage(_currentGroupIds, value, HttpContextItems.CurrentGroupIdsKey);
         }
 
         private static void SetIsAdminValueToStorage(bool? value)
         {
-            SetValueToStorage(ref _isAdmin, value, HttpContextItems.IsAdminKey);
+            SetValueToStorage(_isAdmin, value, HttpContextItems.IsAdminKey);
         }
 
         private static void SetCanUnlockItemsValueToStorage(bool? value)
         {
-            SetValueToStorage(ref _canUnlockItems, value, HttpContextItems.CanUnlockItemsKey);
+            SetValueToStorage(_canUnlockItems, value, HttpContextItems.CanUnlockItemsKey);
         }
 
         private static void SetCurrentCustomerCodeValueToStorage(string value)
         {
-            SetValueToStorage(ref _currentCustomerCode, value, HttpContextItems.CurrentCustomerCodeKey);
+            SetValueToStorage(_currentCustomerCode, value, HttpContextItems.CurrentCustomerCodeKey);
         }
 
         private static void SetCurrentSqlVersionValueToStorage(Version value)
         {
-            SetValueToStorage(ref _currentSqlVersion, value, HttpContextItems.CurrentSqlVersionKey);
+            SetValueToStorage(_currentSqlVersion, value, HttpContextItems.CurrentSqlVersionKey);
         }
 
         public static int CurrentUserId
@@ -360,7 +314,7 @@ namespace Quantumart.QP8.BLL
                     SetCurrentUserIdValueToStorage(result);
                 }
 
-                return result ?? 0;
+                return (int)result;
             }
             set
             {
@@ -395,7 +349,7 @@ namespace Quantumart.QP8.BLL
                     SetCurrentSessionIdValueToStorage(result);
                 }
 
-                return result ?? 0;
+                return (int)result;
             }
         }
 
@@ -464,16 +418,16 @@ namespace Quantumart.QP8.BLL
                 var value = GetValueFromStorage(_isLive, HttpContextItems.IsLiveKey);
                 return value.HasValue && value.Value;
             }
-            set => SetValueToStorage(ref _isLive, value, HttpContextItems.IsLiveKey);
+            set => SetValueToStorage(_isLive, value, HttpContextItems.IsLiveKey);
         }
 
-        public static string CurrentUserName => HttpContext.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+        public static string CurrentUserName => HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value ?? "";
 
         public static string CurrentCultureName
         {
             get
             {
-                var claim = HttpContext.User.FindFirst("CultureName");
+                var claim = HttpContext?.User?.FindFirst("CultureName");
                 return claim != null ? claim.Value : QPConfiguration.Options.Globalization.DefaultCulture;
             }
         }
@@ -482,7 +436,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                var claim = HttpContext.User.FindFirst("LanguageId");
+                var claim = HttpContext?.User?.FindFirst("LanguageId");
                 return claim != null ? int.Parse(claim.Value) : QPConfiguration.Options.Globalization.DefaultLanguageId;
             }
         }
@@ -511,13 +465,13 @@ namespace Quantumart.QP8.BLL
         internal static QPConnectionScope CurrentConnectionScope
         {
             get => GetValueFromStorage(_currentConnectionScope, HttpContextItems.CurrentConnectionScopeKey);
-            set => SetValueToStorage(ref _currentConnectionScope, value, HttpContextItems.CurrentConnectionScopeKey);
+            set => SetValueToStorage(_currentConnectionScope, value, HttpContextItems.CurrentConnectionScopeKey);
         }
 
         internal static BackendActionContext BackendActionContext
         {
             get => GetValueFromStorage(_backendActionContext, HttpContextItems.BackendActionContextKey);
-            set => SetValueToStorage(ref _backendActionContext, value, HttpContextItems.BackendActionContextKey);
+            set => SetValueToStorage(_backendActionContext, value, HttpContextItems.BackendActionContextKey);
         }
 
         public static Version CurrentSqlVersion
@@ -554,18 +508,14 @@ namespace Quantumart.QP8.BLL
                     if (info != null)
                     {
                         result = new QpConnectionInfo(info.ConnectionString, info.DbType);
-                        SetValueToStorage(ref _currentDbConnectionInfo, result, HttpContextItems.CurrentDbConnectionStringKey);
+                        SetValueToStorage(_currentDbConnectionInfo, result, HttpContextItems.CurrentDbConnectionStringKey);
                     }
                 }
 
                 return result;
             }
-            set => SetValueToStorage(ref _currentDbConnectionInfo, value, HttpContextItems.CurrentDbConnectionStringKey);
+            set => SetValueToStorage(_currentDbConnectionInfo, value, HttpContextItems.CurrentDbConnectionStringKey);
         }
-
-        private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionInfo.ConnectionString);
-
-        private static string PreparingDbConnectionStringForEntities(string connectionString) => connectionString;//$"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
 
         public static bool CheckCustomerCode(string customerCode)
         {
@@ -583,7 +533,7 @@ namespace Quantumart.QP8.BLL
             {
                 try
                 {
-                    User user = null;
+                    User user;
                     using (var cn = CreateDbConnection(sqlCn))
                     {
                         cn.Open();
@@ -773,22 +723,15 @@ namespace Quantumart.QP8.BLL
             return ipAddress;
         }
 
-        public static IServiceProvider ServiceProvider { get; private set; }
-
         public static void SetServiceProvider(IServiceProvider provider)
         {
-            ServiceProvider = provider;
         }
 
         private static IContextStorage _externalContextStorage;
 
         private static HashSet<string> _externalContextStorageKeys;
 
-        public static bool UseThreadStorage
-        {
-            get => _useThreadStorage;
-            set => _useThreadStorage = value;
-        }
+        public static bool UseThreadStorage { get; set; }
 
         public static IContextStorage ExternalContextStorage
         {

@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-#if !NET_STANDARD
 using Quantumart.QP8.Assembling;
-#endif
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -477,9 +475,7 @@ namespace Quantumart.QP8.BLL.Services
             var obj = ObjectRepository.GetObjectPropertiesById(id);
             if (obj.PageTemplate.SiteIsDotNet)
             {
-#if !NET_STANDARD
                 new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentDbConnectionString).Assemble();
-#endif
                 return null;
             }
 
@@ -667,9 +663,7 @@ namespace Quantumart.QP8.BLL.Services
             var page = PageRepository.GetPagePropertiesById(id);
             if (page.PageTemplate.SiteIsDotNet)
             {
-#if !NET_STANDARD
                 new AssemblePageController(id, QPContext.CurrentDbConnectionString).Assemble();
-#endif
                 AssembleRepository.UpdatePageStatus(id, QPContext.CurrentUserId);
                 return null;
             }

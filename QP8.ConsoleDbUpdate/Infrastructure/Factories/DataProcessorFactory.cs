@@ -16,7 +16,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
 {
     internal class DataProcessorFactory
     {
-        internal static IDataProcessor Create(BaseSettingsModel settings)
+        internal static IDataProcessor Create(BaseSettingsModel settings, IServiceProvider provider)
         {
             Program.Logger.Debug("Init data processor..");
 
@@ -32,7 +32,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                         dbLogService,
                         new ApplicationInfoRepository(),
                         new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
-                        new XmlDbUpdateHttpContextProcessor()
+                        new XmlDbUpdateHttpContextProcessor(),
+                        provider
                     );
                 case CsvSettingsModel csvSettings:
                     return new CsvDataProcessor(

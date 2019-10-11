@@ -48,12 +48,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
-            : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+        private readonly IServiceProvider _serviceProvider;
+
+        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider provider = null)
+            : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
+        public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider serviceProvider = null )
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -68,6 +70,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _appInfoRepository = appInfoRepository;
             _actionsCorrecterService = actionsCorrecterService;
             _httpContextProcessor = httpContextProcessor;
+            _serviceProvider = serviceProvider;
         }
 
         public virtual void Process(string xmlString, IList<string> filePathes = null)
@@ -93,7 +96,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             };
 
             using (new ThreadStorageScopeContext())
-            using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            using (var ts = new TransactionScope(TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                TransactionScopeAsyncFlowOption.Enabled))
             using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
@@ -187,7 +192,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             try
             {
                 var correctedAction = _actionsCorrecterService.PreActionCorrections(xmlAction, _useGuidSubstitution);
-                var httpContext = _httpContextProcessor.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution);
+                var httpContext = _httpContextProcessor.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution, _serviceProvider);
                 return _actionsCorrecterService.PostActionCorrections(correctedAction, httpContext);
             }
             catch (Exception ex)

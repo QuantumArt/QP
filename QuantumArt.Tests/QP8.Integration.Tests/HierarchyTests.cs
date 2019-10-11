@@ -64,6 +64,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
+                null,
                 false
             );
 

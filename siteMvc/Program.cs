@@ -16,9 +16,8 @@ namespace Quantumart.QP8.WebMvc
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("hosting.json", optional: true, reloadOnChange: true)
@@ -43,7 +42,9 @@ namespace Quantumart.QP8.WebMvc
                 })
                 .UseNLog()
                 .UseStartup<Startup>();
-            return builder.Build();
+            return builder;
         }
+
+        public static IWebHost BuildWebHost(string[] args) => CreateWebHostBuilder(args).Build();
     }
 }
