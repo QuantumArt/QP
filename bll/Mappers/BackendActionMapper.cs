@@ -13,7 +13,7 @@ namespace Quantumart.QP8.BLL.Mappers
             cfg.CreateMap<BackendActionDAL, BackendAction>(MemberList.Source)
                 .ForMember(biz => biz.NextFailedActionCode, opt => opt.MapFrom(data => data.NextFailedAction != null ? data.NextFailedAction.Code : null))
                 .ForMember(biz => biz.NextSuccessfulActionCode, opt => opt.MapFrom(data => data.NextSuccessfulAction != null ? data.NextSuccessfulAction.Code : null))
-                .ForMember(biz => biz.ExcludeCodes, opt => opt.MapFrom(data => data.Excludes != null ? data.Excludes.Select(n => n.Code).ToArray() : null))
+                .ForMember(biz => biz.ExcludeCodes, opt => opt.MapFrom(data => data.ExcludedByBinds != null ? data.ExcludedByBinds.Select(n => n.Excludes.Code).ToArray() : null))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(data => Translator.Translate(data.Name)))
                 .ForMember(biz => biz.NotTranslatedName, opt => opt.MapFrom(data => Translator.Translate(data.Name)))
                 .ForMember(biz => biz.ShortName, opt => opt.MapFrom(data => Translator.Translate(data.ShortName)))
@@ -35,8 +35,6 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(data => data.ParentAction, opt => opt.Ignore())
                 .ForMember(data => data.ParentPreFailedActions, opt => opt.Ignore())
                 .ForMember(data => data.ParentPreSuccessfulActions, opt => opt.Ignore())
-                .ForMember(data => data.ExcludedBy, opt => opt.Ignore())
-                .ForMember(data => data.Excludes, opt => opt.Ignore())
                 .ForMember(data => data.Views, opt => opt.Ignore());
         }
     }

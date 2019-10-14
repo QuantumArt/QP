@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
@@ -58,20 +59,22 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             }
         }
 
-        private static List<BackendAction> LoadActions() => MapperFacade.BackendActionMapper.GetBizList(
-            QPContext.EFContext.BackendActionSet
+        private static List<BackendAction> LoadActions()
+        {
+            var actions = MapperFacade.BackendActionMapper.GetBizList(QPContext.EFContext.BackendActionSet
                 .Include(x => x.EntityType)
                 .Include(x => x.EntityType.Parent)
                 .Include(x => x.EntityType.CancelAction)
                 .Include(x => x.ActionType.PermissionLevel)
                 .Include(x => x.DefaultViewType)
-                .Include(x => x.Views).ThenInclude( y => y.ViewType)
+                .Include(x => x.Views).ThenInclude(y => y.ViewType)
                 .Include(x => x.NextSuccessfulAction)
                 .Include(x => x.NextFailedAction)
-                .Include(x => x.ExcludesBinds).ThenInclude(x => x.Excludes)
+                .Include(x => x.ExcludedByBinds).ThenInclude(x => x.Excludes)
                 .Include(x => x.ToolbarButtons)
-                .ToList()
-        );
+                .ToList());
+            return actions;
+        }
 
         private static List<CustomAction> LoadCustomActions(List<BackendAction> backendActions)
         {

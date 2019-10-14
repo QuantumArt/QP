@@ -59,12 +59,6 @@ namespace Quantumart.QP8.DAL.Entities
         public ICollection<ActionExclusionsBindDAL> ExcludesBinds { get; set; }
         public ICollection<ActionExclusionsBindDAL> ExcludedByBinds { get; set; }
 
-        [NotMapped]
-        public IEnumerable<BackendActionDAL> Excludes => ExcludesBinds.Select(x => x.Excludes);
-
-        [NotMapped]
-        public IEnumerable<BackendActionDAL> ExcludedBy => ExcludedByBinds.Select(x => x.ExcludedBy);
-
     }
         public class BackendActionDALConfiguration : IEntityTypeConfiguration<BackendActionDAL>
         {
