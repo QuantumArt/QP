@@ -82,12 +82,17 @@ namespace Quantumart.QP8.BLL.Repository
 
         public IEnumerable<ListItem> GetEntityTitles(string entityTypeCode, int? parentEntityId, IEnumerable<int> entitiesIDs)
         {
-            if (entityTypeCode == EntityTypeCode.Article && parentEntityId.HasValue && parentEntityId != 0)
+            if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle )
             {
+                var contentId =
+                    parentEntityId ??
+                    QPContext.EFContext.ArticleSet.FirstOrDefault(x => entitiesIDs.Contains((int)x.Id))?.ContentId ??
+                    0;
+
                 return ArticleRepository.GetSimpleList(
                     new SimpleListQuery()
                     {
-                        ParentEntityId = parentEntityId.Value,
+                        ParentEntityId = (int)contentId,
                         SelectionMode = ListSelectionMode.OnlySelectedItems,
                         SelectedEntitiesIds = entitiesIDs.ToArray()
                     }
@@ -96,21 +101,9 @@ namespace Quantumart.QP8.BLL.Repository
 
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> result;
-                if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle)
-                {
-                    var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => entitiesIDs.Contains((int)x.Id))?.ContentId;
-                    var titleField = ContentRepository.GetTitleName((int)contentId);
-                    result = Common.GetEntitiesTitles(scope.DbConnection, titleField, contentId, entitiesIDs.ToList());
-                }
-                else
-                {
-                    var entityType = EntityTypeRepository.GetByCode(entityTypeCode);
-                    result = Common.GetEntitiesTitles(scope.DbConnection, entityType?.Source, entityType?.IdField, entityType?.TitleField, entitiesIDs.ToList());
-                }
-
+                var entityType = EntityTypeRepository.GetByCode(entityTypeCode);
+                var result = Common.GetEntitiesTitles(scope.DbConnection, entityType?.Source, entityType?.IdField, entityType?.TitleField, entitiesIDs.ToList());
                 return result.Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
-
             }
         }
 
