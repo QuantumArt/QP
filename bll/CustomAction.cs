@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -163,6 +165,8 @@ namespace Quantumart.QP8.BLL
 
         public int ParentId { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public string FullUrl => GetFullUrl(Url);
 
         private string GetFullUrl(string url)
@@ -187,6 +191,8 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
+        [BindNever]
+        [ValidateNever]
         public string PreActionFullUrl
         {
             get

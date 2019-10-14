@@ -248,6 +248,7 @@ namespace Quantumart.QP8.BLL.Repository
             SetBottomSeparator(contextMenuId);
 
             var updated = MapperFacade.CustomActionMapper.GetBizObject(customActionDal);
+            updated.Action = MapperFacade.BackendActionMapper.GetBizObject(actionDal);
             BackendActionCache.ResetForCustomerCode();
             return updated;
         }

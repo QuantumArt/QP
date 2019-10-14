@@ -40,8 +40,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
                 Order = Data.Order;
             }
 
-            SelectedSiteIDs = Data.SiteIds.ToArray();
-            SelectedContentIDs = Data.ContentIds.ToArray();
+            SelectedSiteIDs = Data.SiteIds?.ToArray() ?? new int[]{};
+            SelectedContentIDs = Data.ContentIds?.ToArray() ?? new int[]{};
             SelectedActions = Data.ParentActions?.Select(c => new QPCheckedItem { Value = c.ToString() }).ToList() ?? Enumerable.Empty<QPCheckedItem>().ToList();
         }
 
