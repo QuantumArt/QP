@@ -74,12 +74,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult ExecutePreAction(string tabId, int parentId, int[] ids, string actionCode) => Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", ids)}"));
+        public ActionResult ExecutePreAction(string tabId, int parentId, [FromBody] CustomActionQuery query)
+        {
+            var msg = $"Action: {query.ActionCode}, ParentId: {parentId}, IDs: {string.Join(";", query.Ids)}";
+            return Json(MessageResult.Confirm(msg));
+        }
 
         [HttpPost]
-        public ActionResult Proxy(string url, string actionCode, int level, int[] ids, int? parentEntityId)
+        public ActionResult Proxy([FromBody] ProxyViewModel model)
         {
-            var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(url);
+            var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(model.Url);
 
             Logger.Log.Debug($"Proxy custom action url: {urlToProcess.ToJsonLog()}");
             var parts = urlToProcess.Split("?".ToCharArray(), 2);
@@ -106,9 +110,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     result = new StreamReader(response).ReadToEnd();
                 }
 
-                if (level >= PermissionLevel.Modify)
+                if (model.Level >= PermissionLevel.Modify)
                 {
-                    CreateLogs(actionCode, ids, parentEntityId);
+                    CreateLogs(model.ActionCode, model.Ids, model.ParentEntityId);
                 }
 
                 return Content(result);
