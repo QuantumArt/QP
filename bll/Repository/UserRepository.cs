@@ -392,7 +392,7 @@ namespace Quantumart.QP8.BLL.Repository
         private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQpEntityObject dal)
         {
             return biz.ContentDefaultFilters
-                .Where(f => f.ArticleIDs.Any())
+                .Where(f => f.ArticleIDs.Any() && f.ContentId.HasValue)
                 .SelectMany(f =>
                     f.ArticleIDs.Select(aid => new UserDefaultFilterItemDAL
                         {

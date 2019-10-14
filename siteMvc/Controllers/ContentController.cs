@@ -435,7 +435,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> Select(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new ContentSelectableListViewModel(result, tabId, parentId, selModel.Ids);
+            var model = new ContentSelectableListViewModel(result, tabId, parentId, selModel?.Ids ?? new int[]{});
             return await JsonHtml("SelectIndex", model);
         }
 
