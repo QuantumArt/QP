@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
-using QP8.Infrastructure.Logging;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -732,8 +732,9 @@ namespace Quantumart.QP8.BLL
                 catch (Exception exp)
                 {
                     var message = exp.InnerException != null ? exp.InnerException.Message : exp.Message;
+                    CurrentLogger.Error().Exception(exp).Message($"Testing XAML validator for content {Id} failed").Write();
                     errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {message}");
-                    Logger.Log.Info($"Testing XAML validator for content {Id} failed", exp);
+
                 }
             }
         }

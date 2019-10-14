@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using NLog.Fluent;
 using QA.Validation.Xaml;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
@@ -413,7 +414,9 @@ namespace Quantumart.QP8.BLL
                 }
                 catch (Exception exp)
                 {
-                    errors.ErrorFor(f => f.XamlDictionaries, $"{SiteStrings.XamlDictionaries}: {exp.Message}");
+                    var str = $"{SiteStrings.XamlDictionaries}: {exp.Message}";
+                    CurrentLogger.Error().Exception(exp).Message(str).Write();
+                    errors.ErrorFor(f => f.XamlDictionaries, str);
                 }
             }
         }

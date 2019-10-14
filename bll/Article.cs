@@ -6,10 +6,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
+using NLog.Fluent;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
 using QP8.Infrastructure;
@@ -817,7 +817,9 @@ namespace Quantumart.QP8.BLL
                 }
                 catch (Exception exp)
                 {
-                    errors.ErrorForModel(string.Format(ArticleStrings.CustomValidationFailed, exp.Message));
+                    var str = string.Format(ArticleStrings.CustomValidationFailed, exp.Message);
+                    CurrentLogger.Error().Exception(exp).Message(str).Write();
+                    errors.ErrorForModel(str);
                 }
             }
 

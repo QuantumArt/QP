@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using NLog;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -14,6 +15,13 @@ namespace Quantumart.QP8.BLL
 {
     public abstract class EntityObject : BizObject
     {
+        protected readonly ILogger CurrentLogger;
+
+        public EntityObject()
+        {
+            CurrentLogger = LogManager.GetLogger(this.GetType().ToString());
+        }
+
         [Display(Name = "ID", ResourceType = typeof(EntityObjectStrings))]
         public int Id { get; set; }
 
