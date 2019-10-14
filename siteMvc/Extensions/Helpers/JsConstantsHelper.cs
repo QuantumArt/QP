@@ -202,9 +202,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.CONTROLLER_URL_BACKEND_ACTION_TYPE = \"{_urlHelper.Content( "~/BackendActionType/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_ARTICLE_SEARCH_BLOCK = \"{_urlHelper.Content( "~/ArticleSearchBlock/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_WORKFLOW = \"{_urlHelper.Content( "~/Workflow/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK = \"{_urlHelper.Content( "~/Static/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_CONTENT_SEARCH_BLOCK = \"{_urlHelper.Content( "~/Content/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_SITE = \"{_urlHelper.Content( "~/Site/")}\"");
-            constants.AppendLine($"window.CONTROLLER_URL_CONTENT = \"{_urlHelper.Content( "~/Static/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_CONTENT = \"{_urlHelper.Content( "~/Content/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_ARTICLE = \"{_urlHelper.Content( "~/Article/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_THUMBNAIL = \"{_urlHelper.Content( "~/Thumbnail/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_FIELD = \"{_urlHelper.Content("~/Field/")}\"");
