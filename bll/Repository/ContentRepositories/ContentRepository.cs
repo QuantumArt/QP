@@ -572,10 +572,10 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         internal static string GetTitleName(int contentId)
         {
-            var displayFields = GetDisplayFields(contentId, false);
+            var displayFields = GetDisplayFields(contentId, true);
             var fieldName = displayFields
                 .OrderByDescending(x => x.ViewInList)
-                .ThenByDescending(x => x.FieldPriority(false))
+                .ThenByDescending(x => x.FieldPriority(true))
                 .ThenBy(x => x.Order)
                 .FirstOrDefault();
 
