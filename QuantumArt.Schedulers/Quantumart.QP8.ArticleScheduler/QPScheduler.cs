@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration.Models;
 using Unity;
 using Unity.Resolution;
+using NLog;
+using NLog.Fluent;
+using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -16,6 +18,7 @@ namespace Quantumart.QP8.ArticleScheduler
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly TimeSpan _tasksQueueCheckShiftTime;
         private readonly IUnityContainer _unityContainer;
+        private static ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public QpScheduler(IUnityContainer unityContainer, PrtgErrorsHandler prtgLogger, List<QaConfigCustomer> customers, TimeSpan tasksQueueCheckShiftTime)
         {
@@ -39,7 +42,10 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     ex.Data.Clear();
                     ex.Data.Add("CustomerCode", customer.CustomerName);
-                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
+                    Logger.Error()
+                        .Exception(ex)
+                        .Message("There was an error on customer code: {customerCode}", customer.CustomerName)
+                        .Write();
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
             });
@@ -51,8 +57,11 @@ namespace Quantumart.QP8.ArticleScheduler
         {
             var customerDbScheduler = _unityContainer.Resolve<DbScheduler>(
                 new ParameterOverride("customer", customer),
-                new ParameterOverride("connectionString", customer.ConnectionString)
+                new ParameterOverride("connectionString", customer.ConnectionString),
+                new ParameterOverride("dbType", customer.DbType)
             );
+
+            QPContext.CurrentCustomerCode = customer.CustomerName;
 
             customerDbScheduler.Run();
             return customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.Add(_tasksQueueCheckShiftTime));

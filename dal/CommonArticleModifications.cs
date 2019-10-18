@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using NLog;
 using Npgsql;
 using NpgsqlTypes;
 using Quantumart.QP8.Constants;
@@ -16,9 +17,10 @@ namespace Quantumart.QP8.DAL
 {
     public static partial class Common
     {
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         public static void PersistArticle(DbConnection currentDbConnection, string customerCode, string xml, out int id)
         {
-            var logger = LogManager.GetLogger("Common");
+
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(currentDbConnection);
             var ns = SqlQuerySyntaxHelper.DbSchemaName(databaseType);
             var sql = $"select id, modified from {ns}.qp_persist_article(@xml)";
@@ -32,7 +34,7 @@ namespace Quantumart.QP8.DAL
                 }
                 catch (PostgresException ex)
                 {
-                    logger.Error()
+                    Logger.Error()
                         .Exception(ex)
                         .Message("Error while persisting article with xml: {xml}\n Query: {sql}", xml, sql)
                         .Property("customerCode", customerCode)

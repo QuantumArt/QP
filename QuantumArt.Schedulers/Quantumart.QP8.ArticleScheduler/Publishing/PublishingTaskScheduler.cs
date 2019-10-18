@@ -1,9 +1,10 @@
 ﻿using System;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
+using NLog;
+using NLog.Fluent;
 
 namespace Quantumart.QP8.ArticleScheduler.Publishing
 {
@@ -11,6 +12,7 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
     {
         private readonly QaConfigCustomer _customer;
         private readonly IArticlePublishingSchedulerService _publishingService;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public PublishingTaskScheduler(QaConfigCustomer customer, IArticlePublishingSchedulerService publishingService)
         {
@@ -25,7 +27,11 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             if (ShouldProcessTask(task, currentTime))
             {
                 var article = _publishingService.PublishAndCloseSchedule(task.Id);
-                Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been published on customer code: {_customer.CustomerName}");
+                Logger.Info()
+                    .Message(
+                        "Article [{id}: {name}] has been published on customer code: {customerCode}",
+                    article.Id, article.Name, _customer.CustomerName)
+                    .Write();
             }
         }
 

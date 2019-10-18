@@ -218,6 +218,8 @@ namespace Quantumart.QP8.Configuration
             }
         }
 
+        public static bool LogJsonAsString => Options.LogJsonAsString;
+
         public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
 
         public static string ADsConnectionUsername => ConfigVariable(Config.ADsConnectionUsernameKey);

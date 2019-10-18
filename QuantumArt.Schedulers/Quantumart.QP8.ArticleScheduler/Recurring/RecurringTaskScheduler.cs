@@ -1,11 +1,12 @@
 using System;
 using QP8.Infrastructure;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
+using NLog;
+using NLog.Fluent;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
@@ -13,6 +14,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
     {
         private readonly QaConfigCustomer _customer;
         private readonly IArticleRecurringSchedulerService _recurringService;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public RecurringTaskScheduler(QaConfigCustomer customer, IArticleRecurringSchedulerService recurringService)
         {
@@ -56,7 +58,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleWithinShowRange = _recurringService.ShowArticle(task.ArticleId);
                 if (articleWithinShowRange != null && !articleWithinShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleWithinShowRange.Id}: {articleWithinShowRange.Name}] has been shown on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                            articleWithinShowRange.Id, articleWithinShowRange.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison == 0)
@@ -64,7 +70,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleOutOfShowRange = _recurringService.HideArticle(task.ArticleId);
                 if (articleOutOfShowRange != null && articleOutOfShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleOutOfShowRange.Id}: {articleOutOfShowRange.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                            articleOutOfShowRange.Id, articleOutOfShowRange.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison > 0)
@@ -72,7 +82,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleOutOfShowAndTaskRanges = _recurringService.HideAndCloseSchedule(task.Id);
                 if (articleOutOfShowAndTaskRanges != null && articleOutOfShowAndTaskRanges.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleOutOfShowAndTaskRanges.Id}: {articleOutOfShowAndTaskRanges.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                            articleOutOfShowAndTaskRanges.Id, articleOutOfShowAndTaskRanges.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
         }

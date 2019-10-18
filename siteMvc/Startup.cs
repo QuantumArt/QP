@@ -47,9 +47,12 @@ using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.Interfaces;
+using Quantumart.QP8.ArticleScheduler;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
+using A = Quantumart.QP8.BLL.Services.ArticleServices;
+using S = Quantumart.QP8.ArticleScheduler;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -78,6 +81,15 @@ namespace Quantumart.QP8.WebMvc
             var formOptions = new FormOptions();
             Configuration.Bind("Form", formOptions);
             services.AddSingleton(formOptions);
+
+            if (qpOptions.EnableArticleScheduler)
+            {
+                var schedulerOptions = new ArticleSchedulerProperties(qpOptions);
+                Configuration.Bind("ArticleScheduler", schedulerOptions);
+                services.AddSingleton(schedulerOptions);
+
+                services.AddHostedService<S.ArticleService>();
+            }
 
             // used by Session middleware
             services.AddDistributedMemoryCache();
@@ -168,7 +180,7 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<IXmlDbUpdateLogRepository, XmlDbUpdateLogRepository>()
                     .AddTransient<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
                     .AddTransient<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
-                    .AddTransient<IArticleService, ArticleService>()
+                    .AddTransient<IArticleService, A.ArticleService>()
                     .AddTransient<IContentService, ContentService>()
                     .AddTransient<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                     .AddTransient<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()

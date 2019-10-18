@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -19,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
     {
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
-        private readonly ILog _importLogger;
+        private static readonly ILogger ImportLogger = LogManager.GetCurrentClassLogger();
 
         private const int ItemsPerStep = 20;
 
@@ -39,7 +40,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             SiteId = siteId;
             ContentId = contentId;
             ItemCount = itemCount;
-            _importLogger = LogProvider.GetLogger(GetType());
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -77,7 +77,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             Updated = settings.UpdatedArticleIds.Count
                         };
 
-                        _importLogger.Trace($"Import articles step: {step}. Settings: {logData.ToJsonLog()}");
+                        var msg = "Import articles step: {step}.";
+                        msg = (QPConfiguration.LogJsonAsString) ? msg + " Settings: " + logData.ToJsonLog() : msg;
+
+                        ImportLogger.Trace()
+                            .Message(msg, step)
+                            .Property("settings", logData)
+                            .Write();
 
                         result.ProcessedItemsCount = processedItemsCount;
                         result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";

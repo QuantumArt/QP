@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
@@ -18,11 +18,8 @@ using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
-
-//using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
-using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
@@ -49,6 +46,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
 
         private readonly IServiceProvider _serviceProvider;
+
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider provider = null)
             : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider)
@@ -162,14 +161,23 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
-                    Logger.Log.Warn($"XmlDbUpdateAction conflict: Current action already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
+                    Logger.Warn()
+                        .Message("XmlDbUpdateAction conflict: Current action already applied and exist at database")
+                        .Property("logEntry", logEntry)
+                        .Write();
+
                     continue;
                 }
 
                 var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
-                Logger.Log.Debug($"-> Begin replaying action [{logEntry.Hash}]: -> {xmlActionStringLog}");
+                Logger.Debug()
+                    .Message("-> Begin replaying action [{hash}]: -> {xml}", logEntry.Hash, xmlActionStringLog)
+                    .Write();
+
                 var replayedAction = ReplayAction(action, backendUrl);
-                Logger.Log.Debug($"End replaying action [{logEntry.Hash}]: {xmlActionStringLog}");
+                Logger.Debug()
+                    .Message("End replaying action [{hash}]: -> {xml}", logEntry.Hash, xmlActionStringLog)
+                    .Write();
 
                 logEntry.Ids = string.Join(",", replayedAction.Ids);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, currentDbVersion, backendUrl, true).ToNormalizedString(SaveOptions.DisableFormatting, true);

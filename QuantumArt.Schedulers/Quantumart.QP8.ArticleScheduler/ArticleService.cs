@@ -1,25 +1,22 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using NLog;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
     #region snippet1
     public class ArticleService : IHostedService
     {
-        private readonly ILogger _logger;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly IApplicationLifetime _appLifetime;
         internal readonly QpSchedulerProcessor Processor;
         private readonly ArticleSchedulerProperties _options;
 
-        public ArticleService(
-            ILogger<ArticleService> logger, IApplicationLifetime appLifetime, IOptions<ArticleSchedulerProperties> optionsAccessor)
+        public ArticleService(IApplicationLifetime appLifetime, ArticleSchedulerProperties options)
         {
-            _logger = logger;
             _appLifetime = appLifetime;
-            _options = optionsAccessor.Value;
+            _options = options;
             Processor = new QpSchedulerProcessor(_options);
         }
 
@@ -38,13 +35,13 @@ namespace Quantumart.QP8.ArticleScheduler
 
         private void OnStarted()
         {
-            _logger.LogInformation("Starting...");
+            Logger.Info("Starting article scheduler...");
             Processor.Run();
         }
 
         private void OnStopped()
         {
-            _logger.LogInformation("Stopping...");
+            Logger.Info("Stopping article scheduler...");
             Processor.Stop();
         }
     }

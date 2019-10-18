@@ -49,5 +49,9 @@ namespace Quantumart.QP8.Configuration
 
         public Globalization Globalization { get; set; }
 
+        public bool EnableArticleScheduler { get; set; }
+
+        public bool LogJsonAsString { get; set; }
+
     }
 }

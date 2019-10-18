@@ -19,7 +19,7 @@ namespace Quantumart.QP8.BLL
 
         public EntityObject()
         {
-            CurrentLogger = LogManager.GetLogger(this.GetType().ToString());
+            CurrentLogger = LogManager.GetLogger(GetType().FullName);
         }
 
         [Display(Name = "ID", ResourceType = typeof(EntityObjectStrings))]

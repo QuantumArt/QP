@@ -1,22 +1,18 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Net.Http.Headers;
-using QP8.Infrastructure.Logging;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using FileIO = System.IO.File;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -25,11 +21,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IBackendActionLogRepository _logger;
         private readonly FormOptions _formOptions;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public UploadController(IBackendActionLogRepository logger, FormOptions formOptions)
         {
             _logger = logger;
             _formOptions = formOptions;
+        }
+
+        private void LogError(string msg, string fileName, Exception ex = null)
+        {
+            var msgBuilder = Logger.Error().Message(msg).Property("fileName", fileName);
+            if (ex != null)
+            {
+                msgBuilder.Exception(ex);
+            }
+            msgBuilder.Write();
         }
 
         [HttpPost]
@@ -40,7 +47,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
             {
                 var errorMsg = $"File to upload: \"{name}\" has invalid characters";
-                Logger.Log.Warn(errorMsg);
+                LogError(errorMsg, name);
                 return Json(new { message = errorMsg, isError = true });
             }
 
@@ -68,7 +75,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 if (!securityResult.Result)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
-                    Logger.Log.Warn(errorMsg);
+
+                    LogError(errorMsg, name);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
 
@@ -82,7 +91,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (Exception ex)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message);
-                    Logger.Log.Error(errorMsg, ex);
+
+                    LogError(errorMsg, name, ex);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
             }
@@ -98,7 +109,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (Exception ex)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, tempPath, ex.Message);
-                    Logger.Log.Error(errorMsg, ex);
+
+                    LogError(errorMsg, name, ex);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
 
@@ -113,7 +126,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         if (!securityResult.Result)
                         {
                             var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
-                            Logger.Log.Warn(errorMsg);
+
+                            LogError(errorMsg, name);
+
                             return Json(new { message = errorMsg, isError = true });
                         }
 
@@ -135,7 +150,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (Exception ex)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message);
-                    Logger.Log.Error(errorMsg, ex);
+
+                    LogError(errorMsg, name, ex);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
 

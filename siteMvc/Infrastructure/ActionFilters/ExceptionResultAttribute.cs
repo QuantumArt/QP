@@ -37,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
         public ExceptionResultAttribute(ExceptionResultMode mode)
         {
             _mode = mode;
-            _logger = LogManager.GetLogger(GetType().FullName);
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
         public override async Task OnExceptionAsync(ExceptionContext filterContext)

@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using QP8.Infrastructure.Logging;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
@@ -11,6 +12,7 @@ using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Constants;
+using ILogger = NLog.ILogger;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
 {
@@ -22,6 +24,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
         private readonly IFieldRepository _fieldRepository;
         private readonly IArticleRepository _articleRepository;
         private readonly IBatchUpdateService _articleService;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public CsvDbUpdateService(IBatchUpdateService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
         {
@@ -83,7 +86,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                             continue;
                         }
 
-                        Logger.Log.Warn($"Ignore related article CIID:{-relatedId}. Cann't find any related article at csv data or db. FID: {articleField.Id}, CID: {article.ContentId}, CIID: {-article.Id}");
+                        var msg = "Ignore related article CIID: {relatedArticleId}. " +
+                            "Can't find any related article at csv data or db. " +
+                            "FID: {fieldId}, CID: {contentId}, CIID: {articleId}";
+                        Logger.Warn()
+                            .Message(msg,-relatedId, articleField.Id, articleField.Id, -article.Id)
+                            .Write();
                     }
 
                     articleField.ArticleIds = result.ToArray();

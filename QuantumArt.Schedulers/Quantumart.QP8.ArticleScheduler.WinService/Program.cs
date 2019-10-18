@@ -28,7 +28,12 @@ namespace Quantumart.QP8.ArticleScheduler.WinService
                 })
                 .ConfigureServices((hostContext, services) => { services.AddHostedService<ArticleService>(); })
                 .ConfigureServices((hostContext, services) => { services.Configure<HostOptions>(option => { option.ShutdownTimeout = System.TimeSpan.FromSeconds(20); }); })
-                .ConfigureServices((hostContext, services) => { services.Configure<ArticleSchedulerProperties>(hostContext.Configuration.GetSection("Properties")); })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    var schedulerOptions = new ArticleSchedulerProperties();
+                    hostContext.Configuration.Bind("Properties", schedulerOptions);
+                    services.AddSingleton(schedulerOptions);
+                })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.ClearProviders();

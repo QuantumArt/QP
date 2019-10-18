@@ -39,6 +39,7 @@
     <ProjectReference Include="..\configuration\Configuration.csproj" />
     <ProjectReference Include="..\constants\Constants.csproj" />
     <ProjectReference Include="..\Merger\Merger.csproj" />
+    <ProjectReference Include="..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
     <ProjectReference Include="..\security\Security.csproj" />
     <ProjectReference Include="..\utils\Utils.csproj" />

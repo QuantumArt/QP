@@ -1,14 +1,15 @@
 using System;
 using System.IO;
-using Microsoft.AspNetCore.Http;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
+
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -16,26 +17,28 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesService : MultistepActionServiceAbstract
     {
-        private readonly ILog _importLogger;
+        private static readonly ILogger ImportLogger = LogManager.GetCurrentClassLogger();
 
-        public ImportArticlesService()
-        {
-            _importLogger = LogProvider.GetLogger(GetType());
-        }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
         {
-            var importSettings = settingsParams as ImportSettings;
-            _importLogger.Trace($"Start import articles with settings id: {importSettings.Id}");
-
-            var content = ContentRepository.GetById(id);
-            if (content == null)
+            if (settingsParams is ImportSettings importSettings)
             {
-                throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+                ImportLogger.Info()
+                    .Message("Start import articles with settings id: {id}", importSettings.Id)
+                    .Write();
+
+                var content = ContentRepository.GetById(id);
+                if (content == null)
+                {
+                    throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+                }
+
+                importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
+                HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, importSettings);
             }
 
-            importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
-            HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, importSettings);
+
         }
 
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
@@ -74,7 +77,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 ImportAction = (CsvImportMode)importSettings.ImportAction
             };
 
-            _importLogger.Info($"Articles import was finished {logData.ToJsonLog()}");
+            var msg = "Articles import was finished";
+            msg = (QPConfiguration.LogJsonAsString) ? msg + " " + logData.ToJsonLog() : msg;
+
+            ImportLogger.Info()
+                .Message(msg)
+                .Property("result", logData)
+                .Write();
+
             HttpContext.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
 
             base.TearDown();

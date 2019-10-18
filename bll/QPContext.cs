@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using NLog;
+using NLog.Fluent;
 using Npgsql;
-using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -32,6 +32,7 @@ namespace Quantumart.QP8.BLL
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class QPContext
     {
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
@@ -678,7 +679,13 @@ namespace Quantumart.QP8.BLL
             dbContext.SaveChanges();
             sessionsLog = MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
 
-            Logger.Log.Debug($"User successfully authenticated: {sessionsLog.ToJsonLog()}");
+            var msg = "User successfully authenticated";
+            msg = QPConfiguration.LogJsonAsString ? msg + ": " + "sessionsLog.ToJsonLog()" : msg;
+
+            Logger.Debug()
+                .Message(msg)
+                .Property("sessionsLog", sessionsLog)
+                .Write();
 
             return sessionsLog.SessionId;
         }

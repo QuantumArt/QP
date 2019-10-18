@@ -9,11 +9,7 @@ namespace Quantumart.QP8.WebMvc
 {
     public class GlobalExceptionHandler
     {
-        private readonly ILogger _logger;
-        public GlobalExceptionHandler()
-        {
-            _logger = LogManager.GetLogger(GetType().FullName);
-        }
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public void Action(IApplicationBuilder options)
         {
@@ -24,7 +20,7 @@ namespace Quantumart.QP8.WebMvc
                 var ex = context.Features.Get<IExceptionHandlerFeature>();
                 if (ex != null)
                 {
-                     _logger.Error()
+                     Logger.Error()
                          .Exception(ex.Error)
                          .Message("Unhandled exception occurs")
                          .Write();

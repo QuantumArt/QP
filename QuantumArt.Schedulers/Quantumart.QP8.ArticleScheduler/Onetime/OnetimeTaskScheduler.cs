@@ -1,11 +1,14 @@
 ﻿using System;
-using QP8.Infrastructure.Logging;
+using Npgsql.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Recurring;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
+using NLog;
+using NLog.Fluent;
+
 
 namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
@@ -13,6 +16,7 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
     {
         private readonly QaConfigCustomer _customer;
         private readonly IArticleOnetimeSchedulerService _onetimeService;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public OnetimeTaskScheduler(QaConfigCustomer customer, IArticleOnetimeSchedulerService onetimeService)
         {
@@ -42,7 +46,12 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
                 var article = _onetimeService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                        "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                        article.Id, article.Name, _customer.CustomerName)
+                        .Write();
+
                 }
             }
 
@@ -54,7 +63,11 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 
                 if (article != null && !article.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been shown on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been shown on customer code: {customerCode}",
+                            article.Id, article.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
         }

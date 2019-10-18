@@ -254,10 +254,14 @@ namespace Quantumart.QP8.DAL
         }
 
 
-        public static void SetContentItemVisible(DbConnection sqlConnection, int contentItemId, bool isVisible, int lastModifiedBy = 1)
+        public static void SetContentItemVisible(DbConnection connection, int contentItemId, bool isVisible, int lastModifiedBy = 1)
         {
-            var sql = "UPDATE content_item with(rowlock) SET visible = @is_visible, modified = getdate(), last_modified_by = @last_modified_by WHERE content_item_id = @id";
-            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
+            var dbType = GetDbType(connection);
+            var sql = $"UPDATE content_item {WithRowLock(dbType)} " +
+                $"SET visible = @is_visible, modified = {Now(dbType)}, last_modified_by = @last_modified_by " +
+                "WHERE content_item_id = @id";
+
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.AddWithValue("id", contentItemId);
                 cmd.Parameters.AddWithValue("is_visible", isVisible ? 1 : 0);
@@ -270,7 +274,7 @@ namespace Quantumart.QP8.DAL
         public static void MergeArticle(DbConnection sqlConnection, int contentItemId, int lastModifiedBy = 1)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var sql = dbType == DatabaseType.SqlServer ? "qp_merge_article" : "call qp_merge_article(@item_id, last_modified_by);";
+            var sql = dbType == DatabaseType.SqlServer ? "qp_merge_article" : "call qp_merge_articles(ARRAY[@item_id]::int[], @last_modified_by);";
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
@@ -691,8 +695,7 @@ WHERE content_item_id = {contentItemId}
                  }
                  catch (Exception ex)
                  {
-                     var logger = LogManager.GetLogger("Common");
-                     logger.Error()
+                     Logger.Error()
                          .Exception(ex)
                          .Message("Cannot resolve IP Address: {ip}", ip)
                          .Property("customerCode", customerCode)

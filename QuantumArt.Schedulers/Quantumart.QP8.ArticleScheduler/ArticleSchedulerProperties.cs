@@ -1,9 +1,22 @@
 using System;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
     public class ArticleSchedulerProperties
     {
+        public ArticleSchedulerProperties()
+        {
+
+        }
+
+        public ArticleSchedulerProperties(QPublishingOptions options)
+        {
+            XmlConfigPath = options.QpConfigPath;
+            ConfigServiceUrl = options.QpConfigUrl;
+            ConfigServiceToken = options.QpConfigToken;
+        }
+
         public TimeSpan RecurrentTimeout { get; set; }
 
         public TimeSpan PrtgLoggerTasksQueueCheckShiftTime { get; set; }

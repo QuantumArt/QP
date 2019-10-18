@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using QP8.Infrastructure.Logging;
-using QP8.Infrastructure.Extensions;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure.Web.AspNet.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
@@ -21,6 +21,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
+using ILogger = NLog.ILogger;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -28,6 +29,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly ICustomActionService _service;
         private readonly IServiceProvider _serviceProvider;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public CustomActionController(ICustomActionService service, IServiceProvider serviceProvider)
         {
@@ -42,7 +44,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             try
             {
                 customActionToExecute = _service.PrepareForExecuting(tabId, parentId, query);
-                Logger.Log.Debug($"Executing custom action url: {customActionToExecute.CustomAction.FullUrl}");
+                Logger.Debug()
+                    .Message("Executing custom action url: {url}", customActionToExecute.CustomAction.FullUrl)
+                    .Write();
 
                 if (!customActionToExecute.IsActionAccessable)
                 {
@@ -85,7 +89,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(model.Url);
 
-            Logger.Log.Debug($"Proxy custom action url: {urlToProcess.ToJsonLog()}");
+            Logger.Debug()
+                .Message("Proxying custom action url: {url}", urlToProcess)
+                .Write();
+
             var parts = urlToProcess.Split("?".ToCharArray(), 2);
             var request = WebRequest.Create(parts[0]);
             request.Method = "POST";
