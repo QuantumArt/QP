@@ -13,8 +13,8 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             int interval,
             int relativeInterval,
             int recurrenceFactor,
-            DateTime startDate,
-            DateTime endDate,
+            DateTimeOffset startDate,
+            DateTimeOffset endDate,
             TimeSpan startTime,
             TimeSpan duration)
         {
@@ -42,9 +42,9 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
 
         public int RecurrenceFactor { get; }
 
-        public DateTime StartDate { get; }
+        public DateTimeOffset StartDate { get; }
 
-        public DateTime EndDate { get; }
+        public DateTimeOffset EndDate { get; }
 
         public TimeSpan StartTime { get; }
 

@@ -5,9 +5,9 @@ namespace Quantumart.QP8.BLL.Helpers
 {
     public static class ScheduleHelper
     {
-        public static DateTime GetStartDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultStartDate);
+        public static DateTimeOffset GetStartDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultStartDate);
 
-        public static DateTime GetEndDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultEndDate);
+        public static DateTimeOffset GetEndDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultEndDate);
 
         public static DateTime DefaultStartDate
         {
@@ -27,21 +27,21 @@ namespace Quantumart.QP8.BLL.Helpers
             }
         }
 
-        private static DateTime GetScheduleDateTimeFromSqlValues(int? dateValue, int? timeValue, DateTime defaultDate) => dateValue != null && timeValue != null ? GetScheduleDateTimeFromSqlValues((int)dateValue, (int)timeValue) : defaultDate;
+        private static DateTimeOffset GetScheduleDateTimeFromSqlValues(int? dateValue, int? timeValue, DateTime defaultDate) => dateValue != null && timeValue != null ? GetScheduleDateTimeFromSqlValues((int)dateValue, (int)timeValue) : defaultDate;
 
-        public static DateTime GetScheduleDateFromSqlValues(int? dateValue, DateTime defaultDate) => dateValue.HasValue ? GetScheduleDateFromSqlValues(dateValue.Value) : defaultDate;
+        public static DateTimeOffset GetScheduleDateFromSqlValues(int? dateValue, DateTime defaultDate) => dateValue.HasValue ? GetScheduleDateFromSqlValues(dateValue.Value) : defaultDate;
 
         public static TimeSpan GetScheduleTimeFromSqlValues(int? timeValue, TimeSpan defaultTime) => timeValue.HasValue ? GetScheduleTimeFromSqlValues(timeValue.Value) : defaultTime;
 
-        internal static DateTime GetScheduleDateTimeFromSqlValues(int dateValue, int timeValue) => GetScheduleDateFromSqlValues(dateValue) + GetScheduleTimeFromSqlValues(timeValue);
+        internal static DateTimeOffset GetScheduleDateTimeFromSqlValues(int dateValue, int timeValue) => GetScheduleDateFromSqlValues(dateValue) + GetScheduleTimeFromSqlValues(timeValue);
 
-        internal static DateTime GetScheduleDateFromSqlValues(int dateValue)
+        internal static DateTimeOffset GetScheduleDateFromSqlValues(int dateValue)
         {
             var year = dateValue / 10000;
-            ;
             var month = dateValue % 10000 / 100;
             var day = dateValue % 100;
-            return new DateTime(year, month, day);
+            var result = new DateTimeOffset(new DateTime(year, month, day));
+            return result;
         }
 
         internal static TimeSpan GetScheduleTimeFromSqlValues(int timeValue)
@@ -52,13 +52,13 @@ namespace Quantumart.QP8.BLL.Helpers
             return new TimeSpan(hour, minute, second);
         }
 
-        internal static Tuple<int, int> GetSqlValuesFromScheduleDateTime(DateTime date) => new Tuple<int, int>(GetSqlValuesFromScheduleDate(date.Date), GetSqlValuesFromScheduleTime(date.TimeOfDay));
+        internal static Tuple<int, int> GetSqlValuesFromScheduleDateTime(DateTimeOffset date) => new Tuple<int, int>(GetSqlValuesFromScheduleDate(date.Date), GetSqlValuesFromScheduleTime(date.TimeOfDay));
 
-        internal static int GetSqlValuesFromScheduleDate(DateTime date) => date.Year * 10000 + date.Month * 100 + date.Day;
+        internal static int GetSqlValuesFromScheduleDate(DateTimeOffset date) => date.Year * 10000 + date.Month * 100 + date.Day;
 
         internal static int GetSqlValuesFromScheduleTime(TimeSpan time) => time.Hours * 10000 + time.Minutes * 100 + time.Seconds;
 
-        public static TimeSpan GetDuration(string durationUnits, decimal duration, DateTime startDate)
+        public static TimeSpan GetDuration(string durationUnits, decimal duration, DateTimeOffset startDate)
         {
             switch (durationUnits.ToLower())
             {

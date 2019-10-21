@@ -55,13 +55,13 @@ namespace Quantumart.QP8.BLL
         public TimeSpan GetDefaultShowEndTime() => new TimeSpan(23, 59, 59);
 
         [Display(Name = "RepetitionStartDate", ResourceType = typeof(ArticleStrings))]
-        public DateTime RepetitionStartDate { get; set; }
+        public DateTimeOffset RepetitionStartDate { get; set; }
 
         [Display(Name = "RepetitionNoEnd", ResourceType = typeof(ArticleStrings))]
         public bool RepetitionNoEnd { get; set; }
 
         [Display(Name = "RepetitionEndDate", ResourceType = typeof(ArticleStrings))]
-        public DateTime RepetitionEndDate { get; set; }
+        public DateTimeOffset RepetitionEndDate { get; set; }
 
         [Display(Name = "ScheduleRecurringValue", ResourceType = typeof(ArticleStrings))]
         public int ScheduleRecurringValue { get; set; }

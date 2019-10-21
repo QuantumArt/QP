@@ -9,11 +9,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
         private readonly int _interval;
         private readonly int _relativeInterval;
         private readonly int _recurrenceFactor;
-        private readonly DateTime _startDate;
-        private readonly DateTime _endDate;
+        private readonly DateTimeOffset _startDate;
+        private readonly DateTimeOffset _endDate;
         private readonly TimeSpan _startTime;
 
-        public MonthlyRelativeStartCalculator(int interval, int relativeInterval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
+        public MonthlyRelativeStartCalculator(int interval, int relativeInterval, int recurrenceFactor, DateTimeOffset startDate, DateTimeOffset endDate, TimeSpan startTime)
         {
             _interval = interval;
             _relativeInterval = relativeInterval;
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
             CalculateNearestStartDateFunc = GetNearestStartDate;
         }
 
-        private static Func<DateTime, bool> GetIntervalPredicate(int interval)
+        private static Func<DateTimeOffset, bool> GetIntervalPredicate(int interval)
         {
             switch (interval)
             {
@@ -54,7 +54,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
             }
         }
 
-        private static IEnumerable<DateTime> ApplyRelativeInternalConditions(IEnumerable<DateTime> enumerator, int relativeInterval)
+        private static IEnumerable<DateTimeOffset> ApplyRelativeInternalConditions(IEnumerable<DateTimeOffset> enumerator, int relativeInterval)
         {
             switch (relativeInterval)
             {
@@ -69,13 +69,13 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
                 case 16:
                     return enumerator.GetEveryLastDayGroupedByMonth();
                 default:
-                    return Enumerable.Empty<DateTime>();
+                    return Enumerable.Empty<DateTimeOffset>();
             }
         }
 
-        private DateTime? GetNearestStartDate(DateTime dateTime)
+        private DateTimeOffset? GetNearestStartDate(DateTimeOffset dateTime)
         {
-            var allStarts = Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+            var allStarts = Optimize(new Tuple<DateTimeOffset, DateTimeOffset>(_startDate.Date, _endDate.Date), dateTime.Date)
                 .GetEveryFullMonthLimitedByFactor(_recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor
                 .GetAllDaysFromRange()
                 .Where(GetIntervalPredicate(_interval));

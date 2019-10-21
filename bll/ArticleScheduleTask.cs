@@ -16,11 +16,11 @@ namespace Quantumart.QP8.BLL
 
         public int FreqRecurrenceFactor { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTimeOffset StartDate { get; set; }
 
         public TimeSpan StartTime { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         public TimeSpan EndTime { get; set; }
 

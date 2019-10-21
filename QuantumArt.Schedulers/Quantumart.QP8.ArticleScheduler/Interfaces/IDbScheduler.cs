@@ -10,6 +10,6 @@ namespace Quantumart.QP8.ArticleScheduler.Interfaces
 
         List<ArticleScheduleTask> GetDbScheduleTaskActions();
 
-        int GetTasksCountToProcessAtSpecificDateTime(DateTime dateTimeToCheck);
+        int GetTasksCountToProcessAtSpecificDateTime(DateTimeOffset dateTimeToCheck);
     }
 }

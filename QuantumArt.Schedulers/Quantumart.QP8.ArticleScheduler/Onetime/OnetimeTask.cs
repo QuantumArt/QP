@@ -6,7 +6,7 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
     public class OnetimeTask : ISchedulerTask
     {
-        public OnetimeTask(int id, int articleId, DateTime startDateTime, DateTime endDateTime)
+        public OnetimeTask(int id, int articleId, DateTimeOffset startDateTime, DateTimeOffset endDateTime)
         {
             Id = id;
             ArticleId = articleId;
@@ -18,9 +18,9 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 
         public int ArticleId { get; }
 
-        public DateTime StartDateTime { get; }
+        public DateTimeOffset StartDateTime { get; }
 
-        public DateTime EndDateTime { get; }
+        public DateTimeOffset EndDateTime { get; }
 
         public static OnetimeTask CreateOnetimeTask(ArticleScheduleTask task) => new OnetimeTask(task.Id, task.ArticleId, task.StartDate + task.StartTime, task.EndDate + task.EndTime);
     }

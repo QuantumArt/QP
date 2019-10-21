@@ -12,6 +12,6 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
         /// <summary>
         /// Получить текущее время на сервере БД
         /// </summary>
-        DateTime GetCurrentDBDateTime();
+        DateTimeOffset GetCurrentDBDateTime();
     }
 }

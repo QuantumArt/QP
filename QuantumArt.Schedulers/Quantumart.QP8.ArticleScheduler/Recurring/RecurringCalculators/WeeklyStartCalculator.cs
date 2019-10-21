@@ -7,11 +7,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
     {
         private readonly int _interval;
         private readonly int _recurrenceFactor;
-        private readonly DateTime _startDate;
-        private readonly DateTime _endDate;
+        private readonly DateTimeOffset _startDate;
+        private readonly DateTimeOffset _endDate;
         private readonly TimeSpan _startTime;
 
-        public WeeklyStartCalculator(int interval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
+        public WeeklyStartCalculator(int interval, int recurrenceFactor, DateTimeOffset startDate, DateTimeOffset endDate, TimeSpan startTime)
         {
             _interval = interval;
             _recurrenceFactor = recurrenceFactor;
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
             CalculateNearestStartDateFunc = GetNearestStartDate;
         }
 
-        private static bool IntervalPredicate(DateTime dateTime, int interval) =>
+        private static bool IntervalPredicate(DateTimeOffset dateTime, int interval) =>
             (interval & 1) == 1 && dateTime.DayOfWeek == DayOfWeek.Sunday ||
             (interval & 2) == 2 && dateTime.DayOfWeek == DayOfWeek.Monday ||
             (interval & 4) == 4 && dateTime.DayOfWeek == DayOfWeek.Tuesday ||
@@ -31,9 +31,9 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
             (interval & 32) == 32 && dateTime.DayOfWeek == DayOfWeek.Friday ||
             (interval & 64) == 64 && dateTime.DayOfWeek == DayOfWeek.Saturday;
 
-        private DateTime? GetNearestStartDate(DateTime dateTime)
+        private DateTimeOffset? GetNearestStartDate(DateTimeOffset dateTime)
         {
-            return Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+            return Optimize(new Tuple<DateTimeOffset, DateTimeOffset>(_startDate.Date, _endDate.Date), dateTime.Date)
                 .GetEveryFullWeekLimitedByFactor(_recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
                 .GetAllDaysFromRange()
                 .Where(d => IntervalPredicate(d, _interval))

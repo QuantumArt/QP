@@ -7,8 +7,8 @@ namespace Quantumart.QP8.ArticleScheduler.Interfaces
     {
         void Run(ArticleScheduleTask articleTask);
 
-        bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck);
+        bool ShouldProcessTask(ISchedulerTask task, DateTimeOffset dateTimeToCheck);
 
-        bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck);
+        bool ShouldProcessTask(ArticleScheduleTask task, DateTimeOffset dateTimeToCheck);
     }
 }

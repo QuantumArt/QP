@@ -83,10 +83,10 @@ namespace Quantumart.QP8.BLL
         public int Id { get; set; }
 
         [Display(Name = "StartDate", ResourceType = typeof(ArticleStrings))]
-        public DateTime StartDate { get; set; }
+        public DateTimeOffset StartDate { get; set; }
 
         [Display(Name = "EndDate", ResourceType = typeof(ArticleStrings))]
-        public DateTime EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         [Display(Name = "StartRightNow", ResourceType = typeof(ArticleStrings))]
         public bool StartRightNow { get; set; }
@@ -98,7 +98,7 @@ namespace Quantumart.QP8.BLL
         public ScheduleTypeEnum ScheduleType { get; set; }
 
         [Display(Name = "PublicationTime", ResourceType = typeof(ArticleStrings))]
-        public DateTime PublicationDate { get; set; }
+        public DateTimeOffset PublicationDate { get; set; }
 
         public RecurringSchedule Recurring { get; set; }
 

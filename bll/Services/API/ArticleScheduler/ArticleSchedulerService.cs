@@ -35,7 +35,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             }
         }
 
-        public DateTime GetCurrentDBDateTime()
+        public DateTimeOffset GetCurrentDBDateTime()
         {
             QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
             using (var scope = new QPConnectionScope())

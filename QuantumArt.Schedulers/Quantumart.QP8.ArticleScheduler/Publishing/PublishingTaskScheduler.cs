@@ -35,24 +35,29 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        public bool ShouldProcessTask(ISchedulerTask task, DateTimeOffset dateTimeToCheck)
         {
-            var result = dateTimeToCheck >= ((PublishingTask)task).PublishingDateTime;
-            var pubTask = ((PublishingTask)task);
+            return ShouldProcessTask((PublishingTask)task, dateTimeToCheck);
+        }
+
+        public bool ShouldProcessTask(PublishingTask task, DateTimeOffset dateTimeToCheck)
+        {
+            var dt1 = dateTimeToCheck;
+            var dt2 = task.PublishingDateTime;
+            var result = dt1 >= dt2 ;
             if (!result)
             {
-                Logger.Info()
+                Logger.Trace()
                     .Message(
                         "Article [{id}] has been skipped for processing on customer code: {customerCode}." +
                         " {currentDateTime} < {publishingDateTime}. ",
-                        pubTask.ArticleId, _customer.CustomerName,
-                        dateTimeToCheck, pubTask.PublishingDateTime)
+                        task.ArticleId, _customer.CustomerName, dt1, dt2)
                     .Write();
             }
 
             return result;
         }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTimeOffset dateTimeToCheck) => ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck);
     }
 }

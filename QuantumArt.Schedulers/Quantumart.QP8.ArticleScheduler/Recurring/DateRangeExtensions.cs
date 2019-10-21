@@ -15,17 +15,17 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         /// 0 - дата в диапазоне
         /// 1 - дата после диапазона
         /// </returns>
-        internal static int CompareRangeTo(this Tuple<DateTime, DateTime> range, DateTime dt)
+        internal static int CompareRangeTo(this Tuple<DateTimeOffset, DateTimeOffset> range, DateTimeOffset dt)
         {
-            if (range.Item1 > dt)
+            if (range.Item1.ToUniversalTime() > dt.ToUniversalTime())
             {
                 return -1;
             }
 
-            return range.Item2 < dt ? 1 : 0;
+            return range.Item2.ToUniversalTime() < dt.ToUniversalTime() ? 1 : 0;
         }
 
-        internal static IEnumerable<Tuple<DateTime, DateTime>> GetEveryFullMonthLimitedByFactor(this Tuple<DateTime, DateTime> range, int recurrenceFactor)
+        internal static IEnumerable<Tuple<DateTimeOffset, DateTimeOffset>> GetEveryFullMonthLimitedByFactor(this Tuple<DateTimeOffset, DateTimeOffset> range, int recurrenceFactor)
         {
             var startRangeFirstDay = range.Item1.GetMonthStartDate();
             var endRangeFirstDay = range.Item2.GetMonthStartDate();
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        internal static IEnumerable<Tuple<DateTime, DateTime>> GetEveryFullWeekLimitedByFactor(this Tuple<DateTime, DateTime> range, int recurrenceFactor)
+        internal static IEnumerable<Tuple<DateTimeOffset, DateTimeOffset>> GetEveryFullWeekLimitedByFactor(this Tuple<DateTimeOffset, DateTimeOffset> range, int recurrenceFactor)
         {
             var startRangeFirstDay = range.Item1.GetWeekStartDate();
             var endRangeFirstDay = range.Item2.GetWeekStartDate();
@@ -61,7 +61,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        internal static IEnumerable<DateTime> GetEveryNDayFromRange(this Tuple<DateTime, DateTime> range, int n)
+        internal static IEnumerable<DateTimeOffset> GetEveryNDayFromRange(this Tuple<DateTimeOffset, DateTimeOffset> range, int n)
         {
             var startRangeFirstDay = range.Item1.Date;
             var endRangeFirstDay = range.Item2.Date;
@@ -79,7 +79,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        internal static IEnumerable<DateTime> GetAllDaysFromRange(this IEnumerable<Tuple<DateTime, DateTime>> ranges)
+        internal static IEnumerable<DateTimeOffset> GetAllDaysFromRange(this IEnumerable<Tuple<DateTimeOffset, DateTimeOffset>> ranges)
         {
             foreach (var range in ranges)
             {
@@ -94,7 +94,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        internal static IEnumerable<DateTime> GetEveryNDayGroupedByMonth(this IEnumerable<DateTime> days, int number)
+        internal static IEnumerable<DateTimeOffset> GetEveryNDayGroupedByMonth(this IEnumerable<DateTimeOffset> days, int number)
         {
             Ensure.That<ArgumentOutOfRangeException>(number >= 1 && number <= 31, $"Day number: {number} is out of range");
             return (from day in days
@@ -103,7 +103,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 select g.OrderBy(d => d).Skip(number - 1).FirstOrDefault()).Where(d => !d.Equals(default(DateTime)));
         }
 
-        internal static IEnumerable<DateTime> GetEveryLastDayGroupedByMonth(this IEnumerable<DateTime> days)
+        internal static IEnumerable<DateTimeOffset> GetEveryLastDayGroupedByMonth(this IEnumerable<DateTimeOffset> days)
         {
             return (from day in days
                     group day by day.GetMonthStartDate()
@@ -112,7 +112,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 .Where(d => !d.Equals(default(DateTime)));
         }
 
-        internal static DateTime? GetNearestPreviousDateFromList(this IEnumerable<DateTime> dates, DateTime dateTime)
+        internal static DateTimeOffset? GetNearestPreviousDateFromList(this IEnumerable<DateTimeOffset> dates, DateTimeOffset dateTime)
         {
             var previouses = dates.Where(d => d <= dateTime).ToList();
             if (previouses.Any())
@@ -123,7 +123,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return null;
         }
 
-        internal static DateTime GetWeekStartDate(this DateTime dt)
+        internal static DateTimeOffset GetWeekStartDate(this DateTimeOffset dt)
         {
             var iteratorDate = dt;
             while (iteratorDate.DayOfWeek != DayOfWeek.Monday)
@@ -134,10 +134,10 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return iteratorDate.Date;
         }
 
-        internal static DateTime GetMonthStartDate(this DateTime dt) => new DateTime(dt.Year, dt.Month, 1);
+        internal static DateTimeOffset GetMonthStartDate(this DateTimeOffset dt) => new DateTimeOffset(new DateTime(dt.Year, dt.Month, 1));
 
-        internal static bool IsWeekend(this DateTime dt) => dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday;
+        internal static bool IsWeekend(this DateTimeOffset dt) => dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday;
 
-        internal static bool IsWeekday(this DateTime dt) => !IsWeekend(dt);
+        internal static bool IsWeekday(this DateTimeOffset dt) => !IsWeekend(dt);
     }
 }

@@ -35,9 +35,9 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck) => GetTaskRange((OnetimeTask)task).CompareRangeTo(dateTimeToCheck) >= 0;
+        public bool ShouldProcessTask(ISchedulerTask task, DateTimeOffset dateTimeToCheck) => GetTaskRange((OnetimeTask)task).CompareRangeTo(dateTimeToCheck) >= 0;
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(OnetimeTask.CreateOnetimeTask(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTimeOffset dateTimeToCheck) => ShouldProcessTask(OnetimeTask.CreateOnetimeTask(task), dateTimeToCheck);
 
         private void ProcessTask(OnetimeTask task, int comparison)
         {
@@ -72,6 +72,6 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
             }
         }
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(OnetimeTask task) => Tuple.Create(task.StartDateTime, task.EndDateTime);
+        private static Tuple<DateTimeOffset, DateTimeOffset> GetTaskRange(OnetimeTask task) => Tuple.Create(task.StartDateTime, task.EndDateTime);
     }
 }

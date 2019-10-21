@@ -49,7 +49,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
         public List<ArticleScheduleTask> GetDbScheduleTaskActions() => _articleSchedulerService.GetScheduleTaskList().ToList();
 
-        public int GetTasksCountToProcessAtSpecificDateTime(DateTime dateTimeToCheck)
+        public int GetTasksCountToProcessAtSpecificDateTime(DateTimeOffset dateTimeToCheck)
         {
             var dbTasks = GetDbScheduleTaskActions();
             var onetimeTasksCount = dbTasks.Where(FilterOnetimeTasksPredicate).Count(FilterTasksToProceedPredicate(_onetimeScheduler, dateTimeToCheck));
@@ -58,7 +58,7 @@ namespace Quantumart.QP8.ArticleScheduler
             return onetimeTasksCount + recurringTasksCount + publishingTasksCount;
         }
 
-        private static Func<ArticleScheduleTask, bool> FilterTasksToProceedPredicate(ITaskScheduler taskScheduler, DateTime dateTimeToCheck)
+        private static Func<ArticleScheduleTask, bool> FilterTasksToProceedPredicate(ITaskScheduler taskScheduler, DateTimeOffset dateTimeToCheck)
         {
             return task => taskScheduler.ShouldProcessTask(task, dateTimeToCheck);
         }

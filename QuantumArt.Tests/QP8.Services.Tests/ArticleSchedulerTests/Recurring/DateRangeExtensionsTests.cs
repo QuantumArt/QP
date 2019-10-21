@@ -22,7 +22,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             const string rawDateStart = "05/07/2011 05:04:02";
             const string rawDateEnd = "05/27/2011 15:14:12";
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
-            var expectedResult = new List<Tuple<DateTime, DateTime>>
+            var expectedResult = new List<Tuple<DateTimeOffset, DateTimeOffset>>
             {
                 DateTimeHelpers.GetRangeTuple("05/01/2011", "05/31/2011")
             };
@@ -41,7 +41,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             const string rawDateStart = "05/07/2011 05:04:02";
             const string rawDateEnd = "12/27/2011 15:14:12";
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
-            var expectedResult = new List<Tuple<DateTime, DateTime>>
+            var expectedResult = new List<Tuple<DateTimeOffset, DateTimeOffset>>
             {
                 DateTimeHelpers.GetRangeTuple("05/01/2011", "05/31/2011"),
                 DateTimeHelpers.GetRangeTuple("09/01/2011", "09/30/2011")
@@ -61,7 +61,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             const string rawDateStart = "06/22/2011 05:04:02";
             const string rawDateEnd = "06/23/2011 05:04:02";
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
-            var expectedResult = new List<Tuple<DateTime, DateTime>>
+            var expectedResult = new List<Tuple<DateTimeOffset, DateTimeOffset>>
             {
                 DateTimeHelpers.GetRangeTuple("06/20/2011", "06/26/2011")
             };
@@ -80,7 +80,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             const string rawDateStart = "06/01/2011 05:04:02";
             const string rawDateEnd = "07/01/2011 05:04:02";
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
-            var expectedResult = new List<Tuple<DateTime, DateTime>>
+            var expectedResult = new List<Tuple<DateTimeOffset, DateTimeOffset>>
             {
                 DateTimeHelpers.GetRangeTuple("05/30/2011", "06/05/2011"),
                 DateTimeHelpers.GetRangeTuple("06/20/2011", "06/26/2011")
@@ -97,7 +97,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         public void GivenDatesRange_WhenGettingAllDaysFromRange_ShouldReturnCorrectDaysCount()
         {
             // Fixture setup
-            var datesRangeTupleList = new List<Tuple<DateTime, DateTime>>
+            var datesRangeTupleList = new List<Tuple<DateTimeOffset, DateTimeOffset>>
             {
                 DateTimeHelpers.GetRangeTuple("05/01/2011", "05/31/2011"),
                 DateTimeHelpers.GetRangeTuple("09/01/2011", "09/30/2011")
@@ -119,7 +119,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             const string rawDateStart = "06/01/2011 05:04:02";
             const string rawDateEnd = "06/10/2011 05:04:02";
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
-            var expectedResult = new List<DateTime>
+            var expectedResult = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("06/01/2011"),
                 DateTimeHelpers.ParseDateTime("06/06/2011")
@@ -136,7 +136,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         public void GivenDatesList_WhenGettingNDaysGroupedByMonth_ShouldReturnCorrectDates()
         {
             // Fixture setup
-            var datesList = new List<DateTime>
+            var datesList = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("05/01/2011"),
                 DateTimeHelpers.ParseDateTime("05/15/2011"),
@@ -146,7 +146,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 DateTimeHelpers.ParseDateTime("07/01/2011")
             };
 
-            var expectedResult = new List<DateTime>
+            var expectedResult = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("05/10/2011"),
                 DateTimeHelpers.ParseDateTime("07/09/2011")
@@ -163,7 +163,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         public void GivenDatesList_WhenGettingLastDaysGroupedByMonth_ShouldReturnCorrectDates()
         {
             // Fixture setup
-            var datesList = new List<DateTime>
+            var datesList = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("05/01/2011"),
                 DateTimeHelpers.ParseDateTime("05/15/2011"),
@@ -173,7 +173,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 DateTimeHelpers.ParseDateTime("07/01/2011")
             };
 
-            var expectedResult = new List<DateTime>
+            var expectedResult = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("05/15/2011"),
                 DateTimeHelpers.ParseDateTime("07/11/2011")
@@ -193,7 +193,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         {
             // Fixture setup
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
-            var datesList = new List<DateTime>
+            var datesList = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("05/01/2011"),
                 DateTimeHelpers.ParseDateTime("05/15/2011"),
@@ -214,7 +214,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         {
             // Fixture setup
             var currentDate = DateTimeHelpers.ParseDateTime("04/30/2011");
-            var datesList = new List<DateTime>
+            var datesList = new List<DateTimeOffset>
             {
                 DateTimeHelpers.ParseDateTime("05/01/2011"),
                 DateTimeHelpers.ParseDateTime("05/15/2011"),
@@ -233,7 +233,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         {
             // Fixture setup
             var currentDate = DateTimeHelpers.ParseDateTime("05/15/2011");
-            var emptyDateTimeList = Enumerable.Empty<DateTime>();
+            var emptyDateTimeList = Enumerable.Empty<DateTimeOffset>();
 
             // Exercise system
             var actualResult = emptyDateTimeList.GetNearestPreviousDateFromList(currentDate);

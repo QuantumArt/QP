@@ -6,7 +6,7 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
 {
     public class PublishingTask : ISchedulerTask
     {
-        public PublishingTask(int id, int articleId, DateTime publishingDateTime)
+        public PublishingTask(int id, int articleId, DateTimeOffset publishingDateTime)
         {
             Id = id;
             ArticleId = articleId;
@@ -17,8 +17,11 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
 
         public int ArticleId { get; }
 
-        public DateTime PublishingDateTime { get; }
+        public DateTimeOffset PublishingDateTime { get; }
 
-        public static PublishingTask Create(ArticleScheduleTask task) => new PublishingTask(task.Id, task.ArticleId, task.StartDate + task.StartTime);
+        public static PublishingTask Create(ArticleScheduleTask task)
+        {
+            return new PublishingTask(task.Id, task.ArticleId, task.StartDate + task.StartTime);
+        }
     }
 }

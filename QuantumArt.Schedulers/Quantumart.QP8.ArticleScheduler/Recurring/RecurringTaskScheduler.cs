@@ -34,7 +34,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        public bool ShouldProcessTask(ISchedulerTask task, DateTimeOffset dateTimeToCheck)
         {
             var recurringTask = (RecurringTask)task;
             var nearestStartDate = RecurringStartCalculatorFactory.Create(recurringTask).GetNearestStartDateBeforeSpecifiedDate(dateTimeToCheck);
@@ -48,9 +48,9 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return nearestComparisonToShowArticle == 0 || nearestComparisonToShowArticle > 0 && comparison >= 0;
         }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTimeOffset dateTimeToCheck) => ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
 
-        private void ProcessTask(RecurringTask task, DateTime currentTime, int comparison)
+        private void ProcessTask(RecurringTask task, DateTimeOffset currentTime, int comparison)
         {
             var nearestComparisonToShowArticle = GetNearestComparison(task, currentTime);
             if (nearestComparisonToShowArticle == 0)
@@ -91,7 +91,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        private static int GetNearestComparison(RecurringTask task, DateTime currentTime)
+        private static int GetNearestComparison(RecurringTask task, DateTimeOffset currentTime)
         {
             var recurringCalculator = RecurringStartCalculatorFactory.Create(task);
             var nearestStartDate = recurringCalculator.GetNearestStartDateBeforeSpecifiedDate(currentTime);
@@ -103,14 +103,14 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return nearestTaskRangeToShowArticle.CompareRangeTo(currentTime);
         }
 
-        private static DateTime GetNearestEndDate(RecurringTask task, DateTime nearestEndDate)
+        private static DateTimeOffset GetNearestEndDate(RecurringTask task, DateTimeOffset nearestEndDate)
         {
             var taskRange = GetTaskRange(task);
             return taskRange.CompareRangeTo(nearestEndDate) > 0 ? taskRange.Item2 : nearestEndDate;
         }
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
+        private static Tuple<DateTimeOffset, DateTimeOffset> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(DateTime startDateTime, DateTime endDateTime) => Tuple.Create(startDateTime, endDateTime);
+        private static Tuple<DateTimeOffset, DateTimeOffset> GetTaskRange(DateTimeOffset startDateTime, DateTimeOffset endDateTime) => Tuple.Create(startDateTime, endDateTime);
     }
 }
