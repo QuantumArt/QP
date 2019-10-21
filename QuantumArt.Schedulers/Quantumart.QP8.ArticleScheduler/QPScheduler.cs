@@ -63,6 +63,10 @@ namespace Quantumart.QP8.ArticleScheduler
 
             QPContext.CurrentCustomerCode = customer.CustomerName;
 
+            Logger.Trace()
+                .Message("Processing customer code: {customerCode}", customer.CustomerName)
+                .Write();
+
             customerDbScheduler.Run();
             return customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.Add(_tasksQueueCheckShiftTime));
         }

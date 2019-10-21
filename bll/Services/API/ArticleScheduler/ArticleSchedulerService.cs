@@ -4,6 +4,7 @@ using System.Data;
 using System.Transactions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using IsolationLevel = System.Transactions.IsolationLevel;
@@ -27,7 +28,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
         {
-            using (new QPConnectionScope(_connectionString, _dbType))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (new QPConnectionScope())
             {
                 return ScheduleRepository.GetScheduleTaskList();
             }
@@ -35,7 +37,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public DateTime GetCurrentDBDateTime()
         {
-            using (var scope = new QPConnectionScope(_connectionString, _dbType))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (var scope = new QPConnectionScope())
             {
                 return Common.GetSqlDate(scope.DbConnection);
             }
@@ -43,7 +46,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article ShowArticle(int articleId)
         {
-            using (var scope = new QPConnectionScope(_connectionString, _dbType))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (var scope = new QPConnectionScope())
             {
                 var article = ArticleRepository.GetById(articleId);
                 if (article != null && !article.Visible)
@@ -61,7 +65,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article HideArticle(int articleId)
         {
-            using (var scope = new QPConnectionScope(_connectionString, _dbType))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (var scope = new QPConnectionScope())
             {
                 var article = ArticleRepository.GetById(articleId);
                 if (article != null && article.Visible)
@@ -82,7 +87,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (new QPConnectionScope(_connectionString, _dbType))
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+                using (new QPConnectionScope())
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
                     if (schedule != null)
@@ -104,7 +110,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (new QPConnectionScope(_connectionString, _dbType))
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+                using (new QPConnectionScope())
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
                     if (schedule != null)
@@ -126,7 +133,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (var scope = new QPConnectionScope(_connectionString, _dbType))
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+                using (var scope = new QPConnectionScope())
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
                     if (schedule != null)
