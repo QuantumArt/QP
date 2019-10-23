@@ -994,7 +994,9 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static DateTime GetSqlDate(DbConnection connection)
         {
             var dbType = GetDbType(connection);
-            using (var cmd = DbCommandFactory.Create($"select {Now(dbType)} as date", connection))
+            var query = $"select {Now(dbType)}";
+            query = (dbType == DatabaseType.Postgres) ? query + " AT TIME ZONE current_setting('TIMEZONE')" : query;
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (DateTime)cmd.ExecuteScalar();
