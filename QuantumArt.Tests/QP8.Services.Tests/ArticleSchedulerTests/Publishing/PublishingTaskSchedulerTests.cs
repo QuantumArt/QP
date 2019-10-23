@@ -27,7 +27,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Publishing
         public void GivenPublishingTask_WhenBeforePublishTime_ShouldNotDoAnything(ArticleScheduleTask task, TimeSpan diffTime)
         {
             // Fixture setup
-            var startDateTime = task.StartDate + task.StartTime;
+            var startDateTime = task.StartDate;
             var publishingService = _fixture.Freeze<Mock<IArticlePublishingSchedulerService>>();
             publishingService.Setup(m => m.GetCurrentDBDateTime()).Returns(startDateTime - diffTime);
 
@@ -44,7 +44,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Publishing
         public void GivenPublishingTask_WhenPublishTimeTheSame_ShouldPublishArticleAndCloseSchedule(ArticleScheduleTask task)
         {
             // Fixture setup
-            var startDateTime = task.StartDate + task.StartTime;
+            var startDateTime = task.StartDate;
             var publishingService = _fixture.Freeze<Mock<IArticlePublishingSchedulerService>>();
             publishingService.Setup(m => m.GetCurrentDBDateTime()).Returns(startDateTime);
 
@@ -61,7 +61,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Publishing
         public void GivenPublishingTask_WhenAfterPublishTime_ShouldPublishArticleAndCloseSchedule(ArticleScheduleTask task, TimeSpan diffTime)
         {
             // Fixture setup
-            var startDateTime = task.StartDate + task.StartTime;
+            var startDateTime = task.StartDate;
             var publishingService = _fixture.Freeze<Mock<IArticlePublishingSchedulerService>>();
             publishingService.Setup(m => m.GetCurrentDBDateTime()).Returns(startDateTime + diffTime);
 

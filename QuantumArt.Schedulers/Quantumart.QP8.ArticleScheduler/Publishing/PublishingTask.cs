@@ -19,6 +19,6 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
 
         public DateTime PublishingDateTime { get; }
 
-        public static PublishingTask Create(ArticleScheduleTask task) => new PublishingTask(task.Id, task.ArticleId, task.StartDate + task.StartTime);
+        public static PublishingTask Create(ArticleScheduleTask task) => new PublishingTask(task.Id, task.ArticleId, task.StartDate);
     }
 }

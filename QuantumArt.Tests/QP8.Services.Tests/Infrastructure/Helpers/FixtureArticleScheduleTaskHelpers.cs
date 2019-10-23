@@ -12,8 +12,6 @@ namespace QP8.Services.Tests.Infrastructure.Helpers
                 .Build<ArticleScheduleTask>()
                 .With(article => article.StartDate, startDate)
                 .With(article => article.EndDate, endDate)
-                .Without(article => article.StartTime)
-                .Without(article => article.EndTime)
                 .Create();
         }
     }

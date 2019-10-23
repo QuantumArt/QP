@@ -33,10 +33,6 @@ namespace Quantumart.QP8.DAL.Entities
         public int FreqSubdayInterval { get; set; }
         public int FreqRelativeInterval { get; set; }
         public int FreqRecurrenceFactor { get; set; }
-        public Nullable<int> ActiveStartDate { get; set; }
-        public int ActiveEndDate { get; set; }
-        public int ActiveStartTime { get; set; }
-        public int ActiveEndTime { get; set; }
         public int Occurences { get; set; }
         public decimal UseDuration { get; set; }
         public decimal Duration { get; set; }
@@ -44,6 +40,10 @@ namespace Quantumart.QP8.DAL.Entities
         public bool Deactivate { get; set; }
         public bool DeleteJob { get; set; }
         public bool UseService { get; set; }
+
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
 
         public ArticleDAL Article { get; set; }
     }
@@ -65,10 +65,8 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.FreqSubdayInterval).HasColumnName("freq_subday_interval");
 				builder.Property(x => x.FreqRelativeInterval).HasColumnName("freq_relative_interval");
 				builder.Property(x => x.FreqRecurrenceFactor).HasColumnName("freq_recurrence_factor");
-				builder.Property(x => x.ActiveStartDate).HasColumnName("active_start_date");
-				builder.Property(x => x.ActiveEndDate).HasColumnName("active_end_date");
-				builder.Property(x => x.ActiveStartTime).HasColumnName("active_start_time");
-				builder.Property(x => x.ActiveEndTime).HasColumnName("active_end_time");
+				builder.Property(x => x.StartDate).HasColumnName("start_date");
+				builder.Property(x => x.EndDate).HasColumnName("end_date");
 				builder.Property(x => x.Occurences).HasColumnName("occurences");
 				builder.Property(x => x.UseDuration).HasColumnName("use_duration");
 				builder.Property(x => x.Duration).HasColumnName("duration");

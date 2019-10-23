@@ -36,3 +36,4 @@ TriggersDisabling
 MoveToCoalesce
 ExcludeArchiveDuplicate
 AddReplaceUrlsIbDBColumn
+ContentItemSchedule

@@ -23,9 +23,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 interval,
                 relativeInterval,
                 recurrenceFactor,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
@@ -63,9 +62,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 interval,
                 relativeInterval,
                 recurrenceFactor,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
@@ -93,9 +91,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var startCalculator = new MonthlyStartCalculator(
                 interval,
                 recurrenceFactor,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
@@ -128,9 +125,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var startCalculator = new MonthlyStartCalculator(
                 interval,
                 recurrenceFactor,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
@@ -158,9 +154,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var startCalculator = new WeeklyStartCalculator(
                 interval,
                 recurrenceFactor,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
@@ -197,9 +192,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var startCalculator = new WeeklyStartCalculator(
                 interval,
                 recurrenceFactor,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
@@ -225,11 +219,9 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
 
             var startCalculator = new DailyStartCalculator(
                 interval,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
-
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
@@ -254,9 +246,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
 
             var startCalculator = new DailyStartCalculator(
                 interval,
-                DateTimeHelpers.ParseDateTime(rawStartDate),
-                DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTime(rawStartTime)
+                DateTimeHelpers.ParseDateTime(rawStartDate) + DateTimeHelpers.ParseTime(rawStartTime),
+                DateTimeHelpers.ParseDateTime(rawEndDate)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);

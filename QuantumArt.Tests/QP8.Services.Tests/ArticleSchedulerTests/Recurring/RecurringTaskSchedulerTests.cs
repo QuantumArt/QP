@@ -32,7 +32,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 .Build<ArticleScheduleTask>().With(article => article.FreqType, ScheduleFreqTypes.RecurringMonthlyRelative)
                 .Create();
 
-            var startDateTime = task.StartDate + task.StartTime;
+            var startDateTime = task.StartDate;
             var recurringService = _fixture.Freeze<Mock<IArticleRecurringSchedulerService>>();
             recurringService.Setup(m => m.GetCurrentDBDateTime()).Returns(startDateTime - diffTime);
 
@@ -55,7 +55,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 .Build<ArticleScheduleTask>().With(article => article.FreqType, ScheduleFreqTypes.RecurringMonthlyRelative)
                 .Create();
 
-            var startDateTime = task.StartDate + task.StartTime;
+            var startDateTime = task.StartDate;
             var dbDate = startDateTime.AddTicks(-1);
             var recurringService = _fixture.Freeze<Mock<IArticleRecurringSchedulerService>>();
             recurringService.Setup(m => m.GetCurrentDBDateTime()).Returns(dbDate);
@@ -88,9 +88,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 FreqInterval = 9,
                 FreqRelativeInterval = 4,
                 FreqRecurrenceFactor = 5,
-                StartDate = startDate,
+                StartDate = startDate + startTime,
                 EndDate = endDate,
-                StartTime = startTime,
                 Duration = TimeSpan.FromDays(5)
             };
 
@@ -125,9 +124,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 FreqInterval = 9,
                 FreqRelativeInterval = 4,
                 FreqRecurrenceFactor = 5,
-                StartDate = startDate,
+                StartDate = startDate + startTime,
                 EndDate = endDate,
-                StartTime = startTime,
                 Duration = TimeSpan.FromDays(5)
             };
 
@@ -162,9 +160,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 FreqInterval = 9,
                 FreqRelativeInterval = 4,
                 FreqRecurrenceFactor = 5,
-                StartDate = startDate,
+                StartDate = startDate + startTime,
                 EndDate = endDate,
-                StartTime = startTime,
                 Duration = TimeSpan.FromDays(5)
             };
 

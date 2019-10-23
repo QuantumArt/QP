@@ -135,9 +135,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests
                 .With(t => t.ArticleId, ArticleId)
                 .With(t => t.FreqRelativeInterval, 4)
                 .With(t => t.FreqRecurrenceFactor, 5)
-                .With(t => t.StartDate, DateTimeHelpers.ParseDate("01/01/2011"))
-                .With(t => t.StartTime, DateTimeHelpers.ParseTime("12:15:17"))
-                .With(t => t.EndTime, DateTimeHelpers.ParseTime("18:15:17"))
+                .With(t => t.StartDate, DateTimeHelpers.ParseDate("01/01/2011") + DateTimeHelpers.ParseTime("12:15:17"))
                 .With(t => t.Duration, TimeSpan.FromDays(5));
 
             var onetimeTaskComposer = taskComposer.With(t => t.FreqType, ScheduleFreqTypes.OneTime).With(t => t.FreqInterval, 3);
@@ -147,10 +145,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests
             {
                 onetimeTaskComposer.With(t => t.EndDate, DateTimeHelpers.ParseDate("01/31/2011")).Create(),
                 onetimeTaskComposer.With(t => t.EndDate, DateTimeHelpers.ParseDate("12/31/2011")).Create(),
-                onetimeTaskComposer.With(t => t.EndDate, DateTimeHelpers.ParseDate("01/05/2011")).With(t => t.EndTime, DateTimeHelpers.ParseTime("12:15:17")).Create(),
                 onetimeTaskComposer
-                    .With(t => t.StartDate, DateTimeHelpers.ParseDate(CurrentDateTime).AddHours(2))
-                    .With(t => t.StartTime, DateTimeHelpers.ParseTime(CurrentDateTime))
+                    .With(t => t.StartDate, DateTimeHelpers.ParseDate(CurrentDateTime).AddHours(2) + DateTimeHelpers.ParseTime(CurrentDateTime))
                     .With(t => t.EndDate, DateTimeHelpers.ParseDate("12/31/2011"))
                     .Create()
             };
@@ -159,8 +155,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests
             {
                 publishingTaskComposer.With(t => t.EndDate, DateTimeHelpers.ParseDate("12/31/2011")).Create(),
                 publishingTaskComposer
-                    .With(t => t.StartDate, DateTimeHelpers.ParseDate(CurrentDateTime).AddHours(2))
-                    .With(t => t.StartTime, DateTimeHelpers.ParseTime(CurrentDateTime))
+                    .With(t => t.StartDate, DateTimeHelpers.ParseDate(CurrentDateTime).AddHours(2) + DateTimeHelpers.ParseTime(CurrentDateTime))
                     .Create()
             };
 

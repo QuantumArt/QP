@@ -109,7 +109,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return taskRange.CompareRangeTo(nearestEndDate) > 0 ? taskRange.Item2 : nearestEndDate;
         }
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
+        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate, task.EndDate);
 
         private static Tuple<DateTime, DateTime> GetTaskRange(DateTime startDateTime, DateTime endDateTime) => Tuple.Create(startDateTime, endDateTime);
     }

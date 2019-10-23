@@ -10,13 +10,13 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
             switch (task.TaskType)
             {
                 case RecurringTaskTypes.Daily:
-                    return new DailyStartCalculator(task.Interval, task.StartDate, task.EndDate, task.StartTime);
+                    return new DailyStartCalculator(task.Interval, task.StartDate, task.EndDate);
                 case RecurringTaskTypes.Weekly:
-                    return new WeeklyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
+                    return new WeeklyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate);
                 case RecurringTaskTypes.Monthly:
-                    return new MonthlyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
+                    return new MonthlyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate);
                 case RecurringTaskTypes.MonthlyRelative:
-                    return new MonthlyRelativeStartCalculator(task.Interval, task.RelativeInterval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
+                    return new MonthlyRelativeStartCalculator(task.Interval, task.RelativeInterval, task.RecurrenceFactor, task.StartDate, task.EndDate);
                 default:
                     throw new ArgumentException("Неопределенный тип расписания циклической задачи: " + task.TaskType);
             }

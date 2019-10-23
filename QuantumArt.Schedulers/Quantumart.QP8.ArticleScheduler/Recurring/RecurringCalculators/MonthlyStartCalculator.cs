@@ -9,15 +9,13 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
         private readonly int _recurrenceFactor;
         private readonly DateTime _startDate;
         private readonly DateTime _endDate;
-        private readonly TimeSpan _startTime;
 
-        public MonthlyStartCalculator(int interval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
+        public MonthlyStartCalculator(int interval, int recurrenceFactor, DateTime startDate, DateTime endDate)
         {
             _interval = interval;
             _recurrenceFactor = recurrenceFactor;
             _startDate = startDate;
             _endDate = endDate;
-            _startTime = startTime;
 
             CalculateNearestStartDateFunc = GetNearestStartDate;
         }
@@ -29,7 +27,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
                 .GetAllDaysFromRange() // получаем даты
                 .GetEveryNDayGroupedByMonth(_interval) // получить только те дни в каждом месяце которые соответствуют interval
                 .Where(d => _startDate.Date <= d.Date && _endDate.Date >= d.Date) // только те даты что в диапазоне
-                .Select(d => d.Add(_startTime)) // получаем точное время старта
                 .GetNearestPreviousDateFromList(dateTime);
         }
     }

@@ -73,8 +73,6 @@ namespace Quantumart.QP8.BLL.Mappers
 
         private static void ProceedDalToOneTimeSchedule(ArticleScheduleDAL dal, ArticleSchedule result)
         {
-            result.StartDate = ScheduleHelper.GetStartDateTime(dal.ActiveStartDate, dal.ActiveStartTime);
-            result.EndDate = ScheduleHelper.GetEndDateTime(dal.ActiveEndDate, dal.ActiveEndTime);
             if (result.EndDate.Year == ArticleScheduleConstants.Infinity.Year)
             {
                 result.EndDate = ScheduleHelper.DefaultEndDate;
@@ -88,12 +86,6 @@ namespace Quantumart.QP8.BLL.Mappers
 
         private static void ProceedOneTimeScheduleToDal(ArticleSchedule item, ArticleScheduleDAL result)
         {
-            var startValues = ScheduleHelper.GetSqlValuesFromScheduleDateTime(item.StartDate);
-            result.ActiveStartDate = startValues.Item1;
-            result.ActiveStartTime = startValues.Item2;
-            var endValues = ScheduleHelper.GetSqlValuesFromScheduleDateTime(item.EndDate);
-            result.ActiveEndDate = endValues.Item1;
-            result.ActiveEndTime = endValues.Item2;
             result.Duration = 1M;
             result.DurationUnits = "dd";
         }
@@ -108,8 +100,8 @@ namespace Quantumart.QP8.BLL.Mappers
             var result = RecurringSchedule.Empty;
 
             // Интервал повторений
-            result.RepetitionStartDate = ScheduleHelper.GetScheduleDateFromSqlValues(dal.ActiveStartDate, DateTime.Now);
-            result.RepetitionEndDate = ScheduleHelper.GetScheduleDateFromSqlValues(dal.ActiveEndDate, result.GetDefaultRepetitionEndDate());
+            result.RepetitionStartDate = dal.StartDate ?? DateTime.Now;
+            result.RepetitionEndDate = dal.EndDate ?? result.GetDefaultRepetitionEndDate();
             if (result.RepetitionEndDate.Year == ArticleScheduleConstants.Infinity.Year)
             {
                 result.RepetitionEndDate = result.GetDefaultRepetitionEndDate();
@@ -165,12 +157,11 @@ namespace Quantumart.QP8.BLL.Mappers
                 }
             }
 
-            // Интервал времени показа
-            result.ShowStartTime = ScheduleHelper.GetScheduleTimeFromSqlValues(dal.ActiveStartTime);
+            result.ShowStartTime = dal.StartDate?.TimeOfDay ?? TimeSpan.Zero;
             if (dal.UseDuration == 0)
             {
                 result.ShowLimitationType = ShowLimitationType.EndTime;
-                result.ShowEndTime = ScheduleHelper.GetScheduleTimeFromSqlValues(dal.ActiveEndTime);
+                result.ShowEndTime = dal.EndDate?.TimeOfDay ?? TimeSpan.Zero;
             }
             else
             {
@@ -178,19 +169,15 @@ namespace Quantumart.QP8.BLL.Mappers
                 result.DurationValue = Convert.ToInt32(dal.Duration);
                 result.DurationUnit = ScheduleHelper.ParseDurationUnit(dal.DurationUnits);
             }
-
             return result;
         }
 
         private static void ProceedRecurringScheduleToDal(RecurringSchedule item, ArticleScheduleDAL result)
         {
-            result.ActiveStartDate = ScheduleHelper.GetSqlValuesFromScheduleDate(item.RepetitionStartDate);
-            result.ActiveStartTime = ScheduleHelper.GetSqlValuesFromScheduleTime(item.ShowStartTime);
-
+            result.StartDate = item.RepetitionStartDate.Date + item.ShowStartTime;
             var repetitionEndDate = item.RepetitionNoEnd ? ArticleScheduleConstants.Infinity.Date : item.RepetitionEndDate;
             var repetitionEndTime = item.ShowLimitationType == ShowLimitationType.Duration ? ArticleScheduleConstants.Infinity.TimeOfDay : item.ShowEndTime;
-            result.ActiveEndDate = ScheduleHelper.GetSqlValuesFromScheduleDate(repetitionEndDate);
-            result.ActiveEndTime = ScheduleHelper.GetSqlValuesFromScheduleTime(repetitionEndTime);
+            result.StartDate = repetitionEndDate.Date + repetitionEndTime;
 
             result.UseDuration = item.ShowLimitationType == ShowLimitationType.Duration ? 1 : 0;
             result.Duration = Convert.ToDecimal(item.DurationValue);
@@ -245,7 +232,7 @@ namespace Quantumart.QP8.BLL.Mappers
                     {
                         dt = dt.AddYears(1);
                     }
-                    result.ActiveStartDate = ScheduleHelper.GetSqlValuesFromScheduleDate(dt);
+                    result.StartDate = dt;
                 }
                 else if (item.ScheduleRecurringType == ScheduleRecurringType.Monthly)
                 {

@@ -15,7 +15,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             int recurrenceFactor,
             DateTime startDate,
             DateTime endDate,
-            TimeSpan startTime,
             TimeSpan duration)
         {
             Id = id;
@@ -26,7 +25,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             RecurrenceFactor = recurrenceFactor;
             StartDate = startDate;
             EndDate = endDate;
-            StartTime = startTime;
             Duration = duration;
         }
 
@@ -46,8 +44,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
 
         public DateTime EndDate { get; }
 
-        public TimeSpan StartTime { get; }
-
         public TimeSpan Duration { get; }
 
         public static RecurringTask Create(ArticleScheduleTask task) => new RecurringTask(
@@ -59,7 +55,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             task.FreqRecurrenceFactor,
             task.StartDate,
             task.EndDate,
-            task.StartTime,
             task.Duration);
     }
 }
