@@ -23,7 +23,7 @@ namespace Quantumart.QP8.BLL
                     DaySpecifyingType = DaySpecifyingType.Date,
                     Month = 0,
                     DayOfMonth = 1,
-                    ShowStartTime = TimeSpan.Zero,
+                    ShowStartTime = DateTime.Now.Date,
                     ShowLimitationType = ShowLimitationType.EndTime,
                     DurationValue = 12,
                     DurationUnit = ShowDurationUnit.Hours
@@ -52,7 +52,7 @@ namespace Quantumart.QP8.BLL
 
         public DateTime GetDefaultRepetitionEndDate() => RepetitionStartDate.Date.AddYears(1);
 
-        public TimeSpan GetDefaultShowEndTime() => new TimeSpan(23, 59, 59);
+        public DateTime GetDefaultShowEndTime() => DateTime.Now.Date.AddDays(1).AddSeconds(-1);
 
         [Display(Name = "RepetitionStartDate", ResourceType = typeof(ArticleStrings))]
         public DateTime RepetitionStartDate { get; set; }
@@ -110,10 +110,10 @@ namespace Quantumart.QP8.BLL
         public DayOfWeek DayOfWeek { get; set; }
 
         [Display(Name = "ShowStartTime", ResourceType = typeof(ArticleStrings))]
-        public TimeSpan ShowStartTime { get; set; }
+        public DateTime ShowStartTime { get; set; }
 
         [Display(Name = "ShowEndTime", ResourceType = typeof(ArticleStrings))]
-        public TimeSpan ShowEndTime { get; set; }
+        public DateTime ShowEndTime { get; set; }
 
         [Display(Name = "ShowIsLimitedBy", ResourceType = typeof(ArticleStrings))]
         public ShowLimitationType ShowLimitationType { get; set; }

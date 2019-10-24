@@ -707,7 +707,7 @@ namespace Quantumart.QP8.BLL
         public DateTime? DateDefaultValue { get; set; }
 
         [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
-        public TimeSpan? TimeDefaultValue { get; set; }
+        public DateTime? TimeDefaultValue { get; set; }
 
         [Display(Name = "DefaultValue", ResourceType = typeof(FieldStrings))]
         public DateTime? DateTimeDefaultValue { get; set; }
@@ -1180,8 +1180,7 @@ namespace Quantumart.QP8.BLL
                 }
                 else if (ExactType == FieldExactTypes.Time)
                 {
-                    var tdt = Converter.ToNullableDateTime(DefaultValue);
-                    TimeDefaultValue = tdt?.TimeOfDay;
+                    TimeDefaultValue = Converter.ToNullableDateTime(DefaultValue);
                 }
             }
         }

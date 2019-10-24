@@ -39,9 +39,9 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                     RepetitionStartDate = DateTime.Now.AddDays(2),
                     ScheduleRecurringType = C.ScheduleRecurringType.Monthly,
                     ScheduleRecurringValue = 3,
-                    ShowEndTime = TimeSpan.FromMinutes(22),
+                    ShowEndTime = DateTime.Now.Date + TimeSpan.FromMinutes(22),
                     ShowLimitationType = C.ShowLimitationType.Duration,
-                    ShowStartTime = TimeSpan.FromMinutes(122),
+                    ShowStartTime = DateTime.Now.Date + TimeSpan.FromMinutes(122),
                     WeekOfMonth = C.WeekOfMonth.LastWeek
                 }
             };

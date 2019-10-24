@@ -154,11 +154,11 @@ namespace Quantumart.QP8.BLL.Mappers
                 }
             }
 
-            result.ShowStartTime = dal.StartDate?.TimeOfDay ?? TimeSpan.Zero;
+            result.ShowStartTime = dal.StartDate ?? DateTime.Now.Date;
             if (dal.UseDuration == 0)
             {
                 result.ShowLimitationType = ShowLimitationType.EndTime;
-                result.ShowEndTime = dal.EndDate?.TimeOfDay ?? TimeSpan.Zero;
+                result.ShowEndTime = dal.EndDate ?? DateTime.Now.Date;
             }
             else
             {
@@ -171,10 +171,12 @@ namespace Quantumart.QP8.BLL.Mappers
 
         private static void ProceedRecurringScheduleToDal(RecurringSchedule item, ArticleScheduleDAL result)
         {
-            result.StartDate = item.RepetitionStartDate.Date + item.ShowStartTime;
+            result.StartDate = item.RepetitionStartDate.Date + item.ShowStartTime.TimeOfDay;
             var repetitionEndDate = item.RepetitionNoEnd ? ArticleScheduleConstants.Infinity.Date : item.RepetitionEndDate;
-            var repetitionEndTime = item.ShowLimitationType == ShowLimitationType.Duration ? ArticleScheduleConstants.Infinity.TimeOfDay : item.ShowEndTime;
-            result.StartDate = repetitionEndDate.Date + repetitionEndTime;
+            var repetitionEndTime = item.ShowLimitationType == ShowLimitationType.Duration
+                ? ArticleScheduleConstants.Infinity.TimeOfDay
+                : item.ShowEndTime.TimeOfDay;
+            result.EndDate = repetitionEndDate.Date + repetitionEndTime;
 
             result.UseDuration = item.ShowLimitationType == ShowLimitationType.Duration ? 1 : 0;
             result.Duration = Convert.ToDecimal(item.DurationValue);
