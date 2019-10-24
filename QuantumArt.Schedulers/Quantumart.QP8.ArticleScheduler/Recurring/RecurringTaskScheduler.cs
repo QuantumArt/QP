@@ -34,7 +34,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
         {
             var recurringTask = (RecurringTask)task;
             var nearestStartDate = RecurringStartCalculatorFactory.Create(recurringTask).GetNearestStartDateBeforeSpecifiedDate(dateTimeToCheck);
@@ -48,7 +48,10 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return nearestComparisonToShowArticle == 0 || nearestComparisonToShowArticle > 0 && comparison >= 0;
         }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
+        {
+            return ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck, forMonitoring);
+        }
 
         private void ProcessTask(RecurringTask task, DateTime currentTime, int comparison)
         {

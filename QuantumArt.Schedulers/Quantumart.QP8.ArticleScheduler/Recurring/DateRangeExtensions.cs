@@ -17,12 +17,15 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         /// </returns>
         internal static int CompareRangeTo(this Tuple<DateTime, DateTime> range, DateTime dt)
         {
-            if (range.Item1 > dt)
+            var lowerBound = new DateTimeOffset(range.Item1);
+            var upperBound = new DateTimeOffset(range.Item2);
+            var dto = new DateTimeOffset(dt);
+            if (lowerBound > dto)
             {
                 return -1;
             }
 
-            return range.Item2 < dt ? 1 : 0;
+            return upperBound < dto ? 1 : 0;
         }
 
         internal static IEnumerable<Tuple<DateTime, DateTime>> GetEveryFullMonthLimitedByFactor(this Tuple<DateTime, DateTime> range, int recurrenceFactor)

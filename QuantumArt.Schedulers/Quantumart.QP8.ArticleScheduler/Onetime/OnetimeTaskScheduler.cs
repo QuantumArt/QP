@@ -35,9 +35,15 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck) => GetTaskRange((OnetimeTask)task).CompareRangeTo(dateTimeToCheck) >= 0;
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
+        {
+            return GetTaskRange((OnetimeTask)task).CompareRangeTo(dateTimeToCheck) >= 0;
+        }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(OnetimeTask.CreateOnetimeTask(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
+        {
+            return ShouldProcessTask(OnetimeTask.CreateOnetimeTask(task), dateTimeToCheck, forMonitoring);
+        }
 
         private void ProcessTask(OnetimeTask task, int comparison)
         {

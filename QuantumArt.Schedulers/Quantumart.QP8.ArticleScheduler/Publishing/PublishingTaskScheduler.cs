@@ -35,11 +35,11 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
         {
             var result = dateTimeToCheck >= ((PublishingTask)task).PublishingDateTime;
             var pubTask = ((PublishingTask)task);
-            if (!result)
+            if (!result && !forMonitoring)
             {
                 Logger.Info()
                     .Message(
@@ -53,6 +53,9 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             return result;
         }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck, bool forMonitoring)
+        {
+            return ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck, forMonitoring);
+        }
     }
 }

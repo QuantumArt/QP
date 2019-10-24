@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
@@ -67,12 +67,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 result.Recurring = RecurringSchedule.Empty;
             }
 
-            ProceedDalToOneTimeSchedule(dal, result);
-            result.PublicationDate = result.Article.Delayed ? result.StartDate : ScheduleHelper.DefaultStartDate;
-        }
 
-        private static void ProceedDalToOneTimeSchedule(ArticleScheduleDAL dal, ArticleSchedule result)
-        {
             if (result.EndDate.Year == ArticleScheduleConstants.Infinity.Year)
             {
                 result.EndDate = ScheduleHelper.DefaultEndDate;
@@ -82,6 +77,8 @@ namespace Quantumart.QP8.BLL.Mappers
             {
                 result.WithoutEndDate = false;
             }
+
+            result.PublicationDate = result.Article.Delayed ? result.StartDate : ScheduleHelper.DefaultStartDate;
         }
 
         private static void ProceedOneTimeScheduleToDal(ArticleSchedule item, ArticleScheduleDAL result)
