@@ -5233,9 +5233,9 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
 		if dbo.qp_is_sql_2000() = 1
 			set @str_set_params =  '@activation_start_dt=[STRTDT], @activation_start_tm=[STRTTM]'
 		else if dbo.qp_is_early_sql_2005() = 1
-			set @str_set_params =  '@activation_start_dt=$(STRTDT), @activation_start_tm=$(STRTTM)'
+			set @str_set_params =  '@activation_start_dt=$' + '(STRTDT), @activation_start_tm=$' + '(STRTTM)'
 		else
-			set @str_set_params =  '@activation_start_dt=$(ESCAPE_NONE(STRTDT)), @activation_start_tm=$(ESCAPE_NONE(STRTTM))'
+			set @str_set_params =  '@activation_start_dt=$' + '(ESCAPE_NONE(STRTDT)), @activation_start_tm=$' + '(ESCAPE_NONE(STRTTM))'
 		if @freq_type <> 2
 			SET @sql = 'UPDATE content_item with(rowlock) SET visible = 1 WHERE content_item_id = '
 			  + CAST(@item_id AS NVARCHAR)
