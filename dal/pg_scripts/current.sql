@@ -1,62 +1,87 @@
--- auto-generated definition
-create type content_link as
+DO $$ BEGIN
+    create type content_link as
     (
-    id numeric(18),
-    is_symmetric boolean,
-    l_content_id numeric(18),
-    r_content_id numeric(18)
+        id numeric(18),
+        is_symmetric boolean,
+        l_content_id numeric(18),
+        r_content_id numeric(18)
     );
 
-alter type content_link owner to postgres;
+    alter type content_link owner to postgres;
 
-create type link as
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+DO $$ BEGIN
+    create type link as
     (
-    id numeric(18),
-    linked_id numeric(18)
+        id numeric(18),
+        linked_id numeric(18)
     );
 
-alter type link owner to postgres;
--- auto-generated definition
-create type link_data as
+    alter type link owner to postgres;
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+    create type link_data as
     (
-    id numeric(18),
-    attribute_id numeric(18),
-    has_data boolean,
-    splitted boolean,
-    has_async boolean
+        id numeric(18),
+        attribute_id numeric(18),
+        has_data boolean,
+        splitted boolean,
+        has_async boolean
     );
 
-alter type link_data owner to postgres;
+    alter type link_data owner to postgres;
 
-CREATE TYPE public.link_multiple AS
-(
-	id numeric(18,0),
-	link_id numeric(18,0),
-	linked_id numeric(18,0)
-);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+	CREATE TYPE public.link_multiple AS
+	(
+		id numeric(18,0),
+		link_id numeric(18,0),
+		linked_id numeric(18,0)
+	);
 
-ALTER TYPE public.link_multiple
-    OWNER TO postgres;
--- auto-generated definition
-create type link_multiple_splitted as
+	ALTER TYPE public.link_multiple
+		OWNER TO postgres;
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+    create type link_multiple_splitted as
     (
-    id numeric(18),
-    link_id numeric(18),
-    linked_id numeric(18),
-    splitted boolean
+        id numeric(18),
+        link_id numeric(18),
+        linked_id numeric(18),
+        splitted boolean
     );
 
-alter type link_multiple_splitted owner to postgres;
+    alter type link_multiple_splitted owner to postgres;
 
--- auto-generated definition
-create type value as
-(
-    id numeric,
-    field_id numeric,
-    data text
-);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+    create type value as
+    (
+        id numeric,
+        field_id numeric,
+        data text
+    );
 
-alter type value owner to postgres;
+    alter type value owner to postgres;
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 create or replace view backend_action_access_permlevel(action_access_id, user_id, group_id, permission_level, backend_action_id) as
 SELECT c.action_access_id,
@@ -449,7 +474,7 @@ create or replace view v_user_query_attrs AS
 	from user_query_attrs uqa
 	join CONTENT_ATTRIBUTE vca on uqa.virtual_content_id = vca.CONTENT_ID
 	join CONTENT_ATTRIBUTE ca on uqa.user_query_attr_id = ca.ATTRIBUTE_ID
-	where vca.ATTRIBUTE_NAME = ca.ATTRIBUTE_NAME
+	where vca.ATTRIBUTE_NAME = ca.ATTRIBUTE_NAME;
 
 alter table v_user_query_attrs
     owner to postgres;
@@ -473,7 +498,7 @@ create or replace view VIRTUAL_ATTR_BASE_ATTR_RELATION AS
 	JOIN CONTENT_ATTRIBUTE BA ON BA.ATTRIBUTE_ID = AR.BASE_ATTR_ID
 	JOIN CONTENT_ATTRIBUTE VA ON VA.ATTRIBUTE_ID = AR.VIRTUAL_ATTR_ID
 	JOIN CONTENT BC ON BA.CONTENT_ID = BC.CONTENT_ID
-	JOIN CONTENT VC ON VA.CONTENT_ID = VC.CONTENT_ID
+	JOIN CONTENT VC ON VA.CONTENT_ID = VC.CONTENT_ID;
 
 alter table v_user_query_attrs
     owner to postgres;
@@ -1772,6 +1797,7 @@ $BODY$;
 
 ALTER FUNCTION public.qp_authenticate(text, text, boolean, boolean)
     OWNER TO postgres;
+
 CREATE OR REPLACE PROCEDURE public.qp_batch_delete_contents(site_id int, count_to_del int DEFAULT 20)
 LANGUAGE 'plpgsql'
 
@@ -1804,8 +1830,6 @@ AS $BODY$
 
     END;
 $BODY$;
-
-END
 CREATE OR REPLACE PROCEDURE public.qp_before_content_delete(
 	ids integer[])
 LANGUAGE 'plpgsql'
@@ -2391,7 +2415,7 @@ DECLARE
 
 $$;
 
-alter FUNCTION qp_mass_update_content_item(xml, int, int, int, bool) owner to postgres;
+alter FUNCTION qp_mass_update_content_item(xml, int, int, int, bool, bool) owner to postgres;
 
 
 
@@ -2427,7 +2451,7 @@ $$;
 
 alter procedure qp_merge_articles(integer[], integer, boolean) owner to postgres;
 
-create procedure qp_merge_delays(ids integer[], last_modified_by integer DEFAULT 1)
+CREATE OR REPLACE PROCEDURE qp_merge_delays(ids integer[], last_modified_by integer DEFAULT 1)
     language plpgsql
 as
 $$
@@ -2439,13 +2463,13 @@ DECLARE
 		IF ids2 is not null THEN
 			ids3 := array_agg(cd.child_id) from child_delays cd where cd.id = ANY(ids)
 			and not exists (select * from CHILD_DELAYS cd2 where cd2.child_id = cd.child_id and cd2.id <> cd.id);
-			
+
 			IF ids3 is not null THEN
 				call qp_merge_articles(ids3, last_modified_by);
 			END IF;
-			
+
 			DELETE FROM child_delays WHERE id = ANY(ids2);
-			
+
 		END IF;
 	END;
 $$;
@@ -3928,111 +3952,171 @@ $tiu_update_hash$ LANGUAGE plpgsql;
 alter function update_hash() owner to postgres;
 
 
-create trigger tbd_content
-    before delete
-    on content
-    for each row
-execute procedure process_before_content_delete();
-create trigger tbd_content_to_content
-    before delete
-    on content_to_content
-    for each row
-execute procedure process_before_content_to_content_delete();
--- auto-generated definition
-create trigger tbd_delete_item
-    before delete
-    on content_item
-    for each row
-execute procedure process_before_content_item_delete();
+DO $$ BEGIN
+    create trigger tbd_content
+        before delete
+        on content
+        for each row
+    execute procedure process_before_content_delete();
 
--- DROP TRIGGER td_delete_item ON content_item;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+    create trigger tbd_delete_item_version
+        before delete
+        on content_item_version
+        for each row
+    execute procedure process_before_content_item_version_delete();
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+    create trigger tbd_content_to_content
+        before delete
+        on content_to_content
+        for each row
+    execute procedure process_before_content_to_content_delete();
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$ BEGIN
+    create trigger tbd_delete_item
+        before delete
+        on content_item
+        for each row
+    execute procedure process_before_content_item_delete();
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-create trigger td_delete_item
-    after delete
-    on content_item
-    REFERENCING OLD TABLE AS old_table
-    FOR EACH STATEMENT
-execute procedure process_content_item_delete();
+DO $$ BEGIN
+    create trigger td_delete_item
+        after delete
+        on content_item
+        REFERENCING OLD TABLE AS old_table
+        FOR EACH STATEMENT
+    execute procedure process_content_item_delete();
 
--- DROP TRIGGER td_item_link_async ON item_link_async;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-create trigger td_item_link_async
-    after delete
-    on item_link_async
-    referencing OLD TABLE as old_table
-    for each statement
-execute procedure process_item_to_item_delete();
--- DROP TRIGGER td_item_to_item ON item_to_item;
+DO $$ BEGIN
+    create trigger td_item_link_async
+        after delete
+        on item_link_async
+        referencing OLD TABLE as old_table
+        for each statement
+    execute procedure process_item_to_item_delete();
 
-create trigger td_item_to_item
-    after delete
-    on item_to_item
-    referencing OLD TABLE as old_table
-    for each statement
-execute procedure process_item_to_item_delete();
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- DROP TRIGGER ti_content_data_fill ON content_data;
+DO $$ BEGIN
+    create trigger td_item_to_item
+        after delete
+        on item_to_item
+        referencing OLD TABLE as old_table
+        for each statement
+    execute procedure process_item_to_item_delete();
 
-create trigger ti_content_data_fill
-    after insert
-    on content_data
-    REFERENCING NEW TABLE AS new_table
-    FOR EACH STATEMENT
-execute procedure process_content_data_upsert();
-
--- DROP TRIGGER ti_insert_item ON content_item;
-
-create trigger ti_insert_item
-    after insert
-    on content_item
-    REFERENCING NEW TABLE AS new_table
-    FOR EACH STATEMENT
-execute procedure process_content_item_insert();
-
--- DROP TRIGGER ti_item_link_async ON item_link_async;
-
-create trigger ti_item_link_async
-    after insert
-    on item_link_async
-    referencing NEW TABLE as new_table
-    for each statement
-execute procedure process_item_to_item_insert();
-
-
--- DROP TRIGGER ti_item_to_item ON item_to_item;
-
-create trigger ti_item_to_item
-    after insert
-    on item_to_item
-    referencing NEW TABLE as new_table
-    for each statement
-execute procedure process_item_to_item_insert();
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 
--- auto-generated definition
-create trigger tiu_update_hash
-    before insert or update
-    on users
-    for each row
-execute procedure update_hash();
+DO $$ BEGIN
+    create trigger ti_content_data_fill
+        after insert
+        on content_data
+        REFERENCING NEW TABLE AS new_table
+        FOR EACH STATEMENT
+    execute procedure process_content_data_upsert();
 
--- DROP TRIGGER tu_content_data_fill ON content_data;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-create trigger tu_content_data_fill
-    after update
-    on content_data
-    REFERENCING NEW TABLE AS new_table OLD table as old_table
-    FOR EACH STATEMENT
-execute procedure process_content_data_upsert();
 
--- DROP TRIGGER tu_update_item ON content_item;
+DO $$ BEGIN
+    create trigger ti_insert_item
+        after insert
+        on content_item
+        REFERENCING NEW TABLE AS new_table
+        FOR EACH STATEMENT
+    execute procedure process_content_item_insert();
 
-create trigger tu_update_item
-    after update
-    on content_item
-    REFERENCING NEW TABLE AS new_table OLD TABLE AS old_table
-    FOR EACH STATEMENT
-execute procedure process_content_item_update();
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+DO $$ BEGIN
+    create trigger ti_item_link_async
+        after insert
+        on item_link_async
+        referencing NEW TABLE as new_table
+        for each statement
+    execute procedure process_item_to_item_insert();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+
+DO $$ BEGIN
+    create trigger ti_item_to_item
+        after insert
+        on item_to_item
+        referencing NEW TABLE as new_table
+        for each statement
+    execute procedure process_item_to_item_insert();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+
+DO $$ BEGIN
+    create trigger tiu_update_hash
+        before insert or update
+        on users
+        for each row
+    execute procedure update_hash();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+DO $$ BEGIN
+    create trigger tu_content_data_fill
+        after update
+        on content_data
+        REFERENCING NEW TABLE AS new_table OLD table as old_table
+        FOR EACH STATEMENT
+    execute procedure process_content_data_upsert();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    create trigger tu_update_item
+        after update
+        on content_item
+        REFERENCING NEW TABLE AS new_table OLD TABLE AS old_table
+        FOR EACH STATEMENT
+    execute procedure process_content_item_update();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
 
 
 

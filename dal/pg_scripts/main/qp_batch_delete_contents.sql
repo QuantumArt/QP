@@ -30,5 +30,3 @@ AS $BODY$
 
     END;
 $BODY$;
-
-END

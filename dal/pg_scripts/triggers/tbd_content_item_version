@@ -1,5 +1,0 @@
-create trigger tbd_delete_item_version
-    before delete
-    on content_item_version
-    for each row
-execute procedure process_before_content_item_version_delete();

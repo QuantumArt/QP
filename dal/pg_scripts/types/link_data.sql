@@ -1,12 +1,15 @@
--- auto-generated definition
-create type link_data as
+DO $$ BEGIN
+    create type link_data as
     (
-    id numeric(18),
-    attribute_id numeric(18),
-    has_data boolean,
-    splitted boolean,
-    has_async boolean
+        id numeric(18),
+        attribute_id numeric(18),
+        has_data boolean,
+        splitted boolean,
+        has_async boolean
     );
 
-alter type link_data owner to postgres;
+    alter type link_data owner to postgres;
 
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;

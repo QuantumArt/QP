@@ -46,3 +46,4 @@ $BODY$;
 
 ALTER FUNCTION public.qp_authenticate(text, text, boolean, boolean)
     OWNER TO postgres;
+
