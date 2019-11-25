@@ -5,6 +5,7 @@
   const settings = {
     pluginName: 'Typographer',
     pluginDesc: 'Типографер',
+    // eslint-disable-next-line prefer-template
     iconPath: window.APPLICATION_ROOT_URL + 'Scripts/Quantumart/ckeditor/typographer/images/typographer.gif'
   };
 

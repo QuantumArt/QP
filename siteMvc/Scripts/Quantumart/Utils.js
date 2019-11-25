@@ -62,8 +62,7 @@ $q.traceError = (msg, ...otherArgs) => {
  * @param  {...Object} otherArgs data that should be loggged
  */
 $q.alertSuccess = (msg, ...otherArgs) => {
-  if (msg)
-  {
+  if (msg) {
     window.alert(msg);
     if ($q.isDebug || Sys.Debug.isDebug) {
       window.console.log(msg, ...otherArgs);
@@ -619,8 +618,7 @@ $q.getTypeNameForJson = function getTypeNameForJson(typeName) {
 };
 
 $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
-  if (jqXHR && jqXHR.status && jqXHR.getResponseHeader)
-  {
+  if (jqXHR && jqXHR.status && jqXHR.getResponseHeader) {
     let errorMessage = String.format($l.Common.ajaxGenericErrorMessage, jqXHR.status);
 
     if (jqXHR.status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
@@ -630,7 +628,6 @@ $q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
     }
     window.alert(errorMessage);
   }
-
 };
 
 $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
@@ -675,24 +672,22 @@ $q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
 
 $q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings, forError) {
   if (callback) {
-    if (forError)
-    {
+    if (forError) {
       return function ajaxDecorator(jqXHR, textStatus) {
         const data = {};
         if (!BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
           return callback(data, textStatus, jqXHR);
         }
-      }
+        return undefined;
+      };
     }
     return function ajaxDecorator(data, textStatus, jqXHR) {
       if (!BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
         return callback(data, textStatus, jqXHR);
       }
-
       return undefined;
     };
   }
-
   return callback;
 };
 

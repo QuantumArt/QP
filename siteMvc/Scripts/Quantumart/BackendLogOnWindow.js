@@ -154,9 +154,8 @@ export class BackendLogOnWindow extends Observable {
 
   _getUrl(isSubmit) {
     let url = $(this.FORM_SELECTOR).attr('action');
-    if (isSubmit)
-    {
-      url = url.replace("?", "/JsonIndex?");
+    if (isSubmit) {
+      url = url.replace('?', '/JsonIndex?');
     }
     return url;
   }
@@ -231,8 +230,7 @@ export class BackendLogOnWindow extends Observable {
       return false;
     } else if (jqXHR.getResponseHeader('QP-Not-Authenticated')) {
       return true;
-    }
-    else if (this.isLogonUrl(location) || this.isWinlogonUrl(location)) {
+    } else if (this.isLogonUrl(location) || this.isWinlogonUrl(location)) {
       return true;
     }
     return false;
@@ -252,11 +250,12 @@ export class BackendLogOnWindow extends Observable {
     if (!url || !urlForTest) {
       return false;
     }
-    if (urlForTest.endsWith("/")) {
-      urlForTest = urlForTest.left(urlForTest.length - 1);
+    let resultUrl = urlForTest;
+    if (urlForTest.endsWith('/')) {
+      resultUrl = urlForTest.left(urlForTest.length - 1);
     }
 
-    return url.replace(window.location.href, "/").toUpperCase().indexOf(urlForTest) === 0;
+    return url.replace(window.location.href, '/').toUpperCase().indexOf(resultUrl) === 0;
   }
 
   dispose() {
@@ -283,7 +282,7 @@ export class BackendLogOnWindow extends Observable {
 BackendLogOnWindow._instance = null;
 BackendLogOnWindow.deferredExecution = function (data, jqXHR, callback, settings) {
   const logon = BackendLogOnWindow.getInstance();
-  const location = jqXHR.getResponseHeader("Location");
+  const location = jqXHR.getResponseHeader('Location');
   if (logon.needLogon(jqXHR, settings.url, location)) {
     logon.showLogonForm(data, jqXHR, callback, settings, location);
     return true;
