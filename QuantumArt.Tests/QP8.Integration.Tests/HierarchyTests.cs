@@ -39,7 +39,7 @@ namespace QP8.Integration.Tests
         {
             DbConnector = new DBConnector(Global.ConnectionString)
             {
-                DynamicImageCreator = new FakeDynamicImage(),
+                DynamicImageCreator = new FakeDynamicImageCreator(),
                 FileSystem = new FakeFileSystem(),
                 ForceLocalCache = true
             };
