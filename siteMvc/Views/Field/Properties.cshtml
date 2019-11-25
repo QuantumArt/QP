@@ -199,7 +199,7 @@
 
                     using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.ClassifierFieldPanelElementId }, { "hideforcurrent", "true" } }))
                     {
-                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, string.Join("ClassifierList", Model.O2MBackwardFieldNamePanelElementId), htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
+                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, "ClassifierList", htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
                         using (Html.BeginPanel("ClassifierList"))
                         {
                             @Html.SelectFieldFor(s => s.Data.ClassifierId, Html.List(Model.GetAcceptableClassifierFields()), new Dictionary<string, object> { { "id", Model.ClassifierSelectElementId } })
@@ -231,7 +231,7 @@
                 {
                     @Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
                 }
-        
+
                 @Html.NumericFieldFor(s => s.Data.MaxDataListItemCount)
 
                 using (Html.BeginPanel("O2MDefault"))
@@ -263,7 +263,7 @@
                         if (!Model.Data.IsBackwardFieldExists)
                         {
                             @Html.TextBoxFieldFor(s => s.Data.NewM2MBackwardFieldName)
-                        }                       
+                        }
                     }
                 }
 
@@ -282,14 +282,14 @@
                        HtmlAttributes = new Dictionary<string, object> { { "id", Model.BackwardFieldNameElementId } }
                     })
         }
-      
+
           using (Html.BeginPanel(Model.O2MBackwardFieldNamePanelElementId, false, false, reverse: true))
           {
             if (!Model.Data.IsBackwardFieldExists)
             {
                   @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-            }                    
-          }     
+            }
+          }
 
                 @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
             }
@@ -310,7 +310,7 @@
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2ORelation, true))
             {
-                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()), new Dictionary<string, object> { { "id", Model.BackRelationSelectElementId } })                 
+                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()), new Dictionary<string, object> { { "id", Model.BackRelationSelectElementId } })
             }
 
             using (Html.BeginPanel("ListOrderOptions"))
