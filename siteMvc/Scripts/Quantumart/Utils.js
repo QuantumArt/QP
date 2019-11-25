@@ -62,9 +62,11 @@ $q.traceError = (msg, ...otherArgs) => {
  * @param  {...Object} otherArgs data that should be loggged
  */
 $q.alertSuccess = (msg, ...otherArgs) => {
-  window.alert(msg);
-  if ($q.isDebug || Sys.Debug.isDebug) {
-    window.console.log(msg, ...otherArgs);
+  if (msg) {
+    window.alert(msg);
+    if ($q.isDebug || Sys.Debug.isDebug) {
+      window.console.log(msg, ...otherArgs);
+    }
   }
 };
 

@@ -77,11 +77,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(SolutionDir)packages\Quantumart.3.3.0\lib\net471\Quantumart.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.4.0\lib\net471\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(SolutionDir)packages\Quantumart.3.3.0\lib\net471\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.3.4.0\lib\net471\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
