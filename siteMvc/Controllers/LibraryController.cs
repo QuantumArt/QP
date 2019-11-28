@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -68,7 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult ExportFileDownload(int id, string fileName)
         {
             var currentSite = SiteService.Read(id);
-            var folderForUpload = $@"{currentSite.LiveDirectory}\temp\";
+            var folderForUpload = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{CsvWriter.FolderForDownload}{Path.DirectorySeparatorChar}";
             var inf = new PathInfo
             {
                 Path = folderForUpload

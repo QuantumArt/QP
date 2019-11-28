@@ -63,7 +63,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             var result = new MultistepActionStepResult { ProcessedItemsCount = csv.Write(step, ItemsPerStep) };
             if (csv.CsvReady)
             {
-                result.AdditionalInfo = csv.CopyFileToTempSiteLiveDirectory();
+                result.AdditionalInfo = csv.CopyFileToTempUploadDirectory();
             }
 
             return result;
