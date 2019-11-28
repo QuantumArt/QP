@@ -19,7 +19,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvWriter
     {
-        private const string FolderForUpload = "temp";
+        public static readonly string FolderForDownload = $"temp{Path.DirectorySeparatorChar}download";
         private const string IdentifierFieldName = FieldName.ContentItemId;
         private const string ExtensionQueryTemplate = " LEFT JOIN CONTENT_{0}_united [ex{1}] ON [ex{1}].[{2}] = base.CONTENT_ITEM_ID ";
         private const string FieldNameQueryTemplate = "[ex{0}].[{1}] [{0}.{1}]";
@@ -47,19 +47,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public bool CsvReady => _itemsPerStep * (_step + 1) >= _ids.Length;
 
-        public string CopyFileToTempSiteLiveDirectory()
+        public string CopyFileToTempUploadDirectory()
         {
             var fileInfo = new FileInfo(_settings.UploadFilePath);
             if (fileInfo.Exists)
             {
                 var currentSite = SiteRepository.GetById(_siteId);
-                var uploadDir = $@"{currentSite.LiveDirectory}\{FolderForUpload}";
+                var uploadDir = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{FolderForDownload}";
                 if (!Directory.Exists(uploadDir))
                 {
                     Directory.CreateDirectory(uploadDir);
                 }
 
-                var newFileUploadPath = $@"{uploadDir}\{fileInfo.Name}";
+                var newFileUploadPath = $@"{uploadDir}{Path.DirectorySeparatorChar}{fileInfo.Name}";
                 File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
                 File.Delete(_settings.UploadFilePath);
 
@@ -165,7 +165,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
 
                 foreach (var article in articles)
-                {                    
+                {
                     _sb.Append(_contentId);
                     _sb.Append(_settings.Delimiter);
                     _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
@@ -355,7 +355,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (field != null && (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne))
             {
                 value = string.Empty;
-                var mapValue = field.RelationType == RelationType.ManyToMany ? field.LinkId.Value.ToString() : article["content_Item_id"] + "_" + field.Id; 
+                var mapValue = field.RelationType == RelationType.ManyToMany ? field.LinkId.Value.ToString() : article["content_Item_id"] + "_" + field.Id;
                 if (valuesWithRelation.TryGetValue(mapValue, out var mappings) && mappings.Any())
                 {
                     var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
