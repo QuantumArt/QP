@@ -9,6 +9,7 @@ using NLog.Fluent;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
@@ -64,6 +65,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                         reader.Process(step, ItemsPerStep, out var processedItemsCount);
                         if (step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep)
                         {
+                            ContentRepository.UpdateContentModification(ContentId);
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
                         }
 
