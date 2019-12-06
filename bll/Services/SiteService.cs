@@ -131,8 +131,8 @@ namespace Quantumart.QP8.BLL.Services
 
             if (site.ExternalDevelopment)
             {
-                var liveTempDirectory = $@"{site.TempDirectoryForClasses}\live";
-                var stageTempDirectory = $@"{site.TempDirectoryForClasses}\stage";
+                var liveTempDirectory = $@"{site.TempDirectoryForClasses}{Path.DirectorySeparatorChar}live";
+                var stageTempDirectory = $@"{site.TempDirectoryForClasses}{Path.DirectorySeparatorChar}stage";
 
                 if (Directory.Exists(liveTempDirectory))
                 {
