@@ -273,3 +273,5 @@ package/pack/qp8release
 !siteMvc/ToCopy/bin/*.pdb
 !bll/Services/MultistepActions/Publish/
 
+**/appsettings.*.json
+
