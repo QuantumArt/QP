@@ -841,6 +841,9 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("OptimizeForHierarchy", NameResourceType = typeof(FieldStrings))]
         public bool OptimizeForHierarchy { get; set; }
 
+        [LocalizedDisplayName("TraceImport", NameResourceType = typeof(FieldStrings))]
+        public bool TraceImport { get; set; }
+
         [LocalizedDisplayName("IsLocalization", NameResourceType = typeof(FieldStrings))]
         public bool IsLocalization { get; set; }
 

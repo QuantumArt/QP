@@ -249,6 +249,7 @@
           <Property Name="USE_DEFAULT_FILTRATION" Type="bit" Nullable="false" />
           <Property Name="query" Type="nvarchar(max)" />
           <Property Name="alt_query" Type="nvarchar(max)" />
+          <Property Name="TRACE_IMPORT_SCRIPT" Type="nvarchar(max)" />
           <Property Name="ADD_CONTEXT_CLASS_NAME" Type="nvarchar" MaxLength="255" />
           <Property Name="XAML_VALIDATION" Type="ntext" />
           <Property Name="DISABLE_XAML_VALIDATION" Type="bit" Nullable="false" />
@@ -353,6 +354,7 @@
           <Property Name="DISABLE_LIST_AUTO_WRAP" Type="bit" Nullable="false" />
           <Property Name="TA_HIGHLIGHT_TYPE" Type="nvarchar" MaxLength="50" />
 		  <Property Name="MAX_DATA_LIST_ITEM_COUNT" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="TRACE_IMPORT" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="content_constraint">
           <Key>
@@ -6279,6 +6281,7 @@
           <Property Name="PageSize" Type="Int32" Nullable="false" />
           <Property Name="Query" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="AltQuery" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="TraceImportScript" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="MapAsClass" Type="Boolean" Nullable="false" />
           <Property Name="NetName" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="NetPluralName" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -6439,6 +6442,7 @@
           <Property Type="Boolean" Name="IncludeRelationsInTitle" Nullable="false" />
           <Property Type="Boolean" Name="UseInChildContentFilter" Nullable="false" />
           <Property Name="OptimizeForHierarchy" Type="Boolean" Nullable="false" />
+          <Property Name="TraceImport" Type="Boolean" Nullable="false" />
           <Property Name="IsLocalization" Type="Boolean" Nullable="false" />
           <Property Name="UseSeparateReverseViews" Type="Boolean" Nullable="false" />
           <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
@@ -10688,6 +10692,7 @@
                 <ScalarProperty Name="PageSize" ColumnName="content_page_size" />
                 <ScalarProperty Name="Query" ColumnName="query" />
                 <ScalarProperty Name="AltQuery" ColumnName="alt_query" />
+                <ScalarProperty Name="TraceImportScript" ColumnName="TRACE_IMPORT_SCRIPT" />
                 <ScalarProperty Name="MapAsClass" ColumnName="MAP_AS_CLASS" />
                 <ScalarProperty Name="NetName" ColumnName="NET_CONTENT_NAME" />
                 <ScalarProperty Name="NetPluralName" ColumnName="NET_PLURAL_CONTENT_NAME" />
@@ -10720,6 +10725,7 @@
 								<ScalarProperty Name="TaHighlightType" ColumnName="TA_HIGHLIGHT_TYPE" />
                 <ScalarProperty Name="IsLocalization" ColumnName="IS_LOCALIZATION" />
                 <ScalarProperty Name="OptimizeForHierarchy" ColumnName="OPTIMIZE_FOR_HIERARCHY" />
+                <ScalarProperty Name="TraceImport" ColumnName="TRACE_IMPORT" />
                 <ScalarProperty Name="UseInChildContentFilter" ColumnName="USE_IN_CHILD_CONTENT_FILTER" />
                 <ScalarProperty Name="IncludeRelationsInTitle" ColumnName="INCLUDE_RELATIONS_IN_TITLE" />
                 <ScalarProperty Name="FieldTitleCount" ColumnName="FIELD_TITLE_COUNT" />
