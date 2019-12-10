@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -35,6 +38,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private ExtendedArticleList _articlesListFromCsv;
         private List<string> _uniqueValuesList;
         private IEnumerable<Line> _csvLines;
+        private JObject _jObject;
+        private Dictionary<int, Field> _traceFields;
 
         public CsvReader(int siteId, int contentId, ImportSettings settings)
         {
@@ -43,7 +48,33 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _importSettings = settings;
             _reader = new FileReader(settings);
             _notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
+            _traceFields = GetTraceFields(contentId);
+            _jObject = InitJObject(_traceFields);
+
         }
+
+        public string GetTraceResult()
+        {
+            return _traceFields.Any() ? _jObject.ToString() : "";
+        }
+
+        private static JObject InitJObject(Dictionary<int, Field> traceFields)
+        {
+            var obj = new JObject();
+
+            foreach (var field in traceFields.Values)
+            {
+                obj.Add(field.Name, new JArray());
+            }
+
+            return obj;
+        }
+
+        private static Dictionary<int, Field> GetTraceFields(int contentId)
+        {
+            return FieldRepository.GetList(contentId, false).Where(n => n.TraceImport).ToDictionary(n => n.Id, m => m);
+        }
+
 
         public void Process(int step, int itemsPerStep, out int processedItemsCount)
         {
@@ -343,6 +374,31 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return article;
         }
 
+        private string GetFieldValueForTracing(Field field, string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+
+            switch (field.ExactType)
+            {
+                case FieldExactTypes.Numeric:
+                    return MultistepActionHelper.NumericCultureFormat(
+                        value, CultureInfo.CurrentCulture.ToString(), "en-US"
+                    );
+                case FieldExactTypes.Date:
+                case FieldExactTypes.Time:
+                case FieldExactTypes.DateTime:
+                    return MultistepActionHelper.DateCultureFormat(
+                        value, CultureInfo.CurrentCulture.ToString(), "en-US"
+                    );
+                default:
+                    return value;
+
+            }
+        }
+
         private void FormatFieldValue(Field field, string value, ref FieldValue fieldDbValue)
         {
             switch (field.ExactType)
@@ -450,6 +506,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var extensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
             var idsList = existingArticles.GetBaseArticleIds().ToArray();
             _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Update);
+            var articlesInDb = _traceFields.Any() ?
+                ArticleRepository.GetList(idsList, true).ToDictionary(n => n.Id, m => m) : new Dictionary<int, Article>();
+
+
             InsertArticleValues(idsList, existingArticles.GetBaseArticles(), true);
 
             var idsToDelete = new List<int>();
@@ -458,6 +518,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var articlesToUpdate = new List<Article>();
             foreach (var article in existingArticles)
             {
+                if (_traceFields.Any())
+                {
+                    var newArticle = article.BaseArticle;
+                    var oldArticle = articlesInDb[article.BaseArticle.Id];
+                    RegisterTraceFieldValues(newArticle, oldArticle);
+                }
+
                 foreach (var afv in article.Extensions.Where(ex => ex.Value != null))
                 {
                     var aggregatedArticle = afv.Value;
@@ -502,6 +569,28 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, true);
             _notificationRepository.SendNotifications();
             return existingArticles;
+        }
+
+        private void RegisterTraceFieldValues(Article newArticle, Article oldArticle)
+        {
+            if (!_traceFields.Any())
+            {
+                return;
+            }
+
+            var newTraceFieldValues = newArticle.FieldValues.Where(n => n.Field.TraceImport).ToDictionary(n => n.Field.Id, m => m.Value);
+            var oldTraceFieldValues = oldArticle.FieldValues.Where(n => n.Field.TraceImport).ToDictionary(n => n.Field.Id, m => m.Value);
+
+            foreach (var field in _traceFields.Values)
+            {
+                var localObj = new JObject();
+                localObj.Add("id", newArticle.Id);
+                localObj.Add("new", newTraceFieldValues.TryGetValue(field.Id, out var newFvData) ? newFvData : "");
+                localObj.Add("old", GetFieldValueForTracing(
+                    field, oldTraceFieldValues.TryGetValue(field.Id, out var oldFvData) ? oldFvData : ""
+                ));
+                ((JArray)_jObject[field.Name]).Add(localObj);
+            }
         }
 
         private static List<int> InsertArticlesIds(ICollection<Article> articleList, bool preserveGuids = false)
@@ -747,7 +836,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     var grantedIds = field.UseRelationSecurity
                         ? new HashSet<int>(ArticleRepository.CheckRelationSecurity(contentId, validatedIds.ToArray(), false).Where(n => n.Value).Select(m => m.Key))
                         : validatedIds;
-                                        
+
                     var archiveArticles = ArticleRepository.CheckArchiveArticles(relatedIds.ToArray());
 
                     foreach (var item in filteredValues)

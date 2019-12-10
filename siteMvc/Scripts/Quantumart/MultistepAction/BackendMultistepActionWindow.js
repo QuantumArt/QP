@@ -3,6 +3,7 @@ import { BackendLibrary } from '../Library/BackendLibrary';
 import { Observable } from '../Common/Observable';
 import { $c } from '../ControlHelpers';
 import { $q } from '../Utils';
+import {Url} from "../Helpers/vanilla.helpers";
 
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = 'OnMultistepActionWindowCanceling';
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = 'OnMultistepActionWindowCanceled';
@@ -103,7 +104,7 @@ export class BackendMultistepActionWindow extends Observable {
       .get(0);
   }
 
-  _refreshView() {
+  _refreshView(url) {
     let timeRemaining;
 
     this._progressBarComponent.total(this._stageItemsCount);
@@ -118,6 +119,11 @@ export class BackendMultistepActionWindow extends Observable {
         $(this._stageAdditionalInfoElement).children('a').on('click', $.proxy(this._createDownloadLink, this));
       } else {
         $(this._stageAdditionalInfoElement).html(this._additionalInfo);
+
+        if (url)
+        {
+          $(this._stageAdditionalInfoElement).html("<script src='" + url + "' type='text/javascript'></script>")
+        }
 
         if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
           $(this._stageAdditionalInfoElement).append(`<div class="tooltip">${this._additionalInfo}</div>`);
@@ -222,7 +228,7 @@ export class BackendMultistepActionWindow extends Observable {
     return false;
   }
 
-  completeStep(processedItemsCount, additionalInfo, parentId) {
+  completeStep(processedItemsCount, additionalInfo, traceResult, parentId, entityId) {
     this._stageItemsRemaining -= processedItemsCount;
     this._additionalInfo = additionalInfo;
     this._parentId = parentId;
@@ -235,7 +241,16 @@ export class BackendMultistepActionWindow extends Observable {
       this._stageStepsRemaining = 0;
     }
 
-    this._refreshView();
+    const url = (traceResult) ? Url.Content(`~/Content/GetTraceImportScript/${entityId}`) : null;
+
+    this._refreshView(url);
+
+    if (traceResult) {
+
+      if (typeof Quantumart.QP8.BackendMultistepActionWindow.processTraceResult == "function") {
+        Quantumart.QP8.BackendMultistepActionWindow.processTraceResult(traceResult);
+      }
+    }
   }
 
   _isInProcess = true;

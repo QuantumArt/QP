@@ -6,6 +6,7 @@ import { BackendMultistepActionWindow } from './MultistepAction/BackendMultistep
 import { BackendSettingsPopupWindow } from './List/BackendSettingsPopupWindow';
 import { GlobalCache } from './Cache';
 import { Observable } from './Common/Observable';
+import { Url } from 'Helpers/vanilla.helpers';
 import { $c } from './ControlHelpers';
 import { $o } from './Info/BackendEntityObject';
 import { $q } from './Utils';
@@ -347,7 +348,9 @@ export class BackendActionExecutor extends Observable {
                             progressWindow.completeStep(
                               stepData.ProcessedItemsCount,
                               stepData.AdditionalInfo,
-                              actionData.ParentId || parentEntityId
+                              stepData.TraceResult,
+                              actionData.ParentId || parentEntityId,
+                              entityIDs.length > 0 ? entityIDs[0] : 0
                             );
                             stepCounter += 1;
                             if (stepCounter === stepLength) {
