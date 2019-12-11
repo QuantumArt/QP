@@ -339,11 +339,17 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         private static void DeleteEmptyContentGroups()
         {
-            var emptyGroups = QPContext.EFContext.ContentGroupSet
-                .Where(n => !n.Contents.Any() && n.Name != ContentGroup.DefaultName).ToArray();
+            var entities = QPContext.EFContext;
+            var emptyGroups = entities.ContentGroupSet.Where(
+                n => !n.Contents.Any() && n.Name != ContentGroup.DefaultName
+             ).ToArray();
 
-            QPContext.EFContext.ContentGroupSet.RemoveRange(emptyGroups);
-            QPContext.EFContext.SaveChanges();
+            foreach (var emptyGroup in emptyGroups)
+            {
+                entities.Entry(emptyGroup).State = EntityState.Deleted;
+            }
+
+            entities.SaveChanges();
         }
 
         internal static Content Update(Content content)
@@ -1214,5 +1220,6 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 return Common.GetAggregatedArticleIdsMap(QPContext.EFContext, scope.DbConnection, contentId, articleIds);
             }
         }
+
     }
 }

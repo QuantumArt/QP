@@ -90,13 +90,14 @@ AS $BODY$
 									 
 		END LOOP;
 
-		update content_data cd2 set o2m_data = a.o2m_data, ft_data = a.ft_data from
+		update content_data cd2 set o2m_data = a.data::numeric, ft_data = a.ft_data from
 		(
-		    select to_tsvector('russian', cd.data) ft_data, cd.data::numeric o2m_data, cd.attribute_id, cd.content_item_id
+		    select to_tsvector('russian', cd.data) ft_data, cd.data, cd.attribute_id, cd.content_item_id
 		    from content_data cd inner join content_attribute ca on ca.attribute_id = cd.attribute_id
 		    and ca.attribute_type_id = 11 and ca.link_id is null
 		    WHERE cd.content_item_id = ANY(ids)
-		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id and cd2.o2m_data <> a.o2m_data;
+		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id
+		      and coalesce(cd2.ft_data, to_tsvector('russian', '')) <> coalesce(a.ft_data, to_tsvector('russian', ''));
 
 		update content_data cd2 set ft_data = a.ft_data from
 	    (
@@ -104,7 +105,8 @@ AS $BODY$
 		    from content_data cd inner join content_attribute ca on ca.attribute_id = cd.attribute_id
 		    and (ca.attribute_type_id <> 11 or ca.link_id is not null)
 		    WHERE cd.content_item_id = ANY(ids)
-		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id and cd2.ft_data <> a.ft_data;
+		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id
+		      and coalesce(cd2.ft_data, to_tsvector('russian', '')) <> coalesce(a.ft_data, to_tsvector('russian', ''));
 
 		update content_item_ft ci set ft_data = a.ft_data from
         (
