@@ -3,7 +3,7 @@ import { BackendLibrary } from '../Library/BackendLibrary';
 import { Observable } from '../Common/Observable';
 import { $c } from '../ControlHelpers';
 import { $q } from '../Utils';
-import {Url} from "../Helpers/vanilla.helpers";
+import { Url } from '../Helpers/vanilla.helpers';
 
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = 'OnMultistepActionWindowCanceling';
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = 'OnMultistepActionWindowCanceled';
@@ -120,9 +120,8 @@ export class BackendMultistepActionWindow extends Observable {
       } else {
         $(this._stageAdditionalInfoElement).html(this._additionalInfo);
 
-        if (url)
-        {
-          $(this._stageAdditionalInfoElement).html("<script src='" + url + "' type='text/javascript'></script>")
+        if (url) {
+          $(this._stageAdditionalInfoElement).html(`<script src="${url}" type="text/javascript"></script>`);
         }
 
         if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
@@ -241,14 +240,14 @@ export class BackendMultistepActionWindow extends Observable {
       this._stageStepsRemaining = 0;
     }
 
-    const url = (traceResult) ? Url.Content(`~/Content/GetTraceImportScript/${entityId}`) : null;
-
-    this._refreshView(url);
+    // eslint-disable-next-line new-cap
+    const url = Url.Content(`~/Content/GetTraceImportScript/${entityId}`);
+    this._refreshView(traceResult ? url : null);
 
     if (traceResult) {
-
-      if (typeof Quantumart.QP8.BackendMultistepActionWindow.processTraceResult == "function") {
-        Quantumart.QP8.BackendMultistepActionWindow.processTraceResult(traceResult);
+      const wnd = Quantumart.QP8.BackendMultistepActionWindow;
+      if (typeof wnd.processTraceResult === 'function') {
+        wnd.processTraceResult(traceResult);
       }
     }
   }

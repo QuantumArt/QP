@@ -6,7 +6,6 @@ import { BackendMultistepActionWindow } from './MultistepAction/BackendMultistep
 import { BackendSettingsPopupWindow } from './List/BackendSettingsPopupWindow';
 import { GlobalCache } from './Cache';
 import { Observable } from './Common/Observable';
-import { Url } from 'Helpers/vanilla.helpers';
 import { $c } from './ControlHelpers';
 import { $o } from './Info/BackendEntityObject';
 import { $q } from './Utils';
