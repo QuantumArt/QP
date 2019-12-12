@@ -37,8 +37,10 @@ spec:
           name: temp-volume
         - mountPath: /qplibrary
           name: library-volume
-        resources: 
+        resources:
           limits:
+            memory: "1Gi"
+          requests:
             memory: "256Mi"
       volumes:
       - name: temp-volume
