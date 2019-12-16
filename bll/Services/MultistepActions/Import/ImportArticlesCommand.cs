@@ -77,10 +77,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
                         _importLogger.Trace($"Import articles step: {step}. Settings: {logData.ToJsonLog()}");
                         result.ProcessedItemsCount = processedItemsCount;
-                        if (lastStep)
-                        {
-                            result.TraceResult = reader.GetTraceResult();
-                        }
+                        result.TraceResult = reader.GetTraceResult();
                         result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";
                     }
                     catch (Exception ex)

@@ -18,6 +18,7 @@ export class BackendMultistepActionWindow extends Observable {
     this._actionName = actionName;
     this._shortActionName = shortActionName;
     this._startStageTime = new Date();
+    this._traceResult = [];
   }
 
   // название действия
@@ -73,6 +74,7 @@ export class BackendMultistepActionWindow extends Observable {
   _windowHeight = 250;
   _zIndex = undefined;
   _parentId = null;
+  _traceResult = null;
 
   initialize() {
     this._popupWindowComponent = this._createWindow();
@@ -240,14 +242,20 @@ export class BackendMultistepActionWindow extends Observable {
       this._stageStepsRemaining = 0;
     }
 
+    if (traceResult) {
+      this._traceResult.push(traceResult);
+    }
+
+
+
     // eslint-disable-next-line new-cap
     const url = Url.Content(`~/Content/GetTraceImportScript/${entityId}`);
     this._refreshView(traceResult ? url : null);
 
-    if (traceResult) {
+    if (this._traceResult.length > 0 && this._stageStepsRemaining === 0) {
       const wnd = Quantumart.QP8.BackendMultistepActionWindow;
       if (typeof wnd.processTraceResult === 'function') {
-        wnd.processTraceResult(traceResult);
+        wnd.processTraceResult(this._traceResult);
       }
     }
   }
