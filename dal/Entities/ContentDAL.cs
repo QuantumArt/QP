@@ -47,6 +47,7 @@ namespace Quantumart.QP8.DAL.Entities
         public bool UseForContext { get; set; }
         public string FormScript { get; set; }
         public bool ForReplication { get; set; }
+        public string TraceImportScript { get; set; }
 
         public ICollection<ContainerDAL> Containers { get; set; }
         public ICollection<ContentWorkflowBindDAL> WorkflowBinding { get; set; }
@@ -119,6 +120,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.Property(x => x.NetPluralName).HasColumnName("NET_PLURAL_CONTENT_NAME");
             builder.Property(x => x.UseDefaultFiltration).HasColumnName("USE_DEFAULT_FILTRATION");
             builder.Property(x => x.AdditionalContextClassName).HasColumnName("ADD_CONTEXT_CLASS_NAME");
+            builder.Property(x => x.TraceImportScript).HasColumnName("TRACE_IMPORT_SCRIPT");
 
             builder.HasKey(x => x.Id);
 

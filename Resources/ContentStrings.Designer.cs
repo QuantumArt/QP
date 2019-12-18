@@ -1051,6 +1051,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Trace script after CSV Import.
+        /// </summary>
+        public static string TraceImportScript {
+            get {
+                return ResourceManager.GetString("TraceImportScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please select Source contents.
         /// </summary>
         public static string UnionBaseContentNotEntered {

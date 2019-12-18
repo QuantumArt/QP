@@ -37,3 +37,4 @@ MoveToCoalesce
 ExcludeArchiveDuplicate
 AddReplaceUrlsIbDBColumn
 ContentItemSchedule
+TraceImport

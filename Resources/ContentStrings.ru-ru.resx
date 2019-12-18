@@ -501,4 +501,7 @@
   <data name="ForReplication" xml:space="preserve">
     <value>Включить репликацию</value>
   </data>
+  <data name="TraceImportScript" xml:space="preserve">
+    <value>Скрипт трассировки после импорта СSV</value>
+  </data>
 </root>

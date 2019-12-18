@@ -65,6 +65,12 @@
         @Html.QpTextAreaFor(s => s.Data.FormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
       </div>
     )
+
+	  @Html.HtmlFieldFor(s => s.Data.TraceImportScript,
+	    @<div class="qp-expandedContent">
+        @Html.QpTextAreaFor(s => s.Data.TraceImportScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
+      </div>
+	    )
   }
 
   using (Html.BeginFieldGroup(ContentStrings.Legend_CustomValidation))

@@ -792,4 +792,7 @@
   <data name="BackwardFieldId" xml:space="preserve">
     <value>Обратное поле</value>
   </data>
+  <data name="TraceImport" xml:space="preserve">
+    <value>Трассировать при импорте CSV</value>
+  </data>
 </root>

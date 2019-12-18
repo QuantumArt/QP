@@ -385,6 +385,9 @@ namespace Quantumart.QP8.BLL
 
         public string AltQuery { get; set; }
 
+        [Display(Name="TraceImportScript", ResourceType = typeof(ContentStrings))]
+        public string TraceImportScript { get; set; }
+
         public int SiteId { get; set; }
 
         [Display(Name = "XamlValidation", ResourceType = typeof(ContentStrings))]

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -702,5 +702,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             Status = JSendStatus.Success,
             Data = _contentRepository.GetById(contentId).FormScript
         });
+
+        [ConnectionScope]
+        public ActionResult GetTraceImportScript(int id) => Content(
+            _contentRepository.GetById(id).TraceImportScript, "text/javascript"
+        );
     }
 }

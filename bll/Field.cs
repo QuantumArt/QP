@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -879,6 +879,9 @@ namespace Quantumart.QP8.BLL
 
         [Display(Name = "OptimizeForHierarchy", ResourceType = typeof(FieldStrings))]
         public bool OptimizeForHierarchy { get; set; }
+
+        [Display(Name="TraceImport", ResourceType = typeof(FieldStrings))]
+        public bool TraceImport { get; set; }
 
         [Display(Name = "IsLocalization", ResourceType = typeof(FieldStrings))]
         public bool IsLocalization { get; set; }

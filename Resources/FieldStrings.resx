@@ -777,4 +777,7 @@
   <data name="BackwardFieldId" xml:space="preserve">
     <value>Backward Field</value>
   </data>
+  <data name="TraceImport" xml:space="preserve">
+    <value>Trace while importing CSV</value>
+  </data>
 </root>

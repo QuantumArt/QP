@@ -1771,6 +1771,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Trace while importing CSV.
+        /// </summary>
+        public static string TraceImport {
+            get {
+                return ResourceManager.GetString("TraceImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Number of fields included in tree item title.
         /// </summary>
         public static string TreeFieldTitleCount {

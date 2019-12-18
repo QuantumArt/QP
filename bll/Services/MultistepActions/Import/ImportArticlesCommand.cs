@@ -63,7 +63,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                     try
                     {
                         reader.Process(step, ItemsPerStep, out var processedItemsCount);
-                        if (step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep)
+                        var lastStep = step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep;
+                        if (lastStep)
                         {
                             ContentRepository.UpdateContentModification(ContentId);
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
@@ -88,6 +89,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             .Write();
 
                         result.ProcessedItemsCount = processedItemsCount;
+                        result.TraceResult = reader.GetTraceResult();
                         result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";
                     }
                     catch (Exception ex)

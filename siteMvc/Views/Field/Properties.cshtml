@@ -112,6 +112,8 @@
             @Html.CheckBoxFieldFor(s => s.Data.ViewInList)
         }
 
+      @Html.CheckBoxFieldFor(s => s.Data.TraceImport)
+
         if (Model.Data.ParentField != null)
         {
             @Html.TextBoxFieldFor(s => s.ParentFieldName, new Dictionary<string, object> { { "disabled", "disabled" } })

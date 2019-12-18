@@ -14,6 +14,209 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\siteMvc\WebMvc.csproj" />
+    <Compile Include="$(SolutionDir)SharedAssemblyInfo.cs">
+      <Link>References\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Infrastructure\Enums\ConsoleLogLevel.cs" />
+    <Compile Include="Infrastructure\Enums\ExitCode.cs" />
+    <Compile Include="Infrastructure\Factories\ConsoleArgsProcessorFactory.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\CsvReaderProcessor.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\CsvReaderSettings.cs" />
+    <Compile Include="Infrastructure\Helpers\ConsoleHelpers.cs" />
+    <Compile Include="Infrastructure\Models\BaseSettingsModel.cs" />
+    <Compile Include="EmbeddedAssemblyManager.cs" />
+    <Compile Include="Infrastructure\Factories\DataProcessorFactory.cs" />
+    <Compile Include="Infrastructure\Models\CsvSettingsModel.cs" />
+    <Compile Include="Infrastructure\Processors\ArgumentsProcessor\BaseConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\ArgumentsProcessor\CsvConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\ArgumentsProcessor\XmlConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\BaseDataProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\CsvDataProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\IDataProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\XmlDataProcessor.cs" />
+    <Compile Include="Infrastructure\Models\XmlSettingsModel.cs" />
+    <Compile Include="Infrastructure\Adapters\QpUpdateLoggingWrapper.cs" />
+    <Compile Include="Infrastructure\Utf8StringWriter.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\XmlReaderProcessor.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\XmlReaderSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.dll">
+      <Link>References\QP8.Infrastructure.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Logging.dll">
+      <Link>References\QP8.Infrastructure.Logging.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.dll">
+      <Link>References\QP8.Infrastructure.Web.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
+      <Link>References\NLog.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
+      <Link>References\Moq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\AutoMapper.dll">
+      <Link>References\AutoMapper.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.dll">
+      <Link>References\Quantumart.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
+      <Link>References\Quantumart.QP8.Assembling.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Castle.Core.dll">
+      <Link>References\Castle.Core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Configuration.dll">
+      <Link>References\QA.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.dll">
+      <Link>References\QA.Validation.Xaml.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
+      <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll">
+      <Link>References\Mono.Options.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
+      <Link>References\CsvHelper.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Mvc.dll">
+      <Link>References\System.Web.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Abstractions.dll">
+      <Link>References\Unity.Abstractions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Configuration.dll">
+      <Link>References\Unity.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Container.dll">
+      <Link>References\Unity.Container.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Interception.Configuration.dll">
+      <Link>References\Unity.Interception.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.Interception.dll">
+      <Link>References\Unity.Interception.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Unity.ServiceLocation.dll">
+      <Link>References\Unity.ServiceLocation.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Logging.Unity.dll">
+      <Link>References\QP8.Infrastructure.Logging.Unity.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.dll">
+      <Link>References\System.Web.WebPages.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\WebActivatorEx.dll">
+      <Link>References\WebActivatorEx.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
+      <Link>References\Microsoft.Web.Infrastructure.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Web.AspNet.dll">
+      <Link>References\QP8.Infrastructure.Web.AspNet.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll">
+      <Link>References\System.Data.SqlClient.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Net.Http.dll">
+      <Link>References\System.Net.Http.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP8.Infrastructure.Logging.PrtgMonitoring.dll">
+      <Link>References\QP8.Infrastructure.Logging.PrtgMonitoring.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Flurl.dll">
+      <Link>References\Flurl.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Flurl.Http.dll">
+      <Link>References\Flurl.Http.dll</Link>
+    </EmbeddedResource>
+    <Content Include="App.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Owin.dll">
+      <Link>References\Microsoft.Owin.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\EFExtensions.dll">
+      <Link>References\EFExtensions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Irony.dll">
+      <Link>References\Irony.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Common.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Validation.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.BLL.dll">
+      <Link>References\Quantumart.QP8.BLL.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Configuration.dll">
+      <Link>References\Quantumart.QP8.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Constants.dll">
+      <Link>References\Quantumart.QP8.Constants.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.DAL.dll">
+      <Link>References\Quantumart.QP8.DAL.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Resources.dll">
+      <Link>References\Quantumart.QP8.Resources.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Security.dll">
+      <Link>References\Quantumart.QP8.Security.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Utils.dll">
+      <Link>References\Quantumart.QP8.Utils.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Validators.dll">
+      <Link>References\Quantumart.QP8.Validators.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.WebMvc.dll">
+      <Link>References\Quantumart.QP8.WebMvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\RazorGenerator.Mvc.dll">
+      <Link>References\RazorGenerator.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
+      <Link>References\Telerik.Web.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP.ConfigurationService.Client.dll">
+      <Link>References\QP.ConfigurationService.Client.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Threading.Tasks.Extensions.dll">
+      <Link>References\System.Threading.Tasks.Extensions.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.AspNet.SignalR.Core.dll">
+      <Link>References\Microsoft.AspNet.SignalR.Core.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="2.16.3" />
