@@ -246,8 +246,6 @@ export class BackendMultistepActionWindow extends Observable {
       this._traceResult.push(traceResult);
     }
 
-
-
     // eslint-disable-next-line new-cap
     const url = Url.Content(`~/Content/GetTraceImportScript/${entityId}`);
     this._refreshView(traceResult ? url : null);
