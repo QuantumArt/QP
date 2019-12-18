@@ -11,5 +11,8 @@
         public int ProcessedItemsCount { get; set; }
 
         public string AdditionalInfo { get; set; }
+
+        public string TraceResult { get; set; }
+
     }
 }

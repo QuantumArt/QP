@@ -10161,6 +10161,30 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String TraceImportScript
+        {
+            get
+            {
+                return _TraceImportScript;
+            }
+            set
+            {
+                OnTraceImportScriptChanging(value);
+                ReportPropertyChanging("TraceImportScript");
+                _TraceImportScript = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("TraceImportScript");
+                OnTraceImportScriptChanged();
+            }
+        }
+        private global::System.String _TraceImportScript;
+        partial void OnTraceImportScriptChanging(global::System.String value);
+        partial void OnTraceImportScriptChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Boolean MapAsClass
@@ -17511,11 +17535,12 @@ namespace Quantumart.QP8.DAL
         /// <param name="includeRelationsInTitle">Initial value of the IncludeRelationsInTitle property.</param>
         /// <param name="useInChildContentFilter">Initial value of the UseInChildContentFilter property.</param>
         /// <param name="optimizeForHierarchy">Initial value of the OptimizeForHierarchy property.</param>
+        /// <param name="traceImport">Initial value of the TraceImport property.</param>
         /// <param name="isLocalization">Initial value of the IsLocalization property.</param>
         /// <param name="useSeparateReverseViews">Initial value of the UseSeparateReverseViews property.</param>
         /// <param name="disableListAutoWrap">Initial value of the DisableListAutoWrap property.</param>
         /// <param name="maxDataListItemCount">Initial value of the MaxDataListItemCount property.</param>
-        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews, global::System.Boolean disableListAutoWrap, global::System.Decimal maxDataListItemCount)
+        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean traceImport, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews, global::System.Boolean disableListAutoWrap, global::System.Decimal maxDataListItemCount)
         {
             FieldDAL fieldDAL = new FieldDAL();
             fieldDAL.Id = id;
@@ -17562,6 +17587,7 @@ namespace Quantumart.QP8.DAL
             fieldDAL.IncludeRelationsInTitle = includeRelationsInTitle;
             fieldDAL.UseInChildContentFilter = useInChildContentFilter;
             fieldDAL.OptimizeForHierarchy = optimizeForHierarchy;
+            fieldDAL.TraceImport = traceImport;
             fieldDAL.IsLocalization = isLocalization;
             fieldDAL.UseSeparateReverseViews = useSeparateReverseViews;
             fieldDAL.DisableListAutoWrap = disableListAutoWrap;
@@ -19279,6 +19305,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _OptimizeForHierarchy;
         partial void OnOptimizeForHierarchyChanging(global::System.Boolean value);
         partial void OnOptimizeForHierarchyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean TraceImport
+        {
+            get
+            {
+                return _TraceImport;
+            }
+            set
+            {
+                OnTraceImportChanging(value);
+                ReportPropertyChanging("TraceImport");
+                _TraceImport = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("TraceImport");
+                OnTraceImportChanged();
+            }
+        }
+        private global::System.Boolean _TraceImport;
+        partial void OnTraceImportChanging(global::System.Boolean value);
+        partial void OnTraceImportChanged();
     
         /// <summary>
         /// No Metadata Documentation available.

@@ -3,6 +3,7 @@ import { BackendLibrary } from '../Library/BackendLibrary';
 import { Observable } from '../Common/Observable';
 import { $c } from '../ControlHelpers';
 import { $q } from '../Utils';
+import { Url } from '../Helpers/vanilla.helpers';
 
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = 'OnMultistepActionWindowCanceling';
 window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = 'OnMultistepActionWindowCanceled';
@@ -17,6 +18,7 @@ export class BackendMultistepActionWindow extends Observable {
     this._actionName = actionName;
     this._shortActionName = shortActionName;
     this._startStageTime = new Date();
+    this._traceResult = [];
   }
 
   // название действия
@@ -72,6 +74,7 @@ export class BackendMultistepActionWindow extends Observable {
   _windowHeight = 250;
   _zIndex = undefined;
   _parentId = null;
+  _traceResult = null;
 
   initialize() {
     this._popupWindowComponent = this._createWindow();
@@ -103,7 +106,7 @@ export class BackendMultistepActionWindow extends Observable {
       .get(0);
   }
 
-  _refreshView() {
+  _refreshView(url) {
     let timeRemaining;
 
     this._progressBarComponent.total(this._stageItemsCount);
@@ -118,6 +121,10 @@ export class BackendMultistepActionWindow extends Observable {
         $(this._stageAdditionalInfoElement).children('a').on('click', $.proxy(this._createDownloadLink, this));
       } else {
         $(this._stageAdditionalInfoElement).html(this._additionalInfo);
+
+        if (url) {
+          $(this._stageAdditionalInfoElement).html(`<script src="${url}" type="text/javascript"></script>`);
+        }
 
         if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
           $(this._stageAdditionalInfoElement).append(`<div class="tooltip">${this._additionalInfo}</div>`);
@@ -222,7 +229,7 @@ export class BackendMultistepActionWindow extends Observable {
     return false;
   }
 
-  completeStep(processedItemsCount, additionalInfo, parentId) {
+  completeStep(processedItemsCount, additionalInfo, traceResult, parentId, entityId) {
     this._stageItemsRemaining -= processedItemsCount;
     this._additionalInfo = additionalInfo;
     this._parentId = parentId;
@@ -235,7 +242,20 @@ export class BackendMultistepActionWindow extends Observable {
       this._stageStepsRemaining = 0;
     }
 
-    this._refreshView();
+    if (traceResult) {
+      this._traceResult.push(traceResult);
+    }
+
+    // eslint-disable-next-line new-cap
+    const url = Url.Content(`~/Content/GetTraceImportScript/${entityId}`);
+    this._refreshView(traceResult ? url : null);
+
+    if (this._traceResult.length > 0 && this._stageStepsRemaining === 0) {
+      const wnd = Quantumart.QP8.BackendMultistepActionWindow;
+      if (typeof wnd.processTraceResult === 'function') {
+        wnd.processTraceResult(this._traceResult);
+      }
+    }
   }
 
   _isInProcess = true;

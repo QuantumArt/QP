@@ -257,6 +257,12 @@
     <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
       <Link>References\Telerik.Web.Mvc.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QP.ConfigurationService.Client.dll">
+      <Link>References\QP.ConfigurationService.Client.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Threading.Tasks.Extensions.dll">
+      <Link>References\System.Threading.Tasks.Extensions.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.AspNet.SignalR.Core.dll">

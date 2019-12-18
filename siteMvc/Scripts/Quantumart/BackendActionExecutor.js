@@ -347,7 +347,9 @@ export class BackendActionExecutor extends Observable {
                             progressWindow.completeStep(
                               stepData.ProcessedItemsCount,
                               stepData.AdditionalInfo,
-                              actionData.ParentId || parentEntityId
+                              stepData.TraceResult,
+                              actionData.ParentId || parentEntityId,
+                              entityIDs.length > 0 ? entityIDs[0] : 0
                             );
                             stepCounter += 1;
                             if (stepCounter === stepLength) {

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.Mime;
 using System.Web.Mvc;
 using QP8.Infrastructure.Web.AspNet.ActionResults;
 using QP8.Infrastructure.Web.Enums;
@@ -716,5 +717,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             Status = JSendStatus.Success,
             Data = _contentRepository.GetById(contentId).FormScript
         };
+
+        [ConnectionScope]
+        public ActionResult GetTraceImportScript(int id) => Content(
+            _contentRepository.GetById(id).TraceImportScript, "text/javascript"
+        );
     }
 }
