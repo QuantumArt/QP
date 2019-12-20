@@ -783,4 +783,7 @@
   <data name="TraceImport" xml:space="preserve">
     <value>Trace while importing CSV</value>
   </data>
+  <data name="DenyPastDates" xml:space="preserve">
+    <value>Deny dates in the past</value>
+  </data>
 </root>

@@ -340,6 +340,7 @@
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Date, true))
             {
                 @Html.DateFieldFor(s => s.Data.DateDefaultValue)
+                @Html.CheckBoxFieldFor(s => s.Data.DenyPastDates)
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Time, true))
@@ -350,6 +351,7 @@
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.DateTime, true))
             {
                 @Html.DateTimeFieldFor(s => s.Data.DateTimeDefaultValue)
+                @Html.CheckBoxFieldFor(s => s.Data.DenyPastDates)
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Textbox, true))
