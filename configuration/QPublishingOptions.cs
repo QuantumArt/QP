@@ -1,3 +1,4 @@
+using System;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Configuration
@@ -13,6 +14,7 @@ namespace Quantumart.QP8.Configuration
             Globalization = new Globalization();
             CookieTimeout = 1440;
             SessionTimeout = 60;
+            QpConfigPollingInterval = TimeSpan.FromMinutes(2);
         }
 
         public string BackendUrl { get; set; }
@@ -28,6 +30,8 @@ namespace Quantumart.QP8.Configuration
         public string QpConfigUrl { get; set; }
 
         public string QpConfigToken { get; set; }
+
+        public TimeSpan QpConfigPollingInterval { get; set; }
 
         public string TempDirectory { get; set; }
 

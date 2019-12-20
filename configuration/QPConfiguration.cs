@@ -48,7 +48,7 @@ namespace Quantumart.QP8.Configuration
         {
             if (ConfigServiceUrl != null && ConfigServiceToken != null)
             {
-                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                 var variables = AsyncHelper.RunSync(() => service.GetVariables());
 
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.Configuration
                 DatabaseType dbType = default(DatabaseType);
                 if (ConfigServiceUrl != null && ConfigServiceToken != null)
                 {
-                    var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                    var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                     var customer = AsyncHelper.RunSync(() => service.GetCustomer(customerCode));
 
@@ -126,7 +126,7 @@ namespace Quantumart.QP8.Configuration
 
             if (ConfigServiceUrl != null && ConfigServiceToken != null)
             {
-                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                 customers = AsyncHelper.RunSync(() => service.GetCustomers()).ConvertAll(c => new QaConfigCustomer
                 {
@@ -153,7 +153,7 @@ namespace Quantumart.QP8.Configuration
         {
             if (ConfigServiceUrl != null && ConfigServiceToken != null)
             {
-                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                 var customers = AsyncHelper.RunSync(() => service.GetCustomers());
 
