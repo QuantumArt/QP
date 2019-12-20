@@ -410,16 +410,24 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             switch (field.ExactType)
             {
                 case FieldExactTypes.Numeric:
-                    fieldDbValue.Value = MultistepActionHelper.NumericCultureFormat(value, _importSettings.Culture, "en-US");
+                    fieldDbValue.Value = MultistepActionHelper.NumericCultureFormat(
+                        value, _importSettings.Culture, "en-US"
+                    );
                     break;
                 case FieldExactTypes.Date:
-                    fieldDbValue.Value = MultistepActionHelper.DateCultureFormat(value, _importSettings.Culture, "en-US");
+                    fieldDbValue.Value = MultistepActionHelper.DateCultureFormat(
+                        value, _importSettings.Culture, "en-US", field.DenyPastDates
+                    );
                     break;
                 case FieldExactTypes.Time:
-                    fieldDbValue.Value = MultistepActionHelper.DateCultureFormat(value, _importSettings.Culture, "en-US");
+                    fieldDbValue.Value = MultistepActionHelper.DateCultureFormat(
+                        value, _importSettings.Culture, "en-US"
+                    );
                     break;
                 case FieldExactTypes.DateTime:
-                    fieldDbValue.Value = MultistepActionHelper.DateCultureFormat(value, _importSettings.Culture, "en-US");
+                    fieldDbValue.Value = MultistepActionHelper.DateCultureFormat(
+                        value, _importSettings.Culture, "en-US", field.DenyPastDates
+                    );
                     break;
                 case FieldExactTypes.O2MRelation:
                     fieldDbValue.Value = MultistepActionHelper.O2MFormat(value);

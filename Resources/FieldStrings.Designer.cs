@@ -529,6 +529,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deny dates in the past.
+        /// </summary>
+        public static string DenyPastDates {
+            get {
+                return ResourceManager.GetString("DenyPastDates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable list auto wrapping (ul, ol, dl).
         /// </summary>
         public static string DisableListAutoWrap {

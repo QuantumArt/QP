@@ -56,9 +56,17 @@ namespace Quantumart.QP8.BLL
             }
             else if (Field.IsDateTime && !string.IsNullOrEmpty(Value))
             {
-                if (!DateTime.TryParse(Value, out var dt))
+                DateTime parsedDt;
+                if (!DateTime.TryParse(Value, out parsedDt))
                 {
                     errors.Error(Field.FormName, Value, string.Format(ArticleStrings.InvalidDateTimeFormat, Field.DisplayName));
+                }
+                else
+                {
+                    if (Field.DenyPastDates && parsedDt < DateTime.Now)
+                    {
+                        errors.Error(Field.FormName, Value, string.Format(ArticleStrings.DenyPastDates, Field.DisplayName));
+                    }
                 }
             }
             else if (Field.ExactType == FieldExactTypes.Classifier && !string.IsNullOrEmpty(Value))
