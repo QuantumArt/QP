@@ -23,8 +23,13 @@ WORKDIR /src/siteMvc
 RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f netcoreapp2.2
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
-ARG SERVICE_VERSION=0.0.0
-ENV ServiceVersion=${SERVICE_VERSION}
+
+ARG SERVICE_NAME
+ENV SERVICE_NAME=${SERVICE_NAME:-QP}
+
+ARG SERVICE_VERSION
+ENV SERVICE_VERSION=${SERVICE_VERSION:-0.0.0.0}
+
 WORKDIR /app
 COPY --from=build-env /app/out .
 RUN rm -rf /app/hosting.json
