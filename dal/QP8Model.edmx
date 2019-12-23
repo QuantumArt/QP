@@ -355,6 +355,7 @@
           <Property Name="TA_HIGHLIGHT_TYPE" Type="nvarchar" MaxLength="50" />
 		  <Property Name="MAX_DATA_LIST_ITEM_COUNT" Type="numeric" Precision="18" Scale="0" />
           <Property Name="TRACE_IMPORT" Type="bit" Nullable="false" />
+          <Property Name="DENY_PAST_DATES" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="content_constraint">
           <Key>
@@ -6443,6 +6444,7 @@
           <Property Type="Boolean" Name="UseInChildContentFilter" Nullable="false" />
           <Property Name="OptimizeForHierarchy" Type="Boolean" Nullable="false" />
           <Property Name="TraceImport" Type="Boolean" Nullable="false" />
+          <Property Name="DenyPastDates" Type="Boolean" Nullable="false" />
           <Property Name="IsLocalization" Type="Boolean" Nullable="false" />
           <Property Name="UseSeparateReverseViews" Type="Boolean" Nullable="false" />
           <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
@@ -10726,6 +10728,7 @@
                 <ScalarProperty Name="IsLocalization" ColumnName="IS_LOCALIZATION" />
                 <ScalarProperty Name="OptimizeForHierarchy" ColumnName="OPTIMIZE_FOR_HIERARCHY" />
                 <ScalarProperty Name="TraceImport" ColumnName="TRACE_IMPORT" />
+                <ScalarProperty Name="DenyPastDates" ColumnName="DENY_PAST_DATES" />
                 <ScalarProperty Name="UseInChildContentFilter" ColumnName="USE_IN_CHILD_CONTENT_FILTER" />
                 <ScalarProperty Name="IncludeRelationsInTitle" ColumnName="INCLUDE_RELATIONS_IN_TITLE" />
                 <ScalarProperty Name="FieldTitleCount" ColumnName="FIELD_TITLE_COUNT" />

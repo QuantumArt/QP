@@ -301,11 +301,12 @@ export class BackendActionExecutor extends Observable {
               .fail(errorCallback1);
           };
 
-          const errorHandler = function (msgResult) {
+          const errorHandler = function (msgResult, entityId) {
             BackendActionExecutor.showResult(msgResult);
             $q.postDataToUrl(tearDownUrl, { isError: true }, true)
               .done(() => {
                 progressWindow.setError();
+                progressWindow.showTraceResult(entityId);
                 dfr.rejectWith(that, [window.BACKEND_ACTION_EXECUTION_STATUS_FAILED]);
               })
               .fail(errorCallback1);
@@ -323,6 +324,7 @@ export class BackendActionExecutor extends Observable {
                 let stepCounter = 0;
                 let stepLength = 0;
                 let stage = null;
+                let entityId = 0;
 
                 if (actionData.Stages && actionData.Stages.length) {
                   stageLength = actionData.Stages.length;
@@ -341,19 +343,19 @@ export class BackendActionExecutor extends Observable {
                           step: stepCounter
                         }, true, false).done(stepData => {
                         if (stepData) {
+                          entityId = entityIDs.length > 0 ? entityIDs[0] : 0;
                           if (stepData.Type === window.ACTION_MESSAGE_TYPE_ERROR) {
-                            errorHandler(stepData);
+                            errorHandler(stepData, entityId);
                           } else {
                             progressWindow.completeStep(
                               stepData.ProcessedItemsCount,
                               stepData.AdditionalInfo,
                               stepData.TraceResult,
-                              actionData.ParentId || parentEntityId,
-                              entityIDs.length > 0 ? entityIDs[0] : 0
+                              actionData.ParentId || parentEntityId
                             );
                             stepCounter += 1;
                             if (stepCounter === stepLength) {
-                              progressWindow.completeStage();
+                              progressWindow.completeStage(entityId);
                               stageCounter += 1;
                             }
 

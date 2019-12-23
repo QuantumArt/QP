@@ -100,11 +100,19 @@ namespace Quantumart.QP8.BLL.Helpers
             }
         }
 
-        public static string DateCultureFormat(string value, string fromCulture, string toCulture)
+        public static string DateCultureFormat(string value, string fromCulture, string toCulture, bool denyPastDates = false)
         {
-            if (!DateTime.TryParse(value, CultureInfo.GetCultureInfo(fromCulture).DateTimeFormat, DateTimeStyles.None, out var result) && value != "NULL")
+            DateTime parsedDate;
+            if (!DateTime.TryParse(value, CultureInfo.GetCultureInfo(fromCulture).DateTimeFormat, DateTimeStyles.None, out parsedDate) && value != "NULL")
             {
                 throw new FormatException(string.Format(ImportStrings.DateTimeFormatError, value));
+            }
+            else
+            {
+                if (denyPastDates && parsedDate < DateTime.Now)
+                {
+                    throw new FormatException(string.Format(ImportStrings.DenyPastDates, value));
+                }
             }
 
             if (value == "NULL")
@@ -112,7 +120,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 return string.Empty;
             }
 
-            value = result.ToString(CultureInfo.GetCultureInfo(toCulture).DateTimeFormat);
+            value = parsedDate.ToString(CultureInfo.GetCultureInfo(toCulture).DateTimeFormat);
             return value;
         }
 

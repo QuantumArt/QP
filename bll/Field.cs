@@ -844,6 +844,9 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("TraceImport", NameResourceType = typeof(FieldStrings))]
         public bool TraceImport { get; set; }
 
+        [LocalizedDisplayName("DenyPastDates", NameResourceType = typeof(FieldStrings))]
+        public bool DenyPastDates { get; set; }
+
         [LocalizedDisplayName("IsLocalization", NameResourceType = typeof(FieldStrings))]
         public bool IsLocalization { get; set; }
 
@@ -1219,6 +1222,11 @@ namespace Quantumart.QP8.BLL
             if (ExactType != FieldExactTypes.VisualEdit)
             {
                 DocType = null;
+            }
+
+            if (ExactType != FieldExactTypes.Date && ExactType != FieldExactTypes.DateTime)
+            {
+                 DenyPastDates = false;
             }
 
             UpdateStringEnum();

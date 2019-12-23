@@ -192,8 +192,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     {
                         foreach (var fieldValue in new[]
                         {
-                            MultistepActionHelper.DateCultureFormat(article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                            MultistepActionHelper.DateCultureFormat(article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                            MultistepActionHelper.DateCultureFormat(
+                                article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                            MultistepActionHelper.DateCultureFormat(
+                                article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture
+                                ),
                             article[FieldName.UniqueId].ToString(),
                             "0"
                         })
