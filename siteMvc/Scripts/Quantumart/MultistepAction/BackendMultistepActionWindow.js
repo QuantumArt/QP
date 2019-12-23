@@ -106,7 +106,13 @@ export class BackendMultistepActionWindow extends Observable {
       .get(0);
   }
 
-  _refreshView(url) {
+  _loadTraceScript(url) {
+    if (url) {
+      $(this._stageAdditionalInfoElement).append(`<script src="${url}" type="text/javascript"></script>`);
+    }
+  }
+
+  _refreshView() {
     let timeRemaining;
 
     this._progressBarComponent.total(this._stageItemsCount);
@@ -122,9 +128,6 @@ export class BackendMultistepActionWindow extends Observable {
       } else {
         $(this._stageAdditionalInfoElement).html(this._additionalInfo);
 
-        if (url) {
-          $(this._stageAdditionalInfoElement).html(`<script src="${url}" type="text/javascript"></script>`);
-        }
 
         if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
           $(this._stageAdditionalInfoElement).append(`<div class="tooltip">${this._additionalInfo}</div>`);
@@ -204,7 +207,7 @@ export class BackendMultistepActionWindow extends Observable {
   }
 
   // Закончить этап
-  completeStage() {
+  completeStage(entityId) {
     this._stagesRemaining -= 1;
     if (this._stagesRemaining < 0) {
       this._stagesRemaining = 0;
@@ -217,7 +220,10 @@ export class BackendMultistepActionWindow extends Observable {
     this._stageStepsRemaining = 0;
 
     this._refreshView();
+
+    this.showTraceResult(entityId);
   }
+
   _createDownloadLink() {
     let url, urlParams;
     if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
@@ -229,7 +235,7 @@ export class BackendMultistepActionWindow extends Observable {
     return false;
   }
 
-  completeStep(processedItemsCount, additionalInfo, traceResult, parentId, entityId) {
+  completeStep(processedItemsCount, additionalInfo, traceResult, parentId) {
     this._stageItemsRemaining -= processedItemsCount;
     this._additionalInfo = additionalInfo;
     this._parentId = parentId;
@@ -246,11 +252,15 @@ export class BackendMultistepActionWindow extends Observable {
       this._traceResult.push(traceResult);
     }
 
-    // eslint-disable-next-line new-cap
-    const url = Url.Content(`~/Content/GetTraceImportScript/${entityId}`);
-    this._refreshView(traceResult ? url : null);
+    this._refreshView();
+  }
 
-    if (this._traceResult.length > 0 && this._stageStepsRemaining === 0) {
+  showTraceResult(entityId) {
+    if (entityId && this._traceResult && this._traceResult.length > 0) {
+      // eslint-disable-next-line new-cap
+      const url = Url.Content(`~/Content/GetTraceImportScript/${entityId}`);
+      this._loadTraceScript(url);
+
       const wnd = Quantumart.QP8.BackendMultistepActionWindow;
       if (typeof wnd.processTraceResult === 'function') {
         wnd.processTraceResult(this._traceResult);
