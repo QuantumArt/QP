@@ -99,6 +99,7 @@ namespace Quantumart.QP8.DAL.Entities
         public string TaHighlightType { get; set; }
         public decimal MaxDataListItemCount { get; set; }
         public bool TraceImport { get; set; }
+        public bool DenyPastDates { get; set; }
 
         public FieldTypeDAL Type { get; set; }
         public ContentDAL Content { get; set; }
@@ -210,7 +211,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.UseEnglishQuotes).HasColumnName("USE_ENGLISH_QUOTES");
 				builder.Property(x => x.MaxDataListItemCount).HasColumnName("MAX_DATA_LIST_ITEM_COUNT");
                 builder.Property(x => x.TraceImport).HasColumnName("TRACE_IMPORT");
-
+                builder.Property(x => x.DenyPastDates).HasColumnName("DENY_PAST_DATES");
 
                 builder.HasKey(x => x.Id);
 

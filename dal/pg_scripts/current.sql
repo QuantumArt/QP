@@ -504,10 +504,10 @@ alter table v_user_query_attrs
     owner to postgres;
 CREATE OR REPLACE VIEW VIRTUAL_CONTENT_RELATION AS
 	select  DISTINCT
-			PA.CONTENT_ID AS BASE_CONTENT_ID,
+			PA.CONTENT_ID AS BASE_CONTENT_ID,		
 			A.CONTENT_ID AS VIRTUAL_CONTENT_ID
 			from CONTENT_ATTRIBUTE A
-			JOIN CONTENT_ATTRIBUTE PA ON A.persistent_attr_id = PA.ATTRIBUTE_ID
+			JOIN CONTENT_ATTRIBUTE PA ON A.persistent_attr_id = PA.ATTRIBUTE_ID		
 	UNION ALL
 	SELECT union_content_id AS BASE_CONTENT_ID,
 		   virtual_content_id AS VIRTUAL_CONTENT_ID
@@ -987,7 +987,7 @@ create or replace procedure qp_delete_items(content_id integer, ids integer[], i
 as
 $$
 DECLARE
-	  	table_name text;
+	  	table_name text;	  
 		sql text;
 	BEGIN
 
@@ -995,7 +995,7 @@ DECLARE
 		IF is_async THEN
 			table_name := table_name || '_async';
 		END IF;
-
+		
 		sql := FORMAT('delete from %s where content_item_id = ANY($1)', table_name);
 		RAISE NOTICE '%', sql;
 		execute sql using ids;
@@ -1025,16 +1025,16 @@ AS $BODY$
 	  fsql text;
 	BEGIN
 		link_table_name := 'item_link_' || $1::text;
-		condition := CASE WHEN reverse_fields THEN 'src.id = il.linked_id and src.linked_id = il.id' ELSE 'src.id = il.id and src.linked_id = il.linked_id' END;
-
+		condition := CASE WHEN reverse_fields THEN 'src.id = il.linked_id and src.linked_id = il.id' ELSE 'src.id = il.id and src.linked_id = il.linked_id' END;		
+		
 		IF is_async THEN
 			link_table_name := link_table_name || '_async';
 		END IF;
-
+		
 		IF use_reverse_table THEN
 			link_table_name := link_table_name || '_rev';
 		END IF;
-
+		
 		sql := 'delete from %s src using unnest($1) il where %s';
 		fsql := format(sql, link_table_name, condition);
 		EXECUTE fsql USING links;
@@ -1203,7 +1203,7 @@ CREATE OR REPLACE FUNCTION public.qp_get_display_fields(
     LANGUAGE 'plpgsql'
 
     COST 100
-    STABLE
+    STABLE 
 AS $BODY$
 DECLARE
     result content_attribute[];
@@ -1242,7 +1242,7 @@ CREATE OR REPLACE FUNCTION public.qp_get_hash(
     LANGUAGE 'sql'
 
     COST 100
-    IMMUTABLE STRICT
+    IMMUTABLE STRICT 
 AS $BODY$
     SELECT digest($1 || $2::text, 'sha1')
 $BODY$;
@@ -1335,41 +1335,41 @@ AS $BODY$
 		is_self := l_content_id = r_content_id from content_to_content cc where cc.link_id = $1;
 		source_name := CASE WHEN is_async THEN 'item_link_async' ELSE 'item_link' END;
 		rev_fields := CASE WHEN reverse_fields THEN 'il.linked_id, il.id' ELSE 'il.id, il.linked_id' END;
-		condition := CASE WHEN reverse_fields THEN 'il2.id = il.linked_id and il2.linked_id = il.id' ELSE 'il2.id = il.id and il2.linked_id = il.linked_id' END;
-
+		condition := CASE WHEN reverse_fields THEN 'il2.id = il.linked_id and il2.linked_id = il.id' ELSE 'il2.id = il.id and il2.linked_id = il.linked_id' END;		
+		
 		IF is_async THEN
 			link_table_name := link_table_name || '_async';
 		END IF;
-
+		
 		IF use_reverse_table THEN
 			link_table_name := link_table_name || '_rev';
 		END IF;
-
+		
 		links2 := array(
 			select il from unnest(links) il inner join content_item ci on il.id = ci.CONTENT_ITEM_ID where ci.CONTENT_ID = $2
 		);
-
+		
 		foreach t in array links2
 		loop
-			raise notice '%', t;
-		end loop;
-
+			raise notice '%', t;																  
+		end loop;	
+		
 		sql := 'insert into %s select %s from unnest($1) il where not exists(select * from %s il2 where %s)';
 		fsql := format(sql, link_table_name, rev_fields, link_table_name, condition);
 		EXECUTE fsql USING links2;
 		RAISE NOTICE 'Query: %', fsql;
-
-
+		
+		
 		IF is_self THEN
 	    	sql := 'update %s i set is_self = true from unnest($1) i2 where i.link_id = $2 and i.item_id = i2.id and i.linked_item_id = i2.linked_id';
-			fsql := format(sql, source_name, source_name);
+			fsql := format(sql, source_name, source_name);			
 			EXECUTE fsql USING links2, link_id;
 			RAISE NOTICE 'Query: %', fsql;
 		END IF;
-
+		
 		IF use_reverse_table and not is_self THEN
 	    	sql := 'update %s i set is_rev = true from unnest($1) i2 where i.link_id = $2 and i.item_id = i2.id and i.linked_item_id = i2.linked_id';
-			fsql := format(sql, source_name, source_name);
+			fsql := format(sql, source_name, source_name);			
 			EXECUTE fsql USING links2, link_id;
 			RAISE NOTICE 'Query: %', fsql;
 		END IF;
@@ -1582,7 +1582,7 @@ LANGUAGE 'plpgsql'
 
 AS $BODY$
 	DECLARE
-	  	table_name text;
+	  	table_name text;	  
 		sql text;
 	BEGIN
 
@@ -1590,10 +1590,10 @@ AS $BODY$
 		IF is_async THEN
 			table_name := table_name || '_async';
 		END IF;
-
+		
 	    sql := 'update %s base set visible = ci.visible, archive = ci.archive from content_item ci
 		 where base.content_item_id = ci.content_item_id and ci.content_item_id = ANY($1)';
-
+		
 		sql := FORMAT(sql, table_name);
 		RAISE NOTICE '%', sql;
 		execute sql using ids;
@@ -1630,50 +1630,50 @@ AS $BODY$
 		IF is_async THEN
 			table_name := table_name || '_async';
 		END IF;
-
+	
 		IF attr_ids IS NULL THEN
-			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca
+			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
 				where ca.content_id = $1;
 		ELSE
-			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca
+			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
 				where ca.content_id = $1 AND attribute_id = ANY(attr_ids);
 		END IF;
-		attr_ids := array_agg(attribute_id) from unnest(attributes) a;
-
+		attr_ids := array_agg(attribute_id) from unnest(attributes) a;	
+	
 		IF array_length(attributes, 1) > 0 THEN
-
+	
 			attr_names := array_agg(lower(a.attribute_name)) from unnest(attributes) a;
-
+	
 			attrs_update := array_agg(FORMAT('"%s" = pt."%s"', unnest, unnest)) from unnest(attr_names);
 			upd := array_to_string(attrs_update, ', ');
-
+	
 			attrs_result := array_agg(FORMAT('"%s" TEXT', unnest)) from unnest(attr_names);
 			attrs_result := array_prepend('content_item_id NUMERIC', attrs_result);
 			res := array_to_string(attrs_result, ', ');
-
+			
 			attrs_select := array_agg(FORMAT('"%s"::%s', b.name, b.type)) from (
 				select lower(a.attribute_name) as name, CASE WHEN a.attribute_type_id in (2,3,11,13) THEN
 					'numeric'
 				WHEN a.attribute_type_id in (4,5,6) THEN
 					'timestamp without time zone'
 				ELSE
-					'text'
+					'text'								  
 				END AS type from unnest(attributes) a
 			) b;
 			attrs_select := array_prepend('content_item_id', attrs_select);
 			sel := array_to_string(attrs_select, ', ');
-
+	
 			cross_tab := 'update %s base set %s from (
 			SELECT %s FROM crosstab(''
-			select content_item_id, lower(ca.attribute_name),
+			select content_item_id, lower(ca.attribute_name), 
 			case when ca.attribute_type_id in (9, 10) then coalesce(cd.data, cd.blob_data)
 			else qp_correct_data(cd.data::text, ca.attribute_type_id, ca.attribute_size, ca.default_value)::text
-			end as value from content_data cd
+			end as value from content_data cd 
 			inner join content_attribute ca on cd.attribute_id = ca.attribute_id
-			where content_item_id in (%s) and cd.attribute_id in (%s)
-			order by 1,2
-			'') AS final_result(%s)) pt where pt.content_item_id = base.content_item_id;';
-
+			where content_item_id in (%s) and cd.attribute_id in (%s) 
+			order by 1,2	
+			'') AS final_result(%s)) pt where pt.content_item_id = base.content_item_id;';				
+	
 			cross_tab := FORMAT(cross_tab, table_name, upd, sel, array_to_string(ids, ', '), array_to_string(attr_ids, ', '), res);
 			RAISE NOTICE '%', cross_tab;
 			execute cross_tab;
@@ -1687,7 +1687,7 @@ create or replace procedure qp_upsert_items(content_id integer, ids integer[], d
 as
 $$
 DECLARE
-	  	table_name text;
+	  	table_name text;	  
 		sql text;
 	BEGIN
 
@@ -1695,27 +1695,27 @@ DECLARE
 		IF is_async THEN
 			table_name := table_name || '_async';
 		END IF;
-
+		
 	    sql := 'update %s base set visible = ci.visible, archive = ci.archive,
     			modified = ci.modified, last_modified_by = ci.last_modified_by, status_type_id = ci.status_type_id
 			 	from content_item ci
 		 		where base.content_item_id = ci.content_item_id and ci.content_item_id = ANY($1)';
-
+		
 		sql := FORMAT(sql, table_name);
 		RAISE NOTICE '%', sql;
 		execute sql using ids;
-
+		
 		sql := 'insert into %s (content_item_id, created, modified, last_modified_by, status_type_id, visible, archive)
-    			select ci.content_item_id, ci.created, ci.modified, ci.last_modified_by,
-    			case when i2.id is not null then $3 else ci.status_type_id end as status_type_id,
-    			ci.visible, ci.archive
-				from content_item ci left join %s base on ci.content_item_id = base.content_item_id
+    			select ci.content_item_id, ci.created, ci.modified, ci.last_modified_by, 
+    			case when i2.id is not null then $3 else ci.status_type_id end as status_type_id, 
+    			ci.visible, ci.archive 
+				from content_item ci left join %s base on ci.content_item_id = base.content_item_id 
     			inner join unnest($1) i(id) on ci.content_item_id = i.id
 				left join unnest($2) i2(id) on ci.content_item_id = i2.id
     			where base.content_item_id is null';
 		sql := FORMAT(sql, table_name, table_name);
 		RAISE NOTICE '%', sql;
-		execute sql using ids, delayed_ids, none_id;
+		execute sql using ids, delayed_ids, none_id;				
 	END;
 $$;
 
@@ -1737,7 +1737,7 @@ AS $BODY$
             ids := qp_aggregated_and_self(ids);
         end if;
 
-
+        
         update content_item set archive = $2::int, modified = now(), last_modified_by = $3 where content_item_id = ANY(ids);
         update content_item set locked_by = null, locked = null where content_item_id = ANY(ids);
 	END;
@@ -1998,16 +1998,16 @@ BEGIN
 			RETURN default_value;
 		ELSE
 			RETURN NULL;
-		END IF;
+		END IF;			
 	ELSEIF type_id in (4, 5, 6) THEN
 		IF qp_is_date(value) or value is null THEN
 			RETURN value;
 		ELSEIF qp_is_date(default_value) THEN
 			RETURN default_value;
-		ELSE
+		ELSE 
 			RETURN NULL;
-		END IF;
-	ELSE
+		END IF;			
+	ELSE	
 		RETURN value;
 	END IF;
 END;
@@ -2426,25 +2426,25 @@ $$
 DECLARE
 		ids2 int[];
     BEGIN
-		ids2 := array_agg(ci.content_item_id) from content_item ci where ci.content_item_id = ANY(ids)
+		ids2 := array_agg(ci.content_item_id) from content_item ci where ci.content_item_id = ANY(ids) 
 			and (ci.SCHEDULE_NEW_VERSION_PUBLICATION or force_merge);
-
+			
 		IF ids2 is not null THEN
 			call qp_merge_links_multiple(ids2, force_merge);
-
+			
     		UPDATE content_item set not_for_replication = true WHERE content_item_id = ANY(ids2);
-
-    		UPDATE content_item set SCHEDULE_NEW_VERSION_PUBLICATION = false, MODIFIED = now(),
+			
+    		UPDATE content_item set SCHEDULE_NEW_VERSION_PUBLICATION = false, MODIFIED = now(), 
 			LAST_MODIFIED_BY = $2, CANCEL_SPLIT = false
 			where CONTENT_ITEM_ID = ANY(ids2);
-
+			
 			call qp_replicate_items(ids2);
-
+			
     		UPDATE content_item_schedule set delete_job = false WHERE content_item_id = ANY(ids2);
 			DELETE FROM content_item_schedule WHERE content_item_id = ANY(ids2);
     		DELETE FROM CHILD_DELAYS WHERE id = ANY(ids2);
-    		DELETE FROM CHILD_DELAYS WHERE child_id = ANY(ids2);
-
+    		DELETE FROM CHILD_DELAYS WHERE child_id = ANY(ids2);	
+		
 		END IF;
 	END;
 $$;
@@ -2496,7 +2496,7 @@ AS $BODY$
 		IF array_length(ids, 1) = 0 THEN
 			RETURN;
 		END IF;
-
+						
 		ids_with_links := array_agg(row(i.id, ca.link_id)) from (select unnest(ids) as id) i
   		inner join content_item ci on ci.CONTENT_ITEM_ID = i.id and (ci.SPLITTED or force_merge)
   		inner join content c on ci.CONTENT_ID = c.CONTENT_ID
@@ -2504,54 +2504,54 @@ AS $BODY$
 		ids_with_links := coalesce(ids_with_links, ARRAY[]::link[]);
 		IF array_length(ids_with_links, 1) = 0 THEN
 			RETURN;
-		END IF;
-
+		END IF;								   
+				
 		new_ids := array_agg(ila.*)
-		from item_link_async ila inner join unnest(ids_with_links) i
+		from item_link_async ila inner join unnest(ids_with_links) i 
 		on ila.item_id = i.id and ila.link_id = i.linked_id;
 		new_ids := coalesce(new_ids, ARRAY[]::item_link[]);
-
+							
 		old_ids := array_agg(il.*)
-		from item_link il inner join unnest(ids_with_links) i
+		from item_link il inner join unnest(ids_with_links) i 
 		on il.item_id = i.id and il.link_id = i.linked_id;
 		old_ids := coalesce(old_ids, ARRAY[]::item_link[]);
-
+		
 		cross_ids := array_agg(t1.*)
-		from unnest(new_ids) t1 inner join unnest(old_ids) t2
+		from unnest(new_ids) t1 inner join unnest(old_ids) t2 
 		on t1.item_id = t2.item_id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id;
 		cross_ids := coalesce(cross_ids, ARRAY[]::item_link[]);
 
 		old_ids := array_agg(t1.*)
-		from unnest(old_ids) t1 left join unnest(cross_ids) t2
+		from unnest(old_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.item_id = t2.item_id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
 		where t2.item_id is null;
 		old_ids := coalesce(old_ids, ARRAY[]::item_link[]);
-
+							
 		new_ids := array_agg(t1.*)
-		from unnest(new_ids) t1 left join unnest(cross_ids) t2
+		from unnest(new_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.item_id = t2.item_id and t1.link_id = t2.link_id and t1.linked_item_id = t2.linked_item_id
 		where t2.item_id is null;
 		new_ids := coalesce(new_ids, ARRAY[]::item_link[]);
-
+							
   		delete from item_link il using unnest(old_ids) i
   		where il.item_id = i.item_id and il.link_id = i.link_id and il.linked_item_id = i.linked_item_id;
-
+							
   		delete from item_link il using unnest(old_ids) i, content_to_content c
 		where il.linked_item_id = i.item_id and il.link_id = i.link_id and il.item_id = i.linked_item_id
 		and i.link_id = c.link_id and c.symmetric;
 
   		insert into item_link (link_id, item_id, linked_item_id)
   		select link_id, item_id, linked_item_id from unnest(new_ids) i;
-
+							  
   		insert into item_link (link_id, item_id, linked_item_id)
   		select i.link_id, i.linked_item_id, i.item_id
-		from unnest(new_ids) i
-		inner join content_to_content c on i.link_id = c.link_id
+		from unnest(new_ids) i 
+		inner join content_to_content c on i.link_id = c.link_id 
 		left join item_link il on i.link_id = il.link_id and i.item_id = il.linked_item_id and i.linked_item_id = il.item_id
 		where c.symmetric and il.item_id is null;
-
+							
 		IF (array_length(new_ids, 1) > 0) THEN
-			create temp table multiple_data as select
+			create temp table multiple_data as select 
 				n.item_id, n.link_id, n.linked_item_id,
 				ca.attribute_id as linked_attribute_id,
     			(cd.content_item_id is not null) as linked_has_data,
@@ -2563,11 +2563,11 @@ AS $BODY$
     		inner join content_attribute ca on ca.content_id = c.content_id and ca.link_id = n.link_id
     		left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
     		left join item_link_async ila on n.link_id = ila.link_id and n.linked_item_id = ila.item_id and n.item_id = ila.linked_item_id;
-
+							
   			update content_data cd set data = n.link_id from multiple_data n
   			where cd.ATTRIBUTE_ID = n.linked_attribute_id and cd.CONTENT_ITEM_ID = n.linked_item_id
   			and n.linked_has_data;
-
+							
   			insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
   			select distinct n.linked_item_id, n.linked_attribute_id, n.link_id from multiple_data n
   			where not n.linked_has_data and n.linked_attribute_id is not null;
@@ -2579,7 +2579,7 @@ AS $BODY$
 		where ila.item_id = i.id and ila.link_id = i.linked_id;
 
 	END;
-
+	
 $BODY$;
 
 alter procedure qp_merge_links_multiple(integer[], boolean) owner to postgres;
@@ -2812,7 +2812,7 @@ AS $BODY$
 		modification_update_interval int;
 		content_ids int[];
 		id int;
-		site_id int;
+		site_id int;		
 		none_id int;
 		published_id int;
 		articles content_item[];
@@ -2823,7 +2823,7 @@ AS $BODY$
 		sync_ids int[];
 		async_ids int[];
 		sync_ids_delayed int[];
-
+		
 		table_name text;
 		sql text;
     BEGIN
@@ -2831,46 +2831,46 @@ AS $BODY$
 		IF setting_value is not null and qp_is_numeric(setting_value) THEN
 			default_modification_update_interval := setting_value::numeric::int;
 		END IF;
-
+		
 		IF modification_update_interval < 0 THEN
 			modification_update_interval := default_modification_update_interval;
 		END IF;
-
+		
 		articles := array_agg(ci.*) from content_item ci where ci.content_item_id = ANY(ids);
 		content_ids := array_agg(distinct(a.content_id)) from unnest(articles) a;
-
-
+												  
+		
 		FOREACH id in array content_ids
 		LOOP
 			select st1.status_type_id, st2.status_type_id into none_id, published_id
 			from status_type st1 inner join status_type st2
 			on st1.site_id = st2.site_id and st1.status_type_name = 'None' and st2.status_type_name = 'Published'
-			where st1.site_id in (select c.site_id from content c where c.content_id = id);
-
+			where st1.site_id in (select c.site_id from content c where c.content_id = id);										  
+										  
 			IF modification_update_interval > 0 THEN
             	select cm.live_modified, cm.stage_modified into live_modified, stage_modified
 									   from CONTENT_MODIFICATION cm where cm.content_id = id;
 				live_expired := extract(epoch from now() - live_modified) >= modification_update_interval;
 				stage_expired := extract(epoch from now() - stage_modified) >= modification_update_interval;
 			END IF;
-
+									   
 			sync_ids := array_agg(a.content_item_id) from unnest(articles) a where a.content_id = id and not a.splitted;
 			async_ids := array_agg(a.content_item_id) from unnest(articles) a where a.content_id = id and a.splitted;
 			sync_ids_delayed := array_agg(a.content_item_id) from unnest(articles) a where a.content_id = id and not a.splitted and a.schedule_new_version_publication;
-			sync_ids_delayed := coalesce(sync_ids_delayed, ARRAY[]::int[]);
-
+			sync_ids_delayed := coalesce(sync_ids_delayed, ARRAY[]::int[]);										  
+								   
 			IF sync_ids is not null THEN
 				call qp_upsert_items(id, sync_ids, sync_ids_delayed, none_id, false);
 				call qp_delete_items(id, sync_ids, true);
 				call qp_update_items_with_content_data_pivot(id, sync_ids, false, attr_ids);
 			END IF;
-
+										  
 			IF async_ids is not null THEN
 				call qp_upsert_items(id, async_ids, ARRAY[]::int[], none_id, true);
 				call qp_update_items_flags(id, async_ids, false);
-				call qp_update_items_with_content_data_pivot(id, async_ids, true, attr_ids);
-			END IF;
-
+				call qp_update_items_with_content_data_pivot(id, async_ids, true, attr_ids);										  
+			END IF;					
+        
 			IF EXISTS (
 				select * from unnest(articles) a where a.content_id = id and (
 					a.cancel_split or (not a.splitted and a.status_type_id = published_id)
@@ -2881,10 +2881,10 @@ AS $BODY$
 				END IF;
 			ELSE
 				IF (stage_expired) THEN
-                	update content_modification cm set stage_modified = now() where cm.content_id = id;
+                	update content_modification cm set stage_modified = now() where cm.content_id = id;									 
 				END IF;
 			END IF;
-
+									 
 		END LOOP;
 
 		update content_data cd2 set o2m_data = a.data::numeric, ft_data = a.ft_data from
@@ -2933,25 +2933,25 @@ DECLARE
     BEGIN
 		items := array_agg(row(ci.content_id, ci.content_item_id)) from content_item ci where ci.content_item_id = ANY(ids);
 		content_ids := array_agg(distinct(i.id)) from unnest(items) i;
-
+		
 		FOREACH cid in array content_ids
 		LOOP
 			ids2 := array_agg(i.linked_id) from unnest(items) i where i.id = cid;
 	    	sql := '
-					insert into content_%s_async
+					insert into content_%s_async 
 					select * from content_%s_async c where content_item_id = ANY($1) and not exists(
 						select * from content_%s_async a where a.content_item_id = c.content_item_id
 					)';
 			sql := FORMAT(sql, cid, cid, cid);
 			RAISE NOTICE '%', sql;
-			execute sql using ids2;
-
+			execute sql using ids2;							  
+								  
 		END LOOP;
-
+										  
   		insert into item_link_async select * from item_to_item ii where l_item_id = ANY(ids)
   		and link_id in (select link_id from content_attribute ca where ca.content_id = ANY(content_ids))
-  		and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id);
-
+  		and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id);										  
+										  
 	END
 $$;
 
@@ -2978,59 +2978,59 @@ AS $BODY$
 	  is_symmetric boolean;
 	  data_items link_data[];
 	BEGIN
-		RAISE NOTICE 'Start: %', clock_timestamp();
+		RAISE NOTICE 'Start: %', clock_timestamp();			
 		is_symmetric := "symmetric" from content_to_content cc where cc.link_id = $2;
 		IF value is null OR value = '' THEN
 			new_ids = ARRAY[]::int[];
 		ELSE
 			new_ids := regexp_split_to_array(value, E',\\s*')::int[];
 		END IF;
-
+		
 		IF splitted THEN
 			old_ids := array_agg(linked_item_id) from item_link_async ila where ila.link_id = $2 and item_id = $1;
 		ELSE
-			old_ids := array_agg(linked_item_id) from item_link il where il.link_id = $2 and item_id = $1;
+			old_ids := array_agg(linked_item_id) from item_link il where il.link_id = $2 and item_id = $1;		
 		END IF;
 		old_ids := coalesce(old_ids, ARRAY[]::int[]);
-
+		
 		cross_ids := new_ids & old_ids;
 		old_ids := old_ids - cross_ids;
 		new_ids := new_ids - cross_ids;
-
-		RAISE NOTICE 'Arrays calculated: %',  clock_timestamp();
-
+							
+		RAISE NOTICE 'Arrays calculated: %',  clock_timestamp();								
+		
 		IF not update_archive and array_length(old_ids, 1) > 1 THEN
 			archive_ids := array_agg(content_item_id) from content_item where content_item_id = ANY(old_ids) AND archive = 1;
-			archive_ids = coalesce(archive_ids, ARRAY[]::int[]);
+			archive_ids = coalesce(archive_ids, ARRAY[]::int[]);			
 			old_ids := old_ids - archive_ids;
 		END IF;
-
-		RAISE NOTICE 'Archive calculated: %',  clock_timestamp();
-
+								   
+		RAISE NOTICE 'Archive calculated: %',  clock_timestamp();								
+	   
 		IF splitted THEN
-			DELETE FROM item_link_async ila WHERE ila.link_id = $2 AND item_id = $1 and linked_item_id = ANY(old_ids);
+			DELETE FROM item_link_async ila WHERE ila.link_id = $2 AND item_id = $1 and linked_item_id = ANY(old_ids);			
 		ELSE
 			DELETE FROM item_link_async ila WHERE ila.link_id = $2 AND item_id = $1;
 			DELETE FROM item_to_item ii WHERE ii.link_id = $2 AND l_item_id = $1 and r_item_id = ANY(old_ids);
 			IF is_symmetric THEN
 				DELETE FROM item_link_async ila WHERE ila.link_id = $2 AND linked_item_id = $1 and item_id = ANY(old_ids);
-				DELETE FROM item_to_item ii WHERE ii.link_id = $2 AND r_item_id = $1 and l_item_id = ANY(old_ids);
+				DELETE FROM item_to_item ii WHERE ii.link_id = $2 AND r_item_id = $1 and l_item_id = ANY(old_ids);			
 			END IF;
 		END IF;
-
-		RAISE NOTICE 'Deleted: %',  clock_timestamp();
+								   
+		RAISE NOTICE 'Deleted: %',  clock_timestamp();		
 
 		IF splitted THEN
         	INSERT INTO item_link_async SELECT $2, $1, unnest from unnest(new_ids);
     	ELSE
         	INSERT INTO item_link SELECT $2, $1, unnest from unnest(new_ids);
 			IF is_symmetric THEN
- 				INSERT INTO item_link SELECT $2, unnest, $1 from unnest(new_ids);
+ 				INSERT INTO item_link SELECT $2, unnest, $1 from unnest(new_ids);			
 			END IF;
 		END IF;
-
-		RAISE NOTICE 'Inserted: %',  clock_timestamp();
-
+								   
+		RAISE NOTICE 'Inserted: %',  clock_timestamp();								   
+		
 		IF is_symmetric and not splitted and array_length(new_ids, 1) > 0 THEN
 			data_items := array_agg(
 					row(n.id, ca.attribute_id, cd.attribute_id is not null, ci.splitted, ila.link_id is not null)
@@ -3041,36 +3041,36 @@ AS $BODY$
             	inner join content_attribute ca on ca.content_id = c.content_id and ca.link_id = $2
             	left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
             	left join item_link_async ila on $2 = ila.link_id and n.id = ila.item_id and ila.linked_item_id = $1;
-
+								   
 			data_items := COALESCE(data_items, ARRAY[]::link_data[]);
-
-
+								   
+								   
 			RAISE NOTICE 'Data items received: %',  clock_timestamp();
-
-			IF array_length(data_items, 1) > 0 THEN
+				
+			IF array_length(data_items, 1) > 0 THEN	
 
 				update content_data cd set data = $2 from unnest(data_items) n
 				where cd.ATTRIBUTE_ID = n.attribute_id and cd.CONTENT_ITEM_ID = n.id
 				and n.has_data;
-
-				RAISE NOTICE 'content_data updated:%',  clock_timestamp();
+								   
+				RAISE NOTICE 'content_data updated:%',  clock_timestamp();								   
 
 				insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
-				select n.id, n.attribute_id, $2
+				select n.id, n.attribute_id, $2								  
 				from unnest(data_items) n
 				where not n.has_data and n.attribute_id is not null;
 
-				RAISE NOTICE 'content_data inserted:%',  clock_timestamp();
+				RAISE NOTICE 'content_data inserted:%',  clock_timestamp();								   
 
 				insert into item_link_async(link_id, item_id, linked_item_id)
 				select $2, n.id, $1
 				from unnest(data_items) n
 				where n.splitted and not n.has_async and n.attribute_id is not null;
 
-				RAISE NOTICE 'item_link_async inserted: %',  clock_timestamp();
-
+				RAISE NOTICE 'item_link_async inserted: %',  clock_timestamp();								   
+								   
 			END IF;
-
+								  
 		END IF;
 	END;
 $BODY$;
@@ -3090,26 +3090,26 @@ AS $BODY$
 		old_ids link_multiple_splitted[];
 		cross_ids link_multiple_splitted[];
 	BEGIN
-		create temp table field_values as
+		create temp table field_values as	
 		select x.*, ci.splitted from XMLTABLE(
-		'/items/item'
-		PASSING XMLPARSE(DOCUMENT xml_parameter)
+		'/items/item'  
+		PASSING XMLPARSE(DOCUMENT xml_parameter) 
 		COLUMNS
 			id int PATH '@id',
 			link_id int PATH '@linkId',
 			value text PATH '@value'
 		) x inner join content_item ci on x.id = ci.content_item_id;
-
-		new_ids := array_agg(row(a.id, a.link_id, unnest, a.splitted))
+		
+		new_ids := array_agg(row(a.id, a.link_id, unnest, a.splitted)) 
 		from field_values a, unnest(
 		    case when a.value = '' then ARRAY[]::int[] else regexp_split_to_array(a.value, E',\\s*')::int[] end
 		);
 		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
-
+		
 		RAISE NOTICE 'New ids: %', new_ids;
-
+							
 		old_ids := array_agg(row(c.*)) from
-		(
+		(					
 		  select ila.item_id, ila.link_id, ila.linked_item_id, f.splitted
 		  from item_link_async ila inner join field_values f
 		  on ila.link_id = f.link_id and ila.item_id = f.id
@@ -3121,50 +3121,50 @@ AS $BODY$
 		  where not f.splitted
 		) c;
 		old_ids := coalesce(old_ids, ARRAY[]::link_multiple_splitted[]);
-
-		RAISE NOTICE 'Old ids: %', old_ids;
-
+		
+		RAISE NOTICE 'Old ids: %', old_ids;		
+		
 		cross_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))
-		from unnest(new_ids) t1 inner join unnest(old_ids) t2
+		from unnest(new_ids) t1 inner join unnest(old_ids) t2 
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id;
 		cross_ids := coalesce(cross_ids, ARRAY[]::link_multiple_splitted[]);
-
-		RAISE NOTICE 'Cross ids: %', cross_ids;
-
-		old_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))
-		from unnest(old_ids) t1 left join unnest(cross_ids) t2
+		
+		RAISE NOTICE 'Cross ids: %', cross_ids;	
+		
+		old_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))							  
+		from unnest(old_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id
 		where t2.id is null;
 		old_ids := coalesce(old_ids, ARRAY[]::link_multiple_splitted[]);
-
-		new_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))
-		from unnest(new_ids) t1 left join unnest(cross_ids) t2
+							
+		new_ids := array_agg(row(t1.id, t1.link_id, t1.linked_id, t1.splitted))							  
+		from unnest(new_ids) t1 left join unnest(cross_ids) t2 							  
 		on t1.id = t2.id and t1.link_id = t2.link_id and t1.linked_id = t2.linked_id
 		where t2.id is null;
 		new_ids := coalesce(new_ids, ARRAY[]::link_multiple_splitted[]);
-
+							  
   		delete from item_link_async il using field_values f
 		where il.item_id = f.id and il.link_id = f.link_id
 		and not f.splitted;
-
+							
   		delete from item_link_async il using unnest(old_ids) i
   		where il.item_id = i.id and il.link_id = i.link_id and il.linked_item_id = i.linked_id
   		and i.splitted;
-
+							
   		delete from item_link il using unnest(old_ids) i
   		where il.item_id = i.id and il.link_id = i.link_id and il.linked_item_id = i.linked_id
-  		and not i.splitted;
+  		and not i.splitted;							
 
   		delete from item_link_async il using unnest(old_ids) i, content_to_content c
-  		where il.linked_item_id = i.id and il.link_id = i.link_id and il.item_id = i.linked_id
+  		where il.linked_item_id = i.id and il.link_id = i.link_id and il.item_id = i.linked_id 
 		and c.link_id = i.link_id
   		and not i.splitted and c.symmetric;
-
+							
   		delete from item_link il using unnest(old_ids) i, content_to_content c
   		where il.linked_item_id = i.id and il.link_id = i.link_id and il.item_id = i.linked_id
-		and c.link_id = i.link_id
+		and c.link_id = i.link_id							
   		and not i.splitted and c.symmetric;
-
+							
   		insert into item_link_async (link_id, item_id, linked_item_id)
   		select link_id, id, linked_id from unnest(new_ids)
   		where splitted;
@@ -3172,15 +3172,15 @@ AS $BODY$
   		insert into item_link (link_id, item_id, linked_item_id)
   		select link_id, id, linked_id from unnest(new_ids)
   		where not splitted;
-
+							
   		insert into item_link (link_id, item_id, linked_item_id)
   		select i.link_id, i.linked_id, i.id
 		from unnest(new_ids) i, content_to_content c
   		where i.link_id = c.link_id and i.id <> i.linked_id
-		and not i.splitted and c.symmetric;
-
+		and not i.splitted and c.symmetric;							
+							
 		IF (array_length(new_ids, 1) > 0) THEN
-			create temp table multiple_data as select
+			create temp table multiple_data as select 
 				n.id, n.link_id, n.linked_id, n.splitted,
 				ca.attribute_id as linked_attribute_id,
     			(cd.content_item_id is not null) as linked_has_data,
@@ -3192,12 +3192,12 @@ AS $BODY$
     		inner join content c on ci.content_id = c.content_id
     		inner join content_attribute ca on ca.content_id = c.content_id and ca.link_id = n.link_id
     		left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
-    		left join item_link_async ila on n.link_id = ila.link_id and n.linked_id = ila.item_id and n.id = ila.linked_item_id;
-
+    		left join item_link_async ila on n.link_id = ila.link_id and n.linked_id = ila.item_id and n.id = ila.linked_item_id;						
+							
   			update content_data cd set data = n.link_id from multiple_data n
   			where cd.ATTRIBUTE_ID = n.linked_attribute_id and cd.CONTENT_ITEM_ID = n.linked_id
   			and not n.splitted and n.linked_has_data;
-
+							
   			insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
   			select distinct n.linked_id, n.linked_attribute_id, n.link_id from multiple_data n
   			where not n.splitted and not n.linked_has_data and n.linked_attribute_id is not null;
@@ -3205,12 +3205,12 @@ AS $BODY$
   			insert into item_link_async(link_id, item_id, linked_item_id)
   			select n.link_id, n.linked_id, n.id from multiple_data n
   			where not n.splitted and n.linked_splitted and not n.linked_has_async and n.linked_attribute_id is not null	;
-
+							
 			drop table multiple_data;
 		END IF;
 		drop table field_values;
 	END;
-
+	
 $BODY$;
 
 alter procedure qp_update_m2m_values(xml) owner to postgres;
@@ -3423,7 +3423,7 @@ CREATE OR REPLACE FUNCTION public.process_content_data_upsert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF
+    VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
 		ids int[];
@@ -3479,7 +3479,7 @@ AS $BODY$
                 select distinct cd.content_item_id::int as id from content_data cd where cd.content_data_id = ANY(ft_ids)
             ) i;
         END IF;
-
+		
 		IF TG_OP = 'UPDATE' THEN
 			IF EXISTS (
 				select * from new_table i inner join old_table o on i.content_data_id = o.content_data_id
@@ -3490,64 +3490,64 @@ AS $BODY$
 					RETURN NULL;
 			END IF;
 		END IF;
-
+		
 		attribute_ids := array_agg(distinct(attribute_id)) from new_table;
 		attribute_ids := COALESCE(attribute_ids, ARRAY[]::int[]);
 		FOREACH attr_id in array attribute_ids
 		LOOP
 			attr := row(ca.*) from content_attribute ca where ca.attribute_id = attr_id;
-
-			ids := array_agg(i.content_item_id) from new_table i
+								  
+			ids := array_agg(i.content_item_id) from new_table i								  
                 inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
                 inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0
+                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0 
 				and not ci.splitted;
 			ids := COALESCE(ids, ARRAY[]::int[]);
-
-			async_ids := array_agg(i.content_item_id) from new_table i
+								  
+			async_ids := array_agg(i.content_item_id) from new_table i							  
                 inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
                 inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0
+                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0 
 				and ci.splitted;
 			async_ids := COALESCE(async_ids, ARRAY[]::int[]);
-
+								  
 			IF attr.attribute_type_id in (2,3,11,13) THEN
 				column_type := 'numeric';
 			ELSEIF attr.attribute_type_id in (4,5,6) THEN
 				column_type := 'timestamp without time zone';
 			ELSE
-				column_type := 'text';
-			END IF;
-
+				column_type := 'text';								  
+			END IF;					  
+								  
 	   		IF attr.attribute_type_id in (9,10) THEN
 				source := 'coalesce(cd.data, cd.blob_data)';
 			ELSE
 				source := 'qp_correct_data(cd.data::text, %s, %s, ''%s'')';
-				source := FORMAT(source,
+				source := FORMAT(source, 
 					attr.attribute_type_id, attr.attribute_size, coalesce(attr.default_value, '')
-				);
+				); 								  
 			END IF;
-
-			sql :=
+								  
+			sql := 
 				'update %s d set "%s" = %s::%s from content_data cd, unnest($1) where d.content_item_id = unnest' ||
 				' and cd.attribute_id = %s and cd.content_item_id = d.content_item_id';
-
-
-
+				
+								  
+			
 			IF array_length(ids, 1) > 0 THEN
-
+				
 				sql := FORMAT(sql, 'content_' || attr.content_id, lower(attr.attribute_name), source, column_type, attr.attribute_id);
 				RAISE NOTICE '%', sql;
 				execute sql using ids;
-
+								  
 			END IF;
-
+								  
 			IF array_length(async_ids, 1) > 0 THEN
 				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', lower(attr.attribute_name), source, column_type, attr.attribute_id);
 				RAISE NOTICE '%', sql;
 				execute sql using async_ids;
 			END IF;
-
+								  
 		END LOOP;
 		RETURN NULL;
 	END
@@ -3563,7 +3563,7 @@ CREATE OR REPLACE FUNCTION public.process_content_item_delete()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF
+    VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
 		ids int[];
@@ -3574,11 +3574,11 @@ AS $BODY$
 		char_ids text[];
 		o2m_ids int[];
     BEGIN
-
+	
 		IF NOT EXISTS(SELECT * FROM information_schema.tables where table_name = 'disable_td_delete_item') THEN
 			content_ids := array_agg(distinct(content_id)) from OLD_TABLE;
-			content_ids := COALESCE(content_ids, ARRAY[]::int[]);
-
+			content_ids := COALESCE(content_ids, ARRAY[]::int[]);		
+			
 		FOREACH cid in array content_ids
 			LOOP
 				select st.status_type_id, c.virtual_type <> 0 into published_id, is_virtual from STATUS_TYPE st
@@ -3586,20 +3586,20 @@ AS $BODY$
 				where c.content_id = cid;
 
 				ids := array_agg(n.content_item_id) from OLD_TABLE n where n.content_id = cid;
-
+									
 				IF EXISTS (select * from OLD_TABLE where status_type_id = published_id and not splitted) THEN
 					update content_modification set live_modified = now(), stage_modified = now() where content_id = cid;
 				ELSE
 					update content_modification set stage_modified = now() where content_id = cid;
-				END IF;
-
+				END IF;									
+								 
             	o2m_ids := array_agg(ca1.attribute_id) from CONTENT_ATTRIBUTE ca1
             		inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
             		where ca2.CONTENT_ID = cid;
-
+									
 				IF o2m_ids is not null THEN
 					char_ids := array_agg(unnest::text) from unnest(ids);
-
+									
 	                UPDATE content_attribute SET default_value = null
                     	WHERE attribute_id = ANY(o2m_ids)
                     	AND default_value = ANY(char_ids);
@@ -3611,19 +3611,19 @@ AS $BODY$
 					DELETE from VERSION_CONTENT_DATA
 						where ATTRIBUTE_ID = ANY(o2m_ids)
 						AND o2m_data = ANY(ids);
-
+									
 				END IF;
-
-
+				
+								 
 				IF NOT is_virtual THEN
 					call qp_delete_items(cid, ids, false);
 					call qp_delete_items(cid, ids, true);
 				END IF;
-
+								 
 
 			END LOOP;
 		END IF;
-
+							 
 		RETURN NULL;
 	END
 $BODY$;
@@ -3638,7 +3638,7 @@ CREATE OR REPLACE FUNCTION public.process_content_item_insert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF
+    VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
 	    all_ids int[];
@@ -3656,7 +3656,7 @@ AS $BODY$
 		insert into content_data (content_item_id, attribute_id, not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
 		from new_table i inner join content_attribute ca on i.content_id = ca.content_id;
-
+	
 		content_ids := array_agg(distinct(content_id)) from NEW_TABLE;
 		content_ids := COALESCE(content_ids, ARRAY[]::int[]);
 		FOREACH cid in array content_ids
@@ -3664,17 +3664,17 @@ AS $BODY$
 			none_id := st.status_type_id from STATUS_TYPE st
 			inner join content c on st.site_id = c.site_id and st.status_type_name = 'None'
 			where c.content_id = cid;
-
+								
 			ids := array_agg(n.content_item_id) from new_table n
 						where n.content_id = cid and not n.not_for_replication;
 			ids := COALESCE(ids, ARRAY[]::int[]);
-
+							 
 			ids2 := array_agg(n.content_item_id) from new_table n
 						where n.content_id = cid and not n.not_for_replication and n.schedule_new_version_publication;
 			ids2 := COALESCE(ids2, ARRAY[]::int[]);
-
+			
 			call qp_upsert_items(cid, ids, ids2, none_id, false);
-
+							 
 		END LOOP;
 		RETURN NULL;
 	END
@@ -3690,7 +3690,7 @@ CREATE OR REPLACE FUNCTION public.process_content_item_update()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF
+    VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
 		splitted_ids int[];
@@ -3709,69 +3709,69 @@ AS $BODY$
 		published_id int;
 		sql text;
     BEGIN
-		select
-			array_agg(i.content_item_id) filter (where i.splitted <> o.splitted),
+		select 
+			array_agg(i.content_item_id) filter (where i.splitted <> o.splitted), 
 			array_agg(i.content_item_id) filter (where i.not_for_replication <> o.not_for_replication),
 			array_agg(i.content_item_id) filter (where i.locked_by <> o.locked_by),
-			array_agg(i.content_item_id) filter (where i.modified <> o.modified)
+			array_agg(i.content_item_id) filter (where i.modified <> o.modified)			
 		into splitted_ids, not_for_replication_ids, locked_by_ids, modified_ids
 		from new_table i inner join old_table o on i.content_item_id = o.content_item_id;
 
 		RAISE NOTICE 'Splitted ids: %', splitted_ids;
-
+		
 		IF splitted_ids is not null THEN
 			update content_data set splitted = i.splitted
 			from new_table i where content_data.content_item_id = i.content_item_id
 			and content_data.content_item_id = ANY(splitted_ids);
-
-			RETURN NULL;
+			
+			RETURN NULL;		
 		END IF;
 
 		RAISE NOTICE 'Not for Replication ids: %', not_for_replication_ids;
-
+		
 		IF not_for_replication_ids is not null THEN
 			update content_data set not_for_replication = i.not_for_replication
 			from new_table i where content_data.content_item_id = i.content_item_id
 			and content_data.content_item_id = ANY(not_for_replication_ids);
-
-			RETURN NULL;
+		
+			RETURN NULL;		
 		END IF;
-
+		
 		IF locked_by_ids is not null THEN
 			RETURN NULL;
 		END IF;
-
+		
 		insert into content_data (content_item_id, attribute_id, not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
 		from new_table i inner join content_attribute ca on i.content_id = ca.content_id
-		left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
-		where cd.CONTENT_DATA_ID is null;
-
-		content_ids := array_agg(distinct(content_id)) from new_table
+		left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID 
+		where cd.CONTENT_DATA_ID is null;		
+	
+		content_ids := array_agg(distinct(content_id)) from new_table 
 		where content_id in (select content_id from content where virtual_type = 0);
-		content_ids := COALESCE(content_ids, ARRAY[]::int[]);
-
+		content_ids := COALESCE(content_ids, ARRAY[]::int[]);		
+			
 		FOREACH cid in array content_ids
 			LOOP
-
+				
 				select st1.status_type_id, st2.status_type_id into none_id, published_id
 				from status_type st1 inner join status_type st2
 				on st1.site_id = st2.site_id and st1.status_type_name = 'None' and st2.status_type_name = 'Published'
 				where st1.site_id in (select c.site_id from content c where c.content_id = cid);
-
+								
 				items := array_agg(n.*) from new_table n where n.content_id = cid;
 				ids := array_agg(i.content_item_id) from unnest(items) i;
 				async_ids := array_agg(i.content_item_id) from unnest(items) i where i.cancel_split;
 
 				sql := '
-					create temp table ids_with_splitted as
-						select content_item_id, (curr_weight < front_weight and is_workflow_async) or
+					create temp table ids_with_splitted as 
+						select content_item_id, (curr_weight < front_weight and is_workflow_async) or 
             				(curr_weight = workflow_max_weight and delayed) as splitted, not_for_replication
 						from (
-            				select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight,
-            				max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight,
-							case when i2.id is not null then false else ciw.is_async end as is_workflow_async,
-            				ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed, ci.not_for_replication
+            				select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight, 
+            				max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, 
+							case when i2.id is not null then false else ciw.is_async end as is_workflow_async, 
+            				ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed, ci.not_for_replication 
             				from content_item ci inner join UNNEST($1) i(id) on i.id = ci.content_item_id
             				left join UNNEST($2) i2(id) on i2.id = ci.content_item_id
             				inner join content_%s c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID
@@ -3781,13 +3781,13 @@ AS $BODY$
             				left join workflow_rules wr on ciw.WORKFLOW_ID = wr.WORKFLOW_ID
             				left join STATUS_TYPE st3 on st3.STATUS_TYPE_ID = wr.SUCCESSOR_STATUS_ID
             			) as main';
-
+				
 				sql := FORMAT(sql, cid);
 				RAISE NOTICE 'IDS with splitted %', sql;
 				EXECUTE sql using ids, async_ids;
 
-				select
-					array_agg(i2.content_item_id) filter (where not i2.splitted and i.splitted),
+				select 
+					array_agg(i2.content_item_id) filter (where not i2.splitted and i.splitted), 
 					array_agg(i2.content_item_id) filter (where i2.splitted and not i.splitted),
 					array_agg(i2.content_item_id) filter (where not i2.splitted and not i2.not_for_replication),
 					array_agg(i2.content_item_id) filter (where i2.splitted and not i2.not_for_replication)
@@ -3795,33 +3795,33 @@ AS $BODY$
 				from ids_with_splitted i2 inner join (select * from unnest(items)) i on i2.content_item_id = i.content_item_id;
 
 				drop table ids_with_splitted;
-
+				
 				IF ids_to_set is not null THEN
-				    RAISE NOTICE 'ids to set splitted: %', ids_to_set;
+				    RAISE NOTICE 'ids to set splitted: %', ids_to_set;				    
             		insert into content_item_splitted(content_item_id)
 					select id from (select unnest(ids_to_set) as id) base
             		where not exists (select * from content_item_splitted cis where cis.content_item_id = base.id);
-
+																		   
 					update content_item set splitted = true where content_item_id = ANY(ids_to_set);
 				END IF;
-
+																		   
 				IF ids_to_reset is not null THEN
-				    RAISE NOTICE 'ids to reset splitted: %', ids_to_reset;
+				    RAISE NOTICE 'ids to reset splitted: %', ids_to_reset;					    
 					delete from content_item_splitted where content_item_id = ANY(ids_to_reset);
 					update content_item set splitted = false where content_item_id = ANY(ids_to_reset);
 				END IF;
 
 				IF sync_ids is not null THEN
-				    RAISE NOTICE 'ids to update sync: %', sync_ids;
+				    RAISE NOTICE 'ids to update sync: %', sync_ids;					    
 					call qp_upsert_items(cid, sync_ids, ARRAY[]::int[], none_id, false);
 					call qp_delete_items(cid, sync_ids, true);
 				END IF;
-
+																		   
 				IF async_ids is not null THEN
-				    RAISE NOTICE 'ids to update async: %', async_ids;
+				    RAISE NOTICE 'ids to update async: %', async_ids;					    
 					call qp_upsert_items(cid, async_ids, ARRAY[]::int[], none_id, true);
 					call qp_update_items_flags(cid, async_ids, false);
-				END IF;
+				END IF;																				   
 
 			END LOOP;
 
@@ -3832,7 +3832,7 @@ AS $BODY$
 			from new_table i INNER JOIN status_type st ON i.status_type_id = st.status_type_id
 			where i.content_item_id = ANY(modified_ids);
 		END IF;
-
+																		   
 		RETURN NULL;
 	END
 $BODY$;
@@ -3847,7 +3847,7 @@ CREATE OR REPLACE FUNCTION public.process_item_to_item_delete()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF
+    VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
 		content_links content_link[];
@@ -3868,12 +3868,12 @@ AS $BODY$
 				    link_items := array_agg(distinct row(item_id, linked_item_id)) from old_table where link_id = item.id;
 				END IF;
 				self_related := item.l_content_id = item.r_content_id;
-				is_async := TG_TABLE_NAME = 'item_link_async';
+				is_async := TG_TABLE_NAME = 'item_link_async';												 
 				CALL qp_delete_link_table_item(item.id, item.l_content_id, link_items, is_async, false, false);
 				CALL qp_delete_link_table_item(item.id, item.r_content_id, link_items, is_async, true, self_related);
 			END LOOP;
 		END IF;
-		RETURN NULL;
+		RETURN NULL;												   	
     END;
 $BODY$;
 
@@ -3887,7 +3887,7 @@ CREATE OR REPLACE FUNCTION public.process_item_to_item_insert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF
+    VOLATILE NOT LEAKPROOF 
 AS $BODY$
 	DECLARE
 		content_links content_link[];
@@ -3899,7 +3899,7 @@ AS $BODY$
 	  	content_links := array_agg(
 			distinct row(i.link_id, c2c.SYMMETRIC, c2c.l_content_id, c2c.r_content_id)
 		) from new_table i inner join content_to_content c2c on i.link_id = c2c.link_id;
-
+		
 		IF array_length(content_links, 1) > 0 THEN
 			FOREACH item in array content_links
 			LOOP
@@ -3909,20 +3909,20 @@ AS $BODY$
 				    link_items := array_agg(distinct row(item_id, linked_item_id)) from new_table where link_id = item.id;
 				END IF;
 				self_related := item.l_content_id = item.r_content_id;
-				is_async := TG_TABLE_NAME = 'item_link_async';
+				is_async := TG_TABLE_NAME = 'item_link_async';														   
 				CALL qp_insert_link_table_item(item.id, item.l_content_id, link_items, is_async, false, false);
 				CALL qp_insert_link_table_item(item.id, item.r_content_id, link_items, is_async, true, self_related);
 
 			END LOOP;
 		END IF;
-		RETURN NULL;
+		RETURN NULL;												   	
     END;
 $BODY$;
 
 ALTER FUNCTION public.process_item_to_item_insert()
     OWNER TO postgres;
 CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
-	DECLARE
+	DECLARE 
 		salt bigint;
 	 	old_hash bytea;
 	BEGIN
@@ -3947,7 +3947,7 @@ CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 			NEW.password_modified = NOW();
 		END IF;
 
-		RETURN NEW;
+		RETURN NEW;	
 	END
 $tiu_update_hash$ LANGUAGE plpgsql;
 
@@ -4121,7 +4121,15 @@ END $$;
 
 
 
+ALTER TABLE public.site ADD COLUMN IF NOT EXISTS replace_urls_in_db boolean NOT NULL DEFAULT false;
+ALTER TABLE public.content_item_schedule 
+    ADD COLUMN IF NOT EXISTS start_date timestamp NULL;
+
+ALTER TABLE public.content_item_schedule 
+    ADD COLUMN IF NOT EXISTS end_date timestamp NULL;
+
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS TRACE_IMPORT boolean NOT NULL DEFAULT false;
 ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
+ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
 
 
