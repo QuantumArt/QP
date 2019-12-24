@@ -5,6 +5,7 @@
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <MvcBuildViews>true</MvcBuildViews>
     <TargetFrameworks>netcoreapp2.2;net471</TargetFrameworks>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**</DefaultItemExcludes>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
