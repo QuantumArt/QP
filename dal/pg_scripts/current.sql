@@ -1,3 +1,112 @@
+create extension IF NOT EXISTS hstore;
+create extension IF NOT EXISTS intarray;
+create extension IF NOT EXISTS pgcrypto;
+create extension IF NOT EXISTS tablefunc;
+
+ALTER TABLE content_data ALTER COLUMN data TYPE text;
+
+ALTER TABLE content_data ADD COLUMN IF NOT EXISTS o2m_data numeric(18,0) NULL;
+
+ALTER TABLE content_data ADD COLUMN IF NOT EXISTS ft_data tsvector NULL;
+
+
+update content_data cd set o2m_data = data::numeric from content_attribute ca
+where ca.attribute_id = cd.attribute_id and ca.attribute_type_id = 11 and ca.link_id is null
+and cd.o2m_data is null and cd.data is not null;
+
+-- DROP INDEX public.ix_o2m_data;
+
+CREATE INDEX IF NOT EXISTS ix_o2m_data
+    ON public.content_data USING btree
+    (o2m_data)
+    TABLESPACE pg_default;
+
+update content_data cd
+set ft_data = to_tsvector('russian', coalesce(cd.data, cd.blob_data))
+from content_attribute ca
+where ca.attribute_id = cd.attribute_id
+and cd.ft_data is null and coalesce(cd.data, cd.blob_data) is not null;
+
+CREATE INDEX IF NOT EXISTS ix_ft_data ON content_data USING gist(ft_data);
+
+
+DO $$
+BEGIN
+
+  BEGIN
+
+    ALTER TABLE public.content_data
+        ADD CONSTRAINT fk_content_data_content_attribute FOREIGN KEY (attribute_id)
+        REFERENCES public.content_attribute (attribute_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE;
+
+
+  EXCEPTION
+    WHEN duplicate_object THEN RAISE NOTICE 'Table constraint fk_content_data_content_attribute already exists';
+  END;
+
+END $$;
+
+DO $$
+BEGIN
+  BEGIN
+
+    ALTER TABLE public.content_data
+        ADD CONSTRAINT fk_content_data_content_item FOREIGN KEY (content_item_id)
+        REFERENCES public.content_item (content_item_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+  EXCEPTION
+    WHEN duplicate_object THEN RAISE NOTICE 'Table constraint fk_content_data_content_item already exists';
+  END;
+
+END $$;
+
+-- Table: public.content_data
+
+-- DROP TABLE public.content_data;
+
+CREATE TABLE IF NOT EXISTS public.content_item_ft
+(
+    content_item_id numeric(18,0) NOT NULL,
+    ft_data tsvector,
+    PRIMARY KEY (content_item_id),
+    CONSTRAINT fk_content_item_ft_content_item FOREIGN KEY (content_item_id)
+        REFERENCES public.content_item (content_item_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+
+ALTER TABLE public.content_item_ft
+    OWNER to postgres;
+
+
+CREATE INDEX IF NOT EXISTS ix_content_item_ft_data
+    ON public.content_item_ft USING gin
+    (ft_data)
+    TABLESPACE pg_default;
+
+
+
+
+
+ALTER TABLE version_content_data ALTER COLUMN data TYPE text;
+
+ALTER TABLE version_content_data ADD COLUMN IF NOT EXISTS o2m_data numeric(18,0) NULL;
+
+update version_content_data cd set o2m_data = data::numeric from content_attribute ca
+where ca.attribute_id = cd.attribute_id and ca.attribute_type_id = 11 and ca.link_id is null
+and cd.o2m_data is null and cd.data is not null;
+
+-- DROP INDEX public.ix_o2m_data;
+
+CREATE INDEX IF NOT EXISTS ix_version_o2m_data
+    ON public.version_content_data USING btree
+    (o2m_data)
+    TABLESPACE pg_default;
+
 DO $$ BEGIN
     create type content_link as
     (
@@ -679,13 +788,13 @@ AS $BODY$
 	BEGIN
         new := case when is_new then '_new' else '' end;
         cond := case when is_new then 'visible and not archive' else 'visible = 1 and archive = 0' end;
-        sql := 'create view content_%s_live%s as
+        sql := 'create or replace view content_%s_live%s as
                select * from content_%s%s where %s
                and status_type_id in ( select status_type_id from status_type where status_type_name = ''Published'')';
 	     sql := format(sql, cid, new, cid, new, cond);
 	    execute sql;
 
-         sql := 'create view content_%s_stage%s as
+         sql := 'create or replace view content_%s_stage%s as
                select * from content_%s_united%s where %s';
 	     sql := format(sql, cid, new, cid, new, cond);
 	     execute sql;
@@ -783,18 +892,18 @@ AS $BODY$
         end if;
 
 
-        sql := 'create view content_%s_new as select %s from content_%s';
+        sql := 'create or replace view content_%s_new as select %s from content_%s';
 	    sql := format(sql, cid, array_to_string(fields, ', '), cid);
 	    raise notice '%', sql;
 	    execute sql;
 
 	    if is_user_query then
-            sql := 'create view content_%s_united_new as select %s from content_%s_united';
+            sql := 'create or replace view content_%s_united_new as select %s from content_%s_united';
             sql := format(sql, cid, array_to_string(fields, ', '), cid);
             raise notice '%', sql;
             execute sql;
         else
-            sql := 'create view content_%s_async_new as select %s from content_%s_async';
+            sql := 'create or replace view content_%s_async_new as select %s from content_%s_async';
             sql := format(sql, cid, array_to_string(fields, ', '), cid);
             raise notice '%', sql;
             execute sql;
@@ -859,7 +968,7 @@ AS $BODY$
 	  sql text;
 	BEGIN
         new := case when is_new then '_new' else '' end;
-        sql := 'create view content_%s_united%s as
+        sql := 'create or replace view content_%s_united%s as
 	           select c1.* from content_%s%s c1
 	           left join content_%s_async%s c2 on c1.content_item_id = c2.content_item_id
 	           where c2.content_item_id is null
@@ -1493,11 +1602,11 @@ AS $BODY$
 	    link_table_rev := 'item_link_' || id || '_rev';
 	    link_table_async_rev := 'item_link_' || id || '_async_rev';
 
-        sql2 := 'CREATE VIEW %s AS select id, linked_id from %s il
+        sql2 := 'CREATE OR REPLACE VIEW %s AS select id, linked_id from %s il
              where not exists (select * from content_item_splitted cis where il.id = cis.CONTENT_ITEM_ID)
              union all SELECT id, linked_id from %s ila';
 
-        sql := 'CREATE VIEW %s AS select il.item_id, il.linked_item_id from %s il
+        sql := 'CREATE OR REPLACE VIEW %s AS select il.item_id, il.linked_item_id from %s il
                inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
                where CONTENT_ID = %s  and link_id = %s';
 
@@ -4120,6 +4229,43 @@ EXCEPTION
 END $$;
 
 
+
+DO LANGUAGE plpgsql $$
+DECLARE
+	cids int[];
+	cid int;
+BEGIN
+	cids := array_agg(content_id) from content where virtual_type = 0;
+	foreach cid in array cids
+	loop
+		call qp_content_united_view_create(cid);
+	end loop;
+END;
+$$;
+DO LANGUAGE plpgsql $$
+DECLARE
+	lids int[];
+	lid int;
+BEGIN
+	lids := array_agg(link_id) from content_to_content where link_id in (select link_id from content_attribute);
+	foreach lid in array lids
+	loop
+		call qp_link_view_create(lid);
+	end loop;
+END;
+$$;
+DO LANGUAGE plpgsql $$
+DECLARE
+	cids int[];
+	cid int;
+BEGIN
+	cids := array_agg(content_id) from content where virtual_type = 0;
+	foreach cid in array cids
+	loop
+		call qp_content_new_views_create(cid);
+	end loop;
+END;
+$$;
 
 ALTER TABLE public.site ADD COLUMN IF NOT EXISTS replace_urls_in_db boolean NOT NULL DEFAULT false;
 ALTER TABLE public.content_item_schedule 

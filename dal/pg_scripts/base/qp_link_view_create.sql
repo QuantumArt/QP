@@ -30,11 +30,11 @@ AS $BODY$
 	    link_table_rev := 'item_link_' || id || '_rev';
 	    link_table_async_rev := 'item_link_' || id || '_async_rev';
 
-        sql2 := 'CREATE VIEW %s AS select id, linked_id from %s il
+        sql2 := 'CREATE OR REPLACE VIEW %s AS select id, linked_id from %s il
              where not exists (select * from content_item_splitted cis where il.id = cis.CONTENT_ITEM_ID)
              union all SELECT id, linked_id from %s ila';
 
-        sql := 'CREATE VIEW %s AS select il.item_id, il.linked_item_id from %s il
+        sql := 'CREATE OR REPLACE VIEW %s AS select il.item_id, il.linked_item_id from %s il
                inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
                where CONTENT_ID = %s  and link_id = %s';
 

@@ -64,18 +64,18 @@ AS $BODY$
         end if;
 
 
-        sql := 'create view content_%s_new as select %s from content_%s';
+        sql := 'create or replace view content_%s_new as select %s from content_%s';
 	    sql := format(sql, cid, array_to_string(fields, ', '), cid);
 	    raise notice '%', sql;
 	    execute sql;
 
 	    if is_user_query then
-            sql := 'create view content_%s_united_new as select %s from content_%s_united';
+            sql := 'create or replace view content_%s_united_new as select %s from content_%s_united';
             sql := format(sql, cid, array_to_string(fields, ', '), cid);
             raise notice '%', sql;
             execute sql;
         else
-            sql := 'create view content_%s_async_new as select %s from content_%s_async';
+            sql := 'create or replace view content_%s_async_new as select %s from content_%s_async';
             sql := format(sql, cid, array_to_string(fields, ', '), cid);
             raise notice '%', sql;
             execute sql;

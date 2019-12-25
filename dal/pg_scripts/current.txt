@@ -1,7 +1,11 @@
+extensions
+o2m_ft
 types
 views
 base
 main
 trigger_functions
 triggers
+content_views
 table_changes
+

@@ -8,7 +8,7 @@ and cd.o2m_data is null and cd.data is not null;
 
 -- DROP INDEX public.ix_o2m_data;
 
-CREATE INDEX ix_version_o2m_data
+CREATE INDEX IF NOT EXISTS ix_version_o2m_data
     ON public.version_content_data USING btree
     (o2m_data)
     TABLESPACE pg_default;

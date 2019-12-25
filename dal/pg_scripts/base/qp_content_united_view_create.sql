@@ -11,7 +11,7 @@ AS $BODY$
 	  sql text;
 	BEGIN
         new := case when is_new then '_new' else '' end;
-        sql := 'create view content_%s_united%s as
+        sql := 'create or replace view content_%s_united%s as
 	           select c1.* from content_%s%s c1
 	           left join content_%s_async%s c2 on c1.content_item_id = c2.content_item_id
 	           where c2.content_item_id is null
