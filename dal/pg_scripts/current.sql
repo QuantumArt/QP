@@ -520,6 +520,12 @@ CREATE OR REPLACE VIEW public.site_access_permlevel AS
 ALTER TABLE public.site_access_permlevel
     OWNER TO postgres;
 
+CREATE OR REPLACE VIEW public.status_type_new AS
+ SELECT cast(site_id as int) as site_id, cast(status_type_id as int) as id, status_type_name as name, cast(weight as int) as weight from STATUS_TYPE;
+
+ALTER TABLE public.status_type_new
+    OWNER TO postgres;
+
 create or replace view template_object(object_id, parent_object_id, page_template_id, page_id, object_name, object_format_id,
                             description, object_type_id, use_default_values, created, modified, last_modified_by,
                             allow_stage_edit, global, net_object_name, locked, locked_by, enable_viewstate,
@@ -553,6 +559,16 @@ WHERE (o.page_id IS NULL);
 alter table template_object
     owner to postgres;
 
+CREATE OR REPLACE VIEW public.user_group_bind_new AS
+ SELECT cast(group_id as int) as group_id, cast(user_id as int) as user_id from user_group_bind;
+
+ALTER TABLE public.user_group_bind_new
+    OWNER TO postgres;
+CREATE OR REPLACE VIEW public.user_group_new AS
+ SELECT cast(group_id as int) as id, group_name as name from user_group;
+
+ALTER TABLE public.user_group_new
+    OWNER TO postgres;
 create or replace view user_group_tree(group_id, group_name, description, created, modified, last_modified_by,
                             last_modified_by_login, shared_content_items, nt_group, ad_sid, built_in, readonly,
                             use_parallel_workflow, can_unlock_items, parent_group_id) as
@@ -578,6 +594,12 @@ FROM ((user_group ug
 alter table user_group_tree
     owner to postgres;
 
+CREATE OR REPLACE VIEW public.user_new AS
+ SELECT cast(user_id as int) as id, login ,nt_login, l.iso_code, first_name, last_name, email  from users u
+     inner join LANGUAGES l on l.language_id = u.language_id;
+
+ALTER TABLE public.user_new
+    OWNER TO postgres;
 create or replace view v_user_query_attrs AS
 	select vca.ATTRIBUTE_ID as USER_QUERY_ATTR_ID, ca.ATTRIBUTE_ID BASE_ATTR_ID
 	from user_query_attrs uqa
