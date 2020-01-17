@@ -201,7 +201,7 @@
 
                     using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.ClassifierFieldPanelElementId }, { "hideforcurrent", "true" } }))
                     {
-                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, "ClassifierList", htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
+                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, string.Join("ClassifierList", Model.O2MBackwardFieldNamePanelElementId), htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
                         using (Html.BeginPanel("ClassifierList"))
                         {
                             @Html.SelectFieldFor(s => s.Data.ClassifierId, Html.List(Model.GetAcceptableClassifierFields()), new Dictionary<string, object> { { "id", Model.ClassifierSelectElementId } })
@@ -285,18 +285,14 @@
                     })
                 }
 
-                using (Html.BeginPanel("O2MBackwardFieldName"))
+                using (Html.BeginPanel(Model.O2MBackwardFieldNamePanelElementId, false, false, reverse: true))
                 {
-                    using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MBackwardFieldNamePanelElementId } }))
+                    if (!Model.Data.IsBackwardFieldExists)
                     {
-                        if (!Model.Data.IsBackwardFieldExists)
-                        {
-                            @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-                        }
+                        @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
                     }
+                    @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
                 }
-
-                @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))

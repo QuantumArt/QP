@@ -795,6 +795,9 @@
   <data name="TraceImport" xml:space="preserve">
     <value>Трассировать при импорте CSV</value>
   </data>
+  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
+    <value>Обратное поле не может быть создано для агрегированного поля</value>
+  </data>
   <data name="DenyPastDates" xml:space="preserve">
     <value>Запретить даты в прошлом</value>
   </data>

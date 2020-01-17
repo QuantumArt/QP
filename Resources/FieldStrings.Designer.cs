@@ -169,6 +169,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Backward Field  could not be created for Aggregated field.
+        /// </summary>
+        public static string BackwardFieldForAggregatedNotAllowed {
+            get {
+                return ResourceManager.GetString("BackwardFieldForAggregatedNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Backward Field.
         /// </summary>
         public static string BackwardFieldId {

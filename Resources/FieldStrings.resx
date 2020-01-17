@@ -780,6 +780,9 @@
   <data name="TraceImport" xml:space="preserve">
     <value>Trace while importing CSV</value>
   </data>
+  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
+    <value>Backward Field  could not be created for Aggregated field</value>
+  </data>
   <data name="DenyPastDates" xml:space="preserve">
     <value>Deny dates in the past</value>
   </data>
