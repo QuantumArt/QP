@@ -201,7 +201,7 @@
 
                     using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.ClassifierFieldPanelElementId }, { "hideforcurrent", "true" } }))
                     {
-                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, string.Join("ClassifierList", Model.O2MBackwardFieldNamePanelElementId), htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
+                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, "ClassifierList", htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
                         using (Html.BeginPanel("ClassifierList"))
                         {
                             @Html.SelectFieldFor(s => s.Data.ClassifierId, Html.List(Model.GetAcceptableClassifierFields()), new Dictionary<string, object> { { "id", Model.ClassifierSelectElementId } })
