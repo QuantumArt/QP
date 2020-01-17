@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>ConsoleDbUpdate</AssemblyName>
     <RootNamespace>Quantumart.QP8.ConsoleDbUpdate</RootNamespace>
-    <TargetFrameworks>netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <Copyright>Copyright © 2007-2019 Quantum Art</Copyright>
     <Company>Quantum Art</Company>
