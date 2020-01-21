@@ -1140,7 +1140,8 @@ namespace Quantumart.QP8.BLL
                                 .Select(c => string.Format(ContentStrings.UserQueryColumnTypeChanged, c.ColumnName, c.TableName, c.TableDbType, c.DbType))
                                 .ToList();
 
-                        var changedTypeColumnMessages = GetChangedTypeColumnMessage(userQueryViewAllColumns).ToList();
+                        var customUserQueryColumns = userQueryViewAllColumns.Except(UserQueryMandatoryColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
+                        var changedTypeColumnMessages = GetChangedTypeColumnMessage(customUserQueryColumns).ToList();
                         if (changedTypeColumnMessages.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", changedTypeColumnMessages));
@@ -1154,7 +1155,7 @@ namespace Quantumart.QP8.BLL
                                 .Select(g => string.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, string.Join(", ", g.Select(c => $"{SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, c.TableName)}"))))
                                 .ToList();
 
-                        var diffTypeColumnMessage = GetDiffTypeColumnMessages(userQueryViewAllColumns).ToList();
+                        var diffTypeColumnMessage = GetDiffTypeColumnMessages(customUserQueryColumns).ToList();
                         if (diffTypeColumnMessage.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", diffTypeColumnMessage));
