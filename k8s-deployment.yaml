@@ -37,6 +37,8 @@ spec:
           name: temp-volume
         - mountPath: /qplibrary
           name: library-volume
+        - mountPath: /etc/localtime
+          name: tz-config
         resources:
           limits:
             memory: "1Gi"
@@ -48,6 +50,9 @@ spec:
       - name: library-volume
         persistentVolumeClaim:
           claimName: library-pvc
+      - name: tz-config
+        hostPath:
+          path: /usr/share/zoneinfo/Europe/Moscow
 ---
 apiVersion: v1
 kind: Service
