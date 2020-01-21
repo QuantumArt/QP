@@ -34,7 +34,7 @@ WITH v AS (
     FROM XMLTABLE('Notifications/Notification' passing @notifications COLUMNS
         CdcLastExecutedLsnId integer PATH 'CdcLastExecutedLsnId',
         TRANSACTION_LSN text PATH 'TransactionLsn',
-        TRANSACTION_DATE timestamp without time zone PATH 'TransactionDate',
+        TRANSACTION_DATE timestamp with time zone PATH 'TransactionDate',
         URL text PATH 'Url',
         JSON text PATH 'Json'
         ) x

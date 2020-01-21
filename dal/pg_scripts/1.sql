@@ -1,0 +1,1 @@
+select * from content_item where content_item_id = 1936354

@@ -60,7 +60,7 @@ namespace Quantumart.QP8.DAL
                 case "NUMERIC":
                     return "numeric";
                 case "DATETIME":
-                    return "timestamp without time zone";
+                    return "timestamp with time zone";
                 case "NVARCHAR":
                     return "character varying";
                 default:
@@ -131,7 +131,7 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var tableName = "CONTENT_" + id;
             var asyncTableName = tableName + "_ASYNC";
-            var dtType = (dbType == DatabaseType.Postgres) ? "timestamp without time zone" : "datetime";
+            var dtType = (dbType == DatabaseType.Postgres) ? "timestamp with time zone" : "datetime";
             var sql = $@"
             create table {DbSchemaName(dbType)}.{{0}} (
                 {Escape(dbType, "CONTENT_ITEM_ID")} numeric(18,0) NOT NULL PRIMARY KEY,

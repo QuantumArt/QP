@@ -14,10 +14,8 @@
         public const string Nvarchar = "nvarchar";
         public const string Ntext = "ntext";
         public const string Datetime = "datetime";
-        public const string TimeStampWithoutTimeZone = "timestamp without time zone";
+        public const string TimeStampWithTimeZone = "timestamp with time zone";
         public const string Text = "text";
         public const string CharVarying = "character varying";
-
-
     }
 }

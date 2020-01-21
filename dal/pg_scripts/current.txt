@@ -1,6 +1,7 @@
 extensions
 o2m_ft
 types
+timezone
 views
 base
 main

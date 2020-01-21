@@ -1,6 +1,7 @@
+DROP FUNCTION IF EXISTS qp_persist_article;
 
 CREATE OR REPLACE FUNCTION public.qp_persist_article(input xml)
-RETURNS TABLE(id int, modified timestamp without time zone)
+RETURNS TABLE(id int, modified timestamp with time zone)
 LANGUAGE 'plpgsql'
 
 AS $BODY$
@@ -9,7 +10,7 @@ AS $BODY$
 	    ids int[];
 	    cid int;
 	    splitted boolean;
-        modified timestamp without time zone;
+        modified timestamp with time zone;
 	    data_items value[];
 	    m2m_data value[];
 	    m2o_data value[];

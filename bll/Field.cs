@@ -123,7 +123,7 @@ namespace Quantumart.QP8.BLL
             ValidFieldColumnDbTypes.Int,
             ValidFieldColumnDbTypes.BigInt,
             ValidFieldColumnDbTypes.CharVarying,
-            ValidFieldColumnDbTypes.TimeStampWithoutTimeZone,
+            ValidFieldColumnDbTypes.TimeStampWithTimeZone,
             ValidFieldColumnDbTypes.Text,
             ValidFieldColumnDbTypes.SmallInt,
             ValidFieldColumnDbTypes.TinyInt,

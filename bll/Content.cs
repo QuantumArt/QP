@@ -231,8 +231,8 @@ namespace Quantumart.QP8.BLL
             new UserQueryColumn { ColumnName = FieldName.StatusTypeId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
             new UserQueryColumn { ColumnName = FieldName.Visible.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
             new UserQueryColumn { ColumnName = FieldName.Archive.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp without time zone" },
-            new UserQueryColumn { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp without time zone" },
+            new UserQueryColumn { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new UserQueryColumn { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp with time zone" },
             new UserQueryColumn { ColumnName = FieldName.LastModifiedBy.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 }
         });
 

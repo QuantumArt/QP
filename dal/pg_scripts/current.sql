@@ -192,6 +192,109 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+CREATE OR REPLACE PROCEDURE public.qp_change_timestamp_zone_time(
+	table_name text,
+	column_name text,
+	use_timezone boolean default true
+)
+LANGUAGE 'plpgsql'
+
+AS $BODY$
+	DECLARE
+	    time_sql text;
+	    sql text;
+	BEGIN
+	    time_sql := case when use_timezone then 'with' else 'without' end;
+        sql := 'alter table %s alter column %s type timestamp %s time zone';
+	    sql := format(sql, table_name, column_name, time_sql);
+	    execute sql;
+	END;
+$BODY$;
+
+alter procedure qp_change_timestamp_zone_time(text, text, boolean) owner to postgres;
+DO $$ BEGIN
+    create type column_to_process as
+    (
+        table_name text,
+        column_name text
+    );
+
+    alter type column_to_process owner to postgres;
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+DO $$
+	declare
+		columns column_to_process[];
+		item column_to_process;
+		new_item text;
+		sql text;
+	begin
+
+	    columns := array_agg(row(c.table_name, c.column_name)) from information_schema.columns c where table_schema = 'public' and data_type = 'timestamp without time zone'
+        and not table_name in (
+	        select table_name from information_schema.views where table_schema = 'public'
+        )
+	    and (table_name like '%content_%'
+        or table_name in (
+                          'access_token',
+                          'action_access',
+                          'backend_action_log',
+                          'button_trace',
+                          'cdclastexecutedlsn',
+                          'code_snippet',
+                          'container',
+                          'content',
+                          'custom_action',
+                          'dangerous_actions',
+                          'db',
+                          'entity_type_access',
+                          'external_notification_queue',
+                          'folder',
+                          'folder_access',
+                          'messages',
+                          'notifications',
+                          'notifications_sent',
+                          'object',
+                          'object_format',
+                          'object_format_version',
+                          'page',
+                          'page_template',
+                          'page_trace',
+                          'product_relevance',
+                          'products',
+                          'product_versions',
+                          'region_updates',
+                          'removed_entities',
+                          'removed_files',
+                          'sessions_log',
+                          'site',
+                          'site_access',
+                          'status_type',
+                          'style',
+                          'system_notification_queue',
+                          'tasks',
+                          'user_group',
+                          'users',
+                          've_command',
+                          've_plugin',
+                          've_style',
+                          'workflow',
+                          'workflow_access',
+                          'xml_db_update',
+                          'xml_db_update_actions'
+                    ));
+
+		if columns is not null then
+			foreach item in array columns loop
+			    RAISE NOTICE 'Table %, column %', item.table_name, item.column_name;
+			    CALL qp_change_timestamp_zone_time(item.table_name, item.column_name);
+			end loop;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
 create or replace view backend_action_access_permlevel(action_access_id, user_id, group_id, permission_level, backend_action_id) as
 SELECT c.action_access_id,
        c.user_id,
@@ -1761,50 +1864,50 @@ AS $BODY$
 		IF is_async THEN
 			table_name := table_name || '_async';
 		END IF;
-	
+
 		IF attr_ids IS NULL THEN
-			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
+			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca
 				where ca.content_id = $1;
 		ELSE
-			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca 
+			attributes := array_agg(ca.* order by ca.attribute_name) from CONTENT_ATTRIBUTE ca
 				where ca.content_id = $1 AND attribute_id = ANY(attr_ids);
 		END IF;
-		attr_ids := array_agg(attribute_id) from unnest(attributes) a;	
-	
+		attr_ids := array_agg(attribute_id) from unnest(attributes) a;
+
 		IF array_length(attributes, 1) > 0 THEN
-	
+
 			attr_names := array_agg(lower(a.attribute_name)) from unnest(attributes) a;
-	
+
 			attrs_update := array_agg(FORMAT('"%s" = pt."%s"', unnest, unnest)) from unnest(attr_names);
 			upd := array_to_string(attrs_update, ', ');
-	
+
 			attrs_result := array_agg(FORMAT('"%s" TEXT', unnest)) from unnest(attr_names);
 			attrs_result := array_prepend('content_item_id NUMERIC', attrs_result);
 			res := array_to_string(attrs_result, ', ');
-			
+
 			attrs_select := array_agg(FORMAT('"%s"::%s', b.name, b.type)) from (
 				select lower(a.attribute_name) as name, CASE WHEN a.attribute_type_id in (2,3,11,13) THEN
 					'numeric'
 				WHEN a.attribute_type_id in (4,5,6) THEN
-					'timestamp without time zone'
+					'timestamp with time zone'
 				ELSE
-					'text'								  
+					'text'
 				END AS type from unnest(attributes) a
 			) b;
 			attrs_select := array_prepend('content_item_id', attrs_select);
 			sel := array_to_string(attrs_select, ', ');
-	
+
 			cross_tab := 'update %s base set %s from (
 			SELECT %s FROM crosstab(''
-			select content_item_id, lower(ca.attribute_name), 
+			select content_item_id, lower(ca.attribute_name),
 			case when ca.attribute_type_id in (9, 10) then coalesce(cd.data, cd.blob_data)
 			else qp_correct_data(cd.data::text, ca.attribute_type_id, ca.attribute_size, ca.default_value)::text
-			end as value from content_data cd 
+			end as value from content_data cd
 			inner join content_attribute ca on cd.attribute_id = ca.attribute_id
-			where content_item_id in (%s) and cd.attribute_id in (%s) 
-			order by 1,2	
-			'') AS final_result(%s)) pt where pt.content_item_id = base.content_item_id;';				
-	
+			where content_item_id in (%s) and cd.attribute_id in (%s)
+			order by 1,2
+			'') AS final_result(%s)) pt where pt.content_item_id = base.content_item_id;';
+
 			cross_tab := FORMAT(cross_tab, table_name, upd, sel, array_to_string(ids, ', '), array_to_string(attr_ids, ', '), res);
 			RAISE NOTICE '%', cross_tab;
 			execute cross_tab;
@@ -2714,9 +2817,10 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_merge_links_multiple(integer[], boolean) owner to postgres;
+DROP FUNCTION IF EXISTS qp_persist_article;
 
 CREATE OR REPLACE FUNCTION public.qp_persist_article(input xml)
-RETURNS TABLE(id int, modified timestamp without time zone)
+RETURNS TABLE(id int, modified timestamp with time zone)
 LANGUAGE 'plpgsql'
 
 AS $BODY$
@@ -2725,7 +2829,7 @@ AS $BODY$
 	    ids int[];
 	    cid int;
 	    splitted boolean;
-        modified timestamp without time zone;
+        modified timestamp with time zone;
 	    data_items value[];
 	    m2m_data value[];
 	    m2o_data value[];
@@ -2943,18 +3047,18 @@ AS $BODY$
 		modification_update_interval int;
 		content_ids int[];
 		id int;
-		site_id int;		
+		site_id int;
 		none_id int;
 		published_id int;
 		articles content_item[];
 		live_expired boolean = true;
 		stage_expired boolean = true;
-		live_modified timestamp without time zone;
-		stage_modified timestamp without time zone;
+		live_modified timestamp with time zone;
+		stage_modified timestamp with time zone;
 		sync_ids int[];
 		async_ids int[];
 		sync_ids_delayed int[];
-		
+
 		table_name text;
 		sql text;
     BEGIN
@@ -2962,46 +3066,46 @@ AS $BODY$
 		IF setting_value is not null and qp_is_numeric(setting_value) THEN
 			default_modification_update_interval := setting_value::numeric::int;
 		END IF;
-		
+
 		IF modification_update_interval < 0 THEN
 			modification_update_interval := default_modification_update_interval;
 		END IF;
-		
+
 		articles := array_agg(ci.*) from content_item ci where ci.content_item_id = ANY(ids);
 		content_ids := array_agg(distinct(a.content_id)) from unnest(articles) a;
-												  
-		
+
+
 		FOREACH id in array content_ids
 		LOOP
 			select st1.status_type_id, st2.status_type_id into none_id, published_id
 			from status_type st1 inner join status_type st2
 			on st1.site_id = st2.site_id and st1.status_type_name = 'None' and st2.status_type_name = 'Published'
-			where st1.site_id in (select c.site_id from content c where c.content_id = id);										  
-										  
+			where st1.site_id in (select c.site_id from content c where c.content_id = id);
+
 			IF modification_update_interval > 0 THEN
             	select cm.live_modified, cm.stage_modified into live_modified, stage_modified
 									   from CONTENT_MODIFICATION cm where cm.content_id = id;
 				live_expired := extract(epoch from now() - live_modified) >= modification_update_interval;
 				stage_expired := extract(epoch from now() - stage_modified) >= modification_update_interval;
 			END IF;
-									   
+
 			sync_ids := array_agg(a.content_item_id) from unnest(articles) a where a.content_id = id and not a.splitted;
 			async_ids := array_agg(a.content_item_id) from unnest(articles) a where a.content_id = id and a.splitted;
 			sync_ids_delayed := array_agg(a.content_item_id) from unnest(articles) a where a.content_id = id and not a.splitted and a.schedule_new_version_publication;
-			sync_ids_delayed := coalesce(sync_ids_delayed, ARRAY[]::int[]);										  
-								   
+			sync_ids_delayed := coalesce(sync_ids_delayed, ARRAY[]::int[]);
+
 			IF sync_ids is not null THEN
 				call qp_upsert_items(id, sync_ids, sync_ids_delayed, none_id, false);
 				call qp_delete_items(id, sync_ids, true);
 				call qp_update_items_with_content_data_pivot(id, sync_ids, false, attr_ids);
 			END IF;
-										  
+
 			IF async_ids is not null THEN
 				call qp_upsert_items(id, async_ids, ARRAY[]::int[], none_id, true);
 				call qp_update_items_flags(id, async_ids, false);
-				call qp_update_items_with_content_data_pivot(id, async_ids, true, attr_ids);										  
-			END IF;					
-        
+				call qp_update_items_with_content_data_pivot(id, async_ids, true, attr_ids);
+			END IF;
+
 			IF EXISTS (
 				select * from unnest(articles) a where a.content_id = id and (
 					a.cancel_split or (not a.splitted and a.status_type_id = published_id)
@@ -3012,10 +3116,10 @@ AS $BODY$
 				END IF;
 			ELSE
 				IF (stage_expired) THEN
-                	update content_modification cm set stage_modified = now() where cm.content_id = id;									 
+                	update content_modification cm set stage_modified = now() where cm.content_id = id;
 				END IF;
 			END IF;
-									 
+
 		END LOOP;
 
 		update content_data cd2 set o2m_data = a.data::numeric, ft_data = a.ft_data from
@@ -3554,7 +3658,7 @@ CREATE OR REPLACE FUNCTION public.process_content_data_upsert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
-    VOLATILE NOT LEAKPROOF 
+    VOLATILE NOT LEAKPROOF
 AS $BODY$
 	DECLARE
 		ids int[];
@@ -3610,7 +3714,7 @@ AS $BODY$
                 select distinct cd.content_item_id::int as id from content_data cd where cd.content_data_id = ANY(ft_ids)
             ) i;
         END IF;
-		
+
 		IF TG_OP = 'UPDATE' THEN
 			IF EXISTS (
 				select * from new_table i inner join old_table o on i.content_data_id = o.content_data_id
@@ -3621,64 +3725,64 @@ AS $BODY$
 					RETURN NULL;
 			END IF;
 		END IF;
-		
+
 		attribute_ids := array_agg(distinct(attribute_id)) from new_table;
 		attribute_ids := COALESCE(attribute_ids, ARRAY[]::int[]);
 		FOREACH attr_id in array attribute_ids
 		LOOP
 			attr := row(ca.*) from content_attribute ca where ca.attribute_id = attr_id;
-								  
-			ids := array_agg(i.content_item_id) from new_table i								  
+
+			ids := array_agg(i.content_item_id) from new_table i
                 inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
                 inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0 
+                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0
 				and not ci.splitted;
 			ids := COALESCE(ids, ARRAY[]::int[]);
-								  
-			async_ids := array_agg(i.content_item_id) from new_table i							  
+
+			async_ids := array_agg(i.content_item_id) from new_table i
                 inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
                 inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0 
+                where ATTRIBUTE_ID = attr.attribute_id and not ci.not_for_replication and c.virtual_type = 0
 				and ci.splitted;
 			async_ids := COALESCE(async_ids, ARRAY[]::int[]);
-								  
+
 			IF attr.attribute_type_id in (2,3,11,13) THEN
 				column_type := 'numeric';
 			ELSEIF attr.attribute_type_id in (4,5,6) THEN
-				column_type := 'timestamp without time zone';
+				column_type := 'timestamp with time zone';
 			ELSE
-				column_type := 'text';								  
-			END IF;					  
-								  
+				column_type := 'text';
+			END IF;
+
 	   		IF attr.attribute_type_id in (9,10) THEN
 				source := 'coalesce(cd.data, cd.blob_data)';
 			ELSE
 				source := 'qp_correct_data(cd.data::text, %s, %s, ''%s'')';
-				source := FORMAT(source, 
+				source := FORMAT(source,
 					attr.attribute_type_id, attr.attribute_size, coalesce(attr.default_value, '')
-				); 								  
+				);
 			END IF;
-								  
-			sql := 
+
+			sql :=
 				'update %s d set "%s" = %s::%s from content_data cd, unnest($1) where d.content_item_id = unnest' ||
 				' and cd.attribute_id = %s and cd.content_item_id = d.content_item_id';
-				
-								  
-			
+
+
+
 			IF array_length(ids, 1) > 0 THEN
-				
+
 				sql := FORMAT(sql, 'content_' || attr.content_id, lower(attr.attribute_name), source, column_type, attr.attribute_id);
 				RAISE NOTICE '%', sql;
 				execute sql using ids;
-								  
+
 			END IF;
-								  
+
 			IF array_length(async_ids, 1) > 0 THEN
 				sql := FORMAT(sql, 'content_' || attr.content_id || '_async', lower(attr.attribute_name), source, column_type, attr.attribute_id);
 				RAISE NOTICE '%', sql;
 				execute sql using async_ids;
 			END IF;
-								  
+
 		END LOOP;
 		RETURN NULL;
 	END

@@ -242,7 +242,7 @@ namespace Quantumart.QP8.BLL.Helpers
                             vField.DecimalPlaces = column.DecimalPlaces.Value;
                             break;
                         case ValidFieldColumnDbTypes.Datetime:
-                        case ValidFieldColumnDbTypes.TimeStampWithoutTimeZone:
+                        case ValidFieldColumnDbTypes.TimeStampWithTimeZone:
                             vField.TypeId = FieldTypeCodes.DateTime;
                             break;
                         case ValidFieldColumnDbTypes.Bit:

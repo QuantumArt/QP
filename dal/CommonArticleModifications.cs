@@ -61,7 +61,7 @@ namespace Quantumart.QP8.DAL
             }
             else if (new[] { 4, 5, 6}.Contains(attributeTypeId))
             {
-                return "timestamp without time zone";
+                return "timestamp with time zone";
             }
             else
             {
@@ -449,7 +449,7 @@ namespace Quantumart.QP8.DAL
                 update item_to_item {WithRowLock(dbType)} set l_item_id = @newId where l_item_id = @id and r_item_id = @newId;
                 delete from item_to_item {WithRowLock(dbType)} where r_item_id = @id and l_item_id = @newId;
             " : $@"
-                insert into item_to_item(link_id, l_item_id, r_item_id) 
+                insert into item_to_item(link_id, l_item_id, r_item_id)
                 select link_id, @newId, @newId from item_to_item where l_item_id = @newId and r_item_id = @id;
                 delete from item_to_item where l_item_id = @newId and r_item_id = @id;
             ";
