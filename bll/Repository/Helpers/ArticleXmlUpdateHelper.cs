@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         private XDocument GetXmlQuery()
         {
             var xmlResult = new XDocument(new XElement("items"));
-            var lmb = Article.LastModifiedBy != 0 ? Article.LastModifiedBy : QPContext.CurrentUserId;
+            var lmb = QPContext.CurrentUserId != 0 ? QPContext.CurrentUserId : Article.LastModifiedBy;
             var xitem = new XElement("item",
                 new XAttribute("id", Article.Id),
                 new XAttribute("content_id", Article.ContentId),
