@@ -15,7 +15,10 @@ namespace Quantumart.QP8.Configuration
             CookieTimeout = 1440;
             SessionTimeout = 60;
             QpConfigPollingInterval = TimeSpan.FromMinutes(2);
+            EnableSignalR = true;
         }
+
+        public bool EnableSignalR { get; set; }
 
         public string BackendUrl { get; set; }
 

@@ -30,6 +30,8 @@ spec:
               key: CONFIGURATION_SERVICE_TOKEN
         - name: Properties__TempDirectory
           value: /qptemp
+        - name: Properties__EnableSignalR
+          value: "false"
         ports:
         - containerPort: 80
         volumeMounts:

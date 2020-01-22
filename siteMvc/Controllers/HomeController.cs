@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
@@ -21,18 +22,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private JsLanguageHelper _languageHelper;
         private JsConstantsHelper _constantsHelper;
+        private QPublishingOptions _options;
 
-        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper)
+
+        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper, QPublishingOptions options)
         {
             _languageHelper = languageHelper;
             _constantsHelper = constantsHelper;
+            _options = options;
         }
 
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions)
         {
             DbService.ResetUserCache();
-            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
+            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash(), _options));
         }
 
         public async Task<ActionResult> Home(string tabId, int parentId)

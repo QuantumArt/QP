@@ -12,12 +12,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
     public class IndexViewModel
     {
         private readonly DirectLinkOptions _directLinkOptions;
+        private readonly QPublishingOptions _options;
 
-        public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash)
+        public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash, QPublishingOptions options)
         {
             Data = data;
             DbHash = dbHash;
             _directLinkOptions = directLinkOptions;
+            _options = options;
         }
 
         public Db Data { get; }
@@ -48,6 +50,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
                 result.CurrentUserId = QPContext.CurrentUserId;
                 result.AutoLoadHome = Data.AutoOpenHome;
                 result.MustChangePassword = UserService.GetUserMustChangePassword(QPContext.CurrentUserId);
+                result.EnableSignalR = _options.EnableSignalR;
 
                 if (_directLinkOptions != null && _directLinkOptions.IsDefined())
                 {

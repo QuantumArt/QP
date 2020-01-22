@@ -49,6 +49,10 @@ export class Backend {
       if (options.mustChangePassword) {
         this._userMustChangePassword = options.mustChangePassword;
       }
+
+      if (options.enableSignalR) {
+        this._enableSignalR = options.enableSignalR;
+      }
     }
 
     this._loadHandler = $.proxy(this._initialize, this);
@@ -117,6 +121,7 @@ export class Backend {
   _onEntityReadedHandler = null;
   _onHostExternalCallerContextsUnbindedHandler = null;
   _userMustChangePassword = false;
+  _enableSignalR = false;
 
   _initialize() {
     this._backendBrowserHistoryManager.initialize();
@@ -271,8 +276,10 @@ export class Backend {
 
       this._initializeSignOut();
     });
-
-    this._initializeSignalrHubs();
+    if (this._enableSignalR)
+    {
+      this._initializeSignalrHubs();
+    }
   }
 
   _error() {
