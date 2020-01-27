@@ -679,11 +679,8 @@ namespace Quantumart.QP8.BLL
             dbContext.SaveChanges();
             sessionsLog = MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
 
-            var msg = "User successfully authenticated";
-            msg = QPConfiguration.LogJsonAsString ? msg + ": " + "sessionsLog.ToJsonLog()" : msg;
-
-            Logger.Debug()
-                .Message(msg)
+            Logger.Trace()
+                .Message("User successfully authenticated")
                 .Property("sessionsLog", sessionsLog)
                 .Write();
 

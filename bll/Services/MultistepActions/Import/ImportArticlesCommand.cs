@@ -80,11 +80,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             ImportAction = (CsvImportMode)settings.ImportAction
                         };
 
-                        var msg = "Import articles step: {step}.";
-                        msg = (QPConfiguration.LogJsonAsString) ? msg + " Settings: " + logData.ToJsonLog() : msg;
-
                         ImportLogger.Trace()
-                            .Message(msg, step)
+                            .Message("Import articles step: {step}.", step)
                             .Property("result", logData)
                             .Write();
 

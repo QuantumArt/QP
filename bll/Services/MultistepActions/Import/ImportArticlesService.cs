@@ -25,7 +25,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             if (settingsParams is ImportSettings importSettings)
             {
                 ImportLogger.Info()
-                    .Message("Start import articles with settings id: {id}", importSettings.Id)
+                    .Message("Start import articles with settings id: {guid}", importSettings.Id)
                     .Write();
 
                 var content = ContentRepository.GetById(id);
@@ -77,11 +77,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 ImportAction = (CsvImportMode)importSettings.ImportAction
             };
 
-            var msg = "Articles import was finished";
-            msg = (QPConfiguration.LogJsonAsString) ? msg + " " + logData.ToJsonLog() : msg;
-
             ImportLogger.Info()
-                .Message(msg)
+                .Message("Articles import was finished")
                 .Property("result", logData)
                 .Write();
 

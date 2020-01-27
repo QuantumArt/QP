@@ -58,7 +58,5 @@ namespace Quantumart.QP8.Configuration
 
         public bool EnableArticleScheduler { get; set; }
 
-        public bool LogJsonAsString { get; set; }
-
     }
 }
