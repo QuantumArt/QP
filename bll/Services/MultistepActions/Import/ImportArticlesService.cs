@@ -69,11 +69,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             var importSettings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             RemoveFileFromTemp();
 
-            var logData = new
+            var logData = new ImportArticlesLogData()
             {
-                importSettings.Id,
-                importSettings.InsertedArticleIds,
-                importSettings.UpdatedArticleIds,
+                Id = importSettings.Id,
+                InsertedArticleIds = importSettings.InsertedArticleIds.ToArray(),
+                UpdatedArticleIds = importSettings.UpdatedArticleIds.ToArray(),
                 ImportAction = (CsvImportMode)importSettings.ImportAction
             };
 

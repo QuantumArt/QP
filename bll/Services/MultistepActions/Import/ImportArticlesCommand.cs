@@ -72,12 +72,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
                         settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
 
-                        var logData = new
+                        var logData = new ImportArticlesLogData()
                         {
-                            settings.Id,
-                            ImportAction = (CsvImportMode)settings.ImportAction,
-                            Inserted = settings.InsertedArticleIds.Count,
-                            Updated = settings.UpdatedArticleIds.Count
+                            Id = settings.Id,
+                            InsertedArticleIds = settings.InsertedArticleIds.ToArray(),
+                            UpdatedArticleIds = settings.UpdatedArticleIds.ToArray(),
+                            ImportAction = (CsvImportMode)settings.ImportAction
                         };
 
                         var msg = "Import articles step: {step}.";
@@ -85,7 +85,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
                         ImportLogger.Trace()
                             .Message(msg, step)
-                            .Property("settings", logData)
+                            .Property("result", logData)
                             .Write();
 
                         result.ProcessedItemsCount = processedItemsCount;
