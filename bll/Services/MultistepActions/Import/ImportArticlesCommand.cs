@@ -83,6 +83,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                         ImportLogger.Trace()
                             .Message("Import articles step: {step}.", step)
                             .Property("result", logData)
+                            .Property("customerCode", QPContext.CurrentCustomerCode)
                             .Write();
 
                         result.ProcessedItemsCount = processedItemsCount;

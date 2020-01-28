@@ -682,6 +682,7 @@ namespace Quantumart.QP8.BLL
             Logger.Trace()
                 .Message("User successfully authenticated")
                 .Property("sessionsLog", sessionsLog)
+                .Property("customerCode", QPContext.CurrentCustomerCode)
                 .Write();
 
             return sessionsLog.SessionId;

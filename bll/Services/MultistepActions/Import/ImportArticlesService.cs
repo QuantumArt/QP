@@ -80,6 +80,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             ImportLogger.Info()
                 .Message("Articles import was finished")
                 .Property("result", logData)
+                .Property("customerCode", QPContext.CurrentCustomerCode)
                 .Write();
 
             HttpContext.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
