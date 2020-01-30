@@ -205,8 +205,8 @@ AS $BODY$
 	    sql text;
 	BEGIN
 	    time_sql := case when use_timezone then 'with' else 'without' end;
-        sql := 'alter table %s alter column %s type timestamp %s time zone';
-	    sql := format(sql, table_name, column_name, time_sql);
+        sql := 'alter table %s alter column "%s" type timestamp %s time zone';
+	    sql := format(sql, table_name, lower(column_name), time_sql);
 	    execute sql;
 	END;
 $BODY$;
