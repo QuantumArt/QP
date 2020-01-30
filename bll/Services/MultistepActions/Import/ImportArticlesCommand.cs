@@ -1,10 +1,10 @@
 using System;
 using System.Transactions;
 using System.Web;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure;
-using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
+
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
@@ -17,7 +17,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesCommand : IMultistepActionStageCommand
     {
-        private readonly ILog _importLogger;
+
+        private static readonly ILogger ImportLogger = LogManager.GetCurrentClassLogger();
 
         private const int ItemsPerStep = 20;
 
@@ -37,7 +38,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             SiteId = siteId;
             ContentId = contentId;
             ItemCount = itemCount;
-            _importLogger = LogProvider.GetLogger(GetType());
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -67,15 +67,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
                         }
 
-                        var logData = new
+                        var logData = new ImportArticlesLogData()
                         {
-                            settings.Id,
-                            ImportAction = (CsvImportMode)settings.ImportAction,
-                            Inserted = settings.InsertedArticleIds.Count,
-                            Updated = settings.UpdatedArticleIds.Count
+                            Id = settings.Id,
+                            InsertedArticleIds = settings.InsertedArticleIds.ToArray(),
+                            UpdatedArticleIds = settings.UpdatedArticleIds.ToArray(),
+                            ImportAction = (CsvImportMode)settings.ImportAction
                         };
 
-                        _importLogger.Trace($"Import articles step: {step}. Settings: {logData.ToJsonLog()}");
+                        ImportLogger.Trace()
+                            .Message("Import articles step: {step}.", step)
+                            .Property("result", logData)
+                            .Write();
+
                         result.ProcessedItemsCount = processedItemsCount;
                         result.TraceResult = reader.GetTraceResult();
                         result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";

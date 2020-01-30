@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using System.Web;
-using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -17,17 +16,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
     {
         private ImportArticlesCommand _command;
 
-        private readonly ILog _importLogger;
+        private static readonly ILogger ImportLogger = LogManager.GetCurrentClassLogger();
 
         public ImportArticlesService()
         {
-            _importLogger = LogProvider.GetLogger(GetType());
         }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
         {
             var importSettings = settingsParams as ImportSettings;
-            _importLogger.Trace($"Start import articles with settings id: {importSettings.Id}");
+            ImportLogger.Info()
+                .Message("Start import articles with settings id: {guid}", importSettings.Id)
+                .Write();
 
             var content = ContentRepository.GetById(id);
             if (content == null)
@@ -79,15 +79,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             var importSettings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             RemoveFileFromTemp();
 
-            var logData = new
+            var logData = new ImportArticlesLogData()
             {
-                importSettings.Id,
-                importSettings.InsertedArticleIds,
-                importSettings.UpdatedArticleIds,
+                Id = importSettings.Id,
+                InsertedArticleIds = importSettings.InsertedArticleIds.ToArray(),
+                UpdatedArticleIds = importSettings.UpdatedArticleIds.ToArray(),
                 ImportAction = (CsvImportMode)importSettings.ImportAction
             };
 
-            _importLogger.Info($"Articles import was finished {logData.ToJsonLog()}");
+            ImportLogger.Info()
+                .Message("Articles import was finished")
+                .Property("result", logData)
+                .Write();
+
             HttpContext.Current.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
 
             base.TearDown();

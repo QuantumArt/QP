@@ -65,6 +65,10 @@
       <HintPath>$(SolutionDir)packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+      <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="QA.Configuration, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll</HintPath>
     </Reference>
@@ -97,6 +101,7 @@
     <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization" />
@@ -508,6 +513,7 @@
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
     <Compile Include="Services\MultistepActions\CopySite\CopySiteItemLinksCommand.cs" />
+    <Compile Include="Services\MultistepActions\Import\ImportArticlesLogData.cs" />
     <Compile Include="Services\NotificationSender\ExternalInterfaceNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
