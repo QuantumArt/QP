@@ -72,6 +72,8 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: qp-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "2m"
   namespace: qp-ns
 spec:
   rules:
