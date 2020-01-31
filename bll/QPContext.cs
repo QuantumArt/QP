@@ -151,12 +151,12 @@ namespace Quantumart.QP8.BLL
 
         private static void ClearInternalStructureCache()
         {
-            _siteCache = null;
-            _contentCache = null;
-            _contentFieldCache = null;
-            _fieldCache = null;
-            _statusTypeCache = null;
-            _userCache = null;
+            _siteCache.Value = null;
+            _contentCache.Value = null;
+            _contentFieldCache.Value = null;
+            _fieldCache.Value = null;
+            _statusTypeCache.Value = null;
+            _userCache.Value = null;
         }
 
         private static void ClearExternalStructureCache()
@@ -245,17 +245,17 @@ namespace Quantumart.QP8.BLL
 
         private static readonly AsyncLocal<bool?> _isLive = new AsyncLocal<bool?>();
 
-        private static AsyncLocal<Dictionary<int, Site>> _siteCache = new AsyncLocal<Dictionary<int, Site>>();
+        private static readonly AsyncLocal<Dictionary<int, Site>> _siteCache = new AsyncLocal<Dictionary<int, Site>>();
 
-        private static AsyncLocal<Dictionary<int, Content>> _contentCache = new AsyncLocal<Dictionary<int, Content>>();
+        private static readonly AsyncLocal<Dictionary<int, Content>> _contentCache = new AsyncLocal<Dictionary<int, Content>>();
 
-        private static AsyncLocal<Dictionary<int, Field>> _fieldCache = new AsyncLocal<Dictionary<int, Field>>();
+        private static readonly AsyncLocal<Dictionary<int, Field>> _fieldCache = new AsyncLocal<Dictionary<int, Field>>();
 
-        private static AsyncLocal<Dictionary<int, StatusType>> _statusTypeCache = new AsyncLocal<Dictionary<int, StatusType>>();
+        private static readonly AsyncLocal<Dictionary<int, StatusType>> _statusTypeCache = new AsyncLocal<Dictionary<int, StatusType>>();
 
-        private static AsyncLocal<Dictionary<int, User>> _userCache = new AsyncLocal<Dictionary<int, User>>();
+        private static readonly AsyncLocal<Dictionary<int, User>> _userCache = new AsyncLocal<Dictionary<int, User>>();
 
-        private static AsyncLocal<Dictionary<int, List<int>>> _contentFieldCache = new AsyncLocal<Dictionary<int, List<int>>>();
+        private static readonly AsyncLocal<Dictionary<int, List<int>>> _contentFieldCache = new AsyncLocal<Dictionary<int, List<int>>>();
 
         private static readonly AsyncLocal<string> _currentCustomerCode = new AsyncLocal<string>();
 
