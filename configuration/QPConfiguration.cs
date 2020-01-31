@@ -191,7 +191,7 @@ namespace Quantumart.QP8.Configuration
             {
                 if (string.IsNullOrWhiteSpace(_tempDirectory))
                 {
-                    if (!string.IsNullOrEmpty(Options.TempDirectory))
+                    if (!string.IsNullOrEmpty(Options?.TempDirectory))
                     {
                         _tempDirectory = Options.TempDirectory;
                     }
@@ -236,7 +236,7 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
-                    if (!string.IsNullOrEmpty(Options.QpConfigPath))
+                    if (!string.IsNullOrEmpty(Options?.QpConfigPath))
                     {
                         _configPath = Options.QpConfigPath;
                     }
@@ -268,7 +268,7 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceUrl == null)
                 {
-                    if (!String.IsNullOrEmpty(Options.QpConfigUrl))
+                    if (!String.IsNullOrEmpty(Options?.QpConfigUrl))
                     {
                         _configServiceUrl = Options.QpConfigUrl;
                     }
@@ -288,7 +288,7 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceToken == null)
                 {
-                    if (!String.IsNullOrEmpty(Options.QpConfigToken))
+                    if (!String.IsNullOrEmpty(Options?.QpConfigToken))
                     {
                         _configServiceToken = Options.QpConfigToken;
                     }
@@ -302,7 +302,7 @@ namespace Quantumart.QP8.Configuration
             set { _configServiceToken = value; }
         }
 
-        public static int CommandTimeout => Options.CommandTimeout;
+        public static int CommandTimeout => Options?.CommandTimeout ?? 0;
 
 
         public static void SetAppSettings(DbConnectorSettings settings)

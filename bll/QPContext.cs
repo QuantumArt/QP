@@ -310,7 +310,7 @@ namespace Quantumart.QP8.BLL
 
                 if (result == null)
                 {
-                    var claimValue = HttpContext.User.FindFirst("Id")?.Value;
+                    var claimValue = HttpContext?.User?.FindFirst("Id")?.Value;
                     result = claimValue == null ? 0 : int.Parse(claimValue);
                     SetCurrentUserIdValueToStorage(result);
                 }
@@ -345,7 +345,7 @@ namespace Quantumart.QP8.BLL
 
                 if (result == null)
                 {
-                    var claimValue = HttpContext.User.FindFirst(ClaimTypes.Sid).Value;
+                    var claimValue = HttpContext?.User?.FindFirst(ClaimTypes.Sid).Value;
                     result = claimValue == null ? 0 : int.Parse(claimValue);
                     SetCurrentSessionIdValueToStorage(result);
                 }
@@ -450,7 +450,7 @@ namespace Quantumart.QP8.BLL
 
                 if (result == null)
                 {
-                    var claim = HttpContext.User.FindFirst("CustomerCode");
+                    var claim = HttpContext?.User?.FindFirst("CustomerCode");
                     if (claim != null)
                     {
                         result = claim.Value;
