@@ -111,24 +111,30 @@ namespace Quantumart.QP8.DAL
             var usedGroups = childGroups;
             var parentGroupIds = GetParentGroupIds(context, childGroups);
 
-            while (parentGroupIds.Any())
+            while (true)
             {
                 currentLevelAddition += intIncrement;
                 var newParentGroups = parentGroupIds
                     .Where(x => !childGroups.Contains(x) && !usedGroups.Contains(x))
                     .ToList();
-                if (newParentGroups.Any())
-                {
-                    if (!string.IsNullOrWhiteSpace(sql)) sql += unionString;
 
-                    groupIds = string.Join(", ", newParentGroups);
-                    sql += selectGroup
-                        .Replace(LevelIncrementPlaceholder, currentLevelAddition.ToString())
-                        .Replace(GroupInListPlaceholder, groupIds);
-                    sql += groupBy;
-                    usedGroups.AddRange(newParentGroups);
-                    parentGroupIds = GetParentGroupIds(context, newParentGroups);
+                if (!newParentGroups.Any())
+                {
+                    break;
                 }
+
+                if (!string.IsNullOrWhiteSpace(sql))
+                {
+                    sql += unionString;
+                }
+
+                groupIds = string.Join(", ", newParentGroups);
+                sql += selectGroup
+                    .Replace(LevelIncrementPlaceholder, currentLevelAddition.ToString())
+                    .Replace(GroupInListPlaceholder, groupIds);
+                sql += groupBy;
+                usedGroups.AddRange(newParentGroups);
+                parentGroupIds = GetParentGroupIds(context, newParentGroups);
             }
 
             return
