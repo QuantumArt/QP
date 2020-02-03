@@ -320,7 +320,7 @@ namespace Quantumart.QP8.DAL
 
             if (ids != null && ids.Any())
             {
-                var query = $"DELETE FROM content_item where content_item_id in (select id from {source}) ";
+                var query = $"DELETE FROM content_item {WithRowLock(dbType)} where content_item_id in (select id from {source}) ";
                 using (var cmd = DbCommandFactory.Create(query, connection))
                 {
                     cmd.CommandType = CommandType.Text;
