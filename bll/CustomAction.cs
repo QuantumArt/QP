@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -13,6 +14,7 @@ namespace Quantumart.QP8.BLL
     {
         private const string SidParamName = "backend_sid";
         private BackendAction _action;
+        private static Regex LastSlashRegex = new Regex(@"\/$");
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomAction;
 
@@ -184,7 +186,21 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                var url = Url.Substring(Url.Length - 1, 1) == "/" ? Url.Substring(0, Url.Length - 1) + "PreAction/" : Url + "PreAction";
+                var url = Url;
+
+                if (LastSlashRegex.IsMatch(url))
+                {
+                    url = LastSlashRegex.Replace(url, "PreAction/");
+                }
+                else if (url.Contains("?"))
+                {
+                    url = url.Replace("?", "?isPreAction=true&");
+                }
+                else
+                {
+                    url += "PreAction";
+                }
+
                 return GetFullUrl(url);
             }
         }
