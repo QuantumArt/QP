@@ -17,6 +17,7 @@ namespace Quantumart.QP8.BLL
         private const string SidParamName = "backend_sid";
         private BackendAction _action;
         private static Regex LastSlashRegex = new Regex(@"\/$");
+        private static Regex ActionSlugRegex = new Regex(@"\/action\/", RegexOptions.IgnoreCase);
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomAction;
 
@@ -171,7 +172,7 @@ namespace Quantumart.QP8.BLL
         [ValidateNever]
         public string FullUrl => GetFullUrl(Url);
 
-        private string GetFullUrl(string url)
+        private string GetFullUrl(string url, bool includeSid = true)
         {
             string parentContextName = null;
             if (Action.EntityType.ParentId.HasValue)
@@ -184,7 +185,8 @@ namespace Quantumart.QP8.BLL
             var ids = Ids != null ? string.Join(",", Ids) : string.Empty;
             var paramName = Action.EntityType.ContextName ?? string.Empty;
             var sid = SessionId ?? string.Empty;
-            var result = $"{url ?? string.Empty}{symbol}{SidParamName}={sid}&{paramName}={ids}&param_name={paramName}&customerCode={QPContext.CurrentCustomerCode}&actionCode={Action.Code}";
+            var sidStr = includeSid ? $"&{SidParamName}={sid}" : "";
+            var result = $"{url ?? string.Empty}{symbol}{paramName}={ids}&param_name={paramName}&customerCode={QPContext.CurrentCustomerCode}&actionCode={Action.Code}{sidStr}";
             if (parentContextName != null)
             {
                 result = result + $"&{parentContextName}={ParentId}&parent_param_name={parentContextName}";
@@ -205,6 +207,10 @@ namespace Quantumart.QP8.BLL
                 {
                     url = LastSlashRegex.Replace(url, "PreAction/");
                 }
+                else if (ActionSlugRegex.IsMatch(url))
+                {
+                    url = ActionSlugRegex.Replace(url, "/PreAction/");
+                }
                 else if (url.Contains("?"))
                 {
                     url = url.Replace("?", "?isPreAction=true&");
@@ -214,7 +220,7 @@ namespace Quantumart.QP8.BLL
                     url += "PreAction";
                 }
 
-                return GetFullUrl(url);
+                return GetFullUrl(url, false);
             }
         }
 
