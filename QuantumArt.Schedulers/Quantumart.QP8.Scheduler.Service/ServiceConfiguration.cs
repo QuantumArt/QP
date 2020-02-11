@@ -24,7 +24,7 @@ namespace Quantumart.QP8.Scheduler.Service
             var descriptors = Container.ResolveAll<ServiceDescriptor>();
             foreach (var descriptor in descriptors)
             {
-                Container.RegisterType<ServiceBase, SchedulerService>(descriptor.Name, new InjectionFactory(c => new SchedulerService(c.Resolve<Func<IUnityContainer>>(descriptor.Key), descriptor)));
+                Container.RegisterType<ServiceBase>(descriptor.Name, new InjectionFactory(c => new SchedulerService(c.Resolve<Func<IUnityContainer>>(descriptor.Key), descriptor)));
             }
         }
     }
