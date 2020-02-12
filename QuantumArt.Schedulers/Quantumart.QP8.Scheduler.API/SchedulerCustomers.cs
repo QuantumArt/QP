@@ -15,11 +15,9 @@ namespace Quantumart.QP8.Scheduler.API
             _descriptor = descriptor;
         }
 
-        public IEnumerator<QaConfigCustomer> GetEnumerator()
+        public QaConfigCustomer[] GetItems()
         {
-            return QPConfiguration.GetCustomers(_descriptor.Name).Where(c => !c.ExcludeFromSchedulers).GetEnumerator();
+            return QPConfiguration.GetCustomers(_descriptor.Name).Where(c => !c.ExcludeFromSchedulers).ToArray();
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

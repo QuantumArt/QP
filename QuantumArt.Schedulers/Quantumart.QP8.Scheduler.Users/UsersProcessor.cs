@@ -35,8 +35,9 @@ namespace Quantumart.QP8.Scheduler.Users
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start users synchronization");
-            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_schedulerCustomers.ToList());
-            foreach (var customer in _schedulerCustomers)
+            var items = _schedulerCustomers.GetItems();
+            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(items);
+            foreach (var customer in items)
             {
                 if (token.IsCancellationRequested)
                 {

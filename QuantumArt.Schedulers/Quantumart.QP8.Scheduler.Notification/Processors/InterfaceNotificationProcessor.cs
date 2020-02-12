@@ -42,8 +42,9 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start sending notifications");
-            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_schedulerCustomers.ToList());
-            foreach (var customer in _schedulerCustomers)
+            var items = _schedulerCustomers.GetItems().ToArray();
+            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(items);
+            foreach (var customer in items)
             {
                 if (token.IsCancellationRequested)
                 {
@@ -70,32 +71,36 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
         private async Task<Tuple<List<int>, List<int>>> ProcessCustomer(QaConfigCustomer customer, CancellationToken token)
         {
-            var sentNotificationIds = new List<int>();
-            var unsentNotificationIds = new List<int>();
-            var notificationsViewModels = GetPendingNotificationsViewModels(customer.ConnectionString);
-            foreach (var notificationVm in notificationsViewModels)
+            using (new QPConnectionScope(customer.ConnectionString))
             {
-                if (token.IsCancellationRequested)
+                var sentNotificationIds = new List<int>();
+                var unsentNotificationIds = new List<int>();
+                var notificationsViewModels = GetPendingNotificationsViewModels(customer.ConnectionString);
+                foreach (var notificationVm in notificationsViewModels)
                 {
-                    break;
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    try
+                    {
+                        var notificationIdsStatus = await SendNotificationData(notificationVm, customer.CustomerName);
+                        sentNotificationIds.AddRange(notificationIdsStatus.Item1);
+                        unsentNotificationIds.AddRange(notificationIdsStatus.Item2);
+                    }
+                    catch (Exception ex)
+                    {
+                        unsentNotificationIds.AddRange(notificationVm.NotificationsIds);
+                        var message = $"Exception while sending event {notificationVm.NotificationModel.EventName} to {notificationVm.NotificationModel.Url} with message {ex.Message} for customer code: {customer.CustomerName}";
+                        _logger.Error(message, ex);
+                    }
                 }
 
-                try
-                {
-                    var notificationIdsStatus = await SendNotificationData(notificationVm, customer.CustomerName);
-                    sentNotificationIds.AddRange(notificationIdsStatus.Item1);
-                    unsentNotificationIds.AddRange(notificationIdsStatus.Item2);
-                }
-                catch (Exception ex)
-                {
-                    unsentNotificationIds.AddRange(notificationVm.NotificationsIds);
-                    var message = $"Exception while sending event {notificationVm.NotificationModel.EventName} to {notificationVm.NotificationModel.Url} with message {ex.Message} for customer code: {customer.CustomerName}";
-                    _logger.Error(message, ex);
-                }
+                UpdateDbNotificationsData(customer.ConnectionString, sentNotificationIds, unsentNotificationIds);
+                return Tuple.Create(sentNotificationIds, unsentNotificationIds);
             }
 
-            UpdateDbNotificationsData(customer.ConnectionString, sentNotificationIds, unsentNotificationIds);
-            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
         }
 
         private IEnumerable<InterfaceNotificationViewModel> GetPendingNotificationsViewModels(string connection)

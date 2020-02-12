@@ -20,9 +20,9 @@ namespace Quantumart.QP8.Configuration
     public class QPConfiguration
     {
         internal static string _configPath;
-        
+
         internal static string _tempDirectory;
-        
+
         internal static string _configServiceUrl;
 
         internal static string _configServiceToken;
@@ -59,7 +59,7 @@ namespace Quantumart.QP8.Configuration
 
             return elem?.Value ?? String.Empty;
         }
-        
+
         public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
             if (!String.IsNullOrWhiteSpace(customerCode))
@@ -72,7 +72,7 @@ namespace Quantumart.QP8.Configuration
                     var customer = AsyncHelper.RunSync(() => service.GetCustomer(customerCode));
 
                     // TODO: handle 404
-                    
+
                     if (customer == null)
                     {
                         throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
@@ -96,7 +96,7 @@ namespace Quantumart.QP8.Configuration
 
                 if (!String.IsNullOrEmpty(connectionString))
                 {
-                    return TuneConnectionString(connectionString, out var _, appName);
+                    return TuneConnectionString(connectionString, appName);
                 }
             }
 
@@ -125,7 +125,7 @@ namespace Quantumart.QP8.Configuration
 
             foreach (QaConfigCustomer entry in customers)
             {
-                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, out var _, appName);
+                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
             }
 
             return customers;
@@ -145,26 +145,35 @@ namespace Quantumart.QP8.Configuration
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
-        public static string TuneConnectionString(string connectionString, out SqlConnectionStringBuilder cnsBuilder, string appName = null)
+        public static string TuneConnectionString(string connectionString, string appName = null)
         {
-            cnsBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
-            if (!string.IsNullOrWhiteSpace(appName))
+            try
             {
-                cnsBuilder.ApplicationName = appName;
+                var cnsBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
+                if (!string.IsNullOrWhiteSpace(appName))
+                {
+                    cnsBuilder.ApplicationName = appName;
+                }
+                else
+                {
+                    cnsBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
+                        ? cnsBuilder.ApplicationName ?? "QpApp"
+                        : cnsBuilder.ApplicationName = appName;
+                }
+
+                if (cnsBuilder.ConnectTimeout < 120)
+                {
+                    cnsBuilder.ConnectTimeout = 120;
+                }
+
+                return cnsBuilder.ToString();
             }
-            else
+            catch
             {
-                cnsBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
-                    ? cnsBuilder.ApplicationName ?? "QpApp"
-                    : cnsBuilder.ApplicationName = appName;
+                return connectionString;
             }
 
-            if (cnsBuilder.ConnectTimeout < 120)
-            {
-                cnsBuilder.ConnectTimeout = 120;
-            }
 
-            return cnsBuilder.ToString();
         }
 
         public static string TempDirectory
