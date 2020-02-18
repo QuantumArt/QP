@@ -83,6 +83,7 @@ namespace Quantumart.QP8.WebMvc
             RegisterUnity();
             RegisterRoutes(RouteTable.Routes);
             RegisterValueProviders();
+            Logger.Log.Info("QP8 started");
         }
 
         internal static void UnregisterRoutes()

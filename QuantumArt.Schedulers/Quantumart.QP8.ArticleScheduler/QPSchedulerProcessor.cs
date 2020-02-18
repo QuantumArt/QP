@@ -28,6 +28,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
         public void Run()
         {
+            Logger.Log.Info("QP8.ArticleScheduler starting...");
             var unityConfig = new UnityContainerCustomizer();
             var prtgLogger = new PrtgErrorsHandler(unityConfig.UnityContainer.Resolve<IPrtgNLogFactory>());
 
@@ -48,10 +49,13 @@ namespace Quantumart.QP8.ArticleScheduler
                 } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
+            Logger.Log.Info("QP8.ArticleScheduler started");
         }
 
         public void Stop()
         {
+            var failed = false;
+            Logger.Log.Info("QP8.ArticleScheduler stopping...");
             try
             {
                 _cancellationTokenSource.Cancel();
@@ -60,12 +64,19 @@ namespace Quantumart.QP8.ArticleScheduler
             catch (Exception ex)
             {
                 Logger.Log.Error("There was an error while stopping the service", ex);
+                failed = true;
             }
             finally
             {
                 _cancellationTokenSource.Dispose();
                 _task.Dispose();
             }
+
+            if (!failed)
+            {
+                Logger.Log.Info("QP8.ArticleScheduler stopped");
+            }
+
         }
     }
 }
