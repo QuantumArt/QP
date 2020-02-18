@@ -3,7 +3,6 @@ using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
-using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Constants.Cdc.Tarantool;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure

@@ -21,7 +21,6 @@ using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
 using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Services;
-using Quantumart.QP8.CdcDataImport.Tarantool.Properties;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.Cdc.Tarantool;
