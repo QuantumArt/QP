@@ -37,7 +37,7 @@ namespace Quantumart.QP8.BLL.Logging
 
         public void LogMessage(PrtgErrorsHandlerViewModel prtgErrorsHandlerViewModel)
         {
-            Ensure.Argument.IsNot(prtgErrorsHandlerViewModel.CustomersExceptions.Count > prtgErrorsHandlerViewModel.Customers.Count, "Exceptions count shouldn't be greater than number of customers");
+            Ensure.Argument.IsNot(prtgErrorsHandlerViewModel.CustomersExceptions.Count > prtgErrorsHandlerViewModel.Customers.Length, "Exceptions count shouldn't be greater than number of customers");
             if (!prtgErrorsHandlerViewModel.CustomersExceptions.Any())
             {
                 _prtgLogger.LogMessage(new PrtgServiceMonitoringMessage
@@ -47,7 +47,7 @@ namespace Quantumart.QP8.BLL.Logging
                     State = PrtgServiceMonitoringEnum.Ok
                 });
             }
-            else if (prtgErrorsHandlerViewModel.CustomersExceptions.Count < prtgErrorsHandlerViewModel.Customers.Count)
+            else if (prtgErrorsHandlerViewModel.CustomersExceptions.Count < prtgErrorsHandlerViewModel.Customers.Length)
             {
                 _prtgLogger.LogMessage(new PrtgServiceMonitoringMessage
                 {

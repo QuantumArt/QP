@@ -33,7 +33,7 @@ namespace Quantumart.QP8.Scheduler.Core
                         container.RegisterType<ISchedule, IntervalSchedule>("Interface.Notifications.Cleanup", new HierarchicalLifetimeManager(), new InjectionConstructor(Settings.Default.InterfaceNotificationsCleanup));
 
                         container.RegisterType<ServiceDescriptor>(new InjectionFactory(c => c.Resolve<ServiceDescriptor>(service)));
-                        container.RegisterType<IScheduler, Scheduler>(new HierarchicalLifetimeManager(), new InjectionFactory(c => new Scheduler(c.Resolve<IEnumerable<IProcessor>>())));
+                        container.RegisterType<IScheduler>(new HierarchicalLifetimeManager(), new InjectionFactory(c => new Scheduler(c.Resolve<IEnumerable<IProcessor>>())));
                         Container.RegisterType<IEnumerable<IProcessor>>(new InjectionFactory(c => descriptors.Where(d => d.Service == service).Select(d => new ScheduledProcessor(c.Resolve<Func<IProcessor>>(d.Processor), c.Resolve<Func<ISchedule>>(d.Schedule)))));
 
                         return container;
