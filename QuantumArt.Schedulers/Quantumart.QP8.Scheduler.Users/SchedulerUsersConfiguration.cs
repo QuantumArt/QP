@@ -26,7 +26,7 @@ namespace Quantumart.QP8.Scheduler.Users
             Container.RegisterService(ServiceName, "QP8 Users Synchronization", "Синхронизация пользователей QP8 с Active Directory");
 
             Container.RegisterType<IUserService, UserService>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IUserSynchronizationService, UserSynchronizationService>(new InjectionFactory(c => UserSynchronizationServiceFactory.GetService(LogProvider.GetLogger())));
+            Container.RegisterType<IUserSynchronizationService>(new InjectionFactory(c => UserSynchronizationServiceFactory.GetService(LogProvider.GetLogger())));
 
             Container.RegisterProcessor<UsersProcessor>(ServiceName, "UserSynchronizationSchedule");
             RegisterUsersProcessor();
@@ -41,7 +41,7 @@ namespace Quantumart.QP8.Scheduler.Users
             var logger = Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName).GetLogger(assemblyType);
             var prtgErrorsHandler = new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName));
 
-            Container.RegisterType<IProcessor, UsersProcessor>(
+            Container.RegisterType<IProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new UsersProcessor(

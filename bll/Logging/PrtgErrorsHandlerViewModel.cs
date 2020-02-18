@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Quantumart.QP8.Configuration.Models;
 
@@ -14,11 +15,11 @@ namespace Quantumart.QP8.BLL.Logging
 
         public ConcurrentQueue<Exception> CustomersExceptions { get; } = new ConcurrentQueue<Exception>();
 
-        public List<QaConfigCustomer> Customers { get; }
+        public QaConfigCustomer[] Customers { get; }
 
-        public PrtgErrorsHandlerViewModel(List<QaConfigCustomer> customers)
+        public PrtgErrorsHandlerViewModel(IEnumerable<QaConfigCustomer> customers)
         {
-            Customers = customers;
+            Customers = customers.ToArray();
         }
 
         public void IncrementTasksQueueCount(int tasksCount)

@@ -35,8 +35,9 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start cleanup notification queue");
-            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_schedulerCustomers.ToList());
-            foreach (var customer in _schedulerCustomers)
+            var items = _schedulerCustomers.GetItems().ToArray();
+            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(items);
+            foreach (var customer in items)
             {
                 try
                 {
