@@ -146,7 +146,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            TestContext.WriteLine($"Using next database for tests: {Global.DbName}");
+            TestContext.WriteLine($"Using next database for tests: {EnvHelpers.DbNameToRunTests}");
 
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             DictionaryContentId = Global.GetContentId(DbConnector, DictionaryContent);

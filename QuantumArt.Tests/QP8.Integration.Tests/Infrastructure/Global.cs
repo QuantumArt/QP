@@ -17,13 +17,21 @@ namespace QP8.Integration.Tests.Infrastructure
     {
         public static int SiteId => 35;
 
-        public static string DbName => TestContext.Parameters.Get("qp8_test_ci_dbname", $"qp8_test_ci_{Environment.MachineName.ToLowerInvariant()}");
+        public static string ConnectionString
+        {
+            get
+            {
+                var basePart = $"Database={EnvHelpers.DbNameToRunTests};Server={EnvHelpers.DbServerToRunTests};Application Name=UnitTest;";
+                if (!String.IsNullOrEmpty(EnvHelpers.PgDbLoginToRunTests))
+                {
+                    return $"{basePart}User Id={EnvHelpers.PgDbLoginToRunTests};Password={EnvHelpers.PgDbPasswordToRunTests}";
+                }
 
-        //public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+                return $"{basePart}Integrated Security=True;Connection Timeout=600";
+            }
+        }
 
-        public static string ConnectionString => $"Server=mscpgsql01;Port=5432;Database=qp8_test;User Id=postgres;Password=1q2w-p=[;Application Name=UnitTest";
-
-        public static DatabaseType DbType = DatabaseType.Postgres;
+        public static DatabaseType DbType => !String.IsNullOrEmpty(EnvHelpers.PgDbLoginToRunTests) ? DatabaseType.Postgres : DatabaseType.SqlServer;
 
         public static M.DatabaseType ClientDbType => (M.DatabaseType)(int)DbType;
 
