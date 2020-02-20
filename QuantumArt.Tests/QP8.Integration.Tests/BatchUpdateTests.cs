@@ -148,8 +148,6 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            var factory = new WebApplicationFactory<Startup>();
-            factory.CreateDefaultClient();
             TestContext.WriteLine($"Using next database for tests: {EnvHelpers.DbNameToRunTests}");
 
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
@@ -172,7 +170,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                factory.Server.Host.Services,
+                Global.Factory.Server.Host.Services,
                 false);
 
             service.Process(Global.GetXml(@"TestData\batchupdate.xml"));

@@ -41,43 +41,45 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            var factory = new WebApplicationFactory<Startup>();
-            factory.CreateDefaultClient();
 
-            DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType)
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                DynamicImageCreator = new FakeDynamicImageCreator(),
-                FileSystem = new FakeFileSystem(),
-                ForceLocalCache = true
-            };
 
-            RegionContentName = "test regions";
-            ProductContentName = "test products";
-            Clear();
+                DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType)
+                {
+                    DynamicImageCreator = new FakeDynamicImageCreator(),
+                    FileSystem = new FakeFileSystem(),
+                    ForceLocalCache = true
+                };
 
-            var dbLogService = new Mock<IXmlDbUpdateLogService>();
-            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
-            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
+                RegionContentName = "test regions";
+                ProductContentName = "test products";
+                TearDown();
 
-            var service = new XmlDbUpdateNonMvcReplayService(
-                Global.ConnectionString,
-                Global.DbType,
-                null,
-                1,
-                false,
-                dbLogService.Object,
-                new ApplicationInfoRepository(),
-                new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
-                new XmlDbUpdateHttpContextProcessor(),
-                factory.Server.Host.Services,
-                false
-            );
+                var dbLogService = new Mock<IXmlDbUpdateLogService>();
+                dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+                dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            service.Process(Global.GetXml(@"TestData\hierarchy.xml"));
+                var service = new XmlDbUpdateNonMvcReplayService(
+                    Global.ConnectionString,
+                    Global.DbType,
+                    null,
+                    1,
+                    false,
+                    dbLogService.Object,
+                    new ApplicationInfoRepository(),
+                    new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
+                    new XmlDbUpdateHttpContextProcessor(),
+                    Global.Factory.Server.Host.Services,
+                    false
+                );
 
-            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
-            BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
+                service.Process(Global.GetXml(@"TestData\hierarchy.xml"));
+
+                RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+                ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
+                BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
+            }
         }
 
         [Test]
@@ -159,23 +161,21 @@ namespace QP8.Integration.Tests
         [OneTimeTearDown]
         public static void TearDown()
         {
-            Clear();
-        }
-
-        private static void Clear()
-        {
-            var srv = new ContentApiService(Global.ConnectionInfo, 1);
-            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
-
-            if (srv.Exists(ProductContentId))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                srv.Delete(ProductContentId);
-            }
+                var srv = new ContentApiService(Global.ConnectionInfo, 1);
+                RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+                ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
 
-            if (srv.Exists(RegionContentId))
-            {
-                srv.Delete(RegionContentId);
+                if (srv.Exists(ProductContentId))
+                {
+                    srv.Delete(ProductContentId);
+                }
+
+                if (srv.Exists(RegionContentId))
+                {
+                    srv.Delete(RegionContentId);
+                }
             }
         }
     }

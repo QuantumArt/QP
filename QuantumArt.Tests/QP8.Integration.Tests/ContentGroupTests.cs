@@ -28,15 +28,6 @@ namespace QP8.Integration.Tests
         private const string NewGroupName = "bsd";
         private const int SpecificGroupId = 999;
 
-        private static WebApplicationFactory<Startup> Factory;
-
-        [OneTimeSetUp]
-        public static void Init()
-        {
-            Factory = new WebApplicationFactory<Startup>();
-            Factory.CreateDefaultClient();
-        }
-
         [Test]
         public void ReplayXML_CreateContentGroup_WithSpecifiedIdentity()
         {
@@ -54,7 +45,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                Factory.Server.Host.Services,
+                Global.Factory.Server.Host.Services,
                 false
             );
 
@@ -83,7 +74,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                Factory.Server.Host.Services,
+                Global.Factory.Server.Host.Services,
                 false
             );
 

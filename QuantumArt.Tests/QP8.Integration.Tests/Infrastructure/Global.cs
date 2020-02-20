@@ -4,10 +4,12 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QPublishing.Database;
 using M = QP.ConfigurationService.Models;
 
@@ -16,6 +18,8 @@ namespace QP8.Integration.Tests.Infrastructure
     internal static class Global
     {
         public static int SiteId => 35;
+
+        public static WebApplicationFactory<Startup> Factory { get; set; }
 
         public static string ConnectionString
         {
