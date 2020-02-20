@@ -44,9 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "Integra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Integration.Tests", "QuantumArt.Tests\QP8.Integration.Tests\QP8.Integration.Tests.csproj", "{89D19F8D-069F-47CA-9655-5B4D6618F875}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\UnitTests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\UnitTests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42BD44AF-78C8-4799-9EC5-113923D18639}"
 	ProjectSection(SolutionItems) = preProject
@@ -62,9 +62,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C154FDD0-B9E5-4398-8462-F8243B45B73E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\UnitTests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Services.Tests", "QuantumArt.Tests\QP8.Services.Tests\QP8.Services.Tests.csproj", "{F41EA3C2-919A-4C4D-A56B-4DB42F07BB70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Services.Tests", "QuantumArt.Tests\UnitTests\QP8.Services.Tests\QP8.Services.Tests.csproj", "{F41EA3C2-919A-4C4D-A56B-4DB42F07BB70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.CdcDataImport.Tarantool", "QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Tarantool\Quantumart.QP8.CdcDataImport.Tarantool.csproj", "{E8E1D72A-60CF-475C-9A62-25150ACA26E6}"
 EndProject

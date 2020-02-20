@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
-    <Description>QP infrastructure tests</Description>
+    <Description>QP webmvc nunit tests</Description>
     <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
     <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/QuantumArt/QP/blob/master/LICENSE</PackageLicenseUrl>
@@ -15,25 +14,25 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>QP</PackageTags>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <RootNamespace>QP8.Infrastructure.Tests</RootNamespace>
+    <RootNamespace>QP8.WebMvc.NUnit.Tests</RootNamespace>
     <DebugType>Full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.6.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.6.0" />
     <PackageReference Include="FluentAssertions" Version="5.6.0" />
-    <PackageReference Include="Flurl.Http" Version="2.4.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="Moq" Version="4.10.1" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="QA.Validation.Xaml" Version="1.3.0-portable6" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj" />
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj" />
+    <ProjectReference Include="..\..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\..\constants\Constants.csproj" />
+    <ProjectReference Include="..\..\..\utils\Utils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Xaml" />
   </ItemGroup>
 </Project>
