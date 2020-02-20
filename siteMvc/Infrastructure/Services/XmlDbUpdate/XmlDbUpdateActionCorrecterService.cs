@@ -408,7 +408,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
             else
             {
-                foreach (var key in form.Keys.Where(n => n.StartsWith(formKey)))
+                var keys = form.Keys.Where(n => n.StartsWith(formKey)).ToArray();
+                foreach (var key in keys)
                 {
                     if (joinModeReplace && key.EndsWith("Index") || !form.ContainsKey(key))
                     {
@@ -418,6 +419,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     var values = (string[])form[key];
                     form.Remove(key);
 
+                    var newValues = new List<string>(values.Length);
                     foreach (var value in values)
                     {
                         string newValue;
@@ -431,8 +433,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                             newValue = "[" + newValue + "]";
                         }
 
-                        form.Add(key, CorrectIdValue(entityTypeCode, newValue));
+                         newValues.Add(CorrectIdValue(entityTypeCode, newValue));
                     }
+
+                    form.Add(key, new StringValues(newValues.ToArray()));
                 }
             }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 using NUnit.Framework;
 using QP8.Integration.Tests.Infrastructure;
@@ -11,6 +12,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -146,6 +148,8 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
+            var factory = new WebApplicationFactory<Startup>();
+            factory.CreateDefaultClient();
             TestContext.WriteLine($"Using next database for tests: {EnvHelpers.DbNameToRunTests}");
 
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
@@ -168,9 +172,8 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                null,
-                false
-            );
+                factory.Server.Host.Services,
+                false);
 
             service.Process(Global.GetXml(@"TestData\batchupdate.xml"));
 

@@ -541,6 +541,7 @@ namespace Quantumart.QP8.BLL
         }
 
         [JsonIgnore]
+        [ValidateNever]
         public Content RelatedToContent => RelateToContentId.HasValue ? _contentRepository.GetById(RelateToContentId.Value) : null;
 
         [Display(Name = "TextBoxRows", ResourceType = typeof(FieldStrings))]
@@ -681,6 +682,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
 
+        [ValidateNever]
         public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
         [Display(Name = "BackwardFieldId", ResourceType = typeof(FieldStrings))]

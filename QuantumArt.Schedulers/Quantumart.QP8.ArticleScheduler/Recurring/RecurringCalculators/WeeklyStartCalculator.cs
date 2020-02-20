@@ -31,11 +31,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
 
         private DateTime? GetNearestStartDate(DateTime dateTime)
         {
-            return Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+            return Optimize(new Tuple<DateTime, DateTime>(_startDate, _endDate), dateTime)
                 .GetEveryFullWeekLimitedByFactor(_recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
                 .GetAllDaysFromRange()
                 .Where(d => IntervalPredicate(d, _interval))
-                .Where(d => _startDate.Date <= d.Date && _endDate.Date >= d.Date) // только те даты что в диапазоне
+                .Where(d => _startDate <= d && _endDate >= d) // только те даты что в диапазоне
                 .GetNearestPreviousDateFromList(dateTime);
         }
     }

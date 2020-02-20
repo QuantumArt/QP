@@ -42,11 +42,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             httpContext.RequestServices = serviceProvider;
             var handler = serviceProvider.GetRequiredService<MvcRouteHandler>();
 
+            QPContext.CurrentUserId = userId;
             Task.Run(async () =>
             {
                 await handler.RouteAsync(routeContext);
                 await routeContext.Handler(routeContext.HttpContext);
             }).Wait();
+            QPContext.CurrentUserId = 0;
 
             return httpContext;
         }

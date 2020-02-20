@@ -20,7 +20,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
 
         private DateTime? GetNearestStartDate(DateTime dateTime)
         {
-            return Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+            return Optimize(new Tuple<DateTime, DateTime>(_startDate, _endDate), dateTime)
                 .GetEveryNDayFromRange(_interval) // получаем каждый n-й день
                 .GetNearestPreviousDateFromList(dateTime);
         }

@@ -66,8 +66,8 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
 
         internal static IEnumerable<DateTime> GetEveryNDayFromRange(this Tuple<DateTime, DateTime> range, int n)
         {
-            var startRangeFirstDay = range.Item1.Date;
-            var endRangeFirstDay = range.Item2.Date;
+            var startRangeFirstDay = range.Item1;
+            var endRangeFirstDay = range.Item2;
             var countFactor = n;
             var currentDate = startRangeFirstDay;
             while (currentDate < endRangeFirstDay.AddDays(1))
@@ -86,8 +86,8 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         {
             foreach (var range in ranges)
             {
-                var currentDate = range.Item1.Date;
-                var endDate = range.Item2.Date;
+                var currentDate = range.Item1;
+                var endDate = range.Item2;
                 while (currentDate <= endDate)
                 {
                     yield return currentDate;
@@ -134,10 +134,10 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 iteratorDate = iteratorDate.AddDays(-1);
             }
 
-            return iteratorDate.Date;
+            return iteratorDate;
         }
 
-        internal static DateTime GetMonthStartDate(this DateTime dt) => new DateTime(dt.Year, dt.Month, 1);
+        internal static DateTime GetMonthStartDate(this DateTime dt) => new DateTime(dt.Year, dt.Month, 1) + dt.TimeOfDay;
 
         internal static bool IsWeekend(this DateTime dt) => dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday;
 

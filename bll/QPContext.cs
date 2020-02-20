@@ -438,7 +438,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var claim = HttpContext?.User?.FindFirst("LanguageId");
-                return claim != null ? int.Parse(claim.Value) : QPConfiguration.Options.Globalization.DefaultLanguageId;
+                return claim != null ? int.Parse(claim.Value) : QPConfiguration.Options?.Globalization?.DefaultLanguageId ?? 1;
             }
         }
 

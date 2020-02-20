@@ -36,7 +36,7 @@ namespace Quantumart.QP8.Security
                 new Claim("Id", user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, string.Join(";", user.Roles)),
-                new Claim("CustomerCode", user.CustomerCode),
+                new Claim("CustomerCode", user.CustomerCode ?? ""),
                 new Claim("LanguageId", user.LanguageId.ToString()),
                 new Claim("CultureName", user.CultureName),
                 new Claim("MustChangePassword", user.MustChangePassword.ToString()),

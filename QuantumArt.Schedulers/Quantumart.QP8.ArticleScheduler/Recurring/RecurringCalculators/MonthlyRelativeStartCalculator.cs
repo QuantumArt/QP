@@ -73,13 +73,13 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
 
         private DateTime? GetNearestStartDate(DateTime dateTime)
         {
-            var allStarts = Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+            var allStarts = Optimize(new Tuple<DateTime, DateTime>(_startDate, _endDate), dateTime)
                 .GetEveryFullMonthLimitedByFactor(_recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor
                 .GetAllDaysFromRange()
-                .Where(GetIntervalPredicate(_interval));
+                .Where(GetIntervalPredicate(_interval)).ToArray();
 
             allStarts = ApplyRelativeInternalConditions(allStarts, _relativeInterval)
-                .Where(d => _startDate.Date <= d.Date && _endDate.Date >= d.Date); // только те даты что в диапазоне
+                .Where(d => _startDate <= d && _endDate >= d).ToArray(); // только те даты что в диапазоне
 
             return allStarts.GetNearestPreviousDateFromList(dateTime); // ближайшее время старта до или если нет то null
         }

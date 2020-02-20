@@ -51,7 +51,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests
             sut.Run();
 
             // Verify outcome
-            onetimeService.Verify(m => m.ShowArticle(ArticleId), Times.Exactly(3));
+            onetimeService.Verify(m => m.ShowArticle(ArticleId), Times.Exactly(2));
             onetimeService.Verify(m => m.HideAndCloseSchedule(It.IsAny<int>()), Times.Never());
             onetimeService.Verify(m => m.ShowAndCloseSchedule(It.IsAny<int>()), Times.Never());
         }
@@ -110,12 +110,12 @@ namespace QP8.Services.Tests.ArticleSchedulerTests
             _fixture.Register<IPublishingTaskScheduler>(_fixture.Create<PublishingTaskScheduler>);
 
             var schedulerService = _fixture.Freeze<Mock<IArticleSchedulerService>>();
-            var tasksList = GetArticleSchedulerTaskList().Where(t => t.FreqType == ScheduleFreqTypes.OneTime || t.FreqType == ScheduleFreqTypes.Publishing);
+            var tasksList = GetArticleSchedulerTaskList().ToArray();
             var dateTimeNow = DateTimeHelpers.ParseDateTime(CurrentDateTime);
             schedulerService.Setup(m => m.GetScheduleTaskList()).Returns(tasksList);
 
-            const int expectedResultNow = 4;
-            const int expectedResultAt3Hours = 6;
+            const int expectedResultNow = 5;
+            const int expectedResultAt3Hours = 7;
             var sut = _fixture.Create<DbScheduler>();
 
             // Exercise system

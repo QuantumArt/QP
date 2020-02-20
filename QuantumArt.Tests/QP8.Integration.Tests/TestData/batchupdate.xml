@@ -403,8 +403,8 @@
     <field name="Data.UseVersionControl">false</field>
     <field name="Data.MaxNumOfStoredVersions">10</field>
     <field name="Data.MapAsClass">false</field>
-    <field name="Data.NetName">1</field>
-    <field name="Data.NetPluralName">1</field>
+    <field name="Data.NetName"></field>
+    <field name="Data.NetPluralName"></field>
     <field name="Data.UseDefaultFiltration">true</field>
     <field name="Data.UseDefaultFiltration">false</field>
     <field name="Data.AdditionalContextClassName"></field>
@@ -433,8 +433,8 @@
     <field name="Data.UseVersionControl">false</field>
     <field name="Data.MaxNumOfStoredVersions">10</field>
     <field name="Data.MapAsClass">false</field>
-    <field name="Data.NetName">1</field>
-    <field name="Data.NetPluralName">1</field>
+    <field name="Data.NetName"></field>
+    <field name="Data.NetPluralName"></field>
     <field name="Data.UseDefaultFiltration">true</field>
     <field name="Data.UseDefaultFiltration">false</field>
     <field name="Data.AdditionalContextClassName"></field>

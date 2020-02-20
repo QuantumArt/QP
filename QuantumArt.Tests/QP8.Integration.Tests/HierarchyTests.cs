@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
 using NUnit.Framework;
 using QP.ConfigurationService.Client;
@@ -11,6 +12,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -39,6 +41,9 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
+            var factory = new WebApplicationFactory<Startup>();
+            factory.CreateDefaultClient();
+
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType)
             {
                 DynamicImageCreator = new FakeDynamicImageCreator(),
@@ -64,7 +69,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                null,
+                factory.Server.Host.Services,
                 false
             );
 

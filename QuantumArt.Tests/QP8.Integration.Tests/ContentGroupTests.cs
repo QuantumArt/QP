@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using QP8.Integration.Tests.Infrastructure;
@@ -9,6 +13,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -22,6 +27,15 @@ namespace QP8.Integration.Tests
         private const string GroupName = "dsf";
         private const string NewGroupName = "bsd";
         private const int SpecificGroupId = 999;
+
+        private static WebApplicationFactory<Startup> Factory;
+
+        [OneTimeSetUp]
+        public static void Init()
+        {
+            Factory = new WebApplicationFactory<Startup>();
+            Factory.CreateDefaultClient();
+        }
 
         [Test]
         public void ReplayXML_CreateContentGroup_WithSpecifiedIdentity()
@@ -40,7 +54,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                null,
+                Factory.Server.Host.Services,
                 false
             );
 
@@ -69,7 +83,7 @@ namespace QP8.Integration.Tests
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
                 new XmlDbUpdateHttpContextProcessor(),
-                null,
+                Factory.Server.Host.Services,
                 false
             );
 

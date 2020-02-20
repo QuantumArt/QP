@@ -85,9 +85,9 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 Id = _fixture.Create<int>(),
                 ArticleId = _fixture.Create<int>(),
                 FreqType = ScheduleFreqTypes.RecurringMonthlyRelative,
-                FreqInterval = 9,
-                FreqRelativeInterval = 4,
-                FreqRecurrenceFactor = 5,
+                FreqInterval = 9, // working days
+                FreqRelativeInterval = 4, // 3-rd week
+                FreqRecurrenceFactor = 5, // every 5-th month
                 StartDate = startDate + startTime,
                 EndDate = endDate,
                 Duration = TimeSpan.FromDays(5)
@@ -121,9 +121,9 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 Id = _fixture.Create<int>(),
                 ArticleId = _fixture.Create<int>(),
                 FreqType = ScheduleFreqTypes.RecurringMonthlyRelative,
-                FreqInterval = 9,
-                FreqRelativeInterval = 4,
-                FreqRecurrenceFactor = 5,
+                FreqInterval = 9, // working days
+                FreqRelativeInterval = 4, // 3-rd week
+                FreqRecurrenceFactor = 5, // every 5-th month
                 StartDate = startDate + startTime,
                 EndDate = endDate,
                 Duration = TimeSpan.FromDays(5)
