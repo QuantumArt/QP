@@ -24,7 +24,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
             var expectedResult = new List<Tuple<DateTime, DateTime>>
             {
-                DateTimeHelpers.GetRangeTuple("05/01/2011", "05/31/2011")
+                DateTimeHelpers.GetRangeTuple("05/01/2011 05:04:02", "05/31/2011 05:04:02")
             };
 
             // Exercise system
@@ -43,8 +43,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
             var expectedResult = new List<Tuple<DateTime, DateTime>>
             {
-                DateTimeHelpers.GetRangeTuple("05/01/2011", "05/31/2011"),
-                DateTimeHelpers.GetRangeTuple("09/01/2011", "09/30/2011")
+                DateTimeHelpers.GetRangeTuple("05/01/2011 05:04:02", "05/31/2011 05:04:02"),
+                DateTimeHelpers.GetRangeTuple("09/01/2011 05:04:02", "09/30/2011 05:04:02")
             };
 
             // Exercise system
@@ -63,7 +63,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
             var expectedResult = new List<Tuple<DateTime, DateTime>>
             {
-                DateTimeHelpers.GetRangeTuple("06/20/2011", "06/26/2011")
+                DateTimeHelpers.GetRangeTuple("06/20/2011 05:04:02", "06/26/2011 05:04:02")
             };
 
             // Exercise system
@@ -82,8 +82,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
             var expectedResult = new List<Tuple<DateTime, DateTime>>
             {
-                DateTimeHelpers.GetRangeTuple("05/30/2011", "06/05/2011"),
-                DateTimeHelpers.GetRangeTuple("06/20/2011", "06/26/2011")
+                DateTimeHelpers.GetRangeTuple("05/30/2011 05:04:02", "06/05/2011 05:04:02"),
+                DateTimeHelpers.GetRangeTuple("06/20/2011 05:04:02", "06/26/2011 05:04:02")
             };
 
             // Exercise system
@@ -121,8 +121,8 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var rangeTuple = DateTimeHelpers.GetRangeTuple(rawDateStart, rawDateEnd);
             var expectedResult = new List<DateTime>
             {
-                DateTimeHelpers.ParseDateTime("06/01/2011"),
-                DateTimeHelpers.ParseDateTime("06/06/2011")
+                DateTimeHelpers.ParseDateTime("06/01/2011 05:04:02"),
+                DateTimeHelpers.ParseDateTime("06/06/2011 05:04:02")
             };
 
             // Exercise system

@@ -34,7 +34,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             var endRangeFirstDay = range.Item2.GetMonthStartDate();
             var countFactor = recurrenceFactor;
             var currentDate = startRangeFirstDay;
-            while (currentDate < endRangeFirstDay.AddMonths(1))
+            while (currentDate < endRangeFirstDay.AddMonths(1).Date)
             {
                 if (countFactor % recurrenceFactor == 0)
                 {

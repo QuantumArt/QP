@@ -49,7 +49,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = cdcTable2;
 
@@ -73,7 +73,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = cdcTable2;
 
@@ -99,7 +99,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable2,
                 cdcTable3,
                 cdcTable4
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = new List<CdcTableTypeModel>
             {
@@ -129,7 +129,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable2,
                 cdcTable3,
                 cdcTable4
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = new List<CdcTableTypeModel>
             {
@@ -159,7 +159,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = cdcTable2;
 
@@ -183,7 +183,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = cdcTable2;
 
@@ -209,7 +209,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable2,
                 cdcTable3,
                 cdcTable4
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = new List<CdcTableTypeModel>
             {
@@ -239,7 +239,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable2,
                 cdcTable3,
                 cdcTable4
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expected = new List<CdcTableTypeModel>
             {
@@ -269,7 +269,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item =>item.SequenceLsn);
 
             var expectedColumnsFromFirstTable = cdcTable1.Entity.Columns.ToList();
             var expectedColumnsFromSecondTable = cdcTable2.Entity.Columns.ToList();
@@ -308,7 +308,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item => item.SequenceLsn);
 
             var expectedColumnsFromFirstTable = cdcTable1.Entity.Columns.ToList();
             var expectedColumnsFromSecondTable = cdcTable2.Entity.Columns.ToList();
@@ -347,7 +347,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
                 cdcTable1,
                 cdcTable2,
                 cdcTable3
-            }.OrderBy(item => _fixture.Create<int>());
+            }.OrderBy(item => item.SequenceLsn);
 
             var expected = new List<CdcTableTypeModel>
             {
