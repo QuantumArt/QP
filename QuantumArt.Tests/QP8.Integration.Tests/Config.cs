@@ -1,3 +1,5 @@
+using System.Reflection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using QP8.Integration.Tests.Infrastructure;
@@ -11,8 +13,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public void SetUp()
         {
-            Global.Factory = new WebApplicationFactory<Startup>();
-            Global.Factory.CreateDefaultClient();
+            Global.Factory = new TestApplicationFactory();
         }
 
         [OneTimeTearDown]
