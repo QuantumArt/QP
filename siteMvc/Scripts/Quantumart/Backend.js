@@ -276,8 +276,7 @@ export class Backend {
 
       this._initializeSignOut();
     });
-    if (this._enableSignalR)
-    {
+    if (this._enableSignalR) {
       this._initializeSignalrHubs();
     }
   }
