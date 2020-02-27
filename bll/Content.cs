@@ -556,8 +556,6 @@ namespace Quantumart.QP8.BLL
         public ContentGroup Group => _contentGroup.Value;
 
         [JsonIgnore]
-        [BindNever]
-        [ValidateNever]
         public ContentWorkflowBind WorkflowBinding
         {
             get

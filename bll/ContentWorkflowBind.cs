@@ -1,4 +1,7 @@
-﻿namespace Quantumart.QP8.BLL
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace Quantumart.QP8.BLL
 {
     public class ContentWorkflowBind : WorkflowBind
     {
@@ -19,6 +22,8 @@
             ContentId = content.Id;
         }
 
+        [BindNever]
+        [ValidateNever]
         public Content Content { get; set; }
 
         public int ContentId { get; set; }
