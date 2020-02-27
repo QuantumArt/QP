@@ -31,7 +31,15 @@ namespace Quantumart.QP8.BLL.Services.DTO
         [BindProperty(Name="searchQuery")]
         public string SearchQuery { get; set; }
 
-        public IList<ArticleSearchQueryParam> SearchQueryParams => JsonConvert.DeserializeObject<IList<ArticleSearchQueryParam>>(SearchQuery);
+        public IList<ArticleSearchQueryParam> SearchQueryParams
+        {
+            get
+            {
+                return SearchQuery != null ?
+                JsonConvert.DeserializeObject<IList<ArticleSearchQueryParam>>(SearchQuery) :
+                new ArticleSearchQueryParam[] { };
+            }
+        }
 
         public IList<ArticleContextQueryParam> ContextQueryParams => new ArticleContextQueryParam[] {};
 
