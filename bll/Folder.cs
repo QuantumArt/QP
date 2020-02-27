@@ -86,7 +86,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public string Path { get; set; }
 
-        public string OsSpecificPath => RuntimeInformation.IsOSPlatform(OSPlatform.Windows ) ? Path : Path.Replace(@"\", @"/");
+        public string OsSpecificPath => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path : Path?.Replace(@"\", @"/");
 
         /// <summary>
         /// Путь к директории полученный из БД не меняеться на основе данных формы
