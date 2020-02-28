@@ -3173,7 +3173,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             if (!string.IsNullOrWhiteSpace(options.ContentName))
             {
-                filterBuilder.AppendFormat("C.CONTENT_NAME LIKE '%{0}%' AND ", Cleaner.ToSafeSqlLikeCondition(options.ContentName));
+                filterBuilder.AppendFormat("C.CONTENT_NAME LIKE '%{0}%' AND ", Cleaner.ToSafeSqlLikeCondition(dbType, options.ContentName));
             }
 
             var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);

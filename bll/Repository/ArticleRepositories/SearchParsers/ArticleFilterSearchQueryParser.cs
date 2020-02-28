@@ -267,7 +267,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             }
 
             // Иначе формируем результат
-            var value = Cleaner.ToSafeSqlLikeCondition(((string)p.QueryParams[1]).Trim());
+            var value = Cleaner.ToSafeSqlLikeCondition(dbType, ((string)p.QueryParams[1]).Trim());
             if (exactMatch)
             {
                 return $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "<> " : "=")} '{value}')";
