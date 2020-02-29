@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
@@ -38,18 +39,22 @@ namespace Quantumart.QP8.BLL
         public bool IsAssigned => WorkflowId != UnassignedId;
 
         [ValidateNever]
+        [BindNever]
         public bool CurrentUserCanUpdateArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserMaxWeight > 0;
 
         [ValidateNever]
+        [BindNever]
         public bool CurrentUserCanRemoveArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
 
         [ValidateNever]
+        [BindNever]
         public bool CurrentUserCanPublishArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
 
         /// <summary>
         /// Список статусов Workflow
         /// </summary>
         [ValidateNever]
+        [BindNever]
         public List<StatusType> StatusTypes
         {
             get
@@ -67,6 +72,7 @@ namespace Quantumart.QP8.BLL
         /// Список статусов Workflow, доступных для текущего пользователя в виде элементов списка
         /// </summary>
         [ValidateNever]
+        [BindNever]
         public List<StatusType> AvailableStatuses
         {
             get
@@ -87,6 +93,7 @@ namespace Quantumart.QP8.BLL
         /// Максимальный статус в Workflow
         /// </summary>
         [ValidateNever]
+        [BindNever]
         public StatusType MaxStatus
         {
             get
@@ -103,6 +110,7 @@ namespace Quantumart.QP8.BLL
         /// Максимальный вес, доступный текущему пользователю
         /// </summary>
         [ValidateNever]
+        [BindNever]
         public int CurrentUserMaxWeight
         {
             get
@@ -126,6 +134,7 @@ namespace Quantumart.QP8.BLL
         /// Доступен ли пользователю максимальный вес данного Workflow
         /// </summary>
         [ValidateNever]
+        [BindNever]
         public bool CurrentUserHasWorkflowMaxWeight => MaxStatus.Weight == CurrentUserMaxWeight;
 
         public bool UseStatus(int statusTypeId) => WorkflowRepository.DoesWorkflowUseStatus(WorkflowId, statusTypeId);
