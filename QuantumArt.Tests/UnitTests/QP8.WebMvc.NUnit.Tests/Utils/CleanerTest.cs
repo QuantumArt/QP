@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 
 namespace QP8.WebMvc.NUnit.Tests.Utils
@@ -9,19 +10,25 @@ namespace QP8.WebMvc.NUnit.Tests.Utils
         [Test]
         public void ToSafeSqlLikeCondition_NullInput_NullResult()
         {
-            Assert.IsNull(Cleaner.ToSafeSqlLikeCondition(null));
+            Assert.IsNull(Cleaner.ToSafeSqlLikeCondition(DatabaseType.SqlServer, null));
         }
 
         [Test]
         public void ToSafeSqlLikeCondition_SafeInput_SafeResult()
         {
-            Assert.AreEqual("test", Cleaner.ToSafeSqlLikeCondition("test"));
+            Assert.AreEqual("test", Cleaner.ToSafeSqlLikeCondition(DatabaseType.SqlServer,"test"));
         }
 
         [Test]
         public void ToSafeSqlLikeCondition_UnsafeInput_SafeResult()
         {
-            Assert.AreEqual("'' [[] [%] [_]", Cleaner.ToSafeSqlLikeCondition("' [ % _"));
+            Assert.AreEqual("'' [[] [%] [_]", Cleaner.ToSafeSqlLikeCondition(DatabaseType.SqlServer,"' [ % _"));
+        }
+
+        [Test]
+        public void ToSafeSqlLikeConditionPg_UnsafeInput_SafeResult()
+        {
+            Assert.AreEqual(@"'' [ \% \_", Cleaner.ToSafeSqlLikeCondition(DatabaseType.Postgres,"' [ % _"));
         }
 
         [Test]
