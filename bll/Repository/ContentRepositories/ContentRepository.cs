@@ -365,21 +365,25 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
                     var binding = content.WorkflowBinding;
                     var newContent = DefaultRepository.Update<Content, ContentDAL>(content);
-                    binding.SetContent(newContent);
-                    WorkflowRepository.UpdateContentWorkflowBind(binding);
-
-                    // Обновить свойства у агрегированных контентов
-                    foreach (var aggregated in content.AggregatedContents)
+                    var isAggregated = IsAnyAggregatedFields(content.Id);
+                    if (!isAggregated)
                     {
-                        var localAggregated = aggregated;
-                        if (localAggregated.AutoArchive != content.AutoArchive)
-                        {
-                            localAggregated.AutoArchive = content.AutoArchive;
-                            localAggregated = DefaultRepository.Update<Content, ContentDAL>(localAggregated);
-                        }
-
-                        binding.SetContent(localAggregated);
+                        binding.SetContent(newContent);
                         WorkflowRepository.UpdateContentWorkflowBind(binding);
+
+                        // Обновить свойства у агрегированных контентов
+                        foreach (var aggregated in content.AggregatedContents)
+                        {
+                            var localAggregated = aggregated;
+                            if (localAggregated.AutoArchive != content.AutoArchive)
+                            {
+                                localAggregated.AutoArchive = content.AutoArchive;
+                                localAggregated = DefaultRepository.Update<Content, ContentDAL>(localAggregated);
+                            }
+
+                            binding.SetContent(localAggregated);
+                            WorkflowRepository.UpdateContentWorkflowBind(binding);
+                        }
                     }
 
                     DeleteEmptyContentGroups();

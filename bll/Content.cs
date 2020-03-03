@@ -755,16 +755,6 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorFor(f => AutoArchive, ContentStrings.CannotChangeAutoArchive);
                 }
-
-                if (WorkflowBinding.WorkflowId != dbContent.WorkflowBinding.WorkflowId) // Тип Workflow
-                {
-                    errors.ErrorFor(f => WorkflowBinding.WorkflowId, ContentStrings.CannotChangeWorkflow);
-                }
-
-                if (WorkflowBinding.IsAsync != dbContent.WorkflowBinding.IsAsync) // Расщеплять ли статьи по Workflow
-                {
-                    errors.ErrorFor(f => WorkflowBinding.IsAsync, ContentStrings.CannotChangeIsAsync);
-                }
             }
         }
 
