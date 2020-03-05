@@ -3539,10 +3539,23 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static void RecreateDynamicImages_UpdateDynamicFieldValue(int dynamicFieldId, int articleId, string newValue, DbConnection connection)
         {
+            var dbType = GetDbType(connection);
             var sb = new StringBuilder();
-            sb.AppendLine("if exists(select content_data_id from content_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id)");
-            sb.AppendLine(" update content_data set data = @new_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id");
-            sb.AppendLine("else insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sb.AppendLine("if exists(select content_data_id from content_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id)");
+                sb.AppendLine(" update content_data set data = @new_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id");
+                sb.AppendLine("else insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
+            }
+            else
+            {
+                sb.AppendLine("insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
+                sb.AppendLine("on conflict(CONTENT_ITEM_ID, ATTRIBUTE_ID) ");
+                sb.AppendLine("do update set DATA = @new_data");
+            }
+
+
             using (var cmd = DbCommandFactory.Create(sb.ToString(), connection))
             {
                 cmd.CommandType = CommandType.Text;

@@ -178,7 +178,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     Text = u.LogOn,
                     Value = u.Id.ToString(),
-                    Selected = model.Ids.Contains(u.Id)
+                    Selected = model.Ids?.Contains(u.Id) ?? false
                 }).ToArray();
 
                 return await JsonHtml("UserRelation", null);
