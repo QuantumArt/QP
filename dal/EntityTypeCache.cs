@@ -33,11 +33,11 @@ namespace Quantumart.QP8.DAL
             return types;
         }
 
-        public static bool IsParentType(QPModelDataContext context, string customerCode, int languageId, string entityTypeCode)
+        public static bool IsParentTypeForTree(QPModelDataContext context, string customerCode, int languageId, string entityTypeCode)
         {
             var entities = GetEntityTypes(context, customerCode, languageId);
             var id = entities.Single(n => n.Code == entityTypeCode).Id;
-            return entities.Any(n => n.ParentId == id);
+            return entities.Any(n => n.ParentId == id && !n.Disabled);
         }
 
         private static List<EntityTypeDAL> LoadEntityTypes(QPModelDataContext context)

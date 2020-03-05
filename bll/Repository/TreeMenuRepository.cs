@@ -125,7 +125,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         public static bool IsEntityTypeParent(string code)
         {
-            return EntityTypeCache.IsParentType(
+            return EntityTypeCache.IsParentTypeForTree(
                 QPContext.EFContext, QPContext.CurrentCustomerCode, QPContext.CurrentLanguageId, code
             );
         }
