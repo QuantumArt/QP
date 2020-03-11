@@ -1,9 +1,10 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using QP8.Infrastructure;
@@ -40,7 +41,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
             var serviceProvider = provider ?? new HttpContextAccessor().HttpContext.RequestServices;
             httpContext.RequestServices = serviceProvider;
-            var handler = serviceProvider.GetRequiredService<MvcRouteHandler>();
+            var m = typeof(DynamicRouteValueTransformer).Assembly.GetType("Microsoft.AspNetCore.Mvc.Routing.MvcRouteHandler");
+            var handler = (IRouter)serviceProvider.GetRequiredService(m);
 
             QPContext.CurrentUserId = userId;
             Task.Run(async () =>

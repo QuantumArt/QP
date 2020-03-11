@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -99,7 +98,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static IDisposable BeginPanel<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, TValue selectedValue, bool disableControls = false, Dictionary<string, object> htmlAttributes = null)
         {
             var id = QPSelectListItem.GetDependentPanelId(
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 selectedValue.ToString());
 
             if (htmlAttributes == null)

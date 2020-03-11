@@ -1,5 +1,4 @@
-﻿#if !NET_STANDARD
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure.Logging.Interfaces;
@@ -170,4 +169,3 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         }
     }
 }
-#endif

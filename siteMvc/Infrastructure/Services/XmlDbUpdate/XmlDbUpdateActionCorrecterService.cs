@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using QP8.Infrastructure;
@@ -24,11 +25,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly Dictionary<string, Dictionary<Guid, Guid>> _uniqueIdsToReplace = new Dictionary<string, Dictionary<Guid, Guid>>();
         private readonly IArticleService _dbActionService;
         private readonly IContentService _dbContentService;
+        private readonly ModelExpressionProvider _modelExpressionProvider;
 
-        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService, IContentService dbContentService)
+        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService, IContentService dbContentService, ModelExpressionProvider modelExpressionProvider)
         {
             _dbActionService = dbActionService;
             _dbContentService = dbContentService;
+            _modelExpressionProvider = modelExpressionProvider;
         }
 
         public XmlDbUpdateRecordedAction PreActionCorrections(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
@@ -150,7 +153,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 else if (XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
                 {
                     action.UniqueId = new[] { Guid.NewGuid() };
-                    var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
+                    var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(
+                        _modelExpressionProvider, vm => vm.Data.UniqueId
+                    );
                     action.Form[uniqueIdFieldName] = action.UniqueId.Single().ToString();
                 }
             }
@@ -202,7 +207,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction CorrectFormUniqueId(XmlDbUpdateRecordedAction action)
         {
-            var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
+            var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(
+                _modelExpressionProvider, vm => vm.Data.UniqueId
+            );
             CorrectUniqueIdFormValues(action.Form, uniqueIdFieldName);
             return action;
         }

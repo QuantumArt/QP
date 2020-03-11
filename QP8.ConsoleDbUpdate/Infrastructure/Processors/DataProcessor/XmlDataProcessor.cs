@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
@@ -20,6 +21,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateActionCorrecterService actionCorrecterService,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            HttpClient client,
             IServiceProvider provider
             )
             : base(settings)

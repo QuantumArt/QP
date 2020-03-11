@@ -67,7 +67,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
                 var factory = new WebApplicationFactory<Startup>();
                 factory.CreateDefaultClient();
-                var dataProcessor = DataProcessorFactory.Create(settings, factory.Server.Host.Services);
+                var dataProcessor = DataProcessorFactory.Create(
+                    settings, factory.Server.Host.Services, factory.CreateClient()
+                    );
 
                 if (Console.IsInputRedirected && !DisablePipedInput)
                 {

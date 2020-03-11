@@ -11,7 +11,7 @@
         {
           foreach (var field in group)
           {
-            <option value="@field.Value" data-search_type="@((int)field.ArticleFieldSearchType)" data-field_id="@field.ID" data-content_id="@field.ContentId" data-field_column="@field.ColumnName" aria-checkeddata-field_all="@field.IsAll" data-field_is_title="@field.IsTitle" @field.Selected>@field.Name</option>
+            <!option value="@field.Value" data-search_type="@((int)field.ArticleFieldSearchType)" data-field_id="@field.ID" data-content_id="@field.ContentId" data-field_column="@field.ColumnName" aria-checkeddata-field_all="@field.IsAll" data-field_is_title="@field.IsTitle" @(field.IsTitle ? @"selected=""selected""" : "") >@field.Name</!option>
           }
         }
         else
@@ -19,7 +19,7 @@
           <optgroup label="@group.Key">
           @foreach (var f in group)
           {
-            <option value="@f.Value" data-search_type="@((int)f.ArticleFieldSearchType)" data-field_id="@f.ID" data-content_id="@f.ContentId" data-field_column="@f.ColumnName" data-field_all="@f.IsAll" data-field_is_title="@f.IsTitle" @f.Selected>@f.Name</option>
+            <!option value="@f.Value" data-search_type="@((int)f.ArticleFieldSearchType)" data-field_id="@f.ID" data-content_id="@f.ContentId" data-field_column="@f.ColumnName" data-field_all="@f.IsAll" data-field_is_title="@f.IsTitle" @(f.IsTitle ? @"selected=""selected""" : "") >@f.Name</!option>
           }
           </optgroup>
         }

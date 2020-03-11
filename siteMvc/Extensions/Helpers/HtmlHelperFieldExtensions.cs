@@ -2,13 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -256,7 +252,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         internal static IHtmlContent QpLabelFor<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string displayName = "", bool withColon = true, int index = -1)
         {
             var data = html.GetMetaData(expression);
-            return html.QpLabel(html.UniqueId(ExpressionHelper.GetExpressionText(expression), index), string.IsNullOrEmpty(displayName) ? data.DisplayName : displayName, withColon);
+            return html.QpLabel(html.UniqueId(
+                html.ModelExpressionProvider().GetExpressionText(expression), index), string.IsNullOrEmpty(displayName) ? data.DisplayName : displayName, withColon);
         }
 
         internal static IHtmlContent VersionFile(this IHtmlHelper source, string id, string value, Field field, ArticleVersion version, ArticleViewType viewType)
@@ -424,14 +421,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return html.FieldTemplate(html.Span(html.UniqueId(id), value), id, title);
         }
 
-        public static ModelExplorer GetModelExplorer<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
+        public static ModelExpression GetModelExpression<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
         {
-            return ExpressionMetadataProvider.FromLambdaExpression(expression, html.ViewData, html.MetadataProvider);
+            return html.ModelExpressionProvider().CreateModelExpression(html.ViewData, expression);
         }
 
         public static ModelMetadata GetMetaData<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
         {
-            return html.GetModelExplorer(expression).Metadata;
+            return html.GetModelExpression(expression).Metadata;
         }
 
         public static IHtmlContent HtmlFieldFor<TModel, TValue>(
@@ -441,7 +438,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 content(html.ViewData.Model),
-                ExpressionHelper.GetExpressionText(expression), html.GetMetaData(expression).DisplayName);
+                html.ModelExpressionProvider().GetExpressionText(expression), html.GetMetaData(expression).DisplayName);
         }
 
         public static IHtmlContent TextBoxField<TModel, TValue>(
@@ -450,7 +447,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             string defaultValue,
             Dictionary<string, object> htmlAttributes = null)
         {
-            var fieldName = ExpressionHelper.GetExpressionText(expression);
+            var fieldName = html.ModelExpressionProvider().GetExpressionText(expression);
             var metaData = html.GetMetaData(expression);
             return html.FieldTemplate(
                 html.QpTextBox(fieldName, defaultValue, htmlAttributes),
@@ -478,7 +475,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var metaData = html.GetMetaData(expression);
             return html.FieldTemplate(
                 html.QpTextBoxFor(expression, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 metaData.DisplayName,
                 false,
                 HtmlHelpersExtensions.GetExampleText(metaData.ContainerType, metaData.PropertyName));
@@ -491,7 +488,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.QpTextAreaFor(expression, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 html.GetMetaData(expression).DisplayName);
         }
 
@@ -502,7 +499,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.VisualEditorFor(expression, field),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 html.GetMetaData(expression).DisplayName);
         }
 
@@ -512,7 +509,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.DateTimeFor(expression),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -522,7 +519,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.DateFor(expression),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -532,7 +529,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.TimeFor(expression),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -542,7 +539,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.DisplayFor(expression),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -553,7 +550,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.DisplayFor(expression, templateName),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -576,7 +573,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.QpDropDownListFor(expression, list, htmlAttributes, options ?? new SelectOptions()),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName,
                 required: required);
         }
@@ -591,7 +588,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.QpCheckBoxFor(expression, toggleId, reverseToggle, htmlAttributes, forceReadOnly: forceReadonly),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 html.GetMetaData(expression).DisplayName,
                 true);
         }
@@ -606,7 +603,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                  html.QpRadioButtonListFor(expression, list, repeatDirection, entityDataListArgs, options),
-                 ExpressionHelper.GetExpressionText(expression),
+                 html.ModelExpressionProvider().GetExpressionText(expression),
                  GetMetaData(html, expression).DisplayName);
         }
 
@@ -616,7 +613,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.PasswordFor(expression, html.QpHtmlProperties(expression, EditorType.Password)),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -630,7 +627,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.NumericFor(expression, decimalDigits, minValue, maxValue, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -642,7 +639,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.FileFor(expression, field, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -655,7 +652,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return source.FieldTemplate(
                 source.SingleItemPickerFor(expression, selected, entityDataListArgs, options),
-                ExpressionHelper.GetExpressionText(expression),
+                source.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(source, expression).DisplayName);
         }
 
@@ -667,8 +664,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             Dictionary<string, string> additionalData = null)
         {
             return source.FieldTemplate(
-                source.AggregationListFor(ExpressionHelper.GetExpressionText(expression), list, bindings, additionalData),
-                ExpressionHelper.GetExpressionText(expression),
+                source.AggregationListFor(source.ModelExpressionProvider().GetExpressionText(expression), list, bindings, additionalData),
+                source.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(source, expression).DisplayName);
         }
 
@@ -678,8 +675,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             TValue text)
         {
             return source.FieldTemplate(
-                source.VersionTextFor(ExpressionHelper.GetExpressionText(expression), text.ToString()),
-                ExpressionHelper.GetExpressionText(expression),
+                source.VersionTextFor(source.ModelExpressionProvider().GetExpressionText(expression), text.ToString()),
+                source.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(source, expression).DisplayName);
         }
 
@@ -689,8 +686,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             TValue text)
         {
             return source.FieldTemplate(
-                source.VersionAreaFor(ExpressionHelper.GetExpressionText(expression), text.ToString()),
-                ExpressionHelper.GetExpressionText(expression),
+                source.VersionAreaFor(source.ModelExpressionProvider().GetExpressionText(expression), text.ToString()),
+                source.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(source, expression).DisplayName);
         }
 
@@ -699,7 +696,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             Expression<Func<TModel, IEnumerable<TValue>>> expression,
             IEnumerable<TValue> list)
         {
-            return source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list);
+            return source.WorkflowFor(source.ModelExpressionProvider().GetExpressionText(expression), list);
         }
 
         public static IHtmlContent CheckboxListFieldFor<TModel>(
@@ -712,7 +709,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.QpCheckBoxListFor(expression, list, entityDataListArgs, htmlAttributes, repeatDirection),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -729,7 +726,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 html.CheckBoxTreeFor(
                     expression, entityTypeCode, parentEntityId,
                     actionCode, allowGlobalSelection, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -742,7 +739,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.VirtualFieldTreeFor(expression, parentEntityId, virtualContentId, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -755,7 +752,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.UnionContentsFor(expression, selectedItemList, siteId, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 
@@ -768,7 +765,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return html.FieldTemplate(
                 html.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes),
-                ExpressionHelper.GetExpressionText(expression),
+                html.ModelExpressionProvider().GetExpressionText(expression),
                 GetMetaData(html, expression).DisplayName);
         }
 

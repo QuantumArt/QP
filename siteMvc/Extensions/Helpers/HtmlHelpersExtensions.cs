@@ -9,7 +9,7 @@ using System.Text;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
@@ -77,9 +77,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         internal static Dictionary<string, object> QpHtmlProperties<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, EditorType type, int index = -1)
         {
             var data = source.GetMetaData(expression);
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = ModelExpressionProvider(source).GetExpressionText(expression);
             var maxlength = GetMaxLength(data.ContainerType, data.PropertyName);
             return source.QpHtmlProperties(name, maxlength, type, index);
+        }
+
+        internal static ModelExpressionProvider ModelExpressionProvider<TModel>(this IHtmlHelper<TModel> html)
+        {
+            var expressionProvider = html.ViewContext.HttpContext.RequestServices
+                .GetService(typeof(ModelExpressionProvider)) as ModelExpressionProvider;
+            return expressionProvider;
         }
 
         internal static Dictionary<string, object> QpHtmlProperties(this IHtmlHelper source, string name, int maxlength, EditorType type, int index = -1)
@@ -382,7 +389,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static IHtmlContent SingleItemPickerFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, QPSelectListItem selected, EntityDataListArgs entityDataListArgs, ControlOptions options)
         {
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = source.ModelExpressionProvider().GetExpressionText(expression);
             IEnumerable<QPSelectListItem> list = null;
             if (selected != null)
             {
@@ -1206,31 +1213,31 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static IHtmlContent DateTimeFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
         {
-            var data = source.GetModelExplorer(expression);
-            return source.DateTime(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
+            var data = source.GetModelExpression(expression);
+            return source.DateTime(ModelExpressionProvider(source).GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
         }
 
         public static IHtmlContent DateFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
         {
-            var data = source.GetModelExplorer(expression);
-            return source.Date(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
+            var data = source.GetModelExpression(expression);
+            return source.Date(ModelExpressionProvider(source).GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
         }
 
         public static IHtmlContent TimeFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
         {
-            var data = source.GetModelExplorer(expression);
-            return source.Time(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
+            var data = source.GetModelExpression(expression);
+            return source.Time(ModelExpressionProvider(source).GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Textbox));
         }
 
         public static IHtmlContent NumericFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, int decimalDigits = 0, double? minValue = null, double? maxValue = null, Dictionary<string, object> htmlAttributes = null)
         {
-            var data = source.GetModelExplorer(expression);
-            return source.NumericTextBox(ExpressionHelper.GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Numeric).Merge(htmlAttributes, true), decimalDigits, minValue, maxValue);
+            var data = source.GetModelExpression(expression);
+            return source.NumericTextBox(ModelExpressionProvider(source).GetExpressionText(expression), data.Model, source.QpHtmlProperties(expression, EditorType.Numeric).Merge(htmlAttributes, true), decimalDigits, minValue, maxValue);
         }
 
         public static IHtmlContent FileFor<TModel, TValue>(this IHtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes)
         {
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = ModelExpressionProvider(source).GetExpressionText(expression);
             var htmlProperties = source.QpHtmlProperties(expression, EditorType.File);
             htmlProperties.Merge(htmlAttributes, true);
             return source.File(name, null, htmlProperties, field, null, null, false, true, false, false);
@@ -1264,7 +1271,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var qpSelectListItems = list.ToList();
             var options = new ControlOptions { Enabled = !source.IsReadOnly() && !dropDownOptions.ReadOnly };
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = ModelExpressionProvider(source).GetExpressionText(expression);
             var showedList = string.IsNullOrEmpty(dropDownOptions?.DefaultOption)
                 ? qpSelectListItems.ToList()
                 : new[] { new QPSelectListItem { Value = string.Empty, Text = dropDownOptions.DefaultOption } }.Concat(qpSelectListItems).ToList();
@@ -1278,7 +1285,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var div = new TagBuilder("div");
             var qpSelectListItems = list.ToList();
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = ModelExpressionProvider(source).GetExpressionText(expression);
             var id = source.UniqueId(name);
             var localOptions = options ?? new ControlOptions();
 
@@ -1310,7 +1317,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static IHtmlContent QpCheckBoxListFor<TModel>(this IHtmlHelper<TModel> source, Expression<Func<TModel, IList<QPCheckedItem>>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
         {
             var qpSelectListItems = list.ToList();
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = ModelExpressionProvider(source).GetExpressionText(expression);
             var options = new ControlOptions { Enabled = !source.IsReadOnly() };
             if (htmlAttributes != null)
             {
@@ -1322,7 +1329,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 item.Selected = false;
             }
 
-            if (source.GetModelExplorer(expression).Model is IList<QPCheckedItem> propertyValue && propertyValue.Count > 0)
+            if (source.GetModelExpression(expression).Model is IList<QPCheckedItem> propertyValue && propertyValue.Count > 0)
             {
                 var checkedValues = propertyValue.Where(n => n != null).Select(i => i.Value).Intersect(qpSelectListItems.Select(b => b.Value)).ToList();
                 foreach (var item in qpSelectListItems)
@@ -1343,7 +1350,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             bool allowGlobalSelection = false,
             Dictionary<string, object> htmlAttributes = null)
         {
-            var name = ExpressionHelper.GetExpressionText(expression);
+            var name = ModelExpressionProvider(source).GetExpressionText(expression);
             var options = new Dictionary<string, object> { { "id", source.UniqueId(name) } };
             options.AddData("entity_type_code", entityTypeCode);
             options.AddData("parent_entity_id", parentEntityId);
@@ -1352,7 +1359,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.AddData("tree_name", name);
             options.AddData("show_checkbox", bool.TrueString.ToLowerInvariant());
 
-            if (source.GetModelExplorer(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
+            if (source.GetModelExpression(expression).Model is IList<QPTreeCheckedNode> propertyValue && propertyValue.Count > 0)
             {
                 var selectedIDsString = string.Join(";", propertyValue.Select(i => i.Value));
                 options.AddData("selected_ids", selectedIDsString);
@@ -1397,7 +1404,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             EntityDataListArgs entityDataListArgs,
             Dictionary<string, object> htmlAttributes = null
         ) => source.MultipleItemPickerFor(
-            ExpressionHelper.GetExpressionText(expression),
+            ModelExpressionProvider(source).GetExpressionText(expression),
             selectedItemList.Select(c => new QPSelectListItem { Selected = true, Text = c.Text, Value = c.Value }).ToArray(),
             entityDataListArgs,
             htmlAttributes

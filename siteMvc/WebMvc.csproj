@@ -3,8 +3,7 @@
   <PropertyGroup>
     <AssemblyName>Quantumart.QP8.WebMvc</AssemblyName>
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
-    <MvcBuildViews>true</MvcBuildViews>
-    <TargetFrameworks>netcoreapp2.2;net471</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**</DefaultItemExcludes>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
@@ -17,13 +16,10 @@
     <FileVersion>0.1.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="3.1.2" />
+
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
-
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" PrivateAssets="None" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" PrivateAssets="None" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" PrivateAssets="None" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" PrivateAssets="None" />
-
     <PackageReference Include="Moq" Version="4.10.1" PrivateAssets="None" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" PrivateAssets="None" />
     <PackageReference Include="NLog" Version="4.6.8" />
@@ -32,8 +28,7 @@
     <PackageReference Include="NLog.WindowsIdentity" Version="4.6.8" />
     <PackageReference Include="Npgsql" Version="4.0.7" PrivateAssets="None" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" PrivateAssets="None" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" PrivateAssets="None" />
-
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" PrivateAssets="None" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\bll\BLL.csproj" />
@@ -65,6 +60,7 @@
     <None Include="..\dal\pg_scripts\current.sql" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" LinkBase="pg_scripts\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Helpers" />
     <Folder Include="Infrastructure\Converters" />
     <Folder Include="Views\WinLogon" />
   </ItemGroup>

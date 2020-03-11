@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net471;netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <AssemblyName>Quantumart.QP8.Utils</AssemblyName>
     <RootNamespace>Quantumart.QP8.Utils</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <PackageReference Include="Irony" Version="1.1.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />  
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.1'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\constants\Constants.csproj" />
   </ItemGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NET_STANDARD</DefineConstants>
-  </PropertyGroup>
 </Project>

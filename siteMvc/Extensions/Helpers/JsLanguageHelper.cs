@@ -12,9 +12,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
     public class JsLanguageHelper
     {
         private const string LangScriptFolderPath = "/Scripts/Quantumart/languages/";
-        private IHostingEnvironment _environment;
+        private IWebHostEnvironment _environment;
 
-        public JsLanguageHelper(IHostingEnvironment environment)
+        public JsLanguageHelper(IWebHostEnvironment environment)
         {
             _environment = environment;
         }

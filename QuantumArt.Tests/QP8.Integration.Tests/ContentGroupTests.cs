@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -43,7 +45,11 @@ namespace QP8.Integration.Tests
                 false,
                 dbLogService.Object,
                 new ApplicationInfoRepository(),
-                new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
+                new XmlDbUpdateActionCorrecterService(
+                    new ArticleService(new ArticleRepository()),
+                    new ContentService(new ContentRepository()),
+                    new ModelExpressionProvider(new EmptyModelMetadataProvider())
+                ),
                 new XmlDbUpdateHttpContextProcessor(),
                 Global.Factory.Server.Host.Services,
                 false
@@ -72,7 +78,11 @@ namespace QP8.Integration.Tests
                 false,
                 dbLogService.Object,
                 new ApplicationInfoRepository(),
-                new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
+                new XmlDbUpdateActionCorrecterService(
+                    new ArticleService(new ArticleRepository()),
+                    new ContentService(new ContentRepository()),
+                    new ModelExpressionProvider(new EmptyModelMetadataProvider())
+                ),
                 new XmlDbUpdateHttpContextProcessor(),
                 Global.Factory.Server.Host.Services,
                 false

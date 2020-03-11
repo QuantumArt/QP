@@ -41,6 +41,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
 using QA.Configuration;
@@ -128,8 +129,7 @@ namespace Quantumart.QP8.WebMvc
                     options.ModelBinderProviders.Insert(0, new QpModelBinderProvider());
                     options.EnableEndpointRouting = false;
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(options =>
+                .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
@@ -140,10 +140,11 @@ namespace Quantumart.QP8.WebMvc
                 options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode"));
             });
 
-            // TODO: review authenticaton and CultireInfo in SignalR
+            // TODO: review Authentication and CultureInfo in SignalR
             services
-                .AddSignalR()
-                .AddJsonProtocol(options => {
+                .
+                AddSignalR()
+                .AddNewtonsoftJsonProtocol(options => {
                     options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.PayloadSerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
@@ -258,7 +259,7 @@ namespace Quantumart.QP8.WebMvc
                     .GetRequiredService(actionCodeTypes[command]));
         }
 
-        public void Configure(IApplicationBuilder app, IServiceProvider provider, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IServiceProvider provider, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -317,6 +318,7 @@ namespace Quantumart.QP8.WebMvc
 
             app.UseMvc(RegisterRoutes);
 
+
             LogProvider.LogFactory = provider.GetService<INLogFactory>();
         }
 
@@ -348,6 +350,7 @@ namespace Quantumart.QP8.WebMvc
                 "{controller}/{action}/{id?}",
                 new { controller = "Home", action = "Index" }
             );
+
         }
 
         private static void RegisterMappings()

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
@@ -23,8 +23,7 @@
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.6.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.6.0" />
     <PackageReference Include="FluentAssertions" Version="5.6.0" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
@@ -39,8 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Web" />
-	<Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+	  <Reference Include="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
 
   <ItemGroup>

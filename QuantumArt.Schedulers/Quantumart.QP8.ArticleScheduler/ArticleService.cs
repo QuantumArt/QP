@@ -9,11 +9,11 @@ namespace Quantumart.QP8.ArticleScheduler
     public class ArticleService : IHostedService
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IApplicationLifetime _appLifetime;
+        private readonly IHostApplicationLifetime _appLifetime;
         internal readonly QpSchedulerProcessor Processor;
         private readonly ArticleSchedulerProperties _options;
 
-        public ArticleService(IApplicationLifetime appLifetime, ArticleSchedulerProperties options)
+        public ArticleService(IHostApplicationLifetime appLifetime, ArticleSchedulerProperties options)
         {
             _appLifetime = appLifetime;
             _options = options;

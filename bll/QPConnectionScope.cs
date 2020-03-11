@@ -58,7 +58,7 @@ namespace Quantumart.QP8.BLL
             {
                 return false;
             }
-            catch (AutoMapperConfigurationException aex)
+            catch (AutoMapperConfigurationException)
             {
                 return true;
             }

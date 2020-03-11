@@ -1,4 +1,6 @@
 using System;
+using System.Net.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
@@ -16,9 +18,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
 {
     internal class DataProcessorFactory
     {
-        internal static IDataProcessor Create(BaseSettingsModel settings, IServiceProvider provider)
+        internal static IDataProcessor Create(BaseSettingsModel settings, IServiceProvider provider, HttpClient client)
         {
+
             Program.Logger.Debug("Init data processor..");
+            var modelExpressionProvider = provider.GetService(typeof(ModelExpressionProvider)) as ModelExpressionProvider;
 
             switch (settings)
             {
@@ -31,8 +35,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                         xmlSettings,
                         dbLogService,
                         new ApplicationInfoRepository(),
-                        new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
+                        new XmlDbUpdateActionCorrecterService(
+                            new ArticleService(new ArticleRepository()),
+                            new ContentService(new ContentRepository()),
+                            modelExpressionProvider
+                        ),
                         new XmlDbUpdateHttpContextProcessor(),
+                        client,
                         provider
                     );
                 case CsvSettingsModel csvSettings:

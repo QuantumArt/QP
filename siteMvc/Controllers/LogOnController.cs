@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
@@ -17,10 +19,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class LogOnController : QPController
     {
         private AuthenticationHelper _helper;
+        private ModelExpressionProvider _provider;
 
-        public LogOnController(AuthenticationHelper helper)
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider)
         {
             _helper = helper;
+            _provider = provider;
         }
 
         [DisableBrowserCache]
@@ -62,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
             catch (RulesException ex)
             {
-                ex.Extend(ModelState);
+                ex.Extend(ModelState, _provider);
             }
 
             if (ModelState.IsValid && data.User != null)

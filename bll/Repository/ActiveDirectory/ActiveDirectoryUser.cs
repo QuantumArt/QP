@@ -1,4 +1,3 @@
-#if !NET_STANDARD
 using System;
 using System.DirectoryServices;
 using System.Linq;
@@ -36,4 +35,3 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         }
     }
 }
-#endif

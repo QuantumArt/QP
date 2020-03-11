@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 
@@ -118,6 +118,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             ActionCode.EditArticle
         }.Contains(actionCode);
 
-        internal static string GetFieldName<T>(Expression<Func<ArticleViewModel, T>> fieldExpression) => ExpressionHelper.GetExpressionText(fieldExpression);
+        internal static string GetFieldName<T>(
+            ModelExpressionProvider provider, Expression<Func<ArticleViewModel, T>> fieldExpression
+        )
+        {
+            return provider.GetExpressionText(fieldExpression);
+        }
     }
 }

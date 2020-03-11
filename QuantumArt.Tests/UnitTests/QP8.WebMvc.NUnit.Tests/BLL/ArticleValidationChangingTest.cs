@@ -6,6 +6,7 @@ using System.Xaml;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using NUnit.Framework;
+using Portable.Xaml;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
