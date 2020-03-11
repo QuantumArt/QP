@@ -68,7 +68,7 @@ namespace Quantumart.QP8.BLL
             throw newEx;
         }
 
-        private string GetPropertyName(LambdaExpression expr)
+        public static string GetPropertyName(LambdaExpression expr)
         {
             var member = expr.Body as MemberExpression;
             if (member == null)
