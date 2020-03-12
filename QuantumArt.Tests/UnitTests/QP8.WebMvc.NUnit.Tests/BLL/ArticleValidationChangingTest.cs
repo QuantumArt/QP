@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Xaml;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using NUnit.Framework;
@@ -175,6 +174,8 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                 }
             });
 
+            emptyValidatorString = Content.CleanPropertyDefinitions(emptyValidatorString);
+
             var validator = (XamlValidator)XamlServices.Parse(emptyValidatorString);
             validator.ValidationRules.Add(new ForMember
             {
@@ -182,7 +183,7 @@ namespace QP8.WebMvc.NUnit.Tests.BLL
                 Condition = new ApplyValue { Value = fieldValue }
             });
 
-            return XamlServices.Save(validator);
+            return Content.CleanPropertyDefinitions(XamlServices.Save(validator));
         }
 
         private static Dictionary<string, string> CreateValidatorAndRun(string fieldName, object valueToSet, Dictionary<string, string> model)

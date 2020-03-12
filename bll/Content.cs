@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -1241,7 +1242,13 @@ namespace Quantumart.QP8.BLL
                 Description = string.IsNullOrWhiteSpace(f.FriendlyName) ? f.Name : f.FriendlyName
             }));
 
-            return ValidationServices.GenerateXamlValidatorText(propDefs);
+            return CleanPropertyDefinitions(ValidationServices.GenerateXamlValidatorText(propDefs));
+        }
+
+        public static string CleanPropertyDefinitions(string propDefs)
+        {
+            var re = new Regex("(<PropertyDefinition[^>]+)>.*?</PropertyDefinition>");
+            return re.Replace(propDefs, "$1 />");
         }
 
         public int[] GetFieldIds()
