@@ -410,7 +410,10 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     UpdateRelationData(item, preUpdateField);
 
-                    UpdateFieldOrder(newItem.Id, item.Order);
+                    if (oldDal.Order != item.Order)
+                    {
+                        RecreateNewViews(item.ContentId);
+                    }
 
                     UpdateConstraint(constraint, newItem);
 
@@ -688,11 +691,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             return result;
         }
 
-        private static void UpdateFieldOrder(int fieldId, int newOrder)
+        public static void RecreateNewViews(int contentId)
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.UpdateFieldOrder(scope.DbConnection, fieldId, newOrder);
+                Common.RecreateNewViews(scope.DbConnection, contentId);
             }
         }
 

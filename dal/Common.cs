@@ -1490,19 +1490,6 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
         }
 
         /// <summary>
-        /// Обновить Order поля
-        /// </summary>
-        public static void UpdateFieldOrder(DbConnection connection, int fieldId, int newOrder)
-        {
-            using (var cmd = DbCommandFactory.Create("update CONTENT_ATTRIBUTE set ATTRIBUTE_ORDER = @ord where ATTRIBUTE_ID = @fid", connection))
-            {
-                cmd.Parameters.AddWithValue("@fid", fieldId);
-                cmd.Parameters.AddWithValue("@ord", newOrder);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
         /// Возвращает данные о виртуальном поле
         /// </summary>
         public static DataTable GetVirtualFieldData(DbConnection connection, int contentId)

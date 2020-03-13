@@ -179,7 +179,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static void RecreateNewViews(DbConnection cnn, int id)
+        public static void RecreateNewViews(DbConnection cnn, int id)
         {
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
