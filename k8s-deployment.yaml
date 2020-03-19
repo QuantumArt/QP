@@ -51,7 +51,7 @@ spec:
         emptyDir: {}
       - name: library-volume
         persistentVolumeClaim:
-          claimName: library-pvc
+          claimName: qp-library
       - name: tz-config
         hostPath:
           path: /usr/share/zoneinfo/Europe/Moscow
