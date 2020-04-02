@@ -234,6 +234,7 @@
                     @Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
                 }
 
+                @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
                 @Html.NumericFieldFor(s => s.Data.MaxDataListItemCount)
 
                 using (Html.BeginPanel("O2MDefault"))
@@ -285,14 +286,16 @@
                     })
                 }
 
-                using (Html.BeginPanel(Model.O2MBackwardFieldNamePanelElementId, false, false, reverse: true))
+              using (Html.BeginPanel("O2MBackwardFieldName"))
+              {
+                using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MBackwardFieldNamePanelElementId } }))
                 {
-                    if (!Model.Data.IsBackwardFieldExists)
-                    {
-                        @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-                    }
-                    @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
+                  if (!Model.Data.IsBackwardFieldExists)
+                  {
+                    @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
+                  }
                 }
+              }
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))
