@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Parameters used by tests at runtime -->
+  <TestRunParameters>
+    <Parameter name="qp8_test_ci_dbserver" value="__pg.server__" />
+    <Parameter name="qp8_test_ci_dbname" value="qp8_test_ci___Agent.Name__" />
+    <Parameter name="qp8_test_ci_pg_login" value="__pg.login__" />
+    <Parameter name="qp8_test_ci_pg_password" value="__pg.password__" />
+  </TestRunParameters>
+</RunSettings>
