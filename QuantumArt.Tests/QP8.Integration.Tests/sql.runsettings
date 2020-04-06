@@ -2,7 +2,7 @@
 <RunSettings>
   <!-- Parameters used by tests at runtime -->
   <TestRunParameters>
-    <Parameter name="qp8_test_ci_dbserver" value="__sql.server__" />
-    <Parameter name="qp8_test_ci_dbname" value="qp8_test_ci___Agent.Name__" />
+    <Parameter name="qp8_test_ci_dbserver" value="#{sql.server}#" />
+    <Parameter name="qp8_test_ci_dbname" value="qp8_test_ci_#{Agent.Name}#" />
   </TestRunParameters>
 </RunSettings>

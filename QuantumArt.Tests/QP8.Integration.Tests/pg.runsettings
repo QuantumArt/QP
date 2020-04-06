@@ -2,9 +2,9 @@
 <RunSettings>
   <!-- Parameters used by tests at runtime -->
   <TestRunParameters>
-    <Parameter name="qp8_test_ci_dbserver" value="__pg.server__" />
-    <Parameter name="qp8_test_ci_dbname" value="qp8_test_ci___Agent.Name__" />
-    <Parameter name="qp8_test_ci_pg_login" value="__pg.login__" />
-    <Parameter name="qp8_test_ci_pg_password" value="__pg.password__" />
+    <Parameter name="qp8_test_ci_dbserver" value="#{pg.server}#" />
+    <Parameter name="qp8_test_ci_dbname" value="qp8_test_ci_#{Agent.Name}#" />
+    <Parameter name="qp8_test_ci_pg_login" value="#{pg.login}#" />
+    <Parameter name="qp8_test_ci_pg_password" value="#{pg.password}#" />
   </TestRunParameters>
 </RunSettings>
