@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
+  <NUnit>
+    <InternalTraceLevel>Verbose</InternalTraceLevel>
+  </NUnit>
   <!-- Parameters used by tests at runtime -->
   <TestRunParameters>
     <Parameter name="qp8_test_ci_dbserver" value="#{pg.server}#" />
