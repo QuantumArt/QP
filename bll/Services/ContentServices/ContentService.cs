@@ -432,5 +432,15 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
             var relBetweenLinks = ContentRepository.GetRelationsBetweenLinks(sourceSiteId, destinationSiteId);
             ContentRepository.FillLinksTables(relBetweenLinks);
         }
+
+        public static IEnumerable<ContentGroup> GetSiteContentGroups(int siteId)
+        {
+            return ContentRepository.GetSiteContentGroups(siteId);
+        }
+
+        public static IEnumerable<Workflow> GetSiteWorkflows(int siteId)
+        {
+            return WorkflowRepository.GetSiteWorkflows(siteId);
+        }
     }
 }

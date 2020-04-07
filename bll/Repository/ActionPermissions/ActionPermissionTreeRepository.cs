@@ -59,11 +59,11 @@ namespace Quantumart.QP8.BLL.Repository.ActionPermissions
                 IEnumerable<DataRow> rows = null;
                 if (userId.HasValue)
                 {
-                    rows = Common.GetActionPermissionsForUser(scope.DbConnection, userId.Value, entityTypeId, actionId);
+                    rows = Common.GetActionPermissionsForUser(QPContext.EFContext, scope.DbConnection, userId.Value, entityTypeId, actionId);
                 }
                 else if (groupId.HasValue)
                 {
-                    rows = Common.GetActionPermissionsForGroup(scope.DbConnection, groupId.Value, entityTypeId, actionId);
+                    rows = Common.GetActionPermissionsForGroup(QPContext.EFContext, scope.DbConnection, groupId.Value, entityTypeId, actionId);
                 }
                 else
                 {

@@ -1,11 +1,14 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class BackendActionTypeController : QPController
+    public class BackendActionTypeController : AuthQpController
     {
-        public JsonResult GetCodeByActionCode(string actionCode) => Json(BackendActionTypeService.GetCodeByActionCode(actionCode), JsonRequestBehavior.AllowGet);
+        public JsonResult GetCodeByActionCode(string actionCode)
+        {
+            return Json(BackendActionTypeService.GetCodeByActionCode(actionCode));
+        }
     }
 }

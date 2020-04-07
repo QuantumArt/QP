@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 
@@ -15,7 +16,7 @@ namespace Quantumart.QP8.BLL.Repository.XmlDbUpdate
         {
             var context = QPContext.EFContext;
             var entity = MapperFacade.XmlDbUpdateActionsLogMapper.GetDalObject(entry);
-            context.XML_DB_UPDATE_ACTIONS.AddObject(entity);
+            context.Entry(entity).State = EntityState.Added;
             context.SaveChanges();
 
             return entity.Id;

@@ -74,8 +74,8 @@
 		}
 	}
 
-	@Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 
 }
 
@@ -97,4 +97,3 @@
 	});
 </script>
 @Html.RunInitScript(Model)
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -1,5 +1,7 @@
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -8,7 +10,7 @@ using Quantumart.QP8.WebMvc.ViewModels.ActionPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ActionPermissionTreeController : QPController
+    public class ActionPermissionTreeController : AuthQpController
     {
         private readonly IActionPermissionTreeService _service;
 
@@ -20,22 +22,28 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult TreeView(string tabId)
+        public async Task<ActionResult> TreeView(string tabId)
         {
             var model = ActionPermissionsTreeViewModel.Create(tabId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult GetTreeNodes(int? entityTypeId, int? userId, int? groupId) => Json(_service.GetTreeNodes(entityTypeId, userId, groupId));
+        public ActionResult GetTreeNodes([FromBody] PermissionTreeQuery model)
+        {
+            return Json(_service.GetTreeNodes(model));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ActionPermissionTree)]
         [BackendActionContext(ActionCode.ActionPermissionTree)]
-        public ActionResult GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId) => Json(_service.GetTreeNode(entityTypeId, actionId, userId, groupId));
+        public ActionResult GetTreeNode([FromBody] PermissionTreeQuery model)
+        {
+            return Json(_service.GetTreeNode(model));
+        }
     }
 }

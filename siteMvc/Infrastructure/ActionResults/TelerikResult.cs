@@ -1,9 +1,8 @@
 using System.Collections;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionResults
 {
@@ -14,7 +13,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionResults
         {
         }
 
-        public TelerikResult(GridModel model)
+        public TelerikResult(TelerikGridModel model)
         {
             Content = model.ToJsonLog(new DefaultContractResolver());
         }

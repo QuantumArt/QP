@@ -715,7 +715,9 @@ export class BackendEditingArea extends Observable {
   }
 }
 
+/** @type {BackendEditingArea} */
 BackendEditingArea._instance = null;
+
 BackendEditingArea.getInstance = function (editingAreaElementId, options) {
   if (!BackendEditingArea._instance) {
     const instance = new BackendEditingArea(editingAreaElementId, options);

@@ -1,4 +1,6 @@
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
@@ -16,20 +18,20 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             ChangeService = changeService;
         }
 
-        public virtual ActionResult Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
+        public virtual async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
         {
             var permission = ChangeService.ReadOrDefault(parentId, userId, groupId);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service, ChangeService.ViewModelSettings, isPostBack);
-            return JsonHtml("ActionPermissionChange", model);
+            return await JsonHtml("ActionPermissionChange", model);
         }
 
-        public virtual ActionResult Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
+        public virtual async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, IFormCollection collection)
         {
             var permission = ChangeService.ReadOrDefaultForChange(parentId, userId, groupId);
             var model = PermissionViewModel.Create(permission, tabId, parentId, Service, ChangeService.ViewModelSettings);
 
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = ChangeService.Change(model.Data);
@@ -45,7 +47,8 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
             }
 
             model.IsPostBack = true;
-            return JsonHtml("ActionPermissionChange", model);
+
+            return await JsonHtml("ActionPermissionChange", model);
         }
 
         public virtual ActionResult RemoveForNode(int parentId, int? userId, int? groupId) => JsonMessageResult(ChangeService.Remove(parentId, userId, groupId));

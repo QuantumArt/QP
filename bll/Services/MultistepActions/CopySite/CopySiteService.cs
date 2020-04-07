@@ -1,6 +1,7 @@
 using System;
 using System.IO;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants.Mvc;
@@ -10,19 +11,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteService : CopySiteAbstract
     {
-        private CopySiteSettingsCommand _copySiteSettingsCommand;
-        private CopySiteContentsCommand _copySiteContentsCommand;
-        private CopySiteVirtualContentsCommand _copySiteVirtualContentsCommand;
-        private CopySiteContentLinksCommand _copySiteContentLinksCommand;
-        private CopySiteArticlesCommand _copySiteArticlesCommand;
-        private CopySiteItemLinksCommand _copySiteItemLinksCommand;
-        private CopySiteUpdateArticleIdsCommand _copySiteUpdateArticleIdsCommand;
-        private CopySiteTemlatesCommand _copySiteTemplatesCommand;
-        private CopySiteFilesCommand _copySiteFilesCommand;
-
         public override void SetupWithParams(int parentId, int oldSiteId, IMultistepActionParams settingsParams)
         {
-            HttpContext.Current.Session[CopySiteContextSessionKey] = settingsParams;
+            HttpContext.Session.SetValue(CopySiteContextSessionKey, settingsParams);
         }
 
         public override MultistepActionSettings Setup(int parentId, int siteId, bool? boundToExternal)
@@ -39,7 +30,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             var siteArticlesCount = ContentRepository.GetArticlesCountOnSite(siteId);
             var siteTemplatesElementsCount = ObjectRepository.GetTemplatesElementsCountOnSite(siteId);
 
-            var prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(CopySiteContextSessionKey);
             if (prms.DoNotCopyArticles != null)
             {
                 siteArticlesCount = ContentRepository.GetArticlesCountToCopy(prms.DoNotCopyArticles.Value, site.Id);
@@ -50,50 +41,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 siteTemplatesElementsCount = 0;
             }
 
-            _copySiteSettingsCommand = new CopySiteSettingsCommand(siteId, site.Name);
-            _copySiteContentsCommand = new CopySiteContentsCommand(siteId, site.Name, contentCount);
-            _copySiteVirtualContentsCommand = new CopySiteVirtualContentsCommand(siteId, site.Name, virtualContentCount);
-            _copySiteContentLinksCommand = new CopySiteContentLinksCommand(siteId, site.Name, siteContentLinksCount);
-            _copySiteArticlesCommand = new CopySiteArticlesCommand(siteId, site.Name, siteArticlesCount);
-            _copySiteItemLinksCommand = new CopySiteItemLinksCommand(siteId, siteArticlesCount);
-            _copySiteUpdateArticleIdsCommand = new CopySiteUpdateArticleIdsCommand(siteId, siteArticlesCount);
-            _copySiteTemplatesCommand = new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount);
-            _copySiteFilesCommand = new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles);
+            Commands.Add(new CopySiteSettingsCommand(siteId, site.Name));
+            Commands.Add(new CopySiteContentsCommand(siteId, site.Name, contentCount));
+            Commands.Add(new CopySiteVirtualContentsCommand(siteId, site.Name, virtualContentCount));
+            Commands.Add(new CopySiteContentLinksCommand(siteId, site.Name, siteContentLinksCount));
+            Commands.Add(new CopySiteArticlesCommand(siteId, site.Name, siteArticlesCount));
+            Commands.Add(new CopySiteItemLinksCommand(siteId, siteArticlesCount));
+            Commands.Add(new CopySiteUpdateArticleIdsCommand(siteId, siteArticlesCount));
+            Commands.Add(new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount));
+            Commands.Add(new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles));
 
             return base.Setup(parentId, siteId, boundToExternal);
         }
-
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _copySiteSettingsCommand.GetStageSettings(),
-                _copySiteContentsCommand.GetStageSettings(),
-                _copySiteVirtualContentsCommand.GetStageSettings(),
-                _copySiteContentLinksCommand.GetStageSettings(),
-                _copySiteArticlesCommand.GetStageSettings(),
-                _copySiteItemLinksCommand.GetStageSettings(),
-                _copySiteUpdateArticleIdsCommand.GetStageSettings(),
-                _copySiteTemplatesCommand.GetStageSettings(),
-                _copySiteFilesCommand.GetStageSettings()
-            }
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => new MultistepActionServiceContext
-        {
-            CommandStates = new[]
-            {
-                _copySiteSettingsCommand.GetState(),
-                _copySiteContentsCommand.GetState(),
-                _copySiteVirtualContentsCommand.GetState(),
-                _copySiteContentLinksCommand.GetState(),
-                _copySiteArticlesCommand.GetState(),
-                _copySiteItemLinksCommand.GetState(),
-                _copySiteUpdateArticleIdsCommand.GetState(),
-                _copySiteTemplatesCommand.GetState(),
-                _copySiteFilesCommand.GetState()
-            }
-        };
 
         protected string CopySiteContextSessionKey => HttpContextSession.CopySiteServiceSettings;
 
@@ -107,7 +66,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         private void RemoveTempFiles()
         {
-            var prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(CopySiteContextSessionKey);
             if (prms != null)
             {
                 File.Delete(prms.PathForFileWithLinks);

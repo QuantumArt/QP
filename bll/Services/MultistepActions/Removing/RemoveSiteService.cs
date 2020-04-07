@@ -8,10 +8,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public sealed class RemoveSiteService : RemovingServiceAbstract
     {
-        private RemoveSiteArticlesCommand removeSiteArticlesCommand;
-        private RemoveSiteContentsCommand removeSiteContentsCommand;
-        private RemoveSiteCommand removeSiteCommand;
-
         public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal)
         {
             var site = SiteRepository.GetById(siteId);
@@ -43,31 +39,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
             var articleCount = SiteRepository.GetSiteArticleCount(siteId);
             var contentCount = SiteRepository.GetSiteContentCount(siteId);
 
-            removeSiteArticlesCommand = new RemoveSiteArticlesCommand(siteId, site.Name, articleCount);
-            removeSiteContentsCommand = new RemoveSiteContentsCommand(siteId, site.Name, contentCount);
-            removeSiteCommand = new RemoveSiteCommand(siteId, site.Name);
+            Commands.Add(new RemoveSiteArticlesCommand(siteId, site.Name, articleCount));
+            Commands.Add(new RemoveSiteContentsCommand(siteId, site.Name, contentCount));
+            Commands.Add(new RemoveSiteCommand(siteId, site.Name));
 
             return base.Setup(dbId, siteId, boundToExternal);
         }
-
-        protected override MultistepActionSettings CreateActionSettings(int dbId, int siteId) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                removeSiteArticlesCommand.GetStageSettings(),
-                removeSiteContentsCommand.GetStageSettings(),
-                removeSiteCommand.GetStageSettings()
-            }
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int dbId, int siteId, bool? boundToExternal) => new MultistepActionServiceContext
-        {
-            CommandStates = new[]
-            {
-                removeSiteArticlesCommand.GetState(),
-                removeSiteContentsCommand.GetState(),
-                removeSiteCommand.GetState()
-            }
-        };
     }
 }

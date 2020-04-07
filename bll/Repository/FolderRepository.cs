@@ -173,9 +173,9 @@ namespace Quantumart.QP8.BLL.Repository
         public Folder Update(Folder folder)
         {
             folder.ComputePath();
-            var uodatedFolder = UpdateInDb(folder);
+            var updated = UpdateInDb(folder);
             folder.Move();
-            return uodatedFolder;
+            return updated;
         }
 
         public void Delete(Folder folder)

@@ -12,6 +12,16 @@ using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
+    public class GridRow
+    {
+        public string Field { get; set; }
+        public string Title { get; set; }
+        public string Type { get; set; }
+        public bool IsClassifier { get; set; }
+        public bool HasTitleLink { get; set; }
+        public bool Sortable { get; set; }
+    }
+
     public class ArticleListViewModel : ListViewModel
     {
         public DataTable Data { get; set; }
@@ -101,6 +111,25 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             }
         }
 
+        public List<GridRow> GetDynamicColumns()
+        {
+            var rowList = new List<GridRow>();
+            foreach (var field in DisplayFields)
+            {
+                var row = new GridRow
+                {
+                    Field = field.FormName,
+                    Title = field.DisplayName,
+                    Type = field.Type.Name,
+                    IsClassifier = field.IsClassifier,
+                    HasTitleLink = !IsWindow,
+                    Sortable = field.ExactType != FieldExactTypes.M2MRelation && field.ExactType != FieldExactTypes.M2ORelation,
+                };
+                rowList.Add(row);
+            }
+            return rowList;
+        }
+
         #region overrides
 
         public override bool IsReadOnly => base.IsReadOnly || ShowArchive;
@@ -181,19 +210,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return 0;
         }
 
-        public Dictionary<string, object> TreeHthmlAttributes
-        {
-            get
-            {
-                var result = new Dictionary<string, object>();
-                if (AllowMultipleEntitySelection)
-                {
-                    result.AddCssClass(HtmlHelpersExtensions.CheckBoxTreeClassName);
-                }
-
-                return result;
-            }
-        }
+        public string TreeСssClass => AllowMultipleEntitySelection ? HtmlHelpersExtensions.CheckBoxTreeClassName : "";
 
         public override bool AllowFilterSelectedEntities => true;
 

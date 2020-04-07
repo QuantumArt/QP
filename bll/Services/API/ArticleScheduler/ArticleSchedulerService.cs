@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Transactions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 {
@@ -15,15 +18,18 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
         IArticleRecurringSchedulerService
     {
         private readonly string _connectionString;
+        private readonly DatabaseType _dbType;
 
-        public ArticleSchedulerService(string connectionString)
+        public ArticleSchedulerService(string connectionString, DatabaseType dbType)
         {
             _connectionString = connectionString;
+            _dbType = dbType;
         }
 
         public IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
         {
-            using (new QPConnectionScope(_connectionString))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (new QPConnectionScope())
             {
                 return ScheduleRepository.GetScheduleTaskList();
             }
@@ -31,7 +37,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public DateTime GetCurrentDBDateTime()
         {
-            using (var scope = new QPConnectionScope(_connectionString))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (var scope = new QPConnectionScope())
             {
                 return Common.GetSqlDate(scope.DbConnection);
             }
@@ -39,7 +46,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article ShowArticle(int articleId)
         {
-            using (new QPConnectionScope(_connectionString))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (var scope = new QPConnectionScope())
             {
                 var article = ArticleRepository.GetById(articleId);
                 if (article != null && !article.Visible)
@@ -47,7 +55,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                     article.LoadFieldValues();
                     var repo = new NotificationPushRepository();
                     repo.PrepareNotifications(article, new[] { NotificationCode.Update });
-                    QPContext.EFContext.SetContentItemVisible(articleId, true, article.LastModifiedBy);
+                    Common.SetContentItemVisible(scope.DbConnection, articleId, true, article.LastModifiedBy);
                     repo.SendNotifications();
                 }
 
@@ -57,7 +65,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article HideArticle(int articleId)
         {
-            using (new QPConnectionScope(_connectionString))
+            QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+            using (var scope = new QPConnectionScope())
             {
                 var article = ArticleRepository.GetById(articleId);
                 if (article != null && article.Visible)
@@ -65,7 +74,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                     article.LoadFieldValues();
                     var repo = new NotificationPushRepository();
                     repo.PrepareNotifications(article, new[] { NotificationCode.Update });
-                    QPContext.EFContext.SetContentItemVisible(articleId, false, article.LastModifiedBy);
+                    Common.SetContentItemVisible(scope.DbConnection, articleId, false, article.LastModifiedBy);
                     repo.SendNotifications();
                 }
 
@@ -78,7 +87,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (new QPConnectionScope(_connectionString))
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+                using (new QPConnectionScope())
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
                     if (schedule != null)
@@ -100,7 +110,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (new QPConnectionScope(_connectionString))
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+                using (new QPConnectionScope())
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
                     if (schedule != null)
@@ -122,7 +133,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                using (new QPConnectionScope(_connectionString))
+                QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(_connectionString, _dbType);
+                using (var scope = new QPConnectionScope())
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
                     if (schedule != null)
@@ -137,7 +149,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
                             var repo = new NotificationPushRepository();
                             repo.PrepareNotifications(article, new[] { NotificationCode.DelayedPublication });
-                            QPContext.EFContext.MergeArticle(schedule.ArticleId, article.LastModifiedBy);
+                            Common.MergeArticle(scope.DbConnection, schedule.ArticleId, article.LastModifiedBy);
                             repo.SendNotifications();
                         }
                         else

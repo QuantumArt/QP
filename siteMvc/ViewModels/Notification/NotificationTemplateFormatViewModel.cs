@@ -5,7 +5,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
 {
     public class NotificationTemplateFormatViewModel : EntityViewModel
     {
-        public new NotificationObjectFormat Data
+        public NotificationObjectFormat Data
         {
             get => (NotificationObjectFormat)EntityData;
             set => EntityData = value;

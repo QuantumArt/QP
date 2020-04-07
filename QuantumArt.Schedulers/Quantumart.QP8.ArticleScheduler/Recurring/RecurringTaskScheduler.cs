@@ -1,11 +1,12 @@
 using System;
 using QP8.Infrastructure;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
+using NLog;
+using NLog.Fluent;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
@@ -13,6 +14,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
     {
         private readonly QaConfigCustomer _customer;
         private readonly IArticleRecurringSchedulerService _recurringService;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public RecurringTaskScheduler(QaConfigCustomer customer, IArticleRecurringSchedulerService recurringService)
         {
@@ -32,7 +34,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
         {
             var recurringTask = (RecurringTask)task;
             var nearestStartDate = RecurringStartCalculatorFactory.Create(recurringTask).GetNearestStartDateBeforeSpecifiedDate(dateTimeToCheck);
@@ -46,7 +48,10 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return nearestComparisonToShowArticle == 0 || nearestComparisonToShowArticle > 0 && comparison >= 0;
         }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck, bool forMonitoring = false)
+        {
+            return ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck, forMonitoring);
+        }
 
         private void ProcessTask(RecurringTask task, DateTime currentTime, int comparison)
         {
@@ -56,7 +61,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleWithinShowRange = _recurringService.ShowArticle(task.ArticleId);
                 if (articleWithinShowRange != null && !articleWithinShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleWithinShowRange.Id}: {articleWithinShowRange.Name}] has been shown on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                            articleWithinShowRange.Id, articleWithinShowRange.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison == 0)
@@ -64,7 +73,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleOutOfShowRange = _recurringService.HideArticle(task.ArticleId);
                 if (articleOutOfShowRange != null && articleOutOfShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleOutOfShowRange.Id}: {articleOutOfShowRange.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                            articleOutOfShowRange.Id, articleOutOfShowRange.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison > 0)
@@ -72,7 +85,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleOutOfShowAndTaskRanges = _recurringService.HideAndCloseSchedule(task.Id);
                 if (articleOutOfShowAndTaskRanges != null && articleOutOfShowAndTaskRanges.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleOutOfShowAndTaskRanges.Id}: {articleOutOfShowAndTaskRanges.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Info()
+                        .Message(
+                            "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
+                            articleOutOfShowAndTaskRanges.Id, articleOutOfShowAndTaskRanges.Name, _customer.CustomerName)
+                        .Write();
                 }
             }
         }
@@ -95,7 +112,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return taskRange.CompareRangeTo(nearestEndDate) > 0 ? taskRange.Item2 : nearestEndDate;
         }
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
+        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate, task.EndDate);
 
         private static Tuple<DateTime, DateTime> GetTaskRange(DateTime startDateTime, DateTime endDateTime) => Tuple.Create(startDateTime, endDateTime);
     }

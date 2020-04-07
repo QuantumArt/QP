@@ -3,13 +3,13 @@
 
 @using (Html.BeginTabForm(Model))
 {
-	using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.Name)
-		if (!Model.IsNew)
-		{
-			@Html.DisplayFieldFor(s => s.Data.Id)
-		}
-	}
+  using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+    if (!Model.IsNew)
+    {
+      @Html.DisplayFieldFor(s => s.Data.Id)
+    }
+  }
 }
 @Html.PrepareAndRunInitScript(Model)

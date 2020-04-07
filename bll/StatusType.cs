@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -11,17 +11,17 @@ namespace Quantumart.QP8.BLL
     {
         private const int MaxWeight = 100;
 
-        [LocalizedDisplayName("Weight", NameResourceType = typeof(StatusTypeStrings))]
+        [Display(Name = "Weight", ResourceType = typeof(StatusTypeStrings))]
         public int Weight { get; set; }
 
-        [LocalizedDisplayName("Color", NameResourceType = typeof(StatusTypeStrings))]
-        [MaxLengthValidator(6, MessageTemplateResourceName = "ColorLengthExceeded", MessageTemplateResourceType = typeof(StatusTypeStrings))]
-        [FormatValidator(RegularExpressions.RgbColor, MessageTemplateResourceName = "ColorInvalidFormat", MessageTemplateResourceType = typeof(StatusTypeStrings))]
+        [Display(Name = "Color", ResourceType = typeof(StatusTypeStrings))]
+        [StringLength(6, ErrorMessageResourceName = "ColorLengthExceeded", ErrorMessageResourceType = typeof(StatusTypeStrings))]
+        [RegularExpression(RegularExpressions.RgbColor, ErrorMessageResourceName = "ColorInvalidFormat", ErrorMessageResourceType = typeof(StatusTypeStrings))]
         public string Color { get; set; }
 
-        [MaxLengthValidator(6, MessageTemplateResourceName = "AltColorLengthExceeded", MessageTemplateResourceType = typeof(StatusTypeStrings))]
-        [FormatValidator(RegularExpressions.RgbColor, MessageTemplateResourceName = "AltColorInvalidFormat", MessageTemplateResourceType = typeof(StatusTypeStrings))]
-        [LocalizedDisplayName("AltColor", NameResourceType = typeof(StatusTypeStrings))]
+        [StringLength(6, ErrorMessageResourceName = "AltColorLengthExceeded", ErrorMessageResourceType = typeof(StatusTypeStrings))]
+        [RegularExpression(RegularExpressions.RgbColor, ErrorMessageResourceName = "AltColorInvalidFormat", ErrorMessageResourceType = typeof(StatusTypeStrings))]
+        [Display(Name = "AltColor", ResourceType = typeof(StatusTypeStrings))]
         public string AltColor { get; set; }
 
         public int SiteId { get; set; }

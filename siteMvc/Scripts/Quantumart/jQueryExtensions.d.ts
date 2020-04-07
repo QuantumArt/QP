@@ -1,3 +1,5 @@
+/// <reference path="../kendo/kendo.all.d.ts" />
+
 interface JQueryStatic {
   /** Подготавливает значение к преобразованию в число */
   _prepareNumber(value: any): string;
@@ -6,7 +8,7 @@ interface JQueryStatic {
   _getInt(value: any): number;
 
   /** Получает из значения число двойной точности */
-  _getFloat(value): number;
+  _getFloat(value: any): number;
 
   /** Определяет ширину полосы прокрутки */
   getScrollBarWidth(): number;
@@ -52,16 +54,43 @@ interface JQuery {
   paddingBottom(): number;
 
   /** Получает значение левого внутреннего отступа */
-  paddingLeft();
+  paddingLeft(): number;
 
   /**
    * Returns the max zOrder in the document (no parameter)
    * Sets max zOrder by passing a non-zero number
    */
   maxZIndex(opt?: { inc?: number, group?: string }): JQuery;
+
+  /**
+   * Preconfigured @see .kendoGrid()
+   * https://demos.telerik.com/kendo-ui/grid/index
+   * https://docs.telerik.com/kendo-ui/framework/templates/overview
+   */
+  qpGrid(options: kendo.ui.GridOptions): JQuery;
 }
 
 interface JQuerySupport {
-  /** Добавляем в jQuery возможность проверки поддержки CSS-свойства border-radius (взято из библиотеки Modernizr 2.0) */
+  /**
+   * Добавляем в jQuery возможность проверки поддержки
+   * CSS-свойства border-radius (взято из библиотеки Modernizr 2.0)
+   */
   borderRadius: boolean;
+}
+
+declare namespace kendo {
+  namespace data {
+    interface DataSource {
+      [x: string]: any;
+    }
+    interface ObservableObject {
+      [x: string]: any;
+    }
+  }
+
+  namespace ui {
+    interface Grid {
+      [x: string]: any;
+    }
+  }
 }

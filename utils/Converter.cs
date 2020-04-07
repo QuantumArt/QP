@@ -842,7 +842,7 @@ namespace Quantumart.QP8.Utils
                         var columnName = key.ColumnName;
                         if (!string.IsNullOrEmpty(row[columnName].ToString()))
                         {
-                            if (property.Name == columnName)
+                            if (string.Equals(property.Name, columnName, StringComparison.InvariantCultureIgnoreCase))
                             {
                                 var t = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                                 var safeValue = row[columnName] == null ? null : Convert.ChangeType(row[columnName], t);

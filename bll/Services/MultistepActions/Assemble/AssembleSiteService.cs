@@ -19,87 +19,31 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
             return null;
         }
 
-        private CreateFoldersCommand createFoldersCommand;
-        private AssembleNotificationsCommand notificationCommand;
-        private AssemblePagesCommand pagesCommand;
-        private AssembleTemplatesCommand templatesCommand;
-
         public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal)
         {
             var site = GetSite(siteId);
 
             if (site.IsDotNet)
             {
-                createFoldersCommand = new CreateFoldersCommand(siteId, site.Name);
-                notificationCommand = new AssembleNotificationsCommand(siteId, site.Name, true);
+                Commands.Add(new CreateFoldersCommand(siteId, site.Name));
+                Commands.Add(new AssembleNotificationsCommand(siteId, site.Name, true));
 
-                pagesCommand = new AssemblePagesCommand(siteId, site.Name, true, true);
+                var pagesCommand = new AssemblePagesCommand(siteId, site.Name, true, true);
                 pagesCommand.Setup();
+                Commands.Add(pagesCommand);
 
-                templatesCommand = new AssembleTemplatesCommand(siteId, site.Name);
+                var templatesCommand = new AssembleTemplatesCommand(siteId, site.Name);
                 templatesCommand.Setup();
+                Commands.Add(templatesCommand);
             }
             else
             {
-                pagesCommand = new AssemblePagesCommand(siteId, site.Name, true, false);
+                var pagesCommand = new AssemblePagesCommand(siteId, site.Name, true, false);
                 pagesCommand.Setup();
+                Commands.Add(pagesCommand);
             }
 
             return base.Setup(dbId, siteId, boundToExternal);
-        }
-
-        protected override MultistepActionSettings CreateActionSettings(int dbId, int siteId)
-        {
-            var site = GetSite(siteId);
-
-            if (site.IsDotNet)
-            {
-                return new MultistepActionSettings
-                {
-                    Stages = new[]
-                    {
-                        createFoldersCommand.GetStageSettings(),
-                        templatesCommand.GetStageSettings(),
-                        pagesCommand.GetStageSettings(),
-                        notificationCommand.GetStageSettings()
-                    }
-                };
-            }
-
-            return new MultistepActionSettings
-            {
-                Stages = new[]
-                {
-                    pagesCommand.GetStageSettings()
-                }
-            };
-        }
-
-        protected override MultistepActionServiceContext CreateContext(int dbId, int siteId, bool? boundToExternal)
-        {
-            var site = GetSite(siteId);
-
-            if (site.IsDotNet)
-            {
-                return new MultistepActionServiceContext
-                {
-                    CommandStates = new[]
-                    {
-                        createFoldersCommand.GetState(),
-                        templatesCommand.GetState(),
-                        pagesCommand.GetState(),
-                        notificationCommand.GetState()
-                    }
-                };
-            }
-
-            return new MultistepActionServiceContext
-            {
-                CommandStates = new[]
-                {
-                    pagesCommand.GetState()
-                }
-            };
         }
 
         protected override string ContextSessionKey => "BuildSiteService.ProcessingContext";

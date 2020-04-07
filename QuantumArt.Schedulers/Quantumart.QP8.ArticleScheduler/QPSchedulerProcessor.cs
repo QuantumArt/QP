@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using QP8.Infrastructure.Logging;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration;
@@ -13,22 +14,21 @@ namespace Quantumart.QP8.ArticleScheduler
     public class QpSchedulerProcessor
     {
         private const string AppName = "QP8ArticleSchedulerService";
+        private static ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly TimeSpan _recurrentTimeout;
-        private readonly TimeSpan _tasksQueueCheckShiftTime;
+        private readonly ArticleSchedulerProperties _props;
         private CancellationTokenSource _cancellationTokenSource;
 
         private Task _task;
 
-        public QpSchedulerProcessor(TimeSpan recurrentTimeout, TimeSpan tasksQueueCheckShiftTime)
+        public QpSchedulerProcessor(ArticleSchedulerProperties props)
         {
-            _recurrentTimeout = recurrentTimeout;
-            _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
+            _props = props;
         }
 
         public void Run()
         {
-            Logger.Log.Info("QP8.ArticleScheduler starting...");
+            Logger.Info("QP8.ArticleScheduler starting...");
             var unityConfig = new UnityContainerCustomizer();
             var prtgLogger = new PrtgErrorsHandler(unityConfig.UnityContainer.Resolve<IPrtgNLogFactory>());
 
@@ -39,23 +39,27 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     try
                     {
+                        QPConfiguration.ConfigServiceUrl = _props.ConfigServiceUrl;
+                        QPConfiguration.ConfigServiceToken = _props.ConfigServiceToken;
+                        QPConfiguration.XmlConfigPath = _props.XmlConfigPath;
+
                         var customers = QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToList();
-                        new QpScheduler(unityConfig.UnityContainer, prtgLogger, customers, _tasksQueueCheckShiftTime).Run();
+                        new QpScheduler(unityConfig.UnityContainer, prtgLogger, customers, _props.PrtgLoggerTasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log.Error("There was an error while starting the service job", ex);
+                        Logger.Error().Exception(ex).Message("There was an error while starting the service job").Write();
                     }
-                } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
+                } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_props.RecurrentTimeout));
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
-            Logger.Log.Info("QP8.ArticleScheduler started");
+            Logger.Info("QP8.ArticleScheduler started");
         }
 
         public void Stop()
         {
             var failed = false;
-            Logger.Log.Info("QP8.ArticleScheduler stopping...");
+            Logger.Info("QP8.ArticleScheduler stopping...");
             try
             {
                 _cancellationTokenSource.Cancel();
@@ -63,7 +67,7 @@ namespace Quantumart.QP8.ArticleScheduler
             }
             catch (Exception ex)
             {
-                Logger.Log.Error("There was an error while stopping the service", ex);
+                Logger.Error().Exception(ex).Message("There was an error while stopping the service").Write();
                 failed = true;
             }
             finally
@@ -74,7 +78,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
             if (!failed)
             {
-                Logger.Log.Info("QP8.ArticleScheduler stopped");
+                Logger.Info("QP8.ArticleScheduler stopped");
             }
 
         }

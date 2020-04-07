@@ -1,13 +1,14 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class RecreateDynamicImagesController : QPController
+    public class RecreateDynamicImagesController : AuthQpController
     {
         private readonly IRecreateDynamicImagesService _service;
 
@@ -29,17 +30,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int step)
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
         {
-            var stepResult = _service.Step(step);
-            return Json(stepResult);
+            return Json(_service.Step(model.Step));
         }
 
         [HttpPost]
         public ActionResult TearDown(bool isError)
         {
             _service.TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

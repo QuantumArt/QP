@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 
@@ -24,10 +24,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewVirtualContents : Constants.ActionCode.VirtualContentProperties;
 
-        [LocalizedDisplayName("JoinFields", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "JoinFields", ResourceType = typeof(ContentStrings))]
         public IList<QPTreeCheckedNode> JoinFields { get; set; }
 
-        [LocalizedDisplayName("ToRebuild", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ToRebuild", ResourceType = typeof(ContentStrings))]
         public bool ToBuild { get; set; }
 
         public string JoinRootElementId => UniqueId("JoinRootSelect");
@@ -41,7 +41,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
         /// <summary>
         /// Используется ли альтернативный запрос
         /// </summary>
-        [LocalizedDisplayName("IsAltUserQueryUsed", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "IsAltUserQueryUsed", ResourceType = typeof(ContentStrings))]
         public bool IsAltUserQueryUsed { get; set; }
 
         private void Init()
@@ -61,7 +61,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
             ToBuild = IsNew;
         }
 
-        internal void Update()
+        public override void DoCustomBinding()
         {
             // Если не перестраиваем контент - то удалить список Join полей
             if (!ToBuild)
@@ -73,7 +73,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VirtualContent
             {
                 if (Data.VirtualType == VirtualType.Join)
                 {
-                    Data.VirtualJoinFieldNodes = BLL.Content.VirtualFieldNode.Parse(BLL.Content.VirtualFieldNode.NormalizeFieldTreeIdSeq(JoinFields.Select(f => f.Value)));
+                    Data.VirtualJoinFieldNodes = BLL.Content.VirtualFieldNode.Parse(
+                        BLL.Content.VirtualFieldNode.NormalizeFieldTreeIdSeq(
+                            JoinFields.Where(n => n != null).Select(f => f.Value)
+                        )
+                    );
                 }
                 else
                 {

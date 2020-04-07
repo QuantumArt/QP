@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
@@ -101,7 +103,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences)
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
-            var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
+            var availableForList = QPContext.IsAdmin || SecurityRepository.IsEntityAccessible( EntityTypeCode.Content, contentId, ActionTypeCode.List);
             if (!availableForList || ftsOptions.HasError.HasValue && ftsOptions.HasError.Value)
             {
                 filter = SqlFilterComposer.Compose(filter, "1 = 0");
@@ -114,10 +116,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
             else
             {
-                extensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
+                extensionContentIds = searchQueryParams.Select(p => p.ContentId).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
                 contentReferences = searchQueryParams
-                    .Where(p => !string.IsNullOrEmpty(p.ContentID) && !string.IsNullOrEmpty(p.ReferenceFieldID))
-                    .Select(p => new ContentReference(int.Parse(p.ContentID), int.Parse(p.ReferenceFieldID)))
+                    .Where(p => !string.IsNullOrEmpty(p.ContentId) && !string.IsNullOrEmpty(p.ReferenceFieldId))
+                    .Select(p => new ContentReference(int.Parse(p.ContentId), int.Parse(p.ReferenceFieldId)))
                     .ToArray();
             }
 
@@ -188,7 +190,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out var useMainTable);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
 
-                var sqlParams = new List<SqlParameter>();
+                var sqlParams = new List<DbParameter>();
                 var options = new ArticlePageOptions
                 {
                     ContentId = contentId,
@@ -210,7 +212,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     UseMainTableForVariations = useMainTable,
                     VariationFieldName = content.Fields.SingleOrDefault(n => n.UseForVariations)?.Name,
                     OnlyIds = onlyIds.HasValue && onlyIds.Value,
-                    UseSql2012Syntax = QPContext.CurrentSqlVersion.Major >= 11
+                    UseSql2012Syntax = QPContext.DatabaseType == DatabaseType.Postgres || QPContext.CurrentSqlVersion.Major >= 11
                 };
 
                 return Common.GetArticlesPage(QPConnectionScope.Current.DbConnection, options, sqlParams, out totalRecords);
@@ -386,7 +388,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return new ArticleFullTextSearchParameter { HasError = ftsHasError, FieldIdList = ftsFieldIdList, QueryString = ftsQueryString, RawQueryString = rawQueryString, SearchResultLimit = searchResultLimit };
         }
 
-        public static string GetCommonFilter(IList<ArticleSearchQueryParam> searchQueryParams, string filter, IList<SqlParameter> sqlParams)
+        public static string GetCommonFilter(IList<ArticleSearchQueryParam> searchQueryParams, string filter, IList<DbParameter> sqlParams)
             => SqlFilterComposer.Compose(new ArticleFilterSearchQueryParser().GetFilter(searchQueryParams, sqlParams), filter);
 
         public static IEnumerable<ArticleLinkSearchParameter> GetLinkSearchParameter(IEnumerable<ArticleSearchQueryParam> searchQueryParams)
@@ -411,24 +413,24 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return SqlFilterComposer.Compose(contextQueryParams.Select(q => string.Format(string.IsNullOrEmpty(q.Value) ? "c.[{0}] IS NULL" : "c.[{0}] = {1}", fields.Single(n => n.Id == q.FieldId).Name, q.Value)));
         }
 
-        internal static List<ListItem> GetSimpleList(int contentId, int? articleId, int? fieldId, ListSelectionMode selectionMode, int[] selectedArticleIDs, string filter, int testArticleId)
+        internal static List<ListItem> GetSimpleList(SimpleListQuery query)
         {
             using (var scope = new QPConnectionScope())
             {
-                var field = fieldId.HasValue ? FieldRepository.GetById(fieldId.Value) : null;
-                var fields = ContentRepository.GetDisplayFields(contentId, field).ToList();
+                var field = query.ListId != 0 ? FieldRepository.GetById(query.ListId) : null;
+                var fields = ContentRepository.GetDisplayFields(query.ParentEntityId, field).ToList();
                 var displayExpression = GetDisplayExpression(fields);
                 var isMany = field != null && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation);
                 var orderByExpression = isMany
                     ? GetSimpleListOrderExpression(field, fields)
                     : string.Empty;
 
-                var selection = new HashSet<int>(selectedArticleIDs ?? new int[] { });
-                if (testArticleId != 0 && articleId.HasValue && isMany)
+                var selection = new HashSet<int>(query.SelectedEntitiesIds ?? new int[] { });
+                if (query.TestEntityId != 0 && query.ActualEntityId.HasValue && isMany)
                 {
                     var testResult = field.ExactType == FieldExactTypes.M2MRelation && field.LinkId.HasValue
                         ? Common.TestM2MValue(
-                            scope.DbConnection, field.LinkId.Value, articleId.Value, testArticleId
+                            scope.DbConnection, field.LinkId.Value, query.ActualEntityId.Value, query.TestEntityId
                         )
                         : Common.TestM2OValue(
                             scope.DbConnection, new Common.FieldInfo()
@@ -436,36 +438,38 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                                 Id = field.BackRelation.Id,
                                 ContentId = field.BackRelation.ContentId,
                                 Name = field.BackRelation.Name
-                            }, articleId.Value, testArticleId
+                            }, query.ActualEntityId.Value, query.TestEntityId
                         );
 
                     if (testResult)
                     {
-                        selection.Add(testArticleId);
+                        selection.Add(query.TestEntityId);
                     }
                     else
                     {
-                        selection.Remove(testArticleId);
+                        selection.Remove(query.TestEntityId);
                     }
                 }
 
                 var isUserAdmin = QPContext.IsAdmin;
-                var availableForList = isUserAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
+                var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, query.ParentEntityId, ActionTypeCode.List);
                 if (!availableForList)
                 {
-                    filter = SqlFilterComposer.Compose(filter, "1 = 0");
+                    query.Filter = SqlFilterComposer.Compose(query.Filter, "1 = 0");
                 }
 
-                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);
+
+                var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
+                    QPContext.EFContext,
                     QPConnectionScope.Current.DbConnection,
                     QPContext.CurrentUserId,
-                    contentId,
+                    query.ParentEntityId,
                     displayExpression,
-                    selectionMode,
+                    query.SelectionMode,
                     PermissionLevel.List,
-                    filter,
+                    query.Filter,
                     useSecurity,
                     selection.ToArray(),
                     null,
@@ -483,13 +487,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             using (var scope = new QPConnectionScope())
             {
                 var searchFilterQuery = GetSearchFiltersQuery(commonFilter, treeField, filterQuery, linkedFilters, contextQuery, filterSqlParams, ftsOptions.SearchResultLimit);
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
-                var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name);
+
+                var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name, treeField.ContentId);
                 var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField).ToList();
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
                 foreach (var kv in treeItemsDict.Where(ti => searchIds.Contains(int.Parse(ti.Key))))
@@ -509,7 +514,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static string GetSearchFiltersQuery(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int searchLimit)
+        internal static string GetSearchFiltersQuery(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int searchLimit)
         {
             if (string.IsNullOrEmpty(filterQuery) && (linkedFilters == null || !linkedFilters.Any()))
             {
@@ -520,40 +525,49 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out bool _);
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));
 
+            var dbType = QPContext.DatabaseType;
             Common.AddLinkFilteringToQuery(linkedFilters, whereBuilder, filterSqlParams);
-            return $"SELECT DISTINCT TOP({searchLimit}) c.content_item_id from content_{treeField.ContentId}_united c WHERE {whereBuilder}";
+            return $@"
+SELECT
+DISTINCT {(dbType == DatabaseType.SqlServer ? $"TOP({searchLimit})" : string.Empty)}
+c.content_item_id
+from content_{treeField.ContentId}_united c
+WHERE {whereBuilder}
+{(dbType != DatabaseType.SqlServer ? $"LIMIT {searchLimit}" : string.Empty)}
+";
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField)
         {
             var extraFilter = commonFilter.Replace("c.", "cnt.");
+            var dbType = QPContext.DatabaseType;
             commonFilter = SqlFilterComposer.Compose(commonFilter, rootId.HasValue
-                ? $"c.[{treeField.Name}] = {rootId.Value}"
-                : $"c.[{treeField.Name}] IS NULL");
+                ? $"c.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} = {rootId.Value}"
+                : $"c.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} IS NULL");
 
             return GetArticleTreeItemsResult(commonFilter, extraFilter, treeField, null);
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeFilteredResult(IList<int> idsToFilter, string commonFilter, Field treeField)
         {
+            var dbType = QPContext.DatabaseType;
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             return idsToFilter == null
                 ? GetArticleTreeForParentResult(null, commonFilter, treeField)
-                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM @ids) ", extraFilter, treeField, idsToFilter);
+                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}) ", extraFilter, treeField, idsToFilter);
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter)
         {
             using (var scope = new QPConnectionScope())
             {
+                var dbType = QPContext.DatabaseType;
                 var useSecurity = !QPContext.IsAdmin && ContentRepository.IsArticlePermissionsAllowed(treeField.ContentId);
-                var extraSelect = $", c.{treeField.Name} AS parentId" +
-                    ", cil.locked_by" +
-                    ", lu.first_name + ' ' + lu.last_name AS locker_name" +
-                    ", CAST(CASE WHEN (" +
-                    $"SELECT COUNT(content_item_id) FROM content_{treeField.ContentId}_united cnt " +
-                    $"WHERE [{treeField.Name}] = c.content_item_id AND {extraFilter}" +
-                    ") > 0 THEN 1 ELSE 0 END AS bit) AS has_children ";
+                var cntExpr = $" CASE WHEN (SELECT COUNT(content_item_id) FROM content_{treeField.ContentId}_united cnt WHERE {SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} = c.content_item_id AND {extraFilter}) > 0 THEN 1 ELSE 0 END";
+                var extraSelect = $@", c.{treeField.Name} AS parentId,
+cil.locked_by,
+{SqlQuerySyntaxHelper.ConcatStrValues(dbType, "lu.first_name", "' '", "lu.last_name")} AS locker_name,
+{SqlQuerySyntaxHelper.CastToBool(dbType, cntExpr)} AS has_children ";
 
                 var fields = treeField.TreeFieldTitleCount <= 1
                     ? null
@@ -564,6 +578,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 fields = fields ?? new[] { treeField.Relation }.ToList();
                 var extraFrom = " LEFT JOIN content_item cil ON c.content_item_id = cil.content_item_id AND locked_by IS NOT NULL LEFT JOIN users lu ON lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
+                    QPContext.EFContext,
                     scope.DbConnection,
                     QPContext.CurrentUserId,
                     treeField.ContentId,
@@ -575,9 +590,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     null,
                     idsToFilter,
                     ArticleFullTextSearchSettings.SearchResultLimit,
-                    extraSelect,
-                    extraFrom,
-                    GetSimpleListOrderExpression(treeField, fields));
+                    extraSelect: extraSelect,
+                    extraFrom: extraFrom,
+                    orderBy: GetSimpleListOrderExpression(treeField, fields));
 
                 return rows.Select(dr =>
                 {
@@ -607,10 +622,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var sb = new StringBuilder();
             var relCounter = 0;
+            var databaseType = QPContext.DatabaseType;
             foreach (var field in displayFields.Where(field => field.ExactType == FieldExactTypes.O2MRelation))
             {
                 relCounter++;
-                sb.AppendFormatLine(" left join content_{0} as rel_{1} on c.[{2}] = rel_{1}.content_item_id ", field.RelateToContentId, relCounter, field.Name);
+                sb.AppendFormatLine(" left join content_{0} as rel_{1} on c.{2} = rel_{1}.content_item_id ", field.RelateToContentId, relCounter, SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Name));
             }
 
             return sb.ToString();
@@ -618,18 +634,19 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static string GetExtraFromForRelations(IEnumerable<ExportSettings.FieldSetting> displayFields)
         {
+            var dbType = QPContext.DatabaseType;
             var sb = new StringBuilder();
             foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension && !n.ExcludeFromSQLRequest))
             {
-                var onExpr = $"on base.[{field.Name}] = {field.TableAlias}.content_item_id";
+                var onExpr = $"on base.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name)} = {field.TableAlias}.content_item_id";
                 sb.AppendFormatLine(" left join content_{0}_united as {1} {2} ", field.RelatedContentId, field.TableAlias, onExpr);
                 sb.Append(GetO2MRelationExpression(field));
             }
 
             foreach (var field in displayFields.Where(w=>w.FromExtension && w.ExactType != FieldExactTypes.M2MRelation && !w.ExcludeFromSQLRequest))
             {
-                sb.AppendFormatLine(" left join (select c_{0}.CONTENT_ITEM_ID, c_{1}.{4}, c_{0}.{5} from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.[{3}] = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.{4}",
-                     field.RelatedContentId, field.ContentId, field.TableAlias, field.Name, field.RelationByField, field.RelatedAttributeName);
+                sb.AppendFormatLine(" left join (select c_{0}.CONTENT_ITEM_ID, c_{1}.{4}, c_{0}.{5} from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.{3} = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.{4}",
+                     field.RelatedContentId, field.ContentId, field.TableAlias, SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name), field.RelationByField, field.RelatedAttributeName);
             }
 
             return sb.ToString();
@@ -638,10 +655,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static string GetO2MRelationExpression(ExportSettings.FieldSetting field)
         {
+            var dbType = QPContext.DatabaseType;
             var sb = new StringBuilder();
             foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
             {
-                sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.[{2}] = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, f.Name, field.TableAlias);
+                sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.{2} = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name), field.TableAlias);
             }
             return sb.ToString();
         }
@@ -650,6 +668,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             var parts = new List<string>();
             var relCounter = 0;
+            var databaseType = QPContext.DatabaseType;
             foreach (var field in displayFields)
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
@@ -675,30 +694,32 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                         foreach (var id in fieldIds)
                         {
                             var displayField = ContentRepository.GetTitleField(id);
-                            parts.Add($"dbo.qp_link_titles({field.LinkId.Value}, c.content_item_id, {displayField.Id}, 255)");
+                            var contentItemIdField = databaseType == DatabaseType.Postgres ? "c.content_item_id::integer" : "c.content_item_id";
+                            parts.Add($"{SqlQuerySyntaxHelper.DbSchemaName(databaseType)}.qp_link_titles({field.LinkId.Value}, {contentItemIdField}, {displayField.Id}, 255)");
                         }
                     }
                 }
                 else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
                     relCounter++;
-                    parts.Add($"isnull(cast ( rel_{relCounter}.[{field.Relation.Name}] as nvarchar(255)), '')");
+                    parts.Add($"coalesce({SqlQuerySyntaxHelper.CastToString(databaseType, $"rel_{relCounter}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Relation.Name)}")}, '')");
                 }
                 else if (field.IsDateTime || field.IsBlob || field.Type.DbType == DbType.Decimal)
                 {
-                    parts.Add($"isnull(cast ( c.[{field.Name}] as nvarchar(255)), '')");
+                    parts.Add($"coalesce({SqlQuerySyntaxHelper.CastToString(databaseType, $"c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Name)}")}, '')");
                 }
                 else
                 {
-                    parts.Add($"isnull(c.[{field.Name}], '')");
+                    parts.Add($"coalesce(c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, field.Name)}, '')");
                 }
             }
 
-            return (parts.Any() ? string.Join(" + '; ' + ", parts) : "cast(c.content_item_id as nvarchar(255))") + " as title";
+            return (parts.Any() ? SqlQuerySyntaxHelper.ConcatStrValuesWithSeparator(databaseType, "'; '", parts.ToArray()) : SqlQuerySyntaxHelper.CastToString(databaseType, "c.content_item_id")) + " as title";
         }
 
         private static string GetSimpleListOrderExpression(Field field, IEnumerable<Field> displayFields)
         {
+            var databaseType = QPContext.DatabaseType;
             var titleNames = displayFields.Select(n => n.Name).ToList();
             var orderFieldName = string.Empty;
             var orderFieldMatchesTitle = false;
@@ -714,7 +735,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             var orderExpression = field.OrderByTitle && !orderFieldMatchesTitle ? "title asc" : "c.content_item_id asc";
             if (!string.IsNullOrEmpty(orderFieldName))
             {
-                orderExpression = $"c.[{orderFieldName}] asc, {orderExpression}";
+                orderExpression = $"c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, orderFieldName)} asc, {orderExpression}";
             }
 
             return orderExpression;
@@ -725,7 +746,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             using (new QPConnectionScope())
             {
                 return id == 0
-                    ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
+                    ? Common.GetDefaultArticleRow(QPContext.EFContext, QPConnectionScope.Current.DbConnection, contentId)
                     : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive, excludeArchive);
             }
         }
@@ -794,7 +815,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static Article CreateOrUpdate(Article article)
         {
-            var articleUpdater = new ArticleUpdateService(article);
+            var usePostgres = QPContext.DatabaseType == DatabaseType.Postgres;
+
+            var articleUpdater = (usePostgres) ?
+                (IArticleUpdateService)new ArticleXmlUpdateHelper() {Article = article} :
+                new ArticleUpdateService() { Article = article };
+
             var schedule = article.Schedule;
             var colaborativeArticles = article.CollaborativePublishedArticle;
             article = articleUpdater.Update();
@@ -852,7 +878,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var contentId = fieldValuesToTest[0].Article.Content.Id;
                 var filters = fieldValuesToTest.Select(GetSqlExpression).Union(Enumerable.Repeat("ARCHIVE = 0", 1));
                 var condition = SqlFilterComposer.Compose(filters);
-                var parameters = fieldValuesToTest.Select(n => new Common.FieldParameter { Name = n.Field.FormName, DbType = n.Field.Type.DbType, Value = n.Value }).ToList();
+                var parameters = fieldValuesToTest.Select(n => new FieldParameter
+                {
+                    Name = n.Field.FormName,
+                    DbType = n.Field.Type.DbType,
+                    NpgsqlDbType = n.Field.Type.NpgsqlDbType,
+                    ObjectValue = n.ObjectValue
+                }).ToList();
+
                 using (new QPConnectionScope())
                 {
                     conflictingIds = Common.GetConflictIds(QPConnectionScope.Current.DbConnection, id, contentId, condition, parameters);
@@ -876,11 +909,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
             using (new QPConnectionScope())
             {
-                return Common.CountDuplicates(
-                    QPConnectionScope.Current.DbConnection,
-                    constraint.ContentId,
-                    Converter.ToIdCommaList(constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId)),
-                    Converter.ToIdCommaList(restrictToIds), includeArchive);
+                var fieldIds = constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId).ToArray();
+                return Common.CountDuplicates(QPConnectionScope.Current.DbConnection,
+                    constraint.ContentId, fieldIds,restrictToIds, includeArchive
+                );
             }
         }
 
@@ -888,7 +920,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                return Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds, id, QPContext.IsLive, excludeArchive);
+                return (id == 0) ? Common.GetDefaultLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds) :
+                Common.GetLinkedArticles(QPConnectionScope.Current.DbConnection, linkIds, id, QPContext.IsLive, excludeArchive);
             }
         }
 
@@ -993,30 +1026,32 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         internal static void SetArchiveFlag(IList<int> ids, bool flag, bool withAggregated = false)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
                 if (ids != null && ids.Any())
                 {
                     var stageIds = Enumerable.Empty<int>().ToList();
                     var liveIds = Enumerable.Empty<int>().ToList();
-                    Common.GetContentModification(QPConnectionScope.Current.DbConnection, ids, withAggregated, true, ref liveIds, ref stageIds);
-                    Common.SetArchiveFlag(QPConnectionScope.Current.DbConnection, ids, QPContext.CurrentUserId, flag, withAggregated);
-                    Common.UpdateContentModification(QPConnectionScope.Current.DbConnection, liveIds, stageIds);
+                    var cnn = scope.DbConnection;
+                    Common.GetContentModification(cnn, ids, withAggregated, false, ref liveIds, ref stageIds);
+                    Common.SetArchiveFlag(cnn, ids, QPContext.CurrentUserId, flag, withAggregated);
+                    Common.UpdateContentModification(cnn, liveIds, stageIds);
                 }
             }
         }
 
         internal static void Publish(IList<int> ids, bool withAggregated = false)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
                 if (ids != null && ids.Any())
                 {
                     var stageIds = Enumerable.Empty<int>().ToList();
                     var liveIds = Enumerable.Empty<int>().ToList();
-                    Common.GetContentModification(QPConnectionScope.Current.DbConnection, ids, withAggregated, false, ref liveIds, ref stageIds);
-                    Common.Publish(QPConnectionScope.Current.DbConnection, ids, QPContext.CurrentUserId, withAggregated);
-                    Common.UpdateContentModification(QPConnectionScope.Current.DbConnection, liveIds, stageIds);
+                    var cnn = scope.DbConnection;
+                    Common.GetContentModification(cnn, ids, withAggregated, false, ref liveIds, ref stageIds);
+                    Common.Publish(cnn, ids, QPContext.CurrentUserId, withAggregated);
+                    Common.UpdateContentModification(cnn, liveIds, stageIds);
                 }
             }
         }
@@ -1036,9 +1071,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static readonly Regex DynamicColumnNamePattern = new Regex($@"^{Field.Prefix}(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static string GetDisplayExpression(FieldValue item) => $"[{item.Field.Name}]";
+        private static string GetDisplayExpression(FieldValue item) => $"{SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, item.Field.Name)}";
 
-        private static string GetSqlExpression(FieldValue item) => string.IsNullOrEmpty(item.Value) ? $"([{item.Field.Name}] IS NULL)" : $"([{item.Field.Name}] = {item.Field.ParamName})";
+        private static string GetSqlExpression(FieldValue item)
+        {
+            var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, item.Field.Name);
+            return string.IsNullOrEmpty(item.Value) ? $"({fieldName} IS NULL)" : $"({fieldName} = {item.Field.ParamName})";
+        }
 
         private static string ReplaceDynamicColumnsNamesInSortExpressions(string sortExpression, IList<Field> fieldList)
         {
@@ -1052,6 +1091,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     var sortInfo = sortInfoList[sortInfoIndex];
                     var oldFieldName = sortInfo.FieldName;
                     var newFieldName = oldFieldName;
+                    var dbType = QPContext.DatabaseType;
                     if (DynamicColumnNamePattern.IsMatch(oldFieldName))
                     {
                         var field = fieldList.SingleOrDefault(n => n.FormName == oldFieldName);
@@ -1060,15 +1100,16 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                             return null;
                         }
 
-                        newFieldName = $"[{field.Name}]";
+                        newFieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name);
                         if (field.Type.Name == FieldTypeName.Time)
                         {
-                            newFieldName = $"dbo.qp_abs_time(c.{newFieldName})";
+                            var schema = SqlQuerySyntaxHelper.DbSchemaName(dbType);
+                            newFieldName = $"{schema}.qp_abs_time(c.{newFieldName})";
                         }
                     }
-                    else if (!SqlSorting.ContainsSquareBrackets(newFieldName))
+                    else if (!SqlSorting.ContainsEscapeSymbols(newFieldName, dbType))
                     {
-                        newFieldName = $"[{newFieldName}]";
+                        newFieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, newFieldName);
                     }
 
                     if (sortInfoIndex > 0)
@@ -1095,7 +1136,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.RemovingActions_RemoveSiteArticles(siteId, articleToRemove, scope.DbConnection);
+                return Common.RemovingActions_RemoveSiteContentItems(siteId, articleToRemove, scope.DbConnection);
             }
         }
 
@@ -1315,13 +1356,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static List<int> InsertArticleIds(string query, bool preserveGuids = false)
+        internal static List<int> InsertArticleIds(string doc, bool preserveGuids = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return preserveGuids
-                    ? Common.InsertArticleIdsWithGuids(scope.DbConnection, query)
-                    : Common.InsertArticleIds(scope.DbConnection, query);
+                return CommonCsv.InsertArticleIds(scope.DbConnection, doc, preserveGuids);
             }
         }
 
@@ -1329,7 +1368,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.UpdateArticleGuids(scope.DbConnection, guidsByIdToUpdate);
+                CommonCsv.UpdateArticleGuids(scope.DbConnection, guidsByIdToUpdate);
             }
         }
 
@@ -1337,7 +1376,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.InsertArticleValues(scope.DbConnection, xmlParameter);
+                CommonCsv.InsertArticleValues(scope.DbConnection, xmlParameter);
             }
         }
 
@@ -1345,7 +1384,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.ValidateO2MValues(scope.DbConnection, xmlParameter, ImportStrings.IncorrectO2M);
+                CommonCsv.ValidateO2MValues(scope.DbConnection, xmlParameter, ImportStrings.IncorrectO2M);
             }
         }
 
@@ -1377,8 +1416,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                const string storedProc = "qp_update_acrticle_modification_date";
-                Common.ModifyDataUsingXmlParameter(scope.DbConnection, storedProc, xmlParameter);
+
+                CommonCsv.UpdateArticlesDateTime(scope.DbConnection, xmlParameter);
             }
         }
 
@@ -1394,8 +1433,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                const string storedProc = "qp_update_o2mfieldvalues";
-                Common.ModifyDataUsingXmlParameter(scope.DbConnection, storedProc, xmlParameter);
+                CommonCsv.InsertO2MFieldValues(scope.DbConnection, xmlParameter);
             }
         }
 
@@ -1435,7 +1473,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentIdsTreeResult(scope.DbConnection, ids, fieldId, fieldName);
+                var contentId = FieldRepository.GetById(fieldId)?.ContentId;
+                return Common.GetParentIdsTreeResult(scope.DbConnection, ids, fieldId, fieldName, contentId);
             }
         }
 
@@ -1477,13 +1516,13 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                         FormatArticleData(scope.DbConnection, articles);
                     }
 
-                    var rows = Common.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
+                    var rows = CommonBatchUpdate.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
                     var relations = MapperFacade.DataRowMapper.Map<RelationData>(rows);
 
                     var links = GetArticleLinks(articles, relations);
                     articles = UpdateArticleRelations(articles, relations);
 
-                    rows = Common.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
+                    rows = CommonBatchUpdate.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
                     var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
 
                     if (createVersions)
@@ -1498,8 +1537,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     links = UpdateLinkIds(links, insertData);
                     articles = UpdateArticleIds(articles, insertData);
 
-                    Common.BatchUpdate(scope.DbConnection, GetBatchDataTable(articles), QPContext.CurrentUserId);
-                    Common.ReplicateItems(scope.DbConnection, GetArticleIds(articles), GetFieldIds(articles));
+                    CommonBatchUpdate.UpdateNotForReplication(scope.DbConnection, articles.Select(n => n.Id).ToArray(), QPContext.CurrentUserId);
+                    CommonBatchUpdate.BatchUpdate(scope.DbConnection, GetBatchDataTable(articles), QPContext.CurrentUserId);
+                    CommonBatchUpdate.ReplicateItems(scope.DbConnection, GetArticleIds(articles), GetFieldIds(articles));
                     Common.UpdateM2MValues(scope.DbConnection, GetLinksXml(links));
 
                     transaction.Complete();
@@ -1510,10 +1550,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return new InsertData[0];
         }
 
-        private static void FormatArticleData(SqlConnection cnn, ArticleData[] articles)
+        private static void FormatArticleData(DbConnection cnn, ArticleData[] articles)
         {
             var fieldIds = articles.SelectMany(m => m.Fields).Select(n => n.Id).Distinct().ToArray();
-            var types = Common.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(n => (int)n.Field<decimal>("attribute_id"), m =>
+            var types = CommonBatchUpdate.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(n => (int)n.Field<decimal>("attribute_id"), m =>
             {
                 var attributeTypeId = (int)m.Field<decimal>("attribute_type_id");
                 var linkId = (int?)m.Field<decimal?>("link_id");

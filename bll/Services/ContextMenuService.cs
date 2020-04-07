@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -17,11 +18,6 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         public static ContextMenu GetByCode(string menuCode, bool loadItems = false)
         {
-            if (string.IsNullOrWhiteSpace(menuCode))
-            {
-                return null;
-            }
-
             return ContextMenuRepository.GetByCode(menuCode, loadItems);
         }
 

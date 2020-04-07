@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -12,25 +12,25 @@ namespace Quantumart.QP8.BLL
 
         public int? SingleUserId { get; set; }
 
-        [LocalizedDisplayName("RecordActionsIntoFile", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "RecordActionsIntoFile", ResourceType = typeof(DBStrings))]
         public bool RecordActions { get; set; }
 
-        [LocalizedDisplayName("UseAdSyncService", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "UseAdSyncService", ResourceType = typeof(DBStrings))]
         public bool UseAdSyncService { get; set; }
 
-        [LocalizedDisplayName("UseDPC", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "UseDPC", ResourceType = typeof(DBStrings))]
         public bool UseDpc { get; set; }
 
-        [LocalizedDisplayName("UseTokens", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "UseTokens", ResourceType = typeof(DBStrings))]
         public bool UseTokens { get; set; }
 
-        [LocalizedDisplayName("UseCDC", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "UseCDC", ResourceType = typeof(DBStrings))]
         public bool UseCdc { get; set; }
 
-        [LocalizedDisplayName("AutoLoadHome", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "AutoLoadHome", ResourceType = typeof(DBStrings))]
         public bool AutoOpenHome { get; set; }
 
-        [LocalizedDisplayName("AppSettings", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "AppSettings", ResourceType = typeof(DBStrings))]
         public IEnumerable<AppSettingsItem> AppSettings { get; set; }
 
         public override void Validate()

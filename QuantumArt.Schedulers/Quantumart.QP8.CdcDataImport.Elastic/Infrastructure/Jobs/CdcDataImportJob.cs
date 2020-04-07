@@ -19,7 +19,6 @@ using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Services;
-using Quantumart.QP8.CdcDataImport.Elastic.Properties;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quartz;

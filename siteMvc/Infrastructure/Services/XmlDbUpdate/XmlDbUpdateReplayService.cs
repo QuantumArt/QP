@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -25,6 +27,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         protected readonly string ConnectionString;
 
+        protected readonly DatabaseType DbType;
+
+        protected QpConnectionInfo ConnectionInfo => new QpConnectionInfo(ConnectionString, DbType);
+
         private readonly int _userId;
 
         private readonly bool _useGuidSubstitution;
@@ -39,12 +45,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
-            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+        private readonly IServiceProvider _serviceProvider;
+
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
+        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider provider = null)
+            : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
+        public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider serviceProvider = null )
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -53,11 +63,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             ConnectionString = connectionString;
+            DbType = dbType;
 
             _dbLogService = dbLogService;
             _appInfoRepository = appInfoRepository;
             _actionsCorrecterService = actionsCorrecterService;
             _httpContextProcessor = httpContextProcessor;
+            _serviceProvider = serviceProvider;
         }
 
         public virtual void Process(string xmlString, IList<string> filePathes = null)
@@ -65,8 +77,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
-            var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
-            ValidateReplayInput(filteredXmlDocument, currentDbVersion);
+            var currentDbVersion = String.Empty;
+            using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
+            {
+                currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
+                ValidateReplayInput(filteredXmlDocument, currentDbVersion);
+            }
 
             var filteredXmlString = filteredXmlDocument.ToNormalizedString(SaveOptions.DisableFormatting);
             var dbLogEntry = new XmlDbUpdateLogModel
@@ -79,8 +95,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             };
 
             using (new ThreadStorageScopeContext())
-            using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
+            using (var ts = new TransactionScope(TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                TransactionScopeAsyncFlowOption.Enabled))
+            using (new QPConnectionScope(ConnectionInfo, _identityInsertOptions))
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {
@@ -143,18 +161,37 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
-                    Logger.Log.Warn($"XmlDbUpdateAction conflict: Current action already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
+                    Logger.Warn()
+                        .Message("XmlDbUpdateAction conflict: Current action already applied and exist at database")
+                        .Property("logEntry", logEntry)
+                        .Write();
+
                     continue;
                 }
 
                 var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
-                Logger.Log.Debug($"-> Begin replaying action [{logEntry.Hash}]: -> {xmlActionStringLog}");
+                Logger.Debug()
+                    .Message("-> Begin replaying action [{hash}]: -> {xml}", logEntry.Hash, xmlActionStringLog)
+                    .Write();
+
                 var replayedAction = ReplayAction(action, backendUrl);
-                Logger.Log.Debug($"End replaying action [{logEntry.Hash}]: {xmlActionStringLog}");
+                Logger.Debug()
+                    .Message("End replaying action [{hash}]: -> {xml}", logEntry.Hash, xmlActionStringLog)
+                    .Write();
 
                 logEntry.Ids = string.Join(",", replayedAction.Ids);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, currentDbVersion, backendUrl, true).ToNormalizedString(SaveOptions.DisableFormatting, true);
                 _dbLogService.InsertActionLogEntry(logEntry);
+            }
+
+            PostReplay();
+        }
+
+        private void PostReplay()
+        {
+            using (new QPConnectionScope(ConnectionInfo))
+            {
+                _appInfoRepository.PostReplay(_identityInsertOptions);
             }
         }
 
@@ -163,7 +200,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             try
             {
                 var correctedAction = _actionsCorrecterService.PreActionCorrections(xmlAction, _useGuidSubstitution);
-                var httpContext = _httpContextProcessor.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution);
+                var httpContext = _httpContextProcessor.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution, _serviceProvider);
                 return _actionsCorrecterService.PostActionCorrections(correctedAction, httpContext);
             }
             catch (Exception ex)
@@ -176,17 +213,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void ValidateReplayInput(XContainer xmlDocument, string currentDbVersion)
         {
-            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
+            if (!ValidateDbVersion(xmlDocument, currentDbVersion))
             {
-                if (!ValidateDbVersion(xmlDocument, currentDbVersion))
-                {
-                    throw new InvalidOperationException("DB versions doesn't match");
-                }
+                throw new InvalidOperationException("DB versions doesn't match");
+            }
 
-                if (_appInfoRepository.RecordActions())
-                {
-                    throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
-                }
+            if (_appInfoRepository.RecordActions())
+            {
+                throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
             }
         }
 

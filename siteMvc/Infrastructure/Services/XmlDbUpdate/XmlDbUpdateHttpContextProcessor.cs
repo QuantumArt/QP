@@ -1,6 +1,12 @@
+using System;
+using System.Globalization;
 using System.Linq;
-using System.Web;
-using System.Web.Routing;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
@@ -12,20 +18,41 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
     public class XmlDbUpdateHttpContextProcessor : IXmlDbUpdateHttpContextProcessor
     {
-        public HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution)
+        public HttpContext PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution, IServiceProvider provider = null)
         {
             Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
-            var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();
-            var controllerName = urlParts[0];
-            var controllerAction = urlParts[1];
-            var requestContext = new RequestContext(
-                XmlDbUpdateHttpContextHelpers.BuildHttpContextBase(recordedAction, backendUrl, userId, useGuidSubstitution),
-                XmlDbUpdateHttpContextHelpers.GetRouteData(recordedAction, controllerName, controllerAction)
-            );
-
+            var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray())
+                .Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();
+            var controller = urlParts[0];
+            var action = urlParts[1];
             BackendActionContext.ResetCurrent();
-            XmlDbUpdateHttpContextHelpers.BuildController(requestContext, controllerName, CultureHelpers.GetCultureByLcid(recordedAction.Lcid)).Execute(requestContext);
-            return requestContext.HttpContext;
+
+            var cultureInfo = CultureHelpers.GetCultureByLcid(recordedAction.Lcid);
+            CultureInfo.CurrentCulture = cultureInfo;
+
+            var httpContext = XmlDbUpdateHttpContextHelpers.BuildHttpContext(recordedAction, backendUrl, userId, useGuidSubstitution);
+            var routeData = XmlDbUpdateHttpContextHelpers.GetRouteData(recordedAction, controller, action);
+
+            httpContext.Features[typeof(IRoutingFeature)] = new RoutingFeature { RouteData = routeData };
+            var routeContext = new RouteContext(httpContext)
+            {
+                RouteData = routeData
+            };
+
+            var serviceProvider = provider ?? new HttpContextAccessor().HttpContext.RequestServices;
+            httpContext.RequestServices = serviceProvider;
+            var m = typeof(DynamicRouteValueTransformer).Assembly.GetType("Microsoft.AspNetCore.Mvc.Routing.MvcRouteHandler");
+            var handler = (IRouter)serviceProvider.GetRequiredService(m);
+
+            QPContext.CurrentUserId = userId;
+            Task.Run(async () =>
+            {
+                await handler.RouteAsync(routeContext);
+                await routeContext.Handler(routeContext.HttpContext);
+            }).Wait();
+            QPContext.CurrentUserId = 0;
+
+            return httpContext;
         }
     }
 }

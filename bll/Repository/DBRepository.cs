@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -10,14 +12,20 @@ namespace Quantumart.QP8.BLL.Repository
     {
         public static Db Get()
         {
-            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.Include("LastModifiedByUser").FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(
+                QPContext.EFContext.DbSet
+                    .Include(x => x.LastModifiedByUser)
+                    .OrderBy(n => n.Id).FirstOrDefault()
+            );
             result.AppSettings = GetAppSettings();
             return result;
         }
 
         public static Db GetForUpdate()
         {
-            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(
+                QPContext.EFContext.DbSet.OrderBy(n => n.Id).FirstOrDefault()
+             );
             result.AppSettings = GetAppSettings();
             return result;
         }
@@ -45,7 +53,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetDbServerName(scope.DbConnection);
+                return Common.GetDbServerName(scope.DbConnection, QPContext.CurrentCustomerCode);
             }
         }
 
@@ -56,13 +64,14 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void SaveAppSettings(IEnumerable<AppSettingsItem> values)
         {
-            IEnumerable<AppSettingsDAL> result = values.Select(n => AppSettingsDAL.CreateAppSettingsDAL(n.Key, n.Value)).ToList();
-            DefaultRepository.SimpleSave(result);
+            var result = values.Select(n => new AppSettingsDAL(){ Key = n.Key, Value = n.Value} ).ToList();
+            DefaultRepository.SimpleSaveBulk(result);
         }
 
         internal static void DeleteAppSettings()
         {
-            DefaultRepository.SimpleDelete(QPContext.EFContext.AppSettingsSet.ToList());
+            var context = QPContext.EFContext;
+            DefaultRepository.SimpleDeleteBulk(context.AppSettingsSet.ToList(), context);
         }
     }
 }

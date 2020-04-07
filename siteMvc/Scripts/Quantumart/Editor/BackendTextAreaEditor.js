@@ -461,7 +461,7 @@ export class BackendHighlightedTextArea {
   }
 
   initTemplateToolbar() {
-    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetHTAToolbarMarkUp`, {
+    $q.getJsonFromUrl('POST', `${window.CONTROLLER_URL_PAGE_TEMPLATE}GetHtaToolbarMarkUp`, {
       presentationOrCodeBehind: this._presentationOrCodeBehind,
       formatId: this._formatId,
       templateId: this._templateId

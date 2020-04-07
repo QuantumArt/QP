@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository

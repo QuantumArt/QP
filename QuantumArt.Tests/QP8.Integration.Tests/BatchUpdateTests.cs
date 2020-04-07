@@ -1,6 +1,9 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using QP8.Integration.Tests.Infrastructure;
@@ -11,6 +14,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -146,12 +150,12 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            TestContext.WriteLine($"Using next database for tests: {Global.DbName}");
+            TestContext.WriteLine($"Using next database for tests: {EnvHelpers.DbNameToRunTests}");
 
-            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             DictionaryContentId = Global.GetContentId(DbConnector, DictionaryContent);
             BaseContentId = Global.GetContentId(DbConnector, BaseContent);
-            ArticleService = new ArticleApiService(Global.ConnectionString, 1);
+            ArticleService = new ArticleApiService(Global.ConnectionInfo, 1);
             Clear();
 
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
@@ -160,19 +164,25 @@ namespace QP8.Integration.Tests
 
             var service = new XmlDbUpdateNonMvcReplayService(
                 Global.ConnectionString,
+                Global.DbType,
+                null,
                 1,
                 false,
                 dbLogService.Object,
                 new ApplicationInfoRepository(),
-                new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
+                new XmlDbUpdateActionCorrecterService(
+                    new ArticleService(new ArticleRepository()),
+                    new ContentService(new ContentRepository()),
+                    new ModelExpressionProvider(new EmptyModelMetadataProvider())
+                ),
                 new XmlDbUpdateHttpContextProcessor(),
-                false
-            );
+                Global.Factory.Server.Host.Services,
+                false);
 
             service.Process(Global.GetXml(@"TestData\batchupdate.xml"));
 
             Random = new Random();
-            DbConnector = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             BaseContentId = Global.GetContentId(DbConnector, BaseContent);
             InitBaseContentFields();
             InitExtensions();
@@ -235,10 +245,10 @@ namespace QP8.Integration.Tests
 
         private static void Clear()
         {
-            var contentService = new ContentApiService(Global.ConnectionString, 1);
+            var contentService = new ContentApiService(Global.ConnectionInfo, 1);
             var baseContentExists = contentService.Exists(BaseContentId);
             var dictionaryContentExists = contentService.Exists(DictionaryContentId);
-            var fieldService = new FieldApiService(Global.ConnectionString, 1);
+            var fieldService = new FieldApiService(Global.ConnectionInfo, 1);
 
             if (dictionaryContentExists)
             {
@@ -339,7 +349,7 @@ namespace QP8.Integration.Tests
             Assert.That(contentData, Is.Not.Null);
             Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -414,7 +424,7 @@ namespace QP8.Integration.Tests
             Assert.That(DictionaryContentId, Is.EqualTo(articleResult.ContentId));
             Assert.That(articleResult.OriginalArticleId, Is.Not.EqualTo(articleResult.CreatedArticleId));
 
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -543,7 +553,7 @@ namespace QP8.Integration.Tests
         {
             const int range = 1000;
             decimal value = Random.Next(-range, range);
-            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
@@ -552,7 +562,7 @@ namespace QP8.Integration.Tests
             const int range = 100000;
             decimal value = Random.Next(-range, range);
             value /= 100;
-            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
@@ -560,14 +570,14 @@ namespace QP8.Integration.Tests
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateDateField()
         {
             var value = DateTime.Today;
-            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         [Test]
@@ -575,7 +585,7 @@ namespace QP8.Integration.Tests
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
+            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.CurrentCulture));
         }
 
         private static void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)
@@ -597,17 +607,21 @@ namespace QP8.Integration.Tests
                     }.ToList()
                 }
             };
+            var oldValue = GetFieldValue<T>(contentId, fieldName, articleId);
+            Assert.That(oldValue, Is.Not.EqualTo(DateTime.MinValue));
+            Assert.That(oldValue, Is.Not.Null.Or.Empty);
 
             var result = ArticleService.BatchUpdate(data);
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
 
             var newValue = GetFieldValue<T>(contentId, fieldName, articleId);
             Assert.That(value, Is.EqualTo(newValue));
+            Assert.That(oldValue, Is.Not.EqualTo(newValue));
         }
 
         private static void ClearClassifierField(int articleId)
         {
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
                 var article = ArticleService.Read(articleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);

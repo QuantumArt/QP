@@ -1,22 +1,29 @@
 using System;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace QP8.Infrastructure.Web.AspNet.Helpers
 {
     public class UrlHelpers
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public static string ConvertToAbsoluteUrl(string url)
         {
             if (Web.Helpers.UrlHelpers.IsRelativeUrl(url))
             {
-                var urlToProcess = url.Trim();
-                if (urlToProcess.StartsWith("~/"))
+                url = url.Trim();
+                if (url.StartsWith("~/"))
                 {
-                    urlToProcess = VirtualPathUtility.ToAbsolute(url);
+                    var urlHelper = HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
+
+                    url = urlHelper.Content(url);
                 }
 
                 var baseUri = new Uri(GetBaseUrl());
-                return new Uri(baseUri, urlToProcess).ToString();
+                return new Uri(baseUri, url).ToString();
             }
 
             return url;
@@ -24,9 +31,8 @@ namespace QP8.Infrastructure.Web.AspNet.Helpers
 
         public static string GetBaseUrl()
         {
-            var httpContext = HttpContext.Current;
-            Ensure.NotNull(httpContext, "HttpContext not exists here");
-            return GetBaseUrl(httpContext.Request);
+            Ensure.NotNull(HttpContext, "HttpContext not exists here");
+            return GetBaseUrl(HttpContext.Request);
         }
 
         public static string GetBaseUrl(HttpContext context)
@@ -38,7 +44,7 @@ namespace QP8.Infrastructure.Web.AspNet.Helpers
         public static string GetBaseUrl(HttpRequest request)
         {
             Ensure.Argument.NotNull(request, "HttpRequest not exists here");
-            return request.Url.GetLeftPart(UriPartial.Path);
+            return new Uri(UriHelper.GetEncodedUrl(request)).GetLeftPart(UriPartial.Path);
         }
     }
 }

@@ -1,28 +1,36 @@
-﻿@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
 @model Quantumart.QP8.WebMvc.ViewModels.Audit.RemovedEntitiesAreaViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-    <div id="@Model.MainComponentId" class="alMainContaner">
-    @(Html.Telerik().Grid<RemovedEntity>().Name(Model.GridElementId)
-                .DataKeys(k => k.Add(s => s.EntityId))
-                .Columns(c =>
-                    {
-                        c.Bound(s => s.EntityId);
-                        c.Bound(s => s.EntityTypeCode);
-                        c.Bound(s => s.EntityTitle);
-                        c.Bound(s => s.ParentEntityId);
-                        c.Bound(s => s.UserLogin);
-                        c.Bound(s => s.DeletedTime);
-                    }
-                )
-                .DataBinding(db => db.Ajax().Select("_RemovedEntities", "ActionLog"))
-                .EnableCustomBinding(true)
-                .Sortable()
-                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
-                .Selectable(s => s.Enabled(false))
-        )
-    </div>
+  <div id="@Model.MainComponentId" class="alMainContaner">
+    <div id="@Model.GridElementId"></div>
+    <script>
+      $(function () {
+        $('#@Model.GridElementId').qpGrid({
+          selectable: false,
+          autoBind: true,
+          columns: [
+            { field: 'EntityId', title: '@AuditStrings.EntityStringId' },
+            { field: 'EntityTypeCode', title: '@AuditStrings.EntityTypeName' },
+            { field: 'EntityTitle', title: '@AuditStrings.EntityTitle' },
+            { field: 'ParentEntityId', title: '@AuditStrings.ParentEntityId' },
+            { field: 'UserLogin', title: '@AuditStrings.UserLogin' },
+            { field: 'DeletedTime', title: '@AuditStrings.ExecutionTime' },
+          ],
+          dataSource: {
+            transport: {
+              read: {
+                url: "@Url.Action("_RemovedEntities", "ActionLog")",
+              }
+            },
+            pageSize: @Default.GridPageSize,
+          },
+        })
+      });
+    </script>
+  </div>
 }
 
 @Html.PrepareAndRunInitScript(Model)

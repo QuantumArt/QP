@@ -3,7 +3,6 @@ using Flurl;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data;
-using Quantumart.QP8.CdcDataImport.Elastic.Properties;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure
 {

@@ -5,12 +5,14 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Transactions;
+using Npgsql;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 using IsolationLevel = System.Transactions.IsolationLevel;
 
@@ -83,7 +85,15 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.CreateFrontedViews(scope.DbConnection, contentId);
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(scope.DbConnection);
+                if (dbType == DatabaseType.Postgres)
+                {
+                    Common.CreateContentViews(scope.DbConnection, contentId, false);
+                }
+                else
+                {
+                    Common.CreateFrontendViews(scope.DbConnection, contentId);
+                }
             }
         }
 
@@ -143,6 +153,10 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void ChangeUnionContentTriggerState(bool enable)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
             using (var scope = new QPConnectionScope())
             {
                 Common.ChangeTriggerState(scope.DbConnection, "ti_union_contents_auto_map_attrs", enable);
@@ -158,10 +172,11 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 ChangeUnionContentTriggerState(false);
                 var virtualContentId = virtualContent.Id;
-                var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+                var context = QPContext.EFContext;
+                var recToRemove = context.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
 
-                DefaultRepository.SimpleDelete(recToRemove);
-                DefaultRepository.SimpleSave(unionSourceContentIDs.Select(id => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = id }));
+                DefaultRepository.SimpleDeleteBulk(recToRemove, context);
+                DefaultRepository.SimpleSaveBulk(unionSourceContentIDs.Select(id => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = id }));
             }
             finally
             {
@@ -172,8 +187,9 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void RemoveUnionSourcesInfo(Content virtualContent)
         {
             var virtualContentId = virtualContent.Id;
-            var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
-            DefaultRepository.SimpleDelete(recToRemove);
+            var context = QPContext.EFContext;
+            var recToRemove = context.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+            DefaultRepository.SimpleDeleteBulk(recToRemove, context);
         }
 
         /// <summary>
@@ -187,8 +203,9 @@ namespace Quantumart.QP8.BLL.Repository
                 try
                 {
                     var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
-                    var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {userQuery}";
-                    using (var connect = new SqlConnection(QPContext.CurrentDbConnectionString ?? QPConnectionScope.Current.ConnectionString))
+                    var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                    var createTestViewSql = $"CREATE VIEW {schema}.{viewName} AS {userQuery}";
+                    using (var connect = QPContext.CreateDbConnection())
                     {
                         connect.Open();
                         Common.ExecuteSql(connect, createTestViewSql);
@@ -202,18 +219,24 @@ namespace Quantumart.QP8.BLL.Repository
                     errorMessage = ex.ErrorsToString();
                     return false;
                 }
+                catch (NpgsqlException ex)
+                {
+                    errorMessage = ex.Message;
+                    return false;
+                }
             }
         }
 
         /// <summary>
         /// Возвращает информацию о столбцах запроса
         /// </summary>
-        internal static IEnumerable<UserQueryColumn> GetQuerySchema(string sqlQuery)
+        internal static IEnumerable<UserQueryColumn> GetQuerySchema(string userQuery)
         {
             using (var scope = new QPConnectionScope())
             {
                 var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
-                var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {sqlQuery}";
+                var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
+                var createTestViewSql = $"CREATE VIEW {schema}.{viewName} AS {userQuery}";
                 RunCreateViewDdl(createTestViewSql);
 
                 var dttU = Common.GetViewColumnUsage(scope.DbConnection, viewName);
@@ -254,7 +277,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var virtualContentId = uqVirtualContent.Id;
             RemoveUserQuerySourcesInfo(uqVirtualContent);
-            DefaultRepository.SimpleSave(uqVirtualContent.UserQueryContentViewSchema.SelectUniqContentIDs().Select(id => new UserQueryContentsDAL
+            DefaultRepository.SimpleSaveBulk(uqVirtualContent.UserQueryContentViewSchema.SelectUniqContentIDs().Select(id => new UserQueryContentsDAL
             {
                 IsIdSource = false,
                 RealContentId = id,
@@ -265,8 +288,9 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void RemoveUserQuerySourcesInfo(Content uqVirtualContent)
         {
             var virtualContentId = uqVirtualContent.Id;
-            var recToRemove = QPContext.EFContext.UserQueryContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
-            DefaultRepository.SimpleDelete(recToRemove);
+            var context = QPContext.EFContext;
+            var recToRemove = context.UserQueryContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+            DefaultRepository.SimpleDeleteBulk(recToRemove, context);
         }
 
         /// <summary>

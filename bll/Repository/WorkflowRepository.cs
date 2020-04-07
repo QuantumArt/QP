@@ -1,19 +1,23 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class WorkflowRepository
     {
-        internal static ContentWorkflowBindDAL GetContentWorkflowDal(int contentId)
+        internal static ContentWorkflowBindDAL GetContentWorkflowDal(int contentId, QPModelDataContext context = null)
         {
-            return QPContext.EFContext.ContentWorkflowBindSet.SingleOrDefault(s => s.ContentId == (decimal)contentId);
+            var currentContext = context ?? QPContext.EFContext;
+            return currentContext.ContentWorkflowBindSet.SingleOrDefault(s => s.ContentId == (decimal)contentId);
         }
 
         internal static ContentWorkflowBind GetContentWorkflow(int contentId) => MapperFacade.ContentWorkflowBindMapper.GetBizObject(GetContentWorkflowDal(contentId));
@@ -142,14 +146,15 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void UpdateContentWorkflowBind(ContentWorkflowBind binding)
         {
-            var oldDal = GetContentWorkflowDal(binding.Content.Id);
+            var context = QPContext.EFContext;
+            var oldDal = GetContentWorkflowDal(binding.Content.Id, context);
             var persisted = oldDal != null;
             var needToPersist = binding.WorkflowId != WorkflowBind.UnassignedId;
             var changed = persisted && needToPersist && (oldDal.WorkflowId != binding.WorkflowId || oldDal.IsAsync != binding.IsAsync);
             var newDal = !needToPersist ? null : MapperFacade.ContentWorkflowBindMapper.GetDalObject(binding);
             if (persisted && changed || persisted && !needToPersist)
             {
-                DefaultRepository.SimpleDelete(oldDal.EntityKey);
+                DefaultRepository.SimpleDelete(oldDal, context);
             }
 
             if (persisted && changed || !persisted && needToPersist)
@@ -164,67 +169,65 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.WorkflowMapper.GetBizObject(entities.WorkflowSet.Include("LastModifiedByUser").Include("WorkflowRules.StatusType").SingleOrDefault(n => (int)n.Id == id));
         }
 
-        internal static Workflow UpdateProperties(Workflow workflow)
+        internal static Workflow UpdateProperties(Workflow workflow, IEnumerable<int> activeStatuses)
         {
             var entities = QPContext.EFContext;
-            UpdateRuleOrder(workflow);
+            UpdateRuleOrder(workflow, activeStatuses);
 
-            var newWorkflowRules = workflow.WorkflowRules.Where(x => x.Id == 0).ToArray();
+            var dalDb = entities.WorkflowSet.AsNoTracking().Include("WorkflowRules").Single(g => g.Id == workflow.Id);
+            var indbRulesIDs = new HashSet<decimal>(dalDb.WorkflowRules.Select(x => x.Id));
+            var indbRulesStatusIDs = new HashSet<decimal>(dalDb.WorkflowRules.Select(x => x.SuccessorStatusId));
+
+            var rulesToAdd = workflow.WorkflowRules.Where(x => x.Id == 0 && !indbRulesStatusIDs.Contains(x.SuccessorStatusId ?? 0)).ToArray();
             workflow.WorkflowRules.RemoveAll(x => x.Id == 0);
+            var inmemoryRulesIDs = new HashSet<decimal>(workflow.WorkflowRules
+                .Where(n => activeStatuses.Contains(n.SuccessorStatusId ?? 0))
+                .Select(x => Converter.ToDecimal(x.Id)));
 
-            var dal = MapperFacade.WorkflowMapper.GetDalObject(workflow);
-            dal.LastModifiedBy = QPContext.CurrentUserId;
-
+            workflow.LastModifiedBy = QPContext.CurrentUserId;
             using (new QPConnectionScope())
             {
-                dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
+                workflow.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.WorkflowSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            var dal = MapperFacade.WorkflowMapper.GetDalObject(workflow);
+            entities.Entry(dal).State = EntityState.Modified;
 
-            var dalDb = entities.WorkflowSet.Include("WorkflowRules").Single(g => g.Id == dal.Id);
-            foreach (var rule in newWorkflowRules)
+            var rulesToDelete = dalDb.WorkflowRules.Where(x => x.Id != 0 && !inmemoryRulesIDs.Contains(x.Id)).ToArray();
+            var rulesToUpdate = workflow.WorkflowRules
+                .Where(n => inmemoryRulesIDs.Contains(n.Id) && indbRulesIDs.Contains(n.Id))
+                .ToArray();
+
+            foreach (var rule in rulesToAdd)
             {
+                rule.WorkflowId = workflow.Id;
                 var dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
-                dalRule.WorkflowId = workflow.Id;
-                dalRule.Description = rule.Description;
-                dalRule.RuleOrder = rule.RuleOrder;
-                entities.WorkflowRulesSet.AddObject(dalRule);
+                entities.Entry(dalRule).State = EntityState.Added;
             }
 
-            var inmemoryRulesIDs = new HashSet<decimal>(workflow.WorkflowRules.Select(x => Converter.ToDecimal(x.Id)));
-            var indbRulesIDs = new HashSet<decimal>(dalDb.WorkflowRules.Select(x => x.Id));
-            foreach (var rule in dalDb.WorkflowRules.ToArray().Where(x => x.Id != 0))
+            foreach (var rule in rulesToDelete)
             {
-                if (!inmemoryRulesIDs.Contains(rule.Id))
-                {
-                    entities.WorkflowRulesSet.Attach(rule);
-                    dalDb.WorkflowRules.Remove(rule);
-                    entities.WorkflowRulesSet.DeleteObject(rule);
-                }
+                entities.Entry(rule).State = EntityState.Deleted;
             }
 
-            foreach (var rule in workflow.WorkflowRules)
+            foreach (var rule in rulesToUpdate)
             {
-                if (indbRulesIDs.Contains(rule.Id))
-                {
-                    var existingRule = entities.WorkflowRulesSet.Single(x => x.Id == rule.Id);
-                    existingRule.UserId = rule.UserId;
-                    existingRule.GroupId = rule.GroupId;
-                    existingRule.Description = rule.Description;
-                    existingRule.RuleOrder = rule.RuleOrder;
-                }
+                rule.WorkflowId = workflow.Id;
+                var dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
+                entities.Entry(dalRule).State = EntityState.Modified;
             }
 
             entities.SaveChanges();
             return MapperFacade.WorkflowMapper.GetBizObject(dal);
         }
 
-        private static void UpdateRuleOrder(Workflow workflow)
+        private static void UpdateRuleOrder(Workflow workflow, IEnumerable<int> activeStatuses = null)
         {
             var i = 1;
-            foreach (var rule in workflow.WorkflowRules.OrderBy(n => n.StatusType.Weight))
+            var rules = workflow.WorkflowRules
+                .Where(n => activeStatuses == null || activeStatuses.Contains(n.SuccessorStatusId ?? 0))
+                .OrderBy(n => n.StatusType.Weight);
+            foreach (var rule in rules)
             {
                 rule.RuleOrder = i;
                 i++;
@@ -255,51 +258,99 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static Workflow SaveProperties(Workflow workflow)
+        private static void ChangeInsertAccessTriggerState(bool enable)
         {
-            var entities = QPContext.EFContext;
-            UpdateRuleOrder(workflow);
-
-            var forceIds = workflow.ForceRulesIds == null ? null : new Queue<int>(workflow.ForceRulesIds);
-            var dal = MapperFacade.WorkflowMapper.GetDalObject(workflow);
-
-            dal.LastModifiedBy = QPContext.CurrentUserId;
-            using (new QPConnectionScope())
-            {
-                dal.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
-                dal.Modified = dal.Created;
-            }
-
-            entities.WorkflowSet.AddObject(dal);
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Workflow, workflow);
-            if (workflow.ForceId > 0)
-            {
-                dal.Id = workflow.ForceId;
-            }
-
-            entities.SaveChanges();
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Workflow);
-            foreach (var rule in workflow.WorkflowRules)
-            {
-                var dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
-                if (forceIds != null)
-                {
-                    dalRule.Id = forceIds.Dequeue();
-                }
-                dalRule.WorkflowId = dal.Id;
-                entities.WorkflowRulesSet.AddObject(dalRule);
-            }
-
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.WorkflowRule);
-            entities.SaveChanges();
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.WorkflowRule);
-
-            return MapperFacade.WorkflowMapper.GetBizObject(dal);
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_access_workflow", enable);
         }
 
-        internal static void DeleteVeStyle(int id)
+        private static void ChangeDeleteBindingsTriggerState(bool enable)
         {
-            DefaultRepository.Delete<WorkflowDAL>(id);
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "td_content_and_article_workflow_bind", enable);
+        }
+
+        internal static Workflow SaveProperties(Workflow workflow)
+        {
+            using (new QPConnectionScope())
+            {
+                var entities = QPContext.EFContext;
+                UpdateRuleOrder(workflow);
+
+                var forceIds = workflow.ForceRulesIds == null ? null : new Queue<int>(workflow.ForceRulesIds);
+                workflow.LastModifiedBy = QPContext.CurrentUserId;
+                workflow.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
+                workflow.Modified = workflow.Created;
+                if (workflow.ForceId > 0)
+                {
+                    workflow.Id = workflow.ForceId;
+                }
+
+
+                var dal = MapperFacade.WorkflowMapper.GetDalObject(workflow);
+                entities.Entry(dal).State = EntityState.Added;
+
+                if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                {
+                    DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Workflow, workflow);
+                    ChangeInsertAccessTriggerState(false);
+                }
+
+                entities.SaveChanges();
+                workflow.Id = (int)dal.Id;
+
+                CommonSecurity.CreateWorkflowAccess(QPConnectionScope.Current.DbConnection, workflow.Id);
+
+                if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                {
+                    DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Workflow);
+                    ChangeInsertAccessTriggerState(true);
+                }
+
+                foreach (var rule in workflow.WorkflowRules)
+                {
+                    rule.WorkflowId = workflow.Id;
+                    if (forceIds != null)
+                    {
+                        rule.Id = forceIds.Dequeue();
+                    }
+
+                    var dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
+                    entities.Entry(dalRule).State = EntityState.Added;
+                }
+
+                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.WorkflowRule);
+                entities.SaveChanges();
+                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.WorkflowRule);
+
+                return MapperFacade.WorkflowMapper.GetBizObject(dal);
+            }
+        }
+
+        internal static void Delete(int id)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                {
+                    ChangeDeleteBindingsTriggerState(false);
+                }
+
+                var bindings = QPContext.EFContext.ContentWorkflowBindSet.Where(n => n.WorkflowId == id).ToArray();
+                DefaultRepository.SimpleDeleteBulk(bindings);
+
+                var bindings2 = QPContext.EFContext.ArticleWorkflowBindSet.Where(n => n.WorkflowId == id).ToArray();
+                DefaultRepository.SimpleDeleteBulk(bindings2);
+
+                var waits = QPContext.EFContext.WaitingForApprovalSet.Include(n => n.Article.WorkflowBinding)
+                    .Where(n => n.Article.WorkflowBinding.WorkflowId == id).ToArray();
+                DefaultRepository.SimpleDeleteBulk(waits);
+
+                DefaultRepository.Delete<WorkflowDAL>(id);
+
+                if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                {
+                    ChangeDeleteBindingsTriggerState(true);
+                }
+            }
         }
 
         internal static void SaveHistoryStatus(int id, int systemStatusTypeId, string comment, int currentUserId)

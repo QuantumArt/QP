@@ -1,6 +1,4 @@
-﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Library
@@ -33,17 +31,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
 
         public override string ActionCode => IsSite ? Constants.ActionCode.SiteFileProperties : Constants.ActionCode.ContentFileProperties;
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
-            try
-            {
-                File.Validate();
-            }
-            catch (RulesException ex)
-            {
-                ex.Extend(modelState, "Data");
-                IsValid = false;
-            }
+            File.Validate();
+        }
+
+        public override void DoCustomBinding()
+        {
         }
 
         public override string Id => File.Name;

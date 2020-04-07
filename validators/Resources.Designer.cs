@@ -19,10 +19,10 @@ namespace Quantumart.QP8.Validators {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Quantumart.QP8.Validators {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Quantumart.QP8.Validators.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Validators.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.Validators {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The custom validation is success..
         /// </summary>
-        internal static string CustomNegatedValidatorDefaultMessageTemplate {
+        public static string CustomNegatedValidatorDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("CustomNegatedValidatorDefaultMessageTemplate", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The custom validation is failed..
         /// </summary>
-        internal static string CustomNonNegatedValidatorDefaultMessageTemplate {
+        public static string CustomNonNegatedValidatorDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("CustomNonNegatedValidatorDefaultMessageTemplate", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The field &quot;{0}&quot; on type &quot;{1}&quot; is either missing or non public..
         /// </summary>
-        internal static string ExceptionInvalidField {
+        public static string ExceptionInvalidField {
             get {
                 return ResourceManager.GetString("ExceptionInvalidField", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The method &quot;{0}&quot; on type &quot;{1}&quot; is either missing, non public, void or has parameters..
         /// </summary>
-        internal static string ExceptionInvalidMethod {
+        public static string ExceptionInvalidMethod {
             get {
                 return ResourceManager.GetString("ExceptionInvalidMethod", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The property &quot;{0}&quot; on type &quot;{1}&quot; is either missing, non public or read-only..
         /// </summary>
-        internal static string ExceptionInvalidProperty {
+        public static string ExceptionInvalidProperty {
             get {
                 return ResourceManager.GetString("ExceptionInvalidProperty", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to No public readable property with name &quot;{0}&quot; could be found for type &quot;{1}&quot;..
         /// </summary>
-        internal static string ExceptionPropertyToCompareNotFound {
+        public static string ExceptionPropertyToCompareNotFound {
             get {
                 return ResourceManager.GetString("ExceptionPropertyToCompareNotFound", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to No public readable property with name &quot;{0}&quot; could be found for type &quot;{1}&quot;..
         /// </summary>
-        internal static string ExceptionShouldNotCall {
+        public static string ExceptionShouldNotCall {
             get {
                 return ResourceManager.GetString("ExceptionShouldNotCall", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to A validation attribute of type {0} cannot be used to validate values..
         /// </summary>
-        internal static string ExceptionValidationAttributeNotSupported {
+        public static string ExceptionValidationAttributeNotSupported {
             get {
                 return ResourceManager.GetString("ExceptionValidationAttributeNotSupported", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The value must not match the regular expression &quot;{3}&quot; with options &quot;{4}&quot;..
         /// </summary>
-        internal static string RegexIgnoresEmptyStringValidatorNegatedDefaultMessageTemplate {
+        public static string RegexIgnoresEmptyStringValidatorNegatedDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("RegexIgnoresEmptyStringValidatorNegatedDefaultMessageTemplate", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The value must match the regular expression &quot;{3}&quot; with options &quot;{4}&quot;..
         /// </summary>
-        internal static string RegexIgnoresEmptyStringValidatorNonNegatedDefaultMessageTemplate {
+        public static string RegexIgnoresEmptyStringValidatorNonNegatedDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("RegexIgnoresEmptyStringValidatorNonNegatedDefaultMessageTemplate", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The value is not required..
         /// </summary>
-        internal static string RequiredNegatedValidatorDefaultMessageTemplate {
+        public static string RequiredNegatedValidatorDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("RequiredNegatedValidatorDefaultMessageTemplate", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The value is required..
         /// </summary>
-        internal static string RequiredNonNegatedValidatorDefaultMessageTemplate {
+        public static string RequiredNonNegatedValidatorDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("RequiredNonNegatedValidatorDefaultMessageTemplate", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to Unable cast value to type of validated object!.
         /// </summary>
-        internal static string ValueComparisonValidatorFailureToCastValue {
+        public static string ValueComparisonValidatorFailureToCastValue {
             get {
                 return ResourceManager.GetString("ValueComparisonValidatorFailureToCastValue", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The value should not have succeeded in the comparison with value for key &quot;{4}&quot; using operator &quot;{5}&quot;..
         /// </summary>
-        internal static string ValueComparisonValidatorNegatedDefaultMessageTemplate {
+        public static string ValueComparisonValidatorNegatedDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("ValueComparisonValidatorNegatedDefaultMessageTemplate", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace Quantumart.QP8.Validators {
         /// <summary>
         ///   Looks up a localized string similar to The value failed the comparison with value for key &quot;{4}&quot; using operator &quot;{5}&quot;..
         /// </summary>
-        internal static string ValueComparisonValidatorNonNegatedDefaultMessageTemplate {
+        public static string ValueComparisonValidatorNonNegatedDefaultMessageTemplate {
             get {
                 return ResourceManager.GetString("ValueComparisonValidatorNonNegatedDefaultMessageTemplate", resourceCulture);
             }

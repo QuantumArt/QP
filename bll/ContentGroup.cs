@@ -1,8 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -29,10 +29,10 @@ namespace Quantumart.QP8.BLL
 
         public static ContentGroup GetDefaultGroup(int siteId) => ContentRepository.GetGroupById(ContentRepository.GetDefaultGroupId(siteId));
 
-        [RequiredValidator(MessageTemplateResourceName = "GroupNameNotEntered", MessageTemplateResourceType = typeof(ContentStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "GroupNameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "GroupNameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("GroupName", NameResourceType = typeof(ContentStrings))]
+        [Required(ErrorMessageResourceName = "GroupNameNotEntered", ErrorMessageResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "GroupNameMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "GroupNameInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "GroupName", ResourceType = typeof(ContentStrings))]
         public override string Name { get; set; }
 
         public int SiteId { get; set; }

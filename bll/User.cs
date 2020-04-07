@@ -1,98 +1,94 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
-using Unity;
 
 namespace Quantumart.QP8.BLL
 {
-    [HasSelfValidation]
     public class User : EntityObject
     {
         internal static User Create() => new User { Groups = Enumerable.Empty<UserGroup>() };
 
         public User()
         {
-            _contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => QPContext.CurrentUnityContainer.Resolve<IUserService>().GetContentDefaultFilters(Id));
+            _contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => UserRepository.GetContentDefaultFilters(Id));
             EnableContentGroupingInTree = true;
         }
 
-        [LocalizedDisplayName("Login", NameResourceType = typeof(UserStrings))]
-        [RequiredValidator(MessageTemplateResourceName = "LoginNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
-        [MaxLengthValidator(30, MessageTemplateResourceName = "LoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-        [FormatValidator(RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
+        [Display(Name = "Login", ResourceType = typeof(UserStrings))]
+        [Required(ErrorMessageResourceName = "LoginNotEntered", ErrorMessageResourceType = typeof(UserStrings))]
+        [StringLength(30, ErrorMessageResourceName = "LoginLengthExceeded", ErrorMessageResourceType = typeof(UserStrings))]
+        [RegularExpression(RegularExpressions.UserName, ErrorMessageResourceName = "LoginInvalidFormat", ErrorMessageResourceType = typeof(UserStrings))]
         public string LogOn { get; set; }
 
-        [LocalizedDisplayName("Password", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "Password", ResourceType = typeof(UserStrings))]
         public string Password { get; set; }
-        
-        [LocalizedDisplayName("NewPassword", NameResourceType = typeof(UserStrings))]
-        [RequiredValidator("MustChangePassword", MessageTemplateResourceName = "NewPasswordNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
+
+        [Display(Name = "NewPassword", ResourceType = typeof(UserStrings))]
         public string NewPassword { get; set; }
 
-        [LocalizedDisplayName("NewPasswordCopy", NameResourceType = typeof(UserStrings))]
-        [RequiredValidator("MustChangePassword", MessageTemplateResourceName = "NewPasswordCopyNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
+        [Display(Name = "NewPasswordCopy", ResourceType = typeof(UserStrings))]
         public string NewPasswordCopy { get; set; }
 
-        [LocalizedDisplayName("Disabled", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "Disabled", ResourceType = typeof(UserStrings))]
         public bool Disabled { get; set; }
 
-        [RequiredValidator(MessageTemplateResourceName = "FirstNameNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "FirstNameMaxLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-        [LocalizedDisplayName("FirstName", NameResourceType = typeof(UserStrings))]
+        [Required(ErrorMessageResourceName = "FirstNameNotEntered", ErrorMessageResourceType = typeof(UserStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FirstNameMaxLengthExceeded", ErrorMessageResourceType = typeof(UserStrings))]
+        [Display(Name = "FirstName", ResourceType = typeof(UserStrings))]
         public string FirstName { get; set; }
 
-        [RequiredValidator(MessageTemplateResourceName = "LastNameNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "LastNameMaxLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-        [LocalizedDisplayName("LastName", NameResourceType = typeof(UserStrings))]
+        [Required(ErrorMessageResourceName = "LastNameNotEntered", ErrorMessageResourceType = typeof(UserStrings))]
+        [StringLength(255, ErrorMessageResourceName = "LastNameMaxLengthExceeded", ErrorMessageResourceType = typeof(UserStrings))]
+        [Display(Name = "LastName", ResourceType = typeof(UserStrings))]
         public string LastName { get; set; }
 
-        [RequiredValidator(MessageTemplateResourceName = "EmailNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "EmailMaxLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-        [FormatValidator(RegularExpressions.Email, Negated = false, MessageTemplateResourceName = "EmailInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
-        [LocalizedDisplayName("Email", NameResourceType = typeof(UserStrings))]
+        [Required(ErrorMessageResourceName = "EmailNotEntered", ErrorMessageResourceType = typeof(UserStrings))]
+        [StringLength(255, ErrorMessageResourceName = "EmailMaxLengthExceeded", ErrorMessageResourceType = typeof(UserStrings))]
+        [EmailAddress(ErrorMessageResourceName = "EmailInvalidFormat", ErrorMessageResourceType = typeof(UserStrings))]
+        [Display(Name = "Email", ResourceType = typeof(UserStrings))]
         public string Email { get; set; }
 
-        [LocalizedDisplayName("AutoLogOn", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "AutoLogOn", ResourceType = typeof(UserStrings))]
         public bool AutoLogOn { get; set; }
 
-        [LocalizedDisplayName("NtLogin", NameResourceType = typeof(UserStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NtLoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-        [FormatValidator(RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtLoginInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
+        [Display(Name = "NtLogin", ResourceType = typeof(UserStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NtLoginLengthExceeded", ErrorMessageResourceType = typeof(UserStrings))]
+        [RegularExpression(RegularExpressions.UserName, ErrorMessageResourceName = "NtLoginInvalidFormat", ErrorMessageResourceType = typeof(UserStrings))]
         public string NtLogOn { get; set; }
 
-        [LocalizedDisplayName("MustChangePassword", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "MustChangePassword", ResourceType = typeof(UserStrings))]
         public bool MustChangePassword { get; set; }
 
-        [LocalizedDisplayName("EnableContentGroupingInTree", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "EnableContentGroupingInTree", ResourceType = typeof(UserStrings))]
         public bool EnableContentGroupingInTree { get; set; }
 
         public DateTime? LastLogOn { get; set; }
 
         public bool Subscribed { get; set; }
 
-        [LocalizedDisplayName("Language", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "Language", ResourceType = typeof(UserStrings))]
         public int LanguageId { get; set; }
 
         public bool VMode { get; set; }
 
         public byte[] AdSid { get; set; }
 
-        [LocalizedDisplayName("AllowStageEditField", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "AllowStageEditField", ResourceType = typeof(UserStrings))]
         public bool AllowStageEditField { get; set; }
 
-        [LocalizedDisplayName("AllowStageEditObject", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "AllowStageEditObject", ResourceType = typeof(UserStrings))]
         public bool AllowStageEditObject { get; set; }
 
         public bool BuiltIn { get; set; }
@@ -101,6 +97,7 @@ namespace Quantumart.QP8.BLL
 
         public override string EntityTypeCode => Constants.EntityTypeCode.User;
 
+        [ValidateNever]
         public override string Name => LogOn;
 
         public override string Description => DisplayName;
@@ -126,6 +123,8 @@ namespace Quantumart.QP8.BLL
 
         public bool You => QPContext.CurrentUserId == Id;
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<UserGroup> Groups { get; set; }
 
         private readonly InitPropertyValue<IEnumerable<UserDefaultFilter>> _contentDefaultFilters;
@@ -150,6 +149,20 @@ namespace Quantumart.QP8.BLL
         {
             var errors = new RulesException<User>();
             base.Validate(errors);
+
+
+            if (MustChangePassword)
+            {
+                if (string.IsNullOrEmpty(NewPassword))
+                {
+                    errors.ErrorFor(u => u.NewPassword, UserStrings.NewPasswordNotEntered);
+                }
+                if (string.IsNullOrEmpty(NewPasswordCopy))
+                {
+                    errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordCopyNotEntered);
+                }
+            }
+
             if (!string.IsNullOrEmpty(NewPassword))
             {
                 if (NewPassword.Length < 7 || NewPassword.Length > 20)
@@ -188,8 +201,8 @@ namespace Quantumart.QP8.BLL
         {
             return UserRepository.NewPasswordMathCurrentPassword(userId, newPassword);
         }
- 
-        public void DoCustomBinding()
+
+        public override void DoCustomBinding()
         {
             VMode = false;
             Subscribed = true;
@@ -204,10 +217,9 @@ namespace Quantumart.QP8.BLL
             {
                 if (string.IsNullOrEmpty(NewPassword))
                 {
-                    errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotEntered);
+                    errors.ErrorFor(u => u.NewPassword, UserStrings.NewPasswordNotEntered);
                 }
             }
-
             // Пользователь не может быть одновременно добавлен в группу использующую параллельный Workflow ,в группу "Администраторы" или в ее потомков
             if (Groups.Any(g => g.UseParallelWorkflow))
             {
@@ -248,7 +260,7 @@ namespace Quantumart.QP8.BLL
                 if (NewPassword != NewPasswordCopy)
                 {
                     errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordAndCopyDoesntMatch);
-                }               
+                }
             }
 
             if (!errors.IsEmpty)

@@ -11,8 +11,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public sealed class ClearContentService : RemovingServiceAbstract
     {
-        private ClearContentCommand _command;
-
         public override MessageResult PreAction(int siteId, int contentId)
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
@@ -60,20 +58,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
                 contentName = row.Field<string>("CONTENT_NAME");
             }
 
-            _command = new ClearContentCommand(siteId, contentId, contentName, itemCount);
+            Commands.Add(new ClearContentCommand(siteId, contentId, contentName, itemCount));
             return base.Setup(siteId, contentId, boundToExternal);
         }
 
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
-        {
-            var stageSetting = _command.GetStageSettings();
-            return new MultistepActionSettings { Stages = new[] { stageSetting } };
-        }
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
-        {
-            var commandState = _command.GetState();
-            return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
-        }
     }
 }

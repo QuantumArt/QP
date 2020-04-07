@@ -1,11 +1,17 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -15,7 +21,11 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<UserGroup> GetNtGroups()
         {
-            var groups = QPContext.EFContext.UserGroupSet.Include("ParentGroups").Where(f => f.NtGroup != null);
+            var groups = QPContext
+                .EFContext
+                .UserGroupSet
+                .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
+                .Where(f => f.NtGroup != null);
             return MapperFacade.UserGroupMapper.GetBizList(groups.ToList());
         }
 
@@ -28,6 +38,9 @@ namespace Quantumart.QP8.BLL.Repository
                 return MapperFacade.UserGroupListItemRowMapper.GetBizList(rows.ToList());
             }
         }
+
+        internal static IEnumerable<UserGroup> GetEveryoneGroups() => MapperFacade.UserGroupMapper.GetBizList(QPContext.EFContext.UserGroupSet.Where(x => x.IsReadOnly && x.BuiltIn).ToList());
+
 
         /// <summary>
         /// Возвращает список по ids
@@ -42,10 +55,10 @@ namespace Quantumart.QP8.BLL.Repository
         internal static UserGroup GetPropertiesById(int id)
         {
             return MapperFacade.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet
-                .Include("ParentGroups")
-                .Include("ChildGroups")
-                .Include("Users")
-                .Include("LastModifiedByUser")
+                .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
+                .Include(x => x.ChildGroupToGroupBinds).ThenInclude(y => y.ChildGroup)
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.User)
+                .Include(x => x.LastModifiedByUser)
                 .SingleOrDefault(g => g.Id == id)
             );
         }
@@ -66,16 +79,18 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.UserGroupSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
 
-            var dalDb = entities.UserGroupSet.Include("ParentGroups").Include("Users").Single(g => g.Id == dal.Id);
-            foreach (var pg in dalDb.ParentGroups.ToArray())
+            var dalDb = entities
+                .UserGroupSet
+                .Include(x => x.ParentGroupToGroupBinds).ThenInclude(y => y.ParentGroup)
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.User)
+                .Single(g => g.Id == dal.Id);
+            foreach (var pg in dalDb.ParentGroupToGroupBinds.ToArray())
             {
-                if (group.ParentGroup == null || pg.Id != group.ParentGroup.Id)
+                if (group.ParentGroup == null || pg.ParentGroup.Id != group.ParentGroup.Id)
                 {
-                    entities.UserGroupSet.Attach(pg);
-                    dalDb.ParentGroups.Remove(pg);
+                    dalDb.ParentGroupToGroupBinds.Remove(pg);
                 }
             }
 
@@ -85,26 +100,26 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var dalParent = entities.UserGroupSet.Single(g => g.Id == group.ParentGroup.Id);
                     entities.UserGroupSet.Attach(dalParent);
-                    dal.ParentGroups.Add(dalParent);
+                    var bind = new GroupToGroupBindDAL { ParentGroup = dalParent, ChildGroup = dal};
+                    dal.ParentGroupToGroupBinds.Add(bind);
                 }
             }
 
             var inmemoryUserIDs = new HashSet<decimal>(group.Users.Select(u => Converter.ToDecimal(u.Id)));
             var indbUserIDs = new HashSet<decimal>(dalDb.Users.Select(u => u.Id));
-            foreach (var u in dalDb.Users.ToArray())
+            foreach (var u in dalDb.UserGroupBinds.ToArray())
             {
-                if (!inmemoryUserIDs.Contains(u.Id))
+                if (!inmemoryUserIDs.Contains(u.User.Id))
                 {
-                    entities.UserSet.Attach(u);
-                    dalDb.Users.Remove(u);
+                    dalDb.UserGroupBinds.Remove(u);
                 }
             }
             foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
             {
                 if (!indbUserIDs.Contains(u.Id))
                 {
-                    entities.UserSet.Attach(u);
-                    dal.Users.Add(u);
+                    var bind = new UserUserGroupBindDAL { UserId = u.Id, UserGroupId = group.Id };
+                    dal.UserGroupBinds.Add(bind);
                 }
             }
 
@@ -123,20 +138,21 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = dal.Created;
             }
 
-            entities.UserGroupSet.AddObject(dal);
-            entities.SaveChanges();
+            entities.Entry(dal).State = EntityState.Added;
 
             if (group.ParentGroup != null)
             {
                 var parentDal = MapperFacade.UserGroupMapper.GetDalObject(group.ParentGroup);
                 entities.UserGroupSet.Attach(parentDal);
-                dal.ParentGroups.Add(parentDal);
+                var bind = new GroupToGroupBindDAL { ParentGroup = parentDal, ChildGroup = dal };
+                dal.ParentGroupToGroupBinds.Add(bind);
             }
 
             foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
             {
                 entities.UserSet.Attach(u);
-                dal.Users.Add(u);
+                var bind = new UserUserGroupBindDAL { UserGroup = dal, User = u };
+                dal.UserGroupBinds.Add(bind);
             }
 
             entities.SaveChanges();
@@ -200,10 +216,67 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static int CopyGroup(UserGroup group, int currentUserId)
         {
-            using (var scope = new QPConnectionScope())
+            var entities = QPContext.EFContext;
+
+            var userGroupDal = entities
+                .UserGroupSet
+                .AsNoTracking()
+                .Include(x => x.ParentGroupToGroupBinds)
+                .Include(x => x.UserGroupBinds)
+                .Include(x => x.SiteAccess)
+                .Include(x => x.ContentAccess)
+                .Include(x => x.ArticleAccess)
+                .Include(x => x.FolderAccess)
+                .Include(x => x.ENTITY_TYPE_ACCESS)
+                .Include(x => x.ACTION_ACCESS)
+                .Single(x => x.Id == group.Id);
+
+            userGroupDal.Id = 0;
+            userGroupDal.Name = group.Name;
+            userGroupDal.Created = userGroupDal.Modified = DateTime.Now;
+            userGroupDal.LastModifiedBy = currentUserId;
+            userGroupDal.BuiltIn = false;
+            userGroupDal.IsReadOnly = false;
+
+            foreach (var sitePermissionDAL in userGroupDal.SiteAccess)
             {
-                return Common.CopyUserGroup(group.Id, group.Name, currentUserId, scope.DbConnection);
+                sitePermissionDAL.Id = 0;
             }
+
+            foreach (var contentPermissionDAL in userGroupDal.ContentAccess)
+            {
+                contentPermissionDAL.Id = 0;
+            }
+
+            foreach (var articlePermissionDAL in userGroupDal.ArticleAccess)
+            {
+                articlePermissionDAL.Id = 0;
+            }
+
+            foreach (var folderPermissionDAL in userGroupDal.FolderAccess)
+            {
+                folderPermissionDAL.Id = 0;
+            }
+
+            foreach (var entityTypePermissionDAL in userGroupDal.ENTITY_TYPE_ACCESS)
+            {
+                entityTypePermissionDAL.Id = 0;
+            }
+
+            foreach (var actionPermissionDAL in userGroupDal.ACTION_ACCESS)
+            {
+                actionPermissionDAL.Id = 0;
+            }
+
+            var newUserGroupEntityEntry = entities.UserGroupSet.Add(userGroupDal);
+            entities.SaveChanges();
+            var newUserGroup = newUserGroupEntityEntry.Entity;
+            return (int)newUserGroup.Id;
+
+            // using (var scope = new QPConnectionScope())
+            // {
+            //     return Common.CopyUserGroup(group.Id, group.Name, currentUserId, scope.DbConnection);
+            // }
         }
 
         internal static IEnumerable<ListItem> GetSimpleList(int[] groupIDs)
@@ -213,7 +286,38 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void Delete(int id)
         {
-            DefaultRepository.Delete<UserGroupDAL>(id);
+            var entities = QPContext.EFContext;
+            var group = entities
+                .UserGroupSet
+                .Include(x => x.UserGroupBinds)
+                .Include(x => x.ParentGroupToGroupBinds)
+                .Include(x => x.ChildGroupToGroupBinds)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (group == null)
+            {
+                return;
+            }
+
+            foreach (var userGroupBind in group.UserGroupBinds)
+            {
+                entities.Remove(userGroupBind);
+            }
+
+            foreach (var parentGroupToGroupBind in group.ParentGroupToGroupBinds)
+            {
+                entities.Remove(parentGroupToGroupBind);
+            }
+
+            foreach (var childGroupToGroupBind in group.ChildGroupToGroupBinds)
+            {
+                entities.Remove(childGroupToGroupBind);
+            }
+
+            entities.Remove(group);
+            entities.SaveChanges();
+
+            // DefaultRepository.Delete<UserGroupDAL>(id);
         }
     }
 }

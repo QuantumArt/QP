@@ -1,13 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Web;
 using System.Xml.Linq;
+using Flurl.Util;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
@@ -25,12 +28,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvReader
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private readonly int _siteId;
         private readonly int _contentId;
         private readonly FileReader _reader;
         private readonly ImportSettings _importSettings;
         private readonly NotificationPushRepository _notificationRepository;
-
+        private readonly bool _skipFirstLine;
+        private readonly bool _skipSecondLine;
+        private int _initNumber;
         private List<string> _titleHeaders;
         private Dictionary<int, List<Field>> _fieldsMap;
         private Dictionary<Field, int> _headersMap;
@@ -47,6 +54,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _contentId = contentId;
             _importSettings = settings;
             _reader = new FileReader(settings);
+            _skipFirstLine = _reader.Lines.First().Skip;
+            _skipSecondLine = _skipFirstLine && _reader.Lines.Skip(1).First().Skip;
             _notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
             _traceFields = GetTraceFields(contentId);
             _jObject = InitJObject(_traceFields);
@@ -78,11 +87,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public void Process(int step, int itemsPerStep, out int processedItemsCount)
         {
-            _csvLines = _reader.Lines.Where(s => !s.Skip).Skip(step * itemsPerStep).Take(itemsPerStep);
+            _csvLines = _reader.Lines.Where(s => !s.Skip).Skip(step * itemsPerStep).Take(itemsPerStep).ToArray();
+            _initNumber = _csvLines.First().Number - 1;
             _titleHeaders = MultistepActionHelper.GetFileFields(_importSettings, _reader);
-
-            InitFields();
-            ConvertCsvLinesToArticles();
+            var fields = FieldRepository.GetList(_importSettings.FieldsList.Select(n => n.Value))
+                .ToDictionary(n => n.Id.ToString(), m => m);
+            InitFields(fields);
+            ConvertCsvLinesToArticles(fields);
             WriteArticlesToDb();
             processedItemsCount = _csvLines.Count();
         }
@@ -96,18 +107,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             get
             {
-                if (_csvLines == null || !_csvLines.Any())
+                if (_initNumber == 0 || _initNumber == 1 && _skipFirstLine || _initNumber == 2 && _skipSecondLine)
                 {
                     return @"N/A";
                 }
-
-                var num = _csvLines.First().Number - 1;
-                if (num == 0 || num == 1 && _reader.Lines.First().Skip || num == 2 && _reader.Lines.First().Skip && _reader.Lines.Skip(1).First().Skip)
-                {
-                    return @"N/A";
-                }
-
-                return num.ToString();
+                return _initNumber.ToString();
             }
         }
 
@@ -162,7 +166,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return articlesToUpdate;
         }
 
-        private void ConvertCsvLinesToArticles()
+        private void ConvertCsvLinesToArticles(Dictionary<string, Field> fields)
         {
             foreach (var line in _csvLines)
             {
@@ -199,13 +203,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 if (!article.BaseArticle.FieldValues.Any() && _aggregatedContentsMap.Where(w => w.Key != article.BaseArticle.Id).Any())
                 {
-                    var classifierFields = _importSettings.FieldsList.Where(w => w.Value.IsClassifier).Select(s => s.Value);
+                    var classifierFields = fields.Where(w => w.Value.IsClassifier).Select(n => n.Value).ToArray();
 
                     foreach (var classifier in classifierFields)
                     {
                         foreach (var classifierContentId in _aggregatedContentsMap.Where(w => w.Key != classifier.ContentId).Select(s => s.Key))
                         {
-                            if (_importSettings.FieldsList.Where(w => w.Key != "-1" && w.Value.ContentId == classifierContentId).Any())
+                            if (_importSettings.FieldsList.Where(w => w.Key != "-1" && fields[w.Key].ContentId == classifierContentId).Any())
                             {
                                 AddExtensionArticle(article, classifier, classifierContentId, fieldValues, line);
                             }
@@ -342,8 +346,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             var fieldIndex = _titleHeaders.IndexOf(fieldName);
             Ensure.NotEqual(fieldIndex, -1, ImportStrings.UniqueNotSpecified);
+            var field = (_importSettings.UniqueContentFieldId != 0) ? FieldRepository.GetById(_importSettings.UniqueContentFieldId) : null;
 
-            if (_importSettings.UniqueContentField == null || article.ContentId != _contentId)
+            if (field == null || article.ContentId != _contentId)
             {
                 var dbId = 0;
                 if (!string.IsNullOrEmpty(fieldValues[fieldIndex]) && !int.TryParse(fieldValues[fieldIndex], out dbId))
@@ -361,8 +366,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var value = PrepareValue(fieldValues[fieldIndex]);
                 if (value != "NULL" && !string.IsNullOrEmpty(value) && value != "\"\"")
                 {
-                    var fieldDbValue = new FieldValue { Field = _importSettings.UniqueContentField };
-                    FormatFieldValue(_importSettings.UniqueContentField, value, ref fieldDbValue);
+
+                    var fieldDbValue = new FieldValue { Field = field };
+                    FormatFieldValue(field, value, ref fieldDbValue);
                     _uniqueValuesList.Add(fieldDbValue.Value);
                 }
                 else
@@ -441,7 +447,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private ExtendedArticleList GetArticles(ExtendedArticleList articlesList, bool onlyExisting)
         {
             ExtendedArticleList existingArticles;
-            if (_importSettings.UniqueContentField == null)
+            var uniqueField = FieldRepository.GetById(_importSettings.UniqueContentFieldId);
+            if (uniqueField == null)
             {
                 var existingIds = GetExistingArticleIds(articlesList.GetBaseArticleIds());
                 existingArticles = articlesList.Filter(a => !onlyExisting ^ existingIds.Contains(a.Id));
@@ -449,7 +456,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             else
             {
                 existingArticles = new ExtendedArticleList(articlesList);
-                var existingIdsMap = GetExistingArticleIdsMap(_uniqueValuesList, _importSettings.UniqueContentField.Name);
+                var existingIdsMap = GetExistingArticleIdsMap(_uniqueValuesList, uniqueField.Name);
                 for (var i = 0; i < articlesList.Count; i++)
                 {
                     var article = articlesList[i];
@@ -603,18 +610,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static List<int> InsertArticlesIds(ICollection<Article> articleList, bool preserveGuids = false)
         {
-            var i = 0;
-            var query = new StringBuilder();
+            var doc = new XDocument();
+            doc.Add(new XElement("ITEMS"));
             foreach (var article in articleList)
             {
-                var unionAll = ++i == articleList.Count ? string.Empty : " UNION ALL ";
-                query.AppendLine(preserveGuids
-                    ? $"SELECT {Convert.ToInt32(article.Visible)}, {article.StatusTypeId}, {article.ContentId}, {QPContext.CurrentUserId}, '{article.UniqueId}' {unionAll}"
-                    : $"SELECT {Convert.ToInt32(article.Visible)}, {article.StatusTypeId}, {article.ContentId}, {QPContext.CurrentUserId} {unionAll}"
-                );
+                var elem = new XElement("ITEM");
+                elem.Add(new XAttribute("visible", Convert.ToInt32(article.Visible)));
+                elem.Add(new XAttribute("contentId", article.ContentId));
+                elem.Add(new XAttribute("statusId", article.StatusTypeId));
+                elem.Add(new XAttribute("userId", QPContext.CurrentUserId));
+                if (preserveGuids)
+                {
+                    elem.Add(new XAttribute("guid", article.UniqueId));
+                }
+                doc.Root?.Add(elem);
             }
 
-            return ArticleRepository.InsertArticleIds(query.ToString(), preserveGuids);
+            return ArticleRepository.InsertArticleIds(doc.ToString(), preserveGuids);
         }
 
         private static void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)
@@ -967,16 +979,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static void SaveUpdatedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             settings?.UpdatedArticleIds.AddRange(articleIds);
-            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
+            HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, settings);
         }
 
         private static void SaveInsertedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             settings?.InsertedArticleIds.AddRange(articleIds);
-            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
+            HttpContext.Session.SetValue(HttpContextSession.ImportSettingsSessionKey, settings);
         }
 
         private List<int> GetExistingArticleIds(List<int> articlesIdList) => ArticleRepository.CheckForArticleExistence(articlesIdList, string.Empty, _contentId);
@@ -1082,15 +1094,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return columnIndexes.Select(k => k.ToString()).ToList();
         }
 
-        private void InitFields()
+        private void InitFields(Dictionary<string, Field> fields)
         {
-            _fieldsMap = _importSettings
-                .FieldsList.Select(f => f.Value)
+            _fieldsMap = fields.Select(f => f.Value)
                 .GroupBy(f => f.ContentId)
                 .Select(g => g)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
-            _headersMap = _importSettings.FieldsList.ToDictionary(f => f.Value, f => _titleHeaders.FindIndex(s => s == f.Key));
+            _headersMap = fields.ToDictionary(f => f.Value, f => _titleHeaders.FindIndex(s => s == f.Value.Name));
             _aggregatedContentsMap = ContentRepository.GetAggregatedContents(_contentId).ToDictionary(c => c.Id, c => c);
             _articlesListFromCsv = new ExtendedArticleList();
             _uniqueValuesList = new List<string>();
@@ -1110,26 +1121,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public IEnumerable<Line> Lines => _lines.Value;
 
-        public void CopyFileToTempDir()
-        {
-            var fileInfo = new FileInfo(HttpUtility.UrlDecode(_settings.UploadFilePath) ?? string.Empty);
-            if (fileInfo.Exists)
-            {
-                var newFileUploadPath = $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
-                if (!File.Exists(newFileUploadPath))
-                {
-                    File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
-                }
-            }
-            else
-            {
-                throw new FileNotFoundException($"File {_settings.UploadFilePath} was not found.");
-            }
-        }
-
         public static IEnumerable<Line> ReadFile(ImportSettings setts)
         {
-            using (var sr = new StreamReader(setts.UploadFilePath))
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            using (var sr = new StreamReader(setts.TempFileUploadPath))
             {
                 string line;
                 var rdr = new CustomStreamReader(sr.BaseStream, Encoding.GetEncoding(setts.Encoding), setts.LineSeparator, setts.Delimiter);

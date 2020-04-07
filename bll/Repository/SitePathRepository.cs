@@ -1,6 +1,8 @@
 using System.IO;
-using System.Web;
-using System.Web.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Utils;
 
@@ -8,16 +10,19 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class SitePathRepository
     {
-        public static string RELATIVE_PATH_TO_COPY = @"\ToCopy";
-        public static string RELATIVE_PREVIEW_PATH = @"\temp\preview\objects";
-        public static string RELATIVE_NOTIFICATIONS_PATH = @"\qp_notifications";
-        public static string RELATIVE_SETTINGS_PATH = @"\qp_settings";
-        public static string RELATIVE_CONTENTS_PATH = @"\contents";
-        public static string RELATIVE_TEMPLATES_PATH = @"\templates";
-        public static string RELATIVE_IMAGES_PATH = @"\images";
-        public static string RELATIVE_BIN_PATH = @"\bin";
-        public static string RELATIVE_APP_DATA_PATH = @"\App_Data";
-        public static string RELATIVE_APP_CODE_PATH = @"\App_Code";
+        private static readonly char Sep = Path.DirectorySeparatorChar;
+        public static string RELATIVE_PATH_TO_COPY = $"{Sep}ToCopy";
+        public static string RELATIVE_PREVIEW_PATH = $"{Sep}temp{Sep}preview{Sep}objects";
+        public static string RELATIVE_NOTIFICATIONS_PATH = $"{Sep}qp_notifications";
+        public static string RELATIVE_SETTINGS_PATH = $"{Sep}qp_settings";
+        public static string RELATIVE_CONTENTS_PATH = $"{Sep}contents";
+        public static string RELATIVE_TEMPLATES_PATH = $"{Sep}templates";
+        public static string RELATIVE_IMAGES_PATH = $"{Sep}images";
+        public static string RELATIVE_BIN_PATH = $"{Sep}bin";
+        public static string RELATIVE_APP_DATA_PATH = $"{Sep}App_Data";
+        public static string RELATIVE_APP_CODE_PATH = $"{Sep}App_Code";
+
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
         /// <summary>
         /// Возвращает URL, по которому расположен бэкенд
@@ -25,7 +30,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>URL бэкенда</returns>
         internal static string GetCurrentRootUrl()
         {
-            var qpConfig = WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
+            var qpConfig = QPConfiguration.Options;
             return qpConfig == null ? string.Empty : qpConfig.BackendUrl;
         }
 
@@ -36,8 +41,22 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>путь</returns>
         internal static string GetDirectoryPathToCopy()
         {
-            var rootUrl = GetCurrentRootUrl();
-            return HttpContext.Current == null || string.IsNullOrEmpty(rootUrl) ? string.Empty : HttpContext.Current.Server.MapPath(rootUrl + RELATIVE_PATH_TO_COPY);
+            string rootUrl = GetCurrentRootUrl();
+
+            if (HttpContext == null || string.IsNullOrEmpty(rootUrl))
+            {
+                return string.Empty;
+            }
+
+            var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
+
+            // TODO: review resolver directory path
+            return hostingEnvironment.ContentRootFileProvider.GetFileInfo(rootUrl + RELATIVE_PATH_TO_COPY).PhysicalPath;
+        }
+
+        private static IUrlHelper GetUrlHelper()
+        {
+            return HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
         }
 
         /// <summary>
@@ -108,6 +127,51 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
+        /// <summary>
+        /// Возвращает путь к директории, в которой хранятся изображения общие для всех тем
+        /// </summary>
+        /// <returns>путь к директории, в которой хранятся изображения общие для всех тем</returns>
+        internal static string GetCommonRootImageFolderUrl() =>
+            GetUrlHelper().Content("~/Static/Common/");
+
+        /// <summary>
+        /// Возвращает путь к директории, в которой хранятся изображения указанной темы
+        /// </summary>
+        /// <param name="themeName">название темы</param>
+        /// <returns>путь к директории, в которой хранятся изображения указанной темы</returns>
+        internal static string GetThemeRootImageFolderUrl(string themeName) =>
+            GetUrlHelper().Content("~/Static/" + themeName + "/");
+
+        /// <summary>
+        /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы указанной темы
+        /// </summary>
+        /// <param name="themeName">название темы</param>
+        /// <returns>путь к директории, в которой хранятся маленькие пиктограммы указанной темы</returns>
+        internal static string GetThemeSmallIconsImageFolderUrl(string themeName) =>
+            GetUrlHelper().Content( "~/Static/" + themeName + "/icons/16x16/");
+
+        /// <summary>
+        /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы типов файлов
+        /// </summary>
+        /// <param name="themeName">название темы</param>
+        internal static string GetThemeSmallFileTypeIconFolderUrl(string themeName) =>
+            GetUrlHelper().Content( "~/Static/" + themeName + "/icons/16x16/file_types/");
+
+        /// <summary>
+        /// Возвращает путь к директории, в которой хранятся большие пиктограммы типов файлов
+        /// </summary>
+        /// <param name="themeName">название темы</param>
+        internal static string GetThemeBigFileTypeIconFolderUrl(string themeName) =>
+            GetUrlHelper().Content( "~/Static/" + themeName + "/icons/64x64/file_types/");
+
+        /// <summary>
+        /// Возвращает путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы
+        /// </summary>
+        /// <param name="themeName">название темы</param>
+        /// <returns>путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы</returns>
+        internal static string GetThemeAjaxLoaderIconsImageFolderUrl(string themeName) =>
+            GetUrlHelper().Content( "~/Static/" + themeName + "/icons/ajax_loaders/");
+
         public static void CreateDirectories(string basePath)
         {
             Directory.CreateDirectory(basePath);
@@ -126,52 +190,11 @@ namespace Quantumart.QP8.BLL.Repository
         public static void CreateBinDirectory(string binPath)
         {
             Directory.CreateDirectory(binPath);
+            #if !NET_STANDARD
             CopySiteDirectory(binPath, RELATIVE_BIN_PATH);
+            #endif
         }
 
-        /// <summary>
-        /// Возвращает путь к директории, в которой хранятся изображения общие для всех тем
-        /// </summary>
-        /// <returns>путь к директории, в которой хранятся изображения общие для всех тем</returns>
-        internal static string GetCommonRootImageFolderUrl() =>
-            Url.ToAbsolute("~/Content/Common/");
-
-        /// <summary>
-        /// Возвращает путь к директории, в которой хранятся изображения указанной темы
-        /// </summary>
-        /// <param name="themeName">название темы</param>
-        /// <returns>путь к директории, в которой хранятся изображения указанной темы</returns>
-        internal static string GetThemeRootImageFolderUrl(string themeName) =>
-            Url.ToAbsolute("~/Content/" + themeName + "/");
-
-        /// <summary>
-        /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы указанной темы
-        /// </summary>
-        /// <param name="themeName">название темы</param>
-        /// <returns>путь к директории, в которой хранятся маленькие пиктограммы указанной темы</returns>
-        internal static string GetThemeSmallIconsImageFolderUrl(string themeName) =>
-            Url.ToAbsolute("~/Content/" + themeName + "/icons/16x16/");
-
-        /// <summary>
-        /// Возвращает путь к директории, в которой хранятся маленькие пиктограммы типов файлов
-        /// </summary>
-        /// <param name="themeName">название темы</param>
-        internal static string GetThemeSmallFileTypeIconFolderUrl(string themeName) =>
-            Url.ToAbsolute("~/Content/" + themeName + "/icons/16x16/file_types/");
-
-        /// <summary>
-        /// Возвращает путь к директории, в которой хранятся большие пиктограммы типов файлов
-        /// </summary>
-        /// <param name="themeName">название темы</param>
-        internal static string GetThemeBigFileTypeIconFolderUrl(string themeName) =>
-            Url.ToAbsolute("~/Content/" + themeName + "/icons/64x64/file_types/");
-
-        /// <summary>
-        /// Возвращает путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы
-        /// </summary>
-        /// <param name="themeName">название темы</param>
-        /// <returns>путь к директории, в которой хранятся индикаторы AJAX-загрузки указанной темы</returns>
-        internal static string GetThemeAjaxLoaderIconsImageFolderUrl(string themeName) =>
-            Url.ToAbsolute("~/Content/" + themeName + "/icons/ajax_loaders/");
     }
 }
+

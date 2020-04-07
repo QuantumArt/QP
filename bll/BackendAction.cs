@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -54,44 +54,44 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Текст предупреждения, которое выводится перед запуском действия
         /// </summary>
-        [LocalizedDisplayName("ConfirmPhrase", NameResourceType = typeof(CustomActionStrings))]
-        [MaxLengthValidator(1000, MessageTemplateResourceName = "ConfirmPhraseLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "ConfirmPhrase", ResourceType = typeof(CustomActionStrings))]
+        [StringLength(1000, ErrorMessageResourceName = "ConfirmPhraseLengthExceeded", ErrorMessageResourceType = typeof(CustomActionStrings))]
         public string ConfirmPhrase { get; set; }
 
         /// <summary>
         /// Признак того, что для выполнения действия требуется пользовательский интерфейс
         /// </summary>
-        [LocalizedDisplayName("IsInterface", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "IsInterface", ResourceType = typeof(CustomActionStrings))]
         public bool IsInterface { get; set; }
 
         /// <summary>
         /// Имеется преэкшн
         /// </summary>
-        [LocalizedDisplayName("HasPreAction", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "HasPreAction", ResourceType = typeof(CustomActionStrings))]
         public bool HasPreAction { get; set; }
 
         /// <summary>
         /// Имеются настройки
         /// </summary>
-        [LocalizedDisplayName("HasSettings", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "HasSettings", ResourceType = typeof(CustomActionStrings))]
         public bool HasSettings { get; set; }
 
         /// <summary>
         /// Признак того, что для выполнения действия требуется всплывающее окно
         /// </summary>
-        [LocalizedDisplayName("IsWindow", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "IsWindow", ResourceType = typeof(CustomActionStrings))]
         public bool IsWindow { get; set; }
 
         /// <summary>
         /// Ширина окна
         /// </summary>
-        [LocalizedDisplayName("WindowWidth", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "WindowWidth", ResourceType = typeof(CustomActionStrings))]
         public int? WindowWidth { get; set; }
 
         /// <summary>
         /// Высота окна
         /// </summary>
-        [LocalizedDisplayName("WindowHeight", NameResourceType = typeof(CustomActionStrings))]
+        [Display(Name = "WindowHeight", ResourceType = typeof(CustomActionStrings))]
         public int? WindowHeight { get; set; }
 
         /// <summary>
@@ -183,5 +183,8 @@ namespace Quantumart.QP8.BLL
         /// Лимит объектов при превышении которого действие обрабатывается как многошаговое
         /// </summary>
         public int? EntityLimit { get; set; }
+
+
+        public BackendAction Clone() => (BackendAction)MemberwiseClone();
     }
 }

@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class SiteStrings {
@@ -187,7 +187,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of assembly files physical path should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of assembly files physical path should not exceed {1} characters.
         /// </summary>
         public static string AssemblyPathMaxLengthExceeded {
             get {
@@ -232,7 +232,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of connection string name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of connection string name should not exceed {1} characters.
         /// </summary>
         public static string ConnectionStringNameMaxLengthExceeded {
             get {
@@ -268,7 +268,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of context class name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of context class name should not exceed {1} characters.
         /// </summary>
         public static string ContextClassNameMaxLengthExceeded {
             get {
@@ -394,7 +394,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of description should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of description should not exceed {1} characters.
         /// </summary>
         public static string DescriptionMaxLengthExceeded {
             get {
@@ -430,7 +430,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of DNS should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of DNS should not exceed {1} characters.
         /// </summary>
         public static string DnsMaxLengthExceeded {
             get {
@@ -763,7 +763,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of site pages physical path for Live Mode should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of site pages physical path for Live Mode should not exceed {1} characters.
         /// </summary>
         public static string LiveDirectoryMaxLengthExceeded {
             get {
@@ -799,7 +799,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of site pages virtual path for Live Mode should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of site pages virtual path for Live Mode should not exceed {1} characters.
         /// </summary>
         public static string LiveVirtualRootMaxLengthExceeded {
             get {
@@ -853,7 +853,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of site name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of site name should not exceed {1} characters.
         /// </summary>
         public static string NameMaxLengthExceeded {
             get {
@@ -898,7 +898,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of namespace should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of namespace should not exceed {1} characters.
         /// </summary>
         public static string NamespaceMaxLengthExceeded {
             get {
@@ -1006,20 +1006,20 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace urls to placeholders.
-        /// </summary>
-        public static string ReplaceUrlsInDB {
-            get {
-                return ResourceManager.GetString("ReplaceUrlsInDB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Replace URLs.
         /// </summary>
         public static string ReplaceUrls {
             get {
                 return ResourceManager.GetString("ReplaceUrls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace urls to placeholders.
+        /// </summary>
+        public static string ReplaceUrlsInDB {
+            get {
+                return ResourceManager.GetString("ReplaceUrlsInDB", resourceCulture);
             }
         }
         
@@ -1150,7 +1150,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of assembly files physical path for Stage Mode should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of assembly files physical path for Stage Mode should not exceed {1} characters.
         /// </summary>
         public static string StageAssemblyPathMaxLengthExceeded {
             get {
@@ -1186,7 +1186,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of site pages physical path for Stage Mode should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of site pages physical path for Stage Mode should not exceed {1} characters.
         /// </summary>
         public static string StageDirectoryMaxLengthExceeded {
             get {
@@ -1222,7 +1222,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of DNS for Stage Mode should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of DNS for Stage Mode should not exceed {1} characters.
         /// </summary>
         public static string StageDnsMaxLengthExceeded {
             get {
@@ -1258,7 +1258,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of site pages virtual path for Stage Mode should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of site pages virtual path for Stage Mode should not exceed {1} characters.
         /// </summary>
         public static string StageVirtualRootMaxLengthExceeded {
             get {
@@ -1294,7 +1294,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of test directory path should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of test directory path should not exceed {1} characters.
         /// </summary>
         public static string TestDirectoryMaxLengthExceeded {
             get {
@@ -1339,7 +1339,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of physical path for file uploading should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of physical path for file uploading should not exceed {1} characters.
         /// </summary>
         public static string UploadDirMaxLengthExceeded {
             get {
@@ -1384,7 +1384,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of virtual path for file uploading should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of virtual path for file uploading should not exceed {1} characters.
         /// </summary>
         public static string UploadUrlMaxLengthExceeded {
             get {
@@ -1420,7 +1420,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of virtual path prefix for file uploading should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of virtual path prefix for file uploading should not exceed {1} characters.
         /// </summary>
         public static string UploadUrlPrefixMaxLengthExceeded {
             get {

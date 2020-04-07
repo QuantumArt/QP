@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
@@ -26,11 +26,11 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 
         public override int ParentEntityId => 1;
 
-        [MaxLengthValidator(512, MessageTemplateResourceName = "UrlPrefixMaxLengthExceeded", MessageTemplateResourceType = typeof(VisualEditorStrings))]
-        [LocalizedDisplayName("Url", NameResourceType = typeof(VisualEditorStrings))]
+        [StringLength(512, ErrorMessageResourceName = "UrlPrefixMaxLengthExceeded", ErrorMessageResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Url", ResourceType = typeof(VisualEditorStrings))]
         public string Url { get; set; }
 
-        [LocalizedDisplayName("Order", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Order", ResourceType = typeof(VisualEditorStrings))]
         public int Order { get; set; }
 
         public List<VisualEditorCommand> VeCommands { get; set; }
@@ -121,7 +121,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
                 command.IsInvalid = true;
             }
 
-            if (!string.IsNullOrWhiteSpace(command.Name) && Regex.IsMatch(command.Name, RegularExpressions.InvalidEntityName))
+            if (!string.IsNullOrWhiteSpace(command.Name) && !Regex.IsMatch(command.Name, RegularExpressions.EntityName))
             {
                 errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameInvalidFormat, index));
                 command.IsInvalid = true;

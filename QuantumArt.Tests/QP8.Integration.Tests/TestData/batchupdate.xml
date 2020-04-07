@@ -403,8 +403,8 @@
     <field name="Data.UseVersionControl">false</field>
     <field name="Data.MaxNumOfStoredVersions">10</field>
     <field name="Data.MapAsClass">false</field>
-    <field name="Data.NetName">1</field>
-    <field name="Data.NetPluralName">1</field>
+    <field name="Data.NetName"></field>
+    <field name="Data.NetPluralName"></field>
     <field name="Data.UseDefaultFiltration">true</field>
     <field name="Data.UseDefaultFiltration">false</field>
     <field name="Data.AdditionalContextClassName"></field>
@@ -433,8 +433,8 @@
     <field name="Data.UseVersionControl">false</field>
     <field name="Data.MaxNumOfStoredVersions">10</field>
     <field name="Data.MapAsClass">false</field>
-    <field name="Data.NetName">1</field>
-    <field name="Data.NetPluralName">1</field>
+    <field name="Data.NetName"></field>
+    <field name="Data.NetPluralName"></field>
     <field name="Data.UseDefaultFiltration">true</field>
     <field name="Data.UseDefaultFiltration">false</field>
     <field name="Data.AdditionalContextClassName"></field>
@@ -1568,16 +1568,16 @@
     <field name="field_6131">1989546</field>
     <field name="field_6117">string</field>
     <field name="field_6133">15</field>
-    <field name="field_6134">17.45</field>
-    <field name="field_6135">7/5/2016</field>
-    <field name="field_6136">1:30 AM</field>
-    <field name="field_6137">7/5/2016 1:30 AM</field>
-    <field name="field_6138"></field>
-    <field name="field_6139"></field>
+    <field name="field_6134">17,45</field>
+    <field name="field_6135">05.07.2016</field>
+    <field name="field_6136">1:30</field>
+    <field name="field_6137">05.07.2016 1:30</field>
+    <field name="field_6138">1.txt</field>
+    <field name="field_6139">1.png</field>
     <field name="field_6140">text box</field>
     <field name="field_6141">&lt;strong&gt;visual edit&lt;/strong&gt;</field>
     <field name="field_6142"></field>
-    <field name="field_6143">Key1</field>
+    <field name="field_6143">Key2</field>
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>

@@ -52,9 +52,14 @@ Quantumart.QP8.BackendDocumentContext.prototype.fieldValueChangedHandler = funct
 
 Quantumart.QP8.BackendDocumentContext.prototype.setFilter = function (inputName, value, fieldName, $form) {
   var filter = '';
+
   if (value) {
-    filter = fieldName ? 'c.[' + fieldName + '] in (' + value + ')'
-      : 'c.content_item_id in (select linked_item_id from item_link where item_id in (' + value + '))';
+    if (fieldName) {
+      var fieldExpr = this.isPg ? 'c."' + fieldName.toLowerCase() + '"' : 'c.[' + fieldName + ']';
+      filter = fieldExpr + ' in (' + value + ')';
+    } else {
+      filter = 'c.content_item_id in (select linked_item_id from item_link where item_id in (' + value + '))';
+    }
   }
 
   this.applyFilter(inputName, filter, $form);

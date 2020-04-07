@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -5,7 +6,6 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -38,70 +38,70 @@ namespace Quantumart.QP8.BLL
             set => _content = value;
         }
 
-        [LocalizedDisplayName("Format", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "Format", ResourceType = typeof(NotificationStrings))]
         public int? FormatId { get; set; }
 
-        [LocalizedDisplayName("User", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "User", ResourceType = typeof(NotificationStrings))]
         public int? UserId { get; set; }
 
-        [LocalizedDisplayName("UserGroup", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "UserGroup", ResourceType = typeof(NotificationStrings))]
         public int? GroupId { get; set; }
 
-        [LocalizedDisplayName("QP8User", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "QP8User", ResourceType = typeof(NotificationStrings))]
         public int? FromBackenduserId { get; set; }
 
         public User FromUser { get; set; }
 
-        [LocalizedDisplayName("Field", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "Field", ResourceType = typeof(NotificationStrings))]
         public int? EmailFieldId { get; set; }
 
         public int? WorkFlowId { get; set; }
 
         public Workflow Workflow { get; set; }
 
-        [LocalizedDisplayName("Status", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "Status", ResourceType = typeof(NotificationStrings))]
         public int? NotifyOnStatusTypeId { get; set; }
 
-        [LocalizedDisplayName("ForCreate", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForCreate", ResourceType = typeof(NotificationStrings))]
         public bool ForCreate { get; set; }
 
-        [LocalizedDisplayName("ForModify", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForModify", ResourceType = typeof(NotificationStrings))]
         public bool ForModify { get; set; }
 
-        [LocalizedDisplayName("ForRemove", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForRemove", ResourceType = typeof(NotificationStrings))]
         public bool ForRemove { get; set; }
 
-        [LocalizedDisplayName("ForStatusChanged", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForStatusChanged", ResourceType = typeof(NotificationStrings))]
         public bool ForStatusChanged { get; set; }
 
-        [LocalizedDisplayName("ForStatusPartiallyChanged", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForStatusPartiallyChanged", ResourceType = typeof(NotificationStrings))]
         public bool ForStatusPartiallyChanged { get; set; }
 
-        [LocalizedDisplayName("ForFrontend", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForFrontend", ResourceType = typeof(NotificationStrings))]
         public bool ForFrontend { get; set; }
 
-        [LocalizedDisplayName("ForDelayedPublication", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ForDelayedPublication", ResourceType = typeof(NotificationStrings))]
         public bool ForDelayedPublication { get; set; }
 
-        [LocalizedDisplayName("SenderName", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "SenderName", ResourceType = typeof(NotificationStrings))]
         public string FromUserName { get; set; }
 
-        [LocalizedDisplayName("UseDefaultSenderName", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "UseDefaultSenderName", ResourceType = typeof(NotificationStrings))]
         public bool FromDefaultName { get; set; }
 
-        [LocalizedDisplayName("DefaultSenderName", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "DefaultSenderName", ResourceType = typeof(NotificationStrings))]
         public string DefaultSenderName { get; set; }
 
-        [LocalizedDisplayName("UseQaMail", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "UseQaMail", ResourceType = typeof(NotificationStrings))]
         public bool UseQaMail { get; set; }
 
-        [LocalizedDisplayName("Email", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "Email", ResourceType = typeof(NotificationStrings))]
         public string FromUserEmail { get; set; }
 
-        [LocalizedDisplayName("SendFiles", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "SendFiles", ResourceType = typeof(NotificationStrings))]
         public bool SendFiles { get; set; }
 
-        [LocalizedDisplayName("UseQP8UserEmail", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "UseQP8UserEmail", ResourceType = typeof(NotificationStrings))]
         public bool FromBackenduser { get; set; }
 
         public User ToUser { get; set; }
@@ -110,16 +110,16 @@ namespace Quantumart.QP8.BLL
 
         public bool NoEmail { get; set; }
 
-        [LocalizedDisplayName("External", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "External", ResourceType = typeof(NotificationStrings))]
         public bool IsExternal { get; set; }
 
-        [LocalizedDisplayName("ExternalUrl", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ExternalUrl", ResourceType = typeof(NotificationStrings))]
         public string ExternalUrl { get; set; }
 
-        [LocalizedDisplayName("UseService", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "UseService", ResourceType = typeof(NotificationStrings))]
         public bool UseService { get; set; }
 
-        [LocalizedDisplayName("ReceiverType", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "ReceiverType", ResourceType = typeof(NotificationStrings))]
         public int SelectedReceiverType { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Notification;
@@ -219,7 +219,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void DoCustomBinding(bool createDefaultFormat)
+        public override void DoCustomBinding()
         {
             if (IsExternal)
             {
@@ -236,11 +236,6 @@ namespace Quantumart.QP8.BLL
             {
                 ExternalUrl = null;
                 UseService = false;
-            }
-
-            if (createDefaultFormat)
-            {
-                FormatId = null;
             }
 
             if (!ForStatusChanged && !ForStatusPartiallyChanged)

@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Utils
 {
@@ -85,9 +86,29 @@ namespace Quantumart.QP8.Utils
         /// <summary>
         /// Эскейпит спец.символы в строке-параметре условия LIKE
         /// </summary>
-        public static string ToSafeSqlLikeCondition(string condition)
+        public static string ToSafeSqlLikeCondition(DatabaseType dbType, string condition)
         {
-            return string.IsNullOrEmpty(condition) ? condition : condition.Replace("'", "''").Replace("[", "[[]").Replace("%", "[%]").Replace("_", "[_]");
+            if (string.IsNullOrEmpty(condition))
+            {
+                return condition;
+            }
+            else if (dbType == DatabaseType.Postgres)
+            {
+                return condition
+                        .Replace("'", "''")
+                        .Replace("_", @"\_")
+                        .Replace("%", @"\%")
+                    ;
+            }
+            else
+            {
+                return condition
+                        .Replace("'", "''")
+                        .Replace("[", "[[]")
+                        .Replace("%", "[%]")
+                        .Replace("_", "[_]")
+                    ;
+            }
         }
 
         /// <summary>

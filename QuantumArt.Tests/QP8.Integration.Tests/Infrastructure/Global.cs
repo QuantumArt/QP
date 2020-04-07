@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using QP8.Infrastructure.Helpers;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QPublishing.Database;
+using M = QP.ConfigurationService.Models;
 
 namespace QP8.Integration.Tests.Infrastructure
 {
@@ -13,9 +19,28 @@ namespace QP8.Integration.Tests.Infrastructure
     {
         public static int SiteId => 35;
 
-        public static string DbName => TestContext.Parameters.Get("qp8_test_ci_dbname", $"qp8_test_ci_{Environment.MachineName.ToLowerInvariant()}");
+        public static WebApplicationFactory<Startup> Factory { get; set; }
 
-        public static string ConnectionString => $"Initial Catalog={DbName};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        public static string ConnectionString
+        {
+            get
+            {
+                var basePart = $"Database={EnvHelpers.DbNameToRunTests};Server={EnvHelpers.DbServerToRunTests};Application Name=UnitTest;";
+                if (!String.IsNullOrEmpty(EnvHelpers.PgDbLoginToRunTests))
+                {
+                    return $"{basePart}User Id={EnvHelpers.PgDbLoginToRunTests};Password={EnvHelpers.PgDbPasswordToRunTests}";
+                }
+
+                return $"{basePart}Integrated Security=True;Connection Timeout=600";
+            }
+        }
+
+        public static DatabaseType DbType => !String.IsNullOrEmpty(EnvHelpers.PgDbLoginToRunTests) ? DatabaseType.Postgres : DatabaseType.SqlServer;
+
+        public static M.DatabaseType ClientDbType => (M.DatabaseType)(int)DbType;
+
+        public static QpConnectionInfo ConnectionInfo => new QpConnectionInfo(ConnectionString, DbType);
+
 
         public static string GetXml(string fileName) => File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, fileName));
 
@@ -34,7 +59,8 @@ namespace QP8.Integration.Tests.Infrastructure
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : string.Empty;
-            return localdbConnector.GetRealData($"select [{fieldName}] from content_{contentId}{asyncString} {idsString}")
+            var field = DbType == DatabaseType.SqlServer ? $@"[{fieldName}]" : $@"""{fieldName.ToLowerInvariant()}""";
+            return localdbConnector.GetRealData($"select {field} from content_{contentId}{asyncString} {idsString}")
                 .Select()
                 .Select(row => ConvertHelpers.ChangeType<T>(row[fieldName]))
                 .ToArray();
@@ -49,16 +75,16 @@ namespace QP8.Integration.Tests.Infrastructure
 
         public static void ClearContentData(DBConnector dbConnector, int articleId)
         {
-            using (var cmd = new SqlCommand("delete from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
+            using (var cmd = dbConnector.CreateDbCommand("delete from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
             {
                 cmd.Parameters.AddWithValue("@id", articleId);
-                dbConnector.GetRealData(cmd);
+                dbConnector.ProcessData(cmd);
             }
         }
 
         public static ContentDataItem[] GetContentData(DBConnector dbConnector, int articleId)
         {
-            using (var cmd = new SqlCommand("select * from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
+            using (var cmd = dbConnector.CreateDbCommand("select * from CONTENT_DATA where CONTENT_ITEM_ID = @id"))
             {
                 cmd.Parameters.AddWithValue("@id", articleId);
                 return dbConnector.GetRealData(cmd)

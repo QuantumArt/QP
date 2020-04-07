@@ -1,7 +1,9 @@
-﻿namespace Quantumart.QP8.WebMvc.Hubs
+using System.Threading.Tasks;
+
+namespace Quantumart.QP8.WebMvc.Hubs
 {
     public interface ICommunicationService
     {
-        void Send(string key, object value);
+        Task Send(string key, object value);
     }
 }

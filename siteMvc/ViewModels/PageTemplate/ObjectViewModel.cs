@@ -1,7 +1,9 @@
+
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
@@ -9,7 +11,7 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -89,7 +91,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             }
         }
 
-        public new BllObject Data
+        public BllObject Data
         {
             get => (BllObject)EntityData;
             set => EntityData = value;
@@ -110,8 +112,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public List<ListItem> Types => _types ?? (_types = _service.GetTypes().ToList());
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
             if (Data.IsSiteDotNet && string.IsNullOrWhiteSpace(Data.NetName))
             {
                 Data.GenerateNetName();
@@ -225,7 +228,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         private InitPropertyValue<IEnumerable<SortingItem>> _sortingItems;
 
-        [LocalizedDisplayName("DefaultSorting", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "DefaultSorting", ResourceType = typeof(TemplateStrings))]
         public IEnumerable<SortingItem> SortingItems
         {
             get => _sortingItems.Value;
@@ -244,23 +247,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             new ListItem(ArticleSelectionIncludeMode.SpecifiedNumberOfArticles.ToString(), TemplateStrings.SpecifiedNumberOfArticles) { HasDependentItems = true, DependentItemIDs = new[] { "SpecialArticlesPanel" } }
         };
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override IEnumerable<ValidationResult> ValidateViewModel()
         {
-            base.Validate(modelState);
             var duplicateNames = SortingItems.GroupBy(c => c.Field).Where(g => g.Count() > 1).Select(x => x.Key).ToArray();
             var sortingArray = SortingItems.ToArray();
-            for (var i = 0; i < sortingArray.Length; i++)
+            var i = 1;
+            foreach (var item in sortingArray)
             {
-                ValidateSortingItem(sortingArray[i], i + 1, duplicateNames, modelState);
-            }
-        }
-
-        private static void ValidateSortingItem(SortingItem item, int index, string[] dupNames, ModelStateDictionary modelState)
-        {
-            if (dupNames.Contains(item.Field))
-            {
-                modelState.AddModelError(string.Empty, string.Format(TemplateStrings.SortExperessionFieldNotUnique, index));
-                item.Invalid = true;
+                if (duplicateNames.Contains(item.Field))
+                {
+                    yield return new ValidationResult(string.Format(TemplateStrings.SortExperessionFieldNotUnique, i));
+                    item.Invalid = true;
+                }
+                i++;
             }
         }
 
@@ -271,10 +270,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public string ShowGlobalTypeIds => ObjectType.GetCss().Id + "," + ObjectType.GetJavaScript().Id;
 
-        [LocalizedDisplayName("Statuses", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "Statuses", ResourceType = typeof(WorkflowStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> ActiveStatusTypeIds { get; set; }
 
-        [LocalizedDisplayName("Statuses", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "Statuses", ResourceType = typeof(WorkflowStrings))]
         public IEnumerable<ListItem> ActiveStatusTypeListItems { get; set; }
 
         public EntityDataListArgs EntityDataListArgs { get; set; }
@@ -283,10 +283,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public bool HasWorkflow => Data.Container?.Content?.WorkflowBinding != null && Data.Container.Content.WorkflowBinding.WorkflowId != 0;
 
-        [LocalizedDisplayName("SelectionIsStarting", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SelectionIsStarting", ResourceType = typeof(TemplateStrings))]
         public int SelectionIsStarting { get; set; }
 
-        [LocalizedDisplayName("SelectionIncludes", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SelectionIncludes", ResourceType = typeof(TemplateStrings))]
         public int SelectionIncludes { get; set; }
 
         public override string CaptureLockActionCode => Data.PageOrTemplate ? Constants.ActionCode.CaptureLockPageObject : Constants.ActionCode.CaptureLockTemplateObject;

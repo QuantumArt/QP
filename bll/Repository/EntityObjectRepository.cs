@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Repository.Helpers;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -16,7 +20,18 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
-                return Common.CheckUnique(QPConnectionScope.Current.DbConnection, entity.EntityTypeCode, entity.Name, entity.Id, entity.ParentEntityId, entity.RecurringId);
+                var entityType = EntityTypeRepository.GetByCode(entity.EntityTypeCode);
+                return Common.CheckUnique(QPConnectionScope.Current.DbConnection,
+                    entityType?.Source,
+                    entityType?.TitleField,
+                    entityType?.ParentIdField,
+                    entityType?.IdField,
+                    entityType?.RecurringIdField,
+                    entity.Name,
+                    entity.Id,
+                    entity.ParentEntityId,
+                    entity.RecurringId
+                );
             }
         }
 
@@ -24,7 +39,10 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
-                return Common.Lock(QPConnectionScope.Current.DbConnection, item.EntityTypeCode, item.Id, userId);
+                var entityType = EntityTypeRepository.GetByCode(item.EntityTypeCode);
+                var source = entityType?.Source;
+                var idField = entityType?.IdField;
+                return Common.Lock(QPConnectionScope.Current.DbConnection, source, idField, item.Id, userId);
             }
         }
 
@@ -78,74 +96,92 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 return new EntityObject[] { new CustomerObject { Id = ids.First(), Modified = DateTime.MinValue, IsReadOnly = true } };
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Site, StringComparison.InvariantCultureIgnoreCase))
             {
                 return SiteRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Content, StringComparison.InvariantCultureIgnoreCase))
             {
                 return ContentRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Field, StringComparison.InvariantCultureIgnoreCase))
             {
                 return FieldRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Article, StringComparison.InvariantCultureIgnoreCase))
             {
                 return ArticleRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Notification, StringComparison.InvariantCultureIgnoreCase))
             {
                 return NotificationRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.VisualEditorPlugin, StringComparison.InvariantCultureIgnoreCase))
             {
                 return VisualEditorRepository.GetPluginList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.VisualEditorCommand, StringComparison.InvariantCultureIgnoreCase))
             {
                 return VisualEditorRepository.GetCommandList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.VisualEditorStyle, StringComparison.InvariantCultureIgnoreCase))
             {
                 return VisualEditorRepository.GetStyleList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.StatusType, StringComparison.InvariantCultureIgnoreCase))
             {
                 return StatusTypeRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Workflow, StringComparison.InvariantCultureIgnoreCase))
             {
                 return WorkflowRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.PageTemplate, StringComparison.InvariantCultureIgnoreCase))
             {
                 return PageTemplateRepository.GetPageTemplateList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.User, StringComparison.InvariantCultureIgnoreCase))
             {
                 return UserRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.UserGroup, StringComparison.InvariantCultureIgnoreCase))
             {
                 return UserGroupRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.TemplateObjectFormat, StringComparison.InvariantCultureIgnoreCase))
             {
                 return FormatRepository.GetList(ids, false);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.PageObjectFormat, StringComparison.InvariantCultureIgnoreCase))
             {
                 return FormatRepository.GetList(ids, true);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.PageObject, StringComparison.InvariantCultureIgnoreCase) || entityTypeCode.Equals(EntityTypeCode.TemplateObject, StringComparison.InvariantCultureIgnoreCase))
             {
                 return ObjectRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.VirtualContent, StringComparison.InvariantCultureIgnoreCase))
             {
                 return VirtualContentRepository.GetList(ids);
             }
+
             if (entityTypeCode.Equals(EntityTypeCode.Page, StringComparison.InvariantCultureIgnoreCase))
             {
                 return PageRepository.GetList(ids);
@@ -178,7 +214,14 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
         /// <returns>результат проверки (true - существует; false - не существует)</returns>
-        internal static bool CheckExistence(string entityTypeCode, int entityId) => QPContext.EFContext.CheckEntityExistence(entityTypeCode, entityId);
+        internal static bool CheckExistence(string entityTypeCode, int entityId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                var entity = EntityTypeRepository.GetByCode(entityTypeCode);
+                return Common.CheckEntityExistence(scope.DbConnection, entityTypeCode, entity?.Source, entity?.IdField, entityId);
+            }
+        }
 
         /// <summary>
         /// Проверяет сущность на наличие рекурсивных связей
@@ -217,7 +260,15 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="entityId">идентификатор сущности</param>
         /// <param name="parentEntityId"></param>
         /// <returns>название сущности</returns>
-        internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0) => QPContext.EFContext.GetEntityName(entityTypeCode, entityId, parentEntityId);
+        internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0)
+        {
+
+            return GetEntityTitle(entityId, entityTypeCode, parentEntityId);
+            // using (var scope = new QPConnectionScope())
+            // {
+            //     return Common.GetEntityName(scope.DbConnection, entityTypeCode, entityId, parentEntityId);
+            // }
+        }
 
         /// <summary>
         /// Возвращает идентификатор родительской сущности
@@ -227,17 +278,60 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>идентификатор родительской сущности</returns>
         internal static int? GetParentId(string entityTypeCode, int entityId)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentEntityId(QPConnectionScope.Current.DbConnection, entityTypeCode, entityId);
+                var entityType = EntityTypeRepository.GetByCode(entityTypeCode);
+                if (entityType == null)
+                {
+                    return null;
+                }
+
+                var result = Common.GetNumericFieldValue(scope.DbConnection, entityType.ParentIdField, entityType.Source, entityType.IdField, entityId);
+                return result.HasValue ? Convert.ToInt32(result.Value) : (int?)null;
+
+
+
+
             }
         }
 
-        internal static int[] GetParentIdsForTree(string entityTypeCode, int[] ids)
+        internal static int[] GetParentIdsForTree(ParentIdsForTreeQuery query)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentEntityIdsForTree(QPConnectionScope.Current.DbConnection, entityTypeCode, ids);
+
+                if (query.EntityTypeCode == EntityTypeCode.Article)
+                {
+                    var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => query.Ids.Contains((int)x.Id))?.ContentId;
+                    if (contentId == null) return new int[0];
+                    var selfRelationFieldId = QPContext.EFContext.FieldSet.FirstOrDefault(x => x.ContentId == contentId && x.UseForTree)?.Id;
+                    if (selfRelationFieldId == null)
+                    {
+                        var relationFieldTypeId = QPContext.EFContext.FieldTypeSet.FirstOrDefault(x => x.InputType == "relation").Id;
+                        var fieldIds = QPContext.EFContext.FieldSet.Where(x => x.ContentId == contentId).Select(x => x.Id).ToList();
+
+                        var field = QPContext
+                            .EFContext
+                            .FieldSet
+                            // .Include(x => x.RelationField)
+                            .Where(x => x.ContentId == contentId && x.TypeId == relationFieldTypeId && x.RelationId != null && fieldIds.Contains(x.RelationId.Value))
+                            .OrderBy(x => x.Id)
+                            .FirstOrDefault();
+
+                        selfRelationFieldId = field?.Id;
+                    }
+
+                    if (selfRelationFieldId == null) return new int[0];
+
+                    var selfRelationFieldName = FieldRepository.GetById((int)selfRelationFieldId.Value)?.Name;
+                    return Common.GetParentEntityIdsForTree(scope.DbConnection, query.EntityTypeCode, query.Ids, contentId, selfRelationFieldName, null, null, null);
+                }
+
+                var entity = EntityTypeRepository.GetByCode(query.EntityTypeCode);
+                if (string.IsNullOrWhiteSpace(entity?.Source) || string.IsNullOrWhiteSpace(entity?.IdField) || string.IsNullOrWhiteSpace(entity?.RecurringIdField)) return new int[0];
+
+                return Common.GetParentEntityIdsForTree(scope.DbConnection, query.EntityTypeCode, query.Ids, null, null, entity.Source, entity.IdField, entity.RecurringIdField);
+
             }
         }
 
@@ -262,23 +356,190 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>цепочка сущностей</returns>
         internal static IEnumerable<EntityInfo> GetParentsChain(string entityTypeCode, long entityId, long? parentEntityId = null, bool oneLevel = false)
         {
-            IList<EntityInfo> result = null;
-            using (new QPConnectionScope())
+            var result = GetParentsChainInternal(entityTypeCode, entityId, parentEntityId, oneLevel);
+            if (result != null)
             {
-                var dt = Common.GetBreadCrumbsList(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, entityTypeCode, entityId, parentEntityId, oneLevel);
-                if (dt != null)
+                var customerCodeInfo = result.SingleOrDefault(n => n.Code == EntityTypeCode.CustomerCode);
+                if (customerCodeInfo != null)
                 {
-                    result = dt.AsEnumerable().Select(EntityInfo.Create).ToList();
+                    customerCodeInfo.Title = QPContext.CurrentCustomerCode;
+                }
+
+                foreach (var item in result)
+                {
+                    item.Title = Translator.Translate(item.Title);
+                    item.EntityTypeName = Translator.Translate(item.EntityTypeName);
                 }
             }
 
-            var customerCodeInfo = result?.SingleOrDefault(n => n.Code == EntityTypeCode.CustomerCode);
-            if (customerCodeInfo != null)
+            return result;
+        }
+
+        internal static IList<EntityInfo> GetParentsChainInternal(string entityTypeCode, long entityId, long? parentEntityId = null, bool oneLevel = false)
+        {
+            string code;
+
+            var result = new List<Tuple<EntityInfo, string>>();
+
+            using (new QPConnectionScope())
             {
-                customerCodeInfo.Title = QPContext.CurrentCustomerCode;
+                var entityTypes = EntityTypeRepository.GetList();
+                var backendActions = BackendActionCache.Actions;
+
+                int level;
+                long? id;
+                if (entityId != 0)
+                {
+                    level = 0;
+                    id = entityId;
+                    code = entityTypeCode;
+                }
+                else
+                {
+                    level = 1;
+                    id = parentEntityId;
+
+                    code = entityTypes
+                        .FirstOrDefault(x => x.Code.Equals(entityTypeCode, StringComparison.InvariantCultureIgnoreCase))
+                        ?.ParentCode;
+
+                }
+
+                while (!string.IsNullOrWhiteSpace(code))
+                {
+                    var entity = entityTypes
+                        .FirstOrDefault(x => x.Code.Equals(code, StringComparison.InvariantCultureIgnoreCase));
+
+                    var title = GetEntityTitle(id, code, parentEntityId);
+
+                    var recurringId = !string.IsNullOrWhiteSpace(entity?.RecurringIdField) && !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField) && !string.IsNullOrWhiteSpace(entity?.RecurringIdField)
+                        ? (long?)Common.GetNumericFieldValue(QPConnectionScope.Current.DbConnection, entity.RecurringIdField, entity.Source, entity.IdField, (decimal)id)
+                        : null;
+
+                    long? parentId;
+                    if (recurringId.HasValue)
+                    {
+                        parentId = recurringId;
+                    }
+                    else
+                    {
+                        if (code == EntityTypeCode.VirtualArticle)
+                        {
+                            parentId = parentEntityId;
+                        }
+                        else
+                        {
+                            parentId = !string.IsNullOrWhiteSpace(entity?.ParentIdField) && !string.IsNullOrWhiteSpace(entity?.Source) && !string.IsNullOrWhiteSpace(entity?.IdField)
+                                ? (long?)Common.GetNumericFieldValue(QPConnectionScope.Current.DbConnection, entity.ParentIdField, entity.Source, entity.IdField, (decimal)id)
+                                : null;
+                        }
+                    }
+
+                    if (!parentId.HasValue)
+                    {
+                        parentId =
+                            code == EntityTypeCode.CustomerCode
+                                ? 0
+                                : entityTypes.FirstOrDefault(x => x.Code == EntityTypeCode.CustomerCode)?.Id;
+                    }
+
+                    result.Add(new Tuple<EntityInfo, string>(new EntityInfo
+                        {
+                            Id = id.Value,
+                            ParentId = parentId,
+                            Code = code,
+                            EntityTypeName = entity?.Name,
+                            Title = title,
+                            IsFolder = false,
+                            ActionCode = backendActions.FirstOrDefault(x => x.Id == entity.DefaultActionId)?.Code,
+                        },
+                        backendActions.FirstOrDefault(x => x.Id == entity.FolderDefaultActionId)?.Code
+                    ));
+
+                    id = parentId;
+
+                    if (!recurringId.HasValue)
+                    {
+                        code = entity.ParentCode;
+                    }
+
+                    if (level == 1 && oneLevel) break;
+
+                    level++;
+                }
+
+                var tuples = result.Where(x => !string.IsNullOrWhiteSpace(x.Item2)).ToArray();
+                foreach (var tuple in tuples)
+                {
+                    var parentFolder = result.FirstOrDefault(y => y.Item1.Id == tuple.Item1.ParentId);
+                    if (parentFolder != null)
+                    {
+                        parentFolder.Item1.ActionCode = tuple.Item2;
+                    }
+                }
+
+                return result.Select(x => x.Item1).ToList();
+            }
+        }
+
+        private static string GetEntityTitle(long? entityId, string entityTypeCode, decimal? parentEntityId)
+        {
+
+            if (entityTypeCode == EntityTypeCode.VirtualArticle)
+            {
+                return GetArticleTitle(entityId.Value, parentEntityId.Value);
             }
 
-            return result;
+            if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle)
+            {
+                if (!entityId.HasValue) return null;
+                var contentId = QPContext.EFContext.ArticleSet.FirstOrDefault(x => x.Id == entityId)?.ContentId;
+                if (!contentId.HasValue) return null;
+                return GetArticleTitle(entityId.Value, contentId.Value);
+            }
+
+            var entity = EntityTypeRepository.GetList().FirstOrDefault(x => x.Code == entityTypeCode);
+
+            if (string.IsNullOrWhiteSpace(entity?.Source) || string.IsNullOrWhiteSpace(entity?.IdField))
+            {
+                return null;
+            }
+
+            var titleField = !string.IsNullOrEmpty(entity.TitleField) ? entity.TitleField : $"{entity.Source}_id";
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetStringFieldValue(
+                    scope.DbConnection, titleField, entity.Source, entity.IdField, entityId.Value
+                );
+            }
+        }
+
+        private static string GetArticleTitle(long contentItemId, decimal contentId)
+        {
+            var displayFields = ContentRepository.GetDisplayFields((int)contentId, true);
+
+            var r = displayFields.Select(x =>
+                {
+                    var relatedField = x.RelationId != null ? FieldRepository.GetById(x.RelationId.Value) : null;
+                    var relatedRelatedField = relatedField?.RelationId != null ? FieldRepository.GetById(relatedField.RelationId.Value) : null;
+                    return new
+                    {
+                        Field = x,
+                        RelatedField = relatedField,
+                        RelatedRelatedField = relatedRelatedField
+                    };
+                })
+                .OrderBy(x => x.Field.Order)
+                .FirstOrDefault();
+
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleTitle(scope.DbConnection,
+                    contentItemId,
+                    contentId,
+                    r?.Field?.Name, r?.RelatedField?.Name, r?.RelatedField?.ContentId, r?.RelatedRelatedField?.Name, r?.RelatedRelatedField?.ContentId);
+            }
+
         }
 
         internal static void UnlockAllEntitiesLockedByUser(int userId)

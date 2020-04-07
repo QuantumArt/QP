@@ -4,7 +4,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
     public sealed class SearchInTemplatesViewModel : ListViewModel
     {
-        public static SearchInTemplatesViewModel Create(string tabId, int parentId) => Create<SearchInTemplatesViewModel>(tabId, parentId);
+        public static SearchInTemplatesViewModel Create(string tabId, int parentId, int siteId)
+        {
+            var model = Create<SearchInTemplatesViewModel>(tabId, parentId);
+            model.SiteId = siteId;
+            return model;
+        }
+
+        public int SiteId { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.PageTemplate;
 

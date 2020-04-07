@@ -11,8 +11,8 @@
 		@Html.TextBoxFieldFor(s => s.Data.Color)
 		@Html.TextBoxFieldFor(s => s.Data.AltColor)
 	}
-    @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 
 }
 

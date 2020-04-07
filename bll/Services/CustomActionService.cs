@@ -11,39 +11,6 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public interface ICustomActionService
-    {
-        CustomActionPrepareResult PrepareForExecuting(string code, string tabId, IEnumerable<int> ids, int parentId);
-
-        ListResult<CustomActionListItem> List(ListCommand listCommand);
-
-        CustomAction Read(int id);
-
-        CustomAction ReadForUpdate(int id);
-
-        CustomAction Update(CustomAction customAction, int[] selectedActionsIds);
-
-        CustomAction New();
-
-        CustomAction NewForSave();
-
-        CustomAction Save(CustomAction customAction, int[] selectedActionsIds);
-
-        MessageResult Remove(int id);
-
-        IEnumerable<ListItem> GetActionTypeList();
-
-        IEnumerable<ListItem> GetEntityTypeList();
-
-        IEnumerable<Site> GetSites(IEnumerable<int> siteIDs);
-
-        IEnumerable<Content> GetContents(IEnumerable<int> contentIDs);
-
-        CustomActionInitListResult InitList(int parentId);
-
-        CopyResult Copy(int id, int[] selectedActionsIds);
-    }
-
     public class CustomActionService : ICustomActionService
     {
         private const string ControllerActionUrl = @"~/CustomAction/Execute/";
@@ -61,9 +28,9 @@ namespace Quantumart.QP8.BLL.Services
             ActionTypeList = new Lazy<IEnumerable<ListItem>>(LoadActionTypeList, true);
         }
 
-        public CustomActionPrepareResult PrepareForExecuting(string code, string hostId, IEnumerable<int> ids, int parentId)
+        public CustomActionPrepareResult PrepareForExecuting(string hostId, int parentId, CustomActionQuery query)
         {
-            var action = CustomActionRepository.GetByCode(code);
+            var action = CustomActionRepository.GetByCode(query.ActionCode);
             var session = _repository.GetCurrent();
             if (session == null)
             {
@@ -74,10 +41,10 @@ namespace Quantumart.QP8.BLL.Services
             _repository.Update(session);
 
             action.SessionId = session.Sid;
-            action.Ids = ids;
+            action.Ids = query.Ids;
             action.ParentId = parentId;
 
-            return SecurityCheck(new CustomActionPrepareResult { CustomAction = action }, action, ids);
+            return SecurityCheck(new CustomActionPrepareResult { CustomAction = action }, action, query.Ids);
         }
 
         public ListResult<CustomActionListItem> List(ListCommand cmd)
@@ -90,13 +57,10 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public IEnumerable<Site> GetSites(IEnumerable<int> siteIDs) => SiteRepository.GetList(siteIDs);
-
-        public IEnumerable<Content> GetContents(IEnumerable<int> contentIDs) => ContentRepository.GetList(contentIDs);
-
         public CustomAction Read(int id)
         {
             var action = CustomActionRepository.GetById(id);
+
             if (action == null)
             {
                 throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, id));
@@ -105,7 +69,10 @@ namespace Quantumart.QP8.BLL.Services
             return action;
         }
 
-        public CustomAction ReadForUpdate(int id) => Read(id);
+        public CustomAction ReadForModify(int id)
+        {
+            return Read(id).Clone();
+        }
 
         public CustomAction Update(CustomAction customAction, int[] selectedActionsIds)
         {
@@ -127,10 +94,16 @@ namespace Quantumart.QP8.BLL.Services
         public CopyResult Copy(int id, int[] selectedActionsIds)
         {
             var result = new CopyResult();
-            var action = Read(id);
+            var action = ReadForModify(id);
             action.Id = 0;
+            if (action.Action != null)
+            {
+                action.Action.Id = 0;
+
+            }
+
             if (action == null)
-            {                
+            {
                 throw new Exception(string.Format(CustomActionStrings.ActionNotFoundByCode, id));
             }
             if (!action.IsUpdatable || !action.IsAccessible(ActionTypeCode.Read))
@@ -236,13 +209,13 @@ namespace Quantumart.QP8.BLL.Services
 
             if (!IsEntityTypeSiteDescendants(entityType.Id))
             {
-                customAction.Sites = Enumerable.Empty<Site>();
+                customAction.SiteIds = new int[] {};
                 customAction.SiteExcluded = false;
             }
 
             if (!IsEntityTypeContentDescendants(entityType.Id))
             {
-                customAction.Contents = Enumerable.Empty<Content>();
+                customAction.ContentIds = new int[] {};
                 customAction.ContentExcluded = false;
             }
 
@@ -285,6 +258,16 @@ namespace Quantumart.QP8.BLL.Services
                 .Select(i => new ListItem(i.Value, Translator.Translate(i.Text), i.DependentItemIDs))
                 .OrderBy(n => n.Text)
                 .ToArray();
+        }
+
+        public IEnumerable<Site> GetSites(CustomAction action)
+        {
+            return SiteRepository.GetList(action.SiteIds);
+        }
+
+        public IEnumerable<Content> GetContents(CustomAction action)
+        {
+            return ContentRepository.GetList(action.ContentIds, true);
         }
 
         public CustomActionInitListResult InitList(int parentId) => new CustomActionInitListResult

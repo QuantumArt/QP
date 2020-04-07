@@ -163,20 +163,20 @@ namespace Quantumart.QP8.BLL.Services
             return violationMessages.Any() ? MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id }) : null;
         }
 
-        public static IEnumerable<EntityTreeItem> GetChildFieldList(int virtualContentId, int? joinedContentId, string entityId, string selectItemIDs, string parentAlias)
+        public static IEnumerable<EntityTreeItem> GetChildFieldList(ChildFieldListQuery query)
         {
             var helper = new VirtualContentHelper();
 
             // Дочерние поля выбранного поля
-            if (!string.IsNullOrWhiteSpace(entityId))
+            if (!string.IsNullOrWhiteSpace(query.EntityId))
             {
-                return helper.GetChildFieldList(entityId, parentAlias, (f, eid, alias) => Enumerable.Empty<EntityTreeItem>());
+                return helper.GetChildFieldList(query.EntityId, query.ParentAlias, (f, eid, alias) => Enumerable.Empty<EntityTreeItem>());
             }
 
             // рутовые поля
-            if (virtualContentId > 0 || joinedContentId.HasValue)
+            if (query.VirtualContentId > 0 || query.JoinedContentId.HasValue)
             {
-                return helper.GetRootFieldList(virtualContentId, joinedContentId, selectItemIDs);
+                return helper.GetRootFieldList(query);
             }
 
             return null;

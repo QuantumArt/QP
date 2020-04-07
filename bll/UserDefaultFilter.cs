@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 
 namespace Quantumart.QP8.BLL
 {
@@ -18,15 +20,16 @@ namespace Quantumart.QP8.BLL
 
         public int UserId { get; set; }
 
-        [LocalizedDisplayName("DefaultFilterSite", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "DefaultFilterSite", ResourceType = typeof(UserStrings))]
         public int? SiteId => ContentId.HasValue ? GetContent().SiteId : GetAllSites().FirstOrDefault()?.Id;
 
-        [LocalizedDisplayName("DefaultFilterContent", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "DefaultFilterContent", ResourceType = typeof(UserStrings))]
         public int? ContentId { get; set; }
 
         public Content GetContent() => ContentId.HasValue ? ContentRepository.GetById(ContentId.Value) : null;
 
-        [LocalizedDisplayName("DefaultFilterArticles", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "DefaultFilterArticles", ResourceType = typeof(UserStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IList<int> ArticleIDs { get; set; }
 
         public IEnumerable<Article> GetArticles() => ArticleRepository.GetList(ArticleIDs);

@@ -1,7 +1,7 @@
-using System.IO;
 using System.Linq;
-using System.Web;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants.Mvc;
@@ -11,6 +11,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteItemLinksCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 100;
 
         public int SourceSiteId { get; set; }
@@ -29,13 +31,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             SourceSiteId = sourceSiteId;
             SiteArticlesCount = siteArticlesCount;
 
-            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(HttpContextSession.CopySiteServiceSettings);
             DestinationSiteId = prms.DestinationSiteId;
         }
 
         public MultistepActionStepResult Step(int step)
         {
-            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(HttpContextSession.CopySiteServiceSettings);
             var result = new MultistepActionStepResult();
             var skip = step * ItemsPerStep;
             var xDocument = XDocument.Load(prms.PathForFileWithLinks);

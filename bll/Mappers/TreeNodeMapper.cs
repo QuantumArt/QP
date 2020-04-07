@@ -15,6 +15,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.ParentGroupId, opt => opt.MapFrom(row => Converter.ToNullableInt32(row.Field<long?>("PARENT_GROUP_ID"))))
                 .ForMember(biz => biz.IsFolder, opt => opt.MapFrom(row => row.Field<bool>("IS_FOLDER")))
                 .ForMember(biz => biz.IsGroup, opt => opt.MapFrom(row => row.Field<bool>("IS_GROUP")))
+                .ForMember(biz => biz.IsRecurring, opt => opt.MapFrom(row => row.Field<bool>("IS_RECURRING")))
                 .ForMember(biz => biz.GroupItemCode, opt => opt.MapFrom(row => row.Field<string>("GROUP_ITEM_CODE")))
                 .ForMember(biz => biz.Icon, opt => opt.MapFrom(row => row.Field<string>("ICON")))
                 .ForMember(biz => biz.Title, opt => opt.MapFrom(row => row.Field<string>("TITLE")))

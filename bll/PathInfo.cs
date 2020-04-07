@@ -1,5 +1,6 @@
 using System;
-using System.IO;
+using I = System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
@@ -17,12 +18,12 @@ namespace Quantumart.QP8.BLL
 
         public PathInfo GetSubPathInfo(string folderName)
         {
-            if (folderName.IndexOf(@"\") == 0)
+            if (folderName.IndexOf(@"\", StringComparison.Ordinal) == 0)
             {
                 folderName = folderName.Substring(1);
             }
 
-            if (!folderName.Equals(string.Empty) && folderName.LastIndexOf(@"\") == folderName.Length - 1)
+            if (!folderName.Equals(string.Empty) && folderName.LastIndexOf(@"\", StringComparison.Ordinal) == folderName.Length - 1)
             {
                 folderName = folderName.Substring(0, folderName.Length - 1);
             }
@@ -32,10 +33,16 @@ namespace Quantumart.QP8.BLL
                 return new PathInfo { Path = Path, Url = Url };
             }
 
-            return new PathInfo { Path = $@"{Path}\{folderName}", Url = $@"{Url}{folderName.Replace(@"\", @"/")}/" };
+            var replacedName = folderName.Replace(@"\", @"/");
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                folderName = replacedName;
+            }
+            return new PathInfo { Path = $@"{Path}{I.Path.DirectorySeparatorChar}{folderName}", Url = $@"{Url}{replacedName}/" };
         }
 
-        public string GetPath(string fileName) => System.IO.Path.Combine(Path, ReplaceUp(fileName));
+        public string GetPath(string fileName) => I.Path.Combine(Path, ReplaceUp(fileName));
 
         public string GetUrl(string fileName) => $"{Url}{ReplaceUp(fileName)}";
 
@@ -44,12 +51,12 @@ namespace Quantumart.QP8.BLL
         internal FolderFile GetFile(string fileName)
         {
             var path = GetPath(fileName);
-            if (!File.Exists(path))
+            if (!I.File.Exists(path))
             {
                 throw new Exception(string.Format(LibraryStrings.FileNotExists, path));
             }
 
-            return new FolderFile(new FileInfo(path));
+            return new FolderFile(new I.FileInfo(path));
         }
 
         public static PathSecurityResult CheckSecurity(string path) => PathSecurity.Check(path);
@@ -61,8 +68,12 @@ namespace Quantumart.QP8.BLL
             {
                 if (path.StartsWith(pathInfo.Path, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    url = Regex.Replace(path, Regex.Escape(pathInfo.Path + @"\"), pathInfo.Url);
-                    url = url.Replace(@"\", @"/");
+                    var pathWithSep = pathInfo.Path + System.IO.Path.DirectorySeparatorChar;
+                    url = Regex.Replace(path, Regex.Escape(pathWithSep), pathInfo.Url);
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        url = url.Replace(@"\", @"/");
+                    }
                     break;
                 }
             }
@@ -77,8 +88,12 @@ namespace Quantumart.QP8.BLL
             {
                 if (url.StartsWith(pathInfo.Url, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    path = Regex.Replace(url, Regex.Escape(pathInfo.Url), pathInfo.Path + @"\");
-                    path = path.Replace(@"/", @"\");
+                    var pathWithSep = pathInfo.Path + System.IO.Path.DirectorySeparatorChar;
+                    path = Regex.Replace(url, Regex.Escape(pathInfo.Url), pathWithSep);
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        path = path.Replace(@"/", @"\");
+                    }
                     break;
                 }
             }

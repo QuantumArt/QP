@@ -70,7 +70,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of additional context class name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of additional context class name should not exceed {1} characters.
         /// </summary>
         public static string AddContextClassNameLengthExceeded {
             get {
@@ -367,7 +367,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of description should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of description should not exceed {1} characters.
         /// </summary>
         public static string DescriptionMaxLengthExceeded {
             get {
@@ -457,7 +457,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of plural friendly name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of plural friendly name should not exceed {1} characters.
         /// </summary>
         public static string FriendlyPluralMaxLengthExceeded {
             get {
@@ -466,7 +466,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of singular friendly name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of singular friendly name should not exceed {1} characters.
         /// </summary>
         public static string FriendlySingularMaxLengthExceeded {
             get {
@@ -502,7 +502,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of content group name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of content group name should not exceed {1} characters.
         /// </summary>
         public static string GroupNameMaxLengthExceeded {
             get {
@@ -727,7 +727,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of content name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of content name should not exceed {1} characters.
         /// </summary>
         public static string NameMaxLengthExceeded {
             get {
@@ -781,7 +781,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of plural LINQ name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of plural LINQ name should not exceed {1} characters.
         /// </summary>
         public static string NamePluralMaxLengthExceeded {
             get {
@@ -835,7 +835,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of singular LINQ name should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of singular LINQ name should not exceed {1} characters.
         /// </summary>
         public static string NameSingularMaxLengthExceeded {
             get {

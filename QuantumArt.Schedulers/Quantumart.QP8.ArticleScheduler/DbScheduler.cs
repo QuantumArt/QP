@@ -60,7 +60,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
         private static Func<ArticleScheduleTask, bool> FilterTasksToProceedPredicate(ITaskScheduler taskScheduler, DateTime dateTimeToCheck)
         {
-            return task => taskScheduler.ShouldProcessTask(task, dateTimeToCheck);
+            return task => taskScheduler.ShouldProcessTask(task, dateTimeToCheck, true);
         }
 
         private static bool FilterOnetimeTasksPredicate(ArticleScheduleTask task) => task.FreqType == ScheduleFreqTypes.OneTime;

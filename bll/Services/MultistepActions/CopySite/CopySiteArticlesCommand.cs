@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.ContentServices;
@@ -14,6 +15,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteArticlesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 20;
 
         public int CopyFromSiteId { get; set; }
@@ -35,7 +38,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public CopySiteArticlesCommand(int copyFromSiteId, string siteName, int siteArticlesCount)
         {
-            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(HttpContextSession.CopySiteServiceSettings);
             NewSiteId = prms.DestinationSiteId;
             CopyFromSiteId = copyFromSiteId;
             FileNameForLinks = prms.PathForFileWithLinks;

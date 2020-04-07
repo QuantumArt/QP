@@ -20,7 +20,7 @@
             <tr>
                 <td data-bind="text: $index() + 1"></td>
                 <td><input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}" /></td>
-                <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" /></td>
+                <td><img src="@Url.Content("~/Static/QP8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" /></td>
             </tr>
         </tbody>
     </table>
@@ -49,7 +49,7 @@
                     <input class="checkbox enum-default" title="@FieldStrings.EnumValueIsDefault" type="checkbox" data-bind="checked: IsDefault, event: { click: $root.onItemChanged }, attr: { 'data-index': $index }" />
                 </td>
                 <td>
-                    <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" />
+                    <img src="@Url.Content("~/Static/QP8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" />
                 </td>
             </tr>
         </tbody>
@@ -127,7 +127,7 @@
             @Html.CheckBoxFieldFor(s => s.Data.RebuildVirtualContents, "RebuildVirtualContents", true)
             using (Html.BeginPanel("RebuildVirtualContents"))
             {
-                @Html.Warning(FieldStrings.DisablingRebuildIsDangerous)
+                @Html.Warning(Html.Raw(FieldStrings.DisablingRebuildIsDangerous))
             }
         }
 
@@ -234,6 +234,7 @@
                     @Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
                 }
 
+                @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
                 @Html.NumericFieldFor(s => s.Data.MaxDataListItemCount)
 
                 using (Html.BeginPanel("O2MDefault"))
@@ -283,17 +284,18 @@
                        Enabled = false,
                        HtmlAttributes = new Dictionary<string, object> { { "id", Model.BackwardFieldNameElementId } }
                     })
-        }
+                }
 
-          using (Html.BeginPanel(Model.O2MBackwardFieldNamePanelElementId, false, false, reverse: true))
-          {
-            if (!Model.Data.IsBackwardFieldExists)
-            {
-                  @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-            }
-          }
-
-                @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
+              using (Html.BeginPanel("O2MBackwardFieldName"))
+              {
+                using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MBackwardFieldNamePanelElementId } }))
+                {
+                  if (!Model.Data.IsBackwardFieldExists)
+                  {
+                    @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
+                  }
+                }
+              }
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))
@@ -471,8 +473,8 @@
             }
         }
 
-        @Html.Partial("Version", Model.Data)
-        @Html.Partial("EntityDirectLink", Model)
+        <partial name="Version" model="@Model.Data" />
+        <partial name="EntityDirectLink" model="@Model" />
     }
 }
 

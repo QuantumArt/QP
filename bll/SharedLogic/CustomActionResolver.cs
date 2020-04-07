@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
 
             // Получить родительский контент и сайт
             IEnumerable<EntityInfo> bindableParentEntities =
-                EntityObjectRepository.GetParentsChain(testEntityTypeCode, testEntityId)
+                EntityObjectRepository.GetParentsChain(testEntityTypeCode, testEntityId)?
                     .Where(ei =>
                         ei.Id > 0 &&
                         (
@@ -29,12 +29,12 @@ namespace Quantumart.QP8.BLL.SharedLogic
                     )
                     .ToArray();
 
-            var customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code).ToArray());
+            var customActions = CustomActionRepository.GetListByCodes(statuses.Select(s => s.Code)?.ToArray());
 
-            // Если есть как минимум сайт - то проверяем							
-            if (customActions.Any())
+            // Если есть как минимум сайт - то проверяем
+            if (customActions != null && customActions.Any())
             {
-                if (bindableParentEntities.Any())
+                if (bindableParentEntities != null && bindableParentEntities.Any())
                 {
                     var parentSiteInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Site, StringComparison.InvariantCultureIgnoreCase));
                     var parentContentInfo = bindableParentEntities.FirstOrDefault(ei => ei.Code.Equals(EntityTypeCode.Content, StringComparison.InvariantCultureIgnoreCase)
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
                             var visibleBySite = false;
                             var visibleByContent = false;
 
-                            if (ca.Sites.Any(s => s.Id == parentSiteInfo.Id)) // сайт выбран для текущего Custom Action
+                            if (ca.SiteIds.Any(s => s == parentSiteInfo?.Id)) // сайт выбран для текущего Custom Action
                             {
                                 visibleBySite = ca.SiteExcluded;
                             }
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL.SharedLogic
                             {
                                 if (parentContentInfo != null)
                                 {
-                                    if (ca.Contents.Any(c => c.Id == parentContentInfo.Id)) // контент выбран для текущего Custom Action						
+                                    if (ca.ContentIds.Any(c => c == parentContentInfo.Id)) // контент выбран для текущего Custom Action
                                     {
                                         visibleByContent = ca.ContentExcluded;
                                     }

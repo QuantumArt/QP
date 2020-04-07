@@ -1089,10 +1089,6 @@ $c.initFileField = function (fieldElem, actionExecutingHandler) {
     options.renameMatched = $q.toBoolean($field.data('rename_matched'), false);
     options.isImage = $q.toBoolean($field.data('is_image'), false);
 
-    if (allowFileUpload) {
-      options.uploaderType = $q.toInt($field.data('uploader_type'), Quantumart.QP8.Enums.UploaderType.Silverlight);
-    }
-
     const fileField = new BackendFileField(fieldId, wrapperId, options);
 
     fileField.initialize();

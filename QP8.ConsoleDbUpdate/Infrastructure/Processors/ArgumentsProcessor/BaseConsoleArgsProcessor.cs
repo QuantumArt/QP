@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure;
@@ -16,6 +17,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
     {
         protected internal string CustomerCode;
 
+        protected internal DatabaseType DbType;
+
         protected internal IList<string> FilePathes;
 
         protected internal string ConfigPath;
@@ -31,7 +34,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal virtual void PrintEnteredData()
         {
-            Console.WriteLine(SqlHelpers.TryParseConnectionString(CustomerCode, out var _)
+            Console.WriteLine(SqlHelpers.TryParseConnectionString(CustomerCode, DbType, out var _)
                 ? $@"Connection String: {CustomerCode}"
                 : $@"Customer Code: {CustomerCode}"
             );
@@ -90,6 +93,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
                 optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
             }
 
+            optionSet.Add("t|type=", "database type, 0 (default) - SqlServer, 1 - postgres", c => { DbType = Enum.TryParse<DatabaseType>(c, out var dbtype) ? dbtype : DatabaseType.SqlServer; });
             optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
             optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv]", m => { });

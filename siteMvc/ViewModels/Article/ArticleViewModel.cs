@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
@@ -10,7 +13,6 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -18,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleViewModel : LockableEntityViewModel
     {
-        public new BLL.Article Data
+        public BLL.Article Data
         {
             get => (BLL.Article)EntityData;
             set => EntityData = value;
@@ -230,6 +232,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return result;
         }
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<ListItem> AvailableStatuses => Data.Workflow.AvailableStatuses.Select(GetStatusListItem);
 
         internal static RelationListResult GetListForRelation(BLL.Field field, string value, int articleId)
@@ -245,7 +249,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             var list = new List<ListItem>();
             if (!isListOverflow || selectedArticleIDs.Length != 0)
             {
-                list = ArticleService.SimpleList(contentId, articleId, fieldId, mode, selectedArticleIDs, filter);
+                list = ArticleService.SimpleList(
+                    new SimpleListQuery()
+                    {
+                        ParentEntityId = contentId,
+                        EntityId = articleId.ToString(),
+                        ListId = fieldId,
+                        SelectionMode = mode,
+                        SelectedEntitiesIds = selectedArticleIDs,
+                        Filter = filter
+                    });
             }
 
             return new RelationListResult { IsListOverflow = isListOverflow, Items = list };
@@ -255,8 +268,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         internal static BLL.Content GetContentById(int? contentId) => contentId.HasValue ? ContentService.Read(contentId.Value) : null;
 
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
+
             Data.VariationListItems = JsonConvert.DeserializeObject<List<ArticleVariationListItem>>(VariationModel);
             Data.CollaborativePublishedArticle = CheckedCollaborativeArticle.Any()
                 ? CheckedCollaborativeArticle.Select(s=>int.Parse(s.Value)).FirstOrDefault()
@@ -271,7 +286,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 sb.Append(@"<div class=""variationInfoItem removeItem"">");
                 sb.Append(@"<span class=""linkButton actionLink"">");
                 sb.Append(@"<span class=""icon deselectAll"">");
-                sb.Append(@"<img src=""/backend/Content/Common/0.gif"">");
+                sb.Append(@"<img src=""Static/Common/0.gif"">");
                 sb.Append(@"</span><a class=""js removeVariation"" href=""javascript:void(0);"">");
                 sb.AppendFormat(@"<span class=""text"">{0}</span>", ArticleStrings.RemoveCurrentVariation);
                 sb.Append(@"</a></span></div>");
@@ -279,7 +294,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             }
         }
 
-        [LocalizedDisplayName("CollaborativePublication", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "CollaborativePublication", ResourceType = typeof(ArticleStrings))]
         public IList<QPCheckedItem> CheckedCollaborativeArticle { get; set; }
 
         public IEnumerable<ListItem> CollaborativePublishedArticlesList => new ListItem[] {

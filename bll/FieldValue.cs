@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
@@ -141,6 +143,13 @@ namespace Quantumart.QP8.BLL
                 Value = Converter.ToIdCommaList(newItems);
                 NewUnrelatedItems = currentItems.Except(newItems).ToArray();
                 NewRelatedItems = newItems.Except(currentItems).ToArray();
+            }
+            else if (!string.IsNullOrEmpty(value) &&
+                (Field.ExactType == FieldExactTypes.Numeric || Field.ExactType == FieldExactTypes.O2MRelation)
+                && decimal.TryParse(value, out var parsed)
+            )
+            {
+                ObjectValue = parsed;
             }
             else
             {

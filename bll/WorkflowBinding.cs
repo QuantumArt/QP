@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -28,23 +30,31 @@ namespace Quantumart.QP8.BLL
             IsAsync = true;
         }
 
-        [LocalizedDisplayName("Workflow", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "Workflow", ResourceType = typeof(ContentStrings))]
         public int WorkflowId { get; set; }
 
-        [LocalizedDisplayName("SplitArticles", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "SplitArticles", ResourceType = typeof(ContentStrings))]
         public bool IsAsync { get; set; }
 
         public bool IsAssigned => WorkflowId != UnassignedId;
 
+        [ValidateNever]
+        [BindNever]
         public bool CurrentUserCanUpdateArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserMaxWeight > 0;
 
+        [ValidateNever]
+        [BindNever]
         public bool CurrentUserCanRemoveArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
 
+        [ValidateNever]
+        [BindNever]
         public bool CurrentUserCanPublishArticles => !IsAssigned || QPContext.IsAdmin || CurrentUserHasWorkflowMaxWeight;
 
         /// <summary>
         /// Список статусов Workflow
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public List<StatusType> StatusTypes
         {
             get
@@ -57,9 +67,12 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+
         /// <summary>
         /// Список статусов Workflow, доступных для текущего пользователя в виде элементов списка
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public List<StatusType> AvailableStatuses
         {
             get
@@ -75,9 +88,12 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+
         /// <summary>
         /// Максимальный статус в Workflow
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public StatusType MaxStatus
         {
             get
@@ -93,6 +109,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Максимальный вес, доступный текущему пользователю
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public int CurrentUserMaxWeight
         {
             get
@@ -115,6 +133,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Доступен ли пользователю максимальный вес данного Workflow
         /// </summary>
+        [ValidateNever]
+        [BindNever]
         public bool CurrentUserHasWorkflowMaxWeight => MaxStatus.Weight == CurrentUserMaxWeight;
 
         public bool UseStatus(int statusTypeId) => WorkflowRepository.DoesWorkflowUseStatus(WorkflowId, statusTypeId);

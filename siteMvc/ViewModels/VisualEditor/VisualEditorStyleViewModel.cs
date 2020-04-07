@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers.VisualEditor;
 using Quantumart.QP8.BLL.Services.VisualEditor;
@@ -18,28 +18,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewVisualEditorStyle : Constants.ActionCode.VisualEditorStyleProperties;
 
-        public new VisualEditorStyle Data
+        public VisualEditorStyle Data
         {
             get => (VisualEditorStyle)EntityData;
             set => EntityData = value;
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string AggregationListItemsDataAttributeItems { get; set; }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string AggregationListItemsDataStylesItems { get; set; }
 
         public static VisualEditorStyleViewModel Create(VisualEditorStyle style, string tabId, int parentId) => Create<VisualEditorStyleViewModel>(style, tabId, parentId);
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
             _jsonStyles = JsonConvert.DeserializeObject<List<VeStyleAggregationListItem>>(AggregationListItemsDataStylesItems);
             _jsonAttributes = JsonConvert.DeserializeObject<List<VeStyleAggregationListItem>>(AggregationListItemsDataAttributeItems);
             Data.DoCustomBinding(_jsonStyles, _jsonAttributes);
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
             foreach (var attr in Data.AttributeItems)
             {
@@ -50,8 +48,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             {
                 style.Invalid = false;
             }
-
-            base.Validate(modelState);
+            base.Validate();
         }
     }
 }

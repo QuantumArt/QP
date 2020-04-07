@@ -312,7 +312,7 @@ export class BackendEntityEditor extends Observable {
       this._formElement = $form.get(0);
       if (!$q.isNullOrWhiteSpace(this._validationSummaryElementId)) {
         const $validationSummary = $(`#${this._validationSummaryElementId}`);
-        this._formHasErrors = $validationSummary.length > 0 && $validationSummary.find('UL').length > 0;
+        this._formHasErrors = $validationSummary.length > 0 && $validationSummary.hasClass('validation-summary-errors');
       }
 
       if (this._formHasErrors) {
@@ -648,7 +648,7 @@ export class BackendEntityEditor extends Observable {
       }
 
       const $div = $('<div/>', options);
-      $div.append($('<img/>', { src: '/Backend/Content/Common/0.gif' }));
+      $div.append($('<img/>', { src: 'Static/Common/0.gif' }));
 
       if (newSettings.url) {
         $div.css({ 'background-image': `url(${newSettings.url})`, 'background-color': 'transparent' });
@@ -727,7 +727,7 @@ export class BackendEntityEditor extends Observable {
       builder
         .cat(`<li><span id="${options.id}" class="linkButton actionLink">`)
         .cat('<a href="javascript:void(0);">')
-        .cat(`<span class="icon ${options.class}"><img src="/Backend/Content/Common/0.gif"></span>`)
+        .cat(`<span class="icon ${options.class}"><img src="Static/Common/0.gif"></span>`)
         .cat(`<span class="text">${options.title}</span>`)
         .cat('</a></span></li>');
 

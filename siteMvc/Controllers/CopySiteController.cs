@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Services;
@@ -11,17 +12,18 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class CopySiteController : QPController
+    public class CopySiteController : AuthQpController
     {
         private readonly IMultistepActionService _multistepService;
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public CopySiteController(IMultistepActionService multistepService)
+        public CopySiteController(CopySiteService multistepService)
         {
             _multistepService = multistepService ?? throw new ArgumentNullException(nameof(multistepService));
         }
@@ -39,12 +41,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]
-        public ActionResult Settings(string tabId, int parentId, int id)
+        public async Task<ActionResult> Settings(string tabId, int parentId, int id)
         {
             var model = ViewModel.Create<CreateLikeSiteModel>(tabId, parentId);
             model.Data = SiteService.Read(id);
             var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
-            return JsonHtml(viewName, model);
+            return await JsonHtml(viewName, model);
         }
 
         [HttpPost]
@@ -64,19 +66,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.CreateLikeSite)]
         [ConnectionScope]
         [BackendActionLog]
-        [ValidateInput(false)]
         [Record]
-        public JsonCamelCaseResult<JSendResponse> SetupWithParams(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> SetupWithParams(string tabId, int parentId, int id, IFormCollection collection)
         {
             var newSite = SiteService.NewForSave();
             var model = CreateLikeSiteModel.Create(newSite, tabId, parentId);
-
-            TryUpdateModel(model);
-
             var sourceSite = SiteService.Read(id);
             model.Data.AssemblingType = sourceSite.AssemblingType;
-            model.Validate(ModelState);
-
+            await TryUpdateModelAsync(model);
             var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
             if (ModelState.IsValid)
             {
@@ -87,23 +84,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("Exception", ex.Message);
-                    return JsonCamelCaseHtml(viewName, model);
+                    return await JsonCamelCaseHtml(viewName, model);
                 }
 
                 var settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
                 _multistepService.SetupWithParams(parentId, id, settings);
-                return new JSendResponse { Status = JSendStatus.Success };
+                return Json(new JSendResponse { Status = JSendStatus.Success });
             }
 
-            return JsonCamelCaseHtml(viewName, model);
+            return await JsonCamelCaseHtml(viewName, model);
         }
 
         [HttpPost]
         [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step)
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
         {
-            var stepResult = _multistepService.Step(stage, step);
+            var stepResult = _multistepService.Step(model.Stage, model.Step);
             return Json(stepResult);
         }
 
@@ -111,7 +108,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult TearDown(bool isError)
         {
             _multistepService.TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

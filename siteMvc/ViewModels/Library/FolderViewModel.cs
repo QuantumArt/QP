@@ -5,7 +5,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
 {
     public abstract class FolderViewModel : EntityViewModel
     {
-        public new Folder Data
+        public Folder Data
         {
             get => (Folder)EntityData;
             set => EntityData = value;

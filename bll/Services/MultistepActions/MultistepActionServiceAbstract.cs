@@ -1,5 +1,7 @@
 using System;
-using System.Web;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
@@ -47,6 +49,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
     /// </summary>
     public abstract class MultistepActionServiceAbstract : IMultistepActionService
     {
+        protected static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
+        protected List<IMultistepActionStageCommand> Commands = new List<IMultistepActionStageCommand>();
+
         public virtual MessageResult PreAction(int parentId, int id) => null;
 
         public virtual MessageResult PreAction(int parentId, int id, int[] ids) => null;
@@ -59,7 +65,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
             }
 
             var context = CreateContext(parentId, id, boundToExternal);
-            HttpContext.Current.Session[ContextSessionKey] = context;
+            HttpContext.Session.SetValue(ContextSessionKey, context);
             return CreateActionSettings(parentId, id);
         }
         public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => throw new NotImplementedException();
@@ -80,25 +86,42 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
         public MultistepActionStepResult Step(int stage, int step)
         {
-            var context = (MultistepActionServiceContext)HttpContext.Current.Session[ContextSessionKey];
+            var context = HttpContext.Session.GetValue<MultistepActionServiceContext>(ContextSessionKey);
             var command = CreateCommand(context.CommandStates[stage]);
             return command.Step(step);
         }
 
         public virtual void TearDown()
         {
-            HttpContext.Current.Session.Remove(ContextSessionKey);
+            HttpContext.Session.Remove(ContextSessionKey);
         }
 
-        protected abstract MultistepActionSettings CreateActionSettings(int parentId, int id);
+        protected virtual MultistepActionSettings CreateActionSettings(int parentId, int id)
+        {
+            var result = new MultistepActionSettings() { ParentId = parentId };
+            foreach (var cmd in Commands)
+            {
+                result.Stages.Add(cmd.GetStageSettings());
+            }
+            return result;
+        }
 
-        protected abstract MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal);
+        protected virtual MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
+        {
+            var result = new MultistepActionServiceContext();
+            foreach (var cmd in Commands)
+            {
+                result.CommandStates.Add(cmd.GetState());
+            }
+            return result;
+        }
+
 
         protected abstract string ContextSessionKey { get; }
 
         protected abstract IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state);
 
-        protected bool HasAlreadyRun() => HttpContext.Current.Session[ContextSessionKey] != null;
+        protected bool HasAlreadyRun() => HttpContext.Session.HasKey(ContextSessionKey);
 
         public BllObject ReadObjectProperties(int objectId) => ObjectRepository.GetObjectPropertiesById(objectId);
 

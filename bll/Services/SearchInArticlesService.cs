@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils.FullTextSearch;
 
 namespace Quantumart.QP8.BLL.Services
@@ -33,40 +34,56 @@ namespace Quantumart.QP8.BLL.Services
         public IEnumerable<SearchInArticlesResultItem> SearchInArticles(int siteId, int userId, string searchString, ListCommand listCmd, out int totalRecords)
         {
             totalRecords = 0;
-            if (!grammaParser.TryParse(searchString, out var sqlSearchString))
+            string sqlSearchString;
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
             {
-                return Enumerable.Empty<SearchInArticlesResultItem>();
+                if (!grammaParser.TryParse(searchString, out sqlSearchString))
+                {
+                    return Enumerable.Empty<SearchInArticlesResultItem>();
+                }
             }
+            else
+            {
+                sqlSearchString = searchString;
+            }
+
 
             if (string.IsNullOrWhiteSpace(sqlSearchString))
             {
                 return Enumerable.Empty<SearchInArticlesResultItem>();
             }
 
-            int.TryParse(searchString, out var articleId);
-            var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, articleId > 0 ? articleId : (int?)null, listCmd, out totalRecords);
-            if (result.Any())
+            using (new QPConnectionScope())
             {
-                var wordForms = Enumerable.Empty<string>();
-                var version = siaRepository.GetSqlServerVersion();
-                if (version.Major >= 10)
+                var resultArticleId = int.TryParse(searchString, out var articleId) && articleId > 0 ? articleId : (int?)null;
+                var result = siaRepository.SearchInArticles(siteId, userId, sqlSearchString, resultArticleId, listCmd, out totalRecords).ToArray();
+                if (result.Any())
                 {
-                    // если это 2008 или старше - то получить словоформы через запрос к sql server
-                    wordForms = siaRepository.GetWordForms(sqlSearchString);
-                }
-                else
-                {
-                    wordForms = FoundTextMarker.SplitIntoWords(searchString);
-                }
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        var wordForms = Enumerable.Empty<string>();
+                        var version = siaRepository.GetSqlServerVersion();
+                        if (version.Major >= 10)
+                        {
+                            // если это 2008 или старше - то получить словоформы через запрос к sql server
+                            wordForms = siaRepository.GetWordForms(sqlSearchString);
+                        }
+                        else
+                        {
+                            wordForms = FoundTextMarker.SplitIntoWords(searchString);
+                        }
 
-                // Выделить релевантные участки
-                foreach (var r in result)
-                {
-                    r.Text = FoundTextMarker.GetRelevantMarkedText(r.Text, wordForms, 20, "<span class='seachResultHighlight'>", "</span>");
+                        // Выделить релевантные участки
+                        foreach (var r in result)
+                        {
+                            r.Text = FoundTextMarker.GetRelevantMarkedText(r.Text, wordForms, 20, "<span class='seachResultHighlight'>", "</span>");
+                        }
+                    }
                 }
+                return result;
+
             }
 
-            return result;
         }
     }
 }

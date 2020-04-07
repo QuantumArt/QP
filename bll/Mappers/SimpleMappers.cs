@@ -1,4 +1,5 @@
 ﻿using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -30,13 +31,7 @@ namespace Quantumart.QP8.BLL.Mappers
     {
     }
 
-    internal class ContextMenuMapper : GenericMapper<ContextMenu, ContextMenuDAL>
-    {
-    }
 
-    internal class ContextMenuItemMapper : GenericMapper<ContextMenuItem, ContextMenuItemDAL>
-    {
-    }
 
     internal class EntityPermissionLevelMapper : GenericMapper<EntityPermissionLevel, PermissionLevelDAL>
     {

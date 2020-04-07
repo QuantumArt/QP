@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -142,7 +142,7 @@
     <value>Invalid assembly files physical path format</value>
   </data>
   <data name="AssemblyPathMaxLengthExceeded" xml:space="preserve">
-    <value>The length of assembly files physical path should not exceed {5} characters</value>
+    <value>The length of assembly files physical path should not exceed {1} characters</value>
   </data>
   <data name="AssemblyPathNotEntered" xml:space="preserve">
     <value>Please enter assembly files physical path</value>
@@ -157,13 +157,13 @@
     <value>Description</value>
   </data>
   <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
-    <value>The length of description should not exceed {5} characters</value>
+    <value>The length of description should not exceed {1} characters</value>
   </data>
   <data name="DnsInvalidFormat" xml:space="preserve">
     <value>Invalid DNS format</value>
   </data>
   <data name="DnsMaxLengthExceeded" xml:space="preserve">
-    <value>The length of DNS should not exceed {5} characters</value>
+    <value>The length of DNS should not exceed {1} characters</value>
   </data>
   <data name="DnsNotEntered" xml:space="preserve">
     <value>Please enter DNS</value>
@@ -223,7 +223,7 @@
     <value>Invalid physical path for Live Mode format</value>
   </data>
   <data name="LiveDirectoryMaxLengthExceeded" xml:space="preserve">
-    <value>The length of site pages physical path for Live Mode should not exceed {5} characters</value>
+    <value>The length of site pages physical path for Live Mode should not exceed {1} characters</value>
   </data>
   <data name="LiveDirectoryNotEntered" xml:space="preserve">
     <value>Please enter site pages physical path for Live Mode</value>
@@ -235,7 +235,7 @@
     <value>Invalid site pages virtual path for Live Mode format</value>
   </data>
   <data name="LiveVirtualRootMaxLengthExceeded" xml:space="preserve">
-    <value>The length of site pages virtual path for Live Mode should not exceed {5} characters</value>
+    <value>The length of site pages virtual path for Live Mode should not exceed {1} characters</value>
   </data>
   <data name="LiveVirtualRootNotEntered" xml:space="preserve">
     <value>Please enter site pages virtual path for Live Mode</value>
@@ -247,7 +247,7 @@
     <value>Invalid site name</value>
   </data>
   <data name="NameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of site name should not exceed {5} characters</value>
+    <value>The length of site name should not exceed {1} characters</value>
   </data>
   <data name="NameNonUnique" xml:space="preserve">
     <value>Site name is already in using</value>
@@ -292,7 +292,7 @@
     <value>Invalid assembly files physical path for Stage Mode format</value>
   </data>
   <data name="StageAssemblyPathMaxLengthExceeded" xml:space="preserve">
-    <value>The length of assembly files physical path for Stage Mode should not exceed {5} characters</value>
+    <value>The length of assembly files physical path for Stage Mode should not exceed {1} characters</value>
   </data>
   <data name="StageAssemblyPathNotEntered" xml:space="preserve">
     <value>Please enter assembly files physical path for Stage Mode</value>
@@ -304,7 +304,7 @@
     <value>Invalid physical path for Stage Mode format</value>
   </data>
   <data name="StageDirectoryMaxLengthExceeded" xml:space="preserve">
-    <value>The length of site pages physical path for Stage Mode should not exceed {5} characters</value>
+    <value>The length of site pages physical path for Stage Mode should not exceed {1} characters</value>
   </data>
   <data name="StageDirectoryNotEntered" xml:space="preserve">
     <value>Please enter site pages physical path for Stage Mode</value>
@@ -316,7 +316,7 @@
     <value>Invalid DNS for Stage Mode format</value>
   </data>
   <data name="StageDnsMaxLengthExceeded" xml:space="preserve">
-    <value>The length of DNS for Stage Mode should not exceed {5} characters</value>
+    <value>The length of DNS for Stage Mode should not exceed {1} characters</value>
   </data>
   <data name="StageDnsNotEntered" xml:space="preserve">
     <value>Please enter DNS for Stage Mode</value>
@@ -328,7 +328,7 @@
     <value>Invalid site pages virtual path for Stage Mode format</value>
   </data>
   <data name="StageVirtualRootMaxLengthExceeded" xml:space="preserve">
-    <value>The length of site pages virtual path for Stage Mode should not exceed {5} characters</value>
+    <value>The length of site pages virtual path for Stage Mode should not exceed {1} characters</value>
   </data>
   <data name="StageVirtualRootNotEntered" xml:space="preserve">
     <value>Please enter site pages virtual path for Stage Mode</value>
@@ -340,13 +340,13 @@
     <value>Invalid test directory path format</value>
   </data>
   <data name="TestDirectoryMaxLengthExceeded" xml:space="preserve">
-    <value>The length of test directory path should not exceed {5} characters</value>
+    <value>The length of test directory path should not exceed {1} characters</value>
   </data>
   <data name="UploadDirInvalidFormat" xml:space="preserve">
     <value>Invalid physical path for file uploading format</value>
   </data>
   <data name="UploadDirMaxLengthExceeded" xml:space="preserve">
-    <value>The length of physical path for file uploading should not exceed {5} characters</value>
+    <value>The length of physical path for file uploading should not exceed {1} characters</value>
   </data>
   <data name="UploadDirNotEntered" xml:space="preserve">
     <value>Please enter physical path for file uploading</value>
@@ -361,7 +361,7 @@
     <value>Invalid virtual path for file uploading format</value>
   </data>
   <data name="UploadUrlMaxLengthExceeded" xml:space="preserve">
-    <value>The length of virtual path for file uploading should not exceed {5} characters</value>
+    <value>The length of virtual path for file uploading should not exceed {1} characters</value>
   </data>
   <data name="UploadUrlNotEntered" xml:space="preserve">
     <value>Please enter virtual path for file uploading</value>
@@ -373,7 +373,7 @@
     <value>Invalid virtual path prefix for file uploading format</value>
   </data>
   <data name="UploadUrlPrefixMaxLengthExceeded" xml:space="preserve">
-    <value>The length of virtual path prefix for file uploading should not exceed {5} characters</value>
+    <value>The length of virtual path prefix for file uploading should not exceed {1} characters</value>
   </data>
   <data name="UseAbsoluteUploadUrl" xml:space="preserve">
     <value>Use absolute virtual path</value>
@@ -430,13 +430,13 @@
     <value>Wrong connection string name </value>
   </data>
   <data name="ConnectionStringNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of connection string name should not exceed {5} characters</value>
+    <value>The length of connection string name should not exceed {1} characters</value>
   </data>
   <data name="ContextClassNameInvalidFormat" xml:space="preserve">
     <value>Wrong context class name</value>
   </data>
   <data name="ContextClassNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of context class name should not exceed {5} characters</value>
+    <value>The length of context class name should not exceed {1} characters</value>
   </data>
   <data name="DbIndependent" xml:space="preserve">
     <value>Proceed DB-independent generation</value>
@@ -454,7 +454,7 @@
     <value>Wrong namespace</value>
   </data>
   <data name="NamespaceMaxLengthExceeded" xml:space="preserve">
-    <value>The length of namespace should not exceed {5} characters</value>
+    <value>The length of namespace should not exceed {1} characters</value>
   </data>
   <data name="PEnterMode" xml:space="preserve">
     <value>Insert P tag while pressing Enter</value>

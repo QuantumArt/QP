@@ -3,17 +3,16 @@ using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
-
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
     public class PageViewModel : LockableEntityViewModel
     {
-        private IPageService _service;
 
         internal static PageViewModel Create(Page page, string tabId, int parentId, IPageService pageService)
         {
             var model = Create<PageViewModel>(page, tabId, parentId);
-            model._service = pageService;
+            model.Charsets = pageService.GetCharsetsAsListItems().ToList();
+            model.Locales = pageService.GetLocalesAsListItems().ToList();
             return model;
         }
 
@@ -23,18 +22,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string CaptureLockActionCode => Constants.ActionCode.CaptureLockPage;
 
-        public new Page Data
+        public Page Data
         {
             get => (Page)EntityData;
             set => EntityData = value;
         }
 
-        private List<ListItem> _charsets;
+        public List<ListItem> Charsets { get; set; }
 
-        public List<ListItem> Charsets => _charsets ?? (_charsets = _service.GetCharsetsAsListItems().ToList());
-
-        private List<ListItem> _locales;
-
-        public List<ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
+        public List<ListItem> Locales { get; set; }
     }
 }

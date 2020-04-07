@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Services.DbServices
@@ -17,6 +18,8 @@ namespace Quantumart.QP8.BLL.Services.DbServices
         public static Db UpdateSettings(Db db) => DbRepository.Update(db);
 
         public static string GetDbHash() => GehHash(GehHash(DbRepository.GetDbServerName()) + GehHash(DbRepository.GetDbName()));
+
+        public static void ResetUserCache() => BackendActionCache.ResetForUser();
 
         private static string GehHash(string value)
         {

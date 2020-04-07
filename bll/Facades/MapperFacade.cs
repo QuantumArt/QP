@@ -60,7 +60,7 @@ namespace Quantumart.QP8.BLL.Facades
             BackendActionTypeMapper = Create<BackendActionTypeMapper>(cfg);
             ContextMenuItemRowMapper = Create<ContextMenuItemRowMapper>(cfg);
             ContextMenuRowMapper = Create<ContextMenuRowMapper>(cfg);
-            EntityTypeMapper = Create<EntityTypeMapper>(cfg);
+            EntityTypeMapper = Create<EntityTypeMapper>(cfg, true);
             TreeNodeMapper = Create<TreeNodeMapper>(cfg);
             ViewTypeMapper = Create<ViewTypeMapper>(cfg);
             BackendActionViewMapper = Create<BackendActionViewMapper>(cfg);
@@ -158,6 +158,8 @@ namespace Quantumart.QP8.BLL.Facades
             ObjectFormatMapper = Create<ObjectFormatMapper>(cfg, true);
             ObjectFormatRowMapper = Create<ObjectFormatRowMapper>(cfg);
             StatusTypeMapper = Create<StatusMapper>(cfg, true);
+            SiteFolderRowMapper = Create<SiteFolderRowMapper>(cfg);
+            ContentFolderRowMapper = Create<ContentFolderRowMapper>(cfg);
         }
 
         internal static DataRowMapper DataRowMapper = new DataRowMapper();
@@ -188,6 +190,8 @@ namespace Quantumart.QP8.BLL.Facades
         internal static ContentLinkMapper ContentLinkMapper;
         internal static ArticleVersionMapper ArticleVersionMapper;
         internal static SiteFolderMapper SiteFolderMapper;
+        internal static SiteFolderRowMapper SiteFolderRowMapper;
+        internal static ContentFolderRowMapper ContentFolderRowMapper;
         internal static ContentFolderMapper ContentFolderMapper;
         internal static ContentGroupMapper ContentGroupMapper;
         internal static DynamicImageMapper DynamicImageMapper;

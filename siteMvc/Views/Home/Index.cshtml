@@ -12,13 +12,15 @@
   <title>@Model.Title</title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-  <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
+  <link href="~/Static/QP8/favicon.ico" rel="shortcut icon" />
 
-  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?sha=" + version)" />
+  <link rel="stylesheet" href="@Url.Content("~/Static/kendo/kendo.common.min.css")" />
+  <link rel="stylesheet" href="@Url.Content("~/Static/kendo/kendo.silver.min.css")" />
+  <link rel="stylesheet" href="@Url.Content("~/Static/build/app.css?sha=" + version)" />
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")" />
 
   <script>
-    window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
+    window.CKEDITOR_BASEPATH = "@Url.Content("~/Static/ckeditor/")";
   </script>
 </head>
 
@@ -37,70 +39,61 @@
       </div>
     </div>
 
-    @{Html.Telerik().Splitter()
-                    .Name("splitter")
-                    .Orientation(SplitterOrientation.Horizontal)
-                    .Panes(panes =>
-                    {
-                    panes.Add().Content(
-                        @<div id="menuContainer" style="display:none;">
-                          <div class="lineTop"></div>
-                          <em class="tl"></em>
-                          <em class="tr"></em>
-                          <em class="bl"></em>
-                          <em class="br"></em>
-                          <div id="tree">
-                            @(Html.Telerik().TreeView().Name("MainTreeMenu"))
-                          </div>
-                          <div class="lineBottom"></div>
-                        </div>)
-          .Size("20%")
-          .MinSize("50px")
-          .MaxSize("400px")
-          .Collapsible(false)
-          .Resizable(true)
-          .Scrollable(false)
-          .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
+    <div class="t-widget t-splitter-horizontal" id="splitter">
+      <div class="t-pane corners" id="leftMenu">
+        <div id="menuContainer" style="display:none;">
+          <div class="lineTop"></div>
+          <em class="tl"></em>
+          <em class="tr"></em>
+          <em class="bl"></em>
+          <em class="br"></em>
+          <div id="tree">
+            <div class="t-widget t-treeview t-reset" id="MainTreeMenu"></div>
+          </div>
+          <div class="lineBottom"></div>
+        </div>
+      </div>
 
-                    panes.Add().Content(
-                        @<div>
-                          <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
-                          <div id="editingArea" class="vertical-layout corners">
-                            <div class="lineTop"></div>
-                            <em class="tl"></em>
-                            <em class="tr"></em>
-                            <em class="bl"></em>
-                            <em class="br"></em>
-                            <div id="breadCrumbs"></div>
-                            <div id="toolbar">
-                              <div id="actionToolbar"></div>
-                              <div id="viewToolbar"></div>
-                            </div>
-                            <div id="document" class="vertical-layout vertical-layout__main">
-                              <div id="context"></div>
-                              <div id="search"></div>
-                            </div>
-                            <div class="lineBottom"></div>
-                          </div>
-                        </div>
-          ).HtmlAttributes(new { id = "content", @class = "content" });
-                    }).Render();
-    }
+      <div class="t-pane content t-scrollable" id="content">
+        <div>
+          <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
+          <div id="editingArea" class="vertical-layout corners">
+            <div class="lineTop"></div>
+            <em class="tl"></em>
+            <em class="tr"></em>
+            <em class="bl"></em>
+            <em class="br"></em>
+            <div id="breadCrumbs"></div>
+            <div id="toolbar">
+              <div id="actionToolbar"></div>
+              <div id="viewToolbar"></div>
+            </div>
+            <div id="document" class="vertical-layout vertical-layout__main">
+              <div id="context"></div>
+              <div id="search"></div>
+            </div>
+            <div class="lineBottom"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="@Url.Content("~/Scripts/build/vendors.js?sha=" + version)"></script>
-
-  <script src="@Url.Content("~/Scripts/Quantumart/JsConstants.ashx")"></script>
-  <script src="@Url.Content("~/Scripts/Quantumart/JsLanguage.ashx")"></script>
-  <script src="@Url.Content("~/signalr/hubs")"></script>
-
+  <script src="@Url.Content("~/Scripts/kendo/kendo.all.min.js")"></script>
+  <script src="@Url.Content("~/Home/Constants")"></script>
+  <script src="@Url.Content("~/Home/Lang")"></script>
   <script src="@Url.Content("~/Scripts/build/app.js?sha=" + version)"></script>
-  @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true))
 
-  <script>
-      CKEDITOR.timestamp = '@DateTime.Now.Ticks';
-      var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-      var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-      Url.SetRootPath("@Url.Content("~/")");
+  <script type="text/javascript">
+    CKEDITOR.timestamp = '@DateTime.Now.Ticks';
+    var isDebugMode = false; /* Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled) ; */
+    var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+    Url.SetRootPath("@Url.Content("~/")");
+
+    $(document).ready(function () {
+      $('#MainTreeMenu').tTreeView();
+      $('#splitter').tSplitter({ panes: [{ scrollable: false, size: '20%', minSize: '50px', maxSize: '400px' }, {}] });
+    });
   </script>
 </body>

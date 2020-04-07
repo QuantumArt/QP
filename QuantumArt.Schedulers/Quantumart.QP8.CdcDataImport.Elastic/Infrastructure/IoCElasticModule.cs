@@ -1,3 +1,4 @@
+using System.Reflection;
 using Autofac;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
@@ -6,6 +7,7 @@ using Quantumart.QP8.BLL.Services.CdcImport;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Constants;
+using Module = Autofac.Module;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure
 {

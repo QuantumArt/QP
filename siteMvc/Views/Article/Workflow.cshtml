@@ -31,7 +31,7 @@
 
       using (Html.BeginPanel("cancelSplitWarningPanel"))
       {
-        @Html.Warning(ArticleStrings.CancelSplitWarning);
+        @Html.Warning(Html.Raw(ArticleStrings.CancelSplitWarning));
       }
     }
 

@@ -1,13 +1,14 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class FieldDefaultValueController : QPController
+    public class FieldDefaultValueController : AuthQpController
     {
         private readonly IFieldDefaultValueService _service;
 
@@ -36,9 +37,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ApplyFieldDefaultValue)]
         [ConnectionScope]
-        public ActionResult Step(int step)
+        public ActionResult Step([FromBody] MultiStepActionViewModel model)
         {
-            var stepResult = _service.Step(step);
+            var stepResult = _service.Step(model.Step);
             return Json(stepResult);
         }
 
@@ -46,7 +47,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult TearDown(bool isError)
         {
             _service.TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

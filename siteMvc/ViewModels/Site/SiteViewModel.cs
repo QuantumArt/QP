@@ -1,13 +1,13 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
 
         public string AggregationListItemsDataExternalCssItems { get; set; }
 
-        public new BLL.Site Data
+        public BLL.Site Data
         {
             get => (BLL.Site)EntityData;
             set => EntityData = value;
@@ -98,17 +98,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
             new ListItem(OnScreenBorderMode.Never.ToString(), SiteStrings.Never)
         };
 
-        [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ListItem> DefaultCommandsListItems { get; private set; }
 
-        [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Commands", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeCommands { get; set; }
 
+        [ValidateNever]
         public int[] ActiveVeCommandsIds
         {
             get { return ActiveVeCommands.Select(c => int.Parse(c.Value)).ToArray(); }
         }
 
+        [ValidateNever]
         public int[] ActiveVeStyleIds
         {
             get { return ActiveVeStyles.Union(ActiveVeFormats).Select(c => int.Parse(c.Value)).ToArray(); }
@@ -118,25 +120,25 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
 
         public IEnumerable<ListItem> AllFormatsListItems { get; private set; }
 
-        [LocalizedDisplayName("Styles", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Styles", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeStyles { get; set; }
 
-        [LocalizedDisplayName("Formats", NameResourceType = typeof(VisualEditorStrings))]
+        [Display(Name = "Formats", ResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeFormats { get; set; }
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
+
+            ActiveVeStyles = ActiveVeStyles?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeFormats = ActiveVeFormats?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+            ActiveVeCommands = ActiveVeCommands?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+
             if (!string.IsNullOrEmpty(AggregationListItemsDataExternalCssItems))
             {
                 Data.ExternalCssItems = JsonConvert.DeserializeObject<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);
                 Data.ExternalCss = ExternalCssHelper.ConvertToString(Data.ExternalCssItems);
             }
-        }
-
-        public override void Validate(ModelStateDictionary modelState)
-        {
-            modelState.Clear();
-            base.Validate(modelState);
         }
     }
 }

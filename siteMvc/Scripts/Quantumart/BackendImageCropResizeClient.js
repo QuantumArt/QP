@@ -2,6 +2,7 @@
 /* eslint-disable max-statements */
 /* eslint-disable max-len */
 import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
+import { $q } from 'Utils';
 
 export const ImageCropResizeClient = {};
 ImageCropResizeClient._cache = {};
@@ -479,14 +480,7 @@ ImageCropResizeClient._cache = {};
 
   const _serverOperateImage = function () {
     const sendData = readData();
-    const sendDataJson = JSON.stringify(sendData);
-
-    $.ajax(_parameters.cropResizeActionUrl, {
-      contentType: 'application/json',
-      data: sendDataJson,
-      type: 'POST',
-      dataType: 'json'
-    }).done(response => {
+    $q.getJsonFromUrl('POST', _parameters.cropResizeActionUrl, sendData).done(response => {
       if (!response.ok) {
         const message = response.message || $l.Crop.defaultErrorMessage;
         displayErrors([message]);
@@ -505,11 +499,9 @@ ImageCropResizeClient._cache = {};
   };
 
   const _serverCheckFileName = function (userInputFileName) {
-    $.ajax(_parameters.checkFileNameActionUrl, {
-      data: { targetFileUrl: userInputFileName },
-      type: 'POST',
-      dataType: 'json'
-    }).done(response => {
+    $q.getJsonFromUrl('POST', _parameters.checkFileNameActionUrl,
+      { targetFileUrl: userInputFileName }
+    ).done(response => {
       if (response.ok) {
         _serverOperateImage();
       } else {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace Quantumart.QP8.Utils
@@ -83,7 +84,7 @@ namespace Quantumart.QP8.Utils
         public static string ConvertSlashesToBackSlashes(string path)
         {
             var result = path;
-            if (!string.IsNullOrEmpty(result))
+            if (!string.IsNullOrEmpty(result) && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 result = result.Replace(@"/", @"\");
             }

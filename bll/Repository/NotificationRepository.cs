@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 using Quantumart.QPublishing.Database;
 
@@ -17,7 +19,9 @@ namespace Quantumart.QP8.BLL.Repository
         public void SendNotification(string connectionString, int siteId, string code, int id, bool isLive)
         {
             var cnn = new DBConnector(connectionString) { CacheData = false };
-            QPConfiguration.SetAppSettings(cnn.AppSettings);
+            #if !NET_STANDARD
+            QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
+            #endif
             cnn.SendNotification(siteId, code, id, string.Empty, isLive);
         }
 
@@ -68,11 +72,11 @@ namespace Quantumart.QP8.BLL.Repository
         internal static Notification GetPropertiesById(int id)
         {
             return MapperFacade.NotificationMapper.GetBizObject(QPContext.EFContext.NotificationsSet
-                .Include("LastModifiedByUser")
-                .Include("WorkFlow")
-                .Include("FromUser")
-                .Include("ToUser")
-                .Include("ToUserGroup")
+                .Include(x => x.LastModifiedByUser)
+                .Include(x => x.Workflow)
+                .Include(x => x.FromUser)
+                .Include(x => x.ToUser)
+                .Include(x => x.ToUserGroup)
                 .SingleOrDefault(g => g.Id == id)
             );
         }

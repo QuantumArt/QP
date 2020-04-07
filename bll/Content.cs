@@ -1,20 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using QA.Validation.Xaml;
-using QP8.Infrastructure.Logging;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 
 namespace Quantumart.QP8.BLL
 {
@@ -219,6 +225,20 @@ namespace Quantumart.QP8.BLL
             new UserQueryColumn { ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0 }
         });
 
+
+        internal static ReadOnlyCollection<UserQueryColumn> PgSystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
+        {
+            new UserQueryColumn { ColumnName = FieldName.ContentItemId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.StatusTypeId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Visible.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Archive.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new UserQueryColumn { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new UserQueryColumn { ColumnName = FieldName.LastModifiedBy.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 }
+        });
+
+        internal static ReadOnlyCollection<UserQueryColumn> UserQueryMandatoryColumns => QPContext.DatabaseType == DatabaseType.Postgres ? PgSystemMandatoryColumns : SystemMandatoryColumns;
+
         private Site _site;
         private IEnumerable<Field> _fields;
         private ContentWorkflowBind _workflowBinding;
@@ -290,67 +310,67 @@ namespace Quantumart.QP8.BLL
 
         public int[] ForceLinkIds { get; set; }
 
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(ContentStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Name", NameResourceType = typeof(ContentStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.EntityName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Name", ResourceType = typeof(ContentStrings))]
         public override string Name { get; set; }
 
-        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Description", NameResourceType = typeof(ContentStrings))]
+        [StringLength(512, ErrorMessageResourceName = "DescriptionMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Description", ResourceType = typeof(ContentStrings))]
         public override string Description { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlyPluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Plural", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FriendlyPluralMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Plural", ResourceType = typeof(ContentStrings))]
         public string FriendlyPluralName { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlySingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [LocalizedDisplayName("Singular", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FriendlySingularMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "Singular", ResourceType = typeof(ContentStrings))]
         public string FriendlySingularName { get; set; }
 
-        [LocalizedDisplayName("EnableArticlesPermissions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "EnableArticlesPermissions", ResourceType = typeof(ContentStrings))]
         public bool AllowItemsPermission { get; set; }
 
-        [LocalizedDisplayName("Group", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "Group", ResourceType = typeof(ContentStrings))]
         public int GroupId { get; set; }
 
-        [LocalizedDisplayName("EnableSiteSharing", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "EnableSiteSharing", ResourceType = typeof(ContentStrings))]
         public bool IsShared { get; set; }
 
-        [LocalizedDisplayName("ArchiveOnRemoval", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ArchiveOnRemoval", ResourceType = typeof(ContentStrings))]
         public bool AutoArchive { get; set; }
 
-        [LocalizedDisplayName("CreateVersions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "CreateVersions", ResourceType = typeof(ContentStrings))]
         public bool UseVersionControl { get; set; }
 
-        [LocalizedDisplayName("MaximumNumberOfStoredVersions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "MaximumNumberOfStoredVersions", ResourceType = typeof(ContentStrings))]
         public int MaxNumOfStoredVersions { get; set; }
 
-        [LocalizedDisplayName("ArticlesNumberPerPage", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ArticlesNumberPerPage", ResourceType = typeof(ContentStrings))]
         public int PageSize { get; set; }
 
-        [LocalizedDisplayName("MapAsClass", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "MapAsClass", ResourceType = typeof(ContentStrings))]
         public bool MapAsClass { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NameSingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NameSingularInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("NameSingular", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NameSingularMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "NameSingularInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "NameSingular", ResourceType = typeof(ContentStrings))]
         public string NetName { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NamePluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NamePluralInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("NamePlural", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NamePluralMaxLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "NamePluralInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "NamePlural", ResourceType = typeof(ContentStrings))]
         public string NetPluralName { get; set; }
 
-        [LocalizedDisplayName("UseDefaultFiltration", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UseDefaultFiltration", ResourceType = typeof(ContentStrings))]
         public bool UseDefaultFiltration { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "AddContextClassNameLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "AddContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
-        [LocalizedDisplayName("AdditionalContextClassName", NameResourceType = typeof(ContentStrings))]
+        [StringLength(255, ErrorMessageResourceName = "AddContextClassNameLengthExceeded", ErrorMessageResourceType = typeof(ContentStrings))]
+        [RegularExpression(RegularExpressions.FullQualifiedNetName, ErrorMessageResourceName = "AddContextClassNameInvalidFormat", ErrorMessageResourceType = typeof(ContentStrings))]
+        [Display(Name = "AdditionalContextClassName", ResourceType = typeof(ContentStrings))]
         public string AdditionalContextClassName { get; set; }
 
-        [LocalizedDisplayName("VirtualType", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "VirtualType", ResourceType = typeof(ContentStrings))]
         public int VirtualType { get; set; }
 
         /// <summary>
@@ -359,40 +379,40 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public int StoredVirtualType { get; set; }
 
-        [LocalizedDisplayName("JoinRoot", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "JoinRoot", ResourceType = typeof(ContentStrings))]
         public int? JoinRootId { get; set; }
 
         public string Query { get; set; }
 
         public string AltQuery { get; set; }
 
-        [LocalizedDisplayName("TraceImportScript", NameResourceType = typeof(ContentStrings))]
+        [Display(Name="TraceImportScript", ResourceType = typeof(ContentStrings))]
         public string TraceImportScript { get; set; }
 
         public int SiteId { get; set; }
 
-        [LocalizedDisplayName("XamlValidation", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "XamlValidation", ResourceType = typeof(ContentStrings))]
         public string XamlValidation { get; set; }
 
-        [LocalizedDisplayName("DisableXamlValidation", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "DisableXamlValidation", ResourceType = typeof(ContentStrings))]
         public bool DisableXamlValidation { get; set; }
 
-        [LocalizedDisplayName("CreateDefaultXAMLValidation", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "CreateDefaultXAMLValidation", ResourceType = typeof(ContentStrings))]
         public bool CreateDefaultXamlValidation { get; set; }
 
-        [LocalizedDisplayName("ParentContent", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ParentContent", ResourceType = typeof(ContentStrings))]
         public int? ParentContentId { get; set; }
 
-        [LocalizedDisplayName("UseForContext", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UseForContext", ResourceType = typeof(ContentStrings))]
         public bool UseForContext { get; set; }
 
-        [LocalizedDisplayName("ForReplication", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "ForReplication", ResourceType = typeof(ContentStrings))]
         public bool ForReplication { get; set; }
 
-        [LocalizedDisplayName("DisableChangingActions", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "DisableChangingActions", ResourceType = typeof(ContentStrings))]
         public bool DisableChangingActions { get; set; }
 
-        [LocalizedDisplayName("FormScript", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "FormScript", ResourceType = typeof(ContentStrings))]
         public string FormScript { get; set; }
 
         public int[] NewVirtualFieldIds { get; set; }
@@ -462,18 +482,33 @@ namespace Quantumart.QP8.BLL
 
         public bool HasAnyNotification => ContentRepository.HasAnyNotifications(Id);
 
+        [BindNever]
+        [ValidateNever]
+
         public bool HasAggregatedFields
         {
             get { return Fields.Any(f => f.Aggregated); }
         }
 
+        [BindNever]
+        [ValidateNever]
+        [JsonIgnore]
         public Content BaseAggregationContent => _baseAggregationContent.Value;
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Content> AggregatedContents => _aggregatedContents.Value;
 
+        [BindNever]
+        [ValidateNever]
         public Field TreeField => _treeField.Value;
 
+        [BindNever]
+        [ValidateNever]
         public Field VariationField => _variationField.Value;
+
+        [BindNever]
+        [ValidateNever]
 
         internal IEnumerable<Field> FieldsForCreateLike
         {
@@ -487,8 +522,12 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<ContentConstraint> Constraints => _constraints ?? (_constraints = IsNew ? Enumerable.Empty<ContentConstraint>() : ContentConstraintRepository.GetConstraintsByContentId(Id));
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Field> Fields
         {
             get
@@ -506,14 +545,15 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Поля на которые могу ссылаться другие поля через O2M связь
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Field> RelateableFields
         {
             get { return Fields.Where(f => f.IsRelateable).Select(f => f); }
         }
 
+        [BindNever]
+        [ValidateNever]
         public ContentGroup Group => _contentGroup.Value;
 
         [JsonIgnore]
@@ -531,47 +571,59 @@ namespace Quantumart.QP8.BLL
             set => _workflowBinding = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public Site Site
         {
             get => _site ?? (_site = SiteRepository.GetById(SiteId));
             set => _site = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public PathInfo RootVersionsLibrary => PathInfo.GetSubPathInfo(ArticleVersion.RootFolder);
 
+        [BindNever]
+        [ValidateNever]
         public PathInfo RootContentsPathInfo => Site.BasePathInfo.GetSubPathInfo("contents");
 
+        [BindNever]
+        [ValidateNever]
         public override PathInfo PathInfo => RootContentsPathInfo.GetSubPathInfo(Id.ToString());
 
+
+        [BindNever]
+        [ValidateNever]
         public override EntityObject Parent => Site;
 
+
+        [BindNever]
+        [ValidateNever]
         public Content ParentContent => _parentContent.Value;
 
+
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Content> ChildContents => _childContents.Value;
 
-        /// <summary>
-        /// Виртуальные поля контента
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<VirtualFieldNode> VirtualJoinFieldNodes
         {
             get => _virtualJoinFieldNodes.Value;
             set => _virtualJoinFieldNodes.Value = value;
         }
 
-        /// <summary>
-        /// Дочерние виртуальные контенты
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Content> VirtualSubContents => _virtualSubContents.Value;
 
-        /// <summary>
-        /// Схема view виртуального контента типа User Query
-        /// </summary>
+        [BindNever]
+        [ValidateNever]
         internal IEnumerable<UserQueryColumn> UserQueryContentViewSchema => _userQueryContentViewSchema.Value;
 
-        /// <summary>
-        /// ID базовых контентов для построения Union-контента
-        /// </summary>
-        [LocalizedDisplayName("UnionSourceContents", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UnionSourceContents", ResourceType = typeof(ContentStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> UnionSourceContentIDs
         {
             get => _unionContentIDs.Value;
@@ -581,17 +633,23 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Текст запроста для User Query контента
         /// </summary>
-        [LocalizedDisplayName("UserQuery", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UserQuery", ResourceType = typeof(ContentStrings))]
         public string UserQuery { get; set; }
 
         /// <summary>
         /// Текст альтернативного запроста для united view из User Query контента
         /// </summary>
-        [LocalizedDisplayName("UserQueryAlternative", NameResourceType = typeof(ContentStrings))]
+        [Display(Name = "UserQueryAlternative", ResourceType = typeof(ContentStrings))]
         public string UserQueryAlternative { get; set; }
 
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+
+            if (!UseVersionControl)
+            {
+                MaxNumOfStoredVersions = 0;
+            }
+
             if (!MapAsClass)
             {
                 NetName = null;
@@ -676,8 +734,9 @@ namespace Quantumart.QP8.BLL
                 catch (Exception exp)
                 {
                     var message = exp.InnerException != null ? exp.InnerException.Message : exp.Message;
+                    CurrentLogger.Error().Exception(exp).Message($"Testing XAML validator for content {Id} failed").Write();
                     errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {message}");
-                    Logger.Log.Info($"Testing XAML validator for content {Id} failed", exp);
+
                 }
             }
         }
@@ -696,16 +755,6 @@ namespace Quantumart.QP8.BLL
                 if (AutoArchive != dbContent.AutoArchive) // Архивировать при удалении
                 {
                     errors.ErrorFor(f => AutoArchive, ContentStrings.CannotChangeAutoArchive);
-                }
-
-                if (WorkflowBinding.WorkflowId != dbContent.WorkflowBinding.WorkflowId) // Тип Workflow
-                {
-                    errors.ErrorFor(f => WorkflowBinding.WorkflowId, ContentStrings.CannotChangeWorkflow);
-                }
-
-                if (WorkflowBinding.IsAsync != dbContent.WorkflowBinding.IsAsync) // Расщеплять ли статьи по Workflow
-                {
-                    errors.ErrorFor(f => WorkflowBinding.IsAsync, ContentStrings.CannotChangeIsAsync);
                 }
             }
         }
@@ -883,20 +932,26 @@ namespace Quantumart.QP8.BLL
             } while (ContentRepository.NameExists(this));
 
             var netName = NetName;
-            index = 0;
-            do
+            if (!String.IsNullOrEmpty(netName))
             {
-                index++;
-                NetName = MutateHelper.MutateNetName(netName, index);
-            } while (ContentRepository.NetNameExists(this));
+                index = 0;
+                do
+                {
+                    index++;
+                    NetName = MutateHelper.MutateNetName(netName, index);
+                } while (ContentRepository.NetNameExists(this));
+            }
 
             var netPluralName = NetPluralName;
-            index = 0;
-            do
+            if (!String.IsNullOrEmpty(netPluralName))
             {
-                index++;
-                NetPluralName = MutateHelper.MutateNetName(netPluralName, index);
-            } while (ContentRepository.NetPluralNameExists(this));
+                index = 0;
+                do
+                {
+                    index++;
+                    NetPluralName = MutateHelper.MutateNetName(netPluralName, index);
+                } while (ContentRepository.NetPluralNameExists(this));
+            }
         }
 
         internal void DeleteFields()
@@ -1016,6 +1071,9 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        private static ReadOnlyCollection<string> UserQueryValidColumnTypes => QPContext.DatabaseType == DatabaseType.SqlServer ?
+            Field.ValidFieldColumnDbTypeCollection : Field.PgValidFieldColumnDbTypeCollection;
+
         /// <summary>
         /// Валидация виртуального контента типа User Query
         /// </summary>
@@ -1051,14 +1109,14 @@ namespace Quantumart.QP8.BLL
 
                         // проверить на наличие обязательных полей
                         var userQueryViewUniqColumns = userQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
-                        var expectedMandatoryColumns = SystemMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
+                        var expectedMandatoryColumns = UserQueryMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
                         if (expectedMandatoryColumns.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.NotAllMandatoryColumnsInUserQuery, string.Join(", ", expectedMandatoryColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
                         }
 
                         // проверить запрос на наличие недопустимых DB-типов колонок
-                        var invalidTypeColumns = userQueryViewAllColumns.Where(c => !Field.ValidFieldColumnDbTypeCollection.Contains(c.DbType)).ToList();
+                        var invalidTypeColumns = userQueryViewAllColumns.Where(c => !UserQueryValidColumnTypes.Contains(c.DbType)).ToList();
                         if (invalidTypeColumns.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.InvalidColumnsInUserQuery, string.Join(", ", invalidTypeColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
@@ -1071,7 +1129,8 @@ namespace Quantumart.QP8.BLL
                                 .Select(c => string.Format(ContentStrings.UserQueryColumnTypeChanged, c.ColumnName, c.TableName, c.TableDbType, c.DbType))
                                 .ToList();
 
-                        var changedTypeColumnMessages = GetChangedTypeColumnMessage(userQueryViewAllColumns).ToList();
+                        var customUserQueryColumns = userQueryViewAllColumns.Except(UserQueryMandatoryColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
+                        var changedTypeColumnMessages = GetChangedTypeColumnMessage(customUserQueryColumns).ToList();
                         if (changedTypeColumnMessages.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", changedTypeColumnMessages));
@@ -1082,10 +1141,10 @@ namespace Quantumart.QP8.BLL
                             => columns
                                 .GroupBy(c => c.ColumnName, StringComparer.InvariantCultureIgnoreCase)
                                 .Where(g => g.Select(c => c.TableDbType).Distinct(StringComparer.InvariantCultureIgnoreCase).Count() > 1)
-                                .Select(g => string.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, string.Join(", ", g.Select(c => $"[{c.TableName}]"))))
+                                .Select(g => string.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, string.Join(", ", g.Select(c => $"{SqlQuerySyntaxHelper.EscapeEntityName(QPContext.DatabaseType, c.TableName)}"))))
                                 .ToList();
 
-                        var diffTypeColumnMessage = GetDiffTypeColumnMessages(userQueryViewAllColumns).ToList();
+                        var diffTypeColumnMessage = GetDiffTypeColumnMessages(customUserQueryColumns).ToList();
                         if (diffTypeColumnMessage.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", diffTypeColumnMessage));
@@ -1131,7 +1190,7 @@ namespace Quantumart.QP8.BLL
             {
                 // получить схему view (кроме системных полей)
                 var viewName = $"content_{Id}";
-                var viewColumns = VirtualContentRepository.GetViewSchema(viewName).Where(c => !SystemMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer)).ToList();
+                var viewColumns = VirtualContentRepository.GetViewSchema(viewName).Where(c => !UserQueryMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer)).ToList();
 
                 // спец. обработка колонки content_id из union-контентов
                 foreach (var c in viewColumns)
@@ -1183,7 +1242,13 @@ namespace Quantumart.QP8.BLL
                 Description = string.IsNullOrWhiteSpace(f.FriendlyName) ? f.Name : f.FriendlyName
             }));
 
-            return ValidationServices.GenerateXamlValidatorText(propDefs);
+            return CleanPropertyDefinitions(ValidationServices.GenerateXamlValidatorText(propDefs));
+        }
+
+        public static string CleanPropertyDefinitions(string propDefs)
+        {
+            var re = new Regex("(<PropertyDefinition[^>]+)>.*?</PropertyDefinition>");
+            return re.Replace(propDefs, "$1 />");
         }
 
         public int[] GetFieldIds()

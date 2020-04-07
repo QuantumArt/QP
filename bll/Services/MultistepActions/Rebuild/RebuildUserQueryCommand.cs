@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -14,6 +15,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
 {
     internal class RebuildUserQueryCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 10;
 
         public int ContentId { get; }
@@ -51,15 +54,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
                     .ToArray();
 
             _itemCount = contentsToRebuild.Length;
-            HttpContext.Current.Session[HttpContextSession.RebuildUserQueryCommandProcessingContext] = new RebuildUserQueryCommandContext
-            {
-                ContentIdsToRebuild = contentsToRebuild.ToArray()
-            };
+            HttpContext.Session.SetValue(
+                HttpContextSession.RebuildUserQueryCommandProcessingContext,
+                new RebuildUserQueryCommandContext
+                {
+                    ContentIdsToRebuild = contentsToRebuild.ToArray()
+                });
         }
 
         internal static void TearDown()
         {
-            HttpContext.Current.Session[HttpContextSession.RebuildUserQueryCommandProcessingContext] = null;
+            HttpContext.Session.Remove(HttpContextSession.RebuildUserQueryCommandProcessingContext);
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -78,7 +83,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
 
         public MultistepActionStepResult Step(int step)
         {
-            var context = HttpContext.Current.Session[HttpContextSession.RebuildUserQueryCommandProcessingContext] as RebuildUserQueryCommandContext;
+            var context = HttpContext.Session.GetValue<RebuildUserQueryCommandContext>(HttpContextSession.RebuildUserQueryCommandProcessingContext);
+
             var ids = context.ContentIdsToRebuild
                 .Skip(step * ItemsPerStep)
                 .Take(ItemsPerStep)

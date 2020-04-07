@@ -1,139 +1,100 @@
-﻿@using Quantumart.QP8.BLL
-@using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
+﻿@using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.Library.LibraryViewModel
 
-
 <div class="library" id="@Model.MainComponentId">
-	@{Html.Telerik().Splitter()
-		.Name(Model.SplitterId)
-		.HtmlAttributes(new
-		{
-			@class = "l-splitter"
-			//style = "height: 100%;"
-		})
-		.Orientation(SplitterOrientation.Horizontal)
-		.Panes(panes =>
-		{
-			panes.Add().Content(
-				@<div class="treeContainer">
-					@Html.Telerik().TreeView().Name(Model.TreeElementId)
-				</div>
-			)
-			.Size("250px")
-			.MinSize("50px")
-			.MaxSize("400px")
-			.Collapsible(false)
-			.Resizable(true)
-			.HtmlAttributes(new {@class="l-tree", id=Model.TreeContainerElementId})
-			;
+  <div class="t-widget t-splitter-horizontal l-splitter" id="@Model.SplitterId">
+    <div class="t-pane l-tree t-scrollable" id="@Model.TreeContainerElementId">
+      <div class="treeContainer">
+        <div class="t-widget t-treeview t-reset" id="@Model.TreeElementId"></div>
+        <script type="text/javascript">
+            $('#@Model.TreeElementId').tTreeView();
+        </script>
+      </div>
+    </div>
+    <div class="t-pane l-files t-scrollable" id="@Model.ContentElementId">
+      <div class="l-rightPanel">
+        <div class="l-infoBlock">
+          <div class="l-info"><label>@LibraryStrings.PhysicalPath:</label> <span class="l-physical-path"></span></div>
+          <div class="l-info"><label>@LibraryStrings.VirtualPath:</label> <span class="l-virtual-path"></span></div>
+        </div>
+        <form class="l-filterForm">
+          <div class="l-searchBlock ">
+            @Html.QpLabel(Html.UniqueId("fileTypeDropDownList"), LibraryStrings.FileType)
+            @Html.QpDropDownList("fileTypeDropDownList",
+            Model.FileTypes,
+            LibraryStrings.AllFileTypes,
+            new ControlOptions
+            {
+              HtmlAttributes = new Dictionary<string, object>
+              {
+                { "class", "l-fileTypeList " },
+                { "id", Html.UniqueId("fileTypeDropDownList") }
+              },
+              Enabled = !Model.FilterFileTypeId.HasValue
+            })
+            @Html.QpLabel(Html.UniqueId("fileNameSearch"), LibraryStrings.FileName)
+            @Html.QpTextBox("fileNameSearch", "", new Dictionary<string, object>
+            {
+              { "class", "l-fileNameSearch" },
+              { "id", Html.UniqueId("fileNameSearch") }
+            })
 
-			panes.Add().Content(
-				@<div class="l-rightPanel">
-					<div class="l-infoBlock">
-                        <div class="l-info"><label>@LibraryStrings.PhysicalPath:</label> <span class="l-physical-path"></span></div>
-                        <div class="l-info"><label>@LibraryStrings.VirtualPath:</label> <span class="l-virtual-path"></span></div>
-                    </div>
-                    <form class="l-filterForm">
-						<div class="l-searchBlock ">
-						@Html.QpLabel(Html.UniqueId("fileTypeDropDownList"), LibraryStrings.FileType)
-						@Html.QpDropDownList("fileTypeDropDownList",
-						Model.FileTypes,
-						LibraryStrings.AllFileTypes,
-						new ControlOptions
-						{
-							HtmlAttributes = new Dictionary<string, object>
-							{
-								{ "class", "l-fileTypeList " },
-								{ "id", Html.UniqueId("fileTypeDropDownList") }
-							},
-							Enabled = !Model.FilterFileTypeId.HasValue
-						})
-						@Html.QpLabel(Html.UniqueId("fileNameSearch"), LibraryStrings.FileName)
-						@Html.QpTextBox("fileNameSearch", "",
-										new Dictionary<string, object>
-										{
-											{ "class", "l-fileNameSearch" },
-											{ "id", Html.UniqueId("fileNameSearch") }
-										})
+            <input id="@Html.UniqueId("findFileButton")" type="button" class="l-filterButton button" value="@LibraryStrings.Find" />
+            <input id="@Html.UniqueId("resetFilterButton")" type="button" class="l-resetFilterButton button" value="@LibraryStrings.ResetFilter" />
 
-						<input id="@Html.UniqueId("findFileButton")" type="button" class="l-filterButton button" value="@LibraryStrings.Find" />
-						<input id="@Html.UniqueId("resetFilterButton")" type="button" class="l-resetFilterButton button" value="@LibraryStrings.ResetFilter" />
-
-						@if (Model.UploaderType == UploaderType.Silverlight && Model.AllowUpload)
-						{
-							<div id="@Html.UniqueId("silverlightUploader")" class='l-sl-uploader'></div>
-						}
-						else if (Model.UploaderType == UploaderType.Html && Model.AllowUpload)
-						{
-							<div class="l-html-uploader">
-								@(Html.Telerik().Upload()
-										.Name(Html.UniqueId("mvcUploader"))
-										.Async(async => async.Save("UploadFile", "Library"))
-										.Multiple(true)
-										.ShowFileList(false)
-								)
-							</div>
-						}
-                        else if (Model.UploaderType == UploaderType.PlUpload && Model.AllowUpload)
-						{
-                            <div class="l-pl-uploader-container" id="@Html.UniqueId("upload_pl_cont_libr")" style="display:inline-block;">
-                                <div id="@Html.UniqueId("upload_pl_libr_btn")" class="pl_upload_button" style="display:inline-block; vertical-align: baseline;">
-		                            <input type="button" value ="@LibraryStrings.Upload"/>
-	                            </div>
-                                <div class="lop-pbar-container" style="display:none; vertical-align:middle; margin-bottom: 5px;">
-                                    <div class="lop-pbar"></div>
-                                </div>
-                            </div>
-                        }
-					</div>
-					</form>
-					<div class="l-list" id="@Model.ListContainerElementId">list
-					</div>
-					<div class="l-thumb" id="@Model.ThumbContainerElementId">thumbnails
-					</div>
-					<div class="l-grid" id="@Model.GridContainerElementId">
-					@(Html.Telerik().Grid<FolderFile>().Name(Model.GridElementId)
-						.DataKeys(k => k.Add(s => s.Name))
-						.Columns(c =>
-						{
-
-							c.Bound("")
-									.Title(@"<input type='checkbox' />")
-									.Width(30)
-									.HeaderHtmlAttributes(new { @class = "t-select-header" })
-									.ClientTemplate(@"<input type='checkbox' name='SelectedFileNames' value='<#= Name #>' />")
-									.HtmlAttributes(new { @class = "t-select-cell" })
-									.Sortable(false);
-
-							c.Bound(s => s.Name).Title(EntityObjectStrings.Name);
-							c.Bound(s => s.Extension).Title(LibraryStrings.Extension);
-							c.Bound(s => s.FileTypeName).Title(LibraryStrings.FileType);
-							c.Bound(s => s.Size).Title(LibraryStrings.Size);
-							c.Bound(s => s.Dimensions).Title(LibraryStrings.Dimensions).Sortable(false);
-							c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
-							c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
-
-						})
-						.DataBinding(db => db.Ajax()
-							.Select("_Files", Model.ControllerName)
-						)
-						.EnableCustomBinding(true)
-						.Sortable()
-						.Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
-						.Selectable(s => s.Enabled(true))
-						.ClientEvents(e => e
-							.OnDataBinding("$q.preventDefaultFunction")
-							.OnRowDataBound("$q.preventDefaultFunction")
-						)
-					)
-					</div>
-				</div>
-			)
-			.HtmlAttributes(new { id=Model.ContentElementId, @class="l-files" });
-
-		}).Render();
-	}
+            @if (Model.AllowUpload)
+            {
+              <div class="l-pl-uploader-container" id="@Html.UniqueId("upload_pl_cont_libr")" style="display:inline-block;">
+                <div id="@Html.UniqueId("upload_pl_libr_btn")" class="pl_upload_button" style="display:inline-block; vertical-align: baseline;">
+                  <input type="button" value="@LibraryStrings.Upload" />
+                </div>
+                <div class="lop-pbar-container" style="display:none; vertical-align:middle; margin-bottom: 5px;">
+                  <div class="lop-pbar"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </form>
+        <div class="l-list" id="@Model.ListContainerElementId">list</div>
+        <div class="l-thumb" id="@Model.ThumbContainerElementId">thumbnails</div>
+        <div class="l-grid" id="@Model.GridContainerElementId">
+          <div id="@Model.GridElementId"></div>
+          <script>
+            $('#@Model.GridElementId').qpGrid({
+              columns: [
+                {
+                  field: '',
+                  headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+                  headerAttributes: { 'class': 't-select-header' },
+                  template: '<input type="checkbox" name="SelectedFileNames" value="#= Name #" />',
+                  sortable: false,
+                  attributes: { 'class': 't-select-cell' },
+                  width: 35,
+                },
+                { field: 'Name', title: '@EntityObjectStrings.Name' },
+                { field: 'Extension', title: '@LibraryStrings.Extension' },
+                { field: 'FileTypeName', title: '@LibraryStrings.FileType' },
+                { field: 'Size', title: '@LibraryStrings.Size' },
+                { field: 'Dimensions', title: '@LibraryStrings.Dimensions', sortable: false },
+                { field: 'Created', title: '@EntityObjectStrings.Created' },
+                { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+              ],
+              dataSource: {
+                transport: {
+                  read: {
+                    url: '@Url.Action("_Files", Model.ControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId } )',
+                  },
+                },
+              },
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    $('#@Model.SplitterId').tSplitter({ panes: [{ size: '250px', minSize: '50px', maxSize: '400px' }, {}] });
+  </script>
 </div>
 
 @Html.PrepareAndRunInitScript(Model)

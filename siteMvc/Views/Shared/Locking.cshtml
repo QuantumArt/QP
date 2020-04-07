@@ -5,15 +5,15 @@
 {
 	using(Html.BeginFieldGroup(GlobalStrings.LockingGroup))
 	{
-		@Html.DisplayFieldFor(s => s.Data.LockedByDisplayName)
-		@Html.DisplayFieldFor(s => s.Data.LockedToDisplay)
+		@Html.DisplayFieldFor(s => s.LockableData.LockedByDisplayName)
+		@Html.DisplayFieldFor(s => s.LockableData.LockedToDisplay)
 
-		if (Model.Data.LockedByYou)
+		if (Model.LockableData.LockedByYou)
 		{     
-			@Html.CheckBoxFieldFor(s => s.Data.PermanentLock)
+			@Html.CheckBoxFieldFor(s => s.LockableData.PermanentLock)
 		}
 
-		if (Model.Data.CanBeUnlocked)
+		if (Model.LockableData.CanBeUnlocked)
         { 
             @Html.UnlockLink(Model)
         }

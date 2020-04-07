@@ -1,17 +1,19 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions;
+using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ClearContentController : QPController
+    public class ClearContentController : AuthQpController
     {
         private readonly IMultistepActionService _service;
 
-        public ClearContentController(IMultistepActionService service)
+        public ClearContentController(ClearContentService service)
         {
             _service = service;
         }
@@ -31,7 +33,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(int stage, int step) => Json(_service.Step(stage, step));
+        public ActionResult Step([FromBody] MultiStepActionViewModel model) => Json(_service.Step(model.Stage, model.Step));
 
         [HttpPost]
         public void TearDown(bool isError)

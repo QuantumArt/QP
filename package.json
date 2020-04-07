@@ -1,5 +1,7 @@
 {
   "name": "quantumart_qp8",
+  "version": "1.0.0",
+  "private": true,
   "author": "Quantum Art",
   "description": "Quantum Art QP8 project",
   "repository": {
@@ -9,12 +11,18 @@
   "bugs": {
     "url": "http://tfs:8080/tfs/QuantumartCollection/QP/_workitems"
   },
+  "scripts": {
+    "start": "npm run build-dev",
+    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.babel.js",
+    "build-dev": "gulp --gulpfile siteMvc/gulpfile.babel.js",
+    "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
+    "lint": "eslint ./siteMvc/Scripts/Quantumart/",
+    "type-check": "tsc --noEmit --project siteMvc/tsconfig.json || exit 0",
+    "webpack": "webpack --watch --config siteMvc/webpack.config.js"
+  },
   "dependencies": {
-    "classnames": "^2.2.5",
+    "@aspnet/signalr": "^1.1.4",
     "natives": "^1.1.6",
-    "prop-types": "^15.5.8",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
     "tslib": "^1.8.1"
   },
   "devDependencies": {
@@ -22,19 +30,18 @@
     "@types/jquery.scrollto": "^1.4.28",
     "@types/knockout": "^3.4.47",
     "@types/qtip2": "^2.2.29",
-    "@types/signalr": "^2.2.35",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^8.0.2",
     "babel-plugin-syntax-decorators": "^6.13.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
-    "browser-sync": "^2.26.3",
+    "browser-sync": "^2.26.7",
     "chalk": "^2.1.0",
     "cross-env": "^5.1.1",
     "del": "^3.0.0",
     "es6-promise": "^4.1.1",
-    "eslint": "^4.8.0",
+    "eslint": "^4.18.2",
     "eslint-nibble": "^4.2.1",
     "eslint-plugin-import": "^2.8.0",
     "gulp": "^3.9.1",
@@ -55,7 +62,7 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.13.0",
     "stylelint": "^8.0.0",
     "stylelint-config-standard": "^17.0.0",
     "ts-loader": "^3.2.0",
@@ -63,16 +70,5 @@
     "typescript": "^2.6.2",
     "webpack": "^3.10.0",
     "yargs": "^8.0.2"
-  },
-  "scripts": {
-    "start": "npm run build-dev",
-    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.babel.js",
-    "build-dev": "gulp --gulpfile siteMvc/gulpfile.babel.js",
-    "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
-    "lint": "eslint ./siteMvc/Scripts/Quantumart/",
-    "type-check": "tsc --noEmit --project siteMvc/tsconfig.json || exit 0",
-    "webpack": "webpack --watch --config siteMvc/webpack.config.js"
-  },
-  "private": true,
-  "version": "1.0.0"
+  }
 }

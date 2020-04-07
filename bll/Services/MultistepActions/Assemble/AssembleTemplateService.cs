@@ -7,9 +7,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
     public sealed class AssembleTemplateService : MultistepActionServiceAbstract
     {
-        private AssembleTemplateCommand templateCommand;
-        private AssemblePagesCommand pagesCommand;
-        private AssembleNotificationsCommand notificationsCommand;
 
         public override MessageResult PreAction(int parentId, int templateId)
         {
@@ -38,79 +35,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
             if (site.IsDotNet)
             {
-                templateCommand = new AssembleTemplateCommand(templateId, template.Name);
-                pagesCommand = new AssemblePagesCommand(templateId, template.Name, false, true);
+                var templateCommand = new AssembleTemplateCommand(templateId, template.Name);
+                Commands.Add(templateCommand);
+                var pagesCommand = new AssemblePagesCommand(templateId, template.Name, false, true);
                 pagesCommand.Setup();
+                Commands.Add(pagesCommand);
 
-                notificationsCommand = new AssembleNotificationsCommand(templateId, template.Name, false);
+                var notificationsCommand = new AssembleNotificationsCommand(templateId, template.Name, false);
+                Commands.Add(notificationsCommand);
             }
             else
             {
-                pagesCommand = new AssemblePagesCommand(templateId, template.Name, false, false);
+                var pagesCommand = new AssemblePagesCommand(templateId, template.Name, false, false);
                 pagesCommand.Setup();
+                Commands.Add(pagesCommand);
             }
 
             return base.Setup(parentId, templateId, boundToExternal);
-        }
-
-        protected override MultistepActionSettings CreateActionSettings(int siteId, int templateId)
-        {
-            var site = SiteRepository.GetById(siteId);
-            if (site == null)
-            {
-                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
-            }
-
-            if (site.IsDotNet)
-            {
-                return new MultistepActionSettings
-                {
-                    Stages = new[]
-                    {
-                        templateCommand.GetStageSettings(),
-                        pagesCommand.GetStageSettings(),
-                        notificationsCommand.GetStageSettings()
-                    }
-                };
-            }
-
-            return new MultistepActionSettings
-            {
-                Stages = new[]
-                {
-                    pagesCommand.GetStageSettings()
-                }
-            };
-        }
-
-        protected override MultistepActionServiceContext CreateContext(int siteId, int templateId, bool? boundToExternal)
-        {
-            var site = SiteRepository.GetById(siteId);
-            if (site == null)
-            {
-                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
-            }
-
-            if (site.IsDotNet)
-            {
-                return new MultistepActionServiceContext
-                {
-                    CommandStates = new[]
-                    {
-                        templateCommand.GetState(),
-                        pagesCommand.GetState(),
-                        notificationsCommand.GetState()
-                    }
-                };
-            }
-
-            return new MultistepActionServiceContext
-            {
-                CommandStates = new[]
-                {
-                    pagesCommand.GetState()
-                }
-            };
         }
 
         protected override string ContextSessionKey => "BuildSiteService.ProcessingContext";

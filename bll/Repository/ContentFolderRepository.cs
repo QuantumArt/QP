@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
+using ContentFolderDAL = Quantumart.QP8.DAL.Entities.ContentFolderDAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class ContentFolderRepository : FolderRepository
     {
-        internal ObjectSet<ContentFolderDAL> CurrentSet => QPContext.EFContext.ContentFolderSet;
+        internal DbSet<ContentFolderDAL> CurrentSet => QPContext.EFContext.ContentFolderSet;
 
         internal ContentFolderMapper CurrentMapper => MapperFacade.ContentFolderMapper;
+
+        internal ContentFolderRowMapper RowMapper => MapperFacade.ContentFolderRowMapper;
 
         public override Folder GetById(int id)
         {
@@ -40,8 +43,19 @@ namespace Quantumart.QP8.BLL.Repository
             return CurrentMapper.GetBizList(CurrentSet.Where(c => c.ParentId == parentId).ToList());
         }
 
-        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId) =>
-            CurrentMapper.GetBizList(QPContext.EFContext.GetChildContentFoldersList(QPContext.CurrentUserId, parentEntityId, parentId, PermissionLevel.List, false, out int _));
+        public override IEnumerable<Folder> GetChildrenFromDb(int parentEntityId, int parentId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+
+                return RowMapper.GetBizList(
+                    Common.GetChildFoldersList(
+                        scope.DbConnection, QPContext.EFContext, QPContext.IsAdmin, QPContext.CurrentUserId,
+                        parentEntityId,false, parentId, PermissionLevel.List, false, out int _)
+                        .ToList()
+                );
+            }
+        }
 
         public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId)
         {

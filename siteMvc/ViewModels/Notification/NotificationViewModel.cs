@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewNotification : Constants.ActionCode.NotificationProperties;
 
-        public new BLL.Notification Data
+        public BLL.Notification Data
         {
             get => (BLL.Notification)EntityData;
             set => EntityData = value;
@@ -74,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             }
         }
 
-        [LocalizedDisplayName("CreateDefaultFormat", NameResourceType = typeof(NotificationStrings))]
+        [Display(Name = "CreateDefaultFormat", ResourceType = typeof(NotificationStrings))]
         public bool CreateDefaultFormat { get; set; }
 
         public QPSelectListItem FromUserListItem
@@ -133,22 +133,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             return model;
         }
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
+
             if (Data.IsExternal)
             {
                 CreateDefaultFormat = false;
             }
 
-            Data.DoCustomBinding(CreateDefaultFormat);
+            if (CreateDefaultFormat)
+            {
+                Data.FormatId = null;
+            }
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override IEnumerable<ValidationResult> ValidateViewModel()
         {
-            base.Validate(modelState);
             if (!CreateDefaultFormat && !Data.FormatId.HasValue && !Data.IsExternal)
             {
-                modelState.AddModelError("Data.FormatId", NotificationStrings.FormatIdNotEntered);
+                yield return new ValidationResult(NotificationStrings.FormatIdNotEntered, new[] {"Data.FormatId"});
             }
         }
 

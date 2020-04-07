@@ -1,41 +1,46 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    [ValidateInput(false)]
-    public class ArticleVersionController : QPController
+    public class ArticleVersionController : AuthQpController
     {
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticleVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
         [BackendActionContext(ActionCode.ArticleVersions)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var model = ArticleVersionListViewModel.Create(tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticleVersions)]
         [BackendActionContext(ActionCode.ArticleVersions)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy)
         {
-            var serviceResult = ArticleVersionService.List(parentId, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleVersionService.List(parentId, listCommand);
             var result = Mapper.Map<List<ArticleVersion>, List<ArticleVersionListItem>>(serviceResult);
             return new TelerikResult(result, result.Count);
         }
@@ -44,12 +49,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CompareArticleVersionWithCurrent)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
         [BackendActionContext(ActionCode.CompareArticleVersionWithCurrent)]
-        public ActionResult CompareWithCurrent(string tabId, int parentId, int id, bool? boundToExternal)
+        public async Task<ActionResult> CompareWithCurrent(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var version = ArticleVersionService.GetMergedVersion(new[] { id, ArticleVersion.CurrentVersionId }, parentId);
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
             model.ViewType = ArticleVersionViewType.CompareWithCurrent;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost]
@@ -57,24 +62,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CompareArticleVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
         [BackendActionContext(ActionCode.CompareArticleVersions)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Compare(string tabId, int parentId, int[] IDs, bool? boundToExternal)
+        public async Task<ActionResult> Compare(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var version = ArticleVersionService.GetMergedVersion(IDs, parentId);
+            var version = ArticleVersionService.GetMergedVersion(selModel.Ids, parentId);
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
             model.ViewType = ArticleVersionViewType.CompareVersions;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PreviewArticleVersion)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
         [BackendActionContext(ActionCode.PreviewArticleVersion)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? boundToExternal)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode, bool? boundToExternal)
         {
             var version = ArticleVersionService.Read(id, parentId);
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, successfulActionCode, boundToExternal);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.PreviewArticleVersion)]
@@ -83,12 +87,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.RestoreArticleVersion)]
         [BackendActionContext(ActionCode.RestoreArticleVersion)]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, IFormCollection collection)
         {
             var version = ArticleVersionService.Read(id);
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+
+            await TryUpdateModelAsync(model);
 
             if (ModelState.IsValid)
             {
@@ -103,7 +107,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -124,10 +128,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveArticleVersion)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleVersion)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int[] IDs, bool? boundToExternal)
+        public ActionResult MultipleRemove([FromBody] SelectedItemsViewModel selModel, bool? boundToExternal)
         {
-            var result = ArticleVersionService.MultipleRemove(IDs, boundToExternal);
+            var result = ArticleVersionService.MultipleRemove(selModel.Ids, boundToExternal);
             return JsonMessageResult(result);
         }
     }

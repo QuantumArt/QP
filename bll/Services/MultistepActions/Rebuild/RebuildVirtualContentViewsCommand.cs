@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants.Mvc;
@@ -12,6 +13,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
 {
     internal class RebuildVirtualContentViewsCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 1;
 
         public int ContentId { get; }
@@ -49,15 +52,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
                     .ToArray();
 
             _itemCount = contentsToRebuild.Length;
-            HttpContext.Current.Session[HttpContextSession.RebuildVirtualContentProcessingContext] = new RebuildVirtualContentViewsCommandContext
-            {
-                ContentIdsToRebuild = contentsToRebuild
-            };
+
+            HttpContext.Session.SetValue(
+                HttpContextSession.RebuildVirtualContentProcessingContext,
+                new RebuildVirtualContentViewsCommandContext
+                {
+                    ContentIdsToRebuild = contentsToRebuild
+                });
         }
 
         internal static void TearDown()
         {
-            HttpContext.Current.Session[HttpContextSession.RebuildVirtualContentProcessingContext] = null;
+            HttpContext.Session.Remove(HttpContextSession.RebuildVirtualContentProcessingContext);
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -76,7 +82,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
 
         public MultistepActionStepResult Step(int step)
         {
-            var context = HttpContext.Current.Session[HttpContextSession.RebuildVirtualContentProcessingContext] as RebuildVirtualContentViewsCommandContext;
+            var context = HttpContext.Session.GetValue<RebuildVirtualContentViewsCommandContext>(HttpContextSession.RebuildVirtualContentProcessingContext);
+
             var ids = context.ContentIdsToRebuild
                 .Skip(step * ItemsPerStep)
                 .Take(ItemsPerStep)

@@ -1,75 +1,110 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 using Quantumart.QP8.WebMvc.ViewModels.HomePage;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class HomeController : QPController
+    public class HomeController : AuthQpController
     {
-        [DisableBrowserCache]
-        public ActionResult Index(DirectLinkOptions directLinkOptions) => View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
+        private JsLanguageHelper _languageHelper;
+        private JsConstantsHelper _constantsHelper;
+        private QPublishingOptions _options;
 
-        public ActionResult Home(string tabId, int parentId)
+
+        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper, QPublishingOptions options)
         {
-            var model = HomeViewModel.Create(tabId, parentId, DbService.Home());
-            return JsonHtml("Home", model);
+            _languageHelper = languageHelper;
+            _constantsHelper = constantsHelper;
+            _options = options;
         }
 
-        public ActionResult About(string tabId, int parentId)
+        [DisableBrowserCache]
+        public ActionResult Index(DirectLinkOptions directLinkOptions)
+        {
+            DbService.ResetUserCache();
+            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash(), _options));
+        }
+
+        public async Task<ActionResult> Home(string tabId, int parentId)
+        {
+            var model = HomeViewModel.Create(tabId, parentId, DbService.Home());
+            return await JsonHtml("Home", model);
+        }
+
+        public async Task<ActionResult> About(string tabId, int parentId)
         {
             var model = ViewModel.Create<AboutViewModel>(tabId, parentId);
-            return JsonHtml("About", model);
+            return await JsonHtml("About", model);
+        }
+
+        public ActionResult Lang()
+        {
+            return Content(_languageHelper.GetResult(), "text/javascript");
+        }
+
+        public ActionResult Constants()
+        {
+            return Content(_constantsHelper.GetResult(), "text/javascript");
+        }
+
+        public ActionResult TestValidation()
+        {
+            var result = new ProcessRemoteValidationIf();
+            return Content(result.ToString());
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult LockedArticles(string tabId, int parentId, int id)
+        public async Task<ActionResult> LockedArticles(string tabId, int parentId, int id)
         {
             var model = ArticleBaseListViewModel.Create(id, tabId, parentId);
             model.DataBindingActionName = "_LockedArticles";
-            return JsonHtml("LockedArticles", model);
+            return await JsonHtml("LockedArticles", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
-        public ActionResult _LockedArticles(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _LockedArticles(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = ArticleService.ListLocked(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.ListLocked(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult ArticlesForApproval(string tabId, int parentId, int id)
+        public async Task<ActionResult> ArticlesForApproval(string tabId, int parentId, int id)
         {
             var model = ArticleBaseListViewModel.Create(id, tabId, parentId);
             model.DataBindingActionName = "_ArticlesForApproval";
             model.AllowMultipleEntitySelection = false;
-            return JsonHtml("ArticlesForApproval", model);
+            return await JsonHtml("ArticlesForApproval", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
-        public ActionResult _ArticlesForApproval(string tabId, int parentId, int id, GridCommand command)
+        public ActionResult _ArticlesForApproval(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = ArticleService.ArticlesForApproval(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ArticleService.ArticlesForApproval(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -79,10 +114,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UnlockArticles)]
         [BackendActionContext(ActionCode.UnlockArticles)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult UnlockArticles(int[] IDs)
+        public ActionResult UnlockArticles([FromBody] SelectedItemsViewModel selModel)
         {
-            ArticleService.UnlockArticles(IDs);
+            ArticleService.UnlockArticles(selModel.Ids);
             return Json(null);
         }
     }

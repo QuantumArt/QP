@@ -1,6 +1,6 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL.ListItems
 {
@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL.ListItems
 
         private string _comment = string.Empty;
 
-        [LocalizedDisplayName("LastComment", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "LastComment", ResourceType = typeof(ArticleStrings))]
         public string Comment
         {
             get => _comment;

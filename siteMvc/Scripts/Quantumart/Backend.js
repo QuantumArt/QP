@@ -1,4 +1,5 @@
 /* eslint max-lines: 'off' */
+import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr'; // eslint-disable-line no-unused-vars
 import { BackendActionPermissionViewManager } from './Managers/BackendActionPermissionViewManager';
 import { BackendBreadCrumbsManager } from './Managers/BackendBreadCrumbsManager';
 import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
@@ -48,6 +49,10 @@ export class Backend {
       if (options.mustChangePassword) {
         this._userMustChangePassword = options.mustChangePassword;
       }
+
+      if (options.enableSignalR) {
+        this._enableSignalR = options.enableSignalR;
+      }
     }
 
     this._loadHandler = $.proxy(this._initialize, this);
@@ -81,6 +86,7 @@ export class Backend {
   _busy = false;
   _backendActionExecutor = null;
   _backendSplitter = null;
+  /** @type {BackendTreeMenu} */
   _backendTreeMenu = null;
   _backendTreeMenuContextMenuManager = null;
   _backendContextMenuManager = null;
@@ -115,6 +121,7 @@ export class Backend {
   _onEntityReadedHandler = null;
   _onHostExternalCallerContextsUnbindedHandler = null;
   _userMustChangePassword = false;
+  _enableSignalR = false;
 
   _initialize() {
     this._backendBrowserHistoryManager.initialize();
@@ -128,7 +135,7 @@ export class Backend {
     );
 
     // eslint-disable-next-line max-statements
-    this._directLinkExecutor.ready($.proxy(function (openByDirectLink) {
+    this._directLinkExecutor.ready(openByDirectLink => {
       this._directLinkExecutor.attachObserver(
         window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler
       );
@@ -153,7 +160,7 @@ export class Backend {
         contextMenuManager: this._backendTreeMenuContextMenuManager
       });
 
-      this._backendTreeMenu.initialize(3);
+      this._backendTreeMenu.initialize();
       this._backendTreeMenu.attachObserver(
         window.EVENT_TYPE_TREE_MENU_ACTION_EXECUTING, this._onActionExecutingHandler
       );
@@ -268,9 +275,10 @@ export class Backend {
       }
 
       this._initializeSignOut();
-    }, this));
-
-    this._initializeSignalrHubs();
+    });
+    if (this._enableSignalR) {
+      this._initializeSignalrHubs();
+    }
   }
 
   _error() {
@@ -287,21 +295,48 @@ export class Backend {
     $('.signOut').unbind('click');
   }
 
-  _initializeSignalrHubs() {
-    const that = this;
-    $.connection.hub.logging = false;
-    $.connection.communication.client.send = function (key, data) {
+
+  async _initializeSignalrHubs() {
+    const communicationConn = new HubConnectionBuilder()
+      .withUrl('/signalR/communication')
+      .build();
+
+    // TODO: $.connection.hub.logging = false;
+
+    communicationConn.on('Message', (key, data) => {
       if (key === 'singleusermode') {
-        that._updateSingleUserMode(data);
+        this._updateSingleUserMode(data);
       } else {
         $(`.${key}`).text(data);
       }
-    };
+    });
 
-    $.connection.singleUserMode.client.send = this._updateSingleUserMode;
-    $.connection.hub.start().done(() => {
-      const hash = $('body').data('dbhash');
-      $.connection.communication.server.addHash(hash);
+    const singleUserModeConn = new HubConnectionBuilder()
+      .withUrl('/signalR/singleUserMode')
+      .build();
+
+    singleUserModeConn.on('Message', this._updateSingleUserMode);
+
+    this._setReconnectionPolicy(communicationConn);
+    this._setReconnectionPolicy(singleUserModeConn);
+
+    await Promise.all([communicationConn.start(), singleUserModeConn.start()]);
+
+    const hash = $('body').data('dbhash');
+
+    await communicationConn.invoke('AddHash', hash);
+  }
+
+  /**
+   * @param {HubConnection} connection
+   */
+  _setReconnectionPolicy(connection) {
+    // TODO: review SignalR reconnect
+    connection.onclose(async error => {
+      if (error) {
+        await Promise.resolve();
+        await connection.start();
+      }
     });
   }
 

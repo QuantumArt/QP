@@ -295,16 +295,16 @@
     <value>Поле не может быть одновременно уникальным  и иметь значение по умолчанию</value>
   </data>
   <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
-    <value>Длина описания поля не должна превышать {5} символов</value>
+    <value>Длина описания поля не должна превышать {1} символов</value>
   </data>
   <data name="FriendlyNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина дружественного имени поля не должна превышать {5} символов</value>
+    <value>Длина дружественного имени поля не должна превышать {1} символов</value>
   </data>
   <data name="NameInvalidFormat" xml:space="preserve">
     <value>Некорректное имя поля</value>
   </data>
   <data name="NameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени поля не должна превышать {5} символов</value>
+    <value>Длина имени поля не должна превышать {1} символов</value>
   </data>
   <data name="NameNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите имя поля</value>
@@ -319,7 +319,7 @@
     <value>Некорректное имя обратного поля</value>
   </data>
   <data name="BackwardFieldNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени обратного поля не должна превышать {5} символов!</value>
+    <value>Длина имени обратного поля не должна превышать {1} символов!</value>
   </data>
   <data name="BackwardFieldNameNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите имя обрантого поля</value>
@@ -340,7 +340,7 @@
     <value>Длина значения по умолчанию не должна превышать 255 символов!</value>
   </data>
   <data name="DocTypeMaxLengthExceeded" xml:space="preserve">
-    <value>Длина значения DocType не должна превышать {5} символов!</value>
+    <value>Длина значения DocType не должна превышать {1} символов!</value>
   </data>
   <data name="DynamicImageHeightNotInRange" xml:space="preserve">
     <value>Значение высоты не входит в допустимый диапазон: от 1 до 9999</value>
@@ -355,7 +355,7 @@
     <value>Значение ширины не входит в допустимый диапазон: от 1 до 9999</value>
   </data>
   <data name="InputMaskMaxLengthExceeded" xml:space="preserve">
-    <value>Длина маски ввода не должна превышать {5} символов!</value>
+    <value>Длина маски ввода не должна превышать {1} символов!</value>
   </data>
   <data name="InputMaskNotEntered" xml:space="preserve">
     <value>Пожалуйста, укажите маску ввода </value>
@@ -364,7 +364,7 @@
     <value>Некорректное имя LINQ-свойства</value>
   </data>
   <data name="LinqBackPropertyNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени обратного LINQ-свойства не должна превышать {5} символов!</value>
+    <value>Длина имени обратного LINQ-свойства не должна превышать {1} символов!</value>
   </data>
   <data name="LinqBackPropertyNameNonUnique" xml:space="preserve">
     <value>Такое имя обратного LINQ-свойства уже используется</value>
@@ -376,7 +376,7 @@
     <value>Некорректное имя обратного LINQ-свойства</value>
   </data>
   <data name="LinqPropertyNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени LINQ-свойства не должна превышать {5} символов!</value>
+    <value>Длина имени LINQ-свойства не должна превышать {1} символов!</value>
   </data>
   <data name="LinqPropertyNameNonUnique" xml:space="preserve">
     <value>Такое имя LINQ-свойства уже используется</value>
@@ -391,7 +391,7 @@
     <value>Некорректное имя узлового LINQ-класса (единственное)</value>
   </data>
   <data name="NetLinkNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени узлового LINQ-класса (единственное) не должна превышать {5} символов!</value>
+    <value>Длина имени узлового LINQ-класса (единственное) не должна превышать {1} символов!</value>
   </data>
   <data name="NetLinkNameNonUnique" xml:space="preserve">
     <value>Такое  имя узлового LINQ-класса (единственное) уже используется</value>
@@ -406,7 +406,7 @@
     <value>Некорректное имя узлового LINQ-класса (множественное)</value>
   </data>
   <data name="NetPluralLinkNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени узлового LINQ-класса (множественное) не должна превышать {5} символов!</value>
+    <value>Длина имени узлового LINQ-класса (множественное) не должна превышать {1} символов!</value>
   </data>
   <data name="NetPluralLinkNameNonUnique" xml:space="preserve">
     <value>Такое  имя узлового LINQ-класса (множественное) уже используется</value>
@@ -418,7 +418,7 @@
     <value>Не выбран контент с которым связано поле</value>
   </data>
   <data name="RelationConditionMaxLengthExceeded" xml:space="preserve">
-    <value>Длина условия на связь не должна превышать {5} символов!</value>
+    <value>Длина условия на связь не должна превышать {1} символов!</value>
   </data>
   <data name="RelationIdNotSelected" xml:space="preserve">
     <value>Для связи не выбрано поле для показа</value>
@@ -427,7 +427,7 @@
     <value>Длина строки не входит в допустимый диапазон: от 1 до 3500</value>
   </data>
   <data name="SubFolderMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени подпапки для файлов не должна превышать {5} символов!</value>
+    <value>Длина имени подпапки для файлов не должна превышать {1} символов!</value>
   </data>
   <data name="TextboxRowsNotInRange" xml:space="preserve">
     <value>Количество строк не входит в допустимый диапазон: от 5 до 30</value>
@@ -792,11 +792,11 @@
   <data name="BackwardFieldId" xml:space="preserve">
     <value>Обратное поле</value>
   </data>
-  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
-    <value>Обратное поле не может быть создано для агрегированного поля</value>
-  </data>
   <data name="TraceImport" xml:space="preserve">
     <value>Трассировать при импорте CSV</value>
+  </data>
+  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
+    <value>Обратное поле не может быть создано для агрегированного поля</value>
   </data>
   <data name="DenyPastDates" xml:space="preserve">
     <value>Запретить даты в прошлом</value>

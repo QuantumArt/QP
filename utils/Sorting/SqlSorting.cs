@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Utils.Sorting
 {
@@ -87,6 +88,7 @@ namespace Quantumart.QP8.Utils.Sorting
         private static readonly Regex SqlAscendingDirectionWithIndentsRegExp = new Regex(@"\s+(ASC)\s*", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
         private static readonly Regex SqlDescendingDirectionWithIndentsRegExp = new Regex(@"\s+(DESC)\s*", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
         private static readonly Regex SquareBracketsRegExp = new Regex(@"[\[|\]]", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+        private static readonly Regex QuoteRegExp = new Regex( @"[\""]", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 
         /// <summary>
         /// Изменяет направление сортировки на противоположное
@@ -210,12 +212,13 @@ namespace Quantumart.QP8.Utils.Sorting
         public static bool CompareSortExpressions(
             string firstSortExpression,
             string secondSortExpression,
-            bool ignoreSortDirection)
+            bool ignoreSortDirection,
+            DatabaseType dbType = DatabaseType.SqlServer)
         {
             var firstString = firstSortExpression.Trim();
             firstString = firstString.ToLower();
             firstString = Regex.Replace(firstString, @"\s+", " ", RegexOptions.Multiline);
-            firstString = RemoveSquareBrackets(firstString);
+            firstString = RemoveEscapeSymbols(firstString, dbType);
             firstString = SqlAscendingDirectionWithIndentsRegExp.Replace(firstString, "");
             if (ignoreSortDirection)
             {
@@ -225,7 +228,7 @@ namespace Quantumart.QP8.Utils.Sorting
             var secondString = secondSortExpression.Trim();
             secondString = secondString.ToLower();
             secondString = Regex.Replace(secondString, @"\s+", " ", RegexOptions.Multiline);
-            secondString = RemoveSquareBrackets(secondString);
+            secondString = RemoveEscapeSymbols(secondString, dbType);
             secondString = SqlAscendingDirectionWithIndentsRegExp.Replace(secondString, "");
             if (ignoreSortDirection)
             {
@@ -279,9 +282,19 @@ namespace Quantumart.QP8.Utils.Sorting
         /// </summary>
         /// <param name="sortExpression">SQL-код сортировки</param>
         /// <returns>результат проверки (true – содержит; false – не содержит)</returns>
-        public static bool ContainsSquareBrackets(string sortExpression)
+        public static bool ContainsEscapeSymbols(string sortExpression, DatabaseType dbType = DatabaseType.SqlServer)
         {
-            return SquareBracketsRegExp.IsMatch(sortExpression);
+            switch (dbType)
+            {
+
+                case DatabaseType.SqlServer:
+                    return SquareBracketsRegExp.IsMatch(sortExpression);
+                case DatabaseType.Postgres:
+                    return QuoteRegExp.IsMatch(sortExpression);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+            }
+
         }
 
         /// <summary>
@@ -289,9 +302,19 @@ namespace Quantumart.QP8.Utils.Sorting
         /// </summary>
         /// <param name="sortExpression">SQL-код сортировки</param>
         /// <returns>SQL-код сортировки без квадратных скобок</returns>
-        public static string RemoveSquareBrackets(string sortExpression)
+        public static string RemoveEscapeSymbols(string sortExpression, DatabaseType dbType = DatabaseType.SqlServer)
         {
-            return SquareBracketsRegExp.Replace(sortExpression, "");
+            switch (dbType)
+            {
+
+                case DatabaseType.SqlServer:
+                    return SquareBracketsRegExp.Replace(sortExpression, "");
+                case DatabaseType.Postgres:
+                    return QuoteRegExp.Replace(sortExpression, "");
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, null);
+            }
+
         }
 
         /// <summary>
@@ -360,7 +383,7 @@ namespace Quantumart.QP8.Utils.Sorting
         /// </summary>
         /// <param name="sortParameter">параметр сортировки</param>
         /// <returns>информация о сортировке</returns>
-        private static SortingInformation GetSortingInformation(string sortParameter)
+        private static SortingInformation GetSortingInformation(string sortParameter, DatabaseType dbType = DatabaseType.SqlServer)
         {
             SortingInformation sortInfo = null;
             var processedSortParameter = Converter.ToString(sortParameter).Trim();
@@ -382,7 +405,7 @@ namespace Quantumart.QP8.Utils.Sorting
                 {
                     fieldName = processedSortParameter;
                 }
-                fieldName = RemoveSquareBrackets(fieldName);
+                fieldName = RemoveEscapeSymbols(fieldName, dbType);
 
                 sortInfo = new SortingInformation(fieldName, direction);
             }

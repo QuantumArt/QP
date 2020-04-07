@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -15,14 +16,14 @@ namespace Quantumart.QP8.DAL.CdcImport
         private const string @RawLsnFrom = "@rawLsnFrom";
         private const string @RawLsnTo = "@rawLsnTo";
 
-        public static DataTable GetCdcTableData(SqlConnection connection, string captureInstance, string fromLsn = null, string toLsn = null)
+        public static DataTable GetCdcTableData(DbConnection connection, string captureInstance, string fromLsn = null, string toLsn = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine(BuildQueryHeader(fromLsn, toLsn));
             sb.AppendLine(BuildQueryBody(captureInstance));
 
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), connection))
-            using (var da = new SqlDataAdapter(cmd))
+            using (var cmd = DbCommandFactory.Create(sb.ToString(), connection))
+            using (var da = DataAdapterFactory.Create(cmd))
             {
                 cmd.Parameters.AddWithValue(@CaptureInstance, captureInstance);
                 cmd.Parameters.AddWithValue(@RawLsnFrom, (object)fromLsn ?? DBNull.Value);
@@ -57,14 +58,14 @@ WHERE __$operation = 2 OR not_for_replication = 0";
 
                 case CdcCaptureConstants.ContentData:
                     filterClause = $@"
-INNER JOIN 
+INNER JOIN
 (
 	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_TYPE_ID
 	FROM dbo.CONTENT_ATTRIBUTE ca
 ) ca ON ca.ATTRIBUTE_ID = cdc.ATTRIBUTE_ID
-INNER JOIN 
+INNER JOIN
 (
 	SELECT
 		attrt.ATTRIBUTE_TYPE_ID AS attr_type_id,

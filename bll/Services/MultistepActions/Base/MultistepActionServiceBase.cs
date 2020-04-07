@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using System.Web;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
 
@@ -11,15 +11,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
     {
         private TCommand Command { get; set; }
 
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
         {
-            Stages = new[]
-            {
-                Command.GetStageSettings()
-            },
-
-            ParentId = parentId
-        };
+            var result = new MultistepActionSettings() { ParentId = parentId };
+            result.Stages.Add(Command.GetStageSettings());
+            return result;
+        }
 
         protected MultistepActionServiceContext CreateContext(int parentId, int id, int[] ids, bool? boundToExternal)
         {
@@ -29,16 +26,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             {
                 ParentId = parentId,
                 Id = id,
-                Ids = ids,
-                ExtensionContents = ContentRepository.GetList(
-                    ContentRepository.GetReferencedAggregatedContentIds(parentId, ids ?? new int[0])
-                ).ToArray(),
+                Ids = ids.ToList(),
+                ExtensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(parentId, ids).ToList(),
                 BoundToExternal = boundToExternal,
                 ItemsPerStep = itemsPerStep
             };
 
             Command = (TCommand)CreateCommand(state);
-            return new MultistepActionServiceContext { CommandStates = new[] { Command.GetState() } };
+            var result = new MultistepActionServiceContext();
+            result.CommandStates.Add(Command.GetState());
+            return result;
         }
 
         protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => CreateContext(parentId, id, new int[0], boundToExternal);
@@ -60,7 +57,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             }
 
             var context = CreateContext(parentId, id, ids, boundToExternal);
-            HttpContext.Current.Session[ContextSessionKey] = context;
+            HttpContext.Session.SetValue(ContextSessionKey, context);
 
             return CreateActionSettings(parentId, id);
         }

@@ -1,5 +1,5 @@
 using System.Dynamic;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
@@ -10,7 +10,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
     {
         public ArticleVersionViewType ViewType { get; set; }
 
-        public new BLL.ArticleVersion Data
+        public BLL.ArticleVersion Data
         {
             get => (BLL.ArticleVersion)EntityData;
             set => EntityData = value;
@@ -73,17 +73,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
             }
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override void Validate()
         {
-            try
-            {
-                Data.Article.Validate();
-            }
-            catch (RulesException ex)
-            {
-                ex.Extend(modelState, "Data");
-                IsValid = false;
-            }
+            Data.Article.Validate();
         }
 
         public void CopyFieldValuesToArticle()

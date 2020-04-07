@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 
@@ -5,7 +7,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class LockableEntityViewModel : EntityViewModel
     {
-        public new LockableEntityObject Data
+        [ValidateNever]
+        [BindNever]
+        public LockableEntityObject LockableData
         {
             get => (LockableEntityObject)EntityData;
             set => EntityData = value;

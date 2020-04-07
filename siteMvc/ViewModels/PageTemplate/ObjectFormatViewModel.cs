@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             return model;
         }
 
-        public new ObjectFormat Data
+        public ObjectFormat Data
         {
             get => (ObjectFormat)EntityData;
             set => EntityData = value;

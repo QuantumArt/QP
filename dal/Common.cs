@@ -1,23 +1,29 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using NpgsqlTypes;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL
 {
-    public static class Common
+    public static partial class Common
     {
-        public static long GetContentIdForArticle(SqlConnection connection, long id)
+        public static long GetContentIdForArticle(DbConnection connection, long id)
         {
-            using (var cmd = SqlCommandFactory.Create("select content_id from content_item with(nolock) where content_item_id = @id", connection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select content_id from content_item {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -26,32 +32,73 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetTitleName(SqlConnection connection, long contentId)
-        {
-            using (var cmd = SqlCommandFactory.Create("select dbo.qp_get_display_field(@id, 1)", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", contentId);
-                return cmd.ExecuteScalar().ToString();
-            }
-        }
+        /* public static string GetTitleName(DbConnection connection, long contentId)
+         {
 
-        public static DataTable GetDisplayFields(SqlConnection connection, long contentId, bool withRelations = false)
-        {
-            using (var cmd = SqlCommandFactory.Create("SELECT * FROM [dbo].[qp_get_display_fields](@contentId, @with_relation_field)", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
-                var ds = new DataSet();
-                new SqlDataAdapter(cmd).Fill(ds);
-                return 0 == ds.Tables.Count ? null : ds.Tables[0];
-            }
-        }
+             var displayFieldsQuery = GetDisplayFieldsQuery(connection, contentId, true);
+             var isPostgres = IsPostgresConnection(connection);
 
-        public static string GetFieldName(SqlConnection connection, int fieldId)
+             var query = $@"
+ select
+ case when attribute_name is not null then attribute_name else 'content_item_id' end
+ from (
+     select {(isPostgres ? string.Empty : "TOP 1")} attribute_name
+     from ({displayFieldsQuery}) as df
+     order by view_in_list desc, attribute_priority desc, attribute_order asc
+     {(isPostgres ? "LIMIT 1" : string.Empty)}
+ ) as a
+ ";
+
+
+             using (var cmd = DbCommandFactory.Create(query, connection))
+             {
+                 cmd.CommandType = CommandType.Text;
+                 // cmd.Parameters.AddWithValue("@id", contentId);
+                 return cmd.ExecuteScalar().ToString();
+             }
+         }
+
+         public static DataTable GetDisplayFields(DbConnection connection, long contentId, bool withRelations = false)
+         {
+             var query = GetDisplayFieldsQuery(connection, contentId, withRelations);
+
+             using (var cmd = DbCommandFactory.Create(query, connection))
+             {
+                 cmd.CommandType = CommandType.Text;
+                 // cmd.Parameters.AddWithValue("@contentId", contentId);
+                 // cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
+                 var ds = new DataSet();
+                 DataAdapterFactory.Create(cmd).Fill(ds);
+                 return 0 == ds.Tables.Count ? null : ds.Tables[0];
+             }
+         }
+
+         private static string GetDisplayFieldsQuery(DbConnection connection, long contentId, bool withRelations)
+         {
+
+             return $@"
+ select *
+ from (
+         SELECT attribute_id, attribute_name,
+         CASE
+             WHEN attribute_type_id in (9, 10)
+                 THEN {(withRelations ? "1" : "0")}
+             WHEN attribute_type_id = 13 or is_classifier = 1 or
+                  attribute_type_id = 11 AND {(!withRelations ? "1=1" : "1=0")} THEN -1
+             ELSE 1
+             END AS attribute_priority,
+         view_in_list,
+         attribute_order
+         FROM content_attribute ca
+         WHERE content_id = {contentId}
+     ) as c
+ where attribute_priority >= 0
+ ";
+         }*/
+
+        public static string GetFieldName(DbConnection connection, int fieldId)
         {
-            using (var cmd = SqlCommandFactory.Create("select ATTRIBUTE_NAME from CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @fieldId", connection))
+            using (var cmd = DbCommandFactory.Create("select ATTRIBUTE_NAME from CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @fieldId", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@fieldId", fieldId);
@@ -59,13 +106,18 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string[] GetArticleFieldValues(SqlConnection connection, int[] ids, int contentId, string name)
+        public static string[] GetArticleFieldValues(DbConnection connection, int[] ids, int contentId, string name)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var values = new List<string>();
-            using (var cmd = SqlCommandFactory.Create($"select [{name}] from content_{contentId}_united with(nolock) join @ids ON CONTENT_ITEM_ID = Id", connection))
+            var sql = $@"
+                select {SqlQuerySyntaxHelper.EscapeEntityName(dbType, name)} from content_{contentId}_united c {WithNoLock(dbType)}
+                inner join {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")} ON c.content_item_id = i.id
+                ";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -78,9 +130,10 @@ namespace Quantumart.QP8.DAL
             return values.ToArray();
         }
 
-        public static string GetArticleFieldValue(SqlConnection connection, int id, int contentId, string name)
+        public static string GetArticleFieldValue(DbConnection connection, int id, int contentId, string name)
         {
-            using (var cmd = SqlCommandFactory.Create($"select [{name}] from content_{contentId}_united with(nolock) where content_item_id = @id", connection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select {Escape(dbType, name)} from content_{contentId}_united {WithNoLock(dbType)} where content_item_id = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -89,17 +142,19 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetContentFieldValues(SqlConnection connection, int contentId, string name)
+        public static Dictionary<int, string> GetContentFieldValues(DbConnection connection, int contentId, string name)
         {
             var values = new Dictionary<int, string>();
-            using (var cmd = SqlCommandFactory.Create($"select content_item_id, [{name}] from content_{contentId}_united with(nolock) where [{name}] is not null", connection))
+            var databaseType = GetDbType(connection);
+            var escapedNameColumn = SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name);
+            using (var cmd = DbCommandFactory.Create($"select content_item_id, {escapedNameColumn} from content_{contentId}_united {WithNoLock(databaseType)} where {escapedNameColumn} is not null", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
-                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? String.Empty);
+                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? string.Empty);
                     }
                 }
 
@@ -107,9 +162,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetArticleIdByFieldValue(SqlConnection connection, int contentId, string name, string value)
+        public static int GetArticleIdByFieldValue(DbConnection connection, int contentId, string name, string value)
         {
-            using (var cmd = SqlCommandFactory.Create($"select content_item_id from content_{contentId}_united with(nolock) where [{name}] = @value", connection))
+            var databaseType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select content_item_id from content_{contentId}_united {WithNoLock(databaseType)} where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, name)} = @value", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@value", value);
@@ -118,43 +174,34 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataRow GetArticleRow(SqlConnection connection, int id, int contentId, bool isLive, bool excludeArchive = false)
+        public static DataRow GetArticleRow(DbConnection connection, int id, int contentId, bool isLive, bool excludeArchive = false)
         {
+            var databaseType = GetDbType(connection);
             var suffix = isLive ? string.Empty : "_united";
-            var isExcludeArchive = excludeArchive ? "and archive = 0" : string.Empty;
-            using (var cmd = SqlCommandFactory.Create($"select * from content_{contentId}{suffix} with(nolock) where content_item_id = @id {isExcludeArchive}", connection))
+            var isExcludeArchive = excludeArchive ? $"and archive = 0" : string.Empty;
+            using (var cmd = DbCommandFactory.Create($"select * from content_{contentId}{suffix} {WithNoLock(databaseType)} where content_item_id = @id {isExcludeArchive}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return 0 == dt.Rows.Count ? null : dt.Rows[0];
             }
         }
 
-        public static void LockArticleForUpdate(SqlConnection cnn, int id)
+        public static DataTable GetArticleTable(DbConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
         {
-            using (var cmd = SqlCommandFactory.Create("select content_item_id from content_item with(rowlock, updlock) where content_item_id = @id", cnn))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-            }
-        }
-
-        public static DataTable GetArticleTable(SqlConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
-        {
+            var dbType = GetDbType(connection);
             var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
-            var baseSql = $"select {fields} from content_{contentId}{{0}} c with(nolock)" +
-                " left join content_item ci with(nolock) on c.content_item_id = ci.content_item_id {1} {2}";
+            var baseSql = $"select {fields} from content_{contentId}{{0}} c {WithNoLock(dbType)}" +
+                $" left join content_item ci {WithNoLock(dbType)} on c.content_item_id = ci.content_item_id {{1}} {{2}}";
 
 
             var conditions = new List<string>();
 
             if (ids != null)
             {
-                conditions.Add("c.content_item_id in (select id from @itemIds)");
+                conditions.Add($"c.content_item_id in (select id from {IdList(dbType, "@itemIds")})");
             }
 
             if (excludeArchive)
@@ -172,54 +219,41 @@ namespace Quantumart.QP8.DAL
                 conditions.Add("1 = 1");
             }
 
-            var where = " where " + String.Join(" and ", conditions);
+            var where = " where " + string.Join(" and ", conditions);
             var sql = "";
 
             if (ids != null && !isLive && !isVirtual && !returnOnlyIds) //optimization for list of ids
             {
                 var sb = new StringBuilder();
-                sb.AppendLine(string.Format(baseSql, string.Empty, where, " and isnull(ci.splitted, 0) = 0 "));
+                var splitted = $"coalesce(ci.splitted, {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)})";
+
+                sb.AppendLine(string.Format(baseSql, string.Empty, where, $" and {IsFalse(dbType, splitted)} "));
                 sb.AppendLine(" union all ");
-                sb.AppendLine(string.Format(baseSql, "_async", where, " and ci.splitted = 1 "));
+                sb.AppendLine(string.Format(baseSql, "_async", where, $" and {IsTrue(dbType, "ci.splitted")} "));
                 sql = sb.ToString();
             }
             else
             {
-                sql = String.Format(baseSql, isLive ? string.Empty : "_united", where, "");
+                sql = string.Format(baseSql, isLive ? string.Empty : "_united", where, "");
             }
 
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 if (ids != null)
                 {
-                    cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(ids)
-                    });
+                    cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
                 }
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.Rows.Count == 0 ? null : dt;
             }
         }
 
-        public static DataRow GetDefaultArticleRow(SqlConnection connection, int contentId)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_get_default_article", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@content_id", contentId);
-                var ds = new DataSet();
-                new SqlDataAdapter(cmd).Fill(ds);
-                return 0 == ds.Tables.Count || 0 == ds.Tables[0].Rows.Count ? null : ds.Tables[0].Rows[0];
-            }
-        }
-
         public static IList<DataRow> GetArticlesSimpleList(
-            SqlConnection cn,
+            QPModelDataContext efContext,
+            DbConnection cn,
             int userId,
             int contentId,
             string displayExpression,
@@ -234,33 +268,43 @@ namespace Quantumart.QP8.DAL
             string extraFrom = "",
             string orderBy = "")
         {
-            var queryBuilder = new StringBuilder();
-            var selectQuery = searchLimit.HasValue ? $"SELECT TOP ({searchLimit})" : "SELECT";
-            queryBuilder.AppendFormatLine($" {selectQuery} c.content_item_id AS id, {displayExpression}, CAST(CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END AS bit) AS is_selected ");
-            queryBuilder.AppendLine(extraSelect ?? string.Empty);
-            queryBuilder.AppendFormatLine($" FROM content_{contentId}_united c ");
-
+            var databaseType = GetDbType(cn);
+            string securityJoin = "";
             if (useSecurity)
             {
-                var securitySql = GetPermittedItemsAsQuery(cn, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId);
-                queryBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pi ON c.content_item_id = pi.content_item_id ", securitySql);
+                var securitySql = PermissionHelper.GetPermittedItemsAsQuery(
+                    efContext, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId
+                );
+                securityJoin = $" INNER JOIN ({securitySql}) as pi ON c.content_item_id = pi.content_item_id ";
+
             }
+            var top = searchLimit.HasValue ? Top(databaseType, searchLimit.Value) : String.Empty;
+            var limit = searchLimit.HasValue ? Limit(databaseType, searchLimit.Value) : String.Empty;
+            var whereStmt = string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}";
+            var actualOrderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy;
+            var isSelectedExpression = SqlQuerySyntaxHelper.CastToBool(databaseType, "CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END");
+            var selectionJoin = selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ";
 
-            queryBuilder.Append(selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ");
-            queryBuilder.AppendFormatLine("( SELECT content_item_id FROM content_{0} WHERE content_item_id IN (SELECT id FROM @myData)) AS cis ON c.content_item_id = cis.content_item_id ", contentId);
-            queryBuilder.AppendLine(extraFrom ?? string.Empty);
-            queryBuilder.AppendLine(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}");
-
-            orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy;
-            queryBuilder.AppendLine($" ORDER BY {orderBy}");
-
-            return GetDatatableResult(cn, queryBuilder, GetIdsDatatableParam("@ids", idsToFilter), GetIdsDatatableParam("@myData", selectedArticleIds));
+            var query = $@"
+                SELECT {top}
+                c.content_item_id AS id, {displayExpression}, {isSelectedExpression} AS is_selected
+                {extraSelect}
+                FROM content_{contentId}_united c
+                {securityJoin}
+                {selectionJoin}
+                ( SELECT content_item_id FROM content_{contentId} WHERE content_item_id IN (select id from {IdList(databaseType, "@myData")})) AS cis ON c.content_item_id = cis.content_item_id
+                {extraFrom}
+                {whereStmt}
+                ORDER BY {actualOrderBy}
+                {limit}
+            ";
+            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", idsToFilter, databaseType), GetIdsDatatableParam("@myData", selectedArticleIds, databaseType));
         }
 
-        public static void ExecuteSql(SqlConnection connection, string sqlString, List<SqlParameter> parameters, string returnIdParamName, out int id)
+        public static void ExecuteSql(DbConnection connection, string sqlString, List<DbParameter> parameters, string returnIdParamName, out int id)
         {
             id = 0;
-            using (var cmd = SqlCommandFactory.Create(sqlString, connection))
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 if (parameters != null)
@@ -276,53 +320,118 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void ExecuteSql(SqlConnection connection, string sqlString)
+        public static void ExecuteSql(DbConnection connection, string sqlString)
         {
-            using (var cmd = SqlCommandFactory.Create(sqlString, connection))
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static DataRow GetArticleVersionRow(SqlConnection connection, int id, int versionId)
+        public static IEnumerable<DataRow> GetDataRows(DbConnection connection, string sqlString)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_get_versions", connection))
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@item_id", id);
-                cmd.Parameters.AddWithValue("@version_id", versionId);
+                cmd.CommandType = CommandType.Text;
+                var dt = new DataTable();
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                return dt.AsEnumerable().ToArray();
+            }
+        }
+
+        public static long ExecuteScalarLong(DbConnection connection, string sqlString)
+        {
+            return Convert.ToInt64(ExecuteScalar(connection, sqlString));
+        }
+
+        public static object ExecuteScalar(DbConnection connection, string sqlString)
+        {
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
+            {
+                return cmd.ExecuteScalar();
+            }
+        }
+
+        public static DataRow GetArticleVersionRow(QPModelDataContext context, DbConnection connection, int id, int versionId)
+        {
+            var dbType = GetDbType(connection);
+
+            var query = "qp_get_versions";
+
+            if (dbType == DatabaseType.Postgres)
+            {
+                var contentId = context.ArticleSet.FirstOrDefault(x => x.Id == id)?.ContentId;
+                if (contentId == null)
+                {
+                    return null;
+                }
+
+                var fieldIds = context.FieldSet.Where(x => x.ContentId == contentId).Select(x => x.Id).ToList();
+
+                var mainIds = context.FieldSet.Where(x => x.Aggregated && x.RelationId.HasValue && fieldIds.Contains(x.RelationId.Value)).Select(x => x.ContentId).ToList();
+                mainIds.Add(contentId.Value);
+
+                var fields = context
+                    .FieldSet
+                    .AsNoTracking()
+                    .Include(x => x.Content)
+                    .Where(x => mainIds.Contains(x.ContentId))
+                    .OrderBy(x => x.ContentId)
+                    .ThenBy(x => x.Order);
+
+                var fieldNames = fields.Select(n => PgFieldName(n, contentId)).ToArray();
+                var fieldSelects = string.Join(",", fields.Select(n => $"ct.\"{PgFieldName(n, contentId)}\"::{PgSelectType((int)n.TypeId)}"));
+                var fieldNameResults = string.Join(",", fieldNames.Select(n => $@"""{n}"" TEXT"));
+                var categorySelectQuery = $"select * from (values {string.Join(",", fieldNames.Select(fn => $"(''{fn}'')"))}) v";
+
+
+                query = $@"
+select civ.content_item_id, ct.version_id, civ.created, civ.created_by, civ.modified, civ.last_modified_by, {fieldSelects}
+from content_item_version civ
+inner join (
+    select * from crosstab(
+    '
+select vcd.content_item_version_id::numeric as version_id,
+    case ca.content_id when {contentId} then ca.attribute_name else c.content_name || ''.'' || ca.attribute_name end as attribute_name,
+    qp_get_version_data(vcd.attribute_id, vcd.content_item_version_id) as value
+from content_attribute ca
+inner join content c on ca.content_id = c.content_id
+left outer join version_content_data vcd on ca.attribute_id = vcd.attribute_id
+inner join content_item_version civ on vcd.content_item_version_id = civ.content_item_version_id
+where ca.content_id in ({string.Join(",", mainIds)}) and civ.content_item_id = {id} {(versionId == 0 ? string.Empty : $" and vcd.content_item_version_id = {versionId} ")}
+order by 1, 2
+', '{categorySelectQuery}'
+    ) as ct(version_id numeric, {fieldNameResults})
+) ct on civ.content_item_version_id = ct.version_id
+
+";
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                if (dbType == DatabaseType.Postgres)
+                {
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@item_id", id);
+                    cmd.Parameters.AddWithValue("@version_id", versionId);
+                }
+
                 var ds = new DataSet();
-                new SqlDataAdapter(cmd).Fill(ds);
+                DataAdapterFactory.Create(cmd).Fill(ds);
                 return 0 == ds.Tables.Count || 0 == ds.Tables[0].Rows.Count ? null : ds.Tables[0].Rows[0];
             }
         }
 
-        public static void CreateArticleVersion(SqlConnection connection, int userId, int id)
-        {
-            using (var cmd = SqlCommandFactory.Create("create_content_item_version", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@uid", userId);
-                cmd.Parameters.AddWithValue("@content_item_id", id);
-                cmd.ExecuteNonQuery();
-            }
-        }
+        private static string PgFieldName(FieldDAL fieldDAL, decimal? contentId) => fieldDAL.ContentId == contentId ? $"{fieldDAL.Name}" : $"{fieldDAL.Content.Name}.{fieldDAL.Name}";
 
-        public static void CreateArticleVersions(SqlConnection connection, int userId, int[] ids)
+        public static void RestoreArticleVersion(DbConnection connection, int userId, int id)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_create_content_item_versions", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@last_modified_by", userId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static void RestoreArticleVersion(SqlConnection connection, int userId, int id)
-        {
-            using (var cmd = SqlCommandFactory.Create("restore_content_item_version", connection))
+            using (var cmd = DbCommandFactory.Create("restore_content_item_version", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@uid", userId);
@@ -331,49 +440,122 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static bool CheckUnique(SqlConnection connection, string code, string name, int id, int parentId = 0, int? recurringId = null)
+        // public static bool CheckUnique(DbConnection connection, string code, string name, int id, int parentId = 0, int? recurringId = null)
+        // {
+        //     using (var cmd = DbCommandFactory.Create("qp_is_entity_exists", connection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("@code", code);
+        //         cmd.Parameters.AddWithValue("@name", name);
+        //         cmd.Parameters.AddWithValue("@id", id);
+        //         cmd.Parameters.AddWithValue("@parent_id", parentId);
+        //         cmd.Parameters.AddWithValue("@recurring_id", recurringId ?? 0);
+        //         return (bool)cmd.ExecuteScalar();
+        //     }
+        // }
+
+        public static bool CheckUnique(DbConnection connection, string source, string titleField, string parentIdField, string idField, string recurringIdField, string name, int id, int? parentId, int? recurringId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_is_entity_exists", connection))
+            if (parentId == 0) parentId = null;
+            if (recurringId == 0) recurringId = null;
+            var condition = "";
+            if (parentId != null && !string.IsNullOrWhiteSpace(parentIdField))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@code", code);
-                cmd.Parameters.AddWithValue("@name", name);
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@parent_id", parentId);
-                cmd.Parameters.AddWithValue("@recurring_id", recurringId ?? 0);
-                return (bool)cmd.ExecuteScalar();
+                condition += $" and {parentIdField} = {parentId}";
             }
+
+            if (recurringId != null && !string.IsNullOrWhiteSpace(recurringIdField))
+            {
+                condition += $" and {recurringIdField} = {recurringId}";
+            }
+
+            var query = $"select COUNT({idField}) from {source} where {titleField} = '{name}' and {idField} <> {id} {condition}";
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var result = cmd.ExecuteScalar();
+                var count = Convert.ToInt32(result);
+                return count > 0;
+            }
+
         }
 
-        public static int CountDuplicates(SqlConnection connection, int contentId, string fieldIds, string itemIds, bool includeArchive = false)
+        public static int CountDuplicates(DbConnection connection, int contentId, int[] fieldIds, int[] itemIds, bool includeArchive)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_count_duplicates", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_count_duplicates" : "select qp_count_duplicates(@content_id, @field_ids, @ids, @includeArchive);";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
-                cmd.Parameters.AddWithValue("@field_ids", fieldIds);
-                cmd.Parameters.AddWithValue("@ids", itemIds);
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    cmd.Parameters.AddWithValue("@field_ids", Converter.ToIdCommaList(fieldIds));
+                    cmd.Parameters.AddWithValue("@ids", Converter.ToIdCommaList(itemIds));
+                }
+                else
+                {
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@field_ids", fieldIds, dbType));
+                    cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", itemIds, dbType));
+                }
                 cmd.Parameters.AddWithValue("@includeArchive", includeArchive);
+
                 return (int)cmd.ExecuteScalar();
             }
         }
 
-        public static DateTime? Lock(SqlConnection connection, string code, int id, int? userId)
+        // public static DateTime? Lock(DbConnection connection, string code, int id, int? userId)
+        // {
+        //     using (var cmd = DbCommandFactory.Create("qp_lock", connection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("@code", code);
+        //         cmd.Parameters.AddWithValue("@id", id);
+        //         cmd.Parameters.AddWithValue("@user_id", userId);
+        //         var result = cmd.ExecuteScalar();
+        //         return result == DBNull.Value ? null : (DateTime?)result;
+        //     }
+        // }
+
+        public static DateTime? Lock(DbConnection connection, string source, string idField, int id, int? userId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_lock", connection))
+            var databaseType = GetDbType(connection);
+            var lockedValue = (userId.HasValue ? SqlQuerySyntaxHelper.Now(databaseType) : "NULL");
+            var query = $@"
+                {(databaseType == DatabaseType.SqlServer
+                ? $@"
+                    declare @locked datetime
+                    set @locked = {lockedValue}
+                    "
+                : string.Empty)}
+
+                UPDATE {source}
+                SET
+                    locked_by = {SqlQuerySyntaxHelper.NullableDbValue(databaseType, userId)},
+                    locked = {(databaseType == DatabaseType.Postgres ? lockedValue : "@locked")},
+                    permanent_lock = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}
+                WHERE
+                    {idField} = @id
+                {(databaseType == DatabaseType.Postgres
+                    ? SqlQuerySyntaxHelper.Returning(databaseType, "locked")
+                    : "select @locked")}
+                ";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@code", code);
+                cmd.CommandType = CommandType.Text;
+                // cmd.Parameters.AddWithValue("@user_id", userId.HasValue ? userId.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@user_id", userId);
+
                 var result = cmd.ExecuteScalar();
                 return result == DBNull.Value ? null : (DateTime?)result;
             }
+
         }
 
-        public static void UpdatePassword(SqlConnection connection, int userId, string password)
+        public static void UpdatePassword(DbConnection connection, int userId, string password)
         {
-            using (var cmd = SqlCommandFactory.Create("update users set password = @password where user_id = @user_id", connection))
+            using (var cmd = DbCommandFactory.Create("update users set password = @password where user_id = @user_id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@password", password);
@@ -382,76 +564,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void SetArchiveFlag(SqlConnection connection, IEnumerable<int> articleIds, int userId, bool flag, bool withAggregated)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            using (var cmd = SqlCommandFactory.Create(
-                string.Format(
-                    "update content_item with(rowlock) set archive = @flag, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from {0});"
-                    +
-                    " update content_item with(rowlock) set locked_by = null, locked = null where content_item_id in (select id from {0});",
-                    source),
-                connection
-            ))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@flag", flag);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Массовая публикация (может использоваться для статей из разных контентов одного сайта)
-        /// </summary>
-        public static void Publish(SqlConnection connection, IEnumerable<int> articleIds, int userId, bool withAggregated)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            using (var cmd = SqlCommandFactory.Create($@"
-                    declare @ids2 [Ids]
-
-                    insert into @ids2
-                    select id from {source}
-
-                    declare @statusTypeId numeric
-                    select @statusTypeId = status_type_id from status_type where status_type_name = 'Published' and site_id in (select site_id from content c inner join content_item ci with(nolock) on c.content_id = ci.content_id inner join @ids2 i on i.id = ci.content_item_id )
-
-                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
-                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
-
-                    exec qp_merge_delays @ids2, @userId
-
-                    delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
-
-                    exec qp_merge_articles @ids2, @userId
-
-                    ", connection
-            ))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static string GetConflictIds(SqlConnection connection, int id, int contentId, string condition, List<FieldParameter> parameters)
-        {
-            using (var cmd = SqlCommandFactory.Create($"SELECT CONTENT_ITEM_ID FROM CONTENT_{contentId}_UNITED WHERE {condition} AND CONTENT_ITEM_ID <> @id", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                foreach (var parameter in parameters)
-                {
-                    cmd.Parameters.Add(CreateDbParameter(parameter));
-                }
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return IdCommaList(dt, FieldName.ContentItemId);
-            }
-        }
 
         private static string IdCommaList(DataTable dt, string fieldName, bool withSpace = true)
         {
@@ -527,15 +639,7 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-
-        private static SqlParameter CreateDbParameter(FieldParameter item) => new SqlParameter
-        {
-            ParameterName = item.Name,
-            DbType = item.DbType,
-            Value = !string.IsNullOrEmpty(item.Value) ? (object)item.Value : DBNull.Value
-        };
-
-        public static Dictionary<int, string> GetLinkedArticles(SqlConnection connection, IEnumerable<int> linkIds, int id, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, string> GetDefaultLinkedArticles(DbConnection connection, IEnumerable<int> linkIds)
         {
             if (!linkIds.Any())
             {
@@ -543,36 +647,70 @@ namespace Quantumart.QP8.DAL
             }
             else
             {
+                var databaseType = GetDbType(connection);
+                var query = $@"
+                    select article_id, link_id
+                    from field_article_bind f inner join content_attribute ca on ca.attribute_id = f.field_id
+                    and ca.link_id in (select id from {IdList(databaseType, "@linkIds")}) ";
+                using (var cmd = DbCommandFactory.Create(query, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Parameters.Add(GetIdsDatatableParam("@linkIds", linkIds, databaseType));
+                    var dt = new DataTable();
+                    DataAdapterFactory.Create(cmd).Fill(dt);
+                    return IdCommaListDictionary(dt, "link_id", "article_id", false, linkIds);
+                }
+            }
+        }
+
+        public static Dictionary<int, string> GetLinkedArticles(DbConnection connection, IEnumerable<int> linkIds, int id, bool isLive, bool excludeArchive = false)
+        {
+            if (!linkIds.Any())
+            {
+                return new Dictionary<int, string>();
+            }
+            else
+            {
+                var databaseType = GetDbType(connection);
                 var suffix = isLive ? string.Empty : "_united";
-                var isArchive = excludeArchive ? "join content_item ci with(nolock) on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
-                using (
-                    var cmd =
-                        SqlCommandFactory.Create(
-                            $"select linked_item_id, item_id, link_id from item_link{suffix} with(nolock) {isArchive} where item_id = @id and link_id in (select id from @linkIds) ", connection))
+                var isArchive = excludeArchive ? $"join content_item ci {WithNoLock(databaseType)} on linked_item_id = ci.CONTENT_ITEM_ID and ci.ARCHIVE = 0" : string.Empty;
+                var query = $@"
+select linked_item_id, item_id, link_id
+from item_link{suffix} {WithNoLock(databaseType)} {isArchive}
+where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkIds")}) ";
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.Parameters.AddWithValue("@id", id);
-
-                    cmd.Parameters.Add(new SqlParameter("@linkIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(linkIds)
-                    });
+                    cmd.Parameters.Add(GetIdsDatatableParam("@linkIds", linkIds, databaseType));
                     var dt = new DataTable();
-                    new SqlDataAdapter(cmd).Fill(dt);
+                    DataAdapterFactory.Create(cmd).Fill(dt);
                     return IdCommaListDictionary(dt, "link_id", "linked_item_id", false, linkIds);
                 }
             }
         }
 
-        public static Dictionary<int, Dictionary<int, List<int>>> GetLinkedArticlesMultiple(SqlConnection connection, IEnumerable<int> linkIds, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, Dictionary<int, List<int>>> GetLinkedArticlesMultiple(DbConnection connection, IEnumerable<int> linkIds, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            var sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id
-                        where link_id in (select id from @linkIds) ";
+            var dbType = GetDbType(connection);
+            var sql = $@" select
+                        ii.r_item_id as linked_item_id,
+                        ii.l_item_id as item_id,
+                        ii.link_id
+                        from {IdList(dbType, "@itemIds", "i")}
+                            inner join item_to_item ii {(dbType == DatabaseType.SqlServer ? "with(nolock, index(ix_l_item_id))" : string.Empty)} on ii.l_item_id = i.id
+                        where link_id in (select id from {IdList(dbType, "@linkIds", "l")}) ";
+
             if (excludeArchive)
             {
-                sql = @" select ii.r_item_id as linked_item_id, ii.l_item_id as item_id, ii.link_id from @itemIds i inner join item_to_item ii with(nolock, index(ix_l_item_id)) on ii.l_item_id = i.id
-                         inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = ii.r_item_id where link_id in (select id from @linkIds) and ci.ARCHIVE = 0";
+                sql = $@" select
+                            ii.r_item_id as linked_item_id,
+                            ii.l_item_id as item_id,
+                            ii.link_id
+                            from {IdList(dbType, "@itemIds", "i")}
+                                inner join item_to_item ii {(dbType == DatabaseType.SqlServer ? "with(nolock, index(ix_l_item_id))" : string.Empty)} on ii.l_item_id = i.id
+                         inner join content_item ci {WithNoLock(dbType)} on ci.CONTENT_ITEM_ID = ii.r_item_id
+                         where link_id in (select id from {IdList(dbType, "@linkIds", "l")}) and ci.ARCHIVE = 0";
             }
             if (!isLive)
             {
@@ -580,24 +718,23 @@ namespace Quantumart.QP8.DAL
                 sb.AppendLine(sql);
                 sb.AppendLine(" and not exists (select * from content_item_splitted cis where cis.content_item_id = ii.l_item_id) ");
                 sb.AppendLine(" union all ");
-                sb.AppendLine(" select il.linked_item_id, il.item_id, il.link_id from @itemIds i inner join item_link_async il with(nolock) on il.item_id = i.id where link_id in (select id from @linkIds)");
+                sb.AppendLine($@"
+                    select il.linked_item_id,
+                        il.item_id,
+                        il.link_id
+                        from {IdList(dbType, "@itemIds", "i")}
+                            inner join item_link_async il {WithNoLock(dbType)} on il.item_id = i.id
+                        where link_id in (select id from {IdList(dbType, "@linkIds", "l")} )");
                 sql = sb.ToString();
             }
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-                cmd.Parameters.Add(new SqlParameter("@linkIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(linkIds)
-                });
+                cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
+                cmd.Parameters.Add(GetIdsDatatableParam("@linkIds", linkIds, dbType));
+
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return GroupedLinks(dt, "item_id", "linked_item_id", "link_id", linkIds);
             }
         }
@@ -616,7 +753,7 @@ namespace Quantumart.QP8.DAL
             public override int GetHashCode() => Id;
         }
 
-        public static Dictionary<int, string> GetRelatedArticles(SqlConnection connection, IEnumerable<FieldInfo> fiList, int? id, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, string> GetRelatedArticles(DbConnection connection, IEnumerable<FieldInfo> fiList, int? id, bool isLive, bool excludeArchive = false)
         {
             if (!fiList.Any())
             {
@@ -624,105 +761,98 @@ namespace Quantumart.QP8.DAL
             }
             else
             {
+                var databaseType = GetDbType(connection);
                 var suffix = isLive ? string.Empty : "_united";
                 var action = id.HasValue ? " = @id" : " is null ";
                 var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
                 var fieldIds = fiList.Select(n => n.Id).ToArray();
-                var strTemplates = fiList.Select(fi => string.Format(
-                    "select content_item_id, cast({5} as decimal) as field_id from content_{1}{3} with(nolock) where [{0}] {2} {4}",
-                    fi.Name, fi.ContentId, action, suffix, isArchive, fi.Id));
+                var strTemplates = fiList.Select(fi => $@"
+select
+content_item_id,
+cast({fi.Id} as decimal) as field_id
+from content_{fi.ContentId}{suffix} {WithNoLock(databaseType)}
+where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {isArchive}");
 
-                var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+                var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
 
-                using (var cmd = SqlCommandFactory.Create(sql, connection))
+                using (var cmd = DbCommandFactory.Create(sql, connection))
                 {
-                    cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Decimal)
-                    {
-                        Value = id == null ? DBNull.Value : (object)id.Value
-                    });
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
 
                     var dt = new DataTable();
-                    new SqlDataAdapter(cmd).Fill(dt);
+                    DataAdapterFactory.Create(cmd).Fill(dt);
                     return IdCommaListDictionary(dt, "field_id", "content_item_id", false, fieldIds);
                 }
             }
         }
 
-        public static int[] ExcludeArchived(SqlConnection connection, int[] ids)
+        public static int[] ExcludeArchived(DbConnection connection, int[] ids)
         {
-            using (var cmd = SqlCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 0", connection))
+            var dbType = GetDbType(connection);
+            var query = $"select content_item_id from content_item {WithNoLock(dbType)} where content_item_id in (select id from {IdList(dbType, "@itemIds")}) and archive = 0";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
+                cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
             }
         }
 
-        public static int[] CheckArchiveArticle(SqlConnection connection, int[] ids)
+        public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(DbConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
         {
-            using (var cmd = SqlCommandFactory.Create("select content_item_id from content_item with(nolock) where content_item_id in (select id from @itemIds) and archive = 1", connection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
-            }
-        }
-
-        public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(SqlConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
-        {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var suffix = isLive ? string.Empty : "_united";
             var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
             var fieldIds = fiList.Select(n => n.Id).ToArray();
-            var strTemplates = fiList.Select(fi => string.Format(
-                "select content_item_id as linked_item_id, [{0}] as item_id, cast({4} as decimal) as field_id from content_{1}{2} with(nolock) where [{0}] in (select id from @itemIds) {3}",
-                fi.Name, fi.ContentId, suffix, isArchive, fi.Id
-            ));
 
-            var sql = String.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            var strTemplates = fiList.Select(fi => $@"
+                select content_item_id as linked_item_id, {Escape(dbType, fi.Name)} as item_id, cast({fi.Id} as decimal) as field_id
+                from content_{fi.ContentId}{suffix} {WithNoLock(dbType)}
+                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@itemIds")}) {isArchive}
+            ");
+
+            var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                {
-                    TypeName = "Ids",
-                    Value = IdsToDataTable(ids)
-                });
-
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@itemIds", ids, dbType));
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return GroupedLinks(dt, "item_id", "linked_item_id", "field_id", fieldIds);
             }
         }
 
-        public static string GetQueryForO2MValues(string fieldName, string displayFieldName, int contentId, List<int> ids, int maxNumberOfRecords)
+        public static string GetQueryForO2MValues(DatabaseType dbType, string fieldName, string displayFieldName, int contentId, List<int> ids, int maxNumberOfRecords)
         {
-            var query = new StringBuilder();
-            query.AppendFormatLine(" select subsel.content_item_id, {0}, Title from ( ", fieldName);
-            query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
-            query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
-            query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
-            return query.ToString();
+
+            var query = $@"
+            select subsel.content_item_id, {fieldName}, Title from (
+                select u.content_item_id, u.{fieldName}, {SqlQuerySyntaxHelper.CastToString(dbType, Escape(dbType, displayFieldName))} as Title, ROW_NUMBER ()
+                over (PARTITION BY {fieldName} order by u.content_item_id) AS {Escape(dbType, "RowNum")}
+                from content_{contentId}_united as u {WithNoLock(dbType)} where {fieldName} in ({string.Join(",", ids)})) as subsel
+                where subsel.{Escape(dbType, "RowNum")} <= {maxNumberOfRecords + 1}
+";
+
+
+            // var query = new StringBuilder();
+            // query.Append($" select subsel.content_item_id, {fieldName}, Title from ( ", );
+            // query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
+            // query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
+            // query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
+            return query;
         }
 
-        public static Dictionary<string, List<string>> GetM2OValuesBatch(SqlConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
+        public static Dictionary<string, List<string>> GetM2OValuesBatch(DbConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
+            var dbType = GetDbType(connection);
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
-                var query = GetQueryForO2MValues(fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
+                var query = GetQueryForO2MValues(dbType, fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
 
-                using (var cmd = SqlCommandFactory.Create(query, connection))
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -746,14 +876,15 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static Dictionary<Tuple<int, int>, List<int>> GetM2OValues(SqlConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
+        public static Dictionary<Tuple<int, int>, List<int>> GetM2OValues(DbConnection connection, int contentId, int fieldId, string fieldName, List<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
+            var dbType = GetDbType(connection);
             var result = new Dictionary<Tuple<int, int>, List<int>>();
             if (ids.Any())
             {
-                var query = GetQueryForO2MValues(fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
+                var query = GetQueryForO2MValues(dbType, fieldName, displayFieldName, contentId, ids, maxNumberOfRecords);
 
-                using (var cmd = SqlCommandFactory.Create(query, connection))
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -780,21 +911,39 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static Dictionary<string, List<string>> GetM2MValuesBatch(SqlConnection sqlConnection, List<int> ids, int linkId, int maxNumberOfRecords, string displayFieldName, int contentId)
+        public static Dictionary<string, List<string>> GetM2MValuesBatch(DbConnection sqlConnection, List<int> ids, int linkId, int maxNumberOfRecords, string displayFieldName, int contentId)
         {
             var result = new Dictionary<string, List<string>>();
             if (ids.Any())
             {
-                var query = string.Format(
-                    "SELECT [item_id], [linked_item_id], link_id, title FROM( SELECT [item_id], [linked_item_id], link_id, CONVERT (NVARCHAR(255), [{2}]) as title, "
-                    + " ROW_NUMBER() over (partition by item_id "
-                    + "order by linked_item_id) AS [RowNum] from [item_link_united] as u with(nolock) inner join content_{3}_united as c with(nolock) on u.linked_item_id = c.CONTENT_ITEM_ID"
-                    + " where item_id in (select id from @ids) and link_id = {1}) as subq where subq.RowNum <= {0} ",
-                    maxNumberOfRecords + 1, linkId, displayFieldName, contentId);
+                var databaseType = GetDbType(sqlConnection);
+                var titleField = databaseType == DatabaseType.Postgres
+                    ? $"{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, displayFieldName)}::text"
+                    : $"CONVERT (NVARCHAR(255), {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, displayFieldName)})";
+                var query = $@"
+SELECT item_id, linked_item_id, link_id, title
+FROM (
+SELECT item_id, linked_item_id, link_id, {titleField} as title, ROW_NUMBER()
+over (partition by item_id order by linked_item_id) AS RowNum
+from item_link_united as u {WithNoLock(databaseType)}
+inner join content_{contentId}_united as c {WithNoLock(databaseType)} on u.linked_item_id = c.CONTENT_ITEM_ID
+where item_id in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@ids) i(id)" : "@ids")}) and link_id = {linkId}) as subq
+where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
-                using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                using (var cmd = DbCommandFactory.Create(query, sqlConnection))
                 {
-                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                    switch (databaseType)
+                    {
+                        case DatabaseType.SqlServer:
+                            cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                            break;
+                        case DatabaseType.Postgres:
+                            cmd.Parameters.Add(GetIntArrayPostgresParam("@ids", ids));
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -817,22 +966,24 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static string GetLinkedArticlesForVersion(SqlConnection connection, int fieldId, int versionId)
+
+
+        public static string GetLinkedArticlesForVersion(DbConnection connection, int fieldId, int versionId)
         {
-            using (var cmd = SqlCommandFactory.Create("select linked_item_id from item_to_item_version where attribute_id = @attributeId and content_item_version_id = @versionId", connection))
+            using (var cmd = DbCommandFactory.Create("select linked_item_id from item_to_item_version where attribute_id = @attributeId and content_item_version_id = @versionId", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attributeId", fieldId);
                 cmd.Parameters.AddWithValue("@versionId", versionId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return IdCommaList(dt, "linked_item_id", false);
             }
         }
 
-        public static void RemoveLinkVersions(SqlConnection connection, int fieldId)
+        public static void RemoveLinkVersions(DbConnection connection, int fieldId)
         {
-            using (var cmd = SqlCommandFactory.Create("delete from item_to_item_version where attribute_id = @fid", connection))
+            using (var cmd = DbCommandFactory.Create("delete from item_to_item_version where attribute_id = @fid", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@fid", fieldId);
@@ -840,18 +991,22 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DateTime GetSqlDate(SqlConnection connection)
+        public static DateTime GetSqlDate(DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create("select getdate() as date", connection))
+            var dbType = GetDbType(connection);
+            var query = $"select {Now(dbType)}";
+            query = (dbType == DatabaseType.Postgres) ? query + " AT TIME ZONE current_setting('TIMEZONE')" : query;
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (DateTime)cmd.ExecuteScalar();
             }
         }
 
-        public static int GetBaseFieldId(SqlConnection connection, int fieldId, int articleId)
+        public static int GetBaseFieldId(DbConnection connection, int fieldId, int articleId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_get_base_field", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            using (var cmd = DbCommandFactory.Create("qp_get_base_field", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@field_id", fieldId);
@@ -860,7 +1015,7 @@ namespace Quantumart.QP8.DAL
                 {
                     if (dr.Read())
                     {
-                        return (int)dr.GetDecimal(0);
+                        return (dbType == DatabaseType.Postgres) ? dr.GetInt32(0) : (int)dr.GetDecimal(0);
                     }
 
                     return fieldId;
@@ -868,9 +1023,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetSelfRelationFieldId(SqlConnection connection, int contentId)
+        public static int GetSelfRelationFieldId(DbConnection connection, int contentId)
         {
-            using (var cmd = SqlCommandFactory.Create("select dbo.qp_get_self_relation_field_id(@contentId)", connection))
+            using (var cmd = DbCommandFactory.Create("select dbo.qp_get_self_relation_field_id(@contentId)", connection))
             {
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 var result = cmd.ExecuteScalar();
@@ -878,34 +1033,45 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int? GetParentEntityId(SqlConnection connection, string entityTypeCode, int entityId)
-        {
-            int? parentEntityId;
-            using (var cmd = SqlCommandFactory.Create("qp_get_parent_entity_id", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entity_id", entityId);
-                cmd.Parameters.Add(new SqlParameter("@parent_entity_id", SqlDbType.Int)
-                {
-                    Direction = ParameterDirection.Output
-                });
 
-                cmd.ExecuteNonQuery();
-                parentEntityId = Converter.ToNullableInt32(cmd.Parameters["@parent_entity_id"].Value);
-            }
-
-            return parentEntityId;
-        }
-
-        public static int[] GetParentEntityIdsForTree(SqlConnection connection, string entityTypeCode, int[] ids)
+        public static int[] GetParentEntityIdsForTree(
+            DbConnection connection,
+            string entityTypeCode,
+            int[] ids,
+            decimal? contentId,
+            string selfRelationFieldName,
+            string entitySource = null,
+            string entityIdField = null,
+            string entityRecurringIdField = null)
         {
             var result = new List<int>();
-            using (var cmd = SqlCommandFactory.Create("qp_get_parent_entity_ids_for_tree", connection))
+            var dbType = GetDbType(connection);
+
+            string query;
+            if (entityTypeCode == EntityTypeCode.Article)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entityIds", string.Join(",", ids));
+                query = $@"
+                SELECT DISTINCT {Escape(dbType, selfRelationFieldName)}
+                FROM content_{contentId}_united
+                WHERE {Escape(dbType, selfRelationFieldName)} is not null and content_item_id in ({string.Join(",", ids)})
+                ";
+            }
+            else
+            {
+                query = $@"
+                SELECT DISTINCT {Escape(dbType, entityRecurringIdField)}
+                FROM {entitySource}
+                WHERE {Escape(dbType, entityIdField)} in ({string.Join(",", ids)})
+                AND {Escape(dbType, entityRecurringIdField)} is not null
+                ";
+
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                // cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
+                // cmd.Parameters.AddWithValue("@entityIds", string.Join(",", ids));
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -918,93 +1084,83 @@ namespace Quantumart.QP8.DAL
             return result.ToArray();
         }
 
-        public static void AdjustManyToMany(SqlConnection connection, int id, int newId)
-        {
-            using (var cmd = SqlCommandFactory.Create("update item_to_item with(rowlock) set l_item_id = @newId where l_item_id = @id and r_item_id = @newId;delete from item_to_item with(rowlock) where r_item_id = @id and l_item_id = @newId", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@id", id);
-                cmd.Parameters.AddWithValue("@newId", newId);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
         private const string GetTranslationsQuery = @"select p.PHRASE_ID, p.PHRASE_TEXT, t.LANGUAGE_ID, t.PHRASE_TRANSLATION from translations t inner join phrases p on t.phrase_id = p.phrase_id";
 
-        public static IEnumerable<DataRow> GetTranslations(SqlConnection connection)
+        public static IEnumerable<DataRow> GetTranslations(DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create(GetTranslationsQuery, connection))
+            using (var cmd = DbCommandFactory.Create(GetTranslationsQuery, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public class FieldParameter
+
+
+        // public static DataTable GetBreadCrumbsList(DbConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
+        // {
+        //     DataTable dt = null;
+        //     #warning реализовать для postgres
+        //     if (IsPostgresConnection(connection))
+        //     {
+        //         return dt;
+        //     }
+        //     using (var cmd = DbCommandFactory.Create("qp_get_breadcrumbs", connection))
+        //     {
+        //         cmd.CommandType = CommandType.StoredProcedure;
+        //         cmd.Parameters.AddWithValue("@user_id", userId);
+        //         cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
+        //         cmd.Parameters.AddWithValue("@entity_id", entityId);
+        //         cmd.Parameters.AddWithValue("@one_level", oneLevel);
+        //
+        //         if (parentEntityId != null)
+        //         {
+        //             cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
+        //         }
+        //
+        //         var ds = new DataSet();
+        //         DataAdapterFactory.Create(cmd).Fill(ds);
+        //         if (ds.Tables.Count > 0)
+        //         {
+        //             dt = ds.Tables[0];
+        //         }
+        //     }
+        //
+        //     return dt;
+        // }
+
+        public static bool IsAdmin(DbConnection connection, int userId)
         {
-            public string Name { get; set; }
-
-            public DbType DbType { get; set; }
-
-            public string Value { get; set; }
-        }
-
-        public static DataTable GetBreadCrumbsList(SqlConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
-        {
-            DataTable dt = null;
-            using (var cmd = SqlCommandFactory.Create("qp_get_breadcrumbs", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@user_id", userId);
-                cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entity_id", entityId);
-                cmd.Parameters.AddWithValue("@one_level", oneLevel);
-
-                if (parentEntityId != null)
-                {
-                    cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
-                }
-
-                var ds = new DataSet();
-                new SqlDataAdapter(cmd).Fill(ds);
-                if (ds.Tables.Count > 0)
-                {
-                    dt = ds.Tables[0];
-                }
-            }
-
-            return dt;
-        }
-
-        public static bool IsAdmin(SqlConnection connection, int userId)
-        {
-            using (var cmd = SqlCommandFactory.Create($"select count(*) from user_group_bind where group_id = {SpecialIds.AdminGroupId} and user_id = @userId", connection))
+            using (var cmd = DbCommandFactory.Create($"select count(*) from user_group_bind where group_id = {SpecialIds.AdminGroupId} and user_id = @userId", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
-                return (int)cmd.ExecuteScalar() > 0;
+                var result = cmd.ExecuteScalar();
+                return Convert.ToInt64(result) > 0;
             }
         }
 
-        public static int[] GetGroupIds(SqlConnection connection, int userId)
+        public static int[] GetGroupIds(DbConnection connection, int userId)
         {
-            using (var cmd = SqlCommandFactory.Create("select group_id from user_group_bind where user_id = @userId", connection))
+            using (var cmd = DbCommandFactory.Create("select group_id from user_group_bind where user_id = @userId", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                var isSqlServer = connection is SqlConnection;
                 return dt.AsEnumerable().Select(n => (int)n.Field<decimal>("group_id")).ToArray();
             }
         }
 
-        public static bool CanUnlockItems(SqlConnection connection, int userId)
+        public static bool CanUnlockItems(DbConnection connection, int userId)
         {
-            const string sql = @"
+            var dbType = GetDbType(connection);
+            string sql = $@"
                 WITH
-                  cte (group_id, parent_group_id, can_unlock_items)
+                  {SqlQuerySyntaxHelper.RecursiveCte(dbType)} cte (group_id, parent_group_id, can_unlock_items)
                   AS
                   (
                     SELECT ug.group_id, ug.parent_group_id, ug.can_unlock_items
@@ -1016,73 +1172,44 @@ namespace Quantumart.QP8.DAL
                     FROM user_group_tree ug2
                     INNER JOIN cte r ON ug2.group_id = r.parent_group_id
                   )
-                  select count(*) from cte where can_unlock_items = 1";
+                  select count(*) from cte where can_unlock_items = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
 
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
-                return (int)cmd.ExecuteScalar() > 0;
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
             }
         }
 
-        public static int CountArticles(SqlConnection connection, int contentId, bool includeArchive)
+        public static int CountArticles(DbConnection connection, int contentId, bool includeArchive)
         {
-            var sql = "select count(*) from content_" + contentId + " with(nolock)";
+            var databaseType = GetDbType(connection);
+            var sql = $"select count(*) from content_{contentId} {WithNoLock(databaseType)}";
             if (!includeArchive)
             {
-                sql = sql + " where archive = 0";
+                sql = sql + $" where archive = 0";
             }
 
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                return (int)cmd.ExecuteScalar();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
-        /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для пользователя по entity_type_code и action_type_code
-        /// </summary>
-        public static bool IsEntityAccessible(SqlConnection connection, int userId, string entityTypeCode, int entityId, string actionTypeCode)
+        public static bool IsCountOverflow(DbConnection connection, int contentId, bool includeArchive, int countLimit)
         {
-            using (var cmd = SqlCommandFactory.Create("select dbo.qp_is_entity_action_type_accessible(@userId, 0, @entityTypeCode, @entityId, @actionTypeCode)", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entityId", entityId);
-                cmd.Parameters.AddWithValue("@actionTypeCode", actionTypeCode);
-                return (bool)cmd.ExecuteScalar();
-            }
-        }
-
-        /// <summary>
-        /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для пользователя по entity_type_code и action_type_code
-        /// </summary>
-        public static bool IsEntityAccessibleForUserGroup(SqlConnection connection, int groupId, string entityTypeCode, int entityId, string actionTypeCode)
-        {
-            using (var cmd = SqlCommandFactory.Create("select dbo.qp_is_entity_action_type_accessible(0, @groupId, @entityTypeCode, @entityId, @actionTypeCode)", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@groupId", groupId);
-                cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                cmd.Parameters.AddWithValue("@entityId", entityId);
-                cmd.Parameters.AddWithValue("@actionTypeCode", actionTypeCode);
-                return (bool)cmd.ExecuteScalar();
-            }
-        }
-
-        public static bool IsCountOverflow(SqlConnection connection, int contentId, bool includeArchive, int countLimit)
-        {
+            var databaseType = GetDbType(connection);
             var archiveSql = (includeArchive) ?  "" : $" where archive = 0";
             var sql = $@"select count(*) from (
-                    select TOP({countLimit + 1}) content_item_id from content_{contentId}
-                    WITH (NOLOCK)
+                    select {Top(databaseType, countLimit + 1)} content_item_id from content_{contentId}
+                    {WithNoLock(databaseType)}
                     {archiveSql}
+                    {Limit(databaseType, countLimit + 1)}
                 ) a";
 
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 return Convert.ToInt32(cmd.ExecuteScalar()) > countLimit;
             }
@@ -1091,20 +1218,21 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получение максимального веса, доступного пользователю в цепочке workflow
         /// </summary>
-        public static int GetMaxUserWeight(SqlConnection connection, int userId, int workflowId)
+        public static int GetMaxUserWeight(DbConnection connection, int userId, int workflowId)
         {
-            const string sql = @"SELECT dbo.qp_get_user_weight(@userId, @workflowId)";
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var schema = DbSchemaName(dbType);
+            var sql = $@"SELECT {schema}.qp_get_user_weight(@userId, @workflowId)";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@workflowId", workflowId);
                 var value = cmd.ExecuteScalar();
-                return value == DBNull.Value ? 0 : (int)(decimal)value;
+                return value == DBNull.Value ? 0 : dbType == DatabaseType.SqlServer ? (int)(decimal)value : (int)value;
             }
         }
 
-        public static void ChangeTriggerState(SqlConnection connection, string triggerName, bool enable)
+        public static void ChangeTriggerState(DbConnection connection, string triggerName, bool enable)
         {
             var tableName = "#disable_" + triggerName;
             var opString = enable ? "drop" : "create";
@@ -1114,72 +1242,72 @@ namespace Quantumart.QP8.DAL
                 : $"if object_id('tempdb..{tableName}') is null";
 
             var sql = string.Format("{3} {0} table {1} {2}", opString, tableName, signatureString, checkString);
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyContentAccess(SqlConnection connection, int sourceId, int destinationId, int userId)
+        public static void CopyContentAccess(DbConnection connection, int sourceId, int destinationId, int userId)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.AppendFormat("DELETE FROM content_access WHERE content_id = {0};", destinationId);
-            sqlBuilder.Append("INSERT INTO content_access");
-            sqlBuilder.AppendFormat(" SELECT {0}, user_id, group_id, permission_level_id, GETDATE(), GETDATE(), {1}, propagate_to_items, hide FROM content_access", destinationId, userId);
-            sqlBuilder.AppendFormat(" WHERE content_id = {0}", sourceId);
-            using (var cmd = SqlCommandFactory.Create(sqlBuilder.ToString(), connection))
-            {
-                cmd.ExecuteNonQuery();
-            }
+            var dbType = GetDbType(connection);
+            var sql = $@"
+                DELETE FROM content_access WHERE content_id = {destinationId};
+                INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, created, modified, last_modified_by, propagate_to_items, hide)
+                SELECT {destinationId}, user_id, group_id, permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId}, propagate_to_items, hide FROM content_access
+                WHERE content_id = {sourceId}
+            ";
+
+            ExecuteSql(connection, sql);
+
         }
 
-        public static void CopyArticleAccess(SqlConnection sqlConnection, int sourceId, int destinationId, int userId)
+        public static void CopyArticleAccess(DbConnection sqlConnection, int sourceId, int destinationId, int userId)
         {
             var sqlBuilder = new StringBuilder();
             sqlBuilder.AppendFormat("DELETE FROM content_item_access WHERE content_item_id = {0};", sourceId);
             sqlBuilder.Append("INSERT INTO content_item_access");
             sqlBuilder.AppendFormat(" SELECT {0}, user_id, group_id, permission_level_id, GETDATE(), GETDATE(), {1} FROM content_item_access", destinationId, userId);
             sqlBuilder.AppendFormat(" WHERE content_item_id = {0}", sourceId);
-            using (var cmd = SqlCommandFactory.Create(sqlBuilder.ToString(), sqlConnection))
-            {
-                cmd.ExecuteNonQuery();
-            }
+
+            ExecuteSql(sqlConnection, sqlBuilder.ToString());
         }
 
-        public static void UpdateContentFieldsOrder(SqlConnection connection, int currentOrder, int newOrder, int contentId)
+        public static void UpdateContentFieldsOrder(DbConnection connection, int currentOrder, int newOrder, int contentId)
         {
             if (currentOrder != newOrder)
             {
-                var sqlBuilder = new StringBuilder("update [CONTENT_ATTRIBUTE] ");
+                var sqlBuilder = new StringBuilder("update CONTENT_ATTRIBUTE ");
                 if (currentOrder <= 0)
                 {
                     sqlBuilder.Append(" set ATTRIBUTE_ORDER = ATTRIBUTE_ORDER + 1");
-                    sqlBuilder.AppendFormat(" where [ATTRIBUTE_ORDER] > {0}", newOrder);
+                    sqlBuilder.AppendFormat(" where ATTRIBUTE_ORDER > {0}", newOrder);
                 }
                 else if (currentOrder < newOrder)
                 {
                     sqlBuilder.Append(" set ATTRIBUTE_ORDER = ATTRIBUTE_ORDER - 1 ");
-                    sqlBuilder.AppendFormat(" where [ATTRIBUTE_ORDER] > {0} and [ATTRIBUTE_ORDER] <= {1}", currentOrder,
+                    sqlBuilder.AppendFormat(" where ATTRIBUTE_ORDER > {0} and ATTRIBUTE_ORDER <= {1}", currentOrder,
                         newOrder);
                 }
                 else if (currentOrder > newOrder)
                 {
                     sqlBuilder.Append(" set ATTRIBUTE_ORDER = ATTRIBUTE_ORDER + 1");
-                    sqlBuilder.AppendFormat(" where [ATTRIBUTE_ORDER] < {0} and [ATTRIBUTE_ORDER] > {1}", currentOrder,
+                    sqlBuilder.AppendFormat(" where ATTRIBUTE_ORDER < {0} and ATTRIBUTE_ORDER > {1}", currentOrder,
                         newOrder);
                 }
 
                 sqlBuilder.AppendFormat(" and CONTENT_ID = {0}", contentId);
-                using (var cmd = SqlCommandFactory.Create(sqlBuilder.ToString(), connection))
+                using (var cmd = DbCommandFactory.Create(sqlBuilder.ToString(), connection))
                 {
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        public static int GetStringFieldMaxLength(SqlConnection connection, int contentId, string fieldName)
+        public static int GetStringFieldMaxLength(DbConnection connection, int contentId, string fieldName)
         {
-            using (var cmd = SqlCommandFactory.Create(string.Format("select MAX(LEN([{1}])) from content_{0}_united with(nolock)", contentId, fieldName), connection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select MAX({SqlQuerySyntaxHelper.GetFieldLength(dbType, fieldName)}) from content_{contentId}_united {WithNoLock(dbType)}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1188,9 +1316,17 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetBlobFieldMaxSymbolLength(SqlConnection connection, int contentId, string fieldName)
+        public static int GetBlobFieldMaxSymbolLength(DbConnection connection, int contentId, string fieldName)
         {
-            using (var cmd = SqlCommandFactory.Create(string.Format("select MAX(DATALENGTH([{1}])) / 2 from content_{0}_united with(nolock)", contentId, fieldName), connection))
+            var dbType = GetDbType(connection);
+
+            var query = $"select MAX(DATALENGTH([{fieldName}])) / 2 from content_{contentId}_united with(nolock)";
+            if (dbType == DatabaseType.Postgres)
+            {
+                query = $"select MAX(LENGTH({Escape(dbType, fieldName)})) from content_{contentId}_united";
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1199,9 +1335,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int? GetNumericFieldMaxValue(SqlConnection connection, int contentId, string fieldName)
+        public static int? GetNumericFieldMaxValue(DbConnection connection, int contentId, string fieldName)
         {
-            using (var cmd = SqlCommandFactory.Create(string.Format("select MAX([{1}]) from content_{0}_united with(nolock)", contentId, fieldName), connection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select MAX({Escape(dbType, fieldName)}) from content_{contentId}_united {WithNoLock(dbType)}", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -1213,9 +1350,12 @@ namespace Quantumart.QP8.DAL
         /// Сужествуют ли значения numeric поля, которые нельзя использовать как ключ для связи O2M
         /// </summary>
         /// <returns>True - нет "плохих" значений</returns>
-        public static bool CheckNumericValuesAsO2MForeingKey(SqlConnection connection, int contentId, string fieldName, int relatedContentId)
+        public static bool CheckNumericValuesAsO2MForeingKey(DbConnection connection, int contentId, string fieldName, int relatedContentId)
         {
-            using (var cmd = SqlCommandFactory.Create(string.Format("select 1 where EXISTS (select C1.CONTENT_ITEM_ID from content_{0}_united C1 with(nolock) join content_{2}_united C2 with(nolock) ON C1.[{1}] != C2.[CONTENT_ITEM_ID])", contentId, fieldName, relatedContentId), connection))
+            var dbType = GetDbType(connection);
+            var withNoLock = WithNoLock(dbType);
+            var query = $"select 1 where EXISTS (select C1.CONTENT_ITEM_ID from content_{contentId}_united C1 {withNoLock} join content_{relatedContentId}_united C2 {withNoLock} ON C1.{Escape(dbType, fieldName)} != C2.CONTENT_ITEM_ID)";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var obj = cmd.ExecuteScalar();
@@ -1226,12 +1366,11 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Существуют ли множественные связи по данному полю.
         /// </summary>
-        public static bool DoPluralLinksExist(SqlConnection connection, int contentId, int linkId)
+        public static bool DoPluralLinksExist(DbConnection connection, int contentId, int linkId)
         {
-            using (
-                var cmd =
-                    SqlCommandFactory.Create(
-                        $"select 1 where exists(select item_id from item_link_united i inner join content_{contentId}_united c with(nolock) on i.item_id = c.content_item_id where link_id = @lid group by item_id having COUNT(linked_item_id) > 1)", connection))
+            var dbType = GetDbType(connection);
+            var query = $"select 1 where exists(select item_id from item_link_united i inner join content_{contentId}_united c {WithNoLock(dbType)} on i.item_id = c.content_item_id where link_id = @lid group by item_id having COUNT(linked_item_id) > 1)";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@lid", linkId);
@@ -1243,9 +1382,9 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Переключает RelationId равный currentRelationFieldId на значение newRelationFieldId
         /// </summary>
-        public static void ChangeRelationIdToNewOne(SqlConnection сonnection, int currentRelationFieldId, int newRelationFieldId)
+        public static void ChangeRelationIdToNewOne(DbConnection connection, int currentRelationFieldId, int newRelationFieldId)
         {
-            using (var cmd = SqlCommandFactory.Create("update CONTENT_ATTRIBUTE set RELATED_ATTRIBUTE_ID = @newid where RELATED_ATTRIBUTE_ID = @crnid", сonnection))
+            using (var cmd = DbCommandFactory.Create("update CONTENT_ATTRIBUTE set RELATED_ATTRIBUTE_ID = @newid where RELATED_ATTRIBUTE_ID = @crnid", connection))
             {
                 cmd.Parameters.AddWithValue("@newid", newRelationFieldId);
                 cmd.Parameters.AddWithValue("@crnid", currentRelationFieldId);
@@ -1253,43 +1392,85 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void ClearEmailField(SqlConnection сonnection, int fieldId)
+        public static void ClearEmailField(DbConnection connection, int fieldId)
         {
-            using (var cmd = SqlCommandFactory.Create("UPDATE NOTIFICATIONS set email_attribute_id = null where email_attribute_id = @fid", сonnection))
+            using (var cmd = DbCommandFactory.Create("UPDATE NOTIFICATIONS set email_attribute_id = null where email_attribute_id = @fid", connection))
             {
                 cmd.Parameters.AddWithValue("@fid", fieldId);
                 cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ClearO2MData(DbConnection connection, int fieldId)
+        {
+            var dbType = GetDbType(connection);
+            if (dbType == DatabaseType.Postgres)
+            {
+                var updSql = $@"update CONTENT_DATA set O2M_DATA = NULL where ATTRIBUTE_ID = {fieldId} AND O2M_DATA IS NOT NULL;";
+                ExecuteSql(connection, updSql);
+            }
+        }
+
+        public static void FillO2MData(DbConnection connection, int fieldId)
+        {
+            var dbType = GetDbType(connection);
+            if (dbType == DatabaseType.Postgres)
+            {
+                var updSql = $@"update CONTENT_DATA set O2M_DATA = DATA::numeric where ATTRIBUTE_ID = {fieldId};";
+                ExecuteSql(connection, updSql);
             }
         }
 
         /// <summary>
         /// Трансформирует даные статей при изменении типа поля с O2M в M2M
         /// </summary>
-        public static void O2MtoM2MTranferData(SqlConnection сonnection, int fieldId, int linkId)
+        public static void O2MtoM2MTranferData(DbConnection connection, int fieldId, int linkId)
         {
-            // 1. перенести данные о связях из CONTENT_DATA в item_to_item.
-            // 2. В CONTENT_DATA в качестве значения поля для  всех статей установить LinkId
-            const string cmdText = "INSERT INTO [item_to_item] ([link_id],[l_item_id],[r_item_id]) select @linkid as link_id, D.CONTENT_ITEM_ID as l_item_id, D.DATA as r_item_id from CONTENT_DATA D where ATTRIBUTE_ID = @fid and D.DATA is not null; " +
-                "update CONTENT_DATA set DATA = @linkid where ATTRIBUTE_ID = @fid;";
-
-            using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
+            var dbType = GetDbType(connection);
+            var query = $@"SELECT d.content_item_id as item_id, d.data as linked_item_id from content_data d where attribute_id = {fieldId} and d.data is not null";
+            var doc = new XDocument();
+            var items = new XElement("items");
+            doc.Add(items);
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.Parameters.AddWithValue("@fid", fieldId);
-                cmd.Parameters.AddWithValue("@linkid", linkId);
-                cmd.ExecuteNonQuery();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var itemXml = new XElement("item");
+                        itemXml.Add(new XAttribute("id", reader["item_id"]));
+                        itemXml.Add(new XAttribute("linkId", linkId));
+                        itemXml.Add(new XAttribute("value", reader["linked_item_id"]));
+                        doc.Root?.Add(itemXml);
+                    }
+                }
+                UpdateM2MValues(connection, doc.ToString(SaveOptions.None));
             }
+
+            var updSql = $@"update CONTENT_DATA set DATA = '{linkId}', BLOB_DATA = NULL where ATTRIBUTE_ID = {fieldId};";
+            ExecuteSql(connection, updSql);
+
         }
 
-        public static void M2MtoO2MTranferData(SqlConnection сonnection, int fieldId, int linkId)
+        public static void M2MtoO2MTranferData(DbConnection connection, int fieldId, int linkId)
         {
             // перенести данные о связях из item_to_item в CONTENT_DATA.
-            const string cmdText = "update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid; " +
-                "update CONTENT_DATA SET DATA = NULL where CONTENT_DATA.ATTRIBUTE_ID = @fid and CONTENT_DATA.DATA = @linkid;";
+            var query = $@"WITH cte as (
+SELECT cd.content_item_id as item_id,
+	ilu.linked_item_id as linked_item_id
+	FROM content_data cd
+	left outer join item_link_united ilu on cd.content_item_id = ilu.item_id and ilu.link_id = @linkId
+	where cd.attribute_id = @fieldId
+)
+UPDATE content_data cd
+SET data = cte.linked_item_id
+from cte
+where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
 
-            using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
-                cmd.Parameters.AddWithValue("@fid", fieldId);
-                cmd.Parameters.AddWithValue("@linkid", linkId);
+                cmd.Parameters.AddWithValue("@linkId", linkId);
+                cmd.Parameters.AddWithValue("@fieldId", fieldId);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -1297,10 +1478,10 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Меняет данные, хранимые в CONTENT_DATA для полей M2M или M2O
         /// </summary>
-        public static void ChangeContentDataForRelation(SqlConnection сonnection, int fieldId, int newId)
+        public static void ChangeContentDataForRelation(DbConnection connection, int fieldId, int newId)
         {
             const string cmdText = "update content_data set data = @new_id where data is not null and attribute_id = @attribute_id";
-            using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
+            using (var cmd = DbCommandFactory.Create(cmdText, connection))
             {
                 cmd.Parameters.AddWithValue("@attribute_id", fieldId);
                 cmd.Parameters.AddWithValue("@new_id", newId);
@@ -1309,43 +1490,32 @@ namespace Quantumart.QP8.DAL
         }
 
         /// <summary>
-        /// Обновить Order поля
-        /// </summary>
-        public static void UpdateFieldOrder(SqlConnection сonnection, int fieldId, int newOrder)
-        {
-            using (var cmd = SqlCommandFactory.Create("update CONTENT_ATTRIBUTE set ATTRIBUTE_ORDER = @ord where ATTRIBUTE_ID = @fid", сonnection))
-            {
-                cmd.Parameters.AddWithValue("@fid", fieldId);
-                cmd.Parameters.AddWithValue("@ord", newOrder);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
         /// Возвращает данные о виртуальном поле
         /// </summary>
-        public static DataTable GetVirtualFieldData(SqlConnection сonnection, int contentId)
+        public static DataTable GetVirtualFieldData(DbConnection connection, int contentId)
         {
-            const string query = "SELECT " +
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+
+            var query = "SELECT " +
                 "a.ATTRIBUTE_ID as Id, " +
                 "a.ATTRIBUTE_NAME as Name, " +
-                "a.ATTRIBUTE_TYPE_ID as [Type], " +
+                $"a.ATTRIBUTE_TYPE_ID as {Escape(dbType, "Type")}, " +
                 "pa.content_id AS PersistentContentId, " +
                 "a.persistent_attr_id as PersistentId, " +
                 "pa.attribute_name AS PersistentName, " +
                 "rpa.CONTENT_ID as RelateToPersistentContentId, " +
                 "a.join_attr_id as JoinId " +
-                "FROM content_attribute AS a with(nolock) " +
-                "LEFT OUTER JOIN content_attribute AS pa with(nolock) ON pa.attribute_id = a.persistent_attr_id " +
-                "LEFT OUTER JOIN content_attribute AS rpa with(nolock) ON rpa.attribute_id = pa.related_attribute_id " +
-                "LEFT OUTER JOIN content AS c with(nolock) ON rpa.content_id = c.content_id " +
+                $"FROM content_attribute AS a {WithNoLock(dbType)} " +
+                $"LEFT OUTER JOIN content_attribute AS pa {WithNoLock(dbType)} ON pa.attribute_id = a.persistent_attr_id " +
+                $"LEFT OUTER JOIN content_attribute AS rpa {WithNoLock(dbType)} ON rpa.attribute_id = pa.related_attribute_id " +
+                $"LEFT OUTER JOIN content AS c {WithNoLock(dbType)} ON rpa.content_id = c.content_id " +
                 "WHERE a.content_id = @contentId and a.persistent_attr_id IS NOT NULL";
 
-            using (var cmd = SqlCommandFactory.Create(query, сonnection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
@@ -1355,11 +1525,13 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="contentId"></param>
-        public static void CreateUnitedView(SqlConnection connection, int contentId)
+        public static void CreateUnitedView(DbConnection connection, int contentId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_content_united_view_create", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_content_united_view_create" : "call qp_content_united_view_create(@content_id)";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
                 cmd.ExecuteNonQuery();
             }
@@ -1370,9 +1542,9 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="contentId"></param>
-        public static void CreateFrontedViews(SqlConnection connection, int contentId)
+        public static void CreateFrontendViews(DbConnection connection, int contentId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_content_frontend_views_create", connection))
+            using (var cmd = DbCommandFactory.Create("qp_content_frontend_views_create", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
@@ -1385,18 +1557,23 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="viewName"></param>
-        public static void DropView(SqlConnection connection, string viewName)
+        public static void DropView(DbConnection connection, string viewName)
         {
             if (string.IsNullOrWhiteSpace(viewName))
             {
                 throw new ArgumentNullException(nameof(viewName));
             }
 
-            using (var cmd = SqlCommandFactory.Create("qp_drop_existing", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = dbType == DatabaseType.SqlServer ? "qp_drop_existing" : "drop view if exists " + viewName + " cascade";
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@name", viewName);
-                cmd.Parameters.AddWithValue("@flag", "IsView");
+                if (dbType == DatabaseType.SqlServer)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@name", viewName);
+                    cmd.Parameters.AddWithValue("@flag", "IsView");
+                }
                 cmd.ExecuteNonQuery();
             }
         }
@@ -1404,7 +1581,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Удаляет view
         /// </summary>
-        public static void RefreshView(SqlConnection connection, string viewName)
+        public static void RefreshView(DbConnection connection, string viewName)
         {
             if (string.IsNullOrWhiteSpace(viewName))
             {
@@ -1412,7 +1589,7 @@ namespace Quantumart.QP8.DAL
             }
 
             const string sql = "if exists(select * from INFORMATION_SCHEMA.VIEWS where table_name = @viewName) exec sp_refreshview @viewName";
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@viewname", viewName);
@@ -1423,7 +1600,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает список id дочерних виртуальных контентов
         /// </summary>
-        public static IEnumerable<int> GetVirtualSubContentIDs(SqlConnection connection, int contentId)
+        public static IEnumerable<int> GetVirtualSubContentIDs(DbConnection connection, int contentId)
         {
             const string query = "select content_id from content where virtual_join_primary_content_id = @contentId " +
                 "union " +
@@ -1432,7 +1609,7 @@ namespace Quantumart.QP8.DAL
                 "select virtual_content_id as content_id from user_query_contents where real_content_id = @contentId";
 
             var result = new List<int>();
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 using (var reader = cmd.ExecuteReader())
@@ -1447,12 +1624,25 @@ namespace Quantumart.QP8.DAL
             return result.ToArray();
         }
 
-        public static IEnumerable<int> GetRealBaseFieldIds(SqlConnection connection, int virtualFieldId)
+        public static IEnumerable<int> GetRealBaseFieldIds(DbConnection connection, int virtualFieldId)
         {
             var result = new List<int>();
-            using (var cmd = SqlCommandFactory.Create("qp_get_real_base_attributes", connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var recursive = dbType == DatabaseType.SqlServer ? "" : "RECURSIVE";
+            var sql = $@" WITH {recursive} TREE(BASE_ATTR_ID, BASE_CNT_VTYPE) AS
+            (
+                select BASE_ATTR_ID, BASE_CNT_VTYPE FROM VIRTUAL_ATTR_BASE_ATTR_RELATION
+                where VIRTUAL_ATTR_ID = @v_attr_id
+
+                union all
+
+                select R.BASE_ATTR_ID, R.BASE_CNT_VTYPE FROM VIRTUAL_ATTR_BASE_ATTR_RELATION R
+                join TREE T ON T.BASE_ATTR_ID = R.VIRTUAL_ATTR_ID
+            )
+            select BASE_ATTR_ID from TREE where BASE_CNT_VTYPE = 0 ";
+
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@v_attr_id", virtualFieldId);
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -1469,7 +1659,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает информацию о дочерних витуальных полях
         /// </summary>
-        public static DataTable GetVirtualSubFields(SqlConnection сonnection, List<int> rootFieldId)
+        public static DataTable GetVirtualSubFields(DbConnection connection, List<int> rootFieldId)
         {
             var inStatement = "-1";
             if (rootFieldId.Any())
@@ -1477,12 +1667,12 @@ namespace Quantumart.QP8.DAL
                 inStatement = string.Join(",", rootFieldId);
             }
 
-            var query = $"SELECT [BASE_ATTR_ID],[BASE_CNT_ID],[VIRTUAL_ATTR_ID],[VIRTUAL_CNT_ID] FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] WHERE BASE_ATTR_ID IN ({inStatement})";
+            var query = $"SELECT BASE_ATTR_ID, BASE_CNT_ID, VIRTUAL_ATTR_ID, VIRTUAL_CNT_ID FROM VIRTUAL_ATTR_BASE_ATTR_RELATION WHERE BASE_ATTR_ID IN ({inStatement})";
 
-            using (var cmd = SqlCommandFactory.Create(query, сonnection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
@@ -1490,7 +1680,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает информацию о дочерних витуальных полях
         /// </summary>
-        public static DataTable GetVirtualBaseFieldIDs(SqlConnection сonnection, List<int> subFieldIds)
+        public static DataTable GetVirtualBaseFieldIDs(DbConnection connection, List<int> subFieldIds)
         {
             var inStatement = "-1";
             if (subFieldIds.Any())
@@ -1498,11 +1688,11 @@ namespace Quantumart.QP8.DAL
                 inStatement = string.Join(",", subFieldIds);
             }
 
-            var query = $"SELECT distinct [BASE_ATTR_ID], [BASE_CNT_ID], [VIRTUAL_ATTR_ID], [VIRTUAL_CNT_ID] FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] WHERE VIRTUAL_ATTR_ID IN ({inStatement})";
-            using (var cmd = SqlCommandFactory.Create(query, сonnection))
+            var query = $"SELECT distinct BASE_ATTR_ID, BASE_CNT_ID, VIRTUAL_ATTR_ID, VIRTUAL_CNT_ID FROM VIRTUAL_ATTR_BASE_ATTR_RELATION WHERE VIRTUAL_ATTR_ID IN ({inStatement})";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
@@ -1510,21 +1700,22 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Загрузить данные о связи полей в памяти, начиная с некоторго контента
         /// </summary>
-        public static DataTable LoadVirtualFieldsRelations(SqlConnection sqlConnection, int rootContentId)
+        public static DataTable LoadVirtualFieldsRelations(DbConnection sqlConnection, int rootContentId)
         {
-            const string query = "WITH V2BREL AS " +
-                "( " +
-                "SELECT *, 0 as [LEVEL] FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] where BASE_CNT_ID = @rootContent " +
-                "union all " +
-                "SELECT BA.*, [LEVEL] + 1 FROM [VIRTUAL_ATTR_BASE_ATTR_RELATION] BA " +
-                "join V2BREL on BA.BASE_ATTR_ID = V2BREL.VIRTUAL_ATTR_ID " +
-                ") " +
-                "select * from V2BREL order by [LEVEL]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            string query = $@"
+            WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} V2BREL AS (
+                SELECT *, 0 as {Escape(dbType, "LEVEL")} FROM VIRTUAL_ATTR_BASE_ATTR_RELATION where BASE_CNT_ID = @rootContent
+                union all
+                SELECT BA.*, {Escape(dbType, "LEVEL")} + 1 FROM VIRTUAL_ATTR_BASE_ATTR_RELATION BA
+                join V2BREL on BA.BASE_ATTR_ID = V2BREL.VIRTUAL_ATTR_ID
+            )
+            select * from V2BREL order by {Escape(dbType, "LEVEL")}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@rootContent", rootContentId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
@@ -1532,7 +1723,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получить количество полей связей в Union_ATTR для union-полей
         /// </summary>
-        public static DataTable GetUnionFieldRelationCount(SqlConnection сonnection, List<int> unionFieldIds)
+        public static DataTable GetUnionFieldRelationCount(DbConnection connection, List<int> unionFieldIds)
         {
             var inStatement = "-1";
             if (unionFieldIds.Any())
@@ -1540,11 +1731,11 @@ namespace Quantumart.QP8.DAL
                 inStatement = string.Join(",", unionFieldIds);
             }
 
-            var query = $"select COUNT(union_attr_id) F_COUNT, VIRTUAL_ATTR_ID UNION_FIELD_ID FROM union_attrs GROUP BY VIRTUAL_ATTR_ID HAVING VIRTUAL_ATTR_ID IN ({inStatement})";
-            using (var cmd = SqlCommandFactory.Create(query, сonnection))
+            var query = $"select cast(COUNT(union_attr_id) as int) F_COUNT, VIRTUAL_ATTR_ID UNION_FIELD_ID FROM union_attrs GROUP BY VIRTUAL_ATTR_ID HAVING VIRTUAL_ATTR_ID IN ({inStatement})";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
@@ -1552,7 +1743,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получить информацию о таблицах и столбцах которые используются во вью
         /// </summary>
-        public static DataTable GetViewColumnUsage(SqlConnection sqlConnection, string viewName)
+        public static DataTable GetViewColumnUsage(DbConnection sqlConnection, string viewName)
         {
             if (string.IsNullOrWhiteSpace(viewName))
             {
@@ -1569,87 +1760,80 @@ namespace Quantumart.QP8.DAL
                SELECT CI.COLUMN_NAME as ColumnName, CI.DATA_TYPE As DbType, CI.NUMERIC_SCALE as NumericScale, CI.CHARACTER_MAXIMUM_LENGTH as CharMaxLength, CI.TABLE_NAME As TableName, COALESCE(CI2.DATA_TYPE, CI.DATA_TYPE) AS TableDbType FROM CI
                LEFT JOIN INFORMATION_SCHEMA.COLUMNS CI2 ON CI2.COLUMN_NAME = CI.COLUMN_NAME AND CI2.TABLE_NAME = CI.TABLE_NAME";
 
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@view_name", viewName);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
 
-        public static DataTable GetVirtualContentRelations(SqlConnection sqlConnection)
+        public static DataTable GetVirtualContentRelations(DbConnection sqlConnection)
         {
-            const string query = "SELECT [BASE_CONTENT_ID],[VIRTUAL_CONTENT_ID] FROM [VIRTUAL_CONTENT_RELATION]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            const string query = "SELECT BASE_CONTENT_ID,VIRTUAL_CONTENT_ID FROM VIRTUAL_CONTENT_RELATION";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
 
-        public static int CountChildArticles(SqlConnection sqlConnection, int articleId, bool countArchived)
+        public static IList<int> GetChildArticles(DbConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_count_child_articles", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@article_id", articleId);
-                cmd.Parameters.AddWithValue("@count_archived", countArchived);
-                cmd.Parameters.Add(new SqlParameter("@count", SqlDbType.Int) { Direction = ParameterDirection.Output });
-                cmd.ExecuteNonQuery();
-                return (int)cmd.Parameters["@count"].Value;
-            }
-        }
-
-        public static IList<int> GetChildArticles(SqlConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
-        {
+            var dbType = GetDbType(cn);
             var customFilter = string.IsNullOrWhiteSpace(filter) ? string.Empty : $"AND {filter}";
             var parentFilter = ids.Any() ? $"c.{fieldName} IN ({string.Join(",", ids)})" : $"c.{fieldName} IS NULL";
-            var query = $"SELECT c.content_item_id FROM content_{contentId}_united c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
+            var query = $"SELECT c.content_item_id FROM content_{contentId}_united c {WithNoLock(dbType)} WHERE {parentFilter} {customFilter}";
             return GetDatatableResult(cn, query).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
-        private const string GetVisualEditorConfigQuery =
-            "select ISNULL(A.P_ENTER_MODE, S.P_ENTER_MODE) AS PEnterMode, " +
-            "ISNULL(A.USE_ENGLISH_QUOTES, S.USE_ENGLISH_QUOTES) AS UseEnglishQuotes,   " +
-            "ISNULL(A.DISABLE_LIST_AUTO_WRAP, S.DISABLE_LIST_AUTO_WRAP) AS DisableListAutoWrap,   " +
-            "ISNULL(A.ROOT_ELEMENT_CLASS, S.ROOT_ELEMENT_CLASS) AS RootElementClass,   " +
-            "ISNULL(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
-            "from CONTENT_ATTRIBUTE A  " +
-            "join CONTENT C on C.CONTENT_ID = A.CONTENT_ID  " +
-            "join [SITE] S on S.SITE_ID = C.SITE_ID  " +
-            "WHERE A.ATTRIBUTE_ID = @attr_id";
-
-        public static DataTable GetVisualEditFieldParams(SqlConnection sqlConnection, int fieldId)
+        private static string GetVisualEditorConfigQuery(DatabaseType dbType)
         {
-            using (var cmd = SqlCommandFactory.Create(GetVisualEditorConfigQuery, sqlConnection))
+            return "select COALESCE(A.P_ENTER_MODE, S.P_ENTER_MODE) AS PEnterMode, " +
+                "COALESCE(A.USE_ENGLISH_QUOTES, S.USE_ENGLISH_QUOTES) AS UseEnglishQuotes,   " +
+                "COALESCE(A.DISABLE_LIST_AUTO_WRAP, S.DISABLE_LIST_AUTO_WRAP) AS DisableListAutoWrap,   " +
+                "COALESCE(A.ROOT_ELEMENT_CLASS, S.ROOT_ELEMENT_CLASS) AS RootElementClass,   " +
+                "COALESCE(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
+                "from CONTENT_ATTRIBUTE A  " +
+                "join CONTENT C on C.CONTENT_ID = A.CONTENT_ID  " +
+                $"join {Escape(dbType, "SITE")} S on S.SITE_ID = C.SITE_ID  " +
+                "WHERE A.ATTRIBUTE_ID = @attr_id";
+        }
+
+
+        public static DataTable GetVisualEditFieldParams(DbConnection sqlConnection, int fieldId)
+        {
+            var dbType = GetDbType(sqlConnection);
+            using (var cmd = DbCommandFactory.Create(GetVisualEditorConfigQuery(dbType), sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@attr_id", fieldId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
 
-        private const string UpdateSiteFolderSql =
-            "WITH FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, [PATH], NEW_PATH) as " +
-            "( " +
-            "select FOLDER_ID, PARENT_FOLDER_ID, [PATH], REPLACE([PATH], [PATH], @new_path) AS NEW_PATH from [FOLDER] " +
-            "where FOLDER_ID = @folder_id " +
-            "union all " +
-            "select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.[PATH], REPLACE(F.[PATH], F2.[PATH], F2.NEW_PATH) AS NEW_PATH from [FOLDER] F " +
-            "join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID " +
-            ") " +
-            "UPDATE [FOLDER] SET [FOLDER].[PATH] = NP.NEW_PATH, " +
-            " [FOLDER].[MODIFIED] = @modified, " +
-            " [FOLDER].[LAST_MODIFIED_BY] = @modified_by " +
-            "FROM FOLDERS NP " +
-            "WHERE [FOLDER].FOLDER_ID = NP.FOLDER_ID";
-
-        public static void UpdateSiteSubFoldersPath(SqlConnection sqlConnection, int parentFolderId, string path, int modifiedBy, DateTime modified)
+        public static void UpdateSiteSubFoldersPath(DbConnection sqlConnection, int parentFolderId, string path, int modifiedBy, DateTime modified)
         {
-            using (var cmd = SqlCommandFactory.Create(UpdateSiteFolderSql, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var pathColumnName = Escape(dbType, "PATH");
+            var folderTableName = Escape(dbType, "FOLDER");
+            var query = $@"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, NEW_PATH) as (
+                select FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, REPLACE({pathColumnName}, {pathColumnName}, @new_path) AS NEW_PATH from {folderTableName}
+                where FOLDER_ID = @folder_id
+                union all
+                select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.{pathColumnName}, REPLACE(F.{pathColumnName}, F2.{pathColumnName}, F2.NEW_PATH) AS NEW_PATH from {folderTableName} F
+                join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID
+                )
+                UPDATE {folderTableName} SET {pathColumnName} = NP.NEW_PATH,
+                 MODIFIED = @modified,
+                 LAST_MODIFIED_BY = @modified_by
+                FROM FOLDERS NP
+                WHERE {folderTableName}.FOLDER_ID = NP.FOLDER_ID";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@folder_id", parentFolderId);
                 cmd.Parameters.AddWithValue("@new_path", path);
@@ -1659,25 +1843,28 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private const string UpdateContentFolderSql =
-            "WITH FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, [PATH], NEW_PATH) as " +
-            "( " +
-            "select FOLDER_ID, PARENT_FOLDER_ID, [PATH], REPLACE([PATH], [PATH], @new_path) AS NEW_PATH from [content_FOLDER] " +
-            "where FOLDER_ID = @folder_id " +
-            "union all " +
-            "select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.[PATH], REPLACE(F.[PATH], F2.[PATH], F2.NEW_PATH) AS NEW_PATH from [content_FOLDER] F " +
-            "join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID " +
-            ") " +
-            "UPDATE [content_FOLDER] " +
-            " SET [content_FOLDER].[PATH] = NP.NEW_PATH, " +
-            " [content_FOLDER].[MODIFIED] = @modified, " +
-            " [content_FOLDER].[LAST_MODIFIED_BY] = @modified_by " +
-            "FROM FOLDERS NP " +
-            "WHERE [content_FOLDER].FOLDER_ID = NP.FOLDER_ID";
-
-        public static void UpdateContentSubFoldersPath(SqlConnection sqlConnection, int parentFolderId, string path, int modifiedBy, DateTime modified)
+        public static void UpdateContentSubFoldersPath(DbConnection sqlConnection, int parentFolderId, string path, int modifiedBy, DateTime modified)
         {
-            using (var cmd = SqlCommandFactory.Create(UpdateContentFolderSql, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var pathColumnName = Escape(dbType, "PATH");
+            var folderTableName = Escape(dbType, "content_FOLDER");
+
+            var query = $@"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, NEW_PATH) as
+                (
+                select FOLDER_ID, PARENT_FOLDER_ID, {pathColumnName}, REPLACE({pathColumnName}, {pathColumnName}, @new_path) AS NEW_PATH from {folderTableName}
+                where FOLDER_ID = @folder_id
+                union all
+                select F.FOLDER_ID, F.PARENT_FOLDER_ID, F.{pathColumnName}, REPLACE(F.{pathColumnName}, F2.{pathColumnName}, F2.NEW_PATH) AS NEW_PATH from {folderTableName} F
+                join FOLDERS F2 ON F2.FOLDER_ID = F.PARENT_FOLDER_ID
+                )
+                UPDATE {folderTableName}
+                 SET {pathColumnName} = NP.NEW_PATH,
+                 MODIFIED = @modified,
+                 LAST_MODIFIED_BY = @modified_by
+                FROM FOLDERS NP
+                WHERE {folderTableName}.FOLDER_ID = NP.FOLDER_ID";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@folder_id", parentFolderId);
                 cmd.Parameters.AddWithValue("@new_path", path);
@@ -1687,18 +1874,57 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetEntitiesTitles(SqlConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
+        // public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
+        // {
+        //
+        //     if (entitiesIDs != null && entitiesIDs.Any())
+        //     {
+        //         using (var cmd = DbCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
+        //         {
+        //             cmd.CommandType = CommandType.StoredProcedure;
+        //             cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
+        //             cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
+        //
+        //             var dt = new DataTable();
+        //             DataAdapterFactory.Create(cmd).Fill(dt);
+        //             return dt.AsEnumerable().ToArray();
+        //         }
+        //     }
+        //
+        //     return Enumerable.Empty<DataRow>();
+        // }
+
+        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string titleField, decimal? contentId, List<int> entitiesIDs)
         {
-            if (entitiesIDs != null && entitiesIDs.Any())
+            if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && contentId.HasValue)
             {
-                using (var cmd = SqlCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
+                var dbType = GetDbType(connection);
+                var query = $"SELECT content_item_id as ID, {SqlQuerySyntaxHelper.CastToString(dbType, titleField)} as TITLE from content_{contentId.Value}_united WHERE content_item_id IN ({string.Join(",", entitiesIDs)})";
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-                    cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
+                    cmd.CommandType = CommandType.Text;
 
                     var dt = new DataTable();
-                    new SqlDataAdapter(cmd).Fill(dt);
+                    DataAdapterFactory.Create(cmd).Fill(dt);
+                    return dt.AsEnumerable().ToArray();
+                }
+            }
+
+            return Enumerable.Empty<DataRow>();
+        }
+
+        public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string source, string idField, string titleField, List<int> entitiesIDs)
+        {
+            if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && !string.IsNullOrWhiteSpace(source) && !string.IsNullOrWhiteSpace(idField))
+            {
+                var dbType = GetDbType(connection);
+                var query = $"SELECT {idField} as ID, {titleField} as TITLE from {source} WHERE {idField} IN ({string.Join(",", entitiesIDs)})";
+                using (var cmd = DbCommandFactory.Create(query, connection))
+                {
+                    cmd.CommandType = CommandType.Text;
+
+                    var dt = new DataTable();
+                    DataAdapterFactory.Create(cmd).Fill(dt);
                     return dt.AsEnumerable().ToArray();
                 }
             }
@@ -1707,7 +1933,7 @@ namespace Quantumart.QP8.DAL
         }
 
         public static IEnumerable<DataRow> GetActionLogPage(
-            SqlConnection sqlConnection,
+            DbConnection sqlConnection,
             string orderBy,
             string actionCode,
             string actionTypeCode,
@@ -1722,6 +1948,7 @@ namespace Quantumart.QP8.DAL
             int pageSize = 0)
         {
             Debug.Assert(userIds != null, "userIDs is null");
+            var dbType = GetDbType(sqlConnection);
 
             var filters = new List<string>();
 
@@ -1747,7 +1974,7 @@ namespace Quantumart.QP8.DAL
 
             if (!string.IsNullOrEmpty(parentEntityId))
             {
-                filters.Add($"CAST(L.PARENT_ENTITY_ID AS NVARCHAR(25)) = '{Cleaner.ToSafeSqlString(parentEntityId)}'");
+                filters.Add($"{SqlQuerySyntaxHelper.CastToVarchar(dbType, "L.PARENT_ENTITY_ID")} = '{Cleaner.ToSafeSqlString(parentEntityId)}'");
             }
 
             if (!string.IsNullOrEmpty(entityTitle))
@@ -1768,15 +1995,15 @@ namespace Quantumart.QP8.DAL
 
             if (userIds.Any())
             {
-                filters.Add($"U.[USER_ID] in ({string.Join(",", userIds)})");
+                filters.Add($"U.{Escape(dbType, "USER_ID")} in ({string.Join(",", userIds)})");
             }
 
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.CustomerCode,
-                "L.ID as Id, L.EXEC_TIME AS ExecutionTime, L.API as IsApi, AT.CODE AS ActionTypeCode, AT.NAME AS ActionTypeName, ET.CODE AS EntityTypeCode, ET.NAME AS EntityTypeName" +
-                ", L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.[USER_ID] as UserId, U.[LOGIN] as UserLogin, BA.NAME as ActionName",
-                "BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.[USER_ID] = U.[USER_ID]" +
+                $@"L.ID as Id, L.EXEC_TIME AS ExecutionTime, L.API as IsApi, AT.CODE AS ActionTypeCode, AT.NAME AS ActionTypeName, ET.CODE AS EntityTypeCode, ET.NAME AS EntityTypeName,
+                L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.{Escape(dbType, "USER_ID")} as UserId, U.{Escape(dbType, "LOGIN")} as UserLogin, BA.NAME as ActionName",
+                $"BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.{Escape(dbType, "USER_ID")} = U.{Escape(dbType, "USER_ID")}" +
                 " INNER JOIN ACTION_TYPE AT ON AT.CODE = L.ACTION_TYPE_CODE" +
                 " INNER JOIN ENTITY_TYPE ET ON ET.CODE = L.ENTITY_TYPE_CODE" +
                 " INNER JOIN BACKEND_ACTION BA ON BA.CODE = L.ACTION_CODE"
@@ -1789,21 +2016,23 @@ namespace Quantumart.QP8.DAL
             );
         }
 
-        public static IEnumerable<DataRow> GetCustomActionList(SqlConnection sqlConnection, string orderBy, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetCustomActionList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, out int totalRecords)
         {
             var selectBuilder = new StringBuilder();
-            selectBuilder.Append("CA.[ID], CA.[NAME], CA.[ACTION_ID]");
+            var dbType = GetDbType(sqlConnection);
+            var ns = DbSchemaName(dbType);
+            selectBuilder.Append("CA.ID, CA.NAME, CA.ACTION_ID");
             selectBuilder.Append(", AT.CODE AS ACTION_TYPE_CODE, AT.NAME AS ACTION_TYPE_NAME");
             selectBuilder.Append(", ET.CODE AS ENTITY_TYPE_CODE ,ET.NAME AS ENTITY_TYPE_NAME");
-            selectBuilder.Append(", CA.[URL], CA.[ICON_URL], CA.[ORDER], CA.[SITE_EXCLUDED], CA.[CONTENT_EXCLUDED], CA.[SHOW_IN_MENU], CA.[SHOW_IN_TOOLBAR]");
-            selectBuilder.Append(", CA.[CREATED], CA.[MODIFIED], CA.[LAST_MODIFIED_BY], U.[USER_ID], U.[LOGIN]");
+            selectBuilder.Append($", CA.URL, CA.ICON_URL, CA.{Escape(dbType, "ORDER")}, CA.SITE_EXCLUDED, CA.CONTENT_EXCLUDED, CA.SHOW_IN_MENU, CA.SHOW_IN_TOOLBAR");
+            selectBuilder.Append(", CA.CREATED, CA.MODIFIED, CA.LAST_MODIFIED_BY, U.USER_ID, U.LOGIN");
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append(" [dbo].CUSTOM_ACTION CA");
-            fromBuilder.Append(" JOIN [dbo].BACKEND_ACTION A ON CA.ACTION_ID = A.ID");
-            fromBuilder.Append(" JOIN [dbo].ACTION_TYPE AT ON AT.ID = A.[TYPE_ID]");
-            fromBuilder.Append(" JOIN [dbo].ENTITY_TYPE ET ON ET.ID = A.ENTITY_TYPE_ID");
-            fromBuilder.Append(" JOIN [dbo].USERS U ON U.[USER_ID] = CA.LAST_MODIFIED_BY");
+            fromBuilder.Append($" {ns}.CUSTOM_ACTION CA");
+            fromBuilder.Append($" JOIN {ns}.BACKEND_ACTION A ON CA.ACTION_ID = A.ID");
+            fromBuilder.Append($" JOIN {ns}.ACTION_TYPE AT ON AT.ID = A.TYPE_ID");
+            fromBuilder.Append($" JOIN {ns}.ENTITY_TYPE ET ON ET.ID = A.ENTITY_TYPE_ID");
+            fromBuilder.Append($" JOIN {ns}.USERS U ON U.USER_ID = CA.LAST_MODIFIED_BY");
 
             return GetSimplePagedList(
                 sqlConnection,
@@ -1818,35 +2047,40 @@ namespace Quantumart.QP8.DAL
             );
         }
 
-        public static List<DataRow> GetLockedArticlesList(SqlConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            @"[CONTENT_ITEM_ID] as ID
-                                      ,it.[content_id] as ParentId
-                                      ,dbo.qp_get_article_title_func(it.[Content_Item_Id],it.[content_id]) as Title
+        public static List<DataRow> GetLockedArticlesList(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var ns = DbSchemaName(dbType);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                $@"CONTENT_ITEM_ID as ID
+                                      ,it.content_id as ParentId
+                                      ,{ns}.qp_get_article_title_func(it.Content_Item_Id, it.content_id) as Title
                                       ,con.CONTENT_NAME as ContentName
                                       ,site.SITE_NAME as SiteName
                                       ,typ.STATUS_TYPE_NAME as StatusName
-                                      ,it.[CREATED] as Created
-                                      ,it.[MODIFIED] as Modified
+                                      ,it.CREATED as Created
+                                      ,it.MODIFIED as Modified
                                       ,us.LOGIN as LastModifiedByUser
-                                      ,it.[PERMANENT_LOCK] as IsPermanentLock",
-            @"[dbo].[CONTENT_ITEM] as it
-                                      INNER JOIN [dbo].[content] as con on con.CONTENT_ID = it.CONTENT_ID
-                                      INNER JOIN [dbo].[SITE] as site on site.SITE_ID = con.SITE_ID
-                                      INNER JOIN [dbo].[STATUS_TYPE] as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
-                                      INNER JOIN [dbo].[USERS] as us on us.USER_ID = it.LAST_MODIFIED_BY",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "ID ASC",
-            $"it.[locked_by] = {userId}",
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+                                      ,it.PERMANENT_LOCK as IsPermanentLock",
+                $@"{ns}.CONTENT_ITEM as it
+                                      INNER JOIN {ns}.{Escape(dbType, "content")} as con on con.CONTENT_ID = it.CONTENT_ID
+                                      INNER JOIN {ns}.{Escape(dbType, "site")} as site on site.SITE_ID = con.SITE_ID
+                                      INNER JOIN {ns}.STATUS_TYPE as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
+                                      INNER JOIN {ns}.{Escape(dbType, "USERS")} as us on us.USER_ID = it.LAST_MODIFIED_BY",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "ID ASC",
+                $"it.{Escape(dbType, "locked_by")} = {userId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
-        public static int GetLockedArticlesCount(SqlConnection sqlConnection, int userId)
+        public static int GetLockedArticlesCount(DbConnection sqlConnection, int userId)
         {
             const string query = "select count(*) from content_item where locked_by = @userId";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
@@ -1854,7 +2088,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetArticlesWaitingForApprovalCount(SqlConnection sqlConnection, int userId)
+        public static int GetArticlesWaitingForApprovalCount(DbConnection sqlConnection, int userId)
         {
             const string query =
                 @"select count(*) from content_item_workflow ciw with(nolock)
@@ -1867,7 +2101,7 @@ namespace Quantumart.QP8.DAL
                         OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = @userId)
                     )";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
@@ -1875,12 +2109,17 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static List<DataRow> GetArticlesWaitingForApproval(SqlConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            @"ci.content_item_id as ID
+        public static List<DataRow> GetArticlesWaitingForApproval(DbConnection sqlConnection, string orderBy, int startRow, int pageSize, int userId, out int totalRecords)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var ns = DbSchemaName(dbType);
+            var withNoLock = WithNoLock(dbType);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                $@"ci.content_item_id as ID
                                     ,ci.content_id as ParentId
-                                    ,dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
+                                    ,{ns}.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
                                     ,s.site_name as SiteName
                                     ,c.CONTENT_NAME as ContentName
                                     ,ci.MODIFIED as Modified
@@ -1888,37 +2127,38 @@ namespace Quantumart.QP8.DAL
                                     ,typ.STATUS_TYPE_NAME as StatusName
                                     ,us.LOGIN as LastModifiedByUser
                                     ,ci.PERMANENT_LOCK as IsPermanentLock",
-            @"content_item_workflow ciw with(nolock)
-                                    INNER JOIN content_item ci with(nolock) ON ci.content_item_id = ciw.content_item_id
-                                    INNER JOIN full_workflow_rules wr with(nolock) on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
-                                    INNER JOIN full_workflow_rules wr2 with(nolock) on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
-                                    INNER JOIN content c with(nolock) ON ci.content_id = c.content_id
-                                    INNER JOIN site s with(nolock) ON c.site_id = s.site_id
-                                    INNER JOIN status_type as typ with(nolock) on typ.STATUS_TYPE_ID = ci.STATUS_TYPE_ID
+                $@"content_item_workflow ciw {withNoLock}
+                                    INNER JOIN content_item ci {withNoLock} ON ci.content_item_id = ciw.content_item_id
+                                    INNER JOIN full_workflow_rules wr {withNoLock} on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
+                                    INNER JOIN full_workflow_rules wr2 {withNoLock} on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
+                                    INNER JOIN content c {withNoLock} ON ci.content_id = c.content_id
+                                    INNER JOIN site s {withNoLock} ON c.site_id = s.site_id
+                                    INNER JOIN status_type as typ {withNoLock} on typ.STATUS_TYPE_ID = ci.STATUS_TYPE_ID
                                     INNER JOIN users as us on us.USER_ID = ci.LAST_MODIFIED_BY",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
-            string.Format(@"(wr2.user_id = {0}
-                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id={0})
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
+                $@"(wr2.user_id = {userId}
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind {withNoLock} WHERE user_id={userId})
                                         )
                                         AND (
-                                            ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
-                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = {0})
-                                        )", userId),
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+                                            ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
+                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval {withNoLock} where user_id = {userId})
+                                        )",
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
-        internal static IEnumerable<DataRow> GetSimplePagedListOld(SqlConnection sqlConnection,
+        internal static IEnumerable<DataRow> GetSimplePagedListOld(DbConnection sqlConnection,
             string entityTypeCode, string selectBlock, string fromBlock, string orderBy, string filter, int startRow,
             int pageSize, out int totalRecords,
             int userId = 0, bool useSecurity = false, bool countOnly = false, int groupId = 0,
             int startLevel = PermissionLevel.List, int endLevel = PermissionLevel.FullAccess,
             string parentEntityTypeCode = "", int parentEntityId = 0, IEnumerable<int> selectedIds = null,
-            List<SqlParameter> sqlParameters = null)
+            List<DbParameter> sqlParameters = null)
         {
             var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
-            using (var cmd = SqlCommandFactory.Create("qp_get_paged_data", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_paged_data", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("select_block", selectBlock);
@@ -1967,7 +2207,7 @@ namespace Quantumart.QP8.DAL
                 }
 
                 var ds = new DataSet();
-                new SqlDataAdapter(cmd).Fill(ds);
+                DataAdapterFactory.Create(cmd).Fill(ds);
 
                 DataTable result = null;
                 totalRecords = 0;
@@ -1977,7 +2217,7 @@ namespace Quantumart.QP8.DAL
                     result = ds.Tables[0];
                     totalRecords = forceCountQuery
                         ? (int)cmd.Parameters["total_records"].Value
-                        : (result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.CountColumn] : 0);
+                        : (result.Rows.Count != 0 ? (int)result.Rows[0][QPModelDataContext.CountColumn] : 0);
                 }
                 else if (countOnly)
                 {
@@ -1989,7 +2229,7 @@ namespace Quantumart.QP8.DAL
         }
 
         internal static IEnumerable<DataRow> GetSimplePagedList(
-            SqlConnection sqlConnection,
+            DbConnection sqlConnection,
             string entityTypeCode,
             string selectBlock,
             string fromBlock,
@@ -2007,12 +2247,13 @@ namespace Quantumart.QP8.DAL
             string parentEntityTypeCode = "",
             int parentEntityId = 0,
             List<int> selectedIds = null,
-            IList<SqlParameter> sqlParameters = null,
+            IList<DbParameter> sqlParameters = null,
             bool useSql2012Syntax = false,
             List<int> filterIds = null)
         {
             totalRecords = 0;
             DataTable result = null;
+            var databaseType = GetDbType(sqlConnection);
             if (useSecurity)
             {
                 var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel, entityTypeCode, parentEntityTypeCode, parentEntityId);
@@ -2023,7 +2264,7 @@ namespace Quantumart.QP8.DAL
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();
-                countBuilder.Append("SELECT @total_records = COUNT(*) from ");
+                countBuilder.Append("SELECT COUNT(*) from ");
                 countBuilder.AppendLine(fromBlock);
                 if (!string.IsNullOrEmpty(filter))
                 {
@@ -2031,33 +2272,21 @@ namespace Quantumart.QP8.DAL
                     countBuilder.Append(filter);
                 }
 
-                using (var countCmd = SqlCommandFactory.Create(countBuilder.ToString(), sqlConnection))
+                using (var countCmd = DbCommandFactory.Create(countBuilder.ToString(), sqlConnection))
                 {
                     countCmd.CommandType = CommandType.Text;
-                    countCmd.Parameters.Add(new SqlParameter("total_records", SqlDbType.Int)
-                    {
-                        Direction = ParameterDirection.Output
-                    });
-
-                    countCmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(selectedIds)
-                    });
-
-                    countCmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(filterIds)
-                    });
+                    countCmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
+                    countCmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
 
                     if (sqlParameters != null)
                     {
                         countCmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
 
-                    countCmd.ExecuteNonQuery();
-                    totalRecords = (int)countCmd.Parameters["total_records"].Value;
+
+
+                    var countResult = countCmd.ExecuteScalar();
+                    totalRecords = Convert.ToInt32(countResult);
                 }
             }
 
@@ -2095,7 +2324,7 @@ namespace Quantumart.QP8.DAL
                     sqlBuilder.AppendLine(@"OFFSET @startRow ROWS ");
                     if (endRow > 0)
                     {
-                        sqlBuilder.AppendLine(@"FETCH NEXT @endRow - @startRow ROWS ONLY ");
+                        sqlBuilder.AppendLine(@"FETCH NEXT (@endRow - @startRow) ROWS ONLY ");
                     }
                 }
                 else
@@ -2136,36 +2365,66 @@ namespace Quantumart.QP8.DAL
                     sqlBuilder.AppendLine("ORDER BY ROW_NUMBER ASC");
                 }
 
-                using (var cmd = SqlCommandFactory.Create(sqlBuilder.ToString(), sqlConnection))
+                using (var cmd = DbCommandFactory.Create(sqlBuilder.ToString(), sqlConnection))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
-                    cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
-                    cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(selectedIds)
-                    });
 
-                    cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
-                    {
-                        TypeName = "Ids",
-                        Value = IdsToDataTable(filterIds)
-                    });
+                    cmd.Parameters.AddWithValue("@startRow", startRow);
+                    cmd.Parameters.AddWithValue("@endRow", endRow);
+                    cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
+                    cmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
 
                     if (sqlParameters != null)
                     {
                         cmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
 
+                    // switch (databaseType)
+                    // {
+                    //     case DatabaseType.SqlServer:
+                    //         cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
+                    //         cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
+                    //         cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
+                    //         {
+                    //             TypeName = "Ids",
+                    //             Value = IdsToDataTable(selectedIds)
+                    //         });
+                    //
+                    //         cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
+                    //         {
+                    //             TypeName = "Ids",
+                    //             Value = IdsToDataTable(filterIds)
+                    //         });
+                    //
+                    //         if (sqlParameters != null)
+                    //         {
+                    //             cmd.Parameters.AddRange(sqlParameters.ToArray());
+                    //         }
+                    //         break;
+                    //     case DatabaseType.Postgres:
+                    //         cmd.Parameters.Add(new NpgsqlParameter("@startRow", NpgsqlDbType.Integer) { Value = startRow });
+                    //         cmd.Parameters.Add(new NpgsqlParameter("@endRow", NpgsqlDbType.Integer) { Value = endRow });
+                    //         cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
+                    //         cmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
+                    //
+                    //         if (sqlParameters != null)
+                    //         {
+                    //             cmd.Parameters.AddRange(sqlParameters.ToArray());
+                    //         }
+                    //         break;
+                    //     default:
+                    //         throw new ArgumentOutOfRangeException();
+                    // }
+
+
                     var ds = new DataSet();
-                    new SqlDataAdapter(cmd).Fill(ds);
+                    DataAdapterFactory.Create(cmd).Fill(ds);
                     if (ds.Tables.Count > 0)
                     {
                         result = ds.Tables[0];
                         if (!forceCountQuery)
                         {
-                            totalRecords = result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.CountColumn] : 0;
+                            totalRecords = result.Rows.Count != 0 ? Convert.ToInt32(result.Rows[0][QPModelDataContext.CountColumn]) : 0;
                         }
                     }
                 }
@@ -2174,7 +2433,7 @@ namespace Quantumart.QP8.DAL
             return result.AsEnumerable().ToArray();
         }
 
-        public static IEnumerable<DataRow> GetButtonTracePage(SqlConnection sqlConnection, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        public static IEnumerable<DataRow> GetButtonTracePage(DbConnection sqlConnection, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var fromBuilder = new StringBuilder();
             fromBuilder.Append(" dbo.[BUTTON_TRACE] BT");
@@ -2199,7 +2458,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получить страницу Removed Entities
         /// </summary>
-        public static IEnumerable<DataRow> GetRemovedEntitiesPage(SqlConnection sqlConnection, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
+        public static IEnumerable<DataRow> GetRemovedEntitiesPage(DbConnection sqlConnection, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
             sqlConnection,
             EntityTypeCode.CustomerCode,
             "RE.ID as EntityId, RE.PARENT_ID as ParentEntityId, RE.ENTITY_NAME as EntityTypeCode, RE.TITLE as EntityTitle" +
@@ -2215,7 +2474,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Получить страницу Sessions
         /// </summary>
-        public static IEnumerable<DataRow> GetSessionsPage(SqlConnection sqlConnection, bool isFailed, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
+        public static IEnumerable<DataRow> GetSessionsPage(DbConnection sqlConnection, bool isFailed, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
             sqlConnection,
             EntityTypeCode.CustomerCode,
             "[SESSION_ID] AS SessionId, [LOGIN] as [Login], [USER_ID] as [UserId], [START_TIME] as [StartTime], [END_TIME] as [EndTime], [IP]" +
@@ -2228,39 +2487,71 @@ namespace Quantumart.QP8.DAL
             out totalRecords
         );
 
-        public static IEnumerable<DataRow> GetNotificationsPage(SqlConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Notification,
-            "[NOTIFICATION_ID] AS Id, [NOTIFICATION_NAME] as [Name], n.[CREATED] as [Created], n.[MODIFIED] as [Modified], n.no_email, n.LAST_MODIFIED_BY as[LastModifiedBy], " +
-            "n.IS_EXTERNAL as[IsExternal], u2.LOGIN as [LastModifiedByLogin], [FOR_CREATE] as ForCreate, FOR_DELAYED_PUBLICATION as [ForDelayedPublication], " +
-            "[FOR_MODIFY] as ForModify, [For_Remove] as ForRemove, [for_status_changed] as [ForStatusChanged], [for_status_partially_changed] as ForStatusPartiallyChanged, [for_frontend] as ForFrontend," +
-            "n.GROUP_ID,n.[USER_ID],n.email_attribute_id, COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver",
-            "dbo.[NOTIFICATIONS] n left outer join user_group ug on n.group_id = ug.group_id " +
-            "left outer join users u on n.user_id = u.user_id left outer join CONTENT_ATTRIBUTE as a on n.email_attribute_id = a.ATTRIBUTE_ID " +
-            "inner join users u2 on n.LAST_MODIFIED_BY = u2.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name]",
-            "n.CONTENT_ID = " + contentId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
-
-        public static IEnumerable<DataRow> GetVisualEditorPluginsPage(SqlConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.VisualEditorPlugin,
-            "p.[ID] as [Id], p.[NAME] as [Name], p.[DESCRIPTION] as [Description], p.[URL] as [Url], p.[ORDER] as [Order], p.[CREATED] as [Created]," +
-            "p.[MODIFIED] as [Modified], p.LAST_MODIFIED_BY as[LastModifiedBy], u.LOGIN as [LastModifiedByLogin]",
-            "dbo.[VE_PLUGIN] p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Order]",
-            "",
-            startRow,
-            pageSize,
-            out totalRecords
-        );
-
-        public static int GetVisualEditorPluginMaxOrder(SqlConnection sqlConnection)
+        public static IEnumerable<DataRow> GetNotificationsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            using (var cmd = SqlCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]", sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+
+            var selectBlock = $@"
+NOTIFICATION_ID AS Id,
+NOTIFICATION_NAME as {Escape(dbType, "Name")},
+n.CREATED as Created,
+n.MODIFIED as Modified,
+n.no_email,
+n.LAST_MODIFIED_BY as LastModifiedBy,
+n.IS_EXTERNAL as IsExternal,
+u2.LOGIN as LastModifiedByLogin,
+FOR_CREATE as ForCreate,
+FOR_DELAYED_PUBLICATION as ForDelayedPublication,
+FOR_MODIFY as ForModify,
+For_Remove as ForRemove,
+for_status_changed as ForStatusChanged,
+for_status_partially_changed as ForStatusPartiallyChanged,
+for_frontend as ForFrontend,
+n.GROUP_ID,
+n.USER_ID,
+n.email_attribute_id,
+COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
+
+
+            var fromBlock = $@"{DbSchemaName(dbType)}.NOTIFICATIONS n left outer join user_group ug on n.group_id = ug.group_id
+                left outer join users u on n.user_id = u.user_id left outer join CONTENT_ATTRIBUTE as a on n.email_attribute_id = a.ATTRIBUTE_ID
+                inner join users u2 on n.LAST_MODIFIED_BY = u2.user_id";
+
+
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Notification,
+                selectBlock,
+                fromBlock,
+                !string.IsNullOrEmpty(orderBy) ? orderBy : Escape(dbType, "Name"),
+                $"n.CONTENT_ID = {contentId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetVisualEditorPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var escapedOrderColumnName = Escape(dbType, "ORDER");
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.VisualEditorPlugin,
+                $"p.ID as Id, p.NAME as Name, p.DESCRIPTION as Description, p.URL as Url, p.{escapedOrderColumnName} as {escapedOrderColumnName}, p.CREATED as Created," +
+                "p.MODIFIED as Modified, p.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "VE_PLUGIN p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : escapedOrderColumnName,
+                "",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static int GetVisualEditorPluginMaxOrder(DbConnection sqlConnection)
+        {
+            using (var cmd = DbCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var maxOrder = cmd.ExecuteScalar();
@@ -2268,9 +2559,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetVisualEditorStyleMaxOrder(SqlConnection sqlConnection)
+        public static int GetVisualEditorStyleMaxOrder(DbConnection sqlConnection)
         {
-            using (var cmd = SqlCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_STYLE]", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_STYLE]", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var maxOrder = cmd.ExecuteScalar();
@@ -2278,9 +2569,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetDisplayColumns(SqlConnection sqlConnection, int contentId)
+        public static IEnumerable<DataRow> GetDisplayColumns(DbConnection sqlConnection, int contentId)
         {
             var queryBuilder = new StringBuilder();
+            var databaseType = GetDbType(sqlConnection);
             queryBuilder.Append(
                 "SELECT ca.ATTRIBUTE_ID, ca.ATTRIBUTE_NAME, ca.ATTRIBUTE_TYPE_ID, rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID, rca.ATTRIBUTE_TYPE_ID AS RELATED_ATTRIBUTE_TYPE_ID, ");
             queryBuilder.Append(
@@ -2288,25 +2580,26 @@ namespace Quantumart.QP8.DAL
             queryBuilder.Append(
                 " rrca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID2, rrca.ATTRIBUTE_TYPE_ID AS RELATED_ATTRIBUTE_TYPE_ID2, rrca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME2, rrca.CONTENT_ID AS RELATED_CONTENT_ID2, ");
             queryBuilder.Append(
-                " CAST(ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ORDER ASC) AS NUMERIC) AS 'RELATED_COUNT' ");
+                " CAST(ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ORDER ASC) AS NUMERIC) AS RELATED_COUNT ");
             queryBuilder.Append(" FROM CONTENT_ATTRIBUTE AS ca ");
             queryBuilder.Append(" LEFT JOIN CONTENT_ATTRIBUTE AS rca ON rca.ATTRIBUTE_ID = ca.RELATED_ATTRIBUTE_ID ");
             queryBuilder.Append(" LEFT JOIN CONTENT_ATTRIBUTE AS rrca ON rrca.ATTRIBUTE_ID = rca.RELATED_ATTRIBUTE_ID ");
-            queryBuilder.Append(" WHERE ca.CONTENT_ID = @content_id AND ca.view_in_list = 1");
+            queryBuilder.Append($" WHERE ca.CONTENT_ID = @content_id AND ca.view_in_list = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, true)}");
             queryBuilder.Append(" ORDER BY ca.permanent_flag DESC, ca.attribute_order ASC");
-            using (var cmd = SqlCommandFactory.Create(queryBuilder.ToString(), sqlConnection))
+            using (var cmd = DbCommandFactory.Create(queryBuilder.ToString(), sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable();
             }
         }
 
-        public static bool IsArticlePermissionsAllowed(SqlConnection sqlConnection, int contentId)
+        public static bool IsArticlePermissionsAllowed(DbConnection sqlConnection, int contentId)
         {
-            using (var cmd = SqlCommandFactory.Create("select allow_items_permission from content with(nolock) where content_id = " + contentId, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            using (var cmd = DbCommandFactory.Create($"select allow_items_permission from content {WithNoLock(dbType)} where content_id = " + contentId, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var objResult = cmd.ExecuteScalar();
@@ -2314,8 +2607,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetArticlesPage(SqlConnection sqlConnection, ArticlePageOptions options, IList<SqlParameter> sqlParams, out int totalRecords)
+        public static IEnumerable<DataRow> GetArticlesPage(DbConnection sqlConnection, ArticlePageOptions options, IList<DbParameter> sqlParams, out int totalRecords)
         {
+            var databaseType = GetDbType(sqlConnection);
             var selectBuilder = new StringBuilder();
             var fromBuilder = new StringBuilder();
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(options.CommonFilter, options.ContextFilter));
@@ -2333,16 +2627,16 @@ namespace Quantumart.QP8.DAL
             }
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
-            AddStaticColumnsToQuery(options, useSelection, selectBuilder);
-            AddSourcesToQuery(options, useSelection, fromBuilder, fieldMap, referenceMap);
+            AddStaticColumnsToQuery(databaseType, options, useSelection, selectBuilder);
+            AddSourcesToQuery(databaseType, options, useSelection, fromBuilder, fieldMap, referenceMap);
             AddDynamicColumnsToQuery(sqlConnection, options, selectBuilder, fromBuilder, Default.MaxViewInListFieldLength + 1);
 
             var useFullText = AddFullTextFilteringToQuery(sqlConnection, options.FullTextSearch, options.ContentId, options.ExtensionContentIds, fromBuilder);
-            AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams, fieldMap, referenceMap);
+            AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams, fieldMap, referenceMap, databaseType);
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
             {
-                whereBuilder.Append(" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM @filterIds)");
+                whereBuilder.Append($" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM {(databaseType == DatabaseType.Postgres ? "unnest(@filterIds) i(id)" : "@filterIds")})");
             }
 
             var defaultSortExpression = useSelection ? "is_selected DESC, MODIFIED DESC" : "MODIFIED DESC";
@@ -2376,14 +2670,17 @@ namespace Quantumart.QP8.DAL
         public static void AddLinkFilteringToQuery(
             IEnumerable<ArticleLinkSearchParameter> linkFilters,
             StringBuilder whereBuilder,
-            ICollection<SqlParameter> sqlParams,
+            ICollection<DbParameter> sqlParams,
             IDictionary<int, string> fieldMap = null,
-            IDictionary<int, string> referenceMap = null)
+            IDictionary<int, string> referenceMap = null,
+            DatabaseType dbType = DatabaseType.SqlServer)
         {
             if (linkFilters == null)
             {
                 return;
             }
+
+            var ns = DbSchemaName(dbType);
 
             foreach (var linkFilter in linkFilters)
             {
@@ -2402,20 +2699,20 @@ namespace Quantumart.QP8.DAL
                 if (!linkFilter.IsNull)
                 {
                     var paramName = "@link" + linkFilter.LinkId;
-                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {paramName})" : string.Empty;
-                    sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids));
+                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {IdList(dbType, paramName)})" : string.Empty;
+                    sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids, dbType));
 
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString} EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {paramName}){unionAllSqlString})"
-                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}] and cu.content_item_id in (select id from {paramName})) ";
+                        ? $"{inverseString} EXISTS (select item_id from {ns}.item_link_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
+                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
                 {
                     inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString}EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
-                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}]) ";
+                        ? $"{inverseString}EXISTS (select item_id from {ns}.item_link_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
+                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)}) ";
                 }
 
                 if (whereBuilder.Length != 0)
@@ -2427,7 +2724,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static void AddRelationSecurityFilteringToQuery(SqlConnection connection, ArticlePageOptions options, StringBuilder fromBuilder, StringBuilder whereBuilder)
+        private static void AddRelationSecurityFilteringToQuery(DbConnection connection, ArticlePageOptions options, StringBuilder fromBuilder, StringBuilder whereBuilder)
         {
             if (options.RelationSecurityFilters != null)
             {
@@ -2438,9 +2735,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static void AddRelationSecurityFilteringToQuery(SqlConnection connection, ArticleRelationSecurityParameter filter, int userId, StringBuilder fromBuilder, StringBuilder whereBuilder)
+        private static void AddRelationSecurityFilteringToQuery(DbConnection connection, ArticleRelationSecurityParameter filter, int userId, StringBuilder fromBuilder, StringBuilder whereBuilder)
         {
             var securitySql = GetPermittedItemsAsQuery(connection, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, filter.RelatedContentId);
+            var dbType = GetDbType(connection);
+            var withNoLock = WithNoLock(dbType);
             if (filter.IsClassifier)
             {
                 if (whereBuilder.Length != 0)
@@ -2448,55 +2747,61 @@ namespace Quantumart.QP8.DAL
                     whereBuilder.Append(" AND ");
                 }
 
-                whereBuilder.AppendFormat("c.[{0}] in ({1})", filter.FieldName, string.Join(",", filter.AllowedContentIds));
+                whereBuilder.AppendLine($"c.{Escape(dbType, filter.FieldName)} in ({string.Join(",", filter.AllowedContentIds)})");
             }
             else if (filter.IsManyToMany)
             {
-                fromBuilder.AppendFormatLine(" inner join (select distinct linked_item_id from content_{0}_united link_sec_{1} with(nolock) ", filter.RelatedContentId, filter.FieldId);
-                fromBuilder.AppendFormatLine(" inner join item_link links_{1} with(nolock) on link_sec_{1}.content_item_id = links_{1}.item_id and links_{1}.link_id = {0} ", filter.LinkId, filter.FieldId);
-                fromBuilder.AppendFormatLine(" inner join ({0}) pi_{1} on link_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql, filter.FieldId);
-                fromBuilder.AppendFormatLine(" ) as sec_items_{0} on c.content_item_id = sec_items_{0}.linked_item_id ", filter.FieldId);
+                fromBuilder.AppendLine($" inner join (select distinct linked_item_id from content_{filter.RelatedContentId}_united link_sec_{filter.FieldId} {withNoLock} ");
+                fromBuilder.AppendLine($" inner join item_link links_{filter.FieldId} {withNoLock} on link_sec_{filter.FieldId}.content_item_id = links_{filter.FieldId}.item_id and links_{filter.FieldId}.link_id = {filter.LinkId} ");
+                fromBuilder.AppendLine($" inner join ({securitySql}) pi_{filter.FieldId} on link_sec_{filter.FieldId}.content_item_id = pi_{filter.FieldId}.content_item_id ");
+                fromBuilder.AppendLine($" ) as sec_items_{filter.FieldId} on c.content_item_id = sec_items_{filter.FieldId}.linked_item_id ");
             }
             else
             {
-                fromBuilder.AppendFormatLine(" inner join content_{0}_united rel_sec_{1} with(nolock) on c.[{2}] = rel_sec_{1}.content_item_id", filter.RelatedContentId, filter.FieldId, filter.FieldName);
-                fromBuilder.AppendFormatLine(" inner join ({0}) pi_{1} on rel_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql, filter.FieldId);
+                fromBuilder.AppendLine($" inner join content_{filter.RelatedContentId}_united rel_sec_{filter.FieldId} {withNoLock} on c.{Escape(dbType, filter.FieldName)} = rel_sec_{filter.FieldId}.content_item_id");
+                fromBuilder.AppendLine($" inner join ({securitySql}) pi_{filter.FieldId} on rel_sec_{filter.FieldId}.content_item_id = pi_{filter.FieldId}.content_item_id ");
             }
         }
 
-        private static void DropFullTextTemporaryTable(SqlConnection sqlConnection, bool useFullText)
+        private static string FtTempTable(DatabaseType dbType) => dbType == DatabaseType.SqlServer ? "#ft_temp" : "ft_temp";
+
+        private static void DropFullTextTemporaryTable(DbConnection sqlConnection, bool useFullText)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
             if (useFullText)
             {
-                using (var immediateCmd = SqlCommandFactory.Create("DROP TABLE #ft_temp", sqlConnection))
+                using (var immediateCmd = DbCommandFactory.Create($"DROP TABLE {FtTempTable(dbType)}", sqlConnection))
                 {
                     immediateCmd.ExecuteNonQuery();
                 }
             }
         }
 
-        public static bool AddFullTextFilteringToQuery(SqlConnection cn, ArticleFullTextSearchParameter ftsOptions, int contentId, int[] extensionContentIds, StringBuilder fromBuilder)
+        public static bool AddFullTextFilteringToQuery(DbConnection cn, ArticleFullTextSearchParameter ftsOptions, int contentId, int[] extensionContentIds, StringBuilder fromBuilder)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
+            var temp = dbType == DatabaseType.Postgres ? "TEMPORARY" : "";
+            var tempTable = FtTempTable(dbType);
             var useFullText = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
             if (useFullText)
             {
                 var sb = new StringBuilder();
-                sb.Append("CREATE TABLE #ft_temp (content_item_id decimal primary key); ");
-                sb.Append("insert into #ft_temp ");
+                sb.Append($"CREATE {temp} TABLE {tempTable} (content_item_id decimal primary key); ");
+                sb.Append($"insert into {tempTable} ");
                 sb.Append(GetFullTextSearchQuery(cn, contentId, extensionContentIds, ftsOptions));
 
-                using (var cmd = SqlCommandFactory.Create(sb.ToString(), cn))
+                using (var cmd = DbCommandFactory.Create(sb.ToString(), cn))
                 {
                     cmd.ExecuteNonQuery();
                 }
 
-                fromBuilder.AppendLine(" INNER JOIN #ft_temp as qp_fts ON c.content_item_id = qp_fts.content_item_id");
+                fromBuilder.AppendLine($" INNER JOIN {tempTable} as qp_fts ON c.content_item_id = qp_fts.content_item_id");
             }
 
             return useFullText;
         }
 
-        public static IList<int> GetFilterAndFtsSearchResult(SqlConnection cn, int contentId, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions, string searchFilterQuery, ICollection<SqlParameter> filterSqlParams)
+        public static IList<int> GetFilterAndFtsSearchResult(DbConnection cn, int contentId, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions, string searchFilterQuery, ICollection<DbParameter> filterSqlParams)
         {
             var ftsQuery = string.IsNullOrWhiteSpace(ftsOptions.QueryString) ? string.Empty : GetFullTextSearchQuery(cn, contentId, extensionContentIds, ftsOptions);
             var unionQuery = string.IsNullOrWhiteSpace(ftsQuery) || string.IsNullOrWhiteSpace(searchFilterQuery)
@@ -2506,15 +2811,16 @@ namespace Quantumart.QP8.DAL
             return GetDatatableResult(cn, unionQuery, filterSqlParams.ToArray()).Select(dr => (int)dr.Field<decimal>(0)).Distinct().ToList();
         }
 
-        public static string GetFullTextSearchQuery(SqlConnection cn, int contentId, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        public static string GetFullTextSearchQuery(DbConnection cn, int contentId, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(cn);
             string allContentIds;
             IDictionary<int, string> aggregatedFieldMap = null;
             var allfields = string.IsNullOrEmpty(ftsOptions.FieldIdList);
             var textfields = !allfields && ftsOptions.FieldIdList.Contains(",");
             if (allfields || textfields)
             {
-                extensionContentIds = GetReferencedAggregatedContentIds(cn, contentId, null);
+                extensionContentIds = GetReferencedAggregatedContentIds(null, cn, contentId, null);
                 aggregatedFieldMap = GetAggregatedFieldNames(cn, extensionContentIds);
                 allContentIds = string.Join(",", new[] { contentId }.Concat(extensionContentIds));
             }
@@ -2531,55 +2837,72 @@ namespace Quantumart.QP8.DAL
             }
 
             var sb = new StringBuilder();
-            sb.Append($"SELECT DISTINCT TOP({ftsOptions.SearchResultLimit}) ");
+            var top = dbType == DatabaseType.SqlServer ? $"TOP({ftsOptions.SearchResultLimit}) " : "";
+            sb.Append($"SELECT DISTINCT {top}");
             if (extensionContentIds != null && extensionContentIds.Any())
             {
-                sb.AppendFormat("case CI.CONTENT_ID when {0} then CI.CONTENT_ITEM_ID ", contentId);
+                sb.Append(" COALESCE(");
                 if (aggregatedFieldMap != null)
                 {
                     foreach (var cid in extensionContentIds.Where(aggregatedFieldMap.ContainsKey))
                     {
-                        sb.AppendFormat("when {0} then CEX_{0}.{1}  ", cid, aggregatedFieldMap[cid]);
+                        sb.Append($"CEX_{cid}.{aggregatedFieldMap[cid]}, ");
                     }
                 }
-
-                sb.Append("end CONTENT_ITEM_ID ");
+                sb.Append("CI.CONTENT_ITEM_ID) AS CONTENT_ITEM_ID ");
             }
             else
             {
                 sb.Append("CI.CONTENT_ITEM_ID ");
             }
 
-            sb.Append("from content_item CI ");
-            sb.Append("join content_data CD on CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ");
+            sb.AppendLine("from content_item CI ");
+            sb.AppendLine("inner join content_data CD on CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ");
+            if (dbType == DatabaseType.Postgres)
+            {
+                sb.AppendLine($"cross join {GetPgFtQuery(ftsOptions.RawQueryString)} q");
+            }
             if (extensionContentIds != null && aggregatedFieldMap != null)
             {
                 foreach (var cid in extensionContentIds.Where(aggregatedFieldMap.ContainsKey))
                 {
-                    sb.AppendFormat("left join CONTENT_{0} CEX_{0} on CI.CONTENT_ITEM_ID = CEX_{0}.CONTENT_ITEM_ID ", cid);
+                    sb.AppendLine($"left join CONTENT_{cid} CEX_{cid} on CI.CONTENT_ITEM_ID = CEX_{cid}.CONTENT_ITEM_ID ");
                 }
             }
 
-            sb.AppendFormat("where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID and CI.CONTENT_ID IN ({0}) ", allContentIds);
-            var fieldCondition = allfields ? string.Empty : $" CD.ATTRIBUTE_ID in ({ftsOptions.FieldIdList}) and ";
-            sb.AppendFormat("and ({0} contains(CD.*, '{1}')) ", fieldCondition, ftsOptions.QueryString);
+            sb.AppendLine($"where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID and CI.CONTENT_ID IN ({allContentIds}) ");
+            if (!allfields)
+            {
+                sb.AppendLine($" and CD.ATTRIBUTE_ID in ({ftsOptions.FieldIdList}) ");
+            }
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sb.AppendLine($" and contains(CD.*, '{ftsOptions.QueryString}') ");
+            }
+            else
+            {
+                sb.AppendLine(" and CD.ft_data @@ q");
+            }
 
             int parsedInt;
             var parsed = int.TryParse(ftsOptions.RawQueryString, out parsedInt);
             if (allfields && parsed)
             {
-                sb.AppendFormat("union select ci2.content_item_id from content_item ci2 where ci2.content_id IN ({0}) and ci2.CONTENT_ITEM_ID = {1} ", allContentIds, parsedInt);
+                sb.AppendLine($"union select ci2.content_item_id from content_item ci2 where ci2.content_id IN ({allContentIds}) and ci2.CONTENT_ITEM_ID = {parsedInt} ");
             }
 
             return sb.ToString();
         }
 
-        private static void AddDynamicColumnsToQuery(SqlConnection sqlConnection, ArticlePageOptions options, StringBuilder selectBuilder, StringBuilder fromBuilder, int maxDisplayLength)
+        private static void AddDynamicColumnsToQuery(DbConnection sqlConnection, ArticlePageOptions options, StringBuilder selectBuilder, StringBuilder fromBuilder, int maxDisplayLength)
         {
             if (options.OnlyIds)
             {
                 return;
             }
+
+            var databaseType = GetDbType(sqlConnection);
 
             foreach (var row in GetDisplayColumns(sqlConnection, options.ContentId))
             {
@@ -2589,18 +2912,18 @@ namespace Quantumart.QP8.DAL
                 var isFieldAClassifier = row.Field<bool>("IS_CLASSIFIER");
                 if (isFieldAClassifier)
                 {
-                    selectBuilder.AppendFormat(", [cnt_{0}].[CONTENT_NAME] as [{0}]", fieldName);
-                    fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT AS [cnt_{0}] ON [cnt_{0}].[content_id] = c.[{0}] ", fieldName);
+                    selectBuilder.AppendFormat($", {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, $"cnt_{fieldName}")}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_NAME")} as {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}", fieldName);
+                    fromBuilder.AppendFormatLine($" LEFT JOIN CONTENT AS cnt_{fieldName} ON cnt_{fieldName}.content_id = c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)} ");
                 }
                 else
                 {
                     if (viewInList && (fieldType == FieldTypeCodes.VisualEdit || fieldType == FieldTypeCodes.Textbox))
                     {
-                        selectBuilder.AppendFormat(", substring(c.[{0}], 1, {1}) as [{0}]", fieldName, maxDisplayLength);
+                        selectBuilder.AppendFormat($", substring(c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}, 1, {maxDisplayLength}) as {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}", fieldName, maxDisplayLength);
                     }
                     else
                     {
-                        selectBuilder.AppendFormat(", c.[{0}]", fieldName);
+                        selectBuilder.Append($", c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)}");
                     }
                 }
 
@@ -2619,10 +2942,10 @@ namespace Quantumart.QP8.DAL
                     }
 
                     var attributeTypeId = (int)row.Field<decimal>("RELATED_ATTRIBUTE_TYPE_ID");
-                    var currentBlock = GetCurrentBlock(tableAlias, relatedFieldName, attributeTypeId);
+                    var currentBlock = GetCurrentBlock(databaseType, tableAlias, relatedFieldName, attributeTypeId);
 
                     selectBuilder.AppendFormat(", {0} AS {1}", currentBlock, fieldAlias);
-                    fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_UNITED AS {1} with(nolock) ON c.[{2}] = {1}.content_item_id ", relatedContentId, tableAlias, fieldName);
+                    fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId}_UNITED AS {tableAlias} {WithNoLock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fieldName)} = {tableAlias}.content_item_id ");
 
                     var relatedAttributeId2 = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID2");
                     if (relatedAttributeId2.HasValue)
@@ -2633,109 +2956,113 @@ namespace Quantumart.QP8.DAL
 
                         var tableAlias2 = tableAlias + "_r1";
                         var fieldAlias2 = fieldAlias + "_r1";
-                        var currentBlock2 = GetCurrentBlock(tableAlias2, relatedFieldName2, attributeTypeId2);
+                        var currentBlock2 = GetCurrentBlock(databaseType, tableAlias2, relatedFieldName2, attributeTypeId2);
 
                         selectBuilder.AppendFormat(", {0} AS {1}", currentBlock2, fieldAlias2);
-                        fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_UNITED AS {1} with(nolock) ON {2}.[{3}] = {1}.content_item_id ", relatedContentId2, tableAlias2, tableAlias, relatedFieldName);
+                        fromBuilder.AppendLine($" LEFT JOIN CONTENT_{relatedContentId2}_UNITED AS {tableAlias2} {WithNoLock(databaseType)} ON {tableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relatedFieldName)} = {tableAlias2}.content_item_id ");
                     }
                 }
             }
         }
 
-        private static string GetCurrentBlock(string tableAlias, string relatedFieldName, int attributeTypeId)
+        private static string GetCurrentBlock(DatabaseType databaseType, string tableAlias, string relatedFieldName, int attributeTypeId)
         {
-            var currentBlock = $"{tableAlias}.[{relatedFieldName}]";
+            var currentBlock = $"{tableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, relatedFieldName)}";
             if (attributeTypeId == FieldTypeCodes.Textbox || attributeTypeId == FieldTypeCodes.VisualEdit)
             {
-                currentBlock = $"cast ({currentBlock} as nvarchar(255))";
+                currentBlock = $"cast ({currentBlock} as {(databaseType == DatabaseType.Postgres ? "varchar" : "nvarchar")}(255))";
             }
 
             return currentBlock;
         }
 
-        private static void AddSourcesToQuery(ArticlePageOptions options, bool useSelection, StringBuilder fromBuilder, IDictionary<int, string> fieldMap, IDictionary<int, string> referenceMap)
+        private static void AddSourcesToQuery(DatabaseType databaseType, ArticlePageOptions options, bool useSelection, StringBuilder fromBuilder, IDictionary<int, string> fieldMap, IDictionary<int, string> referenceMap)
         {
+            var isPostgres = databaseType == DatabaseType.Postgres;
             var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
-            fromBuilder.AppendFormatLine(" dbo.CONTENT_{0}_UNITED c with(nolock) ", options.ContentId);
+            fromBuilder.AppendLine($" {DbSchemaName(databaseType)}.CONTENT_{options.ContentId}_UNITED c {WithNoLock(databaseType)}");
 
             if (!options.UseMainTableForVariations)
             {
-                fromBuilder.AppendFormatLine(" INNER JOIN CONTENT_{0}_UNITED ch with(nolock) on c.[{1}] = ch.CONTENT_ITEM_ID", options.ContentId, options.VariationFieldName);
+                fromBuilder.AppendLine($" INNER JOIN CONTENT_{options.ContentId}_UNITED ch {WithNoLock(databaseType)} on c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, options.VariationFieldName)} = ch.CONTENT_ITEM_ID");
             }
 
             if (!options.IsVirtual)
             {
-                fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_ITEM cil with(nolock) on {0}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL", tablePrefix);
-                fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_ASYNC ca with(nolock) on {1}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID", options.ContentId, tablePrefix);
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] lu WITH(NOLOCK) ON cil.LOCKED_BY = lu.USER_ID");
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[CONTENT_ITEM_SCHEDULE] sch WITH(NOLOCK) ON {0}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID", tablePrefix);
+                fromBuilder.AppendLine($" LEFT JOIN CONTENT_ITEM cil {WithNoLock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL");
+                fromBuilder.AppendLine($" LEFT JOIN CONTENT_{options.ContentId}_ASYNC ca {WithNoLock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} lu {WithNoLock(databaseType)} ON cil.LOCKED_BY = lu.USER_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_ITEM_SCHEDULE")} sch {WithNoLock(databaseType)} ON {tablePrefix}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID");
             }
 
-            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] mu WITH(NOLOCK) ON {0}.LAST_MODIFIED_BY = mu.USER_ID", tablePrefix);
-            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[STATUS_TYPE] st WITH(NOLOCK) ON {0}.STATUS_TYPE_ID = st.STATUS_TYPE_ID", tablePrefix);
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} mu {WithNoLock(databaseType)} ON {tablePrefix}.LAST_MODIFIED_BY = mu.USER_ID");
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "STATUS_TYPE")} st {WithNoLock(databaseType)} ON {tablePrefix}.STATUS_TYPE_ID = st.STATUS_TYPE_ID");
 
             if (useSelection)
             {
-                fromBuilder.AppendFormatLine(" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM with(nolock) where CONTENT_ITEM_ID in (select id from @itemIds)) AS cis ON {0}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ", tablePrefix);
+                fromBuilder.AppendLine($" LEFT OUTER JOIN (SELECT CONTENT_ITEM_ID from CONTENT_ITEM {WithNoLock(databaseType)} where CONTENT_ITEM_ID in (select id from {(databaseType == DatabaseType.Postgres ? "unnest(@itemIds) i(id)" : "@itemIds")})) AS cis ON {tablePrefix}.CONTENT_ITEM_ID = cis.CONTENT_ITEM_ID ");
             }
 
             if (options.UseSecurity)
             {
                 const string innerSql = "SELECT sec.content_item_id AS ALLOWED_CONTENT_ITEM_ID, sec.permission_level AS PERMISSION_LEVEL FROM (<$_security_insert_$>) AS sec";
-                fromBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pl ON {1}.CONTENT_ITEM_ID = pl.ALLOWED_CONTENT_ITEM_ID", innerSql, tablePrefix);
+                fromBuilder.AppendLine($" INNER JOIN ({innerSql}) AS pl ON {tablePrefix}.CONTENT_ITEM_ID = pl.ALLOWED_CONTENT_ITEM_ID");
             }
 
             foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldId)))
             {
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldId, referenceMap[reference.ReferenceFieldId]);
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{reference.TargetContentId}_UNITED c_{reference.TargetContentId}_{reference.ReferenceFieldId} {WithNoLock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, referenceMap[reference.ReferenceFieldId])} = c_{reference.TargetContentId}_{reference.ReferenceFieldId}.CONTENT_ITEM_ID");
             }
 
             foreach (var contentId in options.ExtensionContentIds)
             {
                 if (fieldMap.ContainsKey(contentId))
                 {
-                    fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0} with(nolock) ON c.CONTENT_ITEM_ID = c_{0}.{1}", contentId, fieldMap[contentId]);
+                    fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{contentId}_UNITED c_{contentId} {WithNoLock(databaseType)} ON c.CONTENT_ITEM_ID = c_{contentId}.{fieldMap[contentId]}");
                 }
             }
         }
 
-        private static void AddStaticColumnsToQuery(ArticlePageOptions options, bool useSelection, StringBuilder selectBuilder)
+        private static void AddStaticColumnsToQuery(DatabaseType databaseType, ArticlePageOptions options, bool useSelection, StringBuilder selectBuilder)
         {
+            var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
             if (options.OnlyIds)
             {
-                selectBuilder.AppendFormat(" {0}.CONTENT_ITEM_ID ", options.UseMainTableForVariations ? "c" : "ch");
+                selectBuilder.Append($" {tablePrefix}.CONTENT_ITEM_ID ");
             }
             else
             {
                 const string colorString = ", CASE WHEN st.COLOR IS NOT NULL AND ST.ALT_COLOR IS NOT NULL THEN ST.STATUS_TYPE_ID ELSE NULL END AS STATUS_TYPE_COLOR";
-                selectBuilder.AppendFormat(
-                    " {0}.CONTENT_ITEM_ID, {0}.CREATED, {0}.MODIFIED, {0}.LAST_MODIFIED_BY, st.STATUS_TYPE_NAME{1}, CAST({0}.visible as bit) as visible",
-                    options.UseMainTableForVariations ? "c" : "ch", colorString
+                selectBuilder.Append(
+                    $" {tablePrefix}.CONTENT_ITEM_ID, {tablePrefix}.CREATED, {tablePrefix}.MODIFIED, {tablePrefix}.LAST_MODIFIED_BY, st.STATUS_TYPE_NAME{colorString}, {SqlQuerySyntaxHelper.CastToBool(databaseType, $"{tablePrefix}.visible")} as visible"
                 );
 
+                var falseValue = SqlQuerySyntaxHelper.ToBoolSql(databaseType, false);
                 if (!options.IsVirtual)
                 {
                     selectBuilder.Append(", cil.LOCKED_BY");
-                    selectBuilder.Append(", CAST((CASE WHEN (sch.content_item_id IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled");
-                    selectBuilder.Append(", CAST((CASE WHEN (ca.content_item_id IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS splitted");
-                    selectBuilder.Append(", lu.FIRST_NAME AS LOCKER_FIRST_NAME, lu.LAST_NAME AS LOCKER_LAST_NAME, lu.[LOGIN] AS LOCKER_LOGIN");
+                    selectBuilder.Append($", {SqlQuerySyntaxHelper.CastToBool(databaseType, "(CASE WHEN (sch.content_item_id IS NOT NULL) THEN 1 ELSE 0 END)")} AS scheduled");
+                    selectBuilder.Append($", {SqlQuerySyntaxHelper.CastToBool(databaseType, "(CASE WHEN (ca.content_item_id IS NOT NULL) THEN 1 ELSE 0 END)")} AS splitted");
+                    selectBuilder.Append($", lu.FIRST_NAME AS LOCKER_FIRST_NAME, lu.LAST_NAME AS LOCKER_LAST_NAME, lu.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "LOGIN")} AS LOCKER_LOGIN");
                 }
                 else
                 {
-                    selectBuilder.Append(", cast(NULL as numeric) AS LOCKED_BY, cast(0 as bit) AS SCHEDULED, cast(0 as bit) AS SPLITTED");
-                    selectBuilder.Append(", cast(NULL as nvarchar) AS LOCKER_FIRST_NAME, cast(NULL as nvarchar) AS LOCKER_LAST_NAME, cast(NULL as nvarchar) AS LOCKER_LOGIN");
+                    var nullStringValue = SqlQuerySyntaxHelper.CastToString(databaseType, "NULL");
+                    selectBuilder.Append($", cast(NULL as numeric) AS LOCKED_BY, {falseValue} AS SCHEDULED, {falseValue} AS SPLITTED");
+                    selectBuilder.Append($", {nullStringValue} AS LOCKER_FIRST_NAME, {nullStringValue} AS LOCKER_LAST_NAME, {nullStringValue} AS LOCKER_LOGIN");
                 }
 
-                selectBuilder.Append(", mu.FIRST_NAME AS MODIFIER_FIRST_NAME, mu.LAST_NAME AS MODIFIER_LAST_NAME ,mu.[LOGIN] AS MODIFIER_LOGIN");
+                selectBuilder.Append($", mu.FIRST_NAME AS MODIFIER_FIRST_NAME, mu.LAST_NAME AS MODIFIER_LAST_NAME ,mu.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "LOGIN")} AS MODIFIER_LOGIN");
                 selectBuilder.Append(useSelection
-                    ? ", CASE WHEN (cis.CONTENT_ITEM_ID IS NOT NULL) THEN 1 ELSE 0 END as is_selected"
-                    : ", 0 as is_selected");
+                    ? $", {SqlQuerySyntaxHelper.CastToBool(databaseType, "(CASE WHEN (cis.CONTENT_ITEM_ID IS NOT NULL) THEN 1 ELSE 0 END)")} as is_selected"
+                    : $", {falseValue} as is_selected");
             }
         }
 
-        public static IEnumerable<DataRow> GetFieldsPage(SqlConnection sqlConnection, FieldPageOptions options, out int totalRecords)
+        public static IEnumerable<DataRow> GetFieldsPage(DbConnection sqlConnection, FieldPageOptions options, out int totalRecords)
         {
             var aggregatedContentIds = GetReferencedAggregatedContentIds(sqlConnection, options.ContentId);
+            var dbType = GetDbType(sqlConnection);
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var filter = "cnt.CONTENT_ID = " + options.ContentId;
@@ -2743,12 +3070,19 @@ namespace Quantumart.QP8.DAL
             if (options.Mode == FieldSelectMode.ForExport || options.Mode == FieldSelectMode.ForExportExpanded)
             {
                 filter = "cnt.CONTENT_ID IN (" + string.Join(",", aggregatedContentIds.Union(new[] { options.ContentId })) + ")";
-                filter = SqlFilterComposer.Compose(filter, "ca.AGGREGATED = 0");
+                filter = SqlFilterComposer.Compose(filter, $"ca.AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}");
                 filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
             }
 
+
             var selectBuilder = new StringBuilder();
-            selectBuilder.Append("ca.[ATTRIBUTE_ID] AS Id,  CASE WHEN (cnt.CONTENT_ID = " + options.ContentId + ") THEN [ATTRIBUTE_NAME] ELSE cnt.[CONTENT_NAME] + '.' + [ATTRIBUTE_NAME] END as [Name], [ATTRIBUTE_NAME] as [FieldName], cnt.[CONTENT_NAME] as [ContentName], ca.[CREATED] as [Created], ca.[MODIFIED] as [Modified], ATTRIBUTE_ORDER as [Order]");
+            selectBuilder.Append($@"ca.ATTRIBUTE_ID AS Id,
+  CASE WHEN (cnt.CONTENT_ID = {options.ContentId}) THEN ATTRIBUTE_NAME ELSE {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "cnt.CONTENT_NAME", "'.'", "ATTRIBUTE_NAME")} END as Name,
+ ATTRIBUTE_NAME as FieldName,
+ cnt.CONTENT_NAME as ContentName,
+ ca.CREATED as Created,
+ ca.MODIFIED as Modified,
+ ATTRIBUTE_ORDER as {Escape(dbType, "Order")}");
             selectBuilder.Append(", FRIENDLY_NAME as FriendlyName, ca.DESCRIPTION as Description, lmb.LOGIN as LastModifiedByUser, ca.ATTRIBUTE_TYPE_ID as TypeCode");
             selectBuilder.Append(", ATTRIBUTE_SIZE as Size, REQUIRED as Required, INDEX_FLAG as Indexed, MAP_AS_PROPERTY as MapAsProperty, VIEW_IN_LIST as ViewInList, at.icon AS TypeIcon, ca.LINK_ID as LinkId");
             if (useSelection)
@@ -2757,9 +3091,9 @@ namespace Quantumart.QP8.DAL
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append("dbo.[CONTENT] cnt INNER JOIN dbo.[CONTENT_ATTRIBUTE] ca ON cnt.CONTENT_ID = ca.CONTENT_ID");
-            fromBuilder.Append(" INNER JOIN dbo.[USERS] lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
-            fromBuilder.Append(" INNER JOIN [ATTRIBUTE_TYPE] at on ca.attribute_type_id = at.attribute_type_id");
+            fromBuilder.Append("CONTENT cnt INNER JOIN CONTENT_ATTRIBUTE ca ON cnt.CONTENT_ID = ca.CONTENT_ID");
+            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
+            fromBuilder.Append(" INNER JOIN ATTRIBUTE_TYPE at on ca.attribute_type_id = at.attribute_type_id");
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT ATTRIBUTE_ID from CONTENT_ATTRIBUTE where ATTRIBUTE_ID in ({0})) AS cas ON ca.ATTRIBUTE_ID = cas.ATTRIBUTE_ID ", string.Join(",", options.SelectedIDs));
@@ -2770,28 +3104,31 @@ namespace Quantumart.QP8.DAL
                 EntityTypeCode.Field,
                 selectBuilder.ToString(),
                 fromBuilder.ToString(),
-                !string.IsNullOrEmpty(options.SortExpression) ? options.SortExpression : "[Order]",
+                !string.IsNullOrEmpty(options.SortExpression) ? options.SortExpression : Escape(dbType, "Order"),
                 filter,
                 options.StartRecord,
                 options.PageSize,
                 out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetContentsPage(SqlConnection sqlConnection, ContentPageOptions options, out int totalRecords)
+        public static IEnumerable<DataRow> GetContentsPage(DbConnection sqlConnection, ContentPageOptions options, out int totalRecords)
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
+            var dbType = GetDbType(sqlConnection);
             var selectBuilder = new StringBuilder();
+
             selectBuilder.Append("c.CONTENT_ID as Id, c.CONTENT_NAME as Name, c.DESCRIPTION as Description, c.CREATED as Created, c.MODIFIED as Modified, c.VIRTUAL_TYPE as VirtualType");
-            selectBuilder.AppendFormat(", s.SITE_NAME as SiteName, case when cg.CONTENT_GROUP_ID = dbo.qp_default_group_id(c.SITE_ID) then dbo.qp_translate(cg.NAME, {0}) else cg.Name end as GroupName, U.LOGIN as LastModifiedByUser", options.LanguageId);
+            selectBuilder.AppendFormat(", s.SITE_NAME as SiteName, cg.Name as GroupName, U.LOGIN as LastModifiedByUser", options.LanguageId);
             if (useSelection)
             {
                 selectBuilder.Append(", CASE WHEN (cis.CONTENT_ID IS NOT NULL) THEN 1 ELSE 0 END as isSelected");
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append("dbo.CONTENT c INNER JOIN dbo.SITE s ON c.SITE_ID = s.SITE_ID");
-            fromBuilder.Append(" INNER JOIN dbo.[USERS] u ON c.LAST_MODIFIED_BY = U.USER_ID");
-            fromBuilder.Append(" LEFT JOIN dbo.[CONTENT_GROUP] cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
+            var ns = DbSchemaName(dbType);
+            fromBuilder.Append($"{ns}.CONTENT c INNER JOIN {ns}.SITE s ON c.SITE_ID = s.SITE_ID");
+            fromBuilder.Append($" INNER JOIN {ns}.{Escape(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in ({0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", string.Join(",", options.SelectedIDs));
@@ -2799,7 +3136,7 @@ namespace Quantumart.QP8.DAL
 
             if (options.Mode == ContentSelectMode.ForWorkflow)
             {
-                fromBuilder.Append(" LEFT JOIN dbo.[CONTENT_WORKFLOW_BIND] cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
+                fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_WORKFLOW_BIND cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
             }
 
             if (options.UseSecurity)
@@ -2823,17 +3160,18 @@ namespace Quantumart.QP8.DAL
 
             if (!string.IsNullOrWhiteSpace(options.ContentName))
             {
-                filterBuilder.AppendFormat("C.CONTENT_NAME LIKE '%{0}%' AND ", Cleaner.ToSafeSqlLikeCondition(options.ContentName));
+                filterBuilder.AppendFormat("C.CONTENT_NAME LIKE '%{0}%' AND ", Cleaner.ToSafeSqlLikeCondition(dbType, options.ContentName));
             }
 
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
             switch (options.Mode)
             {
                 case ContentSelectMode.ForUnion:
-                    filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND VIRTUAL_TYPE IN (0, 1))", options.SiteId);
+                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND VIRTUAL_TYPE IN (0, 1))");
                     break;
 
                 case ContentSelectMode.ForJoin:
-                    filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND VIRTUAL_TYPE = 0)", options.SiteId);
+                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND VIRTUAL_TYPE = 0)");
                     break;
 
                 case ContentSelectMode.ForField:
@@ -2841,11 +3179,11 @@ namespace Quantumart.QP8.DAL
                     break;
 
                 case ContentSelectMode.ForContainer:
-                    filterBuilder.AppendFormat("(C.SITE_ID = {0} or c.is_shared = 1) ", options.SiteId);
+                    filterBuilder.Append($"(C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) ");
                     break;
 
                 case ContentSelectMode.ForForm:
-                    filterBuilder.AppendFormat("((C.SITE_ID = {0} or c.is_shared = 1) AND c.VIRTUAL_TYPE = 0) ", options.SiteId);
+                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND c.VIRTUAL_TYPE = 0) ");
                     break;
 
                 case ContentSelectMode.ForCustomAction:
@@ -2882,21 +3220,22 @@ namespace Quantumart.QP8.DAL
             );
         }
 
-        public static IEnumerable<DataRow> GetSitesPage(SqlConnection sqlConnection, SitePageOptions options, out int totalRecords)
+        public static IEnumerable<DataRow> GetSitesPage(DbConnection sqlConnection, SitePageOptions options, out int totalRecords)
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var selectBuilder = new StringBuilder();
+            var dbType = GetDbType(sqlConnection);
 
             selectBuilder.Append("s.SITE_ID as Id, s.SITE_NAME as Name, s.DESCRIPTION as Description, s.CREATED as Created, s.MODIFIED as Modified, U.LOGIN as LastModifiedByUser");
-            selectBuilder.Append(", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName ");
+            selectBuilder.Append($", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName ");
             if (useSelection)
             {
                 selectBuilder.Append(", CASE WHEN (cis.SITE_ID IS NOT NULL) THEN 1 ELSE 0 END as isSelected");
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append("dbo.SITE s INNER JOIN dbo.[USERS] u ON s.LAST_MODIFIED_BY = u.USER_ID");
-            fromBuilder.Append(" LEFT JOIN dbo.[USERS] u2 ON s.LOCKED_BY = u2.USER_ID");
+            fromBuilder.Append($"{DbSchemaName(dbType)}.SITE s INNER JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} u ON s.LAST_MODIFIED_BY = u.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} u2 ON s.LOCKED_BY = u2.USER_ID");
 
             if (useSelection)
             {
@@ -2924,57 +3263,9 @@ namespace Quantumart.QP8.DAL
             );
         }
 
-        public static IEnumerable<DataRow> GetToolbarButtonsForAction(SqlConnection sqlConnection, int userId, string actionCode, int entityId)
+        public static IEnumerable<DataRow> GetChildTreeNodeList(DbConnection sqlConnection, int userId, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId = 0)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_get_toolbar_buttons_list_by_action_code", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("user_id", userId);
-                cmd.Parameters.AddWithValue("action_code", actionCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static IEnumerable<DataRow> GetActionStatusList(SqlConnection sqlConnection, int userId, string actionCode, int entityId)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_get_action_status_list", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("user_id", userId);
-                cmd.Parameters.AddWithValue("action_code", actionCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static IEnumerable<DataRow> GetMenuStatusList(SqlConnection sqlConnection, int userId, string menuCode, int entityId)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_get_menu_status_list", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("user_id", userId);
-                cmd.Parameters.AddWithValue("menu_code", menuCode);
-                cmd.Parameters.AddWithValue("entity_id", entityId);
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static IEnumerable<DataRow> GetChildTreeNodeList(SqlConnection sqlConnection, int userId, string entityTypeCode, int? parentEntityId, bool isFolder, bool isGroup, string groupItemCode, int entityId = 0)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_expand", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_expand", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("user_id", userId);
@@ -2986,14 +3277,18 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("filter_id", entityId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static DataRow GetContextMenuById(SqlConnection sqlConnection, int userId, int menuId, bool loadRelatedData = false)
+
+
+
+
+        public static DataRow GetContextMenuById(DbConnection sqlConnection, int userId, int menuId, bool loadRelatedData = false)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_get_context_menu_by_id", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_context_menu_by_id", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("user_id", userId);
@@ -3004,9 +3299,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataRow GetContextMenuByCode(SqlConnection sqlConnection, int userId, string menuCode, bool loadRelatedData = false)
+        public static DataRow GetContextMenuByCode(DbConnection sqlConnection, int userId, string menuCode, bool loadRelatedData = false)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_get_context_menu_by_code", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_context_menu_by_code", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("user_id", userId);
@@ -3017,9 +3312,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static DataRow ContextMenuDataSetFill(SqlCommand cmd)
+        private static DataRow ContextMenuDataSetFill(DbCommand cmd)
         {
-            var dataAdapter = new SqlDataAdapter(cmd);
+            var dataAdapter = DataAdapterFactory.Create(cmd);
             var ds = new DataSet();
             dataAdapter.Fill(ds);
 
@@ -3043,20 +3338,20 @@ namespace Quantumart.QP8.DAL
             return null;
         }
 
-        public static IEnumerable<DataRow> GetContextMenusList(SqlConnection sqlConnection, int userId)
+        public static IEnumerable<DataRow> GetContextMenusList(DbConnection sqlConnection, int userId)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_get_context_menus_list", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_context_menus_list", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("user_id", userId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static DataTable GetBaseFieldsForM2O(SqlConnection sqlConnection, int contentId, int fieldId)
+        public static DataTable GetBaseFieldsForM2O(DbConnection sqlConnection, int contentId, int fieldId)
         {
             var sb = new StringBuilder();
             sb.Append("select s.site_id, s.site_name, c.content_id, c.content_name, ca.attribute_name, ca.attribute_id from CONTENT_ATTRIBUTE ca ");
@@ -3066,29 +3361,19 @@ namespace Quantumart.QP8.DAL
             sb.Append("and not exists(select * from CONTENT_ATTRIBUTE where ATTRIBUTE_ID <> @field_id AND BACK_RELATED_ATTRIBUTE_ID = ca.attribute_id) ");
             sb.Append("and c.virtual_type = 0");
 
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@content_id", contentId);
                 cmd.Parameters.AddWithValue("@field_id", fieldId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt;
             }
         }
 
-        public static void UpdateChildDelayedSchedule(SqlConnection connection, int articleId)
+        public static bool CheckRelationCondition(DbConnection connection, int articleId, int contentId, string relCondition)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_copy_schedule_to_child_delays", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@id", articleId);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static bool CheckRelationCondition(SqlConnection connection, int articleId, int contentId, string relCondition)
-        {
-            using (var cmd = SqlCommandFactory.Create($"select count(content_item_id) as cnt from content_{contentId}_united c with(nolock) where content_item_id = @id and ({relCondition})", connection))
+            using (var cmd = DbCommandFactory.Create($"select count(content_item_id) as cnt from content_{contentId}_united c with(nolock) where content_item_id = @id and ({relCondition})", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", articleId);
@@ -3096,9 +3381,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetCurrentDbVersion(SqlConnection connection)
+        public static string GetCurrentDbVersion(DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_versions", connection))
+            if (IsPostgresConnection(connection)) return "7.9.9.0";
+            using (var cmd = DbCommandFactory.Create("qp_versions", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 using (var reader = cmd.ExecuteReader())
@@ -3131,12 +3417,12 @@ namespace Quantumart.QP8.DAL
             "d.BLOB_DATA IS NULL " +
             "and I.CONTENT_ID = @content_id";
 
-        private const string ApplyFieldDefaultValueGetM2MItemIdsToProcessQuery = " select i.CONTENT_ITEM_ID from content_item as i WHERE i.CONTENT_ID = @content_id and not exists (select * from [item_link_united] where item_id = i.CONTENT_ITEM_ID and link_id = @link_id ) ";
 
-        public static IEnumerable<int> ApplyFieldDefaultValue_GetM2MItemIdsToProcess(int contentId, int fieldId, string linkId, SqlConnection connection)
+        public static IEnumerable<int> ApplyFieldDefaultValue_GetM2MItemIdsToProcess(int contentId, int fieldId, int linkId, DbConnection connection)
         {
-            const string query = ApplyFieldDefaultValueGetM2MItemIdsToProcessQuery;
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            var query = $@" select i.CONTENT_ITEM_ID from content_item as i WHERE i.CONTENT_ID = @content_id
+            and not exists (select * from item_link_united where item_id = i.CONTENT_ITEM_ID and link_id = @link_id ) ";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
@@ -3144,99 +3430,120 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@link_id", linkId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().Select(r => Converter.ToInt32(r.Field<decimal>(0))).ToArray();
             }
         }
 
-        public static IEnumerable<int> ApplyFieldDefaultValue_GetItemIdsToProcess(int contentId, int fieldId, bool isBlob, SqlConnection connection)
+        public static IEnumerable<int> ApplyFieldDefaultValue_GetItemIdsToProcess(int contentId, int fieldId, bool isBlob, DbConnection connection)
         {
             var query = isBlob ? ApplyFieldDefaultValueGetItemIdsToProcessQueryForBlob : ApplyFieldDefaultValueGetItemIdsToProcessQuery;
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
                 cmd.Parameters.AddWithValue("@attr_id", fieldId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable()
                     .Select(r => Converter.ToInt32(r.Field<decimal>(0)))
                     .ToArray();
             }
         }
 
-        private const string ApplyFieldDefaultValueSetDefaultValueQueryTemplate =
-            "UPDATE content_data " +
-            "SET {0} = (SELECT {1} FROM content_attribute WHERE attribute_id = @attr_id) " +
-            "WHERE {0} IS NULL " +
-            "AND attribute_id = @attr_id " +
-            "AND CONTENT_ITEM_ID in ({2}) " +
-            "INSERT INTO content_data (attribute_id, content_item_id, {0}) " +
-            "select @attr_id, i.content_item_id, a.{1} from content_item as i " +
-            "LEFT OUTER JOIN content_attribute AS a " +
-            "ON a.content_id = i.content_id AND a.attribute_id = @attr_id " +
-            "where i.CONTENT_ITEM_ID in ({2}) and " +
-            "i.CONTENT_ITEM_ID not in (SELECT d.content_item_id FROM content_data AS d WHERE d.attribute_id = @attr_id)";
-
-        public static void ApplyFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, bool isBlob, bool isM2M, IEnumerable<int> idsForStep, SqlConnection connection)
+        public static void ApplyFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, bool isBlob, bool isM2M, IEnumerable<int> idsForStep, DbConnection connection)
         {
-            var contentDataColumn = isBlob ? "BLOB_DATA" : "DATA";
-            var attributeDefValueColumn = isBlob ? "DEFAULT_BLOB_VALUE" : "DEFAULT_VALUE";
+            var dbType = GetDbType(connection);
+            var contentDataColumn = isBlob && dbType == DatabaseType.SqlServer ? "BLOB_DATA" : "DATA";
+            var attributeDefValueColumn = "COALESCE(a.DEFAULT_BLOB_VALUE, a.DEFAULT_VALUE)";
             var contentItemsIds = string.Join(",", idsForStep);
-            var query = string.Format(ApplyFieldDefaultValueSetDefaultValueQueryTemplate, contentDataColumn, attributeDefValueColumn, contentItemsIds);
+            var sql = $@"UPDATE content_data
+                SET {contentDataColumn} = (SELECT {attributeDefValueColumn} FROM content_attribute a WHERE attribute_id = @attr_id)
+                WHERE {contentDataColumn} IS NULL
+                AND attribute_id = @attr_id
+                AND CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")});
+                INSERT INTO content_data (attribute_id, content_item_id, {contentDataColumn})
+                select @attr_id, i.content_item_id, {attributeDefValueColumn} from content_item as i
+                LEFT OUTER JOIN content_attribute a
+                ON a.content_id = i.content_id AND a.attribute_id = @attr_id
+                where i.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")}) and
+                i.CONTENT_ITEM_ID not in (SELECT d.content_item_id FROM content_data AS d WHERE d.attribute_id = @attr_id)";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attr_id", fieldId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", idsForStep, dbType));
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void ApplyM2MFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, string linkId, List<int> idsForStep, bool symmetric, SqlConnection connection)
+        public static void ApplyM2MFieldDefaultValue_SetDefaultValue(int contentId, int fieldId, int linkId, List<int> idsForStep, bool symmetric, DbConnection connection)
         {
+            var dbType = GetDbType(connection);
             var query = new StringBuilder();
-            query.AppendLine("INSERT INTO [item_to_item] ([link_id], [l_item_id], [r_item_id])");
-            query.AppendFormatLine("select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in ({0}) and ci.SPLITTED = 0 and ab.FIELD_ID = @fieldId", string.Join(",", idsForStep));
-            query.AppendLine("INSERT INTO [item_link_async] ([link_id],[item_id],[linked_item_id])");
-            query.AppendFormatLine("select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in ({0}) and ci.SPLITTED = 1 and ab.FIELD_ID = @fieldId", string.Join(",", idsForStep));
+            query.AppendLine($@"INSERT INTO item_to_item (link_id, l_item_id, r_item_id)");
+            query.AppendLine($@"select @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
+                cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")})
+                and {IsFalse(dbType, "ci.splitted")} and ab.FIELD_ID = @fieldId;");
+            query.AppendLine($@"INSERT INTO item_link_async (link_id,item_id,linked_item_id)");
+            query.AppendLine($@"select @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
+                cross join CONTENT_ITEM as ci where ci.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")})
+                and {IsTrue(dbType, "ci.splitted")} and ab.FIELD_ID = @fieldId;");
             if (symmetric)
             {
-                query.AppendLine("INSERT INTO [item_link_async] ([link_id], [item_id], [linked_item_id])");
-                query.AppendFormatLine(" select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab cross join CONTENT_ITEM as ci inner join CONTENT_ITEM as cii on cii.CONTENT_ITEM_ID = ab.ARTICLE_ID " +
-                    " where ci.CONTENT_ITEM_ID in ({0}) and ci.SPLITTED = 0 and cii.SPLITTED = 1 and ab.FIELD_ID = @fieldId", string.Join(",", idsForStep));
+                query.AppendLine($@"INSERT INTO item_link_async (link_id, item_id, linked_item_id)");
+                query.AppendLine($@"select  @linkID, ci.CONTENT_ITEM_ID, ARTICLE_ID FROM FIELD_ARTICLE_BIND as ab
+                    cross join CONTENT_ITEM as ci
+                    inner join CONTENT_ITEM as cii on cii.CONTENT_ITEM_ID = ab.ARTICLE_ID
+                    where ci.CONTENT_ITEM_ID in (select id from {IdList(dbType, "@ids")}) and ab.FIELD_ID = @fieldId
+                    and {IsFalse(dbType, "ci.splitted")} and {IsTrue(dbType, "cii.splitted")};");
             }
 
-            using (var cmd = SqlCommandFactory.Create(query.ToString(), connection))
+            using (var cmd = DbCommandFactory.Create(query.ToString(), connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@linkID", linkId);
                 cmd.Parameters.AddWithValue("@fieldId", fieldId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", idsForStep, dbType));
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> RecreateDynamicImages_GetDataToProcess(int imageFieldId, SqlConnection connection)
+        public static IEnumerable<DataRow> RecreateDynamicImages_GetDataToProcess(int imageFieldId, DbConnection connection)
         {
             const string query = "select content_item_id AS ID, DATA from content_data where ATTRIBUTE_ID = @attr_id and DATA is not null";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attr_id", imageFieldId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void RecreateDynamicImages_UpdateDynamicFieldValue(int dynamicFieldId, int articleId, string newValue, SqlConnection connection)
+        public static void RecreateDynamicImages_UpdateDynamicFieldValue(int dynamicFieldId, int articleId, string newValue, DbConnection connection)
         {
+            var dbType = GetDbType(connection);
             var sb = new StringBuilder();
-            sb.AppendLine("if exists(select content_data_id from content_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id)");
-            sb.AppendLine(" update content_data set data = @new_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id");
-            sb.AppendLine("else insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), connection))
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                sb.AppendLine("if exists(select content_data_id from content_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id)");
+                sb.AppendLine(" update content_data set data = @new_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id");
+                sb.AppendLine("else insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
+            }
+            else
+            {
+                sb.AppendLine("insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
+                sb.AppendLine("on conflict(CONTENT_ITEM_ID, ATTRIBUTE_ID) ");
+                sb.AppendLine("do update set DATA = @new_data");
+            }
+
+
+            using (var cmd = DbCommandFactory.Create(sb.ToString(), connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attr_id", dynamicFieldId);
@@ -3246,55 +3553,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> RemovingActions_GetContentsItemInfo(int? siteId, int? contentId, SqlConnection connection)
-        {
-            const string query =
-                "select S.SITE_ID, S.SITE_NAME, C.CONTENT_ID, C.CONTENT_NAME, ISNULL(I.[ITEMS_COUNT], 0) AS ITEMS_COUNT from " +
-                "(select  content_id, count(CONTENT_ITEM_ID) [ITEMS_COUNT] from content_item group by content_id) I " +
-                "RIGHT JOIN CONTENT C ON C.CONTENT_ID = I.CONTENT_ID " +
-                "JOIN [SITE] S ON S.SITE_ID = C.SITE_ID " +
-                "where (c.content_id = @content_id OR @content_id is null) " +
-                "and (s.site_id = @site_id OR @site_id is null)";
-
-            using (var cmd = SqlCommandFactory.Create(query, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@content_id", SqlDbType.Int) { Value = contentId.HasValue ? (object)contentId.Value : DBNull.Value });
-                cmd.Parameters.Add(new SqlParameter("@site_id", SqlDbType.Int) { Value = siteId.HasValue ? (object)siteId.Value : DBNull.Value });
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static int RemovingActions_RemoveContentItems(int contentId, int itemsToDelete, SqlConnection connection)
-        {
-            const string query = "select 1 as A into #disable_td_delete_item_o2m_nullify; " +
-                "delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in (" +
-                "   select top(@deleted_count) CONTENT_ITEM_ID from CONTENT_ITEM where CONTENT_ID = @content_id order by CONTENT_ITEM_ID " +
-                ")";
-
-            using (var cmd = SqlCommandFactory.Create(query, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@content_id", contentId);
-                cmd.Parameters.AddWithValue("@deleted_count", itemsToDelete);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static int RemovingActions_ClearO2MRelations(int contentId, SqlConnection connection)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_clear_relations", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@parent_id", contentId);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static IEnumerable<DataRow> GetSharedUnionBaseContentInfo(int siteId, SqlConnection connection)
+        public static IEnumerable<DataRow> GetSharedUnionBaseContentInfo(int siteId, DbConnection connection)
         {
             const string query =
                 "select r.virtual_content_id, " +
@@ -3307,21 +3566,21 @@ namespace Quantumart.QP8.DAL
                 "us.SITE_NAME as union_site_name " +
                 "from union_contents r " +
                 "join CONTENT as bc on bc.CONTENT_ID = r.union_content_id " +
-                "join [SITE] bs on bc.SITE_ID = bs.SITE_ID " +
+                "join SITE bs on bc.SITE_ID = bs.SITE_ID " +
                 "join CONTENT as uc on uc.CONTENT_ID = r.virtual_content_id " +
-                "join [SITE] us on uc.SITE_ID = us.SITE_ID " +
+                "join SITE us on uc.SITE_ID = us.SITE_ID " +
                 "where us.site_id <> bs.site_id AND us.site_id <> @site_id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetSharedRelatedContentInfo(int siteId, SqlConnection connection)
+        public static IEnumerable<DataRow> GetSharedRelatedContentInfo(int siteId, DbConnection connection)
         {
             const string query =
                 "select s.SITE_ID, " +
@@ -3334,31 +3593,31 @@ namespace Quantumart.QP8.DAL
                 "rc.CONTENT_NAME as rel_content_name " +
                 "from content_attribute a " +
                 "join content c on c.CONTENT_ID = a.CONTENT_ID " +
-                "join [SITE] s on c.SITE_ID = s.SITE_ID " +
+                "join SITE s on c.SITE_ID = s.SITE_ID " +
                 "join content_attribute ra on ra.RELATED_ATTRIBUTE_ID = a.ATTRIBUTE_ID " +
                 "join content rc on rc.CONTENT_ID = ra.CONTENT_ID " +
-                "join [SITE] rs on rc.SITE_ID = rs.SITE_ID " +
+                "join SITE rs on rc.SITE_ID = rs.SITE_ID " +
                 "where rs.site_id <> s.site_id AND s.site_id = @site_id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.AddWithValue("@site_id", siteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static int GetSiteArticleCount(int siteId, SqlConnection connection)
+        public static int GetSiteArticleCount(int siteId, DbConnection connection)
         {
             const string query =
-                "select count(CONTENT_ITEM_ID) from CONTENT_ITEM I " +
+                "select cast(count(CONTENT_ITEM_ID) as int) from CONTENT_ITEM I " +
                 "join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID " +
                 "where C.SITE_ID = @site_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
@@ -3366,10 +3625,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetSiteContentCount(int siteId, SqlConnection connection)
+        public static int GetSiteContentCount(int siteId, DbConnection connection)
         {
-            const string query = "select count(CONTENT_ID) from CONTENT where SITE_ID = @site_id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            const string query = "select cast(count(CONTENT_ID) as int) from CONTENT where SITE_ID = @site_id";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
 
@@ -3380,50 +3639,25 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int RemovingActions_RemoveSiteArticles(int siteId, int articleToRemove, SqlConnection connection)
+        public static IEnumerable<int> RemovingActions_BatchRemoveContents(int siteId, int contentsToRemove, DbConnection connection)
         {
-            var query = @"
-                select 1 as A into #disable_td_delete_item_o2m_nullify;
-                select 1 as A into #disable_td_item_to_item;
-
-                select top {0} I.content_item_id into #top_items
-                from CONTENT_ITEM I
-                inner join CONTENT C ON C.CONTENT_ID = I.CONTENT_ID
-                where C.SITE_ID = @site_id
-                order by I.content_id ASC, I.content_item_id ASC
-
-                DELETE FROM item_to_item where r_item_id in (select CONTENT_ITEM_ID from #top_items)
-                DELETE FROM content_item where content_item_id in (select CONTENT_ITEM_ID from #top_items)
-            ";
-
-            query = string.Format(query, articleToRemove);
-
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+            var sql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_batch_delete_contents", "@site_id, @count_to_del");
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@site_id", siteId);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static IEnumerable<int> RemovingActions_BatchRemoveContents(int siteId, int contentsToRemove, SqlConnection connection)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_batch_delete_contents", connection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
                 cmd.Parameters.AddWithValue("@count_to_del", contentsToRemove);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().Select(r => Converter.ToInt32(r.Field<decimal>(0))).ToArray();
             }
         }
 
-        public static IEnumerable<int> AssembleAction_GetSiteTemplatesId(int siteId, SqlConnection connection)
+        public static IEnumerable<int> AssembleAction_GetSiteTemplatesId(int siteId, DbConnection connection)
         {
             var result = new List<int>();
             const string query = "select PAGE_TEMPLATE_ID from PAGE_TEMPLATE where SITE_ID = @site_id order by PAGE_TEMPLATE_ID";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
@@ -3439,23 +3673,23 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static IEnumerable<DataRow> AssembleAction_GetSitePages(int siteId, SqlConnection connection)
+        public static IEnumerable<DataRow> AssembleAction_GetSitePages(int siteId, DbConnection connection)
         {
             const string query = "select P.PAGE_ID Id, T.TEMPLATE_NAME Template, p.PAGE_NAME Name from PAGE P JOIN PAGE_TEMPLATE T ON P.PAGE_TEMPLATE_ID = T.PAGE_TEMPLATE_ID where T.SITE_ID = @site_id order by P.PAGE_ID";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToList();
             }
         }
 
-        public static int AssembleAction_UpdatePageStatus(int pageId, int userId, SqlConnection connection)
+        public static int AssembleAction_UpdatePageStatus(int pageId, int userId, DbConnection connection)
         {
             const string query = "update page set reassemble = 0, assembled = getdate(), last_assembled_by = @user_Id where page_id = @page_Id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@page_Id", pageId);
@@ -3464,11 +3698,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<int> AssembleAction_GetSiteFormatIds(int siteId, SqlConnection connection)
+        public static IEnumerable<int> AssembleAction_GetSiteFormatIds(int siteId, DbConnection connection)
         {
             var result = new List<int>();
             const string query = "select N.FORMAT_ID from NOTIFICATIONS N JOIN CONTENT C ON C.CONTENT_ID = N.CONTENT_ID WHERE N.FORMAT_ID is not null and C.SITE_ID = @site_id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
@@ -3484,9 +3718,9 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static int CopyUser(int sourceUserId, string newLogin, int currentUserId, SqlConnection connection)
+        public static int CopyUser(int sourceUserId, string newLogin, int currentUserId, DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_copy_user", connection))
+            using (var cmd = DbCommandFactory.Create("qp_copy_user", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@user_id", sourceUserId);
@@ -3501,7 +3735,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Отфильтровать пользователей прямо или косвенно входящих в группу администраторов
         /// </summary>
-        public static IEnumerable<int> UserGroups_SelectAdminDescendantGroupUserIDs(IEnumerable<int> userIds, int groupId, SqlConnection connection)
+        public static IEnumerable<int> UserGroups_SelectAdminDescendantGroupUserIDs(IEnumerable<int> userIds, int groupId, DbConnection connection)
         {
             var result = new List<int>();
             const string queryTemplate = @"with G2G (Parent_Group_Id, Child_Group_Id, [Level]) AS
@@ -3520,7 +3754,7 @@ namespace Quantumart.QP8.DAL
 
             var query = string.Format(queryTemplate, string.Join(",", userIds));
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@group_id", groupId);
@@ -3542,19 +3776,21 @@ namespace Quantumart.QP8.DAL
         /// <param name="groupId"></param>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public static bool UserGroups_IsGroupAdminDescendant(int groupId, SqlConnection connection)
+        public static bool UserGroups_IsGroupAdminDescendant(int groupId, DbConnection connection)
         {
-            const string query = @"with G2G (Parent_Group_Id, Child_Group_Id, [Level]) AS
+            var dbType = GetDbType(connection);
+            var levelColumnName = Escape(dbType, "Level");
+            var query = $@"with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} G2G (Parent_Group_Id, Child_Group_Id, {levelColumnName}) AS
                             (
-                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(1 as numeric) as Child_Group_Id, 0 as [Level]
+                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(1 as numeric) as Child_Group_Id, 0 as {levelColumnName}
                                 union all
-                                select G.Parent_Group_Id, G.Child_Group_Id, [Level] + 1 as [Level]
+                                select G.Parent_Group_Id, G.Child_Group_Id, {levelColumnName} + 1 as {levelColumnName}
                                 from group_to_group G
                                 join G2G ON G.Parent_Group_Id = G2G.Child_Group_Id
                             )
                             SELECT CASE WHEN EXISTS(SELECT * FROM G2G where Child_Group_Id = @group_id) THEN 1 ELSE 0 END";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@group_id", groupId);
@@ -3569,19 +3805,23 @@ namespace Quantumart.QP8.DAL
         /// <param name="parentGroupId"></param>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public static bool UserGroups_IsCyclePossible(int groupId, int parentGroupId, SqlConnection connection)
+        public static bool UserGroups_IsCyclePossible(int groupId, int parentGroupId, DbConnection connection)
         {
-            const string query = @"with G2G (Parent_Group_Id, Child_Group_Id, [Level]) AS
+            var dbType = GetDbType(connection);
+            var levelColumnName = Escape(dbType, "Level");
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var query = $@"with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} G2G (Parent_Group_Id, Child_Group_Id, {levelColumnName}) AS
                             (
-                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(@group_id as numeric) as Child_Group_Id, 0 as [Level]
+                                select CAST(NULL as numeric) AS Parent_Group_Id, CAST(@group_id as numeric) as Child_Group_Id, 0 as {levelColumnName}
                                 union all
-                                select G.Parent_Group_Id, G.Child_Group_Id, [Level] + 1 as [Level]
+                                select G.Parent_Group_Id, G.Child_Group_Id, {levelColumnName} + 1 as {levelColumnName}
                                 from group_to_group G
                                 join G2G ON G.Parent_Group_Id = G2G.Child_Group_Id
                             )
-                            SELECT CASE WHEN EXISTS(select * from G2G where Parent_Group_Id = @parent_group_id or Child_Group_Id = @parent_group_id) THEN 1 ELSE 0 END";
+                            SELECT CASE WHEN EXISTS(select * from G2G where Parent_Group_Id = @parent_group_id or Child_Group_Id = @parent_group_id) THEN {trueValue} ELSE {falseValue} END";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@group_id", groupId);
@@ -3590,7 +3830,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<int> UserGroups_SelectWorkflowGroupUserIDs(int[] userIds, SqlConnection connection)
+        public static IEnumerable<int> UserGroups_SelectWorkflowGroupUserIDs(int[] userIds, DbConnection connection)
         {
             var result = new List<int>();
             const string queryTemplate = @"select GB.[USER_ID] from dbo.USER_GROUP_BIND GB
@@ -3598,7 +3838,7 @@ namespace Quantumart.QP8.DAL
                                     WHERE G.USE_PARALLEL_WORKFLOW = 1 and GB.[USER_ID] in ({0})";
 
             var query = string.Format(queryTemplate, string.Join(",", userIds));
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 using (var reader = cmd.ExecuteReader())
@@ -3618,7 +3858,7 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public static IEnumerable<DataRow> UserGroups_GetAdministratorsHierarhy(SqlConnection connection)
+        public static IEnumerable<DataRow> UserGroups_GetAdministratorsHierarhy(DbConnection connection)
         {
             const string query = @"with G2G (Parent_Group_Id, Child_Group_Id, [Level]) AS
                             (
@@ -3630,18 +3870,20 @@ namespace Quantumart.QP8.DAL
                             )
                             SELECT Parent_Group_Id as PARENT, Child_Group_Id AS CHILD, [LEVEL] FROM G2G";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static int CopyUserGroup(int sourceGroupId, string newName, int currentUserId, SqlConnection connection)
+        public static int CopyUserGroup(int sourceGroupId, string newName, int currentUserId, DbConnection connection)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_copy_user_group", connection))
+
+
+            using (var cmd = DbCommandFactory.Create("qp_copy_user_group", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@group_id", sourceGroupId);
@@ -3653,176 +3895,185 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetSitePermissionPage(SqlConnection sqlConnection, int siteId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetSitePermissionPage(DbConnection sqlConnection, int siteId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[SITE_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,SA.[propagate_to_contents] as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.SITE_ACCESS_ID AS ID
+                                      ,U.{Escape(dbType, "LOGIN")} AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,SA.propagate_to_contents as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.ToBoolSql(dbType, false)} as {Escape(dbType, "Hide")}
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.{Escape(dbType, "LOGIN")} AS LastModifiedByUser";
 
-            const string fromBlock = @"[SITE_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"SITE_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[SITE_ID] = " + siteId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "SITE_ID = " + siteId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetContentPermissionPage(SqlConnection sqlConnection, int contentId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetContentPermissionPage(DbConnection sqlConnection, int contentId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[CONTENT_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,SA.[PROPAGATE_TO_ITEMS] as [PropagateToItems]
-                                      ,SA.[HIDE] as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.CONTENT_ACCESS_ID AS ID
+                                      ,U.{Escape(dbType, "LOGIN")} AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,SA.PROPAGATE_TO_ITEMS as PropagateToItems
+                                      ,SA.HIDE as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.{Escape(dbType, "LOGIN")} AS LastModifiedByUser";
 
-            const string fromBlock = @"[CONTENT_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"CONTENT_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[CONTENT_ID] = " + contentId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ID = " + contentId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetArticlePermissionPage(SqlConnection sqlConnection, int articleId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetArticlePermissionPage(DbConnection sqlConnection, int articleId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[CONTENT_ITEM_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.CONTENT_ITEM_ACCESS_ID AS ID
+                                      ,U.LOGIN AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[CONTENT_ITEM_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"CONTENT_ITEM_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[CONTENT_ITEM_ID] = " + articleId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ITEM_ID = " + articleId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetWorkflowPermissionPage(SqlConnection sqlConnection, int workflowId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetWorkflowPermissionPage(DbConnection sqlConnection, int workflowId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[WORKFLOW_ACCESS_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.WORKFLOW_ACCESS_ACCESS_ID AS ID
+                                      ,U.LOGIN AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[WORKFLOW_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"WORKFLOW_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[WORKFLOW_ID] = " + workflowId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "WORKFLOW_ID = " + workflowId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetSiteFolderPermissionPage(SqlConnection sqlConnection, int folderId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetSiteFolderPermissionPage(DbConnection sqlConnection, int folderId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.[FOLDER_ACCESS_ID] AS [ID]
-                                      ,U.[LOGIN] AS [UserLogin]
-                                      ,G.GROUP_NAME AS [GroupName]
-                                      ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                      ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                      ,cast(0 as bit) as [Hide]
-                                      ,SA.[CREATED]
-                                      ,SA.[MODIFIED]
-                                      ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                      ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
 
-            const string fromBlock = @"[FOLDER_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var selectBlock = $@"SA.FOLDER_ACCESS_ID AS ID
+                                      ,U.LOGIN AS UserLogin
+                                      ,G.GROUP_NAME AS GroupName
+                                      ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                      ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                      ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                      ,SA.CREATED
+                                      ,SA.MODIFIED
+                                      ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                      ,U2.LOGIN AS LastModifiedByUser";
+
+            const string fromBlock = @"FOLDER_ACCESS SA
+                                    LEFT JOIN USERS U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN USERS U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[FOLDER_ID] = " + folderId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "FOLDER_ID = " + folderId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetEntityTypePermissionPage(SqlConnection sqlConnection, int entityTypeId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetEntityTypePermissionPage(DbConnection sqlConnection, int entityTypeId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.ENTITY_TYPE_ACCESS_ID AS [ID]
-                                    ,U.[LOGIN] AS [UserLogin]
-                                    ,G.GROUP_NAME AS [GroupName]
-                                    ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                    ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                    ,cast(0 as bit) as [Hide]
-                                    ,SA.[CREATED]
-                                    ,SA.[MODIFIED]
-                                    ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                    ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.ENTITY_TYPE_ACCESS_ID AS ID
+                                    ,U.LOGIN AS UserLogin
+                                    ,G.GROUP_NAME AS GroupName
+                                    ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                    ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                    ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                    ,SA.CREATED
+                                    ,SA.MODIFIED
+                                    ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                    ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[ENTITY_TYPE_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"ENTITY_TYPE_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[ENTITY_TYPE_ID] = " + entityTypeId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ENTITY_TYPE_ID = " + entityTypeId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetActionPermissionPage(SqlConnection sqlConnection, int actionId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetActionPermissionPage(DbConnection sqlConnection, int actionId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            const string selectBlock = @"SA.ACTION_ACCESS_ID AS [ID]
-                                    ,U.[LOGIN] AS [UserLogin]
-                                    ,G.GROUP_NAME AS [GroupName]
-                                    ,L.PERMISSION_LEVEL_NAME AS [LevelName]
-                                    ,cast(0 as numeric(18, 0)) as [PropagateToItems]
-                                    ,cast(0 as bit) as [Hide]
-                                    ,SA.[CREATED]
-                                    ,SA.[MODIFIED]
-                                    ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-                                    ,U2.[LOGIN] AS [LastModifiedByUser]";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = $@"SA.ACTION_ACCESS_ID AS ID
+                                    ,U.LOGIN AS UserLogin
+                                    ,G.GROUP_NAME AS GroupName
+                                    ,L.PERMISSION_LEVEL_NAME AS LevelName
+                                    ,cast(0 as numeric(18, 0)) as PropagateToItems
+                                    ,{SqlQuerySyntaxHelper.CastToBool(dbType, SqlQuerySyntaxHelper.ToBoolSql(dbType, false))} as Hide
+                                    ,SA.CREATED
+                                    ,SA.MODIFIED
+                                    ,SA.LAST_MODIFIED_BY AS LastModifiedByUserId
+                                    ,U2.LOGIN AS LastModifiedByUser";
 
-            const string fromBlock = @"[ACTION_ACCESS] SA
-                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+            var fromBlock = $@"ACTION_ACCESS SA
+                                    LEFT JOIN {Escape(dbType, "USERS")} U ON U.USER_ID = SA.USER_ID
                                     LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "[ACTION_ID] = " + actionId;
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ACTION_ID = " + actionId;
             return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetUserGroupPage(SqlConnection sqlConnection, List<int> selectedIds, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
+        public static IEnumerable<DataRow> GetUserGroupPage(DbConnection sqlConnection, List<int> selectedIds, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
-            var selectBlock = @"G.[GROUP_ID] AS Id,G.[GROUP_NAME] AS Name,G.[DESCRIPTION] AS Description,G.[CREATED],G.[MODIFIED],G.[LAST_MODIFIED_BY] AS LastModifiedByUserId,G.[LAST_MODIFIED_BY_LOGIN] AS LastModifiedByUser,G.[shared_content_items] AS SharedArticles";
-            var fromBlock = @"[dbo].[USER_GROUP_TREE] G";
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = @"G.GROUP_ID AS Id,G.GROUP_NAME AS Name,G.DESCRIPTION AS Description,G.CREATED,G.MODIFIED,G.LAST_MODIFIED_BY AS LastModifiedByUserId,G.LAST_MODIFIED_BY_LOGIN AS LastModifiedByUser,G.shared_content_items AS SharedArticles";
+            var fromBlock = @"USER_GROUP_TREE G";
 
             if (selectedIds != null && selectedIds.Any())
             {
-                selectBlock += " ,CAST((CASE WHEN (GIS.[GROUP_ID] IS NOT NULL) THEN 1 else 0 end) AS bit) AS IS_SELECTED";
-                fromBlock += $" LEFT OUTER JOIN (select [GROUP_ID] from [USER_GROUP_TREE] where [GROUP_ID] in ({string.Join(",", selectedIds)})) AS GIS ON GIS.[GROUP_ID] = G.[GROUP_ID]";
+                selectBlock += $" , {SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (GIS.GROUP_ID IS NOT NULL) THEN 1 else 0 end")} AS IS_SELECTED";
+                fromBlock += $" LEFT OUTER JOIN (select GROUP_ID from USER_GROUP_TREE where GROUP_ID in ({string.Join(",", selectedIds)})) AS GIS ON GIS.GROUP_ID = G.GROUP_ID";
                 orderBy = string.IsNullOrWhiteSpace(orderBy) ? "IS_SELECTED DESC, Name ASC" : orderBy;
             }
             else
@@ -3835,29 +4086,31 @@ namespace Quantumart.QP8.DAL
                 orderBy, filter, startRow, pageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetUserPage(SqlConnection sqlConnection, UserPageOptions options, out int totalRecords)
+        public static IEnumerable<DataRow> GetUserPage(DbConnection sqlConnection, UserPageOptions options, out int totalRecords)
         {
             string strFilter = null;
             string orderBy;
             var filters = new List<string>(4);
+            var dbType = GetDbType(sqlConnection);
+            var ns = DbSchemaName(dbType);
             if (!string.IsNullOrEmpty(options.Login))
             {
-                filters.Add($"U.[LOGIN] LIKE '%{options.Login}%'");
+                filters.Add($"U.LOGIN LIKE '%{options.Login}%'");
             }
 
             if (!string.IsNullOrEmpty(options.Email))
             {
-                filters.Add($"U.[EMAIL] LIKE '%{options.Email}%'");
+                filters.Add($"U.EMAIL LIKE '%{options.Email}%'");
             }
 
             if (!string.IsNullOrEmpty(options.FirstName))
             {
-                filters.Add($"U.[FIRST_NAME] LIKE '%{options.FirstName}%'");
+                filters.Add($"U.FIRST_NAME LIKE '%{options.FirstName}%'");
             }
 
             if (!string.IsNullOrEmpty(options.LastName))
             {
-                filters.Add($"U.[LAST_NAME] LIKE '%{options.LastName}%'");
+                filters.Add($"U.LAST_NAME LIKE '%{options.LastName}%'");
             }
 
             if (filters.Any())
@@ -3865,13 +4118,13 @@ namespace Quantumart.QP8.DAL
                 strFilter = string.Join(" AND ", filters);
             }
 
-            var selectBlock = @"U.[USER_ID] as ID, U.[LOGIN], U.FIRST_NAME, U.LAST_NAME, U.EMAIL, U.LANGUAGE_ID, L.LANGUAGE_NAME, U.LAST_LOGIN, U.[DISABLED], U.CREATED, U.MODIFIED, U.LAST_MODIFIED_BY, MU.[LOGIN] as LAST_MODIFIED_BY_LOGIN";
-            var fromBlock = @"[dbo].[USERS] U JOIN [dbo].[USERS] MU ON MU.[USER_ID] = U.LAST_MODIFIED_BY JOIN [dbo].LANGUAGES L ON L.LANGUAGE_ID =  U.LANGUAGE_ID";
+            var selectBlock = @"U.USER_ID as ID, U.LOGIN, U.FIRST_NAME, U.LAST_NAME, U.EMAIL, U.LANGUAGE_ID, L.LANGUAGE_NAME, U.LAST_LOGIN, U.DISABLED, U.CREATED, U.MODIFIED, U.LAST_MODIFIED_BY, MU.LOGIN as LAST_MODIFIED_BY_LOGIN";
+            var fromBlock = $@"{ns}.USERS U JOIN {ns}.USERS MU ON MU.USER_ID = U.LAST_MODIFIED_BY JOIN {ns}.LANGUAGES L ON L.LANGUAGE_ID =  U.LANGUAGE_ID";
 
             if (options.SelectedIDs != null && options.SelectedIDs.Any())
             {
-                selectBlock += " ,CAST((CASE WHEN (UIS.[USER_ID] IS NOT NULL) THEN 1 else 0 end) AS bit) AS is_selected";
-                fromBlock += $" LEFT OUTER JOIN (select [USER_ID] from [USERS] where [USER_ID] in ({string.Join(",", options.SelectedIDs)})) AS UIS ON UIS.[USER_ID] = U.[USER_ID]";
+                selectBlock += $" ,{SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (UIS.USER_ID IS NOT NULL) THEN 1 else 0 end")} AS is_selected";
+                fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in ({string.Join(",", options.SelectedIDs)})) AS UIS ON UIS.USER_ID = U.USER_ID";
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "is_selected DESC, LOGIN ASC" : options.SortExpression;
             }
             else
@@ -3882,19 +4135,20 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, EntityTypeCode.User, selectBlock, fromBlock, orderBy, strFilter, options.StartRecord, options.PageSize, out totalRecords);
         }
 
-        public static IEnumerable<DataRow> GetChildContentPermissionsForUser(SqlConnection sqlConnection, int siteId, int userId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
+        public static IEnumerable<DataRow> GetChildContentPermissionsForUser(DbConnection sqlConnection, int siteId, int userId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
-            var fromBlock = @"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,
-                                CAST(ISNULL(P2.[PROPAGATE_TO_ITEMS], 0) AS BIT) AS PropagateToItems,
-                                CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
+            var dbType = GetDbType(sqlConnection);
+            var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.USER_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, "coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.HIDE, {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)})")} AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.USER_ID = {{0}}
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE C.SITE_ID = {1}) AS TR";
+                                 WHERE C.SITE_ID = {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, userId, siteId);
             string filter = null;
@@ -3906,26 +4160,28 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, EntityTypeCode.Content, "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Site, parentEntityId: siteId);
         }
 
-        public static DataRow GetChildContentPermissionForUser(SqlConnection sqlConnection, int siteId, int contentId, int userId)
+        public static DataRow GetChildContentPermissionForUser(DbConnection sqlConnection, int siteId, int contentId, int userId)
         {
             int totalRecords;
             var rows = GetChildContentPermissionsForUser(sqlConnection, siteId, userId, "ID asc", 1, 1, out totalRecords, contentId);
             return rows.FirstOrDefault();
         }
 
-        public static IEnumerable<DataRow> GetChildContentPermissionsForGroup(SqlConnection sqlConnection, int siteId, int groupId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
+        public static IEnumerable<DataRow> GetChildContentPermissionsForGroup(DbConnection sqlConnection, int siteId, int groupId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
-            var fromBlock = @"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,
-                                CAST(ISNULL(P2.[PROPAGATE_TO_ITEMS], 0) AS BIT) AS PropagateToItems,
-                                CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
+            var dbType = GetDbType(sqlConnection);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.HIDE, {falseValue})")} AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_PermLevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE C.SITE_ID = {1}) AS TR";
+                                 WHERE C.SITE_ID = {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, groupId, siteId);
 
@@ -3938,27 +4194,29 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, EntityTypeCode.Content, "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Site, parentEntityId: siteId);
         }
 
-        public static DataRow GetChildContentPermissionForGroup(SqlConnection sqlConnection, int siteId, int contentId, int groupId)
+        public static DataRow GetChildContentPermissionForGroup(DbConnection sqlConnection, int siteId, int contentId, int groupId)
         {
             int totalRecords;
             var rows = GetChildContentPermissionsForGroup(sqlConnection, siteId, groupId, "ID asc", 1, 1, out totalRecords, contentId);
             return rows.FirstOrDefault();
         }
 
-        public static IEnumerable<DataRow> GetChildArticlePermissionsForUser(SqlConnection sqlConnection, int contentId, int userId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
+        public static IEnumerable<DataRow> GetChildArticlePermissionsForUser(DbConnection sqlConnection, int contentId, int userId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
         {
-            var fromBlock = @"(select CI.CONTENT_ITEM_ID AS ID, cast(CI.[{2}] as nvarchar(1024)) AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT)  AS IsExplicit
-                                ,CAST(0 AS BIT) AS PropagateToItems
-                                ,CAST(0 AS BIT) AS Hide
+            var dbType = GetDbType(sqlConnection);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+
+            var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN {trueValue} ELSE {falseValue} END")}  AS IsExplicit
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS PropagateToItems
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS Hide
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                LEFT JOIN content_item_access_PermLevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.[USER_ID] = {0}
+                                LEFT JOIN content_item_access_permlevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.{Escape(dbType, "USER_ID")} = {userId}
                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                RIGHT JOIN CONTENT_{1} CI with(nolock) ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
-
-            fromBlock = string.Format(fromBlock, userId, contentId, titleFieldName);
+                                RIGHT JOIN CONTENT_{contentId} CI {WithNoLock(dbType)} ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
 
             string filter = null;
             if (articleId.HasValue)
@@ -3969,27 +4227,30 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, "content_item", "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Content, parentEntityId: contentId);
         }
 
-        public static DataRow GetChildArticlePermissionForUser(SqlConnection sqlConnection, int contentId, int articleId, int userId)
+        public static DataRow GetChildArticlePermissionForUser(DbConnection sqlConnection, int contentId, int articleId, int userId)
         {
             int totalRecords;
             var rows = GetChildArticlePermissionsForUser(sqlConnection, contentId, userId, FieldName.ContentItemId, "ID asc", 1, 1, out totalRecords, articleId);
             return rows.FirstOrDefault();
         }
 
-        public static IEnumerable<DataRow> GetChildArticlePermissionsForGroup(SqlConnection sqlConnection, int contentId, int groupId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
+        public static IEnumerable<DataRow> GetChildArticlePermissionsForGroup(DbConnection sqlConnection, int contentId, int groupId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
         {
-            var fromBlock = @"(select CI.CONTENT_ITEM_ID AS ID, cast(CI.[{2}] as nvarchar(1024)) AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
-                                CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit
-                                ,CAST(0 AS BIT) AS PropagateToItems
-                                ,CAST(0 AS BIT) AS Hide
+            var dbType = GetDbType(sqlConnection);
+            var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
+                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.GROUP_ID IS NOT NULL THEN {trueValue} ELSE {falseValue} END")}  AS IsExplicit
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS PropagateToItems
+                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS Hide
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                LEFT JOIN content_item_access_PermLevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.GROUP_ID = {0}
+                                LEFT JOIN content_item_access_permlevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.GROUP_ID = {groupId}
                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                RIGHT JOIN CONTENT_{1} CI with(nolock) ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
+                                RIGHT JOIN CONTENT_{contentId} CI {WithNoLock(dbType)} ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
 
-            fromBlock = string.Format(fromBlock, groupId, contentId, titleFieldName);
+
 
             string filter = null;
             if (articleId.HasValue)
@@ -4000,54 +4261,42 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, "content_item", "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Content, parentEntityId: contentId);
         }
 
-        public static DataRow GetChildArticlePermissionForGroup(SqlConnection sqlConnection, int contentId, int articleId, int groupId) =>
+        public static DataRow GetChildArticlePermissionForGroup(DbConnection sqlConnection, int contentId, int articleId, int groupId) =>
             GetChildArticlePermissionsForGroup(sqlConnection, contentId, groupId, FieldName.ContentItemId, "ID asc", 1, 1, out int _, articleId).FirstOrDefault();
 
-        public static void InsertChildContentPermissions(SqlConnection sqlConnection, List<int> contentIds, int? userId, int? groupId, int permissionLevel, bool propagateToItems, int currentUserId, bool hide)
+        public static void InsertChildContentPermissions(DbConnection sqlConnection, List<int> contentIds, int? userId, int? groupId, int permissionLevel, bool propagateToItems, int currentUserId, bool hide)
         {
+
+            var dbType = GetDbType(sqlConnection);
             if (contentIds == null || !contentIds.Any() || !userId.HasValue && !groupId.HasValue)
             {
                 return;
             }
 
-            var query = @"INSERT INTO [CONTENT_ACCESS]
-                                       ([CONTENT_ID]
-                                       ,[USER_ID]
-                                       ,[GROUP_ID]
-                                       ,[PERMISSION_LEVEL_ID]
-                                       ,[PROPAGATE_TO_ITEMS]
-                                       ,[HIDE]
-                                       ,[CREATED]
-                                       ,[MODIFIED]
-                                       ,[LAST_MODIFIED_BY])
-                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, GETDATE(), GETDATE(), @modifiedUserId
-                            from CONTENT C where C.CONTENT_ID in ({0})";
+            var query = $@"INSERT INTO CONTENT_ACCESS
+                                       (CONTENT_ID
+                                       ,{Escape(dbType, "USER_ID")}
+                                       ,GROUP_ID
+                                       ,PERMISSION_LEVEL_ID
+                                       ,PROPAGATE_TO_ITEMS
+                                       ,HIDE
+                                       ,CREATED
+                                       ,MODIFIED
+                                       ,LAST_MODIFIED_BY)
+                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, {Now(dbType)}, {Now(dbType)}, @modifiedUserId
+                            from CONTENT C where C.CONTENT_ID in ({string.Join(",", contentIds)})";
 
-            query = string.Format(query, string.Join(",", contentIds));
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
 
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
 
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
-                cmd.Parameters.AddWithValue("@propageteToItems", propagateToItems);
+                cmd.Parameters.AddWithValue("@propageteToItems", SqlQuerySyntaxHelper.BooleanToNumeric(dbType, propagateToItems));
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
                 cmd.Parameters.AddWithValue("@hide", hide);
 
@@ -4055,7 +4304,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void InsertChildContentPermissions(SqlConnection sqlConnection, int siteId, int? userId, int? groupId, int permissionLevel, bool propagateToItems, int currentUserId, bool hide)
+        public static void InsertChildContentPermissions(DbConnection sqlConnection, int siteId, int? userId, int? groupId, int permissionLevel, bool propagateToItems, int currentUserId, bool hide)
         {
             const string query = @"INSERT INTO [CONTENT_ACCESS]
                                        ([CONTENT_ID]
@@ -4070,7 +4319,7 @@ namespace Quantumart.QP8.DAL
                             select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, GETDATE(), GETDATE(), @modifiedUserId
                             from CONTENT C where C.SITE_ID = @siteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 if (userId.HasValue)
@@ -4101,115 +4350,75 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveChildContentPermissions(SqlConnection sqlConnection, List<int> contentIds, int? userId, int? groupId)
+        public static void RemoveChildContentPermissions(DbConnection sqlConnection, List<int> contentIds, int? userId, int? groupId)
         {
             if (contentIds == null || !contentIds.Any() || !userId.HasValue && !groupId.HasValue)
             {
                 return;
             }
 
-            var query = @"delete from [CONTENT_ACCESS] where CONTENT_ID in ({0}) and (@userId IS NULL OR [USER_ID] = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
-            query = string.Format(query, string.Join(",", contentIds));
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+
+            var query = $"delete from CONTENT_ACCESS where CONTENT_ID in ({string.Join(",", contentIds)}) and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
 
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
 
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void RemoveChildContentPermissions(SqlConnection sqlConnection, int siteId, int? userId, int? groupId)
+        public static void RemoveChildContentPermissions(DbConnection sqlConnection, int siteId, int? userId, int? groupId)
         {
-            const string query = @"delete CONTENT_ACCESS from CONTENT_ACCESS A
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"delete CONTENT_ACCESS from CONTENT_ACCESS A
                             JOIN CONTENT C ON A.CONTENT_ID = C.CONTENT_ID
                             where C.SITE_ID = @siteId
-                            and (@userId IS NULL OR A.[USER_ID] = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                            and (@userId IS NULL OR A.{Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@groupId", groupId);
 
                 cmd.Parameters.AddWithValue("@siteId", siteId);
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void InsertChildArticlePermissions(SqlConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId, int permissionLevel, int currentUserId)
+        public static void InsertChildArticlePermissions(DbConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId, int permissionLevel, int currentUserId)
         {
-            var query = @"INSERT INTO [CONTENT_ITEM_ACCESS]
-                            ([CONTENT_ITEM_ID]
-                            ,[USER_ID]
-                            ,[GROUP_ID]
-                            ,[PERMISSION_LEVEL_ID]
-                            ,[CREATED]
-                            ,[MODIFIED]
-                            ,[LAST_MODIFIED_BY])
-                            select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, GETDATE(), GETDATE(), @modifiedUserId
-                            from CONTENT_ITEM CI where CI.CONTENT_ITEM_ID in ({0})";
+            var dbType = GetDbType(sqlConnection);
+            var now = SqlQuerySyntaxHelper.Now(dbType);
+            var query = $@"INSERT INTO CONTENT_ITEM_ACCESS
+                            (CONTENT_ITEM_ID
+                            ,USER_ID
+                            ,GROUP_ID
+                            ,PERMISSION_LEVEL_ID
+                            ,CREATED
+                            ,MODIFIED
+                            ,LAST_MODIFIED_BY)
+                            select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, {now} , {now}, @modifiedUserId
+                            from CONTENT_ITEM CI where CI.CONTENT_ITEM_ID in ({string.Join(",", articleIDs)})";
 
-            query = string.Format(query, string.Join(",", articleIDs));
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
-
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void InsertChildArticlePermissions(SqlConnection sqlConnection, int contentId, int? userId, int? groupId, int permissionLevel, int currentUserId)
+        public static void InsertChildArticlePermissions(DbConnection sqlConnection, int contentId, int? userId, int? groupId, int permissionLevel, int currentUserId)
         {
             const string query = @"INSERT INTO [CONTENT_ITEM_ACCESS]
                             ([CONTENT_ITEM_ID]
@@ -4222,7 +4431,7 @@ namespace Quantumart.QP8.DAL
                             select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, GETDATE(), GETDATE(), @modifiedUserId
                             from CONTENT_ITEM CI where CI.CONTENT_ID = @contentId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 if (userId.HasValue)
@@ -4251,76 +4460,46 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveChildArticlePermissions(SqlConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId)
+        public static void RemoveChildArticlePermissions(DbConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId)
         {
-            var query = @"delete from [CONTENT_ITEM_ACCESS] where CONTENT_ITEM_ID in ({0}) and (@userId IS NULL OR [USER_ID] = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
-            query = string.Format(query, string.Join(",", articleIDs));
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"delete from CONTENT_ITEM_ACCESS where CONTENT_ITEM_ID in ({string.Join(",", articleIDs)}) and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void RemoveChildArticlePermissions(SqlConnection sqlConnection, int contentId, int? userId, int? groupId)
+        public static void RemoveChildArticlePermissions(DbConnection sqlConnection, int contentId, int? userId, int? groupId)
         {
-            const string query = @"delete [CONTENT_ITEM_ACCESS] from [CONTENT_ITEM_ACCESS] A
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"delete CONTENT_ITEM_ACCESS from CONTENT_ITEM_ACCESS A
                             JOIN CONTENT_ITEM CI ON A.CONTENT_ITEM_ID = CI.CONTENT_ITEM_ID
                             where CI.CONTENT_ID = @contentId
-                            and (@userId IS NULL OR A.[USER_ID] = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
+                            and (@userId IS NULL OR A.{Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
-
-                cmd.Parameters.AddWithValue("@contentId", contentId);
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@contentId", contentId, DbType.Int32);
 
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static bool IsSiteDotNeByObjectFormatId(SqlConnection sqlConnection, int objectFormatId)
+        public static bool IsSiteDotNeByObjectFormatId(DbConnection sqlConnection, int objectFormatId)
         {
             const string query = @"select s.script_language from OBJECT_FORMAT obf inner join [OBJECT] o on obf.[OBJECT_ID] = o.[OBJECT_ID]
                             inner join PAGE_TEMPLATE pt on o.PAGE_TEMPLATE_ID = pt.PAGE_TEMPLATE_ID inner join [SITE] s on pt.SITE_ID =  s.SITE_ID
                             where obf.OBJECT_FORMAT_ID = @in_object_format_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@in_object_format_id", objectFormatId);
@@ -4328,14 +4507,15 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetEntityTypePermissionsForGroup(SqlConnection sqlConnection, int groupId, int? entityId = null)
+        public static IEnumerable<DataRow> GetEntityTypePermissionsForGroup(DbConnection sqlConnection, int groupId, int? entityId = null)
         {
-            var fromBlock = @"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit from
+            var dbType = GetDbType(sqlConnection);
+            var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit from
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
+                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, groupId, entityId.HasValue ? $"AND T.ID = {entityId.Value}" : string.Empty);
 
@@ -4343,15 +4523,16 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100);
         }
 
-        public static IEnumerable<DataRow> GetEntityTypePermissionsForUser(SqlConnection sqlConnection, int userId, int? entityId = null)
+        public static IEnumerable<DataRow> GetEntityTypePermissionsForUser(DbConnection sqlConnection, int userId, int? entityId = null)
         {
-            var fromBlock = @"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit, L.PERMISSION_LEVEL
+            var dbType = GetDbType(sqlConnection);
+            var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit, L.PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = {{0}}
                                  RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
+                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{1}}) AS TR";
 
             fromBlock = string.Format(fromBlock, userId, entityId.HasValue ? $"AND T.ID = {entityId.Value}" : string.Empty);
 
@@ -4359,14 +4540,21 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100);
         }
 
-        public static IEnumerable<DataRow> GetActionPermissionsForGroup(SqlConnection sqlConnection, int groupId, int entityTypeId, int? actionId)
+        public static IEnumerable<DataRow> GetActionPermissionsForGroup(QPModelDataContext efContext, DbConnection sqlConnection, int groupId, int entityTypeId, int? actionId)
         {
-            var fromBlock = @"(select T.ID, T.NAME, COALESCE(L.PERMISSION_LEVEL_NAME, {2}) AS PERMISSION_LEVEL_NAME, CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit from
+            var dbType = GetDbType(sqlConnection);
+            var refreshActionTypeId = efContext.ActionTypeSet.First(x => x.Code.Equals(ActionTypeCode.Refresh)).Id;
+            var fromBlock = $@"(select
+                                    T.ID,
+                                    T.NAME,
+                                    COALESCE(L.PERMISSION_LEVEL_NAME, {{2}}) AS PERMISSION_LEVEL_NAME,
+                                   {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit
+                                from
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
                                  RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
+                                 WHERE T.ENTITY_TYPE_ID = {{1}} {{3}} AND T.{Escape(dbType, "TYPE_ID")} != {refreshActionTypeId}) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermission = GetEntityTypePermissionsForGroup(sqlConnection, groupId, entityTypeId).FirstOrDefault();
@@ -4381,15 +4569,23 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100);
         }
 
-        public static IEnumerable<DataRow> GetActionPermissionsForUser(SqlConnection sqlConnection, int userId, int entityTypeId, int? actionId)
+        public static IEnumerable<DataRow> GetActionPermissionsForUser(QPModelDataContext efContext, DbConnection sqlConnection, int userId, int entityTypeId, int? actionId)
         {
-            var fromBlock = @"(select T.ID, T.NAME, COALESCE(L.PERMISSION_LEVEL_NAME, {2}) AS PERMISSION_LEVEL_NAME, CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,  COALESCE(L.PERMISSION_LEVEL, {4}) AS PERMISSION_LEVEL
+            var dbType = GetDbType(sqlConnection);
+            var refreshActionTypeId = efContext.ActionTypeSet.First(x => x.Code.Equals(ActionTypeCode.Refresh)).Id;
+            var fromBlock = $@"(
+select
+T.ID,
+T.NAME,
+COALESCE(L.PERMISSION_LEVEL_NAME, {{2}}) AS PERMISSION_LEVEL_NAME,
+{SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
+COALESCE(L.PERMISSION_LEVEL, {{4}}) AS PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = {{0}}
                                  RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
+                                 WHERE T.ENTITY_TYPE_ID = {{1}} {{3}} AND T.{Escape(dbType, "TYPE_ID")} != {refreshActionTypeId}) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermissionLevel = "NULL";
@@ -4407,30 +4603,54 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out int _, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100);
         }
 
-        public static IEnumerable<DataRow> GetVisualEditorCommandsBySiteId(SqlConnection sqlConnection, int siteId)
+        public static IEnumerable<DataRow> GetVisualEditorCommandsBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var query = @"SELECT cmd.[ID], cmd.[NAME], cmd.[ALIAS], cmd.[ROW_ORDER], cmd.[TOOLBAR_IN_ROW_ORDER], cmd.[GROUP_IN_TOOLBAR_ORDER], cmd.[COMMAND_IN_GROUP_ORDER]," +
-                " bnd.[ON], cmd.[PLUGIN_ID], cmd.[CREATED], cmd.[MODIFIED], cmd.[LAST_MODIFIED_BY] from [dbo].[VE_COMMAND_SITE_BIND] bnd INNER JOIN [dbo].[VE_COMMAND] cmd ON bnd.COMMAND_ID = cmd.ID" +
-                " where bnd.SITE_ID = " + siteId + " ORDER BY cmd.[ID]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"
+SELECT cmd.{Escape(dbType, "ID")},
+cmd.{Escape(dbType, "NAME")},
+cmd.{Escape(dbType, "ALIAS")},
+cmd.{Escape(dbType, "ROW_ORDER")},
+cmd.{Escape(dbType, "TOOLBAR_IN_ROW_ORDER")},
+cmd.{Escape(dbType, "GROUP_IN_TOOLBAR_ORDER")},
+cmd.{Escape(dbType, "COMMAND_IN_GROUP_ORDER")},
+bnd.{Escape(dbType, "ON")},
+cmd.{Escape(dbType, "PLUGIN_ID")},
+cmd.{Escape(dbType, "CREATED")},
+cmd.{Escape(dbType, "MODIFIED")},
+cmd.{Escape(dbType, "LAST_MODIFIED_BY")}
+from {DbSchemaName(dbType)}.VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.SITE_ID = {siteId} ORDER BY cmd.{Escape(dbType, "ID")}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetVisualEditorCommandsByFieldId(SqlConnection sqlConnection, int fieldId)
+        public static IEnumerable<DataRow> GetVisualEditorCommandsByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = @"SELECT cmd.[ID], cmd.[NAME], cmd.[ALIAS], cmd.[ROW_ORDER], cmd.[TOOLBAR_IN_ROW_ORDER], cmd.[GROUP_IN_TOOLBAR_ORDER], cmd.[COMMAND_IN_GROUP_ORDER]," +
-                " bnd.[ON], cmd.[PLUGIN_ID], cmd.[CREATED], cmd.[MODIFIED], cmd.[LAST_MODIFIED_BY] from [dbo].[VE_COMMAND_FIELD_BIND] bnd INNER JOIN [dbo].[VE_COMMAND] cmd ON bnd.COMMAND_ID = cmd.ID" +
-                " where bnd.FIELD_ID = " + fieldId + " ORDER BY cmd.[ID]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"
+SELECT cmd.{Escape(dbType, "ID")},
+cmd.{Escape(dbType, "NAME")},
+cmd.{Escape(dbType, "ALIAS")},
+cmd.{Escape(dbType, "ROW_ORDER")},
+cmd.{Escape(dbType, "TOOLBAR_IN_ROW_ORDER")},
+cmd.{Escape(dbType, "GROUP_IN_TOOLBAR_ORDER")},
+cmd.{Escape(dbType, "COMMAND_IN_GROUP_ORDER")},
+bnd.{Escape(dbType, "ON")},
+cmd.{Escape(dbType, "PLUGIN_ID")},
+cmd.{Escape(dbType, "CREATED")},
+cmd.{Escape(dbType, "MODIFIED")},
+cmd.{Escape(dbType, "LAST_MODIFIED_BY")}
+from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.FIELD_ID = {fieldId} ORDER BY cmd.{Escape(dbType, "ID")}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
@@ -4438,9 +4658,14 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Вкл/Выкл команду в.редактора
         /// </summary>
-        public static void UpdateOrInsertSiteVeCommandValue(SqlConnection sqlConnection, int siteId, int commandId, bool value)
+        public static void UpdateOrInsertSiteVeCommandValue(DbConnection sqlConnection, int siteId, int commandId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_COMMAND_SITE_BIND where [COMMAND_ID] = @cId and [SITE_ID] = @sId)
                             begin
                                     INSERT INTO VE_COMMAND_SITE_BIND
@@ -4457,8 +4682,22 @@ namespace Quantumart.QP8.DAL
                                     update VE_COMMAND_SITE_BIND set [ON] = @val where [COMMAND_ID] = @cId and [SITE_ID] = @sId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+                        INSERT INTO VE_COMMAND_SITE_BIND
+                        (command_id, site_id, {Escape(dbType, "on")})
+                        VALUES(@cId, @sId, @val)
+                        ON CONFLICT(command_id, site_id)
+                        DO UPDATE SET {Escape(dbType, "on")} = @val
+                        ";
+                    break;
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
                 cmd.Parameters.AddWithValue("@sId", siteId);
@@ -4467,9 +4706,14 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateOrInsertSiteVeStyleValue(SqlConnection sqlConnection, int siteId, int styleId, bool value)
+        public static void UpdateOrInsertSiteVeStyleValue(DbConnection sqlConnection, int siteId, int styleId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_STYLE_SITE_BIND where [STYLE_ID] = @cId and [SITE_ID] = @sId)
                             begin
                                     INSERT INTO VE_STYLE_SITE_BIND
@@ -4486,8 +4730,20 @@ namespace Quantumart.QP8.DAL
                                     update VE_STYLE_SITE_BIND set [ON] = @val where [STYLE_ID] = @cId and [SITE_ID] = @sId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+    INSERT INTO VE_STYLE_SITE_BIND (style_id, site_id, {Escape(dbType, "on")})
+    VALUES( @cId, @sId, @val )
+    ON CONFLICT(style_id, site_id)
+    DO UPDATE SET {Escape(dbType, "on")} = @val;
+";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", styleId);
                 cmd.Parameters.AddWithValue("@sId", siteId);
@@ -4496,9 +4752,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveSiteVeCommand(SqlConnection sqlConnection, int siteId, int commandId)
+        public static void RemoveSiteVeCommand(DbConnection sqlConnection, int siteId, int commandId)
         {
-            using (var cmd = SqlCommandFactory.Create("DELETE FROM VE_COMMAND_SITE_BIND where [COMMAND_ID] = @cId and [SITE_ID] = @sId", sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_COMMAND_SITE_BIND where COMMAND_ID = @cId and SITE_ID = @sId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
                 cmd.Parameters.AddWithValue("@sId", siteId);
@@ -4506,9 +4763,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveSiteVeStyle(SqlConnection sqlConnection, int siteId, int styleId)
+        public static void RemoveSiteVeStyle(DbConnection sqlConnection, int siteId, int styleId)
         {
-            using (var cmd = SqlCommandFactory.Create("DELETE FROM VE_STYLE_SITE_BIND where [STYLE_ID] = @cId and [SITE_ID] = @sId", sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create($"DELETE FROM VE_STYLE_SITE_BIND where STYLE_ID = @cId and SITE_ID = @sId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", styleId);
                 cmd.Parameters.AddWithValue("@sId", siteId);
@@ -4516,9 +4774,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveFieldVeCommand(SqlConnection sqlConnection, int fieldId, int commandId)
+        public static void RemoveFieldVeCommand(DbConnection sqlConnection, int fieldId, int commandId)
         {
-            using (var cmd = SqlCommandFactory.Create("DELETE FROM VE_COMMAND_FIELD_BIND where [COMMAND_ID] = @cId and [FIELD_ID] = @fId", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_COMMAND_FIELD_BIND where COMMAND_ID = @cId and FIELD_ID = @fId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
                 cmd.Parameters.AddWithValue("@fId", fieldId);
@@ -4526,9 +4784,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveFieldVeStyle(SqlConnection sqlConnection, int fieldId, int styleId)
+        public static void RemoveFieldVeStyle(DbConnection sqlConnection, int fieldId, int styleId)
         {
-            using (var cmd = SqlCommandFactory.Create("DELETE FROM VE_STYLE_FIELD_BIND where [STYLE_ID] = @sId and [FIELD_ID] = @fId", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("DELETE FROM VE_STYLE_FIELD_BIND where STYLE_ID = @sId and FIELD_ID = @fId", sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@sId", styleId);
                 cmd.Parameters.AddWithValue("@fId", fieldId);
@@ -4536,9 +4794,14 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateOrInsertFieldVeCommandValue(SqlConnection sqlConnection, int fieldId, int commandId, bool value)
+        public static void UpdateOrInsertFieldVeCommandValue(DbConnection sqlConnection, int fieldId, int commandId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_COMMAND_FIELD_BIND where [COMMAND_ID] = @cId and [FIELD_ID] = @fId)
                             begin
                                     INSERT INTO VE_COMMAND_FIELD_BIND
@@ -4555,8 +4818,20 @@ namespace Quantumart.QP8.DAL
                                     update VE_COMMAND_FIELD_BIND set [ON] = @val where [COMMAND_ID] = @cId and [FIELD_ID] = @fId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+ INSERT INTO VE_COMMAND_FIELD_BIND (command_id, field_id, {Escape(dbType, "on")})
+    VALUES( @cId, @fId, @val )
+    ON CONFLICT(command_id, field_id)
+    DO UPDATE SET {Escape(dbType, "on")} = @val;
+";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
                 cmd.Parameters.AddWithValue("@fId", fieldId);
@@ -4565,10 +4840,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static bool IsVeCommandNameFree(SqlConnection sqlConnection, string name, int pluginId)
+        public static bool IsVeCommandNameFree(DbConnection sqlConnection, string name, int pluginId)
         {
-            const string query = @"select COUNT(*) FROM VE_COMMAND WHERE [NAME] = @name AND [PLUGIN_ID] <> @pluginId";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"select COUNT(*) FROM VE_COMMAND WHERE {Escape(dbType, "NAME")} = @name AND PLUGIN_ID <> @pluginId";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@name", name);
@@ -4577,10 +4853,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static bool IsVeCommandAliasFree(SqlConnection sqlConnection, string alias, int pluginId)
+        public static bool IsVeCommandAliasFree(DbConnection sqlConnection, string alias, int pluginId)
         {
-            const string query = @"select COUNT(*) FROM VE_COMMAND WHERE [ALIAS] = @alias AND [PLUGIN_ID] <> @pluginId";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"select COUNT(*) FROM VE_COMMAND WHERE {Escape(dbType, "ALIAS")} = @alias AND {Escape(dbType, "PLUGIN_ID")} <> @pluginId";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@alias", alias);
@@ -4589,10 +4866,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UnlockArticlesLockedByUser(SqlConnection sqlConnection, int userId, int[] ids)
+        public static void UnlockArticlesLockedByUser(DbConnection sqlConnection, int userId, int[] ids)
         {
             var query = $"update CONTENT_ITEM set locked_by = null, locked = null where locked_by = @user_id and content_item_id in ({string.Join(",", ids)})";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
@@ -4600,10 +4877,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UnlockAllArticlesLockedByUser(SqlConnection sqlConnection, int userId)
+        public static void UnlockAllArticlesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string query = @"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $"update CONTENT_ITEM set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, dbType)} and locked_by = @user_id";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
@@ -4611,10 +4889,13 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UnlockAllSitesLockedByUser(SqlConnection sqlConnection, int userId)
+
+
+        public static void UnlockAllSitesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string query = @"update [SITE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var databaseType = GetDbType(sqlConnection);
+            var query = $"update {EscapeObjectName("SITE", databaseType)} set locked_by = null, locked = null where permanent_lock = {GetBoolValue(false, databaseType)} and locked_by = @user_id";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
@@ -4622,61 +4903,114 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetVeCommandsMaxRowOrder(SqlConnection sqlConnection)
+        private static string GetBoolValue(bool value, DatabaseType databaseType)
         {
-            const string query = @"select MAX([ROW_ORDER]) FROM VE_COMMAND";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return value ? "1" : "0";
+                case DatabaseType.Postgres:
+                    return value ? "TRUE" : "FALSE";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+        public static int GetVeCommandsMaxRowOrder(DbConnection sqlConnection)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"select MAX({Escape(dbType, "ROW_ORDER")}) FROM VE_COMMAND";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var maxOrder = cmd.ExecuteScalar();
-                return DBNull.Value.Equals(maxOrder) ? 0 : (int)maxOrder;
+                return DBNull.Value.Equals(maxOrder) ? 0 : Convert.ToInt32(maxOrder);
             }
         }
 
-        public static IEnumerable<DataRow> GetVisualEditorStylesPage(SqlConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.VisualEditorStyle,
-            "s.[ID] as [Id], s.[NAME] as [Name], s.[DESCRIPTION] as [Description], s.[TAG] as [Tag], s.[ORDER] as [Order]," +
-            " s.[IS_SYSTEM] as [IsSystem], s.[IS_FORMAT] as [IsFormat], s.[CREATED] as [Created], s.[MODIFIED] as [Modified], u.LOGIN as [LastModifiedByLogin]",
-            "dbo.[VE_STYLE] s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Order]",
-            "",
-            startRow,
-            pageSize,
-            out totalRecords
-        );
-
-        public static IEnumerable<DataRow> GetVisualEditorStylesBySiteId(SqlConnection sqlConnection, int siteId)
+        public static IEnumerable<DataRow> GetVisualEditorStylesPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            var query = @"SELECT s.[ID], s.[NAME], s.[DESCRIPTION], s.[TAG], s.[ORDER], s.[OVERRIDES_TAG], s.[IS_FORMAT], s.[IS_SYSTEM]," +
-                " bnd.[ON], s.[ATTRIBUTES], s.[STYLES], s.[CREATED], s.[MODIFIED], s.[LAST_MODIFIED_BY] from [dbo].[VE_STYLE_SITE_BIND] bnd INNER JOIN [dbo].[VE_STYLE] s ON bnd.STYLE_ID = s.ID" +
-                " where bnd.SITE_ID = " + siteId + " ORDER BY [Order]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var escapedOrderColumnName = Escape(dbType, "ORDER");
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.VisualEditorStyle,
+                $"s.ID as Id, s.NAME as Name, s.DESCRIPTION as Description, s.TAG as Tag, s.{escapedOrderColumnName} as {escapedOrderColumnName}," +
+                " s.IS_SYSTEM as IsSystem, s.IS_FORMAT as IsFormat, s.CREATED as Created, s.MODIFIED as Modified, u.LOGIN as LastModifiedByLogin",
+                "VE_STYLE s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : escapedOrderColumnName,
+                "",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetVisualEditorStylesBySiteId(DbConnection sqlConnection, int siteId)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"SELECT
+s.{Escape(dbType, "ID")},
+s.NAME,
+s.DESCRIPTION,
+s.TAG,
+s.{Escape(dbType, "ORDER")},
+s.OVERRIDES_TAG,
+s.IS_FORMAT,
+s.IS_SYSTEM,
+bnd.{Escape(dbType, "ON")},
+s.ATTRIBUTES,
+s.STYLES,
+s.CREATED,
+s.MODIFIED,
+s.LAST_MODIFIED_BY
+from VE_STYLE_SITE_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.SITE_ID = {siteId}
+ORDER BY {Escape(dbType, "ORDER")}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetVisualEditorStylesByFieldId(SqlConnection sqlConnection, int fieldId)
+        public static IEnumerable<DataRow> GetVisualEditorStylesByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = @"SELECT s.[ID], s.[NAME], s.[DESCRIPTION], s.[TAG], s.[ORDER], s.[OVERRIDES_TAG], s.[IS_FORMAT], s.[IS_SYSTEM]," +
-                " bnd.[ON], s.[ATTRIBUTES], s.[STYLES], s.[CREATED], s.[MODIFIED], s.[LAST_MODIFIED_BY] from [dbo].[VE_STYLE_FIELD_BIND] bnd INNER JOIN [dbo].[VE_STYLE] s ON bnd.STYLE_ID = s.ID" +
-                " where bnd.FIELD_ID = " + fieldId + " ORDER BY [Order]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"
+SELECT s.{Escape(dbType, "ID")},
+s.NAME,
+s.DESCRIPTION,
+s.TAG,
+s.{Escape(dbType, "ORDER")},
+s.OVERRIDES_TAG,
+s.IS_FORMAT,
+s.IS_SYSTEM,
+bnd.{Escape(dbType, "ON")},
+s.ATTRIBUTES,
+s.STYLES,
+s.CREATED,
+s.MODIFIED,
+s.LAST_MODIFIED_BY
+from VE_STYLE_FIELD_BIND bnd INNER JOIN VE_STYLE s ON bnd.STYLE_ID = s.ID where bnd.FIELD_ID = {fieldId} ORDER BY {Escape(dbType, "ORDER")}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void UpdateOrInsertFieldVeStyleValue(SqlConnection sqlConnection, int fieldId, int styleId, bool value)
+        public static void UpdateOrInsertFieldVeStyleValue(DbConnection sqlConnection, int fieldId, int styleId, bool value)
         {
-            const string query = @"begin tran
+            var dbType = GetDbType(sqlConnection);
+            string query;
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    query = @"begin tran
                             if not exists (select * from VE_STYLE_FIELD_BIND where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId)
                             begin
                                     INSERT INTO VE_STYLE_FIELD_BIND
@@ -4693,8 +5027,21 @@ namespace Quantumart.QP8.DAL
                                     update VE_STYLE_FIELD_BIND set [ON] = @val where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId
                             end
                             commit";
+                    break;
+                case DatabaseType.Postgres:
+                    query = $@"
+INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
+    VALUES( @styleId, @fieldId, @val )
+    ON CONFLICT(style_id, field_id)
+    DO UPDATE SET {Escape(dbType, "on")} = @val;
+";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@styleId", styleId);
                 cmd.Parameters.AddWithValue("@fieldId", fieldId);
@@ -4703,49 +5050,58 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetWorkflowsPage(SqlConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Workflow,
-            "w.[WORKFLOW_ID] AS Id, w.[WORKFLOW_NAME] as [Name], w.[DESCRIPTION] as [Description], w.[MODIFIED] as [Modified], w.[CREATED] as [Created]," +
-            "w.[LAST_MODIFIED_BY] as[LastModifiedBy], u.[LOGIN] as [LastModifiedByLogin]",
-            "[WORKFLOW] w inner join users u on w.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name]",
-            "w.SITE_ID = " + siteId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
-
-        public static IEnumerable<DataRow> GetStatusTypePage(SqlConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.StatusType,
-            "s.[STATUS_TYPE_ID] AS Id, s.[STATUS_TYPE_NAME] as [Name], s.[DESCRIPTION] as [Description], s.[WEIGHT] as [Weight], s.[MODIFIED] as [Modified], s.[CREATED] as [Created]," +
-            " s.[LAST_MODIFIED_BY] as[LastModifiedBy], u.[LOGIN] as [LastModifiedByLogin]",
-            "[STATUS_TYPE] s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Weight]",
-            "s.SITE_ID = " + siteId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
-
-        public static IEnumerable<DataRow> GetStatusTypeWeightsBySiteId(SqlConnection connection, int siteId, int exceptId)
+        public static IEnumerable<DataRow> GetWorkflowsPage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
-            const string query = "select [WEIGHT] FROM [dbo].[STATUS_TYPE] where [SITE_ID] = @siteId and [STATUS_TYPE_ID] <> @id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            var dbType = GetDbType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Workflow,
+                $"w.WORKFLOW_ID AS Id, w.WORKFLOW_NAME as {Escape(dbType, "Name")}, w.DESCRIPTION as Description, w.MODIFIED as Modified, w.CREATED as Created," +
+                "w.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "WORKFLOW w inner join users u on w.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : Escape(dbType, "Name"),
+                "w.SITE_ID = " + siteId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetStatusTypePage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.StatusType,
+                $"s.STATUS_TYPE_ID AS Id, s.STATUS_TYPE_NAME as {Escape(dbType, "Name")}, s.DESCRIPTION as Description, s.WEIGHT as Weight, s.MODIFIED as Modified, s.CREATED as Created," +
+                " s.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "STATUS_TYPE s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "Weight",
+                "s.SITE_ID = " + siteId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetStatusTypeWeightsBySiteId(DbConnection connection, int siteId, int exceptId)
+        {
+            var dbType = GetDbType(connection);
+            var query = $"select {Escape(dbType, "WEIGHT")} FROM {DbSchemaName(dbType)}.{Escape(dbType, "STATUS_TYPE")} where {Escape(dbType, "SITE_ID")} = @siteId and {Escape(dbType, "STATUS_TYPE_ID")} <> @id";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@siteId", siteId);
                 cmd.Parameters.AddWithValue("@id", exceptId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static long GetNumberOfArticlesUsingStatusByStatusId(SqlConnection connection, int id)
+        public static long GetNumberOfArticlesUsingStatusByStatusId(DbConnection connection, int id)
         {
-            using (var cmd = SqlCommandFactory.Create("select COUNT(*) from [CONTENT_ITEM] where [STATUS_TYPE_ID] = @id", connection))
+            using (var cmd = DbCommandFactory.Create("select COUNT(*) from CONTENT_ITEM where STATUS_TYPE_ID = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -4754,9 +5110,9 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static long GetNumberOfWorkflowsUsingStatusByStatusId(SqlConnection connection, int id)
+        public static long GetNumberOfWorkflowsUsingStatusByStatusId(DbConnection connection, int id)
         {
-            using (var cmd = SqlCommandFactory.Create("select COUNT(*) from [workflow_rules] where [SUCCESSOR_STATUS_ID] = @id", connection))
+            using (var cmd = DbCommandFactory.Create("select COUNT(*) from workflow_rules where SUCCESSOR_STATUS_ID = @id", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", id);
@@ -4765,43 +5121,47 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void SetNullAssociatedNotificationsStatusTypesIds(SqlConnection connection, int id)
+        public static void SetNullAssociatedNotificationsStatusTypesIds(DbConnection connection, int id)
         {
-            var query = "UPDATE [NOTIFICATIONS] SET [notify_on_status_type_id] = null, [for_status_changed] = 0, " + $"[for_status_partially_changed] = 0 WHERE [notify_on_status_type_id] = {id}";
+            var dbType = GetDbType(connection);
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+            var query = $"UPDATE NOTIFICATIONS SET notify_on_status_type_id = null, for_status_changed = {falseValue}, for_status_partially_changed = {falseValue} WHERE notify_on_status_type_id = {id}";
+
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void RemoveAssociatedContentItemsStatusHistoryRecords(SqlConnection connection, int id)
+        public static void RemoveAssociatedContentItemsStatusHistoryRecords(DbConnection connection, int id)
         {
-            var query = $"DELETE FROM [CONTENT_ITEM_STATUS_HISTORY] with (rowlock)  where [STATUS_TYPE_ID] = {id}";
+            var dbType = GetDbType(connection);
+            var query = $"DELETE FROM CONTENT_ITEM_STATUS_HISTORY {WithRowLock(dbType)}  where STATUS_TYPE_ID = {id}";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void RemoveAssociatedWaitingForApprovalRecords(SqlConnection connection, int id)
+        public static void RemoveAssociatedWaitingForApprovalRecords(DbConnection connection, int id)
         {
-            var query = $"DELETE FROM [WAITING_FOR_APPROVAL] where [STATUS_TYPE_ID] = {id}";
+            var query = $"DELETE FROM WAITING_FOR_APPROVAL where STATUS_TYPE_ID = {id}";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static HashSet<int> GetTreeIdsToLoad(SqlConnection sqlConnection, string entityTypeCode, string selectedIds)
+        public static HashSet<int> GetTreeIdsToLoad(DbConnection sqlConnection, string entityTypeCode, string selectedIds)
         {
-            using (var cmd = SqlCommandFactory.Create($"select * from ENTITY_TYPE where CODE = '{entityTypeCode}'", sqlConnection))
+            using (var cmd = DbCommandFactory.Create($"select * from ENTITY_TYPE where CODE = '{entityTypeCode}'", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -4822,13 +5182,14 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static HashSet<int> GetTreeIdsToLoad(SqlConnection sqlConnection, string tableName, string parentFieldName, string idFieldName, string selectedIds)
+        public static HashSet<int> GetTreeIdsToLoad(DbConnection sqlConnection, string tableName, string parentFieldName, string idFieldName, string selectedIds)
         {
             var result = new HashSet<int>();
             if (!string.IsNullOrEmpty(selectedIds))
             {
+                var dbType = GetDbType(sqlConnection);
                 var sb = new StringBuilder();
-                sb.AppendLine("WITH IDS (ID)");
+                sb.AppendLine($"WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)} IDS (ID)");
                 sb.AppendLine("AS");
                 sb.AppendLine("(");
                 sb.AppendFormatLine("select {0} from {1} where {2} in ({3}) and {0} is not null", parentFieldName, tableName, idFieldName, selectedIds);
@@ -4840,7 +5201,7 @@ namespace Quantumart.QP8.DAL
                 sb.AppendLine("select distinct ID from IDS");
                 var sql = sb.ToString();
 
-                using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+                using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
                 {
                     cmd.CommandType = CommandType.Text;
                     using (IDataReader dr = cmd.ExecuteReader())
@@ -4856,52 +5217,57 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static IEnumerable<DataRow> GetCommandBindingBySiteId(SqlConnection sqlConnection, int siteId)
+        public static IEnumerable<DataRow> GetCommandBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var query = $"SELECT [COMMAND_ID], [ON] FROM [VE_COMMAND_SITE_BIND] WHERE [SITE_ID] = {siteId}";
+            var dbType = GetDbType(sqlConnection);
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var query = $"SELECT COMMAND_ID, {Escape(dbType, "ON")} FROM VE_COMMAND_SITE_BIND WHERE SITE_ID = {siteId}";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetCommandBindingByFieldId(SqlConnection sqlConnection, int fieldId)
+        public static IEnumerable<DataRow> GetCommandBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = $"SELECT [COMMAND_ID], [ON] FROM [VE_COMMAND_FIELD_BIND] WHERE [FIELD_ID] = {fieldId}";
+            var dbType = GetDbType(sqlConnection);
+            var query = $"SELECT COMMAND_ID, {Escape(dbType, "ON")} FROM VE_COMMAND_FIELD_BIND WHERE FIELD_ID = {fieldId}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetStyleBindingByFieldId(SqlConnection sqlConnection, int fieldId)
+        public static IEnumerable<DataRow> GetStyleBindingByFieldId(DbConnection sqlConnection, int fieldId)
         {
-            var query = $"SELECT [STYLE_ID], [ON] FROM [VE_STYLE_FIELD_BIND] WHERE [FIELD_ID] = {fieldId}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $"SELECT STYLE_ID, {Escape(dbType, "ON")} FROM VE_STYLE_FIELD_BIND WHERE FIELD_ID = {fieldId}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetStyleBindingBySiteId(SqlConnection sqlConnection, int siteId)
+        public static IEnumerable<DataRow> GetStyleBindingBySiteId(DbConnection sqlConnection, int siteId)
         {
-            var query = $"SELECT [STYLE_ID], [ON] FROM [VE_STYLE_SITE_BIND] WHERE [SITE_ID] = {siteId}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var query = $"SELECT STYLE_ID, {Escape(dbType, "ON")} FROM VE_STYLE_SITE_BIND WHERE SITE_ID = {siteId}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
@@ -4909,7 +5275,31 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает id агрегированных статей для статьи контента
         /// </summary>
-        public static IEnumerable<decimal> GetAggregatedArticlesIDs(SqlConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
+        public static IEnumerable<decimal> GetAggregatedArticlesIDs(DbConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
+        {
+            var dbType = GetDbType(connection);
+
+            if (dbType == DatabaseType.SqlServer)
+            {
+                return GetAggregatedArticlesIdsSqlServer(connection, articleId, classifierFields, types, isLive);
+            }
+
+            var query = $"select public.qp_get_aggregated_ids(@articleId::integer, @classifierIds, @contentIds, @isLive)";
+            using (var cmd = DbCommandFactory.Create(query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@articleId", articleId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@classifierIds", classifierFields, dbType));
+                cmd.Parameters.Add(GetIdsDatatableParam("@contentIds", types, dbType));
+                cmd.Parameters.AddWithValue("@isLive", isLive);
+
+                var result = cmd.ExecuteScalar();
+                return Array.ConvertAll((int[])result, item => (decimal)item);
+            }
+
+        }
+
+        private static IEnumerable<decimal> GetAggregatedArticlesIdsSqlServer(DbConnection connection, int articleId, int[] classifierFields, int[] types, bool isLive)
         {
             string query = $@"
             declare @attrIds table (attribute_id numeric primary key, content_id numeric, attribute_name nvarchar(255))
@@ -4925,13 +5315,13 @@ namespace Quantumart.QP8.DAL
                 print @attribute_id
                 if @sql <> ''
                     set @sql = @sql + ' union all '
-                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '{ (isLive ? string.Empty : "_united") } where [' + @attribute_name + '] = @article_id'
+                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '{(isLive ? string.Empty : "_united")} where [' + @attribute_name + '] = @article_id'
                 delete from @attrIds where attribute_id = @attribute_id
             end
             exec sp_executesql @sql, N'@article_id numeric', @article_id = @article_id";
 
             var result = new List<decimal>();
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@article_id", articleId);
@@ -4952,11 +5342,11 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает id статей-вариаций для статьи контента
         /// </summary>
-        public static IEnumerable<decimal> GetVariationArticlesIDs(SqlConnection connection, int articleId, int contentId, string variationFieldName)
+        public static IEnumerable<decimal> GetVariationArticlesIDs(DbConnection connection, int articleId, int contentId, string variationFieldName)
         {
             var query = $@"select c.CONTENT_ITEM_ID from content_{contentId}_united c with(nolock) where c.[{variationFieldName}] = @article_id";
             var result = new List<decimal>();
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@article_id", articleId);
@@ -4972,10 +5362,10 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void RemoveUserQueryAttrs(SqlConnection connection, int contentId)
+        public static void RemoveUserQueryAttrs(DbConnection connection, int contentId)
         {
             const string query = "delete from USER_QUERY_ATTRS WHERE VIRTUAL_CONTENT_ID = @content_id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("content_id", contentId);
@@ -4988,13 +5378,13 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="contentId"></param>
-        public static void RemoveUnionAttrsByUnionContent(SqlConnection connection, int contentId)
+        public static void RemoveUnionAttrsByUnionContent(DbConnection connection, int contentId)
         {
-            const string query = @"delete UNION_ATTRS from UNION_ATTRS UA
-                            JOIN CONTENT_ATTRIBUTE CA ON UA.virtual_attr_id = CA.ATTRIBUTE_ID
-                            WHERE CA.CONTENT_ID = @content_id";
+            var query = $@"delete from UNION_ATTRS WHERE virtual_attr_id IN (
+                                    select ATTRIBUTE_ID FROM CONTENT_ATTRIBUTE WHERE CONTENT_ID = @content_id
+                                )";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("content_id", contentId);
@@ -5002,12 +5392,12 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void RemoveUnionAttrsByBaseFields(SqlConnection connection, List<int> baseFieldIds)
+        public static void RemoveUnionAttrsByBaseFields(DbConnection connection, List<int> baseFieldIds)
         {
             if (baseFieldIds.Any())
             {
                 var query = $"delete from UNION_ATTRS where union_attr_id in ({string.Join(",", baseFieldIds)})";
-                using (var cmd = SqlCommandFactory.Create(query, connection))
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
@@ -5015,86 +5405,90 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void BatchInsertUserQueryAttrs(SqlConnection connection, IEnumerable<UserQueryAttrsDAL> records)
+        public static void BatchInsertUserQueryAttrs(DbConnection connection, IEnumerable<UserQueryAttrsDAL> records)
         {
             var qb = new StringBuilder();
             foreach (var r in records)
             {
-                qb.AppendFormat("INSERT INTO [user_query_attrs] ([virtual_content_id] ,[user_query_attr_id]) VALUES ({0},{1});", r.VirtualContentId, r.UserQueryAttrId);
+                qb.Append($@"INSERT INTO user_query_attrs (virtual_content_id, user_query_attr_id) VALUES ({r.VirtualContentId}, {r.UserQueryAttrId});");
             }
 
             var query = qb.ToString();
             if (!string.IsNullOrEmpty(query))
             {
-                using (var cmd = SqlCommandFactory.Create(query, connection))
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        public static void BatchInsertUnionAttrs(SqlConnection connection, IEnumerable<UnionAttrDAL> records)
+        public static void BatchInsertUnionAttrs(DbConnection connection, IEnumerable<UnionAttrDAL> records)
         {
             var qb = new StringBuilder();
             foreach (var r in records)
             {
-                qb.AppendFormat("INSERT INTO [union_attrs] ([virtual_attr_id],[union_attr_id]) VALUES({0},{1});", r.VirtualFieldId, r.UnionFieldId);
+                qb.Append($@"INSERT INTO union_attrs (virtual_attr_id, union_attr_id) VALUES({r.VirtualFieldId}, {r.UnionFieldId});");
             }
 
             var query = qb.ToString();
             if (!string.IsNullOrEmpty(query))
             {
-                using (var cmd = SqlCommandFactory.Create(query, connection))
+                using (var cmd = DbCommandFactory.Create(query, connection))
                 {
-                    cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        public static void SetWorkflowBindedContentId(SqlConnection connection, int workflowId, int contentId)
+        public static void SetWorkflowBindedContentId(DbConnection connection, int workflowId, int contentId)
         {
-            var query = $"INSERT INTO [content_workflow_bind] ([CONTENT_ID],[WORKFLOW_ID], [is_async]) VALUES({contentId}, {workflowId}, 1);";
+            var dbType = GetDbType(connection);
+            var query = $"INSERT INTO content_workflow_bind (CONTENT_ID, WORKFLOW_ID, is_async) VALUES({contentId}, {workflowId}, {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)});";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CleanWorkflowContentBindedIds(SqlConnection connection, int workflowId)
+        public static void CleanWorkflowContentBindedIds(DbConnection connection, int workflowId)
         {
-            var query = $"DELETE FROM [content_workflow_bind] where WORKFLOW_ID = {workflowId};";
+            var query = $"DELETE FROM content_workflow_bind where WORKFLOW_ID = {workflowId};";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> GetWorkflowContentBindedIds(SqlConnection connection, int workflowId)
+        public static IEnumerable<DataRow> GetWorkflowContentBindedIds(DbConnection connection, int workflowId)
         {
-            var query = $"SELECT CONTENT_ID FROM [content_workflow_bind] where WORKFLOW_ID = {workflowId};";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            var query = $"SELECT CONTENT_ID FROM content_workflow_bind where WORKFLOW_ID = {workflowId};";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> ids)
+        public static int[] GetIdsToAutoArchive(DbConnection connection, IEnumerable<int> ids)
         {
+            var dbType = GetDbType(connection);
             var result = new List<int>();
-            const string query = "select content_item_id FROM @ids i inner join content_item ci on i.id = ci.content_item_id inner join content c on c.content_id = ci.content_id where c.auto_archive = 1";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            string query = $@"SELECT content_item_id
+                FROM {IdList(dbType, "@ids", "ids")}
+                    INNER JOIN content_item ci ON ids.id = ci.content_item_id
+                    INNER JOIN content c ON c.content_id = ci.content_id
+                WHERE c.auto_archive = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 using (IDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -5107,67 +5501,80 @@ namespace Quantumart.QP8.DAL
             return result.ToArray();
         }
 
-        public static void DeleteArticles(SqlConnection connection, List<int> ids, bool withAggregated)
+        public static IEnumerable<DataRow> GetAcceptableBaseFieldIdsForCloning(DbConnection sqlConnection, string fieldName, string contentIds, int virtualContentId, bool forNew)
         {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            if (ids != null && ids.Any())
-            {
-                var query = $"DELETE FROM [content_item] where content_item_id in (select id from {source}) ";
-                using (var cmd = SqlCommandFactory.Create(query, connection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public static IEnumerable<DataRow> GetAcceptableBaseFieldIdsForCloning(SqlConnection sqlConnection, string fieldName, string contentIds, int virtualContentId, bool forNew)
-        {
-            var sb = new StringBuilder();
+            string sql;
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var attrName = dbType == DatabaseType.SqlServer ? "ATTRIBUTE_NAME" : "lower(ATTRIBUTE_NAME)";
             if (!forNew)
             {
-                sb.Append("select ATTRIBUTE_ID as id, isnull(user_query_attr_id, 0) as sort_order from CONTENT_ATTRIBUTE ca ");
-                sb.Append("left join user_query_attrs uqa on ca.attribute_id = uqa.user_query_attr_id and uqa.virtual_content_id = @virtualContentId ");
-                sb.AppendFormat("where ATTRIBUTE_NAME = @attrName and CONTENT_ID in ({0}) order by sort_order desc ", contentIds);
+                sql = $@"
+                    select ATTRIBUTE_ID as id, coalesce(user_query_attr_id, 0) as sort_order from CONTENT_ATTRIBUTE ca
+                    left join user_query_attrs uqa on ca.attribute_id = uqa.user_query_attr_id and uqa.virtual_content_id = @virtualContentId
+                    where {attrName} = @attrName and CONTENT_ID in ({contentIds}) order by sort_order desc
+                ";
             }
             else
             {
-                sb.Append("select ATTRIBUTE_ID as id from CONTENT_ATTRIBUTE ca ");
-                sb.AppendFormat("where ATTRIBUTE_NAME = @attrName and CONTENT_ID in ({0}) ", contentIds);
+                sql = $@"
+                    select ATTRIBUTE_ID as id from CONTENT_ATTRIBUTE ca
+                    where {attrName} = @attrName and CONTENT_ID in ({contentIds})
+                ";
             }
 
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@attrName", fieldName);
                 cmd.Parameters.AddWithValue("@virtualContentId", virtualContentId);
-                cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static string GetPermittedItemsAsQuery(SqlConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
+        public static string GetPermittedItemsAsQuery(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityTypeName, string parentEntityTypeName, int parentEntityId, QPModelDataContext context = null)
         {
-            using (var cmd = SqlCommandFactory.Create("qp_GetPermittedItemsAsQuery", connection))
+            if (context == null)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@user_id", userId);
-                cmd.Parameters.AddWithValue("@group_id", groupId);
-                cmd.Parameters.AddWithValue("@start_level", startLevel);
-                cmd.Parameters.AddWithValue("@end_level", endLevel);
-                cmd.Parameters.AddWithValue("@entity_name", entityName);
-                cmd.Parameters.AddWithValue("@parent_entity_name", parentEntityName);
-                cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
-
-                cmd.Parameters.Add(new SqlParameter("@SQLOut", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output });
-                cmd.ExecuteNonQuery();
-                return (string)cmd.Parameters["@SQLOut"].Value;
+                var dbType = GetDbType(connection);
+                switch (dbType)
+                {
+                    case DatabaseType.SqlServer:
+                        context = new SqlServerQPModelDataContext(connection);
+                        break;
+                    case DatabaseType.Postgres:
+                        context = new NpgSqlQPModelDataContext(connection);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
+
+            return PermissionHelper.GetPermittedItemsAsQuery(context, userId, groupId, startLevel, endLevel, entityTypeName, parentEntityTypeName, parentEntityId);
+            // using (var cmd = DbCommandFactory.Create("qp_GetPermittedItemsAsQuery", connection))
+            // {
+            //     cmd.CommandType = CommandType.StoredProcedure;
+            //     cmd.Parameters.AddWithValue("@user_id", userId);
+            //     cmd.Parameters.AddWithValue("@group_id", groupId);
+            //     cmd.Parameters.AddWithValue("@start_level", startLevel);
+            //     cmd.Parameters.AddWithValue("@end_level", endLevel);
+            //     cmd.Parameters.AddWithValue("@entity_name", entityName);
+            //     cmd.Parameters.AddWithValue("@parent_entity_name", parentEntityName);
+            //     cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
+            //
+            //     cmd.Parameters.Add(new SqlParameter("@SQLOut", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output });
+            //     cmd.ExecuteNonQuery();
+            //     return (string)cmd.Parameters["@SQLOut"].Value;
+            // }
         }
 
-        public static bool TestM2MValue(SqlConnection sqlConnection, int linkId, int articleId, int testArticleId)
+        public static string GetPermittedItemsAsQueryV2(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public static bool TestM2MValue(DbConnection sqlConnection, int linkId, int articleId, int testArticleId)
         {
             var result =
                 GetLinkedArticles(sqlConnection, new[] { linkId }, articleId, false)[linkId]
@@ -5179,7 +5586,7 @@ namespace Quantumart.QP8.DAL
             return result.ContainsKey(testArticleId);
         }
 
-        public static bool TestM2OValue(SqlConnection sqlConnection, FieldInfo fi, int articleId, int testArticleId)
+        public static bool TestM2OValue(DbConnection sqlConnection, FieldInfo fi, int articleId, int testArticleId)
         {
             var result =
                 GetRelatedArticles(sqlConnection, new[] { fi }, articleId, false)[fi.Id]
@@ -5194,15 +5601,16 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Обновляет значения поля StringEnum в существующих статьях, в соответствии со составом перечисления
         /// </summary>
-        public static void CorrectEnumInContentData(SqlConnection sqlConnection, int fieldId, List<string> enumValues, string defValue)
+        public static void CorrectEnumInContentData(DbConnection sqlConnection, int fieldId, List<string> enumValues, string defValue)
         {
             if (enumValues.Any())
             {
-                var query = $@"update content_data set DATA = @def_value, MODIFIED = GETDATE()
+                var dbType = GetDbType(sqlConnection);
+                var query = $@"update content_data set DATA = @def_value, MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)}
                     where ATTRIBUTE_ID = @field_id
                     and DATA not in ({string.Join(",", enumValues.Select(v => $"'{Cleaner.ToSafeSqlString(v)}'"))}) and DATA IS NOT NULL";
 
-                using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                using (var cmd = DbCommandFactory.Create(query, sqlConnection))
                 {
                     cmd.Parameters.AddWithValue("@field_id", fieldId);
                     cmd.Parameters.AddWithValue("@def_value", (object)defValue ?? DBNull.Value);
@@ -5212,49 +5620,80 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetPageTemplatesBySiteId(SqlConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.PageTemplate,
-            "p.[PAGE_TEMPLATE_ID] AS Id, p.[is_system] AS [IsSystem], p.[LOCKED_BY] AS [LockedBy], p.[TEMPLATE_NAME] AS [Name], p.[TEMPLATE_FOLDER] AS [Folder], p.[DESCRIPTION] AS [Description], " +
-            "p.[CREATED] AS [Created], p.[MODIFIED] AS [Modified], p.LAST_MODIFIED_BY AS [LastModifiedBy], u.LOGIN AS [LastModifiedByLogin], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName",
-            "dbo.[PAGE_TEMPLATE] as p inner join users u on p.LAST_MODIFIED_BY = u.user_id left outer join users u2 on p.[LOCKED_BY] = u2.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "p.SITE_ID = " + siteId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetPageTemplatesBySiteId(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.PageTemplate,
+                "p.PAGE_TEMPLATE_ID AS Id, p.is_system AS IsSystem, p.LOCKED_BY AS LockedBy, p.TEMPLATE_NAME AS Name, p.TEMPLATE_FOLDER AS Folder, p.DESCRIPTION AS Description, " +
+                $"p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName",
+                "PAGE_TEMPLATE as p inner join users u on p.LAST_MODIFIED_BY = u.user_id left outer join users u2 on p.LOCKED_BY = u2.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : $"{Escape(dbType, "Name")} ASC",
+                "p.SITE_ID = " + siteId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
-        public static IEnumerable<DataRow> GetPagesByTemplateId(SqlConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Page,
-            "p.[PAGE_ID] AS Id, p.[GENERATE_TRACE] AS [GenerateTrace], p.[LOCKED_BY] AS [LockedBy], p.[REASSEMBLE] AS [Reassemble], p.[PAGE_NAME] AS [Name], p.[DESCRIPTION] AS [Description], " +
-            "p.[PAGE_FILENAME] as FileName, p.[page_folder] as Folder, p.[CREATED] AS [Created], p.[MODIFIED] AS [Modified], p.LAST_MODIFIED_BY AS [LastModifiedBy], u.LOGIN AS [LastModifiedByLogin], " +
-            "p.[ASSEMBLED] as [Assembled], p.[LAST_ASSEMBLED_BY] as [LastAssembledBy], uu.[LOGIN] as [LastAssembledByLogin], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName, t.[TEMPLATE_NAME] as [TemplateName]",
-            "dbo.[PAGE] as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.[PAGE_TEMPLATE_ID] = t.[PAGE_TEMPLATE_ID] left outer join users uu on p.[LAST_ASSEMBLED_BY] " +
-            " = uu.user_id left outer join users u2 on p.[ASSEMBLED] = u2.user_id",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] Asc",
-            "p.[PAGE_TEMPLATE_ID] = " + templateId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetPagesByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
+        {
+            var dbType = GetDbType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Page,
+                "p.PAGE_ID AS Id, p.GENERATE_TRACE AS GenerateTrace, p.LOCKED_BY AS LockedBy, p.REASSEMBLE AS Reassemble, p.PAGE_NAME AS Name, p.DESCRIPTION AS Description, " +
+                "p.PAGE_FILENAME as FileName, p.page_folder as Folder, p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, " +
+                $"p.ASSEMBLED as Assembled, p.LAST_ASSEMBLED_BY as LastAssembledBy, uu.LOGIN as LastAssembledByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName, t.TEMPLATE_NAME as TemplateName",
+                $"{DbSchemaName(dbType)}.{Escape(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
+                " = uu.user_id left outer join users u2 on p.LAST_ASSEMBLED_BY = u2.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "Name Asc",
+                "p.PAGE_TEMPLATE_ID = " + templateId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
 
-        public static IEnumerable<DataRow> GetTemplateObjectsByTemplateId(SqlConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.TemplateObject,
-            "o.[parent_object_id] as parentId, o.[OBJECT_ID] as Id, o.[ICON] as Icon, o.[LOCKED_BY] AS [LockedBy], o.[OBJECT_NAME] as [Name], o.[DESCRIPTION] as [Description], o.[CREATED] as [Created], o.[MODIFIED] as [Modified]," +
-            "u.[LOGIN] as [LastModifiedByLogin], t.[TYPE_NAME] as [TypeName], o.LAST_MODIFIED_BY AS [LastModifiedBy], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName, cast(case when oo.object_id is null then 0 else 1 end as bit) as Overriden ",
-            "[TEMPLATE_OBJECT] o inner join USERS u on o.LAST_MODIFIED_BY = u.USER_ID inner join [OBJECT_TYPE] t on o.OBJECT_TYPE_ID = t.OBJECT_TYPE_ID left outer join users u2 on o.[LOCKED_BY] = u2.user_id " +
-            "left join (select distinct parent_object_id as object_id from object) oo on o.OBJECT_ID = oo.object_id ",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "o.[PAGE_TEMPLATE_ID] = " + templateId,
-            startRow,
-            pageSize,
-            out totalRecords
-        );
+        public static IEnumerable<DataRow> GetTemplateObjectsByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
+        {
+            var dbType = GetDbType(sqlConnection);
 
-        public static IEnumerable<DataRow> GetPageObjectsByPageId(SqlConnection sqlConnection, int pageId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
+            var selectBlock = $@"
+o.parent_object_id as parentId,
+o.OBJECT_ID as Id,
+o.ICON as Icon,
+o.LOCKED_BY AS LockedBy,
+o.OBJECT_NAME as Name,
+o.DESCRIPTION as Description,
+o.CREATED as Created,
+o.MODIFIED as Modified,
+u.LOGIN as LastModifiedByLogin,
+t.TYPE_NAME as TypeName,
+o.LAST_MODIFIED_BY AS LastModifiedBy,
+{SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.first_name", "' '", "u2.last_name")} as LockedByFullName,
+{SqlQuerySyntaxHelper.CastToBool(dbType, $"case when oo.object_id is null then {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)} else {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} end")} as Overriden
+ ";
+            var fromBlock = $@"
+TEMPLATE_OBJECT o inner join USERS u on o.LAST_MODIFIED_BY = u.USER_ID
+inner join OBJECT_TYPE t on o.OBJECT_TYPE_ID = t.OBJECT_TYPE_ID
+left outer join users u2 on o.LOCKED_BY = u2.user_id
+left join (select distinct parent_object_id as object_id from object) oo on o.OBJECT_ID = oo.object_id ";
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.TemplateObject,
+                selectBlock,
+                fromBlock,
+                !string.IsNullOrEmpty(orderBy) ? orderBy : $"{Escape(dbType, "Name")} ASC",
+                "o.PAGE_TEMPLATE_ID = " + templateId,
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetPageObjectsByPageId(DbConnection sqlConnection, int pageId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
             sqlConnection,
             EntityTypeCode.PageObject,
             "o.[parent_object_id] as parentId, o.[OBJECT_ID] as Id, o.[LOCKED_BY] AS [LockedBy], o.[ICON] as Icon, o.[OBJECT_NAME] as [Name], o.[DESCRIPTION] as [Description], o.[CREATED] as [Created], o.[MODIFIED] as [Modified]," +
@@ -5267,7 +5706,7 @@ namespace Quantumart.QP8.DAL
             out totalRecords
         );
 
-        public static IEnumerable<DataRow> GetObjectFormatsByObjectId(SqlConnection sqlConnection, int objectId, string orderBy, out int totalRecords, int startRow, int pageSize, bool pageOrTemplate) => GetSimplePagedList(
+        public static IEnumerable<DataRow> GetObjectFormatsByObjectId(DbConnection sqlConnection, int objectId, string orderBy, out int totalRecords, int startRow, int pageSize, bool pageOrTemplate) => GetSimplePagedList(
             sqlConnection,
             pageOrTemplate ? EntityTypeCode.PageObjectFormat : EntityTypeCode.TemplateObjectFormat,
             "o.[OBJECT_FORMAT_ID] as Id, o.[LOCKED_BY] AS [LockedBy],  o.[FORMAT_NAME] as [Name], o.[DESCRIPTION] as [Description], o.[CREATED] as [Created], o.[MODIFIED] as [Modified]," +
@@ -5280,10 +5719,10 @@ namespace Quantumart.QP8.DAL
             out totalRecords
         );
 
-        public static string GetSiteScriptLanguageByPageId(SqlConnection sqlConnection, int pageId)
+        public static string GetSiteScriptLanguageByPageId(DbConnection sqlConnection, int pageId)
         {
             const string sql = @"SELECT s.script_language from PAGE p inner join page_template t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID inner join [SITE] s on t.SITE_ID = s.SITE_ID WHERE p.PAGE_ID = @pageId";
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@pageId", pageId);
@@ -5292,10 +5731,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetSiteScriptLanguageByTemplateId(SqlConnection sqlConnection, int templateId)
+        public static string GetSiteScriptLanguageByTemplateId(DbConnection sqlConnection, int templateId)
         {
             const string sql = @"SELECT s.script_language from page_template t inner join [SITE] s on t.SITE_ID = s.SITE_ID WHERE t.PAGE_TEMPLATE_ID = @templateId";
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@templateId", templateId);
@@ -5304,7 +5743,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetPagesBySiteId(SqlConnection sqlConnection, int parentId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
+        public static IEnumerable<DataRow> GetPagesBySiteId(DbConnection sqlConnection, int parentId, string orderBy, out int totalRecords, int startRow, int pageSize) => GetSimplePagedList(
             sqlConnection,
             EntityTypeCode.Page,
             "p.[PAGE_ID] AS Id, p.[GENERATE_TRACE] AS [GenerateTrace], p.[LOCKED_BY] AS [LockedBy], p.[REASSEMBLE] AS [Reassemble], p.[PAGE_NAME] AS [Name], p.[DESCRIPTION] AS [Description], " +
@@ -5319,126 +5758,154 @@ namespace Quantumart.QP8.DAL
             out totalRecords
         );
 
-        public static void CopyContentCustomActions(SqlConnection sqlConnection, int sourceId, int destinationId)
+        public static void CopyContentCustomActions(DbConnection sqlConnection, int sourceId, int destinationId)
         {
-            var query = @"INSERT INTO [dbo].[ACTION_CONTENT_BIND] (CUSTOM_ACTION_ID, CONTENT_ID)
-                                    SELECT CUSTOM_ACTION_ID, {0} FROM  [dbo].[ACTION_CONTENT_BIND] where CONTENT_ID = {1}";
+            var query = $@"
+                INSERT INTO ACTION_CONTENT_BIND (CUSTOM_ACTION_ID, CONTENT_ID)
+                SELECT CUSTOM_ACTION_ID, {destinationId} FROM  ACTION_CONTENT_BIND where CONTENT_ID = {sourceId}
+            ";
 
-            query = string.Format(query, destinationId, sourceId);
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void AddHistoryStatus(SqlConnection sqlConnection, int contentItemId, int systemStatusTypeId, int userId, string description)
+        public static void AddHistoryStatus(DbConnection sqlConnection, int contentItemId, int systemStatusTypeId, int userId, string description)
         {
             var query = @"insert into content_item_status_history(CONTENT_ITEM_ID, SYSTEM_STATUS_TYPE_ID, USER_ID, DESCRIPTION) values ({0}, {1}, {2}, N'{3}')";
 
             query = string.Format(query, contentItemId, systemStatusTypeId, userId, description);
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static List<DataRow> GetStatusHistoryItem(SqlConnection sqlConnection, int artcileId)
+        public static List<DataRow> GetStatusHistoryItem(DbConnection sqlConnection, int articleId)
         {
-            var query = @"select TOP 1 h.STATUS_HISTORY_ID as Id
-                                            ,h.STATUS_HISTORY_DATE as ActionDate
-                                            ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
-                                            ,t.STATUS_TYPE_NAME as StatusTypeName
-                                            ,u.LOGIN as ActionMadeBy
-                                            ,s.NAME as SystemStatusTypeName
-                                    from CONTENT_ITEM_STATUS_HISTORY as h with (nolock)
-                                    LEFT JOIN STATUS_TYPE as t with (nolock) on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
-                                    LEFT JOIN USERS as u with (nolock) on u.USER_ID = h.USER_ID
-                                    LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY with (nolock) where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={0}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
-                                    LEFT JOIN SYSTEM_STATUS_TYPE as s with (nolock) on s.ID = h1.SYSTEM_STATUS_TYPE_ID
-                                    where h.CONTENT_ITEM_ID = {0} AND h.SYSTEM_STATUS_TYPE_ID IS NULL
-                                    order by ActionDate desc";
-            query = string.Format(query, artcileId);
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var databaseType = GetDbType(sqlConnection);
+            var query = $@"select
+{(databaseType == DatabaseType.SqlServer ? "TOP 1" : string.Empty)}
+    h.STATUS_HISTORY_ID as Id
+    ,h.STATUS_HISTORY_DATE as ActionDate
+    ,COALESCE(h1.DESCRIPTION, h.DESCRIPTION) as Comment
+    ,t.STATUS_TYPE_NAME as StatusTypeName
+    ,u.LOGIN as ActionMadeBy
+    ,s.NAME as SystemStatusTypeName
+from CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(databaseType)}
+LEFT JOIN STATUS_TYPE as t {WithNoLock(databaseType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
+LEFT JOIN USERS as u {WithNoLock(databaseType)} on u.USER_ID = h.USER_ID
+LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNoLock(databaseType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
+LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(databaseType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID
+where h.CONTENT_ITEM_ID = {articleId} AND h.SYSTEM_STATUS_TYPE_ID IS NULL
+order by ActionDate desc
+{(databaseType == DatabaseType.Postgres ? "LIMIT 1" : string.Empty)}
+";
+            // query = string.Format(query, artcileId);
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToList();
             }
         }
 
-        public static List<DataRow> GetAllHistoryStatusesForArticle(SqlConnection sqlConnection, int articleId, string orderBy, int startRow, int pageSize, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            @"h.STATUS_HISTORY_ID as ID
+        public static List<DataRow> GetAllHistoryStatusesForArticle(DbConnection sqlConnection, int articleId, string orderBy, int startRow, int pageSize, out int totalRecords)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var selectBlock = @"h.STATUS_HISTORY_ID as ID
                                             ,h.STATUS_HISTORY_DATE as ActionDate
-                                            ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
+                                            ,COALESCE(h1.DESCRIPTION, h.DESCRIPTION) as Comment
                                             ,t.STATUS_TYPE_NAME as StatusTypeName
                                             ,u.LOGIN as ActionMadeBy
-                                            ,s.NAME as SystemStatusTypeName",
-            $@"[dbo].[CONTENT_ITEM_STATUS_HISTORY] as h with (nolock)
-                                    LEFT JOIN [dbo].[STATUS_TYPE] as t with (nolock) on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
-                                    LEFT JOIN [dbo].[USERS] as u with (nolock) on u.USER_ID = h.USER_ID
-                                    LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY with (nolock) where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
-                                    LEFT JOIN [dbo].[SYSTEM_STATUS_TYPE] as s with (nolock) on s.ID = h1.SYSTEM_STATUS_TYPE_ID",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "ActionDate DESC",
-            $"h.CONTENT_ITEM_ID = {articleId}",
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+                                            ,s.NAME as SystemStatusTypeName";
 
-        public static List<DataRow> GetArticlesForExport(SqlConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords) => GetSimplePagedList(
-            sqlConnection,
-            EntityTypeCode.Article,
-            $"base.[content_item_id] {columns}, ci.unique_id, base.created, base.modified",
-            $"[dbo].[content_{contentId}_united] base {extensions} LEFT JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
-            string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
-            filter,
-            startRow,
-            pageSize,
-            out totalRecords
-        ).ToList();
+            var formattableString = $@"CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(dbType)}
+                                    LEFT JOIN STATUS_TYPE as t {WithNoLock(dbType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
+                                    LEFT JOIN {Escape(dbType, "USERS")} as u {WithNoLock(dbType)} on u.USER_ID = h.USER_ID
+                                    LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNoLock(dbType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
+                                    LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(dbType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID";
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                selectBlock,
+                formattableString,
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "ActionDate DESC",
+                $"h.CONTENT_ITEM_ID = {articleId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
+
+        public static List<DataRow> GetArticlesForExport(DbConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords)
+        {
+            var dbType = GetDbType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.Article,
+                $"base.{Escape(dbType, "content_item_id")} {columns}, ci.unique_id, base.created, base.modified",
+                $"content_{contentId}_united base {extensions} LEFT JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
+                string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
+                filter,
+                startRow,
+                pageSize,
+                out totalRecords
+            ).ToList();
+        }
 
         /// <summary>
         /// Находит все контенты-расширения, задействованные в статьях заданного контента
         /// </summary>
-        public static int[] GetReferencedAggregatedContentIds(SqlConnection sqlConnection, int contentId, int[] articleIds, bool isArchive = false)
+        public static int[] GetReferencedAggregatedContentIds(QPModelDataContext context, DbConnection sqlConnection, int contentId, int[] articleIds, bool isArchive = false)
         {
-            const string query = @"
-                DECLARE @query NVARCHAR(1000)
-                SET @query = ''
 
-                SELECT
-                    @query = @query + ATTRIBUTE_NAME + ','
-                FROM
-                    CONTENT_ATTRIBUTE f
-                    JOIN CONTENT c ON c.CONTENT_ID = f.CONTENT_ID
-                WHERE
-                    c.CONTENT_ID = @contentId AND
-                    IS_CLASSIFIER = 1
+            var dbType = GetDbType(sqlConnection);
+            if (context == null)
+            {
+                switch (dbType)
+                {
+                    case DatabaseType.SqlServer:
+                        context = new SqlServerQPModelDataContext(sqlConnection);
+                        break;
+                    case DatabaseType.Postgres:
+                        context = new NpgSqlQPModelDataContext(sqlConnection);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
 
-                IF NOT @query = ''
-                BEGIN
-                    DECLARE @queryWithoutLastComma NVARCHAR(1000) = SUBSTRING(@query, 0, LEN(@query));
-                    SET @query =
-                        'SELECT DISTINCT ' + @queryWithoutLastComma + ' FROM CONTENT_' + LTRIM(STR(@contentId))  +
-                        ' WHERE ARCHIVE = ' + CAST(@archive AS CHAR(1))
+            var fieldNames = context
+                .FieldSet
+                .Where(x => x.ContentId == contentId && x.IsClassifier)
+                .Select(x => Escape(dbType, x.Name))
+                .ToArray();
 
-                    IF EXISTS (SELECT NULL FROM @articleIds)
-                        SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
+            if (!fieldNames.Any())
+            {
+                return new int[0];
+            }
 
-                    EXEC sp_executesql @query, N'@articleIds Ids READONLY', @articleIds
-                END";
+            var query = $@"
+                    select distinct {string.Join(",", fieldNames)}
+                    from content_{contentId}
+                    where {SqlQuerySyntaxHelper.CastToBool(dbType, "archive")} = @archive
+                    {(articleIds != null && articleIds.Any()
+                    ? $"AND content_item_id in (select Id from {IdList(dbType, "@articleIds")})"
+                    : string.Empty)}
+                    ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@articleIds", articleIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@articleIds", articleIds, dbType));
                 cmd.Parameters.AddWithValue("@archive", isArchive);
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -5459,9 +5926,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int[] GetReferencedAggregatedContentIds(SqlConnection sqlConnection, int contentId)
+        public static int[] GetReferencedAggregatedContentIds(DbConnection sqlConnection, int contentId)
         {
-            const string query = @"
+            var dbType = GetDbType(sqlConnection);
+
+            string query = $@"
                 SELECT
                     af.CONTENT_ID
                 FROM
@@ -5469,9 +5938,9 @@ namespace Quantumart.QP8.DAL
                     JOIN CONTENT_ATTRIBUTE af ON cf.ATTRIBUTE_ID = af.RELATED_ATTRIBUTE_ID
                 WHERE
                     cf.CONTENT_ID = @contentId AND
-                    af.AGGREGATED = 1";
+                    af.AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@contentId", contentId);
@@ -5488,12 +5957,16 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetAggregatedFieldNames(SqlConnection sqlConnection, int[] contentIds)
+        public static Dictionary<int, string> GetAggregatedFieldNames(DbConnection sqlConnection, int[] contentIds)
         {
-            using (var cmd = SqlCommandFactory.Create("SELECT CONTENT_ID, ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE JOIN @ids ON CONTENT_ID = ID WHERE AGGREGATED = 1", sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            using (var cmd = DbCommandFactory.Create($@"SELECT CONTENT_ID, ATTRIBUTE_NAME
+                    FROM CONTENT_ATTRIBUTE
+                        JOIN {IdList(dbType, "@ids")} ON CONTENT_ID = ID
+                    WHERE AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", contentIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", contentIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new Dictionary<int, string>();
@@ -5509,47 +5982,73 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, Dictionary<int, int>> GetAggregatedArticleIdsMap(SqlConnection sqlConnection, int contentId, int[] articleIds)
+        public static Dictionary<int, Dictionary<int, int>> GetAggregatedArticleIdsMap(QPModelDataContext efContext, DbConnection sqlConnection, int contentId, int[] articleIds)
         {
-            const string query = @"
-                DECLARE @query NVARCHAR(MAX)
-                SET @query = ''
+            var dbType = GetDbType(sqlConnection);
 
+
+
+
+            // string query = @"
+            //     DECLARE @query NVARCHAR(MAX)
+            //     SET @query = ''
+            //
+            //     SELECT
+            //         @query = @query + '
+            //         SELECT
+            //             ids.Id [Id],' +
+            //             CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
+            //             a.CONTENT_ITEM_ID [ExtensionId]
+            //         FROM
+            //             @ids ids
+            //             JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
+            //         UNION'
+            //     FROM
+            //         [CONTENT_ATTRIBUTE] f
+            //         JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
+            //     WHERE
+            //         f.CONTENT_ID = @contentId
+            //
+            //     IF @query <> ''
+            //     BEGIN
+            //         SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
+            //         EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
+            //     END";
+
+
+            var fields = efContext
+                .FieldSet
+                .Include(x => x.Aggregators)
+                .ThenInclude(y => y.Classifier)
+                .Where(x => x.Classifier != null && x.Classifier.ContentId == contentId);
+
+            var queryParts = fields.Select(ef => $@"
                 SELECT
-                    @query = @query + '
-                    SELECT
-                        ids.Id [Id],' +
-                        CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
-                        a.CONTENT_ITEM_ID [ExtensionId]
-                    FROM
-                        @ids ids
-                        JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
-                    UNION'
+                    ids.Id,
+                    {ef.Classifier.Id} {Escape(dbType, "FieldId")},
+                    a.content_item_id {Escape(dbType, "ExtensionId")}
                 FROM
-                    [CONTENT_ATTRIBUTE] f
-                    JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
-                WHERE
-                    f.CONTENT_ID = @contentId
+                    {IdList(dbType, "@ids", "ids")}
+                    JOIN content_{ef.ContentId} a ON a.{Escape(dbType, ef.Name)} = ids.Id
+                ").ToList();
+            var query = string.Join(" UNION ", queryParts);
 
-                IF @query <> ''
-                BEGIN
-                    SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
-                    EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
-                END";
+            var result = new Dictionary<int, Dictionary<int, int>>();
+            if (string.IsNullOrEmpty(query)) return result;
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
+                // cmd.Parameters.AddWithValue("@contentId", contentId);
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
-                    var result = new Dictionary<int, Dictionary<int, int>>();
+
                     while (reader.Read())
                     {
-                        var id = (int)(decimal)reader["Id"];
-                        var fieldId = (int)reader["FieldId"];
-                        var extensionId = (int)(decimal)reader["ExtensionId"];
+                        var id = Converter.ToInt32(reader["Id"]);
+                        var fieldId = Converter.ToInt32(reader["FieldId"]);
+                        var extensionId = Converter.ToInt32(reader["ExtensionId"]);
 
                         Dictionary<int, int> articleMap;
                         if (result.ContainsKey(id))
@@ -5570,12 +6069,15 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetFieldNames(SqlConnection sqlConnection, int[] referenceFieldIds)
+        public static Dictionary<int, string> GetFieldNames(DbConnection connection, int[] referenceFieldIds)
         {
-            using (var cmd = SqlCommandFactory.Create("SELECT f.ATTRIBUTE_ID, f.ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE f JOIN @ids ids ON f.ATTRIBUTE_ID = ids.ID", sqlConnection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($@"SELECT f.ATTRIBUTE_ID, f.ATTRIBUTE_NAME
+                    FROM CONTENT_ATTRIBUTE f
+                    JOIN {IdList(dbType, "@ids", "ids")} ON f.ATTRIBUTE_ID = ids.ID", connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", referenceFieldIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", referenceFieldIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new Dictionary<int, string>();
@@ -5592,55 +6094,55 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void SetPagesAndObjectsEnableViewState(SqlConnection sqlConnection, int pageTemplateId, bool enableViewState)
+        public static void SetPagesAndObjectsEnableViewState(DbConnection sqlConnection, int pageTemplateId, bool enableViewState)
         {
             var objectQuery = $"UPDATE [object] SET ENABLE_VIEWSTATE = {(enableViewState ? 1 : 0)} WHERE page_template_id = {pageTemplateId}";
             var pageQuery = $"UPDATE [page] SET ENABLE_VIEWSTATE = {(enableViewState ? 1 : 0)} WHERE page_template_id = {pageTemplateId}";
 
-            using (var cmd = SqlCommandFactory.Create(objectQuery, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(objectQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
 
-            using (var cmd = SqlCommandFactory.Create(pageQuery, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(pageQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void SetObjectsDisableDataBinding(SqlConnection sqlConnection, int pageTemplateId, bool disableDataBinding)
+        public static void SetObjectsDisableDataBinding(DbConnection sqlConnection, int pageTemplateId, bool disableDataBinding)
         {
             var query = $"UPDATE [object] SET DISABLE_DATABIND = {(disableDataBinding ? 1 : 0)} WHERE page_template_id = {pageTemplateId}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void SetCustomClassForPages(SqlConnection sqlConnection, int pageTemplateId, string customClass)
+        public static void SetCustomClassForPages(DbConnection sqlConnection, int pageTemplateId, string customClass)
         {
             var query = $"UPDATE [page] SET [page_custom_class] = '{customClass}' WHERE page_template_id = {pageTemplateId}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static int GetObjectTypeId(SqlConnection sqlConnection, string typeName)
+        public static int GetObjectTypeId(DbConnection sqlConnection, string typeName)
         {
             var query = $"SELECT [OBJECT_TYPE_ID] FROM [OBJECT_TYPE] WHERE [TYPE_NAME] = '{typeName}'";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (int)(decimal)cmd.ExecuteScalar();
             }
         }
 
-        public static void SetCustomClassForObjects(SqlConnection sqlConnection, int pageTemplateId, string customClassForGenerics, string customClassForContainers, string customClassForForms)
+        public static void SetCustomClassForObjects(DbConnection sqlConnection, int pageTemplateId, string customClassForGenerics, string customClassForContainers, string customClassForForms)
         {
             const string generic = "Generic";
             const string container = "Publishing Container";
@@ -5654,62 +6156,62 @@ namespace Quantumart.QP8.DAL
             var containerQuery = $"UPDATE [OBJECT] set control_custom_class = '{customClassForContainers}' WHERE page_template_id = {pageTemplateId} AND OBJECT_TYPE_ID = {containerTypeId}";
             var formQuery = $"UPDATE [OBJECT] set control_custom_class = '{customClassForForms}' WHERE page_template_id = {pageTemplateId} AND OBJECT_TYPE_ID = {formTypeId}";
 
-            using (var cmd = SqlCommandFactory.Create(genericQuery, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(genericQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
 
-            using (var cmd = SqlCommandFactory.Create(containerQuery, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(containerQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
 
-            using (var cmd = SqlCommandFactory.Create(formQuery, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(formQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void DeleteObjectContainer(SqlConnection sqlConnection, int objectId)
+        public static void DeleteObjectContainer(DbConnection sqlConnection, int objectId)
         {
             var query = "Delete FROM CONTAINER WHERE [object_id] = " + objectId;
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void DeleteObjectForm(SqlConnection sqlConnection, int objectId)
+        public static void DeleteObjectForm(DbConnection sqlConnection, int objectId)
         {
             var query = "Delete FROM CONTENT_FORM WHERE [object_id] = " + objectId;
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static List<DataRow> GetActiveStatusesByObjectId(SqlConnection sqlConnection, int objectId)
+        public static List<DataRow> GetActiveStatusesByObjectId(DbConnection sqlConnection, int objectId)
         {
             const string query = @"SELECT s.STATUS_TYPE_ID, s.WEIGHT, s.SITE_ID, s.STATUS_TYPE_NAME, s.DESCRIPTION, s.Created, s.Modified, s.LAST_MODIFIED_BY, s.BUILT_IN  FROM CONTAINER_STATUSES AS cs INNER JOIN STATUS_TYPE AS s ON cs.[STATUS_TYPE_ID] = s.[STATUS_TYPE_ID] INNER JOIN users as u on u.USER_ID = s.LAST_MODIFIED_BY WHERE cs.[OBJECT_ID] = @objectId";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@objectId", objectId);
                 cmd.ExecuteNonQuery();
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToList();
             }
         }
 
-        public static IEnumerable<DataRow> GetStatusPageForWorkflow(SqlConnection sqlConnection, int workflowId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
+        public static IEnumerable<DataRow> GetStatusPageForWorkflow(DbConnection sqlConnection, int workflowId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
             sqlConnection,
             EntityTypeCode.Notification,
             @" s.STATUS_TYPE_ID as Id, s.STATUS_TYPE_NAME as Name, s.DESCRIPTION as Description, s.[WEIGHT] as Weight,
@@ -5722,28 +6224,28 @@ namespace Quantumart.QP8.DAL
             out totalRecords
         );
 
-        public static IEnumerable<DataRow> GetAllStatusesForWorkflow(SqlConnection sqlConnection, int workflowId)
+        public static IEnumerable<DataRow> GetAllStatusesForWorkflow(DbConnection sqlConnection, int workflowId)
         {
             var query = @"SELECT s.STATUS_TYPE_ID as Id, s.STATUS_TYPE_NAME as Name, s.DESCRIPTION as Description, s.[WEIGHT] as Weight,
                             s.MODIFIED as Modified, s.[CREATED] as Created, s.LAST_MODIFIED_BY as LastModifiedBy, s.BUILT_IN, u.[LOGIN] as LastModifiedByLogin
                             FROM [workflow_rules] as wr
                             inner join status_type as s on s.[STATUS_TYPE_ID] = wr.[SUCCESSOR_STATUS_ID] inner join USERS as u on u.[USER_ID] = s.LAST_MODIFIED_BY
                             where WORKFLOW_ID = " + workflowId;
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void SetObjectActiveStatuses(SqlConnection sqlConnection, int objectId, IEnumerable<int> activeStatusIds)
+        public static void SetObjectActiveStatuses(DbConnection sqlConnection, int objectId, IEnumerable<int> activeStatusIds)
         {
             foreach (var statusId in activeStatusIds)
             {
                 var query = $@"INSERT INTO CONTAINER_STATUSES([OBJECT_ID], [STATUS_TYPE_ID]) values ({objectId}, {statusId})";
-                using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                using (var cmd = DbCommandFactory.Create(query, sqlConnection))
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
@@ -5751,11 +6253,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<int> GetObjectActiveStatusesIds(SqlConnection sqlConnection, int objectId)
+        public static IEnumerable<int> GetObjectActiveStatusesIds(DbConnection sqlConnection, int objectId)
         {
             var result = new List<int>();
             const string query = "select [STATUS_TYPE_ID] FROM [CONTAINER_STATUSES] WHERE [OBJECT_ID] = @objectId";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@objectId", objectId);
@@ -5771,44 +6273,46 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void CleanObjectActiveStatuses(SqlConnection sqlConnection, int objectId)
+        public static void CleanObjectActiveStatuses(DbConnection sqlConnection, int objectId)
         {
             var query = $@"DELETE FROM CONTAINER_STATUSES where [OBJECT_ID] = {objectId}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UnlockAllTemplatesLockedByUser(SqlConnection sqlConnection, int userId)
+        public static void UnlockAllTemplatesLockedByUser(DbConnection sqlConnection, int userId)
         {
-            const string templateQuery = @"update [PAGE_TEMPLATE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
-            using (var cmd = SqlCommandFactory.Create(templateQuery, sqlConnection))
+            var databaseType = GetDbType(sqlConnection);
+            var falseValueStr = GetBoolValue(false, databaseType);
+            var templateQuery = $"update {EscapeObjectName("PAGE_TEMPLATE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
+            using (var cmd = DbCommandFactory.Create(templateQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
             }
 
-            const string pageQuery = @"update [PAGE] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
-            using (var cmd = SqlCommandFactory.Create(pageQuery, sqlConnection))
+            var pageQuery = $"update {EscapeObjectName("PAGE", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
+            using (var cmd = DbCommandFactory.Create(pageQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
             }
 
-            const string objectQuery = @"update [OBJECT] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
-            using (var cmd = SqlCommandFactory.Create(objectQuery, sqlConnection))
+            var objectQuery = $"update {EscapeObjectName("OBJECT", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
+            using (var cmd = DbCommandFactory.Create(objectQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
                 cmd.ExecuteNonQuery();
             }
 
-            const string formatQuery = @"update [OBJECT_FORMAT] set locked_by = null, locked = null where permanent_lock = 0 and locked_by = @user_id";
-            using (var cmd = SqlCommandFactory.Create(formatQuery, sqlConnection))
+            var formatQuery = $"update {EscapeObjectName("OBJECT_FORMAT", databaseType)} set locked_by = null, locked = null where permanent_lock = {falseValueStr} and locked_by = @user_id";
+            using (var cmd = DbCommandFactory.Create(formatQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@user_id", userId);
@@ -5816,43 +6320,58 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetFormatIdsByTemplateId(SqlConnection sqlConnection, int templateId)
+        private static string EscapeObjectName(string objectName, DatabaseType databaseType)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"[{objectName}]";
+                case DatabaseType.Postgres:
+                    return $"\"{objectName.ToLower()}\"";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
+
+
+        public static IEnumerable<DataRow> GetFormatIdsByTemplateId(DbConnection sqlConnection, int templateId)
         {
             const string query = @"SELECT f.[OBJECT_FORMAT_ID] FROM [OBJECT_FORMAT] AS f " +
                 "INNER JOIN [OBJECT] AS o ON f.[OBJECT_ID] = o.[OBJECT_ID] WHERE o.PAGE_TEMPLATE_ID = @templateId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@templateId", templateId);
                 cmd.ExecuteNonQuery();
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToList();
             }
         }
 
-        public static IEnumerable<DataRow> AssembleAction_TemplatePages(int templateId, SqlConnection sqlConnection)
+        public static IEnumerable<DataRow> AssembleAction_TemplatePages(int templateId, DbConnection sqlConnection)
         {
             const string query = "select P.PAGE_ID Id, T.TEMPLATE_NAME Template, p.PAGE_NAME Name from PAGE P JOIN PAGE_TEMPLATE T ON P.PAGE_TEMPLATE_ID = T.PAGE_TEMPLATE_ID where T.PAGE_TEMPLATE_ID = @template_id order by P.PAGE_ID";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@template_id", templateId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToList();
             }
         }
 
-        public static IEnumerable<int> AssembleAction_GetTemplateFormatIds(int templateId, SqlConnection sqlConnection)
+        public static IEnumerable<int> AssembleAction_GetTemplateFormatIds(int templateId, DbConnection sqlConnection)
         {
             var result = new List<int>();
             const string query = @"SELECT f.[OBJECT_FORMAT_ID] FROM [OBJECT_FORMAT] AS f " +
                 "INNER JOIN [OBJECT] AS o ON f.[OBJECT_ID] = o.[OBJECT_ID] INNER JOIN [PAGE_TEMPLATE] AS t on o.[PAGE_TEMPLATE_ID] = t.[PAGE_TEMPLATE_ID] " +
                 "INNER JOIN [NOTIFICATIONS] AS n ON n.[FORMAT_ID] = f.[OBJECT_FORMAT_ID] WHERE t.PAGE_TEMPLATE_ID = @template_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@template_id", templateId);
@@ -5868,9 +6387,9 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void IterateRows(SqlConnection connection, string sqlString, Action<IEnumerable<object>> rowIterator)
+        public static void IterateRows(DbConnection connection, string sqlString, Action<IEnumerable<object>> rowIterator)
         {
-            using (var cmd = SqlCommandFactory.Create(sqlString, connection))
+            using (var cmd = DbCommandFactory.Create(sqlString, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 using (IDataReader reader = cmd.ExecuteReader())
@@ -5885,29 +6404,29 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdatePageAndObjectDateModifiedByObjectId(int objectId, int pageId, SqlConnection sqlConnection)
+        public static void UpdatePageAndObjectDateModifiedByObjectId(int objectId, int pageId, DbConnection sqlConnection)
         {
             var query = $"declare @date datetime set @date = getdate() Update page set MODIFIED = @date where [PAGE_ID] = {pageId} Update OBJECT set MODIFIED = @date where [OBJECT_ID] = {objectId}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateObjectDateModified(int objectId, SqlConnection sqlConnection)
+        public static void UpdateObjectDateModified(int objectId, DbConnection sqlConnection)
         {
             var query = $"Update OBJECT set MODIFIED = getdate() where [OBJECT_ID] = {objectId}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> GetSearchFormatPage(SqlConnection sqlConnection, string sortExpression, int siteId, int? templateId, int? pageId, string filter, out int totalRecords, int start, int pageSize)
+        public static IEnumerable<DataRow> GetSearchFormatPage(DbConnection sqlConnection, string sortExpression, int siteId, int? templateId, int? pageId, string filter, out int totalRecords, int start, int pageSize)
         {
             var filters = new List<string>
             {
@@ -5943,7 +6462,7 @@ namespace Quantumart.QP8.DAL
             );
         }
 
-        public static IEnumerable<DataRow> GetSearchTemplatePage(SqlConnection sqlConnection, string sortExpression, int siteId, string filter, out int totalRecords, int start, int pageSize)
+        public static IEnumerable<DataRow> GetSearchTemplatePage(DbConnection sqlConnection, string sortExpression, int siteId, string filter, out int totalRecords, int start, int pageSize)
         {
             var filters = new List<string>
             {
@@ -5968,7 +6487,7 @@ namespace Quantumart.QP8.DAL
             );
         }
 
-        public static IEnumerable<DataRow> GetSearchObjectPage(SqlConnection sqlConnection, string sortExpression, int siteId, int? templateId, int? pageId, string filter, out int totalRecords, int start, int pageSize)
+        public static IEnumerable<DataRow> GetSearchObjectPage(DbConnection sqlConnection, string sortExpression, int siteId, int? templateId, int? pageId, string filter, out int totalRecords, int start, int pageSize)
         {
             var primaryFilters = new List<string>
             {
@@ -6021,117 +6540,29 @@ namespace Quantumart.QP8.DAL
                 string.IsNullOrWhiteSpace(sortExpression) ? string.Empty : "ORDER BY " + sortExpression
             );
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                totalRecords = dt.Rows.Count != 0 ? (int)dt.Rows[0][QP8Entities.CountColumn] : 0;
+                DataAdapterFactory.Create(cmd).Fill(dt);
+                totalRecords = dt.Rows.Count != 0 ? (int)dt.Rows[0][QPModelDataContext.CountColumn] : 0;
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static List<int> InsertArticleIds(SqlConnection sqlConnection, string query)
-        {
-            var result = new List<int>();
-            var insertInto = $@"DECLARE @NewArticles TABLE ([ID] INT);
-                                INSERT into [dbo].[CONTENT_ITEM]
-                                      ([VISIBLE]
-                                      ,[STATUS_TYPE_ID]
-                                      ,[CONTENT_ID]
-                                      ,[LAST_MODIFIED_BY])
-                                    OUTPUT inserted.[content_item_id] INTO @NewArticles
-                                    {query};
-                                    SELECT ID FROM @NewArticles;";
 
-            using (var cmd = SqlCommandFactory.Create(insertInto, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id;
-                        if (int.TryParse(reader.GetValue(0).ToString(), out id))
-                        {
-                            result.Add(id);
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        public static List<int> InsertArticleIdsWithGuids(SqlConnection sqlConnection, string query)
-        {
-            var result = new List<int>();
-            var insertInto = $@"DECLARE @NewArticles TABLE ([ID] INT)
-                                INSERT into [dbo].[CONTENT_ITEM]
-                                      ([VISIBLE]
-                                      ,[STATUS_TYPE_ID]
-                                      ,[CONTENT_ID]
-                                      ,[LAST_MODIFIED_BY]
-                                      ,[UNIQUE_ID])
-                                    OUTPUT inserted.[content_item_id] INTO @NewArticles
-                                    {query}
-                                    SELECT ID FROM @NewArticles";
-
-            using (var cmd = SqlCommandFactory.Create(insertInto, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id;
-                        if (int.TryParse(reader.GetValue(0).ToString(), out id))
-                        {
-                            result.Add(id);
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        public static void UpdateArticleGuids(SqlConnection sqlConnection, List<Tuple<int, Guid>> guidsByIdToUpdate)
-        {
-            if (guidsByIdToUpdate.Any())
-            {
-                var query = guidsByIdToUpdate.Select(tp => $"UPDATE [dbo].[CONTENT_ITEM] SET [UNIQUE_ID] = '{tp.Item2}' WHERE [CONTENT_ITEM_ID] = {tp.Item1};");
-                using (var cmd = SqlCommandFactory.Create(query.Aggregate((entry1, entry2) => entry1 + Environment.NewLine + entry2), sqlConnection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public static void InsertArticleValues(SqlConnection sqlConnection, string xmlParameter)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_insertArticleValues", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
-                var resultDt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(resultDt);
-            }
-        }
-
-        public static void ChangeInsertIdentityState(SqlConnection sqlConnection, string tableName, bool enable)
+        public static void ChangeInsertIdentityState(DbConnection sqlConnection, string tableName, bool enable)
         {
             var option = enable ? "ON" : "OFF";
             var query = $"SET IDENTITY_INSERT {tableName} {option}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> GetFormatVersionsByFormatId(SqlConnection sqlConnection, int formatId, string orderBy, out int totalRecords, int startRow, int pageSize, bool pageOrTemplate) => GetSimplePagedList(
+        public static IEnumerable<DataRow> GetFormatVersionsByFormatId(DbConnection sqlConnection, int formatId, string orderBy, out int totalRecords, int startRow, int pageSize, bool pageOrTemplate) => GetSimplePagedList(
             sqlConnection,
             pageOrTemplate ? EntityTypeCode.PageObjectFormatVersion : EntityTypeCode.TemplateObjectFormatVersion,
             "v.[OBJECT_FORMAT_VERSION_ID] as Id, v.[DESCRIPTION] as Description, v.[MODIFIED] as Modified, u.Login as [LastModifiedByLogin]",
@@ -6143,67 +6574,16 @@ namespace Quantumart.QP8.DAL
             out totalRecords
         );
 
-        public static void RestoreObjectFormatVersion(SqlConnection connection, int versionId)
+        public static void RestoreObjectFormatVersion(DbConnection connection, int versionId)
         {
-            using (var cmd = SqlCommandFactory.Create("restore_object_format_version", connection))
+            using (var cmd = DbCommandFactory.Create("restore_object_format_version", connection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@version_id", versionId);
                 cmd.ExecuteNonQuery();
             }
         }
-
-        public static void UpdateM2MValues(SqlConnection sqlConnection, string xmlParameter)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_update_m2m_values", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
-                var resultDt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(resultDt);
-            }
-        }
-
-        public static void ValidateO2MValues(SqlConnection sqlConnection, string xmlParameter, string message)
-        {
-            const string sql = @"
-            DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
-            INSERT INTO @NewArticles
-                SELECT
-                 doc.col.value('(CONTENT_ITEM_ID)[1]', 'int') CONTENT_ITEM_ID
-                ,doc.col.value('(ATTRIBUTE_ID)[1]', 'int') ATTRIBUTE_ID
-                ,doc.col.value('(DATA)[1]', 'nvarchar(3500)') DATA
-                ,doc.col.value('(BLOB_DATA)[1]', 'nvarchar(max)') BLOB_DATA
-                FROM @xmlParameter.nodes('/PARAMETERS/FIELDVALUE') doc(col)
-
-                select * from
-                (select a.*, ca.ATTRIBUTE_NAME, rca.CONTENT_ID as RELATED_CONTENT_ID from @NewArticles a
-                inner join CONTENT_ATTRIBUTE ca on a.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
-                inner join CONTENT_ATTRIBUTE rca on ca.RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID and ca.CONTENT_ID <> rca.CONTENT_ID
-                inner join CONTENT rc on rc.CONTENT_ID = rca.CONTENT_ID and rc.VIRTUAL_TYPE <> 3
-                where a.DATA != ''
-                ) as a
-                left join CONTENT_ITEM ci on ci.CONTENT_ITEM_ID = convert(numeric, data)
-                where ci.CONTENT_ID is null or ci.CONTENT_ID <> a.RELATED_CONTENT_ID";
-
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = xmlParameter });
-                var resultDt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(resultDt);
-                if (resultDt.AsEnumerable().Any())
-                {
-                    var dr = resultDt.Rows[0];
-                    var title = dr.Field<string>("ATTRIBUTE_NAME");
-                    var data = dr.Field<string>("DATA");
-                    var id = dr.Field<int>(FieldName.ContentItemId).ToString();
-                    throw new ArgumentException(string.Format(message, id, title, data));
-                }
-            }
-        }
-
-        public static List<int> CheckForArticlesExistence(SqlConnection sqlConnection, List<int> relatedIds, string condition, int contentId)
+        public static List<int> CheckForArticlesExistence(DbConnection sqlConnection, List<int> relatedIds, string condition, int contentId)
         {
             var result = new List<int>();
             if (!string.IsNullOrEmpty(condition))
@@ -6216,8 +6596,10 @@ namespace Quantumart.QP8.DAL
                 relatedIds.Add(0);
             }
 
-            var query = $"select content_item_id from content_{contentId} c with(nolock) where content_item_id in ({string.Join(",", relatedIds)}) {condition}";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+
+            var query = $"select content_item_id from content_{contentId} c {WithNoLock(dbType)} where content_item_id in ({string.Join(",", relatedIds)}) {condition}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 using (var reader = cmd.ExecuteReader())
@@ -6232,7 +6614,7 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static Dictionary<string, int> GetExistingArticleIdsMap(SqlConnection sqlConnection, List<string> values, string fieldName, string condition, int contentId)
+        public static Dictionary<string, int> GetExistingArticleIdsMap(DbConnection sqlConnection, List<string> values, string fieldName, string condition, int contentId)
         {
             var result = new Dictionary<string, int>();
             if (!string.IsNullOrEmpty(condition))
@@ -6243,7 +6625,7 @@ namespace Quantumart.QP8.DAL
             if (values.Count > 0)
             {
                 var query = string.Format("select content_item_id, [{0}] from content_{1}_united with(nolock) where [{0}] in ({2}) {3}", fieldName, contentId, string.Join(",", values.Select(v => "'" + v + "'")), condition);
-                using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                using (var cmd = DbCommandFactory.Create(query, sqlConnection))
                 {
                     cmd.CommandType = CommandType.Text;
                     using (var reader = cmd.ExecuteReader())
@@ -6261,42 +6643,32 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void ModifyDataUsingXmlParameter(SqlConnection sqlConnection, string storedProc, string xmlParameter)
-        {
-            using (var cmd = SqlCommandFactory.Create(storedProc, sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@xmlParameter", xmlParameter);
-                var resultDt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(resultDt);
-            }
-        }
-
-        public static void RemoveLinksFromM2MField(SqlConnection sqlConnection, int linkId, List<int> articleIds)
+        public static void RemoveLinksFromM2MField(DbConnection sqlConnection, int linkId, List<int> articleIds)
         {
             var query = string.Format(@"DELETE FROM [dbo].[item_to_item] WHERE ([l_item_id] IN ({0}) OR [r_item_id] IN ({0})) and [link_id] = {1}", string.Join(",", articleIds), linkId);
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static int GetDefaultGroupId(SqlConnection sqlConnection, int siteId)
+        public static int GetDefaultGroupId(DbConnection sqlConnection, int siteId)
         {
-            var query = $@"select [dbo].qp_default_group_id({siteId})";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var query = $@"select content_group_id from content_group where site_id = {siteId} and name = 'Default Group'";
+            // var query = $@"select [dbo].qp_default_group_id({siteId})";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var result = cmd.ExecuteScalar();
-                return DBNull.Value.Equals(result) ? 0 : (int)result;
+                return DBNull.Value.Equals(result) ? 0 : Convert.ToInt32(result);
             }
         }
 
-        public static string GetNewTemplateObjectName(SqlConnection sqlConnection, int contentId)
+        public static string GetNewTemplateObjectName(DbConnection sqlConnection, int contentId)
         {
             string objectName;
-            using (var cmd = SqlCommandFactory.Create("qp_get_new_template_object_name", sqlConnection))
+            using (var cmd = DbCommandFactory.Create("qp_get_new_template_object_name", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@content_id", contentId);
@@ -6306,10 +6678,10 @@ namespace Quantumart.QP8.DAL
             return objectName;
         }
 
-        public static void CreateContainerStatusBind(SqlConnection sqlConnection, int objectId, int contentId)
+        public static void CreateContainerStatusBind(DbConnection sqlConnection, int objectId, int contentId)
         {
             var query = $@"INSERT INTO CONTAINER_STATUSES SELECT {objectId}, status_type_id FROM workflow AS w " + "INNER JOIN workflow_rules AS wr ON w.workflow_id = wr.workflow_id " + "INNER JOIN status_type s ON wr.successor_status_id = s.status_type_id " + "INNER JOIN content_workflow_bind cwb ON cwb.workflow_id = w.workflow_id " + "WHERE cwb.content_id = @in_content_id ORDER BY rule_order";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@in_content_id", contentId);
                 cmd.CommandType = CommandType.Text;
@@ -6317,7 +6689,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string FormatBodyNet(int contentId, SqlConnection sqlConnection)
+        public static string FormatBodyNet(int contentId, DbConnection sqlConnection)
         {
             var formatBody = new StringBuilder();
             var strUserFields = new StringBuilder();
@@ -6333,7 +6705,7 @@ namespace Quantumart.QP8.DAL
                 .AppendLine("<!-- User Fields -->");
 
             const string query = "SELECT attribute_name FROM content_attribute WHERE content_id = @in_content_id order by attribute_order";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@in_content_id", contentId);
                 using (IDataReader dr = cmd.ExecuteReader())
@@ -6428,7 +6800,7 @@ namespace Quantumart.QP8.DAL
             return codeBehind.ToString();
         }
 
-        public static string FormatBodyVbScript(int contentId, string currentCustomerCode, string backendUrl, SqlConnection sqlConnection)
+        public static string FormatBodyVbScript(int contentId, string currentCustomerCode, string backendUrl, DbConnection sqlConnection)
         {
             var formatBody = new StringBuilder();
             formatBody.AppendLine(GetDefaultNotificationStyle())
@@ -6444,7 +6816,7 @@ namespace Quantumart.QP8.DAL
                 .AppendLine("<!-- User Fields -->");
             var strUserFields = new StringBuilder();
             const string strSql = "SELECT attribute_name FROM content_attribute WHERE content_id = @in_content_id";
-            using (var cmd = SqlCommandFactory.Create(strSql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(strSql, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@in_content_id", contentId);
                 using (IDataReader dr = cmd.ExecuteReader())
@@ -6506,7 +6878,7 @@ namespace Quantumart.QP8.DAL
             return defaultStyle.ToString();
         }
 
-        public static IEnumerable<DataRow> GetRestTemplateObjects(SqlConnection sqlConnection, int templateId, int siteId)
+        public static IEnumerable<DataRow> GetRestTemplateObjects(DbConnection sqlConnection, int templateId, int siteId)
         {
             var query = $@"select t.[TEMPLATE_NAME] as TemplateName, t.PAGE_TEMPLATE_ID, o.[OBJECT_ID], o.PAGE_ID,
                            o.[OBJECT_NAME] as ObjectName, CASE WHEN f.[OBJECT_FORMAT_ID] = o.[OBJECT_FORMAT_ID] THEN null ELSE f.[FORMAT_NAME] END as FormatName
@@ -6514,25 +6886,25 @@ namespace Quantumart.QP8.DAL
                            inner join [PAGE_TEMPLATE] as t on t.[page_template_id] = o.[page_template_id]
                            where t.[SITE_ID] = {siteId} and t.[PAGE_TEMPLATE_ID] <> {templateId} and o.[PAGE_ID] is null";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void DeleteObjectDefaultValues(SqlConnection sqlConnection, int objectId)
+        public static void DeleteObjectDefaultValues(DbConnection sqlConnection, int objectId)
         {
-            using (var cmd = SqlCommandFactory.Create($"delete from OBJECT_VALUES where OBJECT_ID = {objectId}", sqlConnection))
+            using (var cmd = DbCommandFactory.Create($"delete from OBJECT_VALUES where OBJECT_ID = {objectId}", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static bool PageFileNameExists(SqlConnection sqlConnection, string checkPath, int siteId)
+        public static bool PageFileNameExists(DbConnection sqlConnection, string checkPath, int siteId)
         {
             var query = $@"select COUNT(*)
                                          from PAGE as p left outer join PAGE_TEMPLATE as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID
@@ -6540,7 +6912,7 @@ namespace Quantumart.QP8.DAL
                                          where (s.LIVE_DIRECTORY + ISNULL(t.TEMPLATE_FOLDER, '') + ISNULL(p.PAGE_FOLDER, '') + p.PAGE_FILENAME) = '{checkPath}'
                                          and s.SITE_ID = {siteId}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var result = cmd.ExecuteScalar();
@@ -6548,34 +6920,33 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void ClearFieldTreeOrder(SqlConnection sqlConnection, int id)
+        public static void ClearFieldTreeOrder(DbConnection sqlConnection, int id)
         {
-            var query = $@"UPDATE dbo.[CONTENT_ATTRIBUTE] set [TREE_ORDER_FIELD] = null where  [TREE_ORDER_FIELD] = '{id}'";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var query = $@"UPDATE CONTENT_ATTRIBUTE set TREE_ORDER_FIELD = null where TREE_ORDER_FIELD = {id}";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void MoveFieldOrders(SqlConnection sqlConnection, int contentId, int newOrder)
+        public static void MoveFieldOrders(DbConnection sqlConnection, int contentId, int newOrder)
         {
-            var query = $@"UPDATE [CONTENT_ATTRIBUTE]
-                                         SET [ATTRIBUTE_ORDER] = [ATTRIBUTE_ORDER] + 1
-                                         WHERE CONTENT_ID = {contentId} and [ATTRIBUTE_ORDER] >= {newOrder}";
+            var query = $@"UPDATE CONTENT_ATTRIBUTE SET ATTRIBUTE_ORDER = ATTRIBUTE_ORDER + 1
+                WHERE CONTENT_ID = {contentId} and ATTRIBUTE_ORDER >= {newOrder}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<int> GetActiveArticlesIdsForM2MField(SqlConnection sqlConnection, int fieldId)
+        public static IEnumerable<int> GetActiveArticlesIdsForM2MField(DbConnection sqlConnection, int fieldId)
         {
             var query = $"select ARTICLE_ID FROM FIELD_ARTICLE_BIND WHERE FIELD_ID = {fieldId}";
             var result = new List<int>();
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -6589,95 +6960,29 @@ namespace Quantumart.QP8.DAL
             return result.ToArray();
         }
 
-        public static void UpdateContentModification(SqlConnection sqlConnection, int contentId)
+        public static void UpdateContentModification(DbConnection sqlConnection, int contentId)
         {
-            var sb = new StringBuilder();
-            sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @contentId");
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.ExecuteNonQuery();
-            }
+            var dbType = GetDbType(sqlConnection);
+            var sql = $@"
+                update content_modification {WithRowLock(dbType)}
+                set live_modified = {Now(dbType)}, stage_modified = {Now(dbType)} where content_id = {contentId}
+            ";
+            ExecuteSql(sqlConnection, sql);
         }
 
-        public static void UpdateContentModification(SqlConnection sqlConnection, List<int> liveIds, List<int> stageIds)
+        public static void SetFieldM2MDefValue(DbConnection sqlConnection, int[] defaultArticles, int fieldId)
         {
             var sb = new StringBuilder();
-            var sql = new List<SqlParameter>();
-            if (liveIds.Any())
-            {
-                sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE() where content_id in (select id from @liveIds)");
-                sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(liveIds) });
-            }
-
-            if (stageIds.Any())
-            {
-                sb.AppendLine("update content_modification with(rowlock) set stage_modified = GETDATE() where content_id in (select id from @stageIds)");
-                sql.Add(new SqlParameter("@stageIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(stageIds) });
-            }
-
-            if (sql.Any())
-            {
-                using (var cmd = new SqlCommand(sb.ToString(), sqlConnection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.AddRange(sql.ToArray());
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public static void GetContentModification(SqlConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref List<int> liveIds, ref List<int> stageIds)
-        {
-            var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            var aggFunc = returnPublishedForLive ? "max" : "min";
-            var sb = new StringBuilder();
-            var ids = articleIds as int[] ?? articleIds.ToArray();
-            if (!ids.Any())
-            {
-                return;
-            }
-
-            sb.AppendLine("declare @fullIds table (id numeric primary key, content_id numeric, is_published bit)");
-            sb.AppendLine("insert into @fullIds select ci.content_item_id, ci.content_id, ");
-            sb.AppendLine("  case when st.status_type_name = 'Published' and ci.splitted = 0 then 1 else 0 end as is_published ");
-            sb.AppendLine($"  from {source} i inner join content_item ci with(nolock) on i.id = ci.content_item_id ");
-            sb.AppendLine("  inner join status_type st on ci.status_type_id = st.status_type_id ");
-            sb.AppendLine($"select cast(content_id as int) as id, cast({aggFunc}(cast(is_published as int)) as bit) as is_published from @fullIds group by content_id");
-
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                var rows = dt.AsEnumerable().ToArray();
-                stageIds = rows.Select(n => n.Field<int>("id")).ToList();
-                bool Predicate1(DataRow n) => n.Field<bool>("is_published");
-                bool Predicate2(DataRow n) => !n.Field<bool>("is_published");
-
-                liveIds = rows.Where(returnPublishedForLive ? (Func<DataRow, bool>)Predicate1 : Predicate2).Select(n => n.Field<int>("id")).ToList();
-            }
-        }
-
-        public static void SetFieldM2MDefValue(SqlConnection sqlConnection, int[] defaultArticles, int fieldId)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormatLine(" DELETE FROM FIELD_ARTICLE_BIND where FIELD_ID = {0} ", fieldId);
+            sb.AppendLine($@"DELETE FROM FIELD_ARTICLE_BIND where FIELD_ID = {fieldId};");
             foreach (var artId in defaultArticles)
             {
-                sb.AppendFormatLine(" INSERT INTO FIELD_ARTICLE_BIND([ARTICLE_ID],[FIELD_ID]) VALUES ({0},{1}) ", artId, fieldId);
+                sb.AppendLine($@"INSERT INTO FIELD_ARTICLE_BIND(ARTICLE_ID,FIELD_ID) VALUES ({artId},{fieldId});");
             }
 
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-            }
+            ExecuteSql(sqlConnection, sb.ToString());
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenContents(SqlConnection sqlConnection, int oldSiteId, int newSiteId, string newContentIds)
+        public static IEnumerable<DataRow> GetRelationsBetweenContents(DbConnection sqlConnection, int oldSiteId, int newSiteId, string newContentIds)
         {
             var sb = new StringBuilder();
             sb.Append(@"select c.content_id as source_content_id, nc.content_id as destination_content_id
@@ -6691,19 +6996,19 @@ namespace Quantumart.QP8.DAL
                 sb.AppendFormat(" and nc.content_id in ({0})", newContentIds);
             }
 
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", oldSiteId);
                 cmd.Parameters.AddWithValue("@newSiteId", newSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationshipsBetweenAttributes(SqlConnection sqlConnection, int oldSiteId, int newSiteId, string relationsBetweenContentsXml)
+        public static IEnumerable<DataRow> GetRelationshipsBetweenAttributes(DbConnection sqlConnection, int oldSiteId, int newSiteId, string relationsBetweenContentsXml)
         {
             var query = $@" declare @xmlprms xml = '{relationsBetweenContentsXml}'
 
@@ -6719,19 +7024,19 @@ namespace Quantumart.QP8.DAL
                                 inner join [dbo].content_attribute as ca1 (nolock) on ca1.attribute_name = ca.attribute_name and ca1.content_id = ra.destination_content_id
                                 where ra.destination_content_id in (select destinationId from relationsBetweenContents)";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", oldSiteId);
                 cmd.Parameters.AddWithValue("@newSiteId", newSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void CopyContentItemAccess(SqlConnection sqlConnection, string relationsBetweenItems)
+        public static void CopyContentItemAccess(DbConnection sqlConnection, string relationsBetweenItems)
         {
             var query = $@"
                                             declare @now DateTime = GetDate()
@@ -6759,19 +7064,21 @@ namespace Quantumart.QP8.DAL
                                               from [dbo].[content_item_access] as cia (nolock)
                                                 inner join relations_between_content_items as rbci on rbci.source_content_item_id = cia.content_item_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static Dictionary<int, int> GetArticleHierarchy(SqlConnection sqlConnection, int contentId, string treeFieldName)
+        public static Dictionary<int, int> GetArticleHierarchy(DbConnection sqlConnection, int contentId, string treeFieldName)
         {
             var result = new Dictionary<int, int>();
-            var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : "ISNULL([" + treeFieldName + "], 0)";
-            var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united with(nolock) where archive = 0";
-            using (var cmd = new SqlCommand(sql, sqlConnection))
+            var dbType = GetDbType(sqlConnection);
+            var name = Escape(dbType, treeFieldName);
+            var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : $"coalesce({name}, 0)";
+            var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united {WithNoLock(dbType)} where archive = 0";
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 using (var rdr = cmd.ExecuteReader())
@@ -6786,7 +7093,7 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static void CopyUserQueryContents(SqlConnection sqlConnection, string relationsBetweenContentsXml)
+        public static void CopyUserQueryContents(DbConnection sqlConnection, string relationsBetweenContentsXml)
         {
             var query = $@"
                                     declare @xmlprms xml = '{relationsBetweenContentsXml}'
@@ -6804,14 +7111,14 @@ namespace Quantumart.QP8.DAL
                                     inner join relationsBetweenContents as rbc on uqc.virtual_content_id = rbc.source_content_id
                                     inner join relationsBetweenContents as rbc1 on uqc.real_content_id = rbc1.source_content_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyUserQueryAttributes(SqlConnection sqlConnection, string relationsBetweenContents, string relationsBetweenAttributes)
+        public static void CopyUserQueryAttributes(DbConnection sqlConnection, string relationsBetweenContents, string relationsBetweenAttributes)
         {
             var query = $@"
 
@@ -6841,14 +7148,14 @@ namespace Quantumart.QP8.DAL
                                     inner join relationsBetweenContents as rbc on rbc.source_content_id = uqa.virtual_content_id
                                     inner join @relationsBetweenAttributes as rba on rba.source_attribute_id = uqa.user_query_attr_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> CopyContentItems(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string contentIdsToCopy, int startFrom, int endOn, string relationsBetweenContentsXml, string relationsBetweenStatusesXml)
+        public static IEnumerable<DataRow> CopyContentItems(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string contentIdsToCopy, int startFrom, int endOn, string relationsBetweenContentsXml, string relationsBetweenStatusesXml)
         {
             var query = $@"
                                 if OBJECT_ID('tempdb..#disable_ti_access_content_item') IS NULL begin
@@ -6955,7 +7262,7 @@ namespace Quantumart.QP8.DAL
 
                                 select source_item_id, destination_item_id from @contentitemstable";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", sourceSiteId);
@@ -6964,12 +7271,12 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@startFrom", startFrom);
                 cmd.Parameters.AddWithValue("@endOn", endOn);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void CopyContentItemSchedule(SqlConnection sqlConnection, string relationsNewContentItemsIdXml)
+        public static void CopyContentItemSchedule(DbConnection sqlConnection, string relationsNewContentItemsIdXml)
         {
             var query = $@"
                                 declare @todaysDateTime datetime = GetDate()
@@ -7031,14 +7338,14 @@ namespace Quantumart.QP8.DAL
                                         inner join relationsBetweenNewContentItemsXml as cist
                                             on cis.CONTENT_ITEM_ID = cist.source_content_item_id;";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenStatuses(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
+        public static IEnumerable<DataRow> GetRelationsBetweenStatuses(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             const string query = @" select st1.STATUS_TYPE_ID as source_status_type_id
                                                     ,st2.STATUS_TYPE_ID as destination_status_type_id
@@ -7047,19 +7354,19 @@ namespace Quantumart.QP8.DAL
                                                 on st1.STATUS_TYPE_NAME = st2.STATUS_TYPE_NAME and st2.SITE_ID = @newSiteId
                                             where st1.SITE_ID = @oldSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", sourceSiteId);
                 cmd.Parameters.AddWithValue("@newSiteId", destinationSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenLinks(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
+        public static IEnumerable<DataRow> GetRelationsBetweenLinks(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             const string query = @" select distinct oldvalues.link_id as source_link_id, newvalues.link_id as destination_link_id from (
                                     select attribute_name, link_id, c.content_name
@@ -7076,19 +7383,19 @@ namespace Quantumart.QP8.DAL
                                           as newvalues
                                           on newvalues.attribute_name = oldvalues.attribute_name and newvalues.content_name = oldvalues.content_name";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
                 cmd.Parameters.AddWithValue("@destinationSiteId", destinationSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void UpdateContentData(SqlConnection sqlConnection, string relationsBetweenAttributesXml, string relationsNewContentItemsIdXml)
+        public static void UpdateContentData(DbConnection sqlConnection, string relationsBetweenAttributesXml, string relationsNewContentItemsIdXml)
         {
             var query = $@"
 
@@ -7138,21 +7445,21 @@ namespace Quantumart.QP8.DAL
                                 if @ids is not null
                                     exec qp_replicate_items @ids ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static int GetArticlesCountInSite(SqlConnection sqlConnection, int siteId)
+        public static int GetArticlesCountInSite(DbConnection sqlConnection, int siteId)
         {
             var query = $@"SELECT COUNT(CONTENT_ITEM_ID)
                       FROM [dbo].[CONTENT_ITEM] as it
                       INNER JOIN [dbo].[CONTENT] as c on c.CONTENT_ID = it.CONTENT_ID
                       where c.SITE_ID = {siteId}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var result = cmd.ExecuteScalar();
@@ -7160,7 +7467,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateAttributesAfterCopyingArticles(SqlConnection sqlConnection, int destinationSiteId, string relationsBetweenArticles)
+        public static void UpdateAttributesAfterCopyingArticles(DbConnection sqlConnection, int destinationSiteId, string relationsBetweenArticles)
         {
             var query = $@"declare @xmlprms xml = '{relationsBetweenArticles}'
 
@@ -7179,7 +7486,7 @@ namespace Quantumart.QP8.DAL
                                             where c.site_id = @destinationSiteId
                                         ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@destinationSiteId", destinationSiteId);
@@ -7187,7 +7494,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateO2MValues(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
+        public static void UpdateO2MValues(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
         {
             var query = $@"
                             declare @xmlprms xml = '{relationsBetweenArticles}'
@@ -7216,7 +7523,7 @@ namespace Quantumart.QP8.DAL
                                     on cast(lr.olditemid as varchar) = cd.DATA
                                 where c.SITE_ID = @destinationSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7225,7 +7532,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyArticleWorkflowBind(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
+        public static void CopyArticleWorkflowBind(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
         {
             var query = $@"
                             declare @relations_between_items table(
@@ -7257,7 +7564,7 @@ namespace Quantumart.QP8.DAL
                                 inner join @relations_between_items as lr on lr.olditemid = awb.content_item_id
                                 inner join relations_between_workflows as rbw on rbw.old_workflow_id = awb.workflow_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7266,7 +7573,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyFieldArticleBind(SqlConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenAttributes)
+        public static void CopyFieldArticleBind(DbConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenAttributes)
         {
             var query = $@"
                                 declare @xmlprmsAttributes xml = '{relationsBetweenAttributes}'
@@ -7294,14 +7601,14 @@ namespace Quantumart.QP8.DAL
                                 inner join relations_between_items as lr on lr.olditemid = fab.article_id
                                 inner join @relations_between_attributes as ra on ra.source_attribute_id = fab.field_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateContentDataAfterCopyingArticles(SqlConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenLinks)
+        public static void UpdateContentDataAfterCopyingArticles(DbConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenLinks)
         {
             var query = $@"
                                 declare @xmlprmsLinks xml = '{relationsBetweenLinks}'
@@ -7338,14 +7645,14 @@ namespace Quantumart.QP8.DAL
                                 inner join relations_between_items as lr1
                                     on lr1.newitemid = cd.content_item_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyItemToItems(SqlConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenLinks)
+        public static void CopyItemToItems(DbConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenLinks)
         {
             var query = $@"
 
@@ -7378,14 +7685,14 @@ namespace Quantumart.QP8.DAL
                                     on r.source_link_id = i1.link_id
                                 where i1.l_item_id in (select olditemid from relations_between_items)";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateItemToItem(SqlConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenLinks)
+        public static void UpdateItemToItem(DbConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenLinks)
         {
             var query = $@"
                                 declare @xmlprmsLinks xml = '{relationsBetweenLinks}'
@@ -7433,14 +7740,14 @@ namespace Quantumart.QP8.DAL
                                 where ii.r_item_id in (select source_item_id from @relations_between_items)
 ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void FillLinksTables(SqlConnection sqlConnection, string relationsBetweenLinks)
+        public static void FillLinksTables(DbConnection sqlConnection, string relationsBetweenLinks)
         {
             var query = $@"
                                 declare @xmlprmsLinks xml = '{relationsBetweenLinks}'
@@ -7469,14 +7776,14 @@ namespace Quantumart.QP8.DAL
 	                                end
                               ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyWorkflow(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopyWorkflow(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"declare @todaysDate datetime
                                     set @todaysDate = GETDATE()
@@ -7504,7 +7811,7 @@ namespace Quantumart.QP8.DAL
                                         inner join [dbo].[SITE] as s
                                             on w.SITE_ID = s.SITE_ID and s.SITE_ID = @sourceSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7513,7 +7820,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopySiteAccessRules(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopySiteAccessRules(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"    declare @todaysDate datetime
                                     set @todaysDate = GETDATE()
@@ -7540,7 +7847,7 @@ namespace Quantumart.QP8.DAL
                                       from [dbo].[site_access] (nolock)
                                       where site_id = @sourceSiteId and group_id != 1 and permission_level_id != 1 and last_modified_by != 1";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7550,7 +7857,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyActionSiteBind(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopyActionSiteBind(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"insert into [dbo].[action_site_bind]
                                             select [custom_action_id]
@@ -7558,7 +7865,7 @@ namespace Quantumart.QP8.DAL
                                               from [dbo].[action_site_bind] (nolock)
                                               where site_id = @sourceSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7567,7 +7874,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyWorkflowAccess(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopyWorkflowAccess(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"declare @now DateTime = GetDate()
                                     ;with relations_between_workflows
@@ -7598,7 +7905,7 @@ namespace Quantumart.QP8.DAL
                                   from [dbo].[workflow_access] as wa (nolock)
                                     inner join relations_between_workflows as rbw on rbw.source_workflow_id = wa.workflow_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7607,7 +7914,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyWorkflowRules(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopyWorkflowRules(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @";with relations_between_workflows
                                     as
@@ -7646,7 +7953,7 @@ namespace Quantumart.QP8.DAL
 	                                        where wr.WORKFLOW_ID in (select WORKFLOW_ID from workflow where site_id = @destinationSiteId)
 										";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7655,7 +7962,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyFolderAccess(SqlConnection sqlConnection, string relationsBetweenFoldersXml)
+        public static void CopyFolderAccess(DbConnection sqlConnection, string relationsBetweenFoldersXml)
         {
             var query = $@"
                             declare @now DateTime = GetDate()
@@ -7686,14 +7993,14 @@ namespace Quantumart.QP8.DAL
                               from [dbo].[folder_access] as fa (nolock)
                                 inner join relations_between_folders as rbf on rbf.source_folder_id = fa.[folder_id]";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static IEnumerable<DataRow> CopyFolders(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static IEnumerable<DataRow> CopyFolders(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"declare @todaysDate datetime
                                     set @todaysDate = GETDATE()
@@ -7738,19 +8045,19 @@ namespace Quantumart.QP8.DAL
                                     from @relations_between_folders
                                     ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
                 cmd.Parameters.AddWithValue("@destinationSiteId", destinationSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void CopyCommandSiteBind(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopyCommandSiteBind(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"delete from [dbo].[VE_COMMAND_SITE_BIND]
                                      where site_id = @destinationSiteId
@@ -7762,7 +8069,7 @@ namespace Quantumart.QP8.DAL
                                       FROM [dbo].[VE_COMMAND_SITE_BIND] (nolock)
                                       where site_id = @sourceSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7771,7 +8078,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyStyleSiteBind(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
+        public static void CopyStyleSiteBind(int sourceSiteId, int destinationSiteId, DbConnection sqlConnection)
         {
             const string query = @"        delete from [dbo].[VE_STYLE_SITE_BIND]
                                      where site_id = @destinationSiteId
@@ -7783,7 +8090,7 @@ namespace Quantumart.QP8.DAL
                                       FROM [dbo].[VE_STYLE_SITE_BIND] (nolock)
                                       where site_id = @sourceSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -7793,7 +8100,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> CopyContents(SqlConnection sqlConnection, int oldSiteId, int newSiteId, int startFrom, int endOn)
+        public static IEnumerable<DataRow> CopyContents(DbConnection sqlConnection, int oldSiteId, int newSiteId, int startFrom, int endOn)
         {
             var excludeColumns = new List<string> { "content_id" };
             var changeValues = new Dictionary<string, string>
@@ -7827,7 +8134,7 @@ namespace Quantumart.QP8.DAL
                 GetColumnsForTable(sqlConnection, "content", excludeColumns, changeValues),
                 GetColumnsForTable(sqlConnection, "content", excludeColumns));
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", oldSiteId);
@@ -7836,12 +8143,12 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@endOn", endOn);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> CopyContentConstraints(SqlConnection sqlConnection, string relationsBetweenContentsXml)
+        public static IEnumerable<DataRow> CopyContentConstraints(DbConnection sqlConnection, string relationsBetweenContentsXml)
         {
             var query = $@"
                                     declare @xmlprms xml = '{relationsBetweenContentsXml}'
@@ -7872,16 +8179,16 @@ namespace Quantumart.QP8.DAL
 
                                     select source_constraint_id, destination_constraint_id from @relations_between_constrains";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void CopyContentNotifications(SqlConnection sqlConnection, string relationsBetweenContentsXml, string relationsBetweenStatusesXml, string relationsBetweenAttributesXml)
+        public static void CopyContentNotifications(DbConnection sqlConnection, string relationsBetweenContentsXml, string relationsBetweenStatusesXml, string relationsBetweenAttributesXml)
         {
             var changeValues = new Dictionary<string, string>
             {
@@ -7930,14 +8237,14 @@ namespace Quantumart.QP8.DAL
                                     left join @relationsBetweenStatuses as rbs on rbs.source_status_id = n.notify_on_status_type_id
                                     left join @relationsBetweenAttributes as rba on rba.source_attribute_id = n.email_attribute_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyDynamicImageAttributes(SqlConnection sqlConnection, string relationsBetweenAttributesXml)
+        public static void CopyDynamicImageAttributes(DbConnection sqlConnection, string relationsBetweenAttributesXml)
         {
             var query = $@"       declare @xmlprms xml = '{relationsBetweenAttributesXml}'
 
@@ -7956,14 +8263,14 @@ namespace Quantumart.QP8.DAL
                                     from [dbo].[dynamic_image_attribute] as dia (nolock)
                                         inner join relationsBetweenAttributes as ra on dia.ATTRIBUTE_ID = ra.source_attribute_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateAttributesOrder(SqlConnection sqlConnection, int destinationSiteId, string relationsBetweenAttributesXml, string newContentIds)
+        public static void UpdateAttributesOrder(DbConnection sqlConnection, int destinationSiteId, string relationsBetweenAttributesXml, string newContentIds)
         {
             var forAttributesOfContents = string.Empty;
             if (!string.IsNullOrEmpty(newContentIds))
@@ -7989,7 +8296,7 @@ namespace Quantumart.QP8.DAL
                                             on ra.source_attribute_id = ca1.ATTRIBUTE_ID
                                     where c.SITE_ID = @newsiteid {forAttributesOfContents}";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@newSiteId", destinationSiteId);
@@ -7997,7 +8304,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyContentWorkflowBind(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenContentsXml)
+        public static void CopyContentWorkflowBind(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenContentsXml)
         {
             var query = $@"
 
@@ -8031,7 +8338,7 @@ namespace Quantumart.QP8.DAL
                                         inner join relations_between_workflows as rbw on rbw.old_workflow_id = cwb.workflow_id
                                         where rbc.destination_content_id in (select destination_content_id from @relationsBetweenContents)";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", sourceSiteId);
@@ -8040,7 +8347,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyUnionContents(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string newContentIds)
+        public static void CopyUnionContents(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string newContentIds)
         {
             if (string.IsNullOrEmpty(newContentIds))
             {
@@ -8069,7 +8376,7 @@ namespace Quantumart.QP8.DAL
                             left join @relscontents as rc1 on uc.master_content_id = rc1.content_id_old
                             where nvc1.content_id_new in ({newContentIds})";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
@@ -8078,7 +8385,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateVirtualContentAttributes(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
+        public static void UpdateVirtualContentAttributes(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             const string query = @"   ;with relationsBetweenContentLinks as (
                                 select distinct oldvalues.link_id as oldvalue, newvalues.link_id as newvalue from (
@@ -8107,7 +8414,7 @@ namespace Quantumart.QP8.DAL
                                 inner join content as c (nolock)
                                     on ca.CONTENT_ID = c.CONTENT_ID and c.SITE_ID = @newsiteid";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
@@ -8116,7 +8423,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyContentsGroups(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
+        public static void CopyContentsGroups(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             const string query = @"delete from [dbo].[content_group]
                                 where site_id = @newsiteid
@@ -8127,7 +8434,7 @@ namespace Quantumart.QP8.DAL
                               from [dbo].[content_group] (nolock)
                               where site_id = @oldsiteid";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
@@ -8136,7 +8443,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateContentGroupIds(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
+        public static void UpdateContentGroupIds(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             const string query = @";with relations_between_groups as
                             (
@@ -8151,7 +8458,7 @@ namespace Quantumart.QP8.DAL
                                 inner join relations_between_groups as rbg (nolock) on c.content_group_id = rbg.content_group_id_old
                             where site_id = @newsiteid";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
@@ -8160,7 +8467,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> CopyVirtualContents(SqlConnection sqlConnection, int siteId, int newSiteId)
+        public static IEnumerable<DataRow> CopyVirtualContents(DbConnection sqlConnection, int siteId, int newSiteId)
         {
             var excludeColumns = new List<string> { "content_id" };
             var changeValues = new Dictionary<string, string>
@@ -8220,21 +8527,21 @@ namespace Quantumart.QP8.DAL
 
                             ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", siteId);
                 cmd.Parameters.AddWithValue("@newsiteid", newSiteId);
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static int GetSiteRealContentCount(int siteId, SqlConnection connection)
+        public static int GetSiteRealContentCount(int siteId, DbConnection connection)
         {
             const string query = "select count(CONTENT_ID) from CONTENT where SITE_ID = @site_id AND virtual_type = 0";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
@@ -8242,10 +8549,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetSiteContentLinkCount(int siteId, SqlConnection connection)
+        public static int GetSiteContentLinkCount(int siteId, DbConnection connection)
         {
             const string query = "select count(link_id) from SITE_CONTENT_LINK where SITE_ID = @site_id";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
@@ -8253,10 +8560,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetSiteVirtualContentCount(SqlConnection connection, int siteId)
+        public static int GetSiteVirtualContentCount(DbConnection connection, int siteId)
         {
             const string query = "select count(CONTENT_ID) from CONTENT where SITE_ID = @site_id AND virtual_type != 0";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@site_id", siteId);
@@ -8264,7 +8571,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenContents(SqlConnection connection, int oldSiteId, int newSiteId)
+        public static IEnumerable<DataRow> GetRelationsBetweenContents(DbConnection connection, int oldSiteId, int newSiteId)
         {
             const string query = @"select c.content_id as content_id_old
                                     , nc.content_id as content_id_new
@@ -8272,19 +8579,19 @@ namespace Quantumart.QP8.DAL
                              inner join [dbo].[content] as nc on nc.content_name = c.content_name and nc.site_id = @newsiteid
                              where c.site_id = @oldsiteid";
 
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", oldSiteId);
                 cmd.Parameters.AddWithValue("@newsiteid", newSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static int CopySiteTemplates(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, int templateNumber)
+        public static int CopySiteTemplates(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, int templateNumber)
         {
             const string query = @"
                             declare @now datetime = GETDATE()
@@ -8407,7 +8714,7 @@ namespace Quantumart.QP8.DAL
 
                             select new_template_id from @new_templates";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
@@ -8417,7 +8724,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenTemplates(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, int templateIdNew)
+        public static IEnumerable<DataRow> GetRelationsBetweenTemplates(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, int templateIdNew)
         {
             const string query = @"select pto.page_template_id as source_template_id
                                     ,ptn.page_template_id as destination_template_id
@@ -8426,7 +8733,7 @@ namespace Quantumart.QP8.DAL
                                   on pto.template_name = ptn.template_name and ptn.site_id = @newSiteId
                             where pto.site_id = @oldSiteId and ptn.PAGE_TEMPLATE_ID = @templateIdNew";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
@@ -8434,12 +8741,12 @@ namespace Quantumart.QP8.DAL
                 cmd.Parameters.AddWithValue("@templateIdNew", templateIdNew);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenPages(SqlConnection sqlConnection, string relationsBetweenTemplates)
+        public static IEnumerable<DataRow> GetRelationsBetweenPages(DbConnection sqlConnection, string relationsBetweenTemplates)
         {
             var query = $@" declare @xmlprms xml = '{relationsBetweenTemplates}'
 
@@ -8458,16 +8765,16 @@ namespace Quantumart.QP8.DAL
                                 inner join relations_between_templates as pt1
                                     on pn.PAGE_TEMPLATE_ID = pt1.destination_page_template_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> CopySiteTemplatePages(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenTemplates)
+        public static IEnumerable<DataRow> CopySiteTemplatePages(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenTemplates)
         {
             var query = $@"
                             declare @now datetime = GETDATE()
@@ -8535,19 +8842,19 @@ namespace Quantumart.QP8.DAL
 
                             select page_id, page_template_id from @new_pages_added";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldsiteid", sourceSiteId);
                 cmd.Parameters.AddWithValue("@newsiteid", destinationSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> CopySiteTemplateObjects(SqlConnection sqlConnection, string relationsBetweenTemplates, string relationsBetweenPages)
+        public static IEnumerable<DataRow> CopySiteTemplateObjects(DbConnection sqlConnection, string relationsBetweenTemplates, string relationsBetweenPages)
         {
             var query = $@"
                             declare @now datetime = GETDATE()
@@ -8658,16 +8965,16 @@ namespace Quantumart.QP8.DAL
 
                         select source_object_id, destination_object_id from @relations_between_objects";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> CopySiteTemplateObjectFormats(SqlConnection sqlConnection, string relationsBetweenObjects)
+        public static IEnumerable<DataRow> CopySiteTemplateObjectFormats(DbConnection sqlConnection, string relationsBetweenObjects)
         {
             var query = $@"
 
@@ -8755,16 +9062,16 @@ namespace Quantumart.QP8.DAL
                             select source_object_format_id, destination_object_format_id
                             from @relations_between_object_formats";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static void CopySiteUpdateObjects(SqlConnection sqlConnection, string relationsBetweenObjectFormats, string relationsBetweenObjects)
+        public static void CopySiteUpdateObjects(DbConnection sqlConnection, string relationsBetweenObjectFormats, string relationsBetweenObjects)
         {
             var query = $@"
                                 declare @xmlprmsObjectFormats xml = '{relationsBetweenObjectFormats}'
@@ -8794,14 +9101,14 @@ namespace Quantumart.QP8.DAL
                                 inner join relations_between_objects as rbo
                                     on o.OBJECT_ID = rbo.destination_object_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopySiteObjectValues(SqlConnection sqlConnection, string relationsBetweenObjects)
+        public static void CopySiteObjectValues(DbConnection sqlConnection, string relationsBetweenObjects)
         {
             var query = $@"
 
@@ -8820,14 +9127,14 @@ namespace Quantumart.QP8.DAL
                                         inner join relations_between_objects as rbo
                                             on ov.OBJECT_ID = rbo.source_object_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopySiteContainers(SqlConnection sqlConnection, string relationsBetweenObjects, string relationsBetweenContents)
+        public static void CopySiteContainers(DbConnection sqlConnection, string relationsBetweenObjects, string relationsBetweenContents)
         {
             var query = $@"
                                 declare @xmlprmsContents xml = '{relationsBetweenContents}'
@@ -8899,14 +9206,14 @@ namespace Quantumart.QP8.DAL
                                 inner join @relations_between_contents as rbc
                                     on c.CONTENT_ID = rbc.source_content_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopySiteUpdateNotifications(SqlConnection sqlConnection, string relationsBetweenObjectFormats, string relationsBetweenContents)
+        public static void CopySiteUpdateNotifications(DbConnection sqlConnection, string relationsBetweenObjectFormats, string relationsBetweenContents)
         {
             var query = $@"
                                 declare @xmlprmsContents xml = '{relationsBetweenContents}'
@@ -8934,20 +9241,20 @@ namespace Quantumart.QP8.DAL
                                         on rbof.source_object_format_id = n.format_id
                                 where n.content_id in (select destination_content_id from @relations_between_contents)";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static int GetTemplatesElementsCountOnSite(SqlConnection sqlConnection, int siteId)
+        public static int GetTemplatesElementsCountOnSite(DbConnection sqlConnection, int siteId)
         {
             const string query = @"SELECT COUNT(*)
                               from [dbo].[PAGE_TEMPLATE]
                                 where SITE_ID = @siteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@siteId", siteId);
@@ -8955,13 +9262,13 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateVirtualContent(SqlConnection sqlConnection, string newSqlQuery, int newContentId)
+        public static void UpdateVirtualContent(DbConnection sqlConnection, string newSqlQuery, int newContentId)
         {
             const string query = @"update [dbo].[content]
                                 set [query] = @newSqlQuery
                             where [content_id] = @contentId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@newSqlQuery", newSqlQuery);
@@ -8970,7 +9277,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyContentsAttributes(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string newContentIds, bool isContentsVirtual)
+        public static void CopyContentsAttributes(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string newContentIds, bool isContentsVirtual)
         {
             if (string.IsNullOrEmpty(newContentIds))
             {
@@ -9026,7 +9333,7 @@ namespace Quantumart.QP8.DAL
                     drop table #disable_create_new_views
 
             end";
-            using (var cmd = new SqlCommand(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
 
@@ -9039,7 +9346,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyStyleFieldBind(SqlConnection sqlConnection, string relationsBetweenAttributes)
+        public static void CopyStyleFieldBind(DbConnection sqlConnection, string relationsBetweenAttributes)
         {
             var query = $@"
                                         declare @xmlprmsAttributes xml = '{relationsBetweenAttributes}'
@@ -9055,14 +9362,14 @@ namespace Quantumart.QP8.DAL
                                                 from [dbo].[ve_style_field_bind] as csfb (nolock)
                                                 inner join relations_between_attributes as ra
                                                       on ra.source_attribute_id = csfb.[field_id]";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyCommandFieldBind(SqlConnection sqlConnection, string relationsBetweenAttributes)
+        public static void CopyCommandFieldBind(DbConnection sqlConnection, string relationsBetweenAttributes)
         {
             var query = $@"
                                         declare @xmlprmsAttributes xml = '{relationsBetweenAttributes}'
@@ -9079,14 +9386,14 @@ namespace Quantumart.QP8.DAL
                                         inner join relations_between_attributes as ra
                                             on ra.source_attribute_id = csfb.[field_id]";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyContentConstrainRules(SqlConnection sqlConnection, string relationsBetweenConstraints, string relationsBetweenAttributes)
+        public static void CopyContentConstrainRules(DbConnection sqlConnection, string relationsBetweenConstraints, string relationsBetweenAttributes)
         {
             var query = $@"
 
@@ -9115,14 +9422,14 @@ namespace Quantumart.QP8.DAL
                                                   inner join relations_between_attributes as ra on ra.source_attribute_id = ccr.attribute_id
                                                   inner join @relations_between_constraints as rbc on rbc.source_constraint_id = ccr.constraint_id";
 
-            using (var cmd = new SqlCommand(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateAttributes(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenAttributesXml, string contentIds)
+        public static void UpdateAttributes(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenAttributesXml, string contentIds)
         {
             var inContents = string.Empty;
             if (!string.IsNullOrEmpty(contentIds))
@@ -9157,7 +9464,7 @@ namespace Quantumart.QP8.DAL
                                     inner join [dbo].[content] as c on ca.content_id = c.content_id
                                     where c.site_id = @destination_site_id {inContents}";
 
-            using (var cmd = new SqlCommand(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@destination_site_id", destinationSiteId);
@@ -9165,7 +9472,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateAttributeLinkIdAndDefaultValue(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenLinksXml)
+        public static void UpdateAttributeLinkIdAndDefaultValue(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenLinksXml)
         {
             var query = $@"
 
@@ -9189,7 +9496,7 @@ namespace Quantumart.QP8.DAL
                                     where c.site_id = @newSiteId
                                     ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", sourceSiteId);
@@ -9198,7 +9505,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateContentsParentContentId(SqlConnection sqlConnection, int destinationSiteId, string relationsBetweenContentsXml)
+        public static void UpdateContentsParentContentId(DbConnection sqlConnection, int destinationSiteId, string relationsBetweenContentsXml)
         {
             var query = $@" declare @xmlprmsContents xml = '{relationsBetweenContentsXml}'
 
@@ -9214,7 +9521,7 @@ namespace Quantumart.QP8.DAL
                                     on c.PARENT_CONTENT_ID = rbc.source_content_id
                                 where c.SITE_ID = @destinationSiteId";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@destinationSiteId", destinationSiteId);
@@ -9222,7 +9529,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyContentAccess(SqlConnection sqlConnection, int destinationSiteId, string relationsBetweenContentsXml)
+        public static void CopyContentAccess(DbConnection sqlConnection, int destinationSiteId, string relationsBetweenContentsXml)
         {
             var query = $@"
 
@@ -9262,7 +9569,7 @@ namespace Quantumart.QP8.DAL
                                 from [dbo].[content_access] as ca (nolock)
                                     inner join relations_between_contents as rbc on ca.CONTENT_ID = rbc.source_content_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@destinationSiteId", destinationSiteId);
@@ -9270,7 +9577,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void CopyContainerStatuses(SqlConnection sqlConnection, string relBetweenStatuses, string relBetweenObjects)
+        public static void CopyContainerStatuses(DbConnection sqlConnection, string relBetweenStatuses, string relBetweenObjects)
         {
             var query = $@"
 
@@ -9300,14 +9607,14 @@ namespace Quantumart.QP8.DAL
                                         inner join relations_between_statuses as rbs on rbs.source_status_id = cs.status_type_id
                                     ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyContentsCustomActions(SqlConnection sqlConnection, string relationsBetweenContentsXml)
+        public static void CopyContentsCustomActions(DbConnection sqlConnection, string relationsBetweenContentsXml)
         {
             var query = $@"
                                 declare @xmlprmsContents xml = '{relationsBetweenContentsXml}'
@@ -9324,14 +9631,14 @@ namespace Quantumart.QP8.DAL
                                     inner join relations_between_contents as rbc
                                         on rbc.source_content_id = acb.CONTENT_ID";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void CopyContentFolders(SqlConnection sqlConnection, string relationsBetweenContentsXml)
+        public static void CopyContentFolders(DbConnection sqlConnection, string relationsBetweenContentsXml)
         {
             var query = $@"
 
@@ -9368,14 +9675,14 @@ namespace Quantumart.QP8.DAL
                                     inner join relations_between_contents as rbc
                                         on rbc.source_content_id = cf.content_id";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateContentFolders(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenContentsXml)
+        public static void UpdateContentFolders(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenContentsXml)
         {
             var query = $@"
                                 declare @xmlprmsContents xml = '{relationsBetweenContentsXml}'
@@ -9403,7 +9710,7 @@ namespace Quantumart.QP8.DAL
                                         on rbf.source_folder_id = cf.parent_folder_id
                                 where cf.content_id in (select destination_content_id from @relations_between_contents)";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -9412,7 +9719,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IEnumerable<DataRow> CopyContentLinks(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
+        public static IEnumerable<DataRow> CopyContentLinks(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             const string query = @" set nocount on;
 
@@ -9458,19 +9765,19 @@ namespace Quantumart.QP8.DAL
                                 select oldlink, newlink from @relations_between_content_links
                                 ";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@oldSiteId", sourceSiteId);
                 cmd.Parameters.AddWithValue("@newSiteId", destinationSiteId);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> GetRelationsBetweenAttributes(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string contentIds, bool? forVirtualContents, bool byNewContents)
+        public static IEnumerable<DataRow> GetRelationsBetweenAttributes(DbConnection sqlConnection, int sourceSiteId, int destinationSiteId, string contentIds, bool? forVirtualContents, bool byNewContents)
         {
             var sb = new StringBuilder();
 
@@ -9502,16 +9809,16 @@ namespace Quantumart.QP8.DAL
                 sb.AppendFormat(byNewContents ? " where rbc.destination_content_id in ({0})" : " where rbc.source_content_id in ({0})", contentIds);
             }
 
-            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sb.ToString(), sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static int GetArticlesCountToCopy(SqlConnection sqlConnection, int noMoreThanNArticles, int siteId)
+        public static int GetArticlesCountToCopy(DbConnection sqlConnection, int noMoreThanNArticles, int siteId)
         {
             const string query = @"declare @articlesCount int
                                     set @articlesCount = (select SUM(countArticles) from (
@@ -9530,7 +9837,7 @@ namespace Quantumart.QP8.DAL
                                         select @articlesCount
                                     end";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@noMoreThanNArticles", noMoreThanNArticles);
@@ -9539,7 +9846,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetContentIdsToCopy(SqlConnection sqlConnection, int noMoreThanNArticles, int sourceSiteId)
+        public static string GetContentIdsToCopy(DbConnection sqlConnection, int noMoreThanNArticles, int sourceSiteId)
         {
             const string query = @"   declare @ids varchar(max)
                                 select @ids = COALESCE(@ids + ', ', '') + CAST(content_id as nvarchar) from (
@@ -9556,7 +9863,7 @@ namespace Quantumart.QP8.DAL
                                     select @ids
                                 end";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@noMoreThanNArticles", noMoreThanNArticles);
@@ -9565,7 +9872,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetContentIdsBySiteId(SqlConnection sqlConnection, int sourceSiteId)
+        public static string GetContentIdsBySiteId(DbConnection sqlConnection, int sourceSiteId)
         {
             const string query = @"   declare @ids varchar(max)
                                         select @ids = COALESCE(@ids + ', ', '') + CAST(content_id as nvarchar) from (
@@ -9574,7 +9881,7 @@ namespace Quantumart.QP8.DAL
                                     ) as t
                                     select @ids";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@sourceSiteId", sourceSiteId);
@@ -9582,19 +9889,19 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetColumnsForTable(SqlConnection sqlConnection, string tableName, List<string> excludeColumns, Dictionary<string, string> valuesToChange, Dictionary<string, string> fieldsToAdd, string insertBeforeField)
+        public static string GetColumnsForTable(DbConnection sqlConnection, string tableName, List<string> excludeColumns, Dictionary<string, string> valuesToChange, Dictionary<string, string> fieldsToAdd, string insertBeforeField)
         {
             const string query = @"select COLUMN_NAME
                             from INFORMATION_SCHEMA.COLUMNS
                             where TABLE_NAME = @tableName";
 
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@tableName", tableName);
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
 
                 ExcludeColumns(excludeColumns, ref dt);
                 ChangeValues(valuesToChange, ref dt);
@@ -9604,11 +9911,11 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetColumnsForTable(SqlConnection sqlConnection, string tableName, List<string> excludeColumns, Dictionary<string, string> valuesToChange) => GetColumnsForTable(sqlConnection, tableName, excludeColumns, valuesToChange, null, null);
+        public static string GetColumnsForTable(DbConnection sqlConnection, string tableName, List<string> excludeColumns, Dictionary<string, string> valuesToChange) => GetColumnsForTable(sqlConnection, tableName, excludeColumns, valuesToChange, null, null);
 
-        public static string GetColumnsForTable(SqlConnection sqlConnection, string tableName, List<string> excludeColumns) => GetColumnsForTable(sqlConnection, tableName, excludeColumns, null, null, null);
+        public static string GetColumnsForTable(DbConnection sqlConnection, string tableName, List<string> excludeColumns) => GetColumnsForTable(sqlConnection, tableName, excludeColumns, null, null, null);
 
-        public static string GetColumnsForTable(SqlConnection sqlConnection, string tableName) => GetColumnsForTable(sqlConnection, tableName, null, null, null, null);
+        public static string GetColumnsForTable(DbConnection sqlConnection, string tableName) => GetColumnsForTable(sqlConnection, tableName, null, null, null, null);
 
         private static void ChangeValues(Dictionary<string, string> valuesToChange, ref DataTable dt)
         {
@@ -9677,10 +9984,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateDefaultFormatId(SqlConnection sqlConnection, int objectId, int formatId)
+        public static void UpdateDefaultFormatId(DbConnection sqlConnection, int objectId, int formatId)
         {
             const string sql = "update [object] set object_format_id = @formatId where [object_id] = @objectId";
-            using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
 
@@ -9691,46 +9998,45 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string GetDbName(SqlConnection sqlConnection)
+        public static string GetDbName(DbConnection sqlConnection)
         {
-            const string query = @"select db_name() as name";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            var isPostgres = IsPostgresConnection(sqlConnection);
+            var query = $"select {(isPostgres ? "current_database()" : "db_name()")} as name";
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 return (string)cmd.ExecuteScalar();
             }
         }
 
-        public static string GetDbServerName(SqlConnection sqlConnection)
-        {
-            const string query = @"select @@SERVERNAME as server_name";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                return (string)cmd.ExecuteScalar();
-            }
-        }
+        private static bool IsPostgresConnection(DbConnection connection) => connection is NpgsqlConnection;
 
-        public static int[] SortIdsByFieldName(SqlConnection sqlConnection, int[] ids, int contentId, string fieldName, bool isArchive)
+        public static int[] SortIdsByFieldName(DbConnection sqlConnection, int[] ids, int contentId, string fieldName, bool isArchive)
         {
-            const string template = @"
+            var dbType = GetDbType(sqlConnection);
+            var query = $@"
                 select
                     CONTENT_ITEM_ID
                 from
-                    content_{0}_united a with(nolock) {1}
-                WHERE
-                   a.archive = @archive
-                ORDER BY
-                    a.[{2}]";
+                    content_{contentId}_united a {WithNoLock(dbType)}
+                    {(
+                        ids != null && ids.Any()
+                        ? $"join {IdList(dbType, "@ids", "ids")} on a.CONTENT_ITEM_ID = ids.Id"
+                        : string.Empty
 
-            const string join = "join @ids ids on a.CONTENT_ITEM_ID = ids.Id";
-            var query = string.Format(template, contentId, ids == null ? null : join, fieldName);
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+                    )}
+                WHERE
+                   {SqlQuerySyntaxHelper.CastToBool(dbType, "a.archive")} = @archive
+                ORDER BY
+                    a.{Escape(dbType, fieldName)}";
+
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (ids != null)
+                if (ids != null && ids.Any())
                 {
-                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids, dbType));
                 }
                 cmd.Parameters.AddWithValue("@archive", isArchive);
                 var result = new List<int>();
@@ -9855,373 +10161,72 @@ namespace Quantumart.QP8.DAL
             FROM FlatQuery
             WHERE RootContentId IN (SELECT Id FROM @contentIds)";
 
-        public static IEnumerable<DataRow> MatchContents(SqlConnection sqlConnection, int[] contentIds, XDocument fields)
+        public static IEnumerable<DataRow> MatchContents(DbConnection sqlConnection, int[] contentIds, XDocument fields)
         {
-            using (var cmd = SqlCommandFactory.Create(MatchContentsQuery, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(MatchContentsQuery, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.Add(new SqlParameter("@contentIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(contentIds) });
                 cmd.Parameters.Add(new SqlParameter("@fieldsXml", SqlDbType.Xml) { Value = fields.ToString() });
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        public static IEnumerable<DataRow> MatchArticles(SqlConnection sqlConnection, Dictionary<string, object> args, string query)
+        public static IEnumerable<DataRow> MatchArticles(DbConnection sqlConnection, Dictionary<string, object> args, string query)
         {
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddRange(args.Select(param => new SqlParameter(param.Key, param.Value)).ToArray());
 
                 var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
+                DataAdapterFactory.Create(cmd).Fill(dt);
                 return dt.AsEnumerable().ToArray();
             }
         }
 
-        #region BatchUpdate
 
-        #region BatchInsertQuery
-
-        private const string BatchInsertQuery = @"
-            DECLARE @articles TABLE
-            (
-                Id INT PRIMARY KEY IDENTITY(1,1),
-                ContentId INT,
-                ArticleId INT
-                UNIQUE (ContentId, ArticleId)
-            )
-
-            DECLARE @statuses TABLE
-            (
-                ContentId INT PRIMARY KEY,
-                StatusId INT,
-                UNIQUE (StatusId, ContentId)
-            )
-
-            DECLARE @ids TABLE
-            (
-                Id INT PRIMARY KEY IDENTITY(1,1),
-                ArticleId INT
-                UNIQUE (ArticleId)
-            )
-
-            INSERT INTO
-                @articles(ContentId, ArticleId)
-            SELECT DISTINCT
-                ContentId,
-                ArticleId
-            FROM
-                @values
-            EXCEPT
-                SELECT
-                    CONTENT_ID,
-                    CONTENT_ITEM_ID
-                FROM
-                    CONTENT_ITEM
-            ORDER BY
-                ArticleId DESC
-
-            INSERT INTO
-                @statuses(ContentId, StatusId)
-            SELECT
-                a.ContentId,
-                CASE
-                    WHEN
-                        w.WORKFLOW_ID IS NULL
-                    THEN
-                    (
-                        SELECT STATUS_TYPE_ID
-                        FROM STATUS_TYPE t
-                        WHERE t.STATUS_TYPE_NAME = 'Published' AND t.SITE_ID = c.SITE_ID)
-                    ELSE
-                    (
-                        SELECT STATUS_TYPE_ID
-                        FROM STATUS_TYPE t
-                        WHERE t.STATUS_TYPE_NAME = 'None' AND t.SITE_ID = c.SITE_ID
-                    )
-                END StatusId
-            FROM
-                @articles a
-                JOIN CONTENT c ON a.ContentId = c.CONTENT_ID
-                LEFT JOIN CONTENT_WORKFLOW_BIND w ON a.ContentId = w.CONTENT_ID
-            GROUP BY
-                a.ContentId,
-                w.WORKFLOW_ID,
-                c.SITE_ID
-
-            INSERT INTO CONTENT_ITEM
-            (
-                CONTENT_ID,
-                VISIBLE,
-                STATUS_TYPE_ID,
-                LAST_MODIFIED_BY,
-                NOT_FOR_REPLICATION
-            )
-            OUTPUT
-                INSERTED.CONTENT_ITEM_ID INTO @ids(ArticleId)
-            SELECT
-                a.ContentId,
-                @visible,
-                s.StatusId,
-                @userId,
-                1
-            FROM
-                @articles a
-                JOIN @statuses s ON a.ContentId = s.ContentId
-            ORDER BY
-                ArticleId DESC
-
-            SELECT
-                old.ArticleId OriginalArticleId,
-                new.ArticleId CreatedArticleId,
-                old.ContentId
-            FROM
-                @ids new
-                JOIN @articles old ON new.Id = old.Id";
-
-        #endregion
-
-        public static IEnumerable<DataRow> BatchInsert(SqlConnection sqlConnection, DataTable articles, bool visible, int userId)
+        public static IList<int> GetParentIdsTreeResult(DbConnection cn, IList<int> ids, int fieldId, string fieldName, int? contentId)
         {
-            using (var cmd = SqlCommandFactory.Create(BatchInsertQuery, sqlConnection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
-                cmd.Parameters.AddWithValue("@visible", visible ? 1 : 0);
-                cmd.Parameters.AddWithValue("@userId", userId);
+            var dbType = GetDbType(cn);
+            if (string.IsNullOrWhiteSpace(fieldName) || !contentId.HasValue) return new List<int>();
 
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        #region BatchUpdateQuery
-
-        private const string BatchUpdateQuery = @"
-            UPDATE
-                CONTENT_ITEM
-            SET
-                NOT_FOR_REPLICATION = 1,
-                MODIFIED = GETDATE(),
-                LAST_MODIFIED_BY = @userId
-            WHERE
-                NOT_FOR_REPLICATION = 0 AND
-                CONTENT_ITEM_ID IN (SELECT DISTINCT ArticleId FROM @values)
-
-            INSERT INTO
-                CONTENT_DATA (ATTRIBUTE_ID, CONTENT_ITEM_ID, CREATED, MODIFIED, [DATA], BLOB_DATA, not_for_replication)
-            SELECT
-                v.FieldId ATTRIBUTE_ID,
-                v.ArticleId CONTENT_ITEM_ID,
-                GETDATE() CREATED,
-                GETDATE() MODIFIED,
-                CASE
-                    WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END [DATA],
-                CASE
-                    WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END [BLOB_DATA],
-                1 not_for_replication
-            FROM
-                CONTENT_DATA d
-                RIGHT JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
-                JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
-                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID
-            WHERE
-                d.ATTRIBUTE_ID IS NULL
-
-            UPDATE
-                CONTENT_DATA
-            SET
-                DATA =
-                CASE
-                    WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END,
-                BLOB_DATA =
-                CASE
-                    WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
-                    ELSE NULL
-                END
-            FROM
-                CONTENT_DATA d
-                JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
-                JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
-                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID";
-
-        #endregion
-
-        public static void BatchUpdate(SqlConnection sqlConnection, DataTable articles, int userId)
-        {
-            using (var cmd = SqlCommandFactory.Create(BatchUpdateQuery, sqlConnection))
-            {
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        #region GetRelationsQuery
-
-        private const string GetRelationsQuery = @"
-            SELECT
-                f.ArticleId,
-                a.CONTENT_ID ContentId,
-                a.ATTRIBUTE_ID FieldId,
-                a.ATTRIBUTE_NAME FieldName,
-                f.Value FieldValue,
-                CASE
-                    WHEN otm.CONTENT_ID IS NOT NULL THEN a.CONTENT_ID
-                    WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
-                    WHEN mtm.linked_content_id IS NOT NULL THEN mtm.linked_content_id
-                    WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
-                    ELSE NULL
-                END RefContentId,
-                CASE
-                    WHEN otm.CONTENT_ID IS NOT NULL THEN a.ATTRIBUTE_ID
-                    WHEN mto.CONTENT_ID IS NOT NULL THEN mto.ATTRIBUTE_ID
-                    WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.ATTRIBUTE_ID
-                    ELSE NULL
-                END RefFieldId,
-                CASE
-                    WHEN mtm.link_id IS NOT NULL THEN mtm.link_id
-                    ELSE NULL
-                END LinkId
-            FROM
-                @values f
-                JOIN CONTENT_ATTRIBUTE a ON f.FieldId = a.ATTRIBUTE_ID AND f.ContentId = a.CONTENT_ID
-                LEFT JOIN CONTENT_ATTRIBUTE otm ON a.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
-                LEFT JOIN CONTENT_ATTRIBUTE mto ON a.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
-                LEFT JOIN CONTENT_LINK mtm ON a.LINK_ID = mtm.LINK_ID AND a.CONTENT_ID = mtm.content_id
-                LEFT JOIN CONTENT_ATTRIBUTE classifier ON a.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND CAST(classifier.CONTENT_ID AS NVARCHAR(MAX)) = f.Value
-            WHERE
-                otm.CONTENT_ID IS NOT NULL OR
-                mto.CONTENT_ID IS NOT NULL OR
-                mtm.linked_content_id IS NOT NULL OR
-                classifier.CONTENT_ID IS NOT NULL";
-
-        #endregion
-
-        public static IEnumerable<DataRow> GetRelations(SqlConnection sqlConnection, DataTable articles)
-        {
-            using (var cmd = SqlCommandFactory.Create(GetRelationsQuery, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@values", SqlDbType.Structured) { TypeName = "Values", Value = articles });
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
-        public static void ReplicateItems(SqlConnection sqlConnection, int[] articleIds, int[] fieldIds)
-        {
-            using (var cmd = SqlCommandFactory.Create("qp_replicate_items", sqlConnection))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", articleIds) });
-                cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", fieldIds) });
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        #endregion
-
-        public static DataTable GetFieldTypes(SqlConnection cnn, int[] ids)
-        {
-            const string text = "select attribute_id, BACK_RELATED_ATTRIBUTE_ID, attribute_type_id, link_id, is_classifier, " +
-                "cast(case when isnull(cast(enum_values as nvarchar(max)), '') <> '' then 1 else 0 end as bit) as is_string_enum " +
-                "from content_attribute where attribute_id in (select id from @ids)";
-
-            using (var cmd = SqlCommandFactory.Create(text, cnn))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-
-                return dt;
-            }
-        }
-
-        public static DataTable IdsToDataTable(IEnumerable<int> ids)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("id");
-            foreach (var id in ids ?? Enumerable.Empty<int>())
-            {
-                dt.Rows.Add(id);
-            }
-
-            return dt;
-        }
-
-        public static IList<int> GetParentIdsTreeResult(SqlConnection cn, IList<int> ids, int fieldId, string fieldName)
-        {
-            var query = GetParentIdsTreeQuery(ids, fieldId, fieldName);
-            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids), new SqlParameter("@fieldId", fieldId)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
-        }
-
-        public static string GetParentIdsTreeQuery(IList<int> ids, int fieldId, string fieldName) => @"
-                declare @contentId int
-                declare @fieldName nvarchar(255)
-
-                select
-                    @contentId = CONTENT_ID,
-                    @fieldName = ATTRIBUTE_NAME
-                from
-                    CONTENT_ATTRIBUTE
-                where
-                    ATTRIBUTE_ID = @fieldId and
-                    ATTRIBUTE_TYPE_ID = 11
-
-                if (@contentId is not null and @fieldName is not null)
-                begin
-                    declare @sql nvarchar(max) ='
-                        with CTE(Id, ParentId, Lvl)
+            var query = $@"
+                with {SqlQuerySyntaxHelper.RecursiveCte(dbType)} CTE(Id, ParentId, Lvl)
                         as
                         (
                             select
                                 CONTENT_ITEM_ID Id,
-                                [' + @fieldName + '] ParentId,
+                                {fieldName} ParentId,
                                 0 Lvl
                             from
-                                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
+                                content_{contentId}_united c {WithNoLock(dbType)}
                             where
-                                CONTENT_ITEM_ID IN (SELECT * FROM @ids)
-
+                                CONTENT_ITEM_ID IN (select id from {(dbType == DatabaseType.Postgres ? "unnest(@ids) i(id)" : "@ids")})
                             union all
-
                             select
                                 c.CONTENT_ITEM_ID Id,
-                                c." + fieldName + @",
+                                c.{fieldName},
                                 r.Lvl + 1
                             from
-                                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
+                                content_{contentId}_united c {WithNoLock(dbType)}
                                 join CTE r on c.CONTENT_ITEM_ID = r.ParentId
-                        )"
-            + (ids.Count > 1
-                ? "SELECT DISTINCT Id, ParentId FROM CTE'"
-                : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl'")
-            + "EXEC sp_executesql @sql, N'@ids dbo.Ids READONLY, @fieldId int', @ids, @fieldId END";
+                        )
+            ";
+            query += ids.Count > 1
+                ? "SELECT DISTINCT Id, ParentId FROM CTE"
+                : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl";
 
-        private static SqlParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids) => new SqlParameter(paramName, SqlDbType.Structured)
-        {
-            TypeName = "Ids",
-            Value = IdsToDataTable(ids)
-        };
+            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
+        }
 
-        private static IList<DataRow> GetDatatableResult(SqlConnection cn, string query, out int totalCount, params SqlParameter[] @params)
+
+        private static IList<DataRow> GetDatatableResult(DbConnection cn, string query, out int totalCount, params DbParameter[] @params)
         {
-            using (var cmd = SqlCommandFactory.Create(query, cn))
+            using (var cmd = DbCommandFactory.Create(query, cn))
             {
                 cmd.CommandType = CommandType.Text;
                 if (@params != null && @params.Any())
@@ -10230,84 +10235,38 @@ namespace Quantumart.QP8.DAL
                 }
 
                 var ds = new DataSet();
-                totalCount = new SqlDataAdapter(cmd).Fill(ds);
+                totalCount = DataAdapterFactory.Create(cmd).Fill(ds);
 
                 return ds.Tables.Count > 0 ? ds.Tables[0].AsEnumerable().ToList() : Enumerable.Empty<DataRow>().ToList();
             }
         }
 
-        private static IList<DataRow> GetDatatableResult(SqlConnection cn, string query, params SqlParameter[] @params)
+        private static IList<DataRow> GetDatatableResult(DbConnection cn, string query, params DbParameter[] @params)
         {
             int totalCount;
             return GetDatatableResult(cn, query, out totalCount, @params);
         }
 
-        private static IList<DataRow> GetDatatableResult(SqlConnection cn, StringBuilder queryBuilder, params SqlParameter[] @params) => GetDatatableResult(cn, queryBuilder.ToString(), @params);
+        private static IList<DataRow> GetDatatableResult(DbConnection cn, StringBuilder queryBuilder, params DbParameter[] @params) => GetDatatableResult(cn, queryBuilder.ToString(), @params);
 
-        public static int[] GetArticleIdsByGuids(SqlConnection sqlConnection, Guid[] guids)
+        public static bool NewPasswordMatchCurrentPassword(DbConnection connection, int userId, string password)
         {
-            if (guids == null)
-            {
-                throw new ArgumentNullException(nameof(guids));
-            }
 
-            const string xmlQuery = "SELECT doc.col.value('.[1]', 'nvarchar(max)') UNIQUE_ID FROM @xml.nodes('/guids/guid') doc(col)";
-            var query = $"select isnull(ci.content_item_id, 0), guids.unique_id from ({xmlQuery}) guids left join content_item ci with (nolock) on ci.unique_id = guids.unique_id";
-
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-
-                var doc = new XDocument(new XElement("guids"));
-                doc.Root?.Add(guids.Select(n => new XElement("guid", n.ToString())));
-                cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = doc.ToString() });
-
-                var result = new Dictionary<Guid, int>();
-                using (var dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        result.Add(new Guid(dr.GetString(1)), (int)dr.GetDecimal(0));
-                    }
-                }
-
-                return guids.Select(n => result[n]).ToArray();
-            }
-        }
-
-        public static Guid[] GetArticleGuidsByIds(SqlConnection sqlConnection, int[] ids)
-        {
-            if (ids == null)
-            {
-                throw new ArgumentNullException(nameof(ids));
-            }
-
-            const string query = @"select ci.unique_id, ids.Id from @ids ids left join content_item ci with (nolock) on ci.content_item_id = ids.Id";
-            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
-            {
-                cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
-
-                var result = new Dictionary<int, Guid>();
-                using (var dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        result.Add((int)dr.GetDecimal(1), dr.IsDBNull(0) ? Guid.Empty : dr.GetGuid(0));
-                    }
-                }
-
-                return ids.Select(n => result[n]).ToArray();
-            }
-        }
-
-        public static bool NewPasswordMatchCurrentPassword(SqlConnection connection, int userId, string password)
-        {
-            var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
-                          select @salt = salt, @old_hash = hash from users where USER_ID = @userId
-                          set @hash = dbo.qp_get_hash(@password, @salt)
-                          select case when @old_hash = @hash then 1 else 0 end as bit";
-            using (var cmd = SqlCommandFactory.Create(query, connection))
+            var dbType = GetDbType(connection);
+            var q = $@"
+            select
+                case when {DbSchemaName(dbType)}.qp_get_hash(@password, {Escape(dbType, "salt")}) = {Escape(dbType, "hash")}
+                    then {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}
+                    else {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}
+                end
+            FROM {Escape(dbType, "USERS")}
+            WHERE {Escape(dbType, "user_id")} = @userId
+";
+            // var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
+            //               select @salt = salt, @old_hash = hash from users where USER_ID = @userId
+            //               set @hash = dbo.qp_get_hash(@password, @salt)
+            //               select case when @old_hash = @hash then 1 else 0 end as bit";
+            using (var cmd = DbCommandFactory.Create(q, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
@@ -10316,10 +10275,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int GetArticleIdForCollaborativePublication(SqlConnection connection, int childId)
+        public static int GetArticleIdForCollaborativePublication(DbConnection connection, int childId)
         {
             var sql = @"SELECT id FROM child_delays WHERE child_id = @childId";
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@childId", childId);
@@ -10328,15 +10287,17 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void ClearChildDelaysForChild(SqlConnection connection, int childId)
+        public static void ClearChildDelaysForChild(DbConnection connection, int childId)
         {
             var sql = @"DELETE FROM child_delays WHERE child_id = @childId";
-            using (var cmd = SqlCommandFactory.Create(sql, connection))
+            using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@childId", childId);
                 cmd.ExecuteNonQuery();
             }
         }
+
+
     }
 }

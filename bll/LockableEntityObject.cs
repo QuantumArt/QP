@@ -1,23 +1,27 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public abstract class LockableEntityObject : EntityObject
     {
+        [ValidateNever]
+        [BindNever]
         public virtual User LockedByUser { get; set; }
 
         public DateTime Locked { get; set; }
 
-        [LocalizedDisplayName("Locked", NameResourceType = typeof(GlobalStrings))]
+        [Display(Name = "Locked", ResourceType = typeof(GlobalStrings))]
         public string LockedToDisplay => Locked.ValueToDisplay();
 
         public int LockedBy { get; set; }
 
-        [LocalizedDisplayName("LockedByUser", NameResourceType = typeof(GlobalStrings))]
+        [Display(Name = "LockedByUser", ResourceType = typeof(GlobalStrings))]
         public string LockedByDisplayName => LockedByUser != null ? LockedByUser.DisplayName : string.Empty;
 
         public bool LockedByYou => IsLockedByYou(LockedBy);
@@ -26,7 +30,7 @@ namespace Quantumart.QP8.BLL
 
         public bool LockedByAnyoneElse => LockedByAnyone && !LockedByYou;
 
-        [LocalizedDisplayName("PermanentLock", NameResourceType = typeof(GlobalStrings))]
+        [Display(Name = "PermanentLock", ResourceType = typeof(GlobalStrings))]
         public bool PermanentLock { get; set; }
 
         public void AutoLock()

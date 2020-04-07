@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -24,6 +29,12 @@ namespace Quantumart.QP8.BLL.Repository
             return result;
         }
 
+        internal static void ChangeContentIndexesTriggerState(DbConnection cnn, bool enable)
+        {
+            Common.ChangeTriggerState(cnn, "td_content_indexes", enable);
+            Common.ChangeTriggerState(cnn, "tu_content_indexes", enable);
+        }
+
         internal static ContentConstraint Save(ContentConstraint constraint)
         {
             if (constraint == null)
@@ -36,17 +47,39 @@ namespace Quantumart.QP8.BLL.Repository
                 throw new ArgumentException("Метод вызван для существующего в БД ContentConstraint");
             }
 
+
             // Сохраняем ограничение только если есть правила
-            if (constraint.Rules != null && constraint.Rules.Count > 0)
+            if (constraint.Rules != null && constraint.Rules.Any())
             {
                 var ccDal = MapperFacade.ContentConstraintMapper.GetDalObject(constraint);
-                ccDal = DefaultRepository.SimpleSave(ccDal);
+
+                using (var scope = new QPConnectionScope())
+                {
+
+                    ccDal = DefaultRepository.SimpleSave(ccDal);
+                    foreach (var rule in ccDal.Rules)
+                    {
+                        rule.Constraint = ccDal;
+                        rule.ConstraintId = ccDal.Id;
+                        DefaultRepository.SimpleSave(rule);
+                    }
+
+                    if (constraint.IsComplex)
+                    {
+                        Common.CreateComplexIndex(QPContext.EFContext, scope.DbConnection, ccDal);
+                    }
+                }
+
                 var newContraint = MapperFacade.ContentConstraintMapper.GetBizObject(ccDal);
                 return newContraint;
             }
 
+
+
             return constraint;
         }
+
+
 
         internal static ContentConstraint Update(ContentConstraint constraint)
         {
@@ -61,29 +94,57 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             // если нет правил, то удалить ограничение
-            if (constraint.Rules == null || constraint.Rules.Count == 0)
+            if (constraint.Rules == null || !constraint.Rules.Any())
             {
                 Delete(constraint);
                 return null;
             }
 
-            var ccDal = QPContext.EFContext.ContentConstraintSet.Single(d => d.Id == constraint.Id);
-            ccDal.Rules.Load();
-            IEnumerable<ContentConstraintRuleDAL> ruleDalList = ccDal.Rules.ToArray();
 
-            // удалить все правила которые уже есть
-            DefaultRepository.SimpleDelete(ruleDalList);
-
-            // создать новые записи для правил
-            foreach (var rule in constraint.Rules)
+            using (var scope = new QPConnectionScope())
             {
-                rule.ConstraintId = constraint.Id;
+                try
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeContentIndexesTriggerState(scope.DbConnection, false);
+                    }
+
+                    var context = QPContext.EFContext;
+                    var oldConstraintDal = context.ContentConstraintSet.Include(n => n.Rules)
+                        .Single(d => d.Id == constraint.Id);
+                    Common.DropComplexIndex(scope.DbConnection, oldConstraintDal);
+
+                    // удалить все правила которые уже есть
+                    DefaultRepository.SimpleDeleteBulk(oldConstraintDal.Rules.ToArray(), context);
+
+                    // создать новые записи для правил
+                    foreach (var rule in constraint.Rules)
+                    {
+                        rule.ConstraintId = constraint.Id;
+                    }
+
+                    var newDalList = MapperFacade.ContentConstraintRuleMapper.GetDalList(constraint.Rules.ToList());
+                    var list = DefaultRepository.SimpleSaveBulk(newDalList.AsEnumerable()).ToList();
+                    constraint.Rules = MapperFacade.ContentConstraintRuleMapper.GetBizList(list).ToArray();
+
+                    if (constraint.IsComplex)
+                    {
+                        var dal = MapperFacade.ContentConstraintMapper.GetDalObject(constraint);
+                        Common.CreateComplexIndex(QPContext.EFContext, scope.DbConnection, dal);
+                    }
+                }
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeContentIndexesTriggerState(scope.DbConnection, true);
+                    }
+                }
+
             }
 
-            var newDalList = MapperFacade.ContentConstraintRuleMapper.GetDalList(constraint.Rules.ToList());
-            DefaultRepository.SimpleSave(newDalList.AsEnumerable());
-
-            return MapperFacade.ContentConstraintMapper.GetBizObject(ccDal);
+            return constraint;
         }
 
         public static void Delete(ContentConstraint constraint)
@@ -98,8 +159,31 @@ namespace Quantumart.QP8.BLL.Repository
                 throw new ArgumentException("Метод вызван для несуществующего в БД ContentConstraint");
             }
 
-            DefaultRepository.Delete<ContentConstraintDAL>(constraint.Id);
+            using (var scope = new QPConnectionScope())
+            {
+                try
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeContentIndexesTriggerState(scope.DbConnection, false);
+                    }
+                    var dal = MapperFacade.ContentConstraintMapper.GetDalObject(constraint);
+                    Common.DropComplexIndex(scope.DbConnection, dal);
+                    DefaultRepository.Delete<ContentConstraintDAL>(constraint.Id);
+
+                }
+                finally
+                {
+                    if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                    {
+                        ChangeContentIndexesTriggerState(scope.DbConnection, true);
+                    }
+                }
+            }
+
         }
+
+
 
         internal static void CopyContentConstrainRules(string relationsBetweenConstraintsXml, string relationsBetweenAttributesXml)
         {

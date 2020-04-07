@@ -1,15 +1,19 @@
-﻿using System;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
+using System;
 
 namespace Quantumart.QP8.BLL
 {
     public class SearchInArticlesResultItem
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Created { get; set; }
 
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Modified { get; set; }
 
         public string LastModifiedByUser { get; set; }

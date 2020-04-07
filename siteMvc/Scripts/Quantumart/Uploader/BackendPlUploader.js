@@ -160,9 +160,9 @@ export class BackendPlUploader extends BackendBaseUploader {
       max_file_size: `${window.MAX_UPLOAD_SIZE_BYTES}b`,
       chunk_size: '1mb',
       debug: false,
-      url: '/Backend/Upload/UploadChunk',
-      flash_swf_url: '/Backend/Scripts/PlUpload/Moxie.swf',
-      silverlight_xap_url: '/Backend/Scripts/PlUpload/Moxie.xap',
+      url: `${window.APPLICATION_ROOT_URL}Upload/UploadChunk`,
+      flash_swf_url: `${window.APPLICATION_ROOT_URL}Scripts/PlUpload/Moxie.swf`,
+      silverlight_xap_url: `${window.APPLICATION_ROOT_URL}Scripts/PlUpload/Moxie.xap`,
       filters: {
         max_img_resolution: {
           enabled: false,

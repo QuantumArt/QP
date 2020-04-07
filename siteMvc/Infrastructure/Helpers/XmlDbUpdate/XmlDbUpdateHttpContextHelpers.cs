@@ -1,29 +1,27 @@
 using System;
-using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using Moq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using static Quantumart.QP8.BLL.BackendActionContext;
+using Microsoft.Extensions.Primitives;
+using QP8.Infrastructure.Extensions;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
+using HttpContext = Microsoft.AspNetCore.Http.HttpContext;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
     internal static class XmlDbUpdateHttpContextHelpers
     {
-        internal static XmlDbUpdateRecordedAction CreateXmlDbUpdateActionFromHttpContext(HttpContextBase httpContext, string actionCode, bool ignoreForm)
+        internal static XmlDbUpdateRecordedAction CreateXmlDbUpdateActionFromHttpContext(HttpContext httpContext, string actionCode, bool ignoreForm)
         {
             var action = new XmlDbUpdateRecordedAction
             {
@@ -31,8 +29,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ParentId = Current.ParentEntityId ?? 0,
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
-                ExecutedBy = (httpContext.User.Identity as QpIdentity)?.Name,
-                Ids = httpContext.Items.Contains(HttpContextItems.FromId)
+                ExecutedBy = QPContext.CurrentUserName,
+                Ids = httpContext.Items.ContainsKey(HttpContextItems.FromId)
                     ? new[] { httpContext.Items[HttpContextItems.FromId].ToString() }
                     : Current.Entities.Select(n => n.StringId).ToArray(),
                 ResultId = GetContextData<int>(httpContext, HttpContextItems.ResultId),
@@ -53,16 +51,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId)
             };
 
-            if (!ignoreForm)
+            if (!ignoreForm && httpContext.Request.HasFormContentType)
             {
-                action.Form = new NameValueCollection
-                {
-                    httpContext.Request.Form,
-                    GetDynamicFieldValuesFromHttpContext(httpContext, HttpContextItems.FieldUniqueIdPrefix),
-                    GetStringValuesFromHttpContext(httpContext, HttpContextItems.DefaultArticleUniqueIds),
-                    GetStringValuesFromHttpContext(httpContext, HttpContextItems.DataO2MUniqueIdDefaultValue),
-                    GetStringValuesFromHttpContext(httpContext, HttpContextItems.ContentDefaultFilterArticleUniqueIDs)
-                };
+                var allValues = new Dictionary<string, StringValues>();
+                allValues.AddRange(httpContext.Request.Form);
+                allValues.AddRange(GetDynamicFieldValuesFromHttpContext(httpContext, HttpContextItems.FieldUniqueIdPrefix));
+                allValues.AddRange(GetStringValuesFromHttpContext(httpContext, HttpContextItems.DefaultArticleUniqueIds));
+                allValues.AddRange(GetStringValuesFromHttpContext(httpContext, HttpContextItems.DataO2MUniqueIdDefaultValue));
+                allValues.AddRange(GetStringValuesFromHttpContext(httpContext, HttpContextItems.ContentDefaultFilterArticleUniqueIDs));
+                action.Form = allValues;
             }
 
             return action;
@@ -80,69 +77,36 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return data;
         }
 
-        internal static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
+        internal static HttpContext BuildHttpContext(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
         {
-            var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
-            if (controller == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
-            }
-
-            controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
-            controller.ValueProvider = new ValueProviderCollection(new[]
-            {
-                new DictionaryValueProvider<object>(requestContext.RouteData.Values, cultureInfo),
-                new FormCollection(requestContext.HttpContext.Request.Form).ToValueProvider(),
-                new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
-            });
-
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
-            return controller;
+            var httpContext = new DefaultHttpContext();
+            FillHttpRequest(httpContext.Request, action);
+            httpContext.User = GetPrincipal(userId);
+            var guid = useGuidSubstitution ? action.ResultUniqueId : (Guid?)null;
+            AddGlobalHttpContextVariables(httpContext, backendUrl, guid);
+            return httpContext;
         }
 
-        internal static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
-        {
-            HttpContext.Current = new HttpContext(
-                new HttpRequest(string.Empty, backendUrl, string.Empty),
-                new HttpResponse(new StringWriter()));
-
-            var principal = GetQpPrincipal(userId);
-            var httpContext = new Mock<HttpContextBase>();
-            httpContext.Setup(c => c.Request).Returns(GetHttpRequestMock(action));
-            httpContext.Setup(c => c.Session).Returns(new HttpSessionMock());
-            httpContext.Setup(c => c.Response).Returns(new Mock<HttpResponseBase>().Object);
-            httpContext.Setup(c => c.Response.Cookies).Returns(new HttpCookieCollection());
-            httpContext.Setup(c => c.Items).Returns(new Hashtable());
-            httpContext.Setup(c => c.Cache).Returns(HttpRuntime.Cache);
-            httpContext.Setup(c => c.User).Returns(principal);
-            HttpContext.Current.User = principal;
-
-            return useGuidSubstitution
-                ? AddGlobalHttpContextVariables(httpContext.Object, backendUrl, action.ResultUniqueId)
-                : AddGlobalHttpContextVariables(httpContext.Object, backendUrl);
-        }
-
-        private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl)
+        private static void AddGlobalHttpContextVariables(HttpContext httpContext, string backendUrl)
         {
             httpContext.Items.Add(HttpContextItems.IsReplayingXmlContext, true);
             if (!string.IsNullOrWhiteSpace(backendUrl))
             {
                 httpContext.Items.Add(HttpContextItems.BackendUrlContext, backendUrl);
             }
-
-            return httpContext;
         }
 
-        private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl, Guid resultUniqueId)
+        private static void AddGlobalHttpContextVariables(HttpContext httpContext, string backendUrl, Guid? resultUniqueId)
         {
-            httpContext = AddGlobalHttpContextVariables(httpContext, backendUrl);
-            httpContext.Items.Add(HttpContextItems.XmlContextGuidSubstitution, resultUniqueId);
-            return httpContext;
+            AddGlobalHttpContextVariables(httpContext, backendUrl);
+            if (resultUniqueId.HasValue)
+            {
+                httpContext.Items.Add(HttpContextItems.XmlContextGuidSubstitution, resultUniqueId);
+            }
         }
 
-        private static HttpRequestMock GetHttpRequestMock(XmlDbUpdateRecordedAction action)
+        private static void FillHttpRequest(HttpRequest httpRequest, XmlDbUpdateRecordedAction action)
         {
-            var httpRequest = new HttpRequestMock();
             var options = QPConnectionScope.Current.IdentityInsertOptions;
             var entityTypeCode = action.BackendAction.EntityType.Code;
             if (entityTypeCode == EntityTypeCode.VirtualContent)
@@ -151,12 +115,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
 
             var actionTypeCode = action.BackendAction.ActionType.Code;
-            httpRequest.SetForm(action.Form);
-            httpRequest.Form.Add(HttpContextFormConstants.Ids, string.Join(",", action.Ids));
+            action.Form.Add(HttpContextFormConstants.Ids, string.Join(",", action.Ids));
 
             if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
             {
-                httpRequest.Form.Add(HttpContextFormConstants.DataForceId, action.Ids.First());
+                action.Form.Add(HttpContextFormConstants.DataForceId, action.Ids.First());
             }
 
             switch (action.Code)
@@ -164,12 +127,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.AddNewContent:
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceFieldIds, action.ChildIds);
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceFieldIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceLinkIds, action.ChildLinkIds);
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceLinkIds, action.ChildLinkIds);
                     }
 
                     break;
@@ -177,17 +140,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.CreateLikeContent:
                     if (options.Contains(EntityTypeCode.Content))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
+                        action.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceFieldIds, action.ChildIds);
+                        action.Form.Add(HttpContextFormConstants.ForceFieldIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceLinkIds, action.ChildLinkIds);
+                        action.Form.Add(HttpContextFormConstants.ForceLinkIds, action.ChildLinkIds);
                     }
 
                     break;
@@ -195,27 +158,27 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.CreateLikeField:
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
+                        action.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceVirtualFieldIds, action.VirtualFieldIds);
+                        action.Form.Add(HttpContextFormConstants.ForceVirtualFieldIds, action.VirtualFieldIds);
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceChildFieldIds, action.ChildIds);
+                        action.Form.Add(HttpContextFormConstants.ForceChildFieldIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceLinkId, action.ChildId.ToString());
+                        action.Form.Add(HttpContextFormConstants.ForceLinkId, action.ChildId.ToString());
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.ForceChildLinkIds, action.ChildLinkIds);
+                        action.Form.Add(HttpContextFormConstants.ForceChildLinkIds, action.ChildLinkIds);
                     }
 
                     break;
@@ -225,7 +188,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.VirtualFieldProperties:
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
                     }
 
                     break;
@@ -234,24 +197,24 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.FieldProperties:
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.DataContentLinkForceLinkId, action.ChildId.ToString());
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceChildLinkIds, action.ChildIds);
+                        action.Form.Add(HttpContextFormConstants.DataContentLinkForceLinkId, action.ChildId.ToString());
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceChildLinkIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
-                        httpRequest.Form.Add(HttpContextFormConstants.DataForceBackwardId, action.BackwardId.ToString());
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceChildFieldIds, action.ChildIds);
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
+                        action.Form.Add(HttpContextFormConstants.DataForceBackwardId, action.BackwardId.ToString());
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceChildFieldIds, action.ChildIds);
                     }
 
                     break;
 
                 case ActionCode.AddNewCustomAction:
-                    httpRequest.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
+                    action.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
                     if (options.Contains(EntityTypeCode.BackendAction))
                     {
-                        httpRequest.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildId.ToString());
+                        action.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildId.ToString());
                     }
 
                     break;
@@ -260,7 +223,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.VisualEditorPluginProperties:
                     if (options.Contains(EntityTypeCode.VisualEditorCommand))
                     {
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceCommandIds, action.ChildIds);
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceCommandIds, action.ChildIds);
                     }
 
                     break;
@@ -269,17 +232,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.WorkflowProperties:
                     if (options.Contains(EntityTypeCode.WorkflowRule))
                     {
-                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceRulesIds, action.ChildIds);
+                        AddListItem(action.Form, HttpContextFormConstants.DataForceRulesIds, action.ChildIds);
                     }
 
                     break;
             }
-
-            httpRequest.SetPath(action.BackendAction.ControllerActionUrl.Replace("~", string.Empty));
-            return httpRequest;
+            httpRequest.Method = "POST";
+            httpRequest.Form = new FormCollection(action.Form);
+            httpRequest.Path = action.BackendAction.ControllerActionUrl.Replace("~", string.Empty);
         }
 
-        private static void AddListItem(NameValueCollection collection, string name, string commaList)
+        private static void AddListItem(Dictionary<string, StringValues> collection, string name, string commaList)
         {
             if (!string.IsNullOrEmpty(commaList))
             {
@@ -290,41 +253,37 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
-        private static QpPrincipal GetQpPrincipal(int userId)
+        private static ClaimsPrincipal GetPrincipal(int userId)
         {
             var user = new UserService().ReadProfile(userId);
-            var identity = new QpIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false, false);
-            return new QpPrincipal(identity, new string[] { });
+            var qpUser = new QpUser() { Id = user.Id, Name = user.Name, CustomerCode = QPContext.CurrentCustomerCode, LanguageId = user.LanguageId };
+            return AuthenticationHelper.GetClaimsPrincipal(qpUser);
         }
 
-        private static T GetContextData<T>(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
+        private static T GetContextData<T>(HttpContext httpContext, string key) => httpContext.Items.ContainsKey(key) ? (T)httpContext.Items[key] : default(T);
 
-        private static Guid GetGuidContextData(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? Guid.Parse(httpContext.Items[key].ToString()) : Guid.Empty;
+        private static Guid GetGuidContextData(HttpContext httpContext, string key) => httpContext.Items.ContainsKey(key) ? Guid.Parse(httpContext.Items[key].ToString()) : Guid.Empty;
 
-        private static Guid[] GetGuidsContextData(HttpContextBase httpContext, string key) => httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
+        private static Guid[] GetGuidsContextData(HttpContext httpContext, string key) => httpContext.Items.ContainsKey(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
 
-        private static NameValueCollection GetDynamicFieldValuesFromHttpContext(HttpContextBase httpContext, string fieldPrefix)
+        private static Dictionary<string, StringValues> GetDynamicFieldValuesFromHttpContext(HttpContext httpContext, string fieldPrefix)
         {
-            var result = new NameValueCollection();
+            var result = new Dictionary<string, StringValues>();
             foreach (var ctxKey in httpContext.Items.Keys.OfType<string>().Where(key => key.StartsWith(fieldPrefix)))
             {
-                result.Add(GetStringValuesFromHttpContext(httpContext, ctxKey));
+                result.AddRange(GetStringValuesFromHttpContext(httpContext, ctxKey));
             }
 
             return result;
         }
 
-        private static NameValueCollection GetStringValuesFromHttpContext(HttpContextBase httpContext, string key)
+        private static Dictionary<string, StringValues> GetStringValuesFromHttpContext(HttpContext httpContext, string key)
         {
-            var result = new NameValueCollection();
-            if (httpContext.Items.Contains(key))
+            var result = new Dictionary<string, StringValues>();
+            if (httpContext.Items.ContainsKey(key))
             {
-                foreach (var value in (string[])httpContext.Items[key])
-                {
-                    result.Add(key, value);
-                }
+                result.Add(key, (StringValues)httpContext.Items[key]);
             }
-
             return result;
         }
     }

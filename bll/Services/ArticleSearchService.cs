@@ -79,7 +79,16 @@ namespace Quantumart.QP8.BLL.Services
             this.articleSearchRepository = articleSearchRepository;
         }
 
-        public IEnumerable<ListItem> GetSimpleList(Field field, IEnumerable<int> selectedArticleIDs) => ArticleRepository.GetSimpleList(field.RelateToContentId.Value, null, field.Id, ListSelectionMode.OnlySelectedItems, selectedArticleIDs.ToArray(), field.RelationFilter, 0);
+        public IEnumerable<ListItem> GetSimpleList(Field field, IEnumerable<int> selectedArticleIDs) => ArticleRepository.GetSimpleList(
+            new SimpleListQuery()
+            {
+                ParentEntityId = field.RelateToContentId.Value,
+                ListId = field.Id,
+                SelectionMode = ListSelectionMode.OnlySelectedItems,
+                SelectedEntitiesIds = selectedArticleIDs.ToArray(),
+                Filter = field.RelationFilter
+            }
+            );
 
         /// <summary>
         /// Возвращает список "текстовых" полей (по которым возможет полнотекстовый поиск)
@@ -236,7 +245,7 @@ namespace Quantumart.QP8.BLL.Services
                 });
         }
 
-        public Field GetFieldByID(int fieldID) => articleSearchRepository.GetFieldByID(fieldID);
+        public Field GetFieldByID(int fieldID) => articleSearchRepository.GetFieldById(fieldID);
 
         /// <summary>
         /// Определяет тип поиска по полю

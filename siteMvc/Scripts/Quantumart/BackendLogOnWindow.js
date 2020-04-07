@@ -37,8 +37,8 @@ export class BackendLogOnWindow extends Observable {
     this._windowComponent = $.telerik.window.create({
       title: $l.Common.ajaxUserSessionExpiredErrorMessage,
       html: serverContent,
-      width: 500,
-      height: 265,
+      width: 700,
+      height: 350,
       modal: true,
       resizable: false,
       draggable: false,
@@ -51,14 +51,14 @@ export class BackendLogOnWindow extends Observable {
       that._disableWindow();
       evt.preventDefault();
       let content;
-      const currentUserName = that._getGurrentUserName();
-      const currentCustomerCode = that._getGurrentCustomerCode();
+      const currentUserName = that._getCurrentUserName();
+      const currentCustomerCode = that._getCurrentCustomerCode();
       const userName = $(that.USERNAME_SELECTOR).val();
       const password = $(that.PASSWORD_SELECTOR).val();
       const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
       let method = 'GET';
       let useAutoLogin = that._getUseAutoLogin();
-      const url = that._getUrl();
+      const url = that._getUrl(evt.type === 'submit');
       let setDefaultValues = false;
 
       if (evt.type === 'submit') {
@@ -110,7 +110,7 @@ export class BackendLogOnWindow extends Observable {
     };
 
     this._onCloseWindowHandler = function () {
-      that._triggerDeferredCallcacks(that._isAuthenticated);
+      that._triggerDeferredCallbacks(that._isAuthenticated);
       that.dispose();
     };
 
@@ -125,36 +125,38 @@ export class BackendLogOnWindow extends Observable {
   }
 
   _setDefaultValues() {
-    const currentUserName = this._getGurrentUserName();
-    const currentCustomerCode = this._getGurrentCustomerCode();
+    const currentUserName = this._getCurrentUserName();
+    const currentCustomerCode = this._getCurrentCustomerCode();
     $(this.USERNAME_SELECTOR).val(currentUserName);
     $(this.CUSTOMERCODE_SELECTOR).val(currentCustomerCode);
   }
 
-  _showWindow(data) {
+  _showWindow(data, location) {
     if (!this._windowComponent) {
-      this._createWindow(this._getServerContent(data));
+      let winData = data;
+      if (location) {
+        winData = $q.getJsonSync(location);
+      }
+      this._createWindow(this._getServerContent(winData));
       this._attachEvents();
       this._setDefaultValues();
       this._enableWindow();
     }
   }
 
-  _getGurrentUserName() {
+  _getCurrentUserName() {
     return $('span.userName').text();
   }
 
-  _getGurrentCustomerCode() {
+  _getCurrentCustomerCode() {
     return $('span.t-in').first().text();
   }
 
-  _getUrl() {
+  _getUrl(isSubmit) {
     let url = $(this.FORM_SELECTOR).attr('action');
-
-    if (!url.endsWith('/')) {
-      url += '/';
+    if (isSubmit) {
+      url = url.replace('?', '/JsonIndex?');
     }
-
     return url;
   }
 
@@ -192,7 +194,7 @@ export class BackendLogOnWindow extends Observable {
     $(this.FORM_SELECTOR).find('a').off();
   }
 
-  _triggerDeferredCallcacks(isAuthenticated) {
+  _triggerDeferredCallbacks(isAuthenticated) {
     $(this).triggerHandler({
       type: this.AJAX_EVENT,
 
@@ -201,7 +203,7 @@ export class BackendLogOnWindow extends Observable {
     });
   }
 
-  _addDeferredCallcack(callback, settings) {
+  _addDeferredCallback(jqXHR, callback, settings) {
     this._updateZindex();
     $(this).on(this.AJAX_EVENT, e => {
       // @ts-ignore JQueryEvent is used as business logic event
@@ -209,34 +211,56 @@ export class BackendLogOnWindow extends Observable {
       if (isAuthenticated) {
         jQuery.ajax(settings).done(callback);
       } else {
-        callback({ success: true });
+        callback(jqXHR);
       }
     });
   }
 
-  _clearDeferredCallcacks() {
+  _clearDeferredCallbacks() {
     $(this).off(this.AJAX_EVENT);
   }
 
-  showLogonForm(data, callback, settings) {
-    this._addDeferredCallcack(callback, settings);
-    this._showWindow(data);
+  showLogonForm(data, jqXHR, callback, settings, location) {
+    this._addDeferredCallback(jqXHR, callback, settings);
+    this._showWindow(data, location);
   }
 
-  needLogon(jqXHR, url) {
-    if (
-      url.toUpperCase() === window.CONTROLLER_URL_LOGON.toUpperCase()
-      || url.toUpperCase() === window.CONTROLLER_URL_WINLOGON.toUpperCase()) {
+  needLogon(jqXHR, url, location) {
+    if (this.isLogonUrl(url) || this.isWinlogonUrl(url)) {
       return false;
     } else if (jqXHR.getResponseHeader('QP-Not-Authenticated')) {
+      return true;
+    } else if (this.isLogonUrl(location) || this.isWinlogonUrl(location)) {
       return true;
     }
     return false;
   }
 
+  isLogonUrl(url) {
+    const urlForTest = window.CONTROLLER_URL_LOGON.toUpperCase();
+    return this.testUrl(url, urlForTest);
+  }
+
+  isWinlogonUrl(url) {
+    const urlForTest = window.CONTROLLER_URL_WINLOGON.toUpperCase();
+    return this.testUrl(url, urlForTest);
+  }
+
+  testUrl(url, urlForTest) {
+    if (!url || !urlForTest) {
+      return false;
+    }
+    let resultUrl = urlForTest;
+    if (urlForTest.endsWith('/')) {
+      resultUrl = urlForTest.left(urlForTest.length - 1);
+    }
+
+    return url.replace(window.location.href, '/').toUpperCase().indexOf(resultUrl) === 0;
+  }
+
   dispose() {
     super.dispose();
-    this._clearDeferredCallcacks();
+    this._clearDeferredCallbacks();
 
     if (this._windowComponent) {
       this._detachEvents();
@@ -258,9 +282,9 @@ export class BackendLogOnWindow extends Observable {
 BackendLogOnWindow._instance = null;
 BackendLogOnWindow.deferredExecution = function (data, jqXHR, callback, settings) {
   const logon = BackendLogOnWindow.getInstance();
-
-  if (logon.needLogon(jqXHR, settings.url)) {
-    logon.showLogonForm(data, callback, settings);
+  const location = jqXHR.getResponseHeader('Location');
+  if (logon.needLogon(jqXHR, settings.url, location)) {
+    logon.showLogonForm(data, jqXHR, callback, settings, location);
     return true;
   }
 

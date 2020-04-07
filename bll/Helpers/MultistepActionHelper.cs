@@ -126,7 +126,6 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static List<string> GetFileFields(ImportSettings setts, FileReader reader)
         {
-            reader.CopyFileToTempDir();
             var firstline = reader.Lines.Select(n => n.Value).Where(s => !s.StartsWith("sep=")).Take(1).ToList();
             if (!firstline.Any())
             {

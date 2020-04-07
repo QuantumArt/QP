@@ -1,5 +1,6 @@
 using AutoMapper;
 using Quantumart.QP8.DAL;
+using SiteFolderDAL = Quantumart.QP8.DAL.Entities.SiteFolderDAL;
 
 namespace Quantumart.QP8.BLL.Mappers
 {

@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel.DataAnnotations;
+using I = System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
+using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -24,11 +27,13 @@ namespace Quantumart.QP8.BLL
 
         protected abstract FolderFactory GetFactory();
 
-        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(FolderStrings))]
-        [FormatValidator(RegularExpressions.InvalidFolderName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(FolderStrings))]
-        [LocalizedDisplayName("Name", NameResourceType = typeof(FolderStrings))]
+        [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(FolderStrings))]
+        [RegularExpression(RegularExpressions.FolderName, ErrorMessageResourceName = "NameInvalidFormat", ErrorMessageResourceType = typeof(FolderStrings))]
+        [Display(Name = "Name", ResourceType = typeof(FolderStrings))]
         public override string Name { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public override IEnumerable<EntityObject> Children
         {
             get
@@ -42,18 +47,27 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public override PathInfo PathInfo => _pathInfo ?? (_pathInfo = CreatePathInfo(Path));
+
 
         private PathInfo CreatePathInfo(string path) => Parent.PathInfo.GetSubPathInfo(path);
 
+        [BindNever]
+        [ValidateNever]
         public override bool HasChildren
         {
             get => AutoLoadChildren ? Children.Any() : _hasChildren;
             set => _hasChildren = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public override EntityObject Parent => _parent ?? (_parent = GetParent());
 
+        [BindNever]
+        [ValidateNever]
         public bool IsEmpty
         {
             get
@@ -63,7 +77,7 @@ namespace Quantumart.QP8.BLL
                     return true;
                 }
 
-                return IsNew || !Directory.Exists(PathInfo.Path) || Directory.EnumerateFileSystemEntries(PathInfo.Path, "*", SearchOption.AllDirectories).Any();
+                return IsNew || !I.Directory.Exists(PathInfo.Path) || I.Directory.EnumerateFileSystemEntries(PathInfo.Path, "*", I.SearchOption.AllDirectories).Any();
             }
         }
 
@@ -71,6 +85,8 @@ namespace Quantumart.QP8.BLL
         /// Путь к директории
         /// </summary>
         public string Path { get; set; }
+
+        public string OsSpecificPath => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path : Path?.Replace(@"\", @"/");
 
         /// <summary>
         /// Путь к директории полученный из БД не меняеться на основе данных формы
@@ -89,6 +105,8 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool LoadAllChildren { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public FolderRepository Repository
         {
             get
@@ -103,6 +121,8 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public Folder ParentFolder => _parentFolder ?? (_parentFolder = ParentId == null ? null : Repository.GetById((int)ParentId));
 
         public string OutputName => !string.IsNullOrEmpty(Name) ? Name : LibraryStrings.RootFolder;
@@ -116,9 +136,9 @@ namespace Quantumart.QP8.BLL
 
         internal void CreateInFs()
         {
-            if (!Directory.Exists(PathInfo.Path))
+            if (!I.Directory.Exists(PathInfo.Path))
             {
-                Directory.CreateDirectory(PathInfo.Path);
+                I.Directory.CreateDirectory(PathInfo.Path);
             }
         }
 
@@ -126,16 +146,16 @@ namespace Quantumart.QP8.BLL
         {
             ComputePath();
             var oldPathInfo = CreatePathInfo(StoredPath);
-            if (!Directory.Exists(PathInfo.Path) && Directory.Exists(oldPathInfo.Path))
+            if (!I.Directory.Exists(PathInfo.Path) && I.Directory.Exists(oldPathInfo.Path))
             {
-                Directory.Move(oldPathInfo.Path, PathInfo.Path);
+                I.Directory.Move(oldPathInfo.Path, PathInfo.Path);
                 StoredPath = Path;
             }
         }
 
         internal void RemoveFromFs()
         {
-            if (Directory.Exists(PathInfo.Path))
+            if (I.Directory.Exists(PathInfo.Path))
             {
                 ForceDelete(PathInfo.Path);
             }
@@ -155,7 +175,7 @@ namespace Quantumart.QP8.BLL
                 }
 
                 var childrenNames = Children.Select(n => n.Name.ToLowerInvariant()).ToList();
-                var namesToCreateInDb = new DirectoryInfo(PathInfo.Path)
+                var namesToCreateInDb = new I.DirectoryInfo(PathInfo.Path)
                     .EnumerateDirectories()
                     .Select(n => n.Name)
                     .Where(n => !childrenNames.Contains(n.ToLowerInvariant()) && !IsSpecialName(n));
@@ -171,13 +191,13 @@ namespace Quantumart.QP8.BLL
 
         public static void ForceDelete(string path)
         {
-            if (Directory.Exists(path))
+            if (I.Directory.Exists(path))
             {
-                var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
+                var directory = new I.DirectoryInfo(path) { Attributes = I.FileAttributes.Normal };
 
-                foreach (var info in directory.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+                foreach (var info in directory.EnumerateFileSystemInfos("*", I.SearchOption.AllDirectories))
                 {
-                    info.Attributes = FileAttributes.Normal;
+                    info.Attributes = I.FileAttributes.Normal;
                 }
 
                 directory.Delete(true);
@@ -186,7 +206,7 @@ namespace Quantumart.QP8.BLL
 
         protected override RulesException ValidateUnique(RulesException errors)
         {
-            if (Directory.Exists(CreatePathInfo(CreateComputedPath(Name)).Path))
+            if (I.Directory.Exists(CreatePathInfo(CreateComputedPath(Name)).Path))
             {
                 errors.Error("Name", Name, PropertyIsNotUniqueMessage);
             }
@@ -198,7 +218,7 @@ namespace Quantumart.QP8.BLL
 
         internal ListResult<FolderFile> GetFiles(ListCommand command, LibraryFileFilter filter)
         {
-            var files = new DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
+            var files = new I.DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
             var sort = string.IsNullOrEmpty(command.SortExpression) ? "Name ASC" : command.SortExpression;
             var typeFilter = filter.FileType.HasValue ? (Func<FolderFile, bool>)(f => f.FileType == filter.FileType.Value) : f => true;
             var filtered = files
@@ -222,7 +242,7 @@ namespace Quantumart.QP8.BLL
             var currentFolder = this;
             if (!string.IsNullOrEmpty(subFolder))
             {
-                var names = subFolder.Split('\\');
+                var names = subFolder.Split(I.Path.DirectorySeparatorChar);
                 var id = Id;
                 foreach (var name in names)
                 {
@@ -242,6 +262,6 @@ namespace Quantumart.QP8.BLL
             Path = CreateComputedPath(Name);
         }
 
-        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}\";
+        private string CreateComputedPath(string name) => $@"{(ParentFolder == null ? string.Empty : ParentFolder.Path)}{name}" + @"\";
     }
 }

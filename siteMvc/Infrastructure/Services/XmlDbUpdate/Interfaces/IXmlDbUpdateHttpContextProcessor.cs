@@ -1,10 +1,14 @@
-﻿using System.Web;
+﻿using System;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces
 {
     public interface IXmlDbUpdateHttpContextProcessor
     {
-        HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution);
+        HttpContext PostAction(
+            XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution,
+            IServiceProvider serviceProvider);
     }
 }

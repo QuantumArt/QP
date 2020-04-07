@@ -1,7 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
+using QP.ConfigurationService.Client;
 using QP8.Integration.Tests.Infrastructure;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
@@ -9,6 +13,8 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -37,37 +43,49 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            DbConnector = new DBConnector(Global.ConnectionString)
+
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                DynamicImageCreator = new FakeDynamicImageCreator(),
-                FileSystem = new FakeFileSystem(),
-                ForceLocalCache = true
-            };
 
-            RegionContentName = "test regions";
-            ProductContentName = "test products";
-            Clear();
+                DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType)
+                {
+                    DynamicImageCreator = new FakeDynamicImageCreator(),
+                    FileSystem = new FakeFileSystem(),
+                    ForceLocalCache = true
+                };
 
-            var dbLogService = new Mock<IXmlDbUpdateLogService>();
-            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
-            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
+                RegionContentName = "test regions";
+                ProductContentName = "test products";
+                TearDown();
 
-            var service = new XmlDbUpdateNonMvcReplayService(
-                Global.ConnectionString,
-                1,
-                false,
-                dbLogService.Object,
-                new ApplicationInfoRepository(),
-                new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository()), new ContentService(new ContentRepository())),
-                new XmlDbUpdateHttpContextProcessor(),
-                false
-            );
+                var dbLogService = new Mock<IXmlDbUpdateLogService>();
+                dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+                dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            service.Process(Global.GetXml(@"TestData\hierarchy.xml"));
+                var service = new XmlDbUpdateNonMvcReplayService(
+                    Global.ConnectionString,
+                    Global.DbType,
+                    null,
+                    1,
+                    false,
+                    dbLogService.Object,
+                    new ApplicationInfoRepository(),
+                    new XmlDbUpdateActionCorrecterService(
+                        new ArticleService(new ArticleRepository()),
+                        new ContentService(new ContentRepository()),
+                        new ModelExpressionProvider(new EmptyModelMetadataProvider())
+                    ),
+                    new XmlDbUpdateHttpContextProcessor(),
+                    Global.Factory.Server.Host.Services,
+                    false
+                );
 
-            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
-            BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
+                service.Process(Global.GetXml(@"TestData\hierarchy.xml"));
+
+                RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+                ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
+                BaseArticlesIds = Global.GetIdsWithTitles(DbConnector, RegionContentId);
+            }
         }
 
         [Test]
@@ -75,9 +93,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["root"], BaseArticlesIds["macro1"], BaseArticlesIds["macro2"], BaseArticlesIds["region12"], BaseArticlesIds["district113"] };
             var ids2 = new[] { BaseArticlesIds["root"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionInfo, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -94,9 +112,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["region12"], BaseArticlesIds["macro1"] };
             var ids2 = new[] { BaseArticlesIds["macro1"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionInfo, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -113,9 +131,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["city111"], BaseArticlesIds["city112"], BaseArticlesIds["district113"], BaseArticlesIds["region12"], BaseArticlesIds["macro2"] };
             var ids2 = new[] { BaseArticlesIds["root"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionInfo, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -132,9 +150,9 @@ namespace QP8.Integration.Tests
         {
             var ids = new[] { BaseArticlesIds["city111"], BaseArticlesIds["city112"], BaseArticlesIds["district113"], BaseArticlesIds["region12"] };
             var ids2 = new[] { BaseArticlesIds["macro1"] };
-            using (new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                var articleService = new ArticleApiService(Global.ConnectionString, 1);
+                var articleService = new ArticleApiService(Global.ConnectionInfo, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -149,23 +167,21 @@ namespace QP8.Integration.Tests
         [OneTimeTearDown]
         public static void TearDown()
         {
-            Clear();
-        }
-
-        private static void Clear()
-        {
-            var srv = new ContentApiService(Global.ConnectionString, 1);
-            RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
-            ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
-
-            if (srv.Exists(ProductContentId))
+            using (new QPConnectionScope(Global.ConnectionInfo))
             {
-                srv.Delete(ProductContentId);
-            }
+                var srv = new ContentApiService(Global.ConnectionInfo, 1);
+                RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
+                ProductContentId = Global.GetContentId(DbConnector, ProductContentName);
 
-            if (srv.Exists(RegionContentId))
-            {
-                srv.Delete(RegionContentId);
+                if (srv.Exists(ProductContentId))
+                {
+                    srv.Delete(ProductContentId);
+                }
+
+                if (srv.Exists(RegionContentId))
+                {
+                    srv.Delete(RegionContentId);
+                }
             }
         }
     }

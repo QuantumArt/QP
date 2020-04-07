@@ -1,23 +1,18 @@
 using System;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
     public static class HtmlHelperLinkButtonsListExtensions
     {
-        public class LinkButtonsList : IDisposable
+        private class LinkButtonsList : IDisposable
         {
             private bool _disposed;
-            private readonly HtmlHelper _html;
+            private readonly IHtmlHelper _html;
 
-            public LinkButtonsList(HtmlHelper html)
+            public LinkButtonsList(IHtmlHelper html)
             {
-                if (html == null)
-                {
-                    throw new ArgumentNullException(nameof(html));
-                }
-
-                _html = html;
+                _html = html ?? throw new ArgumentNullException(nameof(html));
             }
 
             public void Dispose()
@@ -36,13 +31,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
         }
 
-        public static LinkButtonsList BeginLinkButtonsList(this HtmlHelper html)
+        public static IDisposable BeginLinkButtonsList(this IHtmlHelper html)
         {
             html.ViewContext.Writer.Write(@"<ul class=""linkButtons group doctab-title"">");
             return new LinkButtonsList(html);
         }
 
-        public static void EndLinkButtonsList(this HtmlHelper html)
+        public static void EndLinkButtonsList(this IHtmlHelper html)
         {
             html.ViewContext.Writer.Write("</ul>");
         }

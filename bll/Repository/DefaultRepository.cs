@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
-using D = System.Data.Objects.DataClasses;
+using EF = Quantumart.QP8.Constants.EF;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -33,15 +39,15 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static TBiz Save<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, QPContext.CurrentUserId);
 
         internal static TBiz SaveAsAdmin<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject => SaveAsUser<TBiz, TDal>(item, SpecialIds.AdminUserId);
 
         internal static TBiz SaveAsUser<TBiz, TDal>(TBiz item, int userId)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject
         {
             var entities = QPContext.EFContext;
@@ -61,14 +67,14 @@ namespace Quantumart.QP8.BLL.Repository
             dalItem.Created = current;
             dalItem.Modified = current;
             dalItem.LastModifiedBy = userId;
-            entities.AddObject(GetSetNameByType(typeof(TDal)), dalItem);
+            entities.Entry(dalItem).State = EntityState.Added;
             entities.SaveChanges();
 
             return DefaultMapper.GetBizObject<TBiz, TDal>(dalItem);
         }
 
         internal static TBiz Update<TBiz, TDal>(TBiz item)
-            where TDal : D.EntityObject, IQpEntityObject
+            where TDal : class, IQpEntityObject
             where TBiz : EntityObject
         {
             var dalItem = DefaultMapper.GetDalObject<TDal, TBiz>(item);
@@ -80,158 +86,234 @@ namespace Quantumart.QP8.BLL.Repository
                 dalItem.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.AttachTo(GetSetNameByType(typeof(TDal)), dalItem);
-            entities.ObjectStateManager.ChangeObjectState(dalItem, EntityState.Modified);
+            entities.Entry(dalItem).State = EntityState.Modified;
             entities.SaveChanges();
             return DefaultMapper.GetBizObject<TBiz, TDal>(dalItem);
         }
 
         internal static void Delete<TDal>(int id)
-            where TDal : D.EntityObject
+            where TDal : class
         {
-            SimpleDelete(new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id));
+            var entities = QPContext.EFContext;
+            var result = entities.Set<TDal>().Find((decimal)id);
+            if (result != null)
+            {
+                entities.Entry( result).State = EntityState.Deleted;
+                entities.SaveChanges();
+            }
         }
 
         internal static void Delete<TDal>(int[] id)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            var sql = $"SELECT VALUE entity FROM {GetSetNameByType(typeof(TDal), true)} AS entity WHERE entity.Id IN {{{string.Join(",", id)}}}";
-            var list = entities.CreateQuery<TDal>(sql).ToList();
-            foreach (var result in list)
+
+            var list = FindAll<TDal>(entities, id);
+            foreach (var item in list)
             {
-                entities.DeleteObject(result);
+                entities.Entry(item).State = EntityState.Deleted;
             }
 
             entities.SaveChanges();
         }
 
-        internal static TDal GetById<TDal>(int id)
-            where TDal : D.EntityObject
-        {
-            var entities = QPContext.EFContext;
-            var key = new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id);
-            if (entities.TryGetObjectByKey(key, out var result))
-            {
-                return (TDal)result;
-            }
 
-            return null;
+
+
+
+        private static List<TDal> FindAll<TDal>(DbContext dbContext, int[] keyValues)
+            where TDal : class
+        {
+            var entityType = dbContext.Model.FindEntityType(typeof(TDal));
+            var primaryKey = entityType.FindPrimaryKey();
+            if (primaryKey.Properties.Count != 1)
+                throw new NotSupportedException("Only a single primary key is supported");
+
+            var pkProperty = primaryKey.Properties[0];
+            var pkPropertyType = pkProperty.ClrType;
+
+            var castedKeyValues = pkPropertyType != typeof(int) ? keyValues.Select(x => Convert.ChangeType(x, pkPropertyType)).ToArray() : new[] { keyValues };
+
+            // retrieve member info for primary key
+            var pkMemberInfo = typeof(TDal).GetProperty(pkProperty.Name);
+            if (pkMemberInfo == null)
+                throw new ArgumentException("Type does not contain the primary key as an accessible property");
+
+            // build lambda expression
+            var parameter = Expression.Parameter(typeof(TDal), "e");
+            var body = Expression.Call(null, ContainsMethod,
+                Expression.Constant(castedKeyValues),
+                Expression.Convert(Expression.MakeMemberAccess(parameter, pkMemberInfo), typeof(object)));
+            var predicateExpression = Expression.Lambda<Func<TDal, bool>>(body, parameter);
+
+            // run query
+            return dbContext.Set<TDal>().Where(predicateExpression).ToList();
+        }
+
+
+
+
+        internal static TDal GetById<TDal>(int id, QPModelDataContext context = null)
+            where TDal : class
+        {
+            var currentContext = context ?? QPContext.EFContext;
+            return currentContext.Set<TDal>().Find((decimal)id);
+
         }
 
         internal static TDal SimpleSave<TDal>(TDal dalItem)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            entities.AddObject(GetSetNameByType(typeof(TDal)), dalItem);
+            entities.Entry(dalItem).State = EntityState.Added;
             entities.SaveChanges();
             return dalItem;
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        internal static IEnumerable<TDal> SimpleSave<TDal>(IEnumerable<TDal> dalItemList)
-            where TDal : D.EntityObject
+        internal static IEnumerable<TDal> SimpleSaveBulk<TDal>(IEnumerable<TDal> dalItemList)
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            var setName = GetSetNameByType(typeof(TDal));
-            foreach (var dalItem in dalItemList)
+            foreach (var item in dalItemList)
             {
-                entities.AddObject(setName, dalItem);
+                entities.Entry(item).State = EntityState.Added;
             }
-
             entities.SaveChanges();
             return dalItemList;
         }
 
         internal static TDal SimpleUpdate<TDal>(TDal dalItem)
-            where TDal : D.EntityObject
+            where TDal : class
         {
             var entities = QPContext.EFContext;
-            entities.AttachTo(GetSetNameByType(typeof(TDal)), dalItem);
-            entities.ObjectStateManager.ChangeObjectState(dalItem, EntityState.Modified);
+            entities.Entry(dalItem).State = EntityState.Modified;
             entities.SaveChanges();
             return dalItem;
         }
 
-        internal static void SimpleDelete(EntityKey key)
+        internal static void SimpleDelete<TDal>(TDal dalItem, QPModelDataContext context = null)
+            where TDal : class
         {
-            var entities = QPContext.EFContext;
-            if (entities.TryGetObjectByKey(key, out var result))
-            {
-                entities.DeleteObject(result);
-            }
-
+            var entities = context ?? QPContext.EFContext;
+            entities.Entry(dalItem).State = EntityState.Deleted;
             entities.SaveChanges();
         }
 
-        internal static void SimpleDelete<TDal>(IEnumerable<TDal> dalItems)
-            where TDal : D.EntityObject
+        internal static void SimpleDeleteBulk<TDal>(IEnumerable<TDal> dalItems, QPModelDataContext context = null)
+            where TDal : class
         {
-            var entities = QPContext.EFContext;
-            foreach (var dalItem in dalItems)
+            var entities = context ?? QPContext.EFContext;
+            foreach (var dal in dalItems)
             {
-                if (entities.TryGetObjectByKey(dalItem.EntityKey, out var result))
-                {
-                    entities.DeleteObject(result);
-                }
+                entities.Entry(dal).State = EntityState.Deleted;
             }
-
             entities.SaveChanges();
+
         }
 
         public static void ChangeIdentityInsertState(string entityTypeCode, bool state)
         {
+            if (QPContext.DatabaseType != DatabaseType.SqlServer)
+            {
+                return;
+            }
+
             if (QPConnectionScope.Current.IdentityInsertOptions.Contains(entityTypeCode))
             {
-                string table = null;
-                switch (entityTypeCode)
-                {
-                    case EntityTypeCode.ContentLink:
-                        table = "dbo.CONTENT_TO_CONTENT";
-                        break;
-                    case EntityTypeCode.Content:
-                        table = "dbo.CONTENT";
-                        break;
-                    case EntityTypeCode.ContentGroup:
-                        table = "dbo.CONTENT_GROUP";
-                        break;
-                    case EntityTypeCode.Field:
-                        table = "dbo.CONTENT_ATTRIBUTE";
-                        break;
-                    case EntityTypeCode.VisualEditorCommand:
-                        table = "dbo.VE_COMMAND";
-                        break;
-                    case EntityTypeCode.VisualEditorPlugin:
-                        table = "dbo.VE_PLUGIN";
-                        break;
-                    case EntityTypeCode.VisualEditorStyle:
-                        table = "dbo.VE_STYLE";
-                        break;
-                    case EntityTypeCode.CustomAction:
-                        table = "dbo.CUSTOM_ACTION";
-                        break;
-                    case EntityTypeCode.BackendAction:
-                        table = "dbo.BACKEND_ACTION";
-                        break;
-                    case EntityTypeCode.Site:
-                        table = "dbo.SITE";
-                        break;
-                    case EntityTypeCode.StatusType:
-                        table = "dbo.STATUS_TYPE";
-                        break;
-                    case EntityTypeCode.Workflow:
-                        table = "dbo.WORKFLOW";
-                        break;
-                    case EntityTypeCode.Notification:
-                        table = "dbo.NOTIFICATIONS";
-                        break;
-                }
+                var table = TableToInsert(entityTypeCode);
 
                 if (table != null)
                 {
-                    Common.ChangeInsertIdentityState(QPConnectionScope.Current.DbConnection, table, state);
+                    Common.ChangeInsertIdentityState(QPConnectionScope.Current.DbConnection, "dbo." + table, state);
                 }
             }
+        }
+
+        internal static string TableIdToInsert(string entityTypeCode)
+        {
+            string tableId;
+            switch (entityTypeCode)
+            {
+                case EntityTypeCode.ContentLink:
+                    tableId = "link_id";
+                    break;
+                case EntityTypeCode.Content:
+                    tableId = "content_id";
+                    break;
+                case EntityTypeCode.ContentGroup:
+                    tableId = "content_group_id";
+                    break;
+                case EntityTypeCode.Field:
+                    tableId = "attribute_id";
+                    break;
+                case EntityTypeCode.Site:
+                    tableId = "site_id";
+                    break;
+                case EntityTypeCode.StatusType:
+                    tableId = "status_type_id";
+                    break;
+                case EntityTypeCode.Workflow:
+                    tableId = "workflow_id";
+                    break;
+                case EntityTypeCode.Notification:
+                    tableId = "notification_id";
+                    break;
+                default:
+                    tableId = "id";
+                    break;
+            }
+
+            return tableId;
+        }
+
+        internal static string TableToInsert(string entityTypeCode)
+        {
+            string table = null;
+            switch (entityTypeCode)
+            {
+                case EntityTypeCode.ContentLink:
+                    table = "CONTENT_TO_CONTENT";
+                    break;
+                case EntityTypeCode.Content:
+                    table = "CONTENT";
+                    break;
+                case EntityTypeCode.ContentGroup:
+                    table = "CONTENT_GROUP";
+                    break;
+                case EntityTypeCode.Field:
+                    table = "CONTENT_ATTRIBUTE";
+                    break;
+                case EntityTypeCode.VisualEditorCommand:
+                    table = "VE_COMMAND";
+                    break;
+                case EntityTypeCode.VisualEditorPlugin:
+                    table = "VE_PLUGIN";
+                    break;
+                case EntityTypeCode.VisualEditorStyle:
+                    table = "VE_STYLE";
+                    break;
+                case EntityTypeCode.CustomAction:
+                    table = "CUSTOM_ACTION";
+                    break;
+                case EntityTypeCode.BackendAction:
+                    table = "BACKEND_ACTION";
+                    break;
+                case EntityTypeCode.Site:
+                    table = "SITE";
+                    break;
+                case EntityTypeCode.StatusType:
+                    table = "STATUS_TYPE";
+                    break;
+                case EntityTypeCode.Workflow:
+                    table = "WORKFLOW";
+                    break;
+                case EntityTypeCode.Notification:
+                    table = "NOTIFICATIONS";
+                    break;
+            }
+
+            return table;
         }
 
         internal static void TurnIdentityInsertOn(string entityTypeCode, EntityObject objectForCheck)
@@ -252,6 +334,24 @@ namespace Quantumart.QP8.BLL.Repository
         internal static void TurnIdentityInsertOff(string entityTypeCode)
         {
             ChangeIdentityInsertState(entityTypeCode, false);
+        }
+
+        private static readonly MethodInfo ContainsMethod = typeof(Enumerable).GetMethods()
+            .FirstOrDefault(m => m.Name == "Contains" && m.GetParameters().Length == 2)
+            .MakeGenericMethod(typeof(object));
+
+        public static void PostReplay(HashSet<string> insertIdentityOptions)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                if (scope.CurrentDbType == DatabaseType.Postgres)
+                {
+                    foreach (var key in insertIdentityOptions)
+                    {
+                        Common.PostgresUpdateSequence(scope.DbConnection, TableToInsert(key), TableIdToInsert(key));
+                    }
+                }
+            }
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
@@ -18,14 +21,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateActionCorrecterService actionsCorrecterService,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IServiceProvider provider,
             bool isQpInstalled = true)
-            : base(connectionString, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+            : base(connectionString, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider)
         {
             _isQpInstalled = isQpInstalled;
         }
 
         public XmlDbUpdateNonMvcReplayService(
             string connectionString,
+            DatabaseType dbType,
             HashSet<string> identityInsertOptions,
             int userId,
             bool useGuidSubstitution,
@@ -33,8 +38,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateActionCorrecterService actionsCorrecterService,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IServiceProvider provider,
             bool isQpInstalled = true)
-            : base(connectionString, identityInsertOptions, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+            : base(connectionString, dbType, identityInsertOptions, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider)
         {
             _isQpInstalled = isQpInstalled;
         }
@@ -53,16 +59,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void QpInstalledProcess(string xmlString, IList<string> filePathes)
         {
-            using (new FakeMvcApplicationContext())
-            {
-                base.Process(xmlString, filePathes);
-            }
+            base.Process(xmlString, filePathes);
         }
 
         private void QpNotInstalledProcess(string xmlString, IList<string> filePathes)
         {
-            using (new NonQpEnvironmentContext(ConnectionString))
-            using (new FakeMvcApplicationContext())
+            using (new NonQpEnvironmentContext(ConnectionInfo))
             {
                 base.Process(xmlString, filePathes);
             }

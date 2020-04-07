@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Alex Kostyukov</Authors>
+    <Company>Quantum Art</Company>
+    <Product>QP8.Framework</Product>
+    <Description>QP webmvc tests</Description>
+    <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
+    <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
+    <PackageLicenseUrl>https://github.com/QuantumArt/QP/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>QP</PackageTags>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <RootNamespace>QP8.WebMvc.Tests</RootNamespace>
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.6.0" />
+    <PackageReference Include="AutoFixture.Xunit2" Version="4.6.0" />
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Moq" Version="4.10.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\..\constants\Constants.csproj" />
+    <ProjectReference Include="..\..\..\QuantumArt.Infrastructure\QP8.Infrastructure.TestTools\QP8.Infrastructure.TestTools.csproj" />
+    <ProjectReference Include="..\..\..\siteMvc\WebMvc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Reference Include="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\catalog\content_2576_2016_10_7_13_24_43_ex1.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\catalog\content_2577_2016_10_7_13_25_8_ex2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\catalog\content_2578_2016_10_7_13_23_42_base.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_10771_2016_9_27_13_31_10.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_10772_2016_9_27_13_31_20.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_10773_2016_9_27_13_31_2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\CsvData\kz_copy\content_289_2016_9_27_13_30_50.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\catalog_2016-10-27_17-00-16.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\catalog_guid_rename.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\catalog_with_five_actions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_CR_endings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_LF_endings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_with_duplicates.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

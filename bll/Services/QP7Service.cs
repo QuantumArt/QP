@@ -3,7 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -33,6 +34,8 @@ namespace Quantumart.QP8.BLL.Services
 
         #endregion
 
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public string GetQP7Path()
         {
             var path = DbRepository.GetAppSettings()
@@ -60,8 +63,8 @@ namespace Quantumart.QP8.BLL.Services
         public QP7Token Authenticate(string applicationPath)
         {
             var customerCode = QPContext.CurrentCustomerCode;
-            var userName = QPContext.CurrentUserIdentity.Name;
-            var password = HttpContext.Current.Session[HttpContextSession.Qp7Password] as string;
+            var userName = QPContext.CurrentUserName;
+            var password = HttpContext.Session.GetValue<string>(HttpContextSession.Qp7Password);
 
             return Authenticate(userName, password, customerCode, applicationPath);
         }
@@ -162,7 +165,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static void SetPassword(string password)
         {
-            HttpContext.Current.Session[HttpContextSession.Qp7Password] = password;
+            HttpContext.Session.SetValue(HttpContextSession.Qp7Password, password);
         }
     }
 

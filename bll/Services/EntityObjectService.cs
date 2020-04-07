@@ -56,62 +56,53 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public static IList<EntityTreeItem> GetEntityTreeItems(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string filter, string hostFilter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser) => ArticleTreeFactory.Create(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser).Process();
+        public static IList<EntityTreeItem> GetEntityTreeItems(ChildListQuery query) => ArticleTreeFactory.Create(query).Process();
 
         /// <summary>
         /// Возвращает упрощенный список сущностей
         /// </summary>
-        /// <param name="entityTypeCode">код типа сущности</param>
-        /// <param name="parentEntityId">идентификатор родительской сущности</param>
-        /// <param name="entityId">идентификатор сущности</param>
-        /// <param name="listId">дополнительный параметр для идентификации списка</param>
-        /// <param name="selectionMode">режим выделения списка</param>
-        /// <param name="selectedEntitiesIDs">идентификаторы выбранных сущностей</param>
-        /// <param name="filter"></param>
-        /// <param name="testEntityId"></param>
-        /// <returns>упрощенный список сущностей</returns>
-        public static List<ListItem> SimpleList(string entityTypeCode, int parentEntityId, int? entityId, int? listId, ListSelectionMode selectionMode, int[] selectedEntitiesIDs, string filter, int testEntityId)
+        public static List<ListItem> SimpleList(SimpleListQuery query)
         {
             var itemList = new List<ListItem>();
-            if (entityTypeCode == EntityTypeCode.ContentGroup)
+            if (query.EntityTypeCode == EntityTypeCode.ContentGroup)
             {
-                itemList = ContentRepository.GetGroupSimpleList(parentEntityId, selectedEntitiesIDs).ToList();
+                itemList = ContentRepository.GetGroupSimpleList(query.ParentEntityId, query.SelectedEntitiesIds).ToList();
             }
-            else if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle)
+            else if (query.EntityTypeCode == EntityTypeCode.Article || query.EntityTypeCode == EntityTypeCode.ArchiveArticle)
             {
-                itemList = ArticleRepository.GetSimpleList(parentEntityId, entityId, listId, selectionMode, selectedEntitiesIDs, filter, testEntityId);
+                itemList = ArticleRepository.GetSimpleList(query);
             }
-            else if (entityTypeCode == EntityTypeCode.Content)
+            else if (query.EntityTypeCode == EntityTypeCode.Content)
             {
-                itemList.AddRange(ContentRepository.GetSimpleList(parentEntityId, selectedEntitiesIDs));
+                itemList.AddRange(ContentRepository.GetSimpleList(query.ParentEntityId, query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.Site)
+            else if (query.EntityTypeCode == EntityTypeCode.Site)
             {
-                itemList.AddRange(SiteRepository.GetSimpleList(selectedEntitiesIDs));
+                itemList.AddRange(SiteRepository.GetSimpleList(query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.User)
+            else if (query.EntityTypeCode == EntityTypeCode.User)
             {
-                itemList.AddRange(UserRepository.GetSimpleList(selectedEntitiesIDs));
+                itemList.AddRange(UserRepository.GetSimpleList(query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.UserGroup)
+            else if (query.EntityTypeCode == EntityTypeCode.UserGroup)
             {
-                itemList.AddRange(UserGroupRepository.GetSimpleList(selectedEntitiesIDs));
+                itemList.AddRange(UserGroupRepository.GetSimpleList(query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.TemplateObjectFormat)
+            else if (query.EntityTypeCode == EntityTypeCode.TemplateObjectFormat)
             {
-                itemList.AddRange(ObjectFormatRepository.GetObjectFormats(parentEntityId, listId, selectedEntitiesIDs));
+                itemList.AddRange(ObjectFormatRepository.GetObjectFormats(query.ParentEntityId, query.ActualListId, query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.Page)
+            else if (query.EntityTypeCode == EntityTypeCode.Page)
             {
-                itemList.AddRange(PageTemplateRepository.GetPageSimpleList(selectedEntitiesIDs));
+                itemList.AddRange(PageTemplateRepository.GetPageSimpleList(query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.StatusType)
+            else if (query.EntityTypeCode == EntityTypeCode.StatusType)
             {
-                itemList.AddRange(StatusTypeRepository.GetStatusSimpleList(selectedEntitiesIDs));
+                itemList.AddRange(StatusTypeRepository.GetStatusSimpleList(query.SelectedEntitiesIds));
             }
-            else if (entityTypeCode == EntityTypeCode.Field)
+            else if (query.EntityTypeCode == EntityTypeCode.Field)
             {
-                itemList.AddRange(FieldRepository.GetList(selectedEntitiesIDs).Select(c => new ListItem(c.Id.ToString(), c.Name)));
+                itemList.AddRange(FieldRepository.GetList(query.SelectedEntitiesIds).Select(c => new ListItem(c.Id.ToString(), c.Name)));
             }
 
             return itemList;
@@ -158,7 +149,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <returns>идентификатор родительской сущности</returns>
         public static int? GetParentId(string entityTypeCode, int entityId) => EntityObjectRepository.GetParentId(entityTypeCode, entityId);
 
-        public static int[] GetParentIdsForTree(string entityTypeCode, int[] ids) => EntityObjectRepository.GetParentIdsForTree(entityTypeCode, ids);
+        public static int[] GetParentIdsForTree(ParentIdsForTreeQuery query) => EntityObjectRepository.GetParentIdsForTree(query);
 
         /// <summary>
         /// Возвращает цепочку сущностей для хлебных крошек
@@ -205,7 +196,11 @@ namespace Quantumart.QP8.BLL.Services
 
         public static void UnlockAllEntitiesLockedByCurrentUser()
         {
-            EntityObjectRepository.UnlockAllEntitiesLockedByUser(QPContext.CurrentUserId);
+            var id = QPContext.CurrentUserId;
+            if (id != 0)
+            {
+                EntityObjectRepository.UnlockAllEntitiesLockedByUser(id);
+            }
         }
 
         /// <summary>

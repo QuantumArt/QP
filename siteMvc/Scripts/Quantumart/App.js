@@ -92,7 +92,6 @@ require('./Editor/BackendEditorsAutoSaver.js');
 require('./Editor/BackendClassifierField.js');
 require('./Uploader/BackendBaseUploader.js');
 require('./Uploader/BackendUploaderEventArgs.js');
-require('./Uploader/BackendHtmlUploader.js');
 require('./Uploader/BackendPlUploader.js');
 require('./Audit/ActionLogComponent.js');
 require('./Audit/ActionLogFilterTile.js');

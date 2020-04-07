@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class StatusTypeStrings {
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Alternate color should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of Alternate color should not exceed {1} characters.
         /// </summary>
         public static string AltColorLengthExceeded {
             get {
@@ -124,7 +124,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of Color should not exceed {5} characters.
+        ///   Looks up a localized string similar to The length of Color should not exceed {1} characters.
         /// </summary>
         public static string ColorLengthExceeded {
             get {

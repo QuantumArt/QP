@@ -1,11 +1,15 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -72,20 +76,34 @@ namespace Quantumart.QP8.BLL.Repository
         public IEnumerable<BackendActionLog> Save(IEnumerable<BackendActionLog> logs)
         {
             IEnumerable<BackendActionLogDAL> toSave = MapperFacade.BackendActionLogMapper.GetDalList(logs.ToList());
-            var saved = DefaultRepository.SimpleSave(toSave);
+            var saved = DefaultRepository.SimpleSaveBulk(toSave);
             return MapperFacade.BackendActionLogMapper.GetBizList(saved.ToList());
         }
 
         public IEnumerable<ListItem> GetEntityTitles(string entityTypeCode, int? parentEntityId, IEnumerable<int> entitiesIDs)
         {
-            if (entityTypeCode == EntityTypeCode.Article && parentEntityId.HasValue && parentEntityId != 0)
+            if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.ArchiveArticle )
             {
-                return ArticleRepository.GetSimpleList(parentEntityId.Value, null, null, ListSelectionMode.OnlySelectedItems, entitiesIDs.ToArray(), null, 0);
+                var contentId =
+                    parentEntityId ??
+                    QPContext.EFContext.ArticleSet.FirstOrDefault(x => entitiesIDs.Contains((int)x.Id))?.ContentId ??
+                    0;
+
+                return ArticleRepository.GetSimpleList(
+                    new SimpleListQuery()
+                    {
+                        ParentEntityId = (int)contentId,
+                        SelectionMode = ListSelectionMode.OnlySelectedItems,
+                        SelectedEntitiesIds = entitiesIDs.ToArray()
+                    }
+                );
             }
 
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetEntitiesTitles(scope.DbConnection, entityTypeCode, entitiesIDs.ToList()).Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
+                var entityType = EntityTypeRepository.GetByCode(entityTypeCode);
+                var result = Common.GetEntitiesTitles(scope.DbConnection, entityType?.Source, entityType?.IdField, entityType?.TitleField, entitiesIDs.ToList());
+                return result.Select(r => new ListItem(Converter.ToInt32(r["ID"]).ToString(), r["TITLE"].ToString()));
             }
         }
 
@@ -175,7 +193,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             var slDal =
                 QPContext.EFContext.SessionsLogSet
-                    .Where(s => !s.IsQP7 && s.UserId == uid && s.SessionId == sid)                
+                    .Where(s => !s.IsQP7 && s.UserId == uid && s.SessionId == sid)
                     .FirstOrDefault() ??
                 QPContext.EFContext.SessionsLogSet
                     .Where(s => !s.IsQP7 && s.UserId == uid)
@@ -199,6 +217,5 @@ namespace Quantumart.QP8.BLL.Repository
                 CommonSecurity.ClearUserToken(scope.DbConnection, userId, sessionId);
             }
         }
-
     }
 }

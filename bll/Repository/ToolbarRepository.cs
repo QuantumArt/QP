@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -16,8 +18,19 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                var rows = Common.GetToolbarButtonsForAction(scope.DbConnection, QPContext.CurrentUserId, actionCode, entityId);
-                return MapperFacade.ToolbarButtonRowMapper.GetBizList(rows.ToList());
+                var action = BackendActionCache.Actions.FirstOrDefault(x => x.Code.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase));
+                if (action == null)
+                {
+                    throw new ApplicationException("Action is not found: " + actionCode);
+                }
+
+                var rows = Common.GetToolbarButtonsForAction(
+                    QPContext.EFContext, scope.DbConnection, QPContext.CurrentUserId, QPContext.IsAdmin,
+                    action.Id, action.EntityType.Code, entityId
+                );
+                var buttons = MapperFacade.ToolbarButtonRowMapper.GetBizList(rows.ToList());
+                buttons.ForEach(x => x.Name = Translator.Translate(x.Name));
+                return buttons;
             }
         }
     }

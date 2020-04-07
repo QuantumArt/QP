@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -23,7 +24,8 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                cmd.SortExpression = MapperFacade.CustomActionListItemRowMapper.TranslateSortExpression(cmd.SortExpression);
+                var dbType = QPContext.DatabaseType;
+                cmd.SortExpression = MapperFacade.CustomActionListItemRowMapper.TranslateSortExpression(cmd.SortExpression, dbType);
                 var rows = Common.GetCustomActionList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
                 var result = MapperFacade.CustomActionListItemRowMapper.GetBizList(rows.ToList());
                 return result;
@@ -36,6 +38,25 @@ namespace Quantumart.QP8.BLL.Repository
             result.LastModifiedByUser = UserRepository.GetById(result.LastModifiedBy, true);
             return result;
         }
+
+        // internal static CustomAction GetRealById(int id)
+        // {
+        //     var customAction = MapperFacade.CustomActionMapper.GetBizObject(
+        //             QPContext.EFContext.CustomActionSet
+        //                 .Include(b => b.ContentCustomActionBinds)
+        //                 .Include(b => b.SiteCustomActionBinds)
+        //                 .Include(b => b.Action)
+        //                 .SingleOrDefault()
+        //         );
+        //
+        //         foreach (var c in customActions)
+        //         {
+        //             c.Action = backendActions.FirstOrDefault(n => n.Id == c.ActionId);
+        //         }
+        //
+        //         return customActions;
+        //     }
+        // }
 
         internal static CustomAction GetByCode(string code)
         {
@@ -60,22 +81,20 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.CustomActionSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
 
             var dal2 = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
-            entities.BackendActionSet.Attach(dal2);
-            entities.ObjectStateManager.ChangeObjectState(dal2, EntityState.Modified);
+            entities.Entry(dal2).State = EntityState.Modified;
 
             // Toolbar Buttons
             foreach (var t in entities.ToolbarButtonSet.Where(t => t.ActionId == customAction.Action.Id))
             {
-                entities.ToolbarButtonSet.DeleteObject(t);
+                entities.Entry(t).State = EntityState.Deleted;
             }
 
             foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
             {
-                entities.ToolbarButtonSet.AddObject(t);
+                entities.Entry(t).State = EntityState.Added;
             }
 
             var refreshBtnDal = CreateRefreshButton(dal.ActionId);
@@ -83,68 +102,65 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 foreach (var t in entities.ToolbarButtonSet.Where(b => b.ParentActionId == dal.ActionId && b.ActionId == refreshBtnDal.ActionId))
                 {
-                    entities.ToolbarButtonSet.DeleteObject(t);
+                    entities.Entry(t).State = EntityState.Deleted;
                 }
             }
 
             if (customAction.Action.IsInterface && !entities.ToolbarButtonSet.Any(b => b.ParentActionId == dal.ActionId && b.ActionId == refreshBtnDal.ActionId))
             {
-                entities.ToolbarButtonSet.AddObject(refreshBtnDal);
+                entities.Entry(refreshBtnDal).State = EntityState.Added;
             }
 
             int? oldContextMenuId = null;
             foreach (var c in entities.ContextMenuItemSet.Where(c => c.ActionId == customAction.Action.Id))
             {
                 oldContextMenuId = c.ContextMenuId;
-                entities.ContextMenuItemSet.DeleteObject(c);
+                entities.Entry(c).State = EntityState.Deleted;
             }
             foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
             {
-                entities.ContextMenuItemSet.AddObject(c);
+                entities.Entry(c).State = EntityState.Added;
             }
 
             var dalDb = entities.CustomActionSet
-                .Include("Contents")
-                .Include("Sites")
+                .Include(x => x.ContentCustomActionBinds)
+                .Include(x => x.SiteCustomActionBinds)
                 .Single(a => a.Id == customAction.Id);
 
-            var inmemorySiteIDs = new HashSet<decimal>(customAction.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
-            var indbSiteIDs = new HashSet<decimal>(dalDb.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
-            foreach (var s in dalDb.Sites.ToArray())
+            var inmemorySiteIDs = new HashSet<decimal>(customAction.SiteIds.Select(bs => Converter.ToDecimal(bs)));
+            var dalSiteBinds = dalDb.SiteCustomActionBinds.ToArray();
+            var indbSiteIDs = new HashSet<decimal>(dalSiteBinds.Select(bs => bs.SiteId));
+            var dalSiteBindsToRemove = dalSiteBinds.Where(n => !inmemorySiteIDs.Contains(n.SiteId)).ToArray();
+            var dalSiteBindsToCreate = customAction.SiteIds.Where(n => !indbSiteIDs.Contains(n)).Select(
+                n => new SiteCustomActionBindDAL { CustomAction = dal, SiteId = n }
+            );
+            foreach (var s in dalSiteBindsToRemove)
             {
-                if (!inmemorySiteIDs.Contains(s.Id))
-                {
-                    entities.SiteSet.Attach(s);
-                    dalDb.Sites.Remove(s);
-                }
+                dal.SiteCustomActionBinds.Remove(s);
             }
-            foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
+
+            foreach (var c in dalSiteBindsToCreate)
             {
-                if (!indbSiteIDs.Contains(s.Id))
-                {
-                    entities.SiteSet.Attach(s);
-                    dal.Sites.Add(s);
-                }
+                dal.SiteCustomActionBinds.Add(c);
             }
 
             // Binded Contents
-            var inmemoryContentIDs = new HashSet<decimal>(customAction.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-            var indbContentIDs = new HashSet<decimal>(dalDb.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-            foreach (var s in dalDb.Contents.ToArray())
+            var inmemoryContentIDs = new HashSet<decimal>(customAction.ContentIds.Select(bs => Converter.ToDecimal(bs)));
+            var dalBinds = dalDb.ContentCustomActionBinds.ToArray();
+            var indbContentIDs = new HashSet<decimal>(dalBinds.Select(bs => bs.ContentId));
+            var dalBindsToRemove = dalBinds.Where(n => !inmemoryContentIDs.Contains(n.ContentId)).ToArray();
+            var dalbindsToCreate = customAction.ContentIds.Where(n => !indbContentIDs.Contains(n)).Select(
+                n => new ContentCustomActionBindDAL { CustomAction = dal, ContentId = n }
+            );
+
+            foreach (var r in dalBindsToRemove)
             {
-                if (!inmemoryContentIDs.Contains(s.Id))
-                {
-                    entities.ContentSet.Attach(s);
-                    dalDb.Contents.Remove(s);
-                }
+                dal.ContentCustomActionBinds.Remove(r);
             }
-            foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
+
+            foreach (var c in dalbindsToCreate)
             {
-                if (!indbContentIDs.Contains(s.Id))
-                {
-                    entities.ContentSet.Attach(s);
-                    dal.Contents.Add(s);
-                }
+                dal.ContentCustomActionBinds.Add(c);
             }
 
             entities.SaveChanges();
@@ -155,7 +171,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             SetBottomSeparator(customAction.Action.EntityType.ContextMenu.Id);
             var updated = MapperFacade.CustomActionMapper.GetBizObject(dal);
-            BackendActionCache.Reset();
+            BackendActionCache.ResetForCustomerCode();
 
             return updated;
         }
@@ -164,7 +180,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var entities = QPContext.EFContext;
             var actionDal = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
-            entities.BackendActionSet.AddObject(actionDal);
+            entities.Entry(actionDal).State = EntityState.Added;
 
             EntityObject.VerifyIdentityInserting(EntityTypeCode.BackendAction, actionDal.Id, customAction.ForceActionId);
             if (customAction.ForceActionId != 0)
@@ -179,46 +195,52 @@ namespace Quantumart.QP8.BLL.Repository
             var customActionDal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
             customActionDal.LastModifiedBy = QPContext.CurrentUserId;
             customActionDal.Action = actionDal;
+
+
             using (new QPConnectionScope())
             {
                 customActionDal.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
                 customActionDal.Modified = customActionDal.Created;
             }
 
-            entities.CustomActionSet.AddObject(customActionDal);
+            entities.Entry(customActionDal).State = EntityState.Added;
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.CustomAction, customAction);
             entities.SaveChanges();
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.CustomAction);
 
-            foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
+            var buttonsToInsert = MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList());
+            foreach (var item in buttonsToInsert)
             {
-                t.ActionId = customActionDal.Action.Id;
-                entities.ToolbarButtonSet.AddObject(t);
+                item.ActionId = customActionDal.ActionId;
+                entities.Entry(item).State = EntityState.Added;
             }
 
-            foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
+            var cmiToInsert = MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList());
+            foreach (var item in cmiToInsert)
             {
-                c.ActionId = customActionDal.Action.Id;
-                entities.ContextMenuItemSet.AddObject(c);
+                item.ActionId = customActionDal.ActionId;
+                entities.Entry(item).State = EntityState.Added;
             }
 
-            foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
+            customActionDal.SiteCustomActionBinds = new List<SiteCustomActionBindDAL>();
+            foreach (var item in customAction.SiteIds)
             {
-                entities.SiteSet.Attach(s);
-                customActionDal.Sites.Add(s);
+                var bind = new SiteCustomActionBindDAL { SiteId = item, CustomAction = customActionDal };
+                customActionDal.SiteCustomActionBinds.Add(bind);
             }
 
-            foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
+            customActionDal.ContentCustomActionBinds = new List<ContentCustomActionBindDAL>();
+            foreach (var item in customAction.ContentIds)
             {
-                entities.ContentSet.Attach(s);
-                customActionDal.Contents.Add(s);
+                var bind = new ContentCustomActionBindDAL { ContentId = item, CustomAction = customActionDal };
+                customActionDal.ContentCustomActionBinds.Add(bind);
             }
 
             if (customAction.Action.IsInterface)
             {
                 var refreshBtnDal = CreateRefreshButton(customActionDal.ActionId);
-                entities.ToolbarButtonSet.AddObject(refreshBtnDal);
+                entities.Entry(refreshBtnDal).State = EntityState.Added;
             }
 
             entities.SaveChanges();
@@ -226,7 +248,8 @@ namespace Quantumart.QP8.BLL.Repository
             SetBottomSeparator(contextMenuId);
 
             var updated = MapperFacade.CustomActionMapper.GetBizObject(customActionDal);
-            BackendActionCache.Reset();
+            updated.Action = MapperFacade.BackendActionMapper.GetBizObject(actionDal);
+            BackendActionCache.ResetForCustomerCode();
             return updated;
         }
 
@@ -242,31 +265,31 @@ namespace Quantumart.QP8.BLL.Repository
             var contextMenuId = dalDb.Action.EntityType.ContextMenuId;
             foreach (var t in dalDb.Action.ToolbarButtons.ToArray())
             {
-                entities.ToolbarButtonSet.DeleteObject(t);
+                entities.Entry(t).State = EntityState.Deleted;
             }
 
             foreach (var t in entities.ToolbarButtonSet.Where(b => b.ParentActionId == dalDb.ActionId))
             {
-                entities.ToolbarButtonSet.DeleteObject(t);
+                entities.Entry(t).State = EntityState.Deleted;
             }
 
             int? oldContextMenuId = null;
             foreach (var c in dalDb.Action.ContextMenuItems.ToArray())
             {
                 oldContextMenuId = c.ContextMenuId;
-                entities.ContextMenuItemSet.DeleteObject(c);
+                entities.Entry(c).State = EntityState.Deleted;
             }
-
-            entities.BackendActionSet.DeleteObject(dalDb.Action);
-            entities.CustomActionSet.DeleteObject(dalDb);
+            entities.Entry(dalDb.Action).State = EntityState.Deleted;
+            entities.Entry(dalDb).State = EntityState.Deleted;
             entities.SaveChanges();
+
             if (oldContextMenuId != contextMenuId)
             {
                 SetBottomSeparator(oldContextMenuId);
             }
 
             SetBottomSeparator(contextMenuId);
-            BackendActionCache.Reset();
+            BackendActionCache.ResetForCustomerCode();
         }
 
         internal static CustomAction Copy(CustomAction action)
@@ -294,7 +317,7 @@ namespace Quantumart.QP8.BLL.Repository
                 index++;
                 newAlias = MutateHelper.MutateNetName(alias, index);
             }
-            while (ExistAlias(newAlias));
+            while (DoesAliasExist(newAlias));
             return newAlias;
         }
 
@@ -307,18 +330,20 @@ namespace Quantumart.QP8.BLL.Repository
                 index++;
                 newName = MutateHelper.MutateString(name, index);
             }
-            while (ExistName(newName));
+            while (DoesNameExist(newName));
             return newName;
         }
 
-        private static bool ExistName(string name)
+        private static bool DoesNameExist(string name)
         {
             return QPContext.EFContext.CustomActionSet.Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        private static bool ExistAlias(string alias)
+        private static bool DoesAliasExist(string alias)
         {
-            return QPContext.EFContext.CustomActionSet.Any(a => a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase));
+            return QPContext.EFContext.CustomActionSet.Any(
+                a => a.Alias != null && a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase)
+            );
         }
 
         private static IEnumerable<int> ExistOrders()

@@ -4,6 +4,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -44,12 +45,14 @@ namespace Quantumart.QP8.BLL.Repository
                     {
                         DefaultRepository.Delete<ArticleScheduleDAL>(originalId);
                     }
+
                 }
 
                 var needToPersist = dalItem.FreqType != ScheduleFreqTypes.None && hasChanges;
                 if (needToPersist)
                 {
-                    dalItem.UseService = QPConfiguration.UseScheduleService;
+                    dalItem.UseService = true;
+                    dalItem.Created = article.Modified;
                     dalItem.Modified = article.Modified;
                     dalItem.LastModifiedBy = article.LastModifiedBy;
                     DefaultRepository.SimpleSave(dalItem);
@@ -57,10 +60,8 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        private static bool DetectChanges(ArticleScheduleDAL originalItem, ArticleScheduleDAL dalItem) => originalItem.ActiveEndDate != dalItem.ActiveEndDate ||
-            originalItem.ActiveEndTime != dalItem.ActiveEndTime ||
-            originalItem.ActiveStartTime != dalItem.ActiveStartTime ||
-            originalItem.ActiveStartDate != dalItem.ActiveStartDate ||
+        private static bool DetectChanges(ArticleScheduleDAL originalItem, ArticleScheduleDAL dalItem) => originalItem.EndDate != dalItem.EndDate ||
+            originalItem.StartDate != dalItem.StartDate ||
             originalItem.Duration != dalItem.Duration ||
             originalItem.DurationUnits != dalItem.DurationUnits ||
             originalItem.UseDuration != dalItem.UseDuration ||

@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.EntityPermissions;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -13,22 +15,28 @@ namespace Quantumart.QP8.BLL
 
         public IPermissionRepository Repository { get; private set; }
 
+        [BindNever]
+        [ValidateNever]
         public User User { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public UserGroup Group { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public EntityPermissionLevel PermissionLevel { get; set; }
 
-        [LocalizedDisplayName("PropagateToItems", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "PropagateToItems", ResourceType = typeof(EntityPermissionStrings))]
         public bool PropagateToItems { get; set; }
 
-        [LocalizedDisplayName("MemberType", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "MemberType", ResourceType = typeof(EntityPermissionStrings))]
         public int MemberType { get; set; }
 
-        [LocalizedDisplayName("ExplicitPermissionToRelatedContents", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "ExplicitPermissionToRelatedContents", ResourceType = typeof(EntityPermissionStrings))]
         public bool ExplicitPermissionToRelatedContents { get; set; }
 
-        [LocalizedDisplayName("Hide", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "Hide", ResourceType = typeof(EntityPermissionStrings))]
         public bool Hide { get; set; }
 
         internal static EntityPermission Create(int parentId, IPermissionRepository repository)
@@ -69,7 +77,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
             if (MemberType == UserMemberType)
             {

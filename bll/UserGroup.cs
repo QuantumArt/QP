@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
-    [HasSelfValidation]
     public class UserGroup : EntityObject
     {
         private static readonly int ADMIN_GROUP_ID = 1;
@@ -21,24 +21,30 @@ namespace Quantumart.QP8.BLL
 
         public bool BuiltIn { get; set; }
 
-        [LocalizedDisplayName("SharedArticles", NameResourceType = typeof(UserGroupStrings))]
+        [Display(Name = "SharedArticles", ResourceType = typeof(UserGroupStrings))]
         public bool SharedArticles { get; set; }
 
-        [LocalizedDisplayName("UseParallelWorkflow", NameResourceType = typeof(UserGroupStrings))]
+        [Display(Name = "UseParallelWorkflow", ResourceType = typeof(UserGroupStrings))]
         public bool UseParallelWorkflow { get; set; }
 
-        [LocalizedDisplayName("CanUnlockItems", NameResourceType = typeof(UserGroupStrings))]
+        [Display(Name = "CanUnlockItems", ResourceType = typeof(UserGroupStrings))]
         public bool CanUnlockItems { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NtGroupLengthExceeded", MessageTemplateResourceType = typeof(UserGroupStrings))]
-        [FormatValidator(RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtGroupInvalidFormat", MessageTemplateResourceType = typeof(UserGroupStrings))]
-        [LocalizedDisplayName("NtGroup", NameResourceType = typeof(UserGroupStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NtGroupLengthExceeded", ErrorMessageResourceType = typeof(UserGroupStrings))]
+        [RegularExpression(RegularExpressions.UserName, ErrorMessageResourceName = "NtGroupInvalidFormat", ErrorMessageResourceType = typeof(UserGroupStrings))]
+        [Display(Name = "NtGroup", ResourceType = typeof(UserGroupStrings))]
         public string NtGroup { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<User> Users { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public UserGroup ParentGroup { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<UserGroup> ChildGroups { get; set; }
 
         #endregion
@@ -72,7 +78,7 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorForModel(UserGroupStrings.GroupCouldntBeAdminDescendant);
             }
 
-            // проверка на циклы 
+            // проверка на циклы
             if (!IsNew && ParentGroup != null)
             {
                 if (UserGroupRepository.IsCyclePossible(Id, ParentGroup.Id))

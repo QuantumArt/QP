@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.IO;
 using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;
@@ -13,7 +14,7 @@ namespace Quantumart.QP8.BLL.Mappers
             cfg.CreateMap<DataRow, PageTemplateListItem>(MemberList.Source)
                 .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal>("Id"))))
                 .ForMember(biz => biz.Name, opt => opt.MapFrom(row => row.Field<string>("Name")))
-                .ForMember(biz => biz.Folder, opt => opt.MapFrom(row => "\\" + row.Field<string>("Folder")))
+                .ForMember(biz => biz.Folder, opt => opt.MapFrom(row => Path.DirectorySeparatorChar + row.Field<string>("Folder")))
                 .ForMember(biz => biz.Description, opt => opt.MapFrom(row => row.Field<string>("Description")))
                 .ForMember(biz => biz.IsSystem, opt => opt.MapFrom(row => row.Field<bool>("IsSystem")))
                 .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(row => Converter.ToInt32(row.Field<decimal?>("LockedBy"), 0)))

@@ -1,3 +1,5 @@
+using System;
+using System.Net.Http;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
@@ -18,19 +20,25 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             IXmlDbUpdateLogService xmlDbUpdateLogService,
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateActionCorrecterService actionCorrecterService,
-            IXmlDbUpdateHttpContextProcessor httpContextProcessor)
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            HttpClient client,
+            IServiceProvider provider
+            )
             : base(settings)
         {
             _settings = settings;
             _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(
                 QPContext.CurrentDbConnectionString,
+                QPContext.DatabaseType,
                 CommonHelpers.GetDbIdentityInsertOptions(settings.GenerateNewFieldIds, settings.GenerateNewContentIds),
                 settings.UserId,
                 settings.UseGuidSubstitution,
                 xmlDbUpdateLogService,
                 appInfoRepository,
                 actionCorrecterService,
-                httpContextProcessor);
+                httpContextProcessor,
+                provider
+                );
         }
 
         public override void Process()

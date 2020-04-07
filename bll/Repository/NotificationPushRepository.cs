@@ -4,19 +4,26 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using QP8.Infrastructure.Logging;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.NotificationSender;
-using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
+
+#if !NET_STANDARD
+using Quantumart.QP8.Configuration;
+#endif
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class NotificationPushRepository
     {
+
+        private static ILogger Logger = LogManager.GetCurrentClassLogger();
+
         private int ContentId { get; set; }
 
         private int SiteId { get; set; }
@@ -228,8 +235,9 @@ namespace Quantumart.QP8.BLL.Repository
                 ExternalExceptionHandler = HandleException,
                 ThrowNotificationExceptions = false
             };
-
-            QPConfiguration.SetAppSettings(cnn.AppSettings);
+#if !NET_STANDARD
+            QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
+#endif
             foreach (var simpleCode in code.Split(';'))
             {
                 cnn.SendNotification(id, simpleCode);
@@ -287,7 +295,7 @@ namespace Quantumart.QP8.BLL.Repository
         private Article[] GetArticles()
         {
             var articles = ArticleRepository.GetList(ArticleIds, true);
-            return ContentId == 0 ? articles.Where(a => a.ContentId == ContentId).ToArray() : articles.ToArray();
+            return ContentId != 0 ? articles.Where(a => a.ContentId == ContentId).ToArray() : articles.ToArray();
         }
 
         private void ValidateCodes(IEnumerable<string> codes)
@@ -329,7 +337,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void HandleException(Exception ex)
         {
-            Logger.Log.Error("Notification service error", ex);
+            Logger.Error().Exception(ex).Message("Notification service error").Write();
         }
     }
 }

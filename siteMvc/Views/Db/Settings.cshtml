@@ -22,7 +22,7 @@
       <dd class="field">
         <span class="downloadRecords linkButton actionLink actionlink">
           <a href="javascript: void(0)" class="@(ViewBag.IsRecordAvailableForDownload ? string.Empty : "disabled")">
-            <span class="icon download"><img src="/Backend/Content/Common/0.gif" alt="download record"></span>
+            <span class="icon download"><img src="Static/Common/0.gif" alt="download record"></span>
             <span class="text">@DBStrings.DownloadRecordedActions</span>
           </a>
         </span>
@@ -70,7 +70,7 @@
       <dd class="field">
         <span class="replayRecords linkButton actionLink">
           <a href="javascript: void(0)">
-            <span class="icon restore"><img src="/Backend/Content/Common/0.gif" alt="replay record"></span>
+            <span class="icon restore"><img src="Static/Common/0.gif" alt="replay record"></span>
             <span class="text">@DBStrings.ReplayActions</span>
           </a>
         </span>
@@ -91,8 +91,8 @@
     @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
   }
 
-  @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 }
 
 <script type="text/html" id="@Html.UniqueId("Data_AppSettings_template")">
@@ -112,7 +112,7 @@
 				<td data-bind="text: $index() + 1"></td>
 				<td><input class="textbox" data-bind="value: Key, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
 				<td><input class="textbox" data-bind="value: Value, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-        <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" alt="delete" data-bind="click: $root.removeItem"/></td>
+        <td><img src="@Url.Content("~/Static/QP8/icons/16x16/delete.gif")" alt="delete" data-bind="click: $root.removeItem"/></td>
 			</tr>
 		</tbody>
 	</table>

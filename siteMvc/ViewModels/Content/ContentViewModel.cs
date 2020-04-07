@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Content
@@ -25,7 +26,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
         {
             get
             {
-                var result = Data.Site.Workflows.Select(n => new ListItem(n.Id.ToString(), n.Name, SplitBlock)).ToList();
+                var result = ContentService.GetSiteWorkflows(Data.SiteId)
+                    .Select(n => new ListItem(n.Id.ToString(), n.Name, SplitBlock)).ToList();
                 result.Add(new ListItem(WorkflowBind.UnassignedId.ToString(), ContentStrings.NoWorkflow));
                 return result;
             }

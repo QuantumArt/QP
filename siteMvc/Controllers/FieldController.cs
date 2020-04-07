@@ -1,43 +1,46 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class FieldController : QPController
+    public class FieldController : AuthQpController
     {
-        public FieldController(IArticleService dbArticleService)
-            : base(dbArticleService)
+        public FieldController(IArticleService dbArticleService, QPublishingOptions options)
+            : base(dbArticleService, options)
         {
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Fields)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = FieldService.InitList(parentId);
             var model = FieldListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Fields)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        public ActionResult _Index(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
-            var serviceResult = FieldService.List(parentId, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = FieldService.List(parentId, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -46,29 +49,28 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewField)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
         [BackendActionContext(ActionCode.AddNewField)]
-        public ActionResult New(string tabId, int parentId, int? fieldId)
+        public async Task<ActionResult> New(string tabId, int parentId, int? fieldId)
         {
             var field = FieldService.New(parentId, fieldId);
             var model = FieldViewModel.Create(field, tabId, parentId);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
-        [ValidateInput(false)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewField)]
         [BackendActionContext(ActionCode.AddNewField)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, string backendActionCode, IFormCollection collection)
         {
             var content = FieldService.New(parentId, null);
             var model = FieldViewModel.Create(content, tabId, parentId);
             var oldLinkId = model.Data.LinkId;
             var oldBackward = model.Data.BackwardField;
 
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -91,7 +93,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 return Redirect("Properties", new
@@ -104,31 +106,30 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.FieldProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Field, "id")]
         [BackendActionContext(ActionCode.FieldProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
         {
             var content = FieldService.Read(id);
             var model = FieldViewModel.Create(content, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
             model.OrderChanged = orderChanged ?? false;
             model.ViewInListAffected = viewInListAffected ?? false;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.FieldProperties)]
-        [ValidateInput(false)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateField)]
         [BackendActionContext(ActionCode.UpdateField)]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, IFormCollection collection)
         {
             var field = FieldService.ReadForUpdate(id);
             var model = FieldViewModel.Create(field, tabId, parentId);
@@ -137,8 +138,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var oldLinkId = model.Data.LinkId;
             var oldBackward = model.Data.BackwardField;
 
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -158,7 +159,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("UserQueryContentCreateViewException", uqEx.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
                 catch (VirtualContentProcessingException vcpEx)
                 {
@@ -168,7 +169,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpEx.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 var newOrder = model.Data.Order;
@@ -184,38 +185,38 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualFieldProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.VirtualField, "id")]
         [BackendActionContext(ActionCode.VirtualFieldProperties)]
-        public ActionResult VirtualProperties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
+        public async Task<ActionResult> VirtualProperties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
         {
             var content = FieldService.VirtualRead(id);
             var model = FieldViewModel.Create(content, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
             model.OrderChanged = orderChanged ?? false;
             model.ViewInListAffected = viewInListAffected ?? false;
-            return JsonHtml("VirtualProperties", model);
+            return await JsonHtml("VirtualProperties", model);
         }
 
         [HttpPost, Record(ActionCode.VirtualFieldProperties)]
-        [ValidateInput(false)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVirtualField)]
         [BackendActionContext(ActionCode.UpdateVirtualField)]
         [BackendActionLog]
-        public ActionResult VirtualProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> VirtualProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var field = FieldService.ReadForUpdate(id);
             var model = FieldViewModel.Create(field, tabId, parentId);
             var oldOrder = model.Data.Order;
             var oldViewInList = model.Data.ViewInList;
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -231,7 +232,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("UserQueryContentCreateViewException", uqe.Message);
-                    return JsonHtml("VirtualProperties", model);
+                    return await JsonHtml("VirtualProperties", model);
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
@@ -241,7 +242,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 var newViewInList = model.Data.ViewInList;
@@ -256,7 +257,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 });
             }
 
-            return JsonHtml("VirtualProperties", model);
+            return await JsonHtml("VirtualProperties", model);
         }
 
         [HttpPost, Record]
@@ -277,10 +278,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveField)]
         [BackendActionContext(ActionCode.MultipleRemoveField)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemove(int[] IDs)
+        public ActionResult MultipleRemove([FromBody] SelectedItemsViewModel selModel)
         {
-            var result = FieldService.MultipleRemove(IDs);
+            var result = FieldService.MultipleRemove(selModel.Ids);
             return JsonMessageResult(result);
         }
 
@@ -288,26 +288,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForExport(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForExport(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = FieldService.InitList(parentId);
-            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExport)
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, selModel.Ids, ActionCode.MultipleSelectFieldForExport)
             {
                 IsMultiple = true
             };
 
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, GridCommand command)
+        public ActionResult _MultipleSelectForExport(
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy)
         {
-            var serviceResult = FieldService.ListForExport(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = FieldService.ListForExport(listCommand, parentId, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -315,26 +314,26 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForExportExpanded(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = FieldService.InitList(parentId);
-            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExportExpanded)
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, selModel.Ids, ActionCode.MultipleSelectFieldForExportExpanded)
             {
                 IsMultiple = true
             };
 
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
         [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForExportExpanded(string tabId, int parentId, string IDs, GridCommand command)
+        public ActionResult _MultipleSelectForExportExpanded(
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy)
         {
-            var serviceResult = FieldService.ListForExportExpanded(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = FieldService.ListForExportExpanded(
+                listCommand, parentId, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -350,9 +349,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 id,
                 forceId,
                 forceLinkId,
-                forceVirtualFieldIds.ToIntArray(),
-                forceChildFieldIds.ToIntArray(),
-                forceChildLinkIds.ToIntArray()
+                forceVirtualFieldIds?.ToIntArray(),
+                forceChildFieldIds?.ToIntArray(),
+                forceChildLinkIds?.ToIntArray()
             );
 
             PersistResultId(result.Id);

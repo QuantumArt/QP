@@ -1,10 +1,10 @@
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ToolbarController : QPController
+    public class ToolbarController : AuthQpController
     {
         public JsonResult GetToolbarButtonListByActionCode(string actionCode, string entityId, string parentEntityId, bool? boundToExternal)
         {
@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int.TryParse(parentEntityId, out var parsedParentId);
 
             var buttonsList = ToolbarService.GetButtonListByActionCode(actionCode, parsedId, parsedParentId, boundToExternal);
-            return Json(buttonsList, JsonRequestBehavior.AllowGet);
+            return Json(buttonsList);
         }
     }
 }

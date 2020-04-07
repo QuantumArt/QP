@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportArticlesParams : IMultistepActionSettings
@@ -6,8 +8,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public int ContentId;
 
-        // ReSharper disable once InconsistentNaming
-        public int[] IDs;
+        [JsonProperty("IDs")]
+        public int[] Ids;
 
         public bool IsArchive;
 
@@ -15,14 +17,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         {
             SiteId = siteId;
             ContentId = contentId;
-            IDs = ids;
+            Ids = ids;
         }
 
         public ExportArticlesParams(int siteId, int contentId, int[] ids, bool isArchive)
         {
             SiteId = siteId;
             ContentId = contentId;
-            IDs = ids;
+            Ids = ids;
             IsArchive = isArchive;
         }
 

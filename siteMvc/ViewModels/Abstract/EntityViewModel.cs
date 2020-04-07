@@ -1,41 +1,45 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
-using System.Web.Mvc;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
-    public abstract class EntityViewModel : ViewModel
+    public abstract class EntityViewModel : ViewModel, IValidatableObject
     {
-        public EntityObject EntityData { get; set; }
+        protected EntityObject EntityData { get; set; }
 
         public string SuccesfulActionCode { get; set; }
-
-        public bool IsValid { get; set; }
-
-        public EntityObject Data
-        {
-            get => EntityData;
-            set => EntityData = value;
-        }
 
         public static T Create<T>(EntityObject obj, string tabId, int parentId)
             where T : EntityViewModel, new()
         {
             var model = Create<T>(tabId, parentId);
             model.EntityData = obj;
-            model.IsValid = true;
             return model;
         }
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public bool IsNew => EntityData.IsNew;
 
         public override MainComponentType MainComponentType => MainComponentType.Editor;
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public override string MainComponentId => UniqueId("Editor");
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public override ExpandoObject MainComponentParameters
         {
             get
@@ -50,16 +54,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             }
         }
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public override ExpandoObject MainComponentOptions
         {
             get
             {
                 dynamic result = base.MainComponentParameters;
                 result.validationSummaryElementId = ValidationSummaryId;
-                result.modifiedDateTime = Data != null && !Data.IsNew ? Data.Modified.Ticks : new long?();
-                result.entityTypeAllowedToAutosave = Data != null && EntityType.CheckToAutosave(Data.EntityTypeCode);
+                result.modifiedDateTime = EntityData != null && !EntityData.IsNew ? EntityData.Modified.Ticks : new long?();
+                result.entityTypeAllowedToAutosave = EntityData != null && EntityType.CheckToAutosave(EntityData.EntityTypeCode);
 
-                var saveAndCloseAction = Data?.SaveAndCloseAction;
+                var saveAndCloseAction = EntityData?.SaveAndCloseAction;
                 if (saveAndCloseAction != null)
                 {
                     result.saveAndCloseActionCode = saveAndCloseAction.Code;
@@ -71,10 +78,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public override DocumentContextState DocumentContextState => string.IsNullOrWhiteSpace(SuccesfulActionCode) ? DocumentContextState.Loaded : DocumentContextState.Saved;
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public virtual string Id => EntityData.Id.ToString();
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public virtual string Name => EntityData.Name;
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
         public virtual DirectLinkOptions DirectLinkOptions
         {
             get
@@ -95,17 +111,43 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             }
         }
 
-        public virtual void Validate(ModelStateDictionary modelState)
+        public virtual void DoCustomBinding()
         {
+            EntityData.DoCustomBinding();
+        }
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var result = new List<ValidationResult>();
+
+            DoCustomBinding();
+
             try
             {
-                EntityData.Validate();
+                Validate();
             }
             catch (RulesException ex)
             {
-                ex.Extend(modelState, "Data");
-                IsValid = false;
+                result = ex.GetValidationResults("Data").ToList();
             }
+
+            var viewModelResult = ValidateViewModel();
+            if (viewModelResult != null)
+            {
+                result.AddRange(viewModelResult);
+            }
+
+            return result;
+        }
+
+        public virtual void Validate()
+        {
+            EntityData.Validate();
+        }
+
+        public virtual IEnumerable<ValidationResult> ValidateViewModel()
+        {
+            return new ValidationResult[] { };
         }
     }
 }

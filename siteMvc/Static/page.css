@@ -1,0 +1,285 @@
+HTML,
+BODY {
+  height: 100%;
+  overflow: hidden;
+}
+
+/*#region Login form*/
+.loginFormLayout #content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -100px 0 0 -150px;
+  width: 300px;
+  height: 200px;
+  background-color: #fff;
+}
+
+.loginFormLayout .formLayout dt.label {
+  width: 8em;
+  white-space: nowrap;
+}
+
+.loginFormLayout .formLayout dd.field {
+  margin-left: 8.5em;
+}
+
+.loginFormLayout .validationSummary,
+.loginFormLayout .validation-summary-errors {
+  margin-top: 0.5em;
+}
+
+.loginFormLayout .validation-summary-valid {
+  display: none;
+}
+/*#endregion*/
+
+/*#region Two column layuot*/
+.twoColumnLayout {
+  background-color: #283c52;
+  background-image: url('QP8/bg.png');
+  background-repeat: repeat;
+  height: 100%;
+}
+
+.twoColumnLayout #splitter {
+  background-color: transparent;
+  height: 100%;
+  border: none;
+  margin-right: 5px;
+}
+
+.twoColumnLayout #leftMenu {
+  position: relative;
+  margin: 0 0 0 6px;
+  padding: 0;
+}
+
+.twoColumnLayout #leftMenu .lineTop,
+.twoColumnLayout #leftMenu .lineBottom {
+  margin: 0 4px;
+  padding: 0;
+  height: 4px;
+  background-color: #fff;
+  font-size: 1px;
+}
+
+.twoColumnLayout #leftMenu .lineTop {
+  margin-top: 6px;
+}
+
+.twoColumnLayout #leftMenu .lineBottom {
+  margin-bottom: 12px;
+}
+
+.twoColumnLayout #leftMenu EM.tl,
+.twoColumnLayout #leftMenu EM.tr,
+.twoColumnLayout #leftMenu EM.bl,
+.twoColumnLayout #leftMenu EM.br {
+  width: 4px;
+  height: 4px;
+  background-image: url('QP8/tree_view/container_corners.png');
+}
+
+.twoColumnLayout #leftMenu EM.tl {
+  left: 0;
+  top: 6px;
+  background-position: -4px -4px;
+}
+
+.twoColumnLayout #leftMenu EM.tr {
+  right: 0;
+  top: 6px;
+  background-position: 0 -4px;
+}
+
+.twoColumnLayout #leftMenu EM.bl {
+  left: 0;
+  bottom: 32px;
+  background-position: -4px 0px;
+}
+
+.twoColumnLayout #leftMenu EM.br {
+  right: 0;
+  bottom: 32px;
+  background-position: 0 0;
+}
+
+.twoColumnLayout #tree {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  background-color: #fff;
+  overflow: auto;
+}
+
+.twoColumnLayout #content {
+  float: left;
+  overflow: visible;
+}
+
+.twoColumnLayout .content {
+  margin: 0 0 0 7px;
+  padding: 0;
+  overflow: auto;
+}
+
+.twoColumnLayout #splitter > .t-splitbar {
+  margin-left: 6px;
+  background: url('Common/0.gif');
+  border: none;
+}
+
+.twoColumnLayout #splitter > .t-splitbar .t-icon {
+  background: url('Common/0.gif');
+}
+
+.vsplitbar {
+  margin: 0;
+  width: 12px;
+  cursor: w-resize;
+  background-image: url('Common/0.gif');
+  background-repeat: repeat-y;
+}
+
+.vsplitbar.active {
+  background-image: url('QP8/splitter/vsplitter_active_bg.png');
+}
+
+.splitterMask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url('Common/0.gif');
+}
+
+.twoColumnLayout #tabs {
+  margin: 6px 6px 0 0px;
+  padding: 0;
+  height: 24px;
+}
+
+.twoColumnLayout #editingArea {
+  display: none;
+  position: relative;
+  top: -7px;
+  margin: 3px 6px 0 0;
+  padding: 0;
+  height: calc(100vh - 58px);
+  min-height: 480px;
+}
+
+.twoColumnLayout #editingArea .lineTop,
+.twoColumnLayout #editingArea .lineBottom {
+  margin: 0 4px;
+  padding: 0;
+  height: 4px;
+  background-color: #ffe8a6;
+  font-size: 1px;
+}
+
+.twoColumnLayout #editingArea EM.tl,
+.twoColumnLayout #editingArea EM.tr,
+.twoColumnLayout #editingArea EM.bl,
+.twoColumnLayout #editingArea EM.br {
+  width: 8px;
+  height: 8px;
+  background-image: url('QP8/editing_area/container_corners.png');
+}
+
+.twoColumnLayout #editingArea EM.tl {
+  left: -4px;
+  top: -4px;
+  background-position: 0 0;
+}
+
+.twoColumnLayout #editingArea EM.tr {
+  right: -4px;
+  top: -4px;
+  background-position: 0 0;
+}
+
+.twoColumnLayout #editingArea EM.bl {
+  left: -4px;
+  bottom: -4px;
+  background-position: 0 0;
+}
+
+.twoColumnLayout #editingArea EM.br {
+  right: -4px;
+  bottom: -4px;
+  background-position: -8px -8px;
+}
+
+.twoColumnLayout #breadCrumbs {
+  margin: 0;
+  padding: 0;
+  height: 26px;
+  background-color: #ebf5fb;
+  z-index: 9995;
+  overflow: hidden;
+}
+
+.twoColumnLayout #toolbar {
+  margin: 0;
+  padding: 0;
+  background-color: #bcc7d8;
+  z-index: 9995;
+  overflow: hidden;
+}
+
+.twoColumnLayout #actionToolbar {
+  float: left;
+}
+
+.twoColumnLayout #viewToolbar {
+  float: right;
+}
+
+.twoColumnLayout #search,
+.twoColumnLayout #context {
+  background-color: #ebf5fb;
+}
+
+.twoColumnLayout #document {
+  clear: both;
+  z-index: 4444;
+  margin: 0;
+  min-height: 200px;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.twoColumnLayout #document .documentWrapper {
+  clear: both;
+  position: relative;
+  z-index: 4444;
+  margin: 0;
+  width: auto;
+  height: 100%;
+  overflow: auto;
+  background-color: #fff;
+}
+
+.twoColumnLayout #document .documentWrapper.libraryWrapper {
+  overflow: hidden;
+}
+
+.twoColumnLayout #document .documentWrapper .editingForm,
+.twoColumnLayout #document .documentWrapper .documentPadding {
+  padding: 3px 5px;
+}
+
+.twoColumnLayout #document .loadingLayer {
+  position: absolute;
+  z-index: 5555;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  background: #eee url('QP8/icons/ajax_loaders/big_loading.gif') no-repeat center;
+}
+/*#endregion*/

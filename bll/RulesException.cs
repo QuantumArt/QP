@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
@@ -62,6 +66,64 @@ namespace Quantumart.QP8.BLL
 
             newEx.ErrorForModel(sb.ToString());
             throw newEx;
+        }
+
+        public static string GetPropertyName(LambdaExpression expr)
+        {
+            var member = expr.Body as MemberExpression;
+            if (member == null)
+            {
+                return "";
+            }
+
+            var propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+            {
+                return "";
+            }
+
+            return member.Member.Name;
+        }
+
+        public IEnumerable<ValidationResult> GetValidationResults(string prefix)
+        {
+            prefix = string.IsNullOrEmpty(prefix) ? string.Empty : prefix + ".";
+            var criticalErrors = Errors.Where(n => n.Critical).ToList();
+            foreach (var error in criticalErrors)
+            {
+                yield return GetValidationResultFromRuleViolation(prefix, error);
+            }
+
+            if (!criticalErrors.Any())
+            {
+                foreach (var error in Errors.Where(n => !n.Critical))
+                {
+                    yield return GetValidationResultFromRuleViolation(prefix, error);
+                }
+            }
+        }
+
+        private ValidationResult GetValidationResultFromRuleViolation(string prefix, RuleViolation error)
+        {
+            var name = GetPropertyName(prefix, error);
+            var members = new[] { name };
+            return new ValidationResult(error.Message, members);
+        }
+
+        private string GetPropertyName(string prefix, RuleViolation error)
+        {
+            if (error.Property != null)
+            {
+                var name = GetPropertyName(error.Property);
+                return string.IsNullOrEmpty(name) ? "" : prefix + name;
+            }
+
+            if (error.PropertyName != null)
+            {
+               return error.PropertyName;
+            }
+
+            return "";
         }
     }
 

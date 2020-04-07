@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Helpers;
@@ -6,7 +7,6 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -21,65 +21,65 @@ namespace Quantumart.QP8.BLL
 
         private const string Delimeter = ",";
 
-        [LocalizedDisplayName("NetLanguage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetLanguage", ResourceType = typeof(TemplateStrings))]
         public int? NetLanguageId { get; set; }
 
-        [LocalizedDisplayName("NetClassName", NameResourceType = typeof(TemplateStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NetTemplateNameMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetClassName", ResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NetNameMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
         public string NetTemplateName { get; set; }
 
-        [LocalizedDisplayName("FolderName", NameResourceType = typeof(TemplateStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "TemplateFolderNameMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
+        [Display(Name = "FolderName", ResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "FolderNameMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
         public string TemplateFolder { get; set; }
 
-        [LocalizedDisplayName("MaxNumberOfFormatStoredVersions", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "MaxNumberOfFormatStoredVersions", ResourceType = typeof(TemplateStrings))]
         public int MaxNumOfFormatStoredVersions { get; set; }
 
-        [LocalizedDisplayName("SendNoCacheHeader", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SendNoCacheHeader", ResourceType = typeof(TemplateStrings))]
         public bool SendNocacheHeaders { get; set; }
 
-        [LocalizedDisplayName("CodeBehind", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CodeBehind", ResourceType = typeof(TemplateStrings))]
         public string CodeBehind { get; set; }
 
-        [LocalizedDisplayName("Presentation", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Presentation", ResourceType = typeof(TemplateStrings))]
         public string TemplateBody { get; set; }
 
-        [LocalizedDisplayName("PresentationForPreview", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "PresentationForPreview", ResourceType = typeof(TemplateStrings))]
         public string PreviewTemplateBody { get; set; }
 
-        [LocalizedDisplayName("CodeBehindForPreview", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CodeBehindForPreview", ResourceType = typeof(TemplateStrings))]
         public string PreviewCodeBehind { get; set; }
 
-        [LocalizedDisplayName("EnableViewState", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "EnableViewState", ResourceType = typeof(TemplateStrings))]
         public bool EnableViewstate { get; set; }
 
-        [LocalizedDisplayName("DisableAutoDataBinding", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "DisableAutoDataBinding", ResourceType = typeof(TemplateStrings))]
         public bool DisableDatabind { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "CustomClassForGenericsMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
-        [LocalizedDisplayName("CustomClassForGenerics", NameResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "CustomClassForGenericsMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClassForGenerics", ResourceType = typeof(TemplateStrings))]
         public string CustomClassForGenerics { get; set; }
 
-        [MaxLengthValidator(255, MessageTemplateResourceName = "CustomClassForPublishingContainersMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
-        [LocalizedDisplayName("CustomClassForPublishingContainers", NameResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "CustomClassForPublishingContainersMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClassForPublishingContainers", ResourceType = typeof(TemplateStrings))]
         public string CustomClassForContainers { get; set; }
 
-        [LocalizedDisplayName("CustomClassForPublishingForms", NameResourceType = typeof(TemplateStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "CustomClassForFormsMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClassForPublishingForms", ResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "CustomClassForFormsMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
         public string CustomClassForForms { get; set; }
 
-        [LocalizedDisplayName("Charset", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Charset", ResourceType = typeof(TemplateStrings))]
         public string Charset { get; set; }
 
-        [LocalizedDisplayName("Locale", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "Locale", ResourceType = typeof(TemplateStrings))]
         public int Locale { get; set; }
 
-        [LocalizedDisplayName("CustomClassForPages", NameResourceType = typeof(TemplateStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "CustomClassForPagesMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClassForPages", ResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "CustomClassForPagesMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
         public string CustomClassForPages { get; set; }
 
-        [LocalizedDisplayName("CustomClassForTemplate", NameResourceType = typeof(TemplateStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "CustomClassForTemplatesMaxLengthExceeded", MessageTemplateResourceType = typeof(TemplateStrings))]
+        [Display(Name = "CustomClassForTemplate", ResourceType = typeof(TemplateStrings))]
+        [StringLength(255, ErrorMessageResourceName = "CustomClassForTemplatesMaxLengthExceeded", ErrorMessageResourceType = typeof(TemplateStrings))]
         public string TemplateCustomClass { get; set; }
 
         public int SiteId { get; set; }
@@ -99,16 +99,16 @@ namespace Quantumart.QP8.BLL
             Locale = PageTemplateRepository.GetLocaleByName("Russian").Id
         };
 
-        [LocalizedDisplayName("ApplyToExistingPagesAndObjects", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ApplyToExistingPagesAndObjects", ResourceType = typeof(TemplateStrings))]
         public bool ApplyToExistingPagesAndObjects { get; set; }
 
-        [LocalizedDisplayName("ApplyToExistingObjects", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "ApplyToExistingObjects", ResourceType = typeof(TemplateStrings))]
         public bool ApplyToExistingObjects { get; set; }
 
-        [LocalizedDisplayName("OverridePageSettings", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "OverridePageSettings", ResourceType = typeof(TemplateStrings))]
         public bool OverridePageSettings { get; set; }
 
-        [LocalizedDisplayName("OverrideObjectSettings", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "OverrideObjectSettings", ResourceType = typeof(TemplateStrings))]
         public bool OverrideObjectSettings { get; set; }
 
         public override void Validate()
@@ -232,7 +232,7 @@ namespace Quantumart.QP8.BLL
 
         private readonly InitPropertyValue<IEnumerable<AdditionalNamespace>> _additionalNamespaceItems;
 
-        [LocalizedDisplayName("AdditionalNamespases", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "AdditionalNamespases", ResourceType = typeof(TemplateStrings))]
         public IEnumerable<AdditionalNamespace> AdditionalNamespaceItems
         {
             get => _additionalNamespaceItems.Value;

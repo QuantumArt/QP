@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Microsoft.Extensions.Primitives;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
@@ -15,7 +15,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
     internal static class XmlDbUpdateSerializerHelpers
     {
-        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl) => SerializeAction(action, currentDbVersion, backendUrl, false);
+        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl)
+        {
+            return SerializeAction(action, currentDbVersion, backendUrl, false);
+        }
 
         internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl, bool withoutRoot)
         {
@@ -143,9 +146,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return result.Where(r => r.Value != null).Select(r => new XAttribute(r.Key, r.Value));
         }
 
-        private static IEnumerable<XElement> GetActionChildElements(NameValueCollection nvc)
+        private static IEnumerable<XElement> GetActionChildElements(Dictionary<string, StringValues> form)
         {
-            return nvc?.AllKeys.SelectMany(k => nvc.GetValues(k) ?? Enumerable.Empty<string>(), (fieldNameAttributeValue, fieldElementValue) =>
+            return form?.Keys.Where(n => n != "__RequestVerificationToken")
+                .SelectMany(k => ((string[])form[k]) ?? Enumerable.Empty<string>(), (fieldNameAttributeValue, fieldElementValue) =>
             {
                 var fieldElement = new XElement(XmlDbUpdateXDocumentConstants.FieldElement, fieldElementValue);
                 fieldElement.SetAttributeValue(XmlDbUpdateXDocumentConstants.FieldNameAttribute, fieldNameAttributeValue);
@@ -277,13 +281,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
-        private static NameValueCollection GetActionFields(XContainer root)
+        private static Dictionary<string, StringValues> GetActionFields(XContainer root)
         {
-            return root.Elements().Aggregate(new NameValueCollection(), (seed, curr) =>
+            var result = new Dictionary<string, StringValues>();
+            foreach (var elem in root.Elements())
             {
-                seed.Add(curr.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute)?.Value, curr.Value);
-                return seed;
-            });
+                var key = elem.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute)?.Value;
+                if (!string.IsNullOrEmpty(key))
+                {
+                    if (result.ContainsKey(key))
+                    {
+                        result[key] = StringValues.Concat(result[key], elem.Value);
+                    }
+                    else
+                    {
+                        result[key] = elem.Value;
+                    }
+                }
+            }
+
+            return result;
         }
 
         private static DateTime GetExecuted(XElement action, int lcid) =>

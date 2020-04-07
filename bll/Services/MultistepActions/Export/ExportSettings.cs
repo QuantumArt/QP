@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Configuration;
@@ -17,11 +19,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             _dateForFileName = DateTime.Now;
             _fieldsToExpand = new Lazy<Field[]>(GetFieldsToExpand);
             _fieldsToExpandSettings = new Lazy<IEnumerable<FieldSetting>>(GetFieldsToExpandSettings);
+            CustomFieldIds = new List<int>();
+            FieldIdsToExpand = new List<int>();
+            FieldNames = new List<string>();
+            HeaderNames = new List<string>();
+            Extensions = new List<Extension>();
         }
 
         public int ContentId { get; set; }
 
-        public bool isArchive { get; set; }
+        public int SiteId { get; set; }
+
+        public bool IsArchive { get; set; }
 
         public string Encoding { get; set; }
 
@@ -35,40 +44,44 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public bool ExcludeSystemFields { get; set; }
 
-        public int[] CustomFieldIds { get; set; }
+        public List<int> CustomFieldIds { get; set; }
 
-        public int[] FieldIdsToExpand { get; set; }
+        public List<int> FieldIdsToExpand { get; set; }
 
+        [JsonIgnore]
         public Field[] FieldsToExpand => _fieldsToExpand.Value;
 
+        [JsonIgnore]
         public IEnumerable<FieldSetting> FieldsToExpandSettings => _fieldsToExpandSettings.Value;
 
         private string _orderByField = string.Empty;
         private readonly Lazy<Field[]> _fieldsToExpand;
         private readonly Lazy<IEnumerable<FieldSetting>> _fieldsToExpandSettings;
 
+        [JsonIgnore]
         public string OrderByField
         {
             get => _orderByField;
             set => _orderByField = value.Replace("ID", "content_item_id");
         }
 
+        [JsonIgnore]
         public string UploadFilePath
         {
             get
             {
                 var fileName = $"content_{ContentId}_{_dateForFileName.Year}_{_dateForFileName.Month}_{_dateForFileName.Day}_{_dateForFileName.Hour}_{_dateForFileName.Minute}_{_dateForFileName.Second}.csv";
-                return $"{QPConfiguration.TempDirectory}\\{fileName}";
+                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileName}";
             }
         }
 
-        public string[] FieldNames { get; set; }
+        public List<string> FieldNames { get; set; }
 
-        public string[] HeaderNames { get; set; }
+        public List<string> HeaderNames { get; set; }
 
-        public string Extensions { get; set; }
+        public string ExtensionsStr { get; set; }
 
-        public IEnumerable<Extension> extensionsList { get; set; }
+        public List<Extension> Extensions { get; set; }
 
         private Field[] GetFieldsToExpand() => FieldIdsToExpand != null && FieldIdsToExpand.Any() ? FieldRepository.GetList(FieldIdsToExpand).ToArray() : new Field[] { };
 
@@ -83,9 +96,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                     Field = rm,
                     DisplayField = GetDisplayField(rm)
                 })
-            }).Select((n, i) => new FieldSetting(n.Field, i + 1, n.DisplayField, ContentId, extensionsList)
+            }).Select((n, i) => new FieldSetting(n.Field, i + 1, n.DisplayField, ContentId, Extensions)
             {
-                Related = n.DisplayFields.Select((m, j) => new FieldSetting(m.Field, (i + 1) * 100 + j + 1, m.DisplayField, ContentId, extensionsList)).ToList()
+                Related = n.DisplayFields.Select((m, j) => new FieldSetting(m.Field, (i + 1) * 100 + j + 1, m.DisplayField, ContentId, Extensions)).ToList()
             }).ToArray();
         }
 
@@ -172,11 +185,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
             public string RelationFieldName => Fields.Any() ? Fields.Single(s=>s.Aggregated).Name : string.Empty;
 
-           public IEnumerable<Field> Fields { get; set; }
+           public List<Field> Fields { get; set; }
 
             public Extension()
             {
-                Fields = Enumerable.Empty<Field>();
+                Fields = new List<Field>();
             }
         }
     }

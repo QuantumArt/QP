@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Configuration;
 
@@ -12,9 +13,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public DateTime DateTimeOnStart { get; set; }
 
-        public string PathForFileWithLinks => $"{QPConfiguration.TempDirectory}\\copy_site_{DestinationSiteId}_links_{GetDateTimeForFileName()}.xml";
+        public string PathForFileWithLinks => $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}copy_site_{DestinationSiteId}_links_{GetDateTimeForFileName()}.xml";
 
-        public string PathForFileWithFilesToCopy => $"{QPConfiguration.TempDirectory}\\copy_site_{DestinationSiteId}_files_buffer_{GetDateTimeForFileName()}.txt";
+        public string PathForFileWithFilesToCopy => $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}copy_site_{DestinationSiteId}_files_buffer_{GetDateTimeForFileName()}.txt";
 
         public int? DoNotCopyArticles { get; set; }
 

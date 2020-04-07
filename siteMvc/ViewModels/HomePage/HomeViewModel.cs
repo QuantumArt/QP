@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
@@ -19,19 +19,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
             return model;
         }
 
-        [LocalizedDisplayName("LoggedAs", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "LoggedAs", ResourceType = typeof(HomeStrings))]
         public string LoggedAs => CurrentUser.FullName;
 
-        [LocalizedDisplayName("Search", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "Search", ResourceType = typeof(HomeStrings))]
         public string Search { get; set; }
 
-        [LocalizedDisplayName("Site", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "Site", ResourceType = typeof(HomeStrings))]
         public int SiteId { get; set; }
 
-        [LocalizedDisplayName("LockedCount", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "LockedCount", ResourceType = typeof(HomeStrings))]
         public int LockedCount { get; set; }
 
-        [LocalizedDisplayName("ApprovalCount", NameResourceType = typeof(HomeStrings))]
+        [Display(Name = "ApprovalCount", ResourceType = typeof(HomeStrings))]
         public int ApprovalCount { get; set; }
 
         public IEnumerable<ListItem> Sites { get; set; }

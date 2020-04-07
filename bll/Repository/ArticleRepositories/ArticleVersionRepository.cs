@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Objects;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Dynamic;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
+using Quantumart.QP8.Utils.Sorting;
+using Remotion.Linq.Clauses;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 {
@@ -18,8 +23,22 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-            var query = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            return MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(query, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
+
+
+            var result = QPContext.EFContext
+                .ArticleVersionSet
+                .Where(x => x.ArticleId == articleId)
+                .Include(x => x.LastModifiedByUser)
+                .Include(x => x.CreatedByUser)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(command.SortExpression))
+            {
+                result = result.OrderBy(command.SortExpression);
+            }
+
+
+            return MapperFacade.ArticleVersionMapper.GetBizList(result.ToList());
         }
 
         /// <summary>
@@ -52,18 +71,19 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 }
 
                 var article = ArticleRepository.GetById(articleId);
-                articleVersion = new ArticleVersion { ArticleId = articleId, Id = id, Modified = article.Modified, LastModifiedBy = article.LastModifiedBy, LastModifiedByUser = article.LastModifiedByUser, Article = article };
+                articleVersion = new ArticleVersion
+                {
+                    ArticleId = articleId,
+                    Id = id,
+                    Modified = article.Modified,
+                    LastModifiedBy = article.LastModifiedBy,
+                    LastModifiedByUser = article.LastModifiedByUser,
+                    Article = article
+                };
             }
             else
             {
-                var articleVersionDal = DefaultRepository.GetById<ArticleVersionDAL>(id);
-                if (articleVersionDal == null)
-                {
-                    return null;
-                }
-
-                articleVersionDal.LastModifiedByUserReference.Load();
-
+                var articleVersionDal = QPContext.EFContext.ArticleVersionSet.Include(n => n.LastModifiedByUser).SingleOrDefault(n => n.Id == id);
                 articleVersion = MapperFacade.ArticleVersionMapper.GetBizObject(articleVersionDal);
                 if (articleVersion != null)
                 {
@@ -84,7 +104,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleVersionRow(QPConnectionScope.Current.DbConnection, articleId, id);
+                return Common.GetArticleVersionRow(QPContext.EFContext, QPConnectionScope.Current.DbConnection, articleId, id);
             }
         }
 

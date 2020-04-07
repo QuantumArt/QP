@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.ListItems;
@@ -17,6 +20,9 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class SiteService
     {
+
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public static SiteInitListResult InitList(int parentId) => new SiteInitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewSite)
@@ -100,7 +106,6 @@ namespace Quantumart.QP8.BLL.Services
             SiteRepository.Delete(id);
             return null;
         }
-
         public static MessageResult AssembleContentsPreAction(int id)
         {
             var site = SiteRepository.GetById(id);
@@ -122,11 +127,12 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var sqlMetalPath = QPConfiguration.ConfigVariable(Config.SqlMetalKey);
+            var extDbType = (QP.ConfigurationService.Models.DatabaseType)QPContext.DatabaseType;
 
             if (site.ExternalDevelopment)
             {
-                var liveTempDirectory = $@"{site.TempDirectoryForClasses}\live";
-                var stageTempDirectory = $@"{site.TempDirectoryForClasses}\stage";
+                var liveTempDirectory = $@"{site.TempDirectoryForClasses}{Path.DirectorySeparatorChar}live";
+                var stageTempDirectory = $@"{site.TempDirectoryForClasses}{Path.DirectorySeparatorChar}stage";
 
                 if (Directory.Exists(liveTempDirectory))
                 {
@@ -144,26 +150,25 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     File.Delete(site.TempArchiveForClasses);
                 }
-
-                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString)
+                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType)
                 {
                     SiteRoot = liveTempDirectory,
                     IsLive = true,
                     DisableClassGeneration = site.DownloadEfSource
                 }.Assemble();
 
-                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString)
+                new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType)
                 {
                     SiteRoot = stageTempDirectory,
                     IsLive = false,
                     DisableClassGeneration = site.DownloadEfSource
                 }.Assemble();
-
+                var urlHelper =  HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
-                return MessageResult.Download($"/Backend/Site/GetClassesZip/{id}");
+                return MessageResult.Download(urlHelper.Content($"~/Site/GetClassesZip/{id}"));
             }
+            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString, extDbType).Assemble();
 
-            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
             return null;
         }
 

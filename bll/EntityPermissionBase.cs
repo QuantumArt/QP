@@ -1,21 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class EntityPermissionBase : EntityObject
     {
-        [LocalizedDisplayName("User", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "User", ResourceType = typeof(EntityPermissionStrings))]
         public int? UserId { get; set; }
 
-        [LocalizedDisplayName("Group", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "Group", ResourceType = typeof(EntityPermissionStrings))]
         public int? GroupId { get; set; }
 
-        [LocalizedDisplayName("PermissionLevel", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "PermissionLevel", ResourceType = typeof(EntityPermissionStrings))]
         public int PermissionLevelId { get; set; }
 
         public override int ParentEntityId { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public override string Name
         {
             get { return null; }

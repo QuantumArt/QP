@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -133,7 +133,7 @@
     <value>Физический путь для файлов сборок имеет некорректный формат</value>
   </data>
   <data name="AssemblyPathMaxLengthExceeded" xml:space="preserve">
-    <value>Длина физического пути для файлов сборок не должна превышать {5} символов</value>
+    <value>Длина физического пути для файлов сборок не должна превышать {1} символов</value>
   </data>
   <data name="AssemblyPathNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите физический путь для файлов сборок</value>
@@ -148,7 +148,7 @@
     <value>DNS имеет некорректный формат</value>
   </data>
   <data name="DnsMaxLengthExceeded" xml:space="preserve">
-    <value>Длина DNS не должна превышать {5} символов</value>
+    <value>Длина DNS не должна превышать {1} символов</value>
   </data>
   <data name="DnsNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите DNS!</value>
@@ -214,7 +214,7 @@
     <value>Физический путь для страниц сайта в Основном режиме имеет некорректный формат</value>
   </data>
   <data name="LiveDirectoryMaxLengthExceeded" xml:space="preserve">
-    <value>Длина физического пути для страниц сайта в Основном режиме не должна превышать {5} символов</value>
+    <value>Длина физического пути для страниц сайта в Основном режиме не должна превышать {1} символов</value>
   </data>
   <data name="LiveDirectoryNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите физический путь для страниц сайта в Основном режиме</value>
@@ -226,7 +226,7 @@
     <value>Виртуальный путь для страниц сайта в Основном режиме имеет некорректный формат</value>
   </data>
   <data name="LiveVirtualRootMaxLengthExceeded" xml:space="preserve">
-    <value>Длина виртуального пути для страниц сайта в Основном режиме не должна превышать {5} символов</value>
+    <value>Длина виртуального пути для страниц сайта в Основном режиме не должна превышать {1} символов</value>
   </data>
   <data name="LiveVirtualRootNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите виртуальный путь для станиц сайта в Основном режиме!</value>
@@ -238,7 +238,7 @@
     <value>Некорректное имя сайта</value>
   </data>
   <data name="NameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени сайта не должна превышать {5} символов</value>
+    <value>Длина имени сайта не должна превышать {1} символов</value>
   </data>
   <data name="NameNonUnique" xml:space="preserve">
     <value>Такое имя сайта уже используется</value>
@@ -283,7 +283,7 @@
     <value>Физический путь для файлов сборок в Тестовом режиме имеет некорректный формат</value>
   </data>
   <data name="StageAssemblyPathMaxLengthExceeded" xml:space="preserve">
-    <value>Длина физического пути для файлов сборок в Тестовом режиме не должна превышать {5} символов</value>
+    <value>Длина физического пути для файлов сборок в Тестовом режиме не должна превышать {1} символов</value>
   </data>
   <data name="StageAssemblyPathNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите физический путь для файлов сборок в Тестовом режиме</value>
@@ -295,7 +295,7 @@
     <value>Физический путь для страниц сайта в Тестовом режиме имеет некорректный формат</value>
   </data>
   <data name="StageDirectoryMaxLengthExceeded" xml:space="preserve">
-    <value>Длина физического пути для страниц сайта в Тестовом режиме не должна превышать {5} символов</value>
+    <value>Длина физического пути для страниц сайта в Тестовом режиме не должна превышать {1} символов</value>
   </data>
   <data name="StageDirectoryNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите физический путь для страниц сайта в Тестовом режиме</value>
@@ -307,7 +307,7 @@
     <value>DNS для тестового режима имеет некорректный формат</value>
   </data>
   <data name="StageDnsMaxLengthExceeded" xml:space="preserve">
-    <value>Длина DNS для Тестового режима не должна превышать {5} символов</value>
+    <value>Длина DNS для Тестового режима не должна превышать {1} символов</value>
   </data>
   <data name="StageDnsNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите DNS для Тестового режима</value>
@@ -319,7 +319,7 @@
     <value>Виртуальный путь для страниц сайта в Тестовом режиме имеет некорректный формат</value>
   </data>
   <data name="StageVirtualRootMaxLengthExceeded" xml:space="preserve">
-    <value>Длина виртуального пути для страниц сайта в Тестовом режиме не должна превышать {5} символов</value>
+    <value>Длина виртуального пути для страниц сайта в Тестовом режиме не должна превышать {1} символов</value>
   </data>
   <data name="StageVirtualRootNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите виртуальный путь для страниц сайта в Тестовом режиме</value>
@@ -331,13 +331,13 @@
     <value>Физический путь к тестовой папке имеет некорректный формат</value>
   </data>
   <data name="TestDirectoryMaxLengthExceeded" xml:space="preserve">
-    <value>Длина физического пути к тестовой папке не должна превышать {5} символов</value>
+    <value>Длина физического пути к тестовой папке не должна превышать {1} символов</value>
   </data>
   <data name="UploadDirInvalidFormat" xml:space="preserve">
     <value>Физический путь для загрузки файлов имеет некорректный формат</value>
   </data>
   <data name="UploadDirMaxLengthExceeded" xml:space="preserve">
-    <value>Длина физического пути для загрузки файлов не должна превышать {5} символов</value>
+    <value>Длина физического пути для загрузки файлов не должна превышать {1} символов</value>
   </data>
   <data name="UploadDirNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите физический путь для загрузки файлов</value>
@@ -352,7 +352,7 @@
     <value>Виртуальный путь для загрузки файлов имеет некорректный формат</value>
   </data>
   <data name="UploadUrlMaxLengthExceeded" xml:space="preserve">
-    <value>Длина виртуального пути для загрузки файлов не должна превышать {5} символов</value>
+    <value>Длина виртуального пути для загрузки файлов не должна превышать {1} символов</value>
   </data>
   <data name="UploadUrlNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите виртуальный путь для загрузки файлов</value>
@@ -364,7 +364,7 @@
     <value>Префикс виртуального пути для загрузки файлов имеет некорректный формат</value>
   </data>
   <data name="UploadUrlPrefixMaxLengthExceeded" xml:space="preserve">
-    <value>Длина префикса виртуального пути для загрузки файлов не должна превышать {5} символов</value>
+    <value>Длина префикса виртуального пути для загрузки файлов не должна превышать {1} символов</value>
   </data>
   <data name="UseAbsoluteUploadUrl" xml:space="preserve">
     <value>Использовать абсолютный виртуальный путь</value>
@@ -421,13 +421,13 @@
     <value>Некорректное имя строки подключения</value>
   </data>
   <data name="ConnectionStringNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени строки подключения не должна превышать {5} символов</value>
+    <value>Длина имени строки подключения не должна превышать {1} символов</value>
   </data>
   <data name="ContextClassNameInvalidFormat" xml:space="preserve">
     <value>Некорректное имя контекстного класса</value>
   </data>
   <data name="ContextClassNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени контекстного класса не должна превышать {5} символов</value>
+    <value>Длина имени контекстного класса не должна превышать {1} символов</value>
   </data>
   <data name="DbIndependent" xml:space="preserve">
     <value>Выполнять генерацию, независимую от БД</value>
@@ -445,7 +445,7 @@
     <value>Некорректное пространство имен</value>
   </data>
   <data name="NamespaceMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени пространства имен не должна превышать {5} символов</value>
+    <value>Длина имени пространства имен не должна превышать {1} символов</value>
   </data>
   <data name="PEnterMode" xml:space="preserve">
     <value>Вставлять тег P при нажатии Enter</value>
@@ -460,7 +460,7 @@
     <value>Описание</value>
   </data>
   <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
-    <value>Длина описания не должна превышать {5} символов</value>
+    <value>Длина описания не должна превышать {1} символов</value>
   </data>
   <data name="ContextClassNameNonUnique" xml:space="preserve">
     <value>Имя контекстного класса (с учетом пространства имен) не является уникальным на уровне сайта</value>

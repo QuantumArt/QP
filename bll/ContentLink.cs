@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -27,24 +30,27 @@ namespace Quantumart.QP8.BLL
 
         public bool IsNew => LinkId == default(int);
 
-        [LocalizedDisplayName("Symmetric", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "Symmetric", ResourceType = typeof(FieldStrings))]
         public bool Symmetric { get; set; }
 
-        [LocalizedDisplayName("MapLinkAsClass", NameResourceType = typeof(FieldStrings))]
+        [Display(Name = "MapLinkAsClass", ResourceType = typeof(FieldStrings))]
         public bool MapAsClass { get; set; }
 
-        [LocalizedDisplayName("NetLinkName", NameResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NetLinkNameInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NetLinkNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "NetLinkName", ResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "NetLinkNameInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NetLinkNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string NetLinkName { get; set; }
 
-        [LocalizedDisplayName("NetPluralLinkName", NameResourceType = typeof(FieldStrings))]
-        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NetPluralLinkNameInvalidFormat", MessageTemplateResourceType = typeof(FieldStrings))]
-        [MaxLengthValidator(255, MessageTemplateResourceName = "NetPluralLinkNameMaxLengthExceeded", MessageTemplateResourceType = typeof(FieldStrings))]
+        [Display(Name = "NetPluralLinkName", ResourceType = typeof(FieldStrings))]
+        [RegularExpression(RegularExpressions.NetName, ErrorMessageResourceName = "NetPluralLinkNameInvalidFormat", ErrorMessageResourceType = typeof(FieldStrings))]
+        [StringLength(255, ErrorMessageResourceName = "NetPluralLinkNameMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string NetPluralLinkName { get; set; }
 
         private Content _content;
 
+        [BindNever]
+        [ValidateNever]
+        [JsonIgnore]
         public Content Content
         {
             get => _content ?? (_content = ContentRepository.GetById(LContentId));

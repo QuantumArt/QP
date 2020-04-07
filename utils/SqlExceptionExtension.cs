@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Quantumart.QP8.Utils
 {
-	public static class SqlExceptionExtension
+	public static class DbExceptionExtension
 	{
 		public static string ErrorsToString(this SqlException ex)
 		{

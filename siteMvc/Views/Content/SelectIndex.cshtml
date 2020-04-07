@@ -1,41 +1,31 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.Content.ContentSelectableListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-    @(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-            {
-                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                    .Width(30)
-                    .HtmlAttributes(new { @class = "id" });
-                c.Bound(s => s.GroupName).Title(ContentStrings.GroupName);
-                c.Bound(s => s.Name)
-                    .Title(EntityObjectStrings.Name)
-                    .HtmlAttributes(new { @class = "title" });
-
-                c.Bound(s => s.SiteName).Title(ContentStrings.ParentSiteName);
-
-                c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
-            })
-        .DataBinding(db => db.Ajax()
-            .Select(Model.GetDataAction, "Content")
-        )
-        .EnableCustomBinding(true)
-        .Sortable()
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e
-                .OnDataBinding("$q.preventDefaultFunction")
-                .OnRowDataBound("$q.preventDefaultFunction")
-        )
-    )
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
+          { field: 'GroupName', title: '@ContentStrings.GroupName' },
+          { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+          { field: 'SiteName', title: '@ContentStrings.ParentSiteName' },
+          { field: 'Description', title: '@EntityObjectStrings.Description' }
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GetDataAction, "Content", new { tabId = Model.TabId, parentId = Model.ParentEntityId })"
+            },
+          },
+          pagesize: '@Default.GridPageSize',
+        },
+      });
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -86,92 +85,5 @@ namespace Quantumart.QP8.Validators
 
         internal static bool IsValidMethod(MethodInfo methodInfo) => null != methodInfo && typeof(void) != methodInfo.ReturnType && methodInfo.GetParameters().Length == 0;
 
-        internal static T ExtractValidationAttribute<T>(MemberInfo attributeProvider, string ruleset)
-            where T : BaseValidationAttribute
-        {
-            return attributeProvider != null
-                ? GetCustomAttributes(attributeProvider, typeof(T), false).Cast<T>().FirstOrDefault(attribute => ruleset.Equals(attribute.Ruleset))
-                : null;
-        }
-
-        internal static T ExtractValidationAttribute<T>(ParameterInfo attributeProvider, string ruleset)
-            where T : BaseValidationAttribute
-        {
-            return attributeProvider?.GetCustomAttributes(typeof(T), false).Cast<T>().FirstOrDefault(attribute => ruleset.Equals(attribute.Ruleset));
-        }
-
-        /// <summary>
-        /// Retrieves an array of the custom attributes applied to a member of a type, looking for the existence
-        /// of a metadata type where the attributes are actually specified.
-        /// Parameters specify the member, the type of the custom attribute to search
-        /// for, and whether to search ancestors of the member.
-        /// </summary>
-        /// <param name="element">
-        /// An object derived from the <see cref="MemberInfo" /> class that describes a
-        /// constructor, event, field, method, or property member of a class.
-        /// </param>
-        /// <param name="attributeType">The type, or a base type, of the custom attribute to search for.</param>
-        /// <param name="inherit">
-        /// If <see langword="true" />, specifies to also search the ancestors of element for
-        /// custom attributes.
-        /// </param>
-        /// <returns>
-        /// An <see cref="Attribute" /> array that contains the custom attributes of type type applied to
-        /// element, or an empty array if no such custom attributes exist.
-        /// </returns>
-        /// <seealso cref="MetadataTypeAttribute" />
-        public static Attribute[] GetCustomAttributes(MemberInfo element, Type attributeType, bool inherit)
-        {
-            var matchingElement = GetMatchingElement(element);
-            return Attribute.GetCustomAttributes(matchingElement, attributeType, inherit);
-        }
-
-        private static MemberInfo GetMatchingElement(MemberInfo element)
-        {
-            var sourceType = element as Type;
-            var elementIsType = sourceType != null;
-            if (sourceType == null)
-            {
-                sourceType = element.DeclaringType;
-            }
-
-            var metadataTypeAttribute = (MetadataTypeAttribute)Attribute.GetCustomAttribute(sourceType, typeof(MetadataTypeAttribute), false);
-            if (metadataTypeAttribute == null)
-            {
-                return element;
-            }
-
-            sourceType = metadataTypeAttribute.MetadataClassType;
-            if (elementIsType)
-            {
-                return sourceType;
-            }
-
-            var matchingMembers = sourceType.GetMember(element.Name, element.MemberType, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (matchingMembers.Length > 0)
-            {
-                var methodBase = element as MethodBase;
-                if (methodBase == null)
-                {
-                    return matchingMembers[0];
-                }
-
-                var parameterTypes = methodBase.GetParameters().Select(pi => pi.ParameterType).ToArray();
-                return matchingMembers.Cast<MethodBase>().FirstOrDefault(mb => MatchMethodBase(mb, parameterTypes)) ?? element;
-            }
-
-            return element;
-        }
-
-        private static bool MatchMethodBase(MethodBase mb, Type[] parameterTypes)
-        {
-            var parameters = mb.GetParameters();
-            if (parameters.Length != parameterTypes.Length)
-            {
-                return false;
-            }
-
-            return !parameters.Where((t, i) => t.ParameterType != parameterTypes[i]).Any();
-        }
     }
 }

@@ -1,11 +1,12 @@
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class CssController : QPController
+    public class CssController : AuthQpController
     {
         private readonly IStatusTypeService _statusTypeService;
 
@@ -14,10 +15,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _statusTypeService = statusTypeService;
         }
 
-        public ActionResult CustomCss()
+        public async Task<ActionResult> CustomCss()
         {
-            HttpContext.Response.ContentType = "text/css";
-            return Content(RenderPartialView("CustomCss", new CustomCssViewModel(_statusTypeService.GetColouredStatuses())));
+            var viewModel = new CustomCssViewModel(_statusTypeService.GetColouredStatuses());
+            string content = await RenderPartialView("CustomCss", viewModel);
+            return Content(content, "text/css");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewPageTemplate : Constants.ActionCode.PageTemplateProperties;
 
-        public new BLL.PageTemplate Data
+        public BLL.PageTemplate Data
         {
             get => (BLL.PageTemplate)EntityData;
             set => EntityData = value;
@@ -43,8 +43,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public List<ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
+
             if (Data.SiteIsDotNet && string.IsNullOrWhiteSpace(Data.NetTemplateName))
             {
                 Data.GenerateNetName();

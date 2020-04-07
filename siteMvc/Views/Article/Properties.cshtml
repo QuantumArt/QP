@@ -4,19 +4,19 @@
 
 @if (!Model.Data.IsUpdatableWithWorkflow)
 {
-    @Html.Warning(Model.WorkflowWarning)
+    @Html.Warning(Html.Raw(Model.WorkflowWarning))
 }
 
 @if (Model.Data.ViewType == ArticleViewType.ReadOnlyBecauseOfRelationSecurity)
 {
-    @Html.Warning(Model.RelationSecurityWarning)
+    @Html.Warning(Html.Raw(Model.RelationSecurityWarning))
 }
 
 @using (Html.BeginTabForm(Model))
 {
   if (Model.ShowLockInfo)
   {
-        @Html.Partial("Locking", Model)
+    <partial name="Locking" model="@Model" />
   }
 
   if (Model.Data.UseVariations)
@@ -54,12 +54,12 @@
 
   if (!Model.IsReadOnly)
   {
-        @Html.Partial("Schedule", Model)
-        @Html.Partial("Workflow", Model)
+    <partial name="Schedule" model="@Model" />
+    <partial name="Workflow" model="@Model" />
   }
 
-    @Html.Partial("Version", Model.Data)
-    @Html.Partial("EntityDirectLink", Model)
+  <partial name="Version" model="@Model.Data" />
+    <partial name="EntityDirectLink" model="@Model" />
 }
 
 @Html.PrepareInitScript(Model)

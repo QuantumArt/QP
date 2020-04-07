@@ -59,7 +59,7 @@ export class Home {
         title: $l.Home.search
       });
 
-      $div.append($('<img/>', { src: '/Backend/Content/Common/0.gif' }));
+      $div.append($('<img/>', { src: 'Static/Common/0.gif' }));
       $wrapper.append($div);
       $div.on('click', onSubmit);
 

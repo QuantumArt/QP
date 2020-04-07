@@ -1,5 +1,5 @@
-using System.Web.Mvc;
-using Quantumart.QP8.BLL.Services.MultistepActions;
+using Microsoft.AspNetCore.Mvc;
+using Quantumart.QP8.BLL.Services.MultistepActions.Assemble;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -8,7 +8,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class AssembleTemplateFromObjectListController : AssembleTemplateBaseController
     {
-        public AssembleTemplateFromObjectListController(IMultistepActionService service)
+        public AssembleTemplateFromObjectListController(AssembleTemplateService service)
             : base(service)
         {
         }

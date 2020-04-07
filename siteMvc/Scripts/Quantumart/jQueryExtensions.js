@@ -1,4 +1,5 @@
-/* eslint-disable no-restricted-properties, no-param-reassign */
+/* eslint-disable no-restricted-properties, no-param-reassign, no-console */
+
 // eslint-disable-next-line id-length, no-shadow
 (function ($) {
   const colors = {
@@ -331,6 +332,69 @@
         zmax += def.inc;
         $(this).css('z-index', zmax);
       });
+    },
+
+    // Инициализатор грида
+    // https://demos.telerik.com/kendo-ui/grid/index
+    // https://docs.telerik.com/kendo-ui/framework/templates/overview
+    qpGrid(opt) {
+      (function checkGridParams() {
+        try {
+          if (!opt.columns) {
+            console.error('Columns is required');
+          }
+          if (!opt.dataSource.transport.read.url) {
+            console.error('Url is required');
+          }
+        } catch (e) {
+          console.error(e, opt, 'Grid options lack of required keys');
+        }
+      }());
+      return $(this).kendoGrid($.extend(true, {
+        noRecords: {
+          template: 'No records to display.'
+        },
+        reorderable: true,
+        selectable: true,
+        scrollable: false,
+        pageable: {
+          alwaysVisible: false
+        },
+        sortable: {
+          allowUnsort: true
+        },
+        autoBind: false,
+        dataSource: {
+          transport: {
+            read: {
+              type: 'post',
+              dataType: 'json'
+            },
+
+            /**
+             * @param {kendo.data.DataSourceTransportParameterMapData} data
+             * @returns Query params
+             */
+            parameterMap(data) {
+              const params = {
+                page: data.page,
+                pageSize: data.pageSize
+              };
+              if (data.sort && data.sort.length) {
+                params.orderBy = `${data.sort[0].field}-${data.sort[0].dir}`;
+              }
+              return params;
+            }
+          },
+          schema: {
+            data: 'data',
+            total: 'total'
+          },
+          pageSize: 20,
+          serverPaging: true,
+          serverSorting: true
+        }
+      }, opt)).addClass(`qpGrid ${opt.class}`);
     }
   });
 

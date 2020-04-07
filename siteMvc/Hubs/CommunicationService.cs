@@ -1,21 +1,23 @@
-using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Quantumart.QP8.BLL.Services.DbServices;
+using System.Threading.Tasks;
 
 namespace Quantumart.QP8.WebMvc.Hubs
 {
     public class CommunicationService : ICommunicationService
     {
-        private readonly IHubContext<ICommunicationService> _context;
+        private readonly IHubContext<CommunicationHub> _context;
 
-        public CommunicationService()
+        public CommunicationService(IHubContext<CommunicationHub> context)
         {
-            _context = GlobalHost.ConnectionManager.GetHubContext<ICommunicationService>("communication");
+            _context = context;
         }
 
-        public void Send(string key, object value)
+        public async Task Send(string key, object value)
         {
-            var dbHash = DbService.GetDbHash();
-            _context.Clients.Group(dbHash).Send(key, value);
+            string dbHash = DbService.GetDbHash();
+
+            await _context.Clients.Group(dbHash).SendAsync("Message", key, value);
         }
     }
 }

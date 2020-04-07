@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Constants;
@@ -12,8 +13,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportArticlesService : MultistepActionServiceAbstract
     {
-        private ExportArticlesCommand _command;
-
         public void SetupWithParams(int parentId, int id, int[] ids, ExportSettings settingsParams)
         {
             var contentId = ids == null ? id : parentId;
@@ -24,7 +23,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             settingsParams.ContentId = content.Id;
-            HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] = settingsParams;
+            settingsParams.SiteId = content.SiteId;
+            HttpContext.Session.SetValue(HttpContextSession.ExportSettingsSessionKey, settingsParams);
         }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
@@ -37,13 +37,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             SetupWithParams(parentId, 0, ids, settingsParams as ExportSettings);
         }
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, null, boundToExternal);
- 
+
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => Setup(parentId, id, null, boundToExternal, isArchive);
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false); 
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false);
 
         public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive)
         {
-            var contentId = ids == null ? id : parentId;
+            var contentId = ids != null && ids.Any() ? parentId : id;
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
@@ -51,32 +51,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             var articleIds = GetArticleIds(ids, content.Id, isArchive);
-            var articleExtensionContents = GetArticleExtensionContents(articleIds, content.Id, isArchive);
-            _command = new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContents);
-
+            var articleExtensionContentIds = GetArticleExtensionContentIds(articleIds, content.Id, isArchive);
+            Commands.Add(new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContentIds));
             return base.Setup(content.SiteId, content.Id, boundToExternal);
-        }
-
-        protected override MultistepActionSettings CreateActionSettings(int parentId, int id) => new MultistepActionSettings
-        {
-            Stages = new[]
-            {
-                _command.GetStageSettings()
-            },
-            ParentId = parentId
-        };
-
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
-        {
-            var commandState = _command.GetState();
-            return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
         }
 
         protected override string ContextSessionKey { get; } = HttpContextSession.ExportContextSessionKey;
 
         public override void TearDown()
         {
-            HttpContext.Current.Session.Remove(HttpContextSession.ExportSettingsSessionKey);
+            HttpContext.Session.Remove(HttpContextSession.ExportSettingsSessionKey);
             base.TearDown();
         }
 
@@ -116,13 +100,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         private static int[] GetArticleIds(int[] ids, int contentId, bool isArchive = false)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
+            var settings = HttpContext.Session.GetValue<ExportSettings>(HttpContextSession.ExportSettingsSessionKey);
             var orderBy = string.IsNullOrEmpty(settings.OrderByField) ? FieldName.ContentItemId : settings.OrderByField;
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy, isArchive);
         }
 
-        private static IEnumerable<Content> GetArticleExtensionContents(int[] ids, int contentId, bool isArchive) => ContentRepository.GetList(
-            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0], isArchive)
-        ).ToArray();
+        private static int[] GetArticleExtensionContentIds(int[] ids, int contentId, bool isArchive) =>
+            ContentRepository.GetReferencedAggregatedContentIds(contentId, ids ?? new int[0], isArchive).ToArray();
     }
 }

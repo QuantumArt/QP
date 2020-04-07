@@ -8,7 +8,6 @@ using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
-using Quantumart.QP8.CdcDataImport.Elastic.Properties;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Models;
 using Quartz;

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
@@ -12,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
     {
         private IUserGroupService _service;
 
-        public new BLL.UserGroup Data
+        public BLL.UserGroup Data
         {
             get => (BLL.UserGroup)EntityData;
             set => EntityData = value;
@@ -41,16 +43,18 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
             ParentGroupId = Data.ParentGroup?.Id ?? 0;
         }
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
             Data.Users = BindedUserIDs.Any() ? _service.GetUsers(BindedUserIDs) : Enumerable.Empty<BLL.User>();
             Data.ParentGroup = ParentGroupId.HasValue ? _service.Read(ParentGroupId.Value) : null;
         }
 
-        [LocalizedDisplayName("BindedUserIDs", NameResourceType = typeof(UserGroupStrings))]
+        [Display(Name = "BindedUserIDs", ResourceType = typeof(UserGroupStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> BindedUserIDs { get; set; }
 
-        [LocalizedDisplayName("ParentGroup", NameResourceType = typeof(UserGroupStrings))]
+        [Display(Name = "ParentGroup", ResourceType = typeof(UserGroupStrings))]
         public int? ParentGroupId { get; set; }
 
         public IEnumerable<ListItem> BindedUserListItems

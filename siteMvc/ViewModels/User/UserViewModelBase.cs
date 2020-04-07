@@ -11,11 +11,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
     {
         protected IUserService Service;
 
-        internal virtual void DoCustomBinding()
-        {
-        }
-
-        public new BLL.User Data
+        public BLL.User Data
         {
             get => (BLL.User)EntityData;
             set => EntityData = value;

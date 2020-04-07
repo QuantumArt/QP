@@ -1,7 +1,9 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -9,25 +11,25 @@ namespace Quantumart.QP8.BLL
     {
         private string _userName;
 
-        [LocalizedDisplayName("UserName", NameResourceType = typeof(LogOnStrings))]
+        [Display(Name = "UserName", ResourceType = typeof(LogOnStrings))]
         public string UserName
         {
             get => UseAutoLogin ? NtUserName : _userName;
             set => _userName = value;
         }
 
-        [LocalizedDisplayName("Password", NameResourceType = typeof(LogOnStrings))]
+        [Display(Name = "Password", ResourceType = typeof(LogOnStrings))]
         public string Password { get; set; }
 
-        [LocalizedDisplayName("CustomerCode", NameResourceType = typeof(LogOnStrings))]
+        [Display(Name = "CustomerCode", ResourceType = typeof(LogOnStrings))]
         public string CustomerCode { get; set; }
 
         public bool UseAutoLogin { get; set; }
 
+        [BindNever]
         public string NtUserName { get; set; }
 
-        public bool? IsSilverlightInstalled { get; set; }
-
+        [BindNever]
         public QpUser User { get; set; }
 
         public void Validate()
@@ -64,11 +66,7 @@ namespace Quantumart.QP8.BLL
                 var errorCode = QpAuthenticationErrorNumber.NoErrors;
                 User = QPContext.Authenticate(this, ref errorCode, out var message);
 
-                if (User != null)
-                {
-                    User.IsSilverlightInstalled = IsSilverlightInstalled.HasValue && IsSilverlightInstalled.Value;
-                }
-                else if (errorCode == QpAuthenticationErrorNumber.AccountNotExist)
+                if (errorCode == QpAuthenticationErrorNumber.AccountNotExist)
                 {
                     errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountNotExist);
                 }

@@ -1,6 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -33,16 +33,16 @@ namespace Quantumart.QP8.BLL.Services
             Hide = permission.Hide
         };
 
-        [LocalizedDisplayName("PropagateToItems", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "PropagateToItems", ResourceType = typeof(EntityPermissionStrings))]
         public bool PropagateToItems { get; set; }
 
-        [LocalizedDisplayName("CopyParentPermission", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "CopyParentPermission", ResourceType = typeof(EntityPermissionStrings))]
         public bool CopyParentPermission { get; set; }
 
-        [LocalizedDisplayName("ExplicitPermissionToRelatedContents", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "ExplicitPermissionToRelatedContents", ResourceType = typeof(EntityPermissionStrings))]
         public bool ExplicitPermissionToRelatedContents { get; set; }
 
-        [LocalizedDisplayName("Hide", NameResourceType = typeof(EntityPermissionStrings))]
+        [Display(Name = "Hide", ResourceType = typeof(EntityPermissionStrings))]
         public bool Hide { get; set; }
     }
 }

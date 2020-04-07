@@ -5,6 +5,7 @@ using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
+
     internal class ActiveDirectoryRepository
     {
         private readonly string[] _groupProperties = { "cn", "memberOf" };
@@ -74,3 +75,4 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         }
     }
 }
+

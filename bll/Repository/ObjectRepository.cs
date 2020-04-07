@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -57,8 +59,8 @@ namespace Quantumart.QP8.BLL.Repository
             var entities = QPContext.EFContext;
             foreach (var obj in dvals)
             {
-                var dal = ObjectValuesDAL.CreateObjectValuesDAL(objectId, obj.VariableName, obj.VariableValue);
-                entities.ObjectValuesSet.AddObject(dal);
+                var dal = new ObjectValuesDAL() { ObjectId = objectId, VariableName = obj.VariableName, VariableValue = obj.VariableValue};
+                entities.Entry(dal).State = EntityState.Added;
             }
 
             entities.SaveChanges();
@@ -69,7 +71,7 @@ namespace Quantumart.QP8.BLL.Repository
             var entities = QPContext.EFContext;
             foreach (var dal in entities.ObjectValuesSet.Where(x => x.ObjectId == objectId))
             {
-                entities.ObjectValuesSet.DeleteObject(dal);
+                entities.Entry(dal).State = EntityState.Deleted;
             }
 
             entities.SaveChanges();
@@ -194,7 +196,7 @@ namespace Quantumart.QP8.BLL.Repository
             dal.CursorLocation = "adUseClient";
             dal.LockType = "adLockReadOnly";
             dal.Locked = null;
-            entities.ContainerSet.AddObject(dal);
+            entities.Entry(dal).State = EntityState.Added;
             entities.SaveChanges();
             return MapperFacade.ContainerMapper.GetBizObject(dal);
         }
@@ -217,7 +219,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var entities = QPContext.EFContext;
             var dal = MapperFacade.ContentFormMapper.GetDalObject(contentForm);
-            entities.ContentFormSet.AddObject(dal);
+            entities.Entry(dal).State = EntityState.Added;
             entities.SaveChanges();
             return MapperFacade.ContentFormMapper.GetBizObject(dal);
         }

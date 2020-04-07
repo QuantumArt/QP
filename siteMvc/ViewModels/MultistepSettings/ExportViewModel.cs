@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
@@ -11,6 +11,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public ExportViewModel()
         {
             AllFields = true;
+            CustomFields = new int[] { };
+            FieldsToExpand = new int[] { };
+            Ids = new int[] { };
         }
 
         public bool IsArchive { get; set; }
@@ -20,8 +23,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public override string EntityTypeCode => Constants.EntityTypeCode.Content;
 
         public int ContentId { get; set; }
-        
-        [LocalizedDisplayName("OrderByField", NameResourceType = typeof(MultistepActionStrings))]
+
+        [Display(Name = "OrderByField", ResourceType = typeof(MultistepActionStrings))]
         public string OrderByField { get; set; }
 
         public List<ListItem> Fields => ArticleService.GetListOfFieldsToSort(ContentId);
@@ -32,16 +35,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public int[] Ids { get; set; }
 
-        [LocalizedDisplayName("ExcludeSystemFields", NameResourceType = typeof(ImportStrings))]
+        [Display(Name = "ExcludeSystemFields", ResourceType = typeof(ImportStrings))]
         public bool ExcludeSystemFields { get; set; }
 
-        [LocalizedDisplayName("AllFields", NameResourceType = typeof(ImportStrings))]
+        [Display(Name = "AllFields", ResourceType = typeof(ImportStrings))]
         public bool AllFields { get; set; }
 
-        [LocalizedDisplayName("CustomFields", NameResourceType = typeof(ImportStrings))]
+        [Display(Name = "CustomFields", ResourceType = typeof(ImportStrings))]
         public int[] CustomFields { get; set; }
 
-        [LocalizedDisplayName("FieldsToExpand", NameResourceType = typeof(ImportStrings))]
+        [Display(Name = "FieldsToExpand", ResourceType = typeof(ImportStrings))]
         public int[] FieldsToExpand { get; set; }
     }
 }

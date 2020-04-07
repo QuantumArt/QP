@@ -1,6 +1,9 @@
 using System;
+using System.Data;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.API
@@ -10,18 +13,34 @@ namespace Quantumart.QP8.BLL.Services.API
         private bool _userTested;
 
         protected ServiceBase(int userId)
-            : this(QPContext.CurrentDbConnectionString, userId)
+            : this(QPContext.CurrentDbConnectionInfo, userId)
         {
         }
 
-        protected ServiceBase(string connectionString, int userId)
+        protected ServiceBase(string connectionString, int userId) : this(
+            new QpConnectionInfo(connectionString, DatabaseType.SqlServer), userId
+        )
         {
-            Ensure.NotNull(connectionString, "Connection string should not be empty");
+
             ConnectionString = connectionString;
             UserId = userId;
         }
 
+        protected ServiceBase(QpConnectionInfo info, int userId)
+        {
+            Ensure.NotNull(info, "Connection info should not be null");
+            Ensure.NotNull(info.ConnectionString, "Connection string should not be empty");
+            ConnectionString = info.ConnectionString;
+            DbType = info.DbType;
+            UserId = userId;
+        }
+
+
         public string ConnectionString { get; }
+
+        public DatabaseType DbType { get; }
+
+        public QpConnectionInfo ConnectionInfo => new QpConnectionInfo(ConnectionString, DbType);
 
         public int UserId { get; }
 
@@ -56,7 +75,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void LoadStructureCache(IContextStorage st, bool resetExternal)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 if (st != null)
                 {
@@ -69,7 +88,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         private void TestUser()
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var user = UserRepository.GetById(UserId);
                 if (user == null)

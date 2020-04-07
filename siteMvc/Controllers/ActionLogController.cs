@@ -1,6 +1,8 @@
 using System.Linq;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.Audit;
 using Quantumart.QP8.Constants;
@@ -11,11 +13,10 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Audit;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ActionLogController : QPController
+    public class ActionLogController : AuthQpController
     {
         private readonly IBackendActionLogService _actionLogService;
         private readonly IButtonTraceService _buttonTraceService;
@@ -33,9 +34,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ActionLog)]
         [BackendActionContext(ActionCode.ActionLog)]
-        public ActionResult Actions(string tabId, int parentId)
+        public async Task<ActionResult> Actions(string tabId, int parentId)
         {
             var model = ActionLogAreaViewModel.Create(tabId, parentId);
+
             model.ActionTypeList = _actionLogService.GetActionTypeList()
                 .Select(t => new QPSelectListItem { Text = Translator.Translate(t.NotTranslatedName), Value = t.Code, Selected = false })
                 .OrderBy(itm => itm.Text)
@@ -51,21 +53,28 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 .OrderBy(itm => itm.Text)
                 .ToArray();
 
-            return JsonHtml("Actions", model);
+            return await JsonHtml("Actions", model);
         }
 
         [ActionAuthorize(ActionCode.ActionLog)]
         [BackendActionContext(ActionCode.ActionLog)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Actions(GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))] BackendActionLogFilter filter)
+        public ActionResult _Actions(
+            int page,
+            int pageSize,
+            string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))]
+            BackendActionLogFilter filter)
         {
-            var list = _actionLogService.GetLogPage(command.GetListCommand(), filter);
-            var data = list.Data.Select(r =>
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var list = _actionLogService.GetLogPage(listCommand, filter);
+
+            var data = list.Data.Select(log =>
             {
-                r.ActionTypeName = Translator.Translate(r.ActionTypeName);
-                r.ActionName = Translator.Translate(r.ActionName);
-                r.EntityTypeName = Translator.Translate(r.EntityTypeName);
-                return r;
+                log.ActionTypeName = Translator.Translate(log.ActionTypeName);
+                log.ActionName = Translator.Translate(log.ActionName);
+                log.EntityTypeName = Translator.Translate(log.EntityTypeName);
+                return log;
             });
 
             return new TelerikResult(data, list.TotalRecords);
@@ -74,19 +83,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ButtonTrace)]
         [BackendActionContext(ActionCode.ButtonTrace)]
-        public ActionResult ButtonTrace(string tabId, int parentId) => JsonHtml("ButtonTraceIndex", ButtonTraceAreaViewModel.Create(tabId, parentId));
+        public async Task<ActionResult> ButtonTrace(string tabId, int parentId)
+        {
+            return await JsonHtml("ButtonTraceIndex", ButtonTraceAreaViewModel.Create(tabId, parentId));
+        }
 
         [ActionAuthorize(ActionCode.ButtonTrace)]
         [BackendActionContext(ActionCode.ButtonTrace)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _ButtonTrace(GridCommand command)
+        public ActionResult _ButtonTrace(int page, int pageSize, string orderBy)
         {
-            var list = _buttonTraceService.GetPage(command.GetListCommand());
-            var data = list.Data.Select(r =>
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var list = _buttonTraceService.GetPage(listCommand);
+
+            var data = list.Data.Select(trace =>
             {
-                r.ButtonName = Translator.Translate(r.ButtonName);
-                r.TabName = Translator.Translate(r.TabName);
-                return r;
+                trace.ButtonName = Translator.Translate(trace.ButtonName);
+                trace.TabName = Translator.Translate(trace.TabName);
+                return trace;
             });
 
             return new TelerikResult(data, list.TotalRecords);
@@ -95,54 +108,54 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.RemovedEntities)]
         [BackendActionContext(ActionCode.RemovedEntities)]
-        public ActionResult RemovedEntities(string tabId, int parentId)
+        public async Task<ActionResult> RemovedEntities(string tabId, int parentId)
         {
             var model = RemovedEntitiesAreaViewModel.Create(tabId, parentId);
-            return JsonHtml("RemovedEntities", model);
+            return await JsonHtml("RemovedEntities", model);
         }
 
         [ActionAuthorize(ActionCode.RemovedEntities)]
         [BackendActionContext(ActionCode.RemovedEntities)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _RemovedEntities(GridCommand command)
+        public ActionResult _RemovedEntities(int page, int pageSize, string orderBy)
         {
-            var list = _removedEntitiesService.GetPage(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var list = _removedEntitiesService.GetPage(listCommand);
             return new TelerikResult(list.Data, list.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SuccessfulSession)]
         [BackendActionContext(ActionCode.SuccessfulSession)]
-        public ActionResult SucessfullSessions(string tabId, int parentId)
+        public async Task<ActionResult> SucessfullSessions(string tabId, int parentId)
         {
             var model = SucessfullSessionsAreaViewModel.Create(tabId, parentId);
-            return JsonHtml("SucessfullSessions", model);
+            return await JsonHtml("SucessfullSessions", model);
         }
 
         [ActionAuthorize(ActionCode.SuccessfulSession)]
         [BackendActionContext(ActionCode.SuccessfulSession)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _SucessfullSessions(GridCommand command)
+        public ActionResult _SucessfullSessions(int page, int pageSize, string orderBy)
         {
-            var list = _sessionLogService.GetSucessfullSessionPage(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var list = _sessionLogService.GetSucessfullSessionPage(listCommand);
             return new TelerikResult(list.Data, list.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.FailedSession)]
         [BackendActionContext(ActionCode.FailedSession)]
-        public ActionResult FailedSessions(string tabId, int parentId)
+        public async Task<ActionResult> FailedSessions(string tabId, int parentId)
         {
             var model = FailedSessionsAreaViewModel.Create(tabId, parentId);
-            return JsonHtml("FailedSessions", model);
+            return await JsonHtml("FailedSessions", model);
         }
 
         [ActionAuthorize(ActionCode.FailedSession)]
         [BackendActionContext(ActionCode.FailedSession)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _FailedSessions(GridCommand command)
+        public ActionResult _FailedSessions(int page, int pageSize, string orderBy)
         {
-            var list = _sessionLogService.GetFailedSessionPage(command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var list = _sessionLogService.GetFailedSessionPage(listCommand);
             return new TelerikResult(list.Data, list.TotalRecords);
         }
     }

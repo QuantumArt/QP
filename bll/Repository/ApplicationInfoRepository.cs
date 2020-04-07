@@ -1,4 +1,5 @@
-﻿using Quantumart.QP8.DAL;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -6,9 +7,9 @@ namespace Quantumart.QP8.BLL.Repository
     {
         public string GetCurrentDbVersion()
         {
-            using (var scope = new QPConnectionScope())
+            using (new QPConnectionScope())
             {
-                return Common.GetCurrentDbVersion(scope.DbConnection);
+                return Common.GetCurrentDbVersion(QPConnectionScope.Current.DbConnection);
             }
         }
 
@@ -18,6 +19,11 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 return DbRepository.Get().RecordActions;
             }
+        }
+
+        public void PostReplay(HashSet<string> insertIdentityOptions)
+        {
+            DefaultRepository.PostReplay(insertIdentityOptions);
         }
     }
 }

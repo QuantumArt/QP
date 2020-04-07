@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.BLL.Services
 {
     [Serializable]
     public class FieldDefaultValueContext
     {
-        public int[] ProcessedContentItemIds { get; set; }
+        public List<int> ProcessedContentItemIds { get; set; }
 
         public int ContentId { get; set; }
 
@@ -13,7 +14,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public bool IsBlob { get; set; }
 
-        public int[] DefaultArticles { get; set; }
+        public List<int> DefaultArticles { get; set; }
 
         public bool IsM2M { get; set; }
 

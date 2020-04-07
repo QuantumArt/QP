@@ -207,7 +207,7 @@ export class BackendVisualEditor {
     $editorLink.off('click').on('click', e => {
       if (!that._isInitialized) {
         that._isInitialized = true;
-        $q.getAjax('/Backend/VisualEditorConfig/LoadVeConfig', {
+        $q.getAjax(`${window.APPLICATION_ROOT_URL}VisualEditorConfig/LoadVeConfig`, {
           siteId: that._siteId,
           fieldId: that._fieldId
         }, data => {

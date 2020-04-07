@@ -9,26 +9,26 @@
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
 		@Html.TextAreaFieldFor(s => s.Data.Description)
-		@Html.SelectFieldFor(s => s.Data.GroupId, Html.List(Model.Groups), Model.SelectGroupOptions)
-		@Html.NumericFieldFor(s => s.Data.PageSize, Content.MinPageSize, Content.MaxPageSize)	
+		@Html.SelectFieldFor(s => s.Data.GroupId, Html.List(Model.GetGroups()), Model.SelectGroupOptions)
+		@Html.NumericFieldFor(s => s.Data.PageSize, Content.MinPageSize, Content.MaxPageSize)
 		@Html.CheckBoxFieldFor(s => s.Data.IsShared)
 		@Html.CheckBoxFieldFor(s => s.Data.DisableChangingActions)
 	}
-	
+
 	using (Html.BeginFieldGroup(ContentStrings.Legend_FriendlyName))
 	{
 		@Html.TextBoxFieldFor(s => s.Data.FriendlySingularName)
 		@Html.TextBoxFieldFor(s => s.Data.FriendlyPluralName)
 	}
-			
+
 
 	if (Model.Data.Site.IsDotNet)
-	{ 
+	{
 		using (Html.BeginFieldGroup(ContentStrings.Legend_LinqParameters))
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.Data.MapAsClass, Model.ClassBlock)
 			using (Html.BeginPanel(Model.ClassBlock))
-			{ 
+			{
 				@Html.TextBoxFieldFor(s => s.Data.NetName)
 				@Html.TextBoxFieldFor(s => s.Data.NetPluralName)
 				@Html.CheckBoxFieldFor(s => s.Data.UseDefaultFiltration)
@@ -40,16 +40,16 @@
 	using (Html.BeginFieldGroup(ContentStrings.Legend_VirtualContentParameters))
 	{
         using (Html.BeginPanel("RebuildPanel", !Model.Data.IsNew, false))
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.ToBuild, "BuildParamsPanel");
 		}
-        
+
 		using (Html.BeginPanel("BuildParamsPanel"))
-		{ 			
+		{
 			@Html.RadioFieldFor(s => s.Data.VirtualType, Html.List(Model.GetVirtualTypes()))
 			using (Html.BeginPanel("JoinTypePanel"))
 			{
-			  @Html.SingleItemPickerFieldFor(m => m.Data.JoinRootId, Model.JoinListItem, 
+			  @Html.SingleItemPickerFieldFor(m => m.Data.JoinRootId, Model.JoinListItem,
 			    new EntityDataListArgs
 			    {
 			      EntityTypeCode = EntityTypeCode.Content,
@@ -69,35 +69,35 @@
 			}
 
 			using (Html.BeginPanel("UnionTypePanel"))
-			{ 
+			{
 				@Html.UnionContentsFieldFor(s => s.Data.UnionSourceContentIDs, Model.GetContentsForUnion(), Model.Data.SiteId, new Dictionary<string, object> { { "id", Model.UnionSourcesElementId } });
 			}
 
 			using (Html.BeginPanel("UserQueryTypePanel"))
-			{                                                                                             				
+			{
                 @Html.TextAreaFieldFor(s => s.Data.UserQuery, new Dictionary<string, object> { { "class", "textbox codeBehind hta-SqlTextArea highlightedTextarea" }})
-    
+
 				@Html.CheckBoxFieldFor(s => s.IsAltUserQueryUsed, "UserQueryAlternativePanel")
 
 				using (Html.BeginPanel("UserQueryAlternativePanel"))
-				{ 
+				{
 					@Html.TextAreaFieldFor(s => s.Data.UserQueryAlternative, new Dictionary<string, object> { { "class", "textbox codeBehind hta-SqlTextArea highlightedTextarea" }})
                 }
 			}
 		}
-	}	
-	@Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+	}
+	<partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
 
 }
 
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
-	@(Model.ContextObjectName).setInitializedCallback(function() {				
+<script type="text/javascript">
+	@(Model.ContextObjectName).setInitializedCallback(function() {
 		this.joinContentAndJoinFieldsMediator = new Quantumart.QP8.JoinContentAndJoinFieldsMediator("@Model.JoinRootElementId", "@Model.JoinFieldsElementId");
 		this.unionRadioAndSourceContentsListMediator = new Quantumart.QP8.UnionRadioAndSourceContentsListMediator('@Html.UniqueId("UnionTypePanel")', '@Html.UniqueId("BuildParamsPanel")', "@Model.UnionSourcesElementId");
-	});	
-	@(Model.ContextObjectName).setTerminatingCallback(function() {								
+	});
+	@(Model.ContextObjectName).setTerminatingCallback(function() {
 		this.joinContentAndJoinFieldsMediator.dispose();
 		this.joinContentAndJoinFieldsMediator = null;
 

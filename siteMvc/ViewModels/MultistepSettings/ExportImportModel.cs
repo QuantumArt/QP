@@ -1,27 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class ExportImportModel : EntityViewModel
     {
-        [LocalizedDisplayName("ImportCulture", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "ImportCulture", ResourceType = typeof(MultistepActionStrings))]
         public string Culture { get; set; }
 
-        [LocalizedDisplayName("ImportEncoding", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "ImportEncoding", ResourceType = typeof(MultistepActionStrings))]
         public string Encoding { get; set; }
 
-        [LocalizedDisplayName("FieldDelimiter", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "FieldDelimiter", ResourceType = typeof(MultistepActionStrings))]
         public string Delimiter { get; set; } = "1";
 
-        [LocalizedDisplayName("LineSeparator", NameResourceType = typeof(MultistepActionStrings))]
+        [Display(Name = "LineSeparator", ResourceType = typeof(MultistepActionStrings))]
         public string LineSeparator { get; set; }
 
         public List<ListItem> Locales => new List<ListItem>
@@ -56,6 +56,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public override string EntityTypeCode => throw new NotImplementedException();
 
         public override string ActionCode => throw new NotImplementedException();
+
+        public override void DoCustomBinding()
+        {
+        }
+
+        public override void Validate()
+        {
+        }
 
         public IEnumerable<ListItem> GetList(IEnumerable<int> ids)
         {

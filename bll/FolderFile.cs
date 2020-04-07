@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.ComponentModel.DataAnnotations;
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using Quantumart.QP8.BLL.Converters;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -130,13 +132,13 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// имя файла с расширением
         /// </summary>
-        [LocalizedDisplayName("FileName", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "FileName", ResourceType = typeof(LibraryStrings))]
         public string Name { get; set; }
 
         /// <summary>
         /// расширение файла (с точкой)
         /// </summary>
-        [LocalizedDisplayName("Extension", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "Extension", ResourceType = typeof(LibraryStrings))]
         public string Extension { get; set; }
 
         /// <summary>
@@ -152,7 +154,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Размеры изображения (только для картинок)
         /// </summary>
-        [LocalizedDisplayName("Dimensions", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "Dimensions", ResourceType = typeof(LibraryStrings))]
         public string Dimensions
         {
             get
@@ -164,12 +166,12 @@ namespace Quantumart.QP8.BLL
                     {
                         try
                         {
-                            using (var image = Image.FromFile(FullName))
+                            using (var image = Image.Load(FullName))
                             {
                                 _Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
                             }
                         }
-                        catch (OutOfMemoryException) // sic!!!
+                        catch (NotSupportedException)
                         {
                             _Dimensions = string.Empty;
                         }
@@ -182,13 +184,15 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Дата создания файла
         /// </summary>
-        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        [JsonConverter(typeof(DateTimeConverter))]
+        [Display(Name = "Created", ResourceType = typeof(EntityObjectStrings))]
         public DateTime Created { get; set; }
 
         /// <summary>
         /// Дата модификации файла
         /// </summary>
-        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        [JsonConverter(typeof(DateTimeConverter))]
+        [Display(Name = "Modified", ResourceType = typeof(EntityObjectStrings))]
         public DateTime Modified { get; set; }
 
         /// <summary>
@@ -210,7 +214,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Имя типа файла
         /// </summary>
-        [LocalizedDisplayName("FileType", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "FileType", ResourceType = typeof(LibraryStrings))]
         public string FileTypeName => GetTypeName(FileType);
 
         /// <summary>
@@ -226,7 +230,7 @@ namespace Quantumart.QP8.BLL
         /// <returns></returns>
         public static string GetTypeExtensions(FolderFileType type) => fileExtensionsDictionary[type];
 
-        [LocalizedDisplayName("Size", NameResourceType = typeof(LibraryStrings))]
+        [Display(Name = "Size", ResourceType = typeof(LibraryStrings))]
         public string Size
         {
             get

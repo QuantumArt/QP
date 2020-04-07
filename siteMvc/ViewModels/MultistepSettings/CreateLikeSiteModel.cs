@@ -1,6 +1,6 @@
-using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
@@ -20,25 +20,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public override string ActionCode => Constants.ActionCode.CreateLikeSite;
 
-        [LocalizedDisplayName("DoNotCopyFiles", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "DoNotCopyFiles", ResourceType = typeof(SiteStrings))]
         public bool DoNotCopyFiles { get; set; }
 
-        [LocalizedDisplayName("DoNotCopyArticles", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "DoNotCopyArticles", ResourceType = typeof(SiteStrings))]
         public int? DoNotCopyArticles { get; set; }
 
-        [LocalizedDisplayName("DoNotCopyTemplates", NameResourceType = typeof(SiteStrings))]
+        [Display(Name = "DoNotCopyTemplates", ResourceType = typeof(SiteStrings))]
         public bool DoNotCopyTemplates { get; set; }
 
-        public new BLL.Site Data
+        public BLL.Site Data
         {
             get => (BLL.Site)EntityData;
             set => EntityData = value;
-        }
-
-        public override void Validate(ModelStateDictionary modelState)
-        {
-            modelState.Clear();
-            base.Validate(modelState);
         }
 
         public static CreateLikeSiteModel Create(BLL.Site site, string tabId, int parentId)

@@ -1,13 +1,11 @@
 using System.Threading.Tasks;
-using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DbServices;
 
 namespace Quantumart.QP8.WebMvc.Hubs
 {
-    [HubName("singleUserMode")]
     public class SingleUserModeHub : Hub
     {
         private readonly IUserService _userService;
@@ -17,7 +15,7 @@ namespace Quantumart.QP8.WebMvc.Hubs
             _userService = userService;
         }
 
-        public override Task OnConnected()
+        public override async Task OnConnectedAsync()
         {
             var settings = DbService.ReadSettings();
 
@@ -40,8 +38,9 @@ namespace Quantumart.QP8.WebMvc.Hubs
                 };
             }
 
-            Clients.Caller.send(message);
-            return base.OnConnected();
+            await Clients.Caller.SendAsync("Message", message);
+
+            await base.OnConnectedAsync();
         }
     }
 }

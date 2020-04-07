@@ -1,46 +1,56 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class MultistepController : QPController
+    public class MultistepController : AuthQpController
     {
         private readonly Func<string, IMultistepActionService> _getService;
-        private readonly Func<string, string> _getActionCode;
 
-        public MultistepController(Func<string, IMultistepActionService> getService, Func<string, string> getActionCode)
+        public MultistepController(Func<string, IMultistepActionService> getService)
         {
             _getService = getService;
-            _getActionCode = getActionCode;
         }
 
-        protected override IActionInvoker CreateActionInvoker() => new MultistepActionInvoker(_getActionCode);
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ActionAuthorize(null)]
+        public ActionResult PreAction(string command, int parentId, [FromBody] SelectedItemsViewModel model)
+        {
+            return Json(_getService(command).PreAction(parentId, 0, model.Ids));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult PreAction(string command, int parentId, int[] IDs) => Json(_getService(command).PreAction(parentId, 0, IDs));
+        [ActionAuthorize(null)]
+        [BackendActionContext(null)]
+        [BackendActionLog]
+        [Record]
+        public ActionResult Setup(string command, int parentId, [FromBody] SelectedItemsViewModel model, bool? boundToExternal)
+        {
+            return Json(_getService(command).Setup(parentId, 0, model.Ids, boundToExternal));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Setup(string command, int parentId, int[] IDs, bool? boundToExternal) => Json(_getService(command).Setup(parentId, 0, IDs, boundToExternal));
+        [ActionAuthorize(null)]
+        public ActionResult Step(string command, [FromBody] MultiStepActionViewModel model)
+        {
+            return Json(_getService(command).Step(model.Stage, model.Step));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult Step(string command, int stage, int step) => Json(_getService(command).Step(stage, step));
-
-        [HttpPost]
-        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ActionAuthorize(null)]
         public ActionResult TearDown(string command)
         {
             _getService(command).TearDown();
-            return null;
+            return Json(null);
         }
     }
 }

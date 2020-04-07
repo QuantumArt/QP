@@ -1,5 +1,9 @@
-﻿using System.Linq;
-using System.Web.Mvc;
+using System;
+using System.Linq;
+using System.Security.Principal;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
@@ -12,38 +16,62 @@ using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    [ValidateInput(false)]
     public class LogOnController : QPController
     {
+        private AuthenticationHelper _helper;
+        private ModelExpressionProvider _provider;
+
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider)
+        {
+            _helper = helper;
+            _provider = provider;
+        }
+
         [DisableBrowserCache]
         [ResponseHeader(ResponseHeaders.QpNotAuthenticated, "True")]
-        public ActionResult Index(DirectLinkOptions directLinkOptions)
+        public async Task<ActionResult> Index(bool? useAutoLogin, DirectLinkOptions directLinkOptions)
         {
-            if (!Request.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(Request.UserHostAddress))
+            var data = new LogOnCredentials
             {
-                return Redirect(GetAuthorizationUrl(directLinkOptions));
-            }
+                UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication(),
+                NtUserName = GetCurrentUser()
+            };
 
-            FillViewBagData();
-            return LogOnView();
+            FillViewBagData(directLinkOptions);
+            return await LogOnView(data);
         }
 
         [HttpPost]
         [DisableBrowserCache]
-        public ActionResult Index(DirectLinkOptions directLinkOptions, LogOnCredentials data)
+        public async Task<ActionResult> Index(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
+            return await PostIndex(useAutoLogin, data, returnUrl);
+        }
+
+        [HttpPost]
+        [DisableBrowserCache]
+        public async Task<ActionResult> JsonIndex(bool? useAutoLogin, [FromBody] LogOnCredentials data, string returnUrl)
+        {
+            return await PostIndex(useAutoLogin, data, returnUrl);
+        }
+
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
+        {
+            data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
+            data.NtUserName = GetCurrentUser();
+
             try
             {
                 data.Validate();
             }
             catch (RulesException ex)
             {
-                ex.Extend(ModelState);
+                ex.Extend(ModelState, _provider);
             }
 
             if (ModelState.IsValid && data.User != null)
             {
-                AuthenticationHelper.CompleteAuthentication(data.User);
+                _helper.SignIn(data.User);
                 if (Request.IsAjaxRequest())
                 {
                     return Json(new
@@ -54,38 +82,48 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     });
                 }
 
-                if (directLinkOptions != null && directLinkOptions.IsDefined())
+                if (!string.IsNullOrEmpty(returnUrl))
                 {
-                    return RedirectToAction("Index", "Home", directLinkOptions);
+                    return LocalRedirect(returnUrl);
                 }
 
                 return RedirectToAction("Index", "Home");
             }
 
             FillViewBagData();
-            return LogOnView();
+            return await LogOnView(data);
         }
 
         [DisableBrowserCache]
         public ActionResult LogOut(DirectLinkOptions directLinkOptions)
         {
-            var loginUrl = QPContext.LogOut();
-            if (directLinkOptions != null)
-            {
-                loginUrl = directLinkOptions.AddToUrl(loginUrl);
-            }
-
-            return Redirect(loginUrl);
+            QPContext.LogOut();
+            return RedirectToAction("Index");
         }
 
-        private static string GetAuthorizationUrl(DirectLinkOptions directLinkOptions) => directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl;
-
-        private void FillViewBagData()
+        private void FillViewBagData(DirectLinkOptions directLinkOptions = null)
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
             ViewBag.CustomerCodes = QPConfiguration.GetCustomerCodes().Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
+
+            ViewBag.AutoLoginLinkQuery = "?useAutoLogin=false";
+            if (directLinkOptions != null && directLinkOptions.IsDefined())
+            {
+                ViewBag.AutoLoginLinkQuery += "&" + directLinkOptions.ToUrlParams();
+            }
         }
 
-        private ActionResult LogOnView() => Request.IsAjaxRequest() ? JsonHtml("Popup", null) : View();
+        private string GetCurrentUser() => HttpContext.User.Identity is WindowsIdentity wi ? wi.Name : null;
+
+        private bool IsWindowsAuthentication() => HttpContext.User.Identity is WindowsIdentity;
+
+        private async Task<ActionResult> LogOnView(LogOnCredentials data)
+        {
+            if (Request.IsAjaxRequest())
+            {
+                return await JsonHtml("Popup", data);
+            }
+            return View("Index", data);
+        }
     }
 }

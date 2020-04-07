@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
@@ -19,11 +20,11 @@ namespace Quantumart.QP8.BLL.Processors.TreeProcessors
         private readonly string _filterQuery;
         private readonly IList<ArticleLinkSearchParameter> _linkedFilters;
         private readonly IList<ArticleContextQueryParam> _contextQuery;
-        private readonly ICollection<SqlParameter> _filterSqlParams;
+        private readonly ICollection<DbParameter> _filterSqlParams;
         private readonly int[] _extensionContentIds;
         private readonly ArticleFullTextSearchParameter _ftsOptions;
 
-        public ArticleFtsProcessor(int parentEntityId, string commonFilter, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        public ArticleFtsProcessor(int parentEntityId, string commonFilter, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             _parentEntityId = parentEntityId;
             _commonFilter = commonFilter;

@@ -3,10 +3,10 @@ namespace Quantumart.QP8.Constants
     public static class RegularExpressions
     {
         public const string Ip = @"^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$";
-        public const string InvalidEntityName = @"[!-,\.\/:-@{-~\[\]]";
-        public const string InvalidFieldName = @"[!-,\/:-@{-~\[\]]";
-        public const string InvalidUserName = @"[""#%-\)\+,\/:-\?{-~\[\]]";
-        public const string InvalidFolderName = @"[<>:""\/\\|\?\*]";
+        public const string EntityName = @"^[^!-,\.\/:-@{-~\[\]]+$";
+        public const string FieldName = @"^[^!-,\/:-@{-~\[\]]+$";
+        public const string UserName = @"^[^""#%-\)\+,\/:-\?{-~\[\]]+$";
+        public const string FolderName = @"^[^<>:""\/\\|\?\*]+$";
         public const string NetName = @"^[_a-zA-Z][_a-zA-Z0-9]*$";
         public const string FullQualifiedNetName = @"^[_a-zA-Z][_a-zA-Z0-9]*(\.[_a-zA-Z][_a-zA-Z0-9]*)*$";
         public const string Email = @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";

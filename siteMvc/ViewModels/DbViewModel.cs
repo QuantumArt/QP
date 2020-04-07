@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
@@ -15,7 +15,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             OverrideRecordsFile = false;
         }
 
-        public new Db Data
+        public Db Data
         {
             get => (Db)EntityData;
             set => EntityData = value;
@@ -25,16 +25,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public override string ActionCode => Constants.ActionCode.DbSettings;
 
-        [LocalizedDisplayName("OverrideRecordsFile", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "OverrideRecordsFile", ResourceType = typeof(DBStrings))]
         public bool OverrideRecordsFile { get; set; }
 
-        [LocalizedDisplayName("OverrideRecordsUser", NameResourceType = typeof(DBStrings))]
+        [Display(Name = "OverrideRecordsUser", ResourceType = typeof(DBStrings))]
         public bool OverrideRecordsUser { get; set; }
 
         public string AggregationListItemsDataAppSettings { get; set; }
 
-        public void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            base.DoCustomBinding();
             if (!string.IsNullOrEmpty(AggregationListItemsDataAppSettings))
             {
                 Data.AppSettings = JsonConvert.DeserializeObject<List<AppSettingsItem>>(AggregationListItemsDataAppSettings);

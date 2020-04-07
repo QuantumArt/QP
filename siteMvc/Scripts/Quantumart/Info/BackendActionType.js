@@ -14,7 +14,7 @@ BackendActionType.getActionTypeCodeByActionCode = function (actionCode) {
   if (!actionTypeCode) {
     $q.getJsonFromUrl(
       'GET',
-      `${window.CONTROLLER_URL_BACKEND_ACTION_TYPE}/GetCodeByActionCode`,
+      `${window.CONTROLLER_URL_BACKEND_ACTION_TYPE}GetCodeByActionCode`,
       { actionCode },
       false,
       false,

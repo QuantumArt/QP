@@ -2,11 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
     public class FieldService : ServiceBase
     {
+        public FieldService(QpConnectionInfo info, int userId)
+            : base(info, userId)
+        {
+        }
         public FieldService(string connectionString, int userId)
             : base(connectionString, userId)
         {
@@ -19,7 +24,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Field Read(int id)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return FieldRepository.GetById(id);
             }
@@ -27,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public IEnumerable<Field> List(int contentId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 return FieldRepository.GetFullList(contentId);
             }
@@ -35,7 +40,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public IEnumerable<Field> ListRelated(int contentId)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 var o2mField = ContentRepository.GetRelatedO2MFields(contentId);
                 var m2mField = ContentRepository.GetRelatedM2MFields(contentId);
@@ -47,7 +52,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public Field Save(Field field, bool explicitOrder)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = UserId;
                 var result = field.PersistWithBackward(explicitOrder);
@@ -58,7 +63,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public void Delete(int id)
         {
-            using (new QPConnectionScope(ConnectionString))
+            using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = UserId;
                 Field.Die(id);

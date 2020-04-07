@@ -1,8 +1,8 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -34,28 +34,70 @@ namespace Quantumart.QP8.BLL
             Recurring = schedule.Recurring.Clone();
         }
 
+        internal void DoCustomBinding()
+        {
+            if (ScheduleType != ScheduleTypeEnum.Recurring)
+            {
+                Recurring = RecurringSchedule.Empty;
+            }
+            else
+            {
+                Recurring.DoCustomBinding();
+            }
+
+            if (ScheduleType != ScheduleTypeEnum.OneTimeEvent)
+            {
+                StartDate = ScheduleHelper.DefaultStartDate;
+                EndDate = ScheduleHelper.DefaultEndDate;
+            }
+            else
+            {
+                if (StartRightNow || StartDate < DateTime.Now)
+                {
+                    StartDate = DateTime.Now.AddSeconds(10);
+                }
+
+                if (WithoutEndDate)
+                {
+                    EndDate = ArticleScheduleConstants.Infinity;
+                }
+            }
+
+            if (StartRightNow && WithoutEndDate)
+            {
+                ScheduleType = ScheduleTypeEnum.Visible;
+            }
+
+            if (Article.Delayed)
+            {
+                StartDate = PublicationDate;
+                EndDate = ArticleScheduleConstants.Infinity;
+            }
+
+        }
+
         public Article Article;
 
         public int ArticleId { get; set; }
 
         public int Id { get; set; }
 
-        [LocalizedDisplayName("StartDate", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "StartDate", ResourceType = typeof(ArticleStrings))]
         public DateTime StartDate { get; set; }
 
-        [LocalizedDisplayName("EndDate", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "EndDate", ResourceType = typeof(ArticleStrings))]
         public DateTime EndDate { get; set; }
 
-        [LocalizedDisplayName("StartRightNow", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "StartRightNow", ResourceType = typeof(ArticleStrings))]
         public bool StartRightNow { get; set; }
 
-        [LocalizedDisplayName("WithoutEndDate", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "WithoutEndDate", ResourceType = typeof(ArticleStrings))]
         public bool WithoutEndDate { get; set; }
 
-        [LocalizedDisplayName("ScheduleType", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "ScheduleType", ResourceType = typeof(ArticleStrings))]
         public ScheduleTypeEnum ScheduleType { get; set; }
 
-        [LocalizedDisplayName("PublicationTime", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "PublicationTime", ResourceType = typeof(ArticleStrings))]
         public DateTime PublicationDate { get; set; }
 
         public RecurringSchedule Recurring { get; set; }

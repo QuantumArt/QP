@@ -133,7 +133,7 @@
     <value>Alias</value>
   </data>
   <data name="AliasExceeded" xml:space="preserve">
-    <value>The length of Alias should not exceed {5} characters!</value>
+    <value>The length of Alias should not exceed {1} characters!</value>
   </data>
   <data name="AliasInvalidFormat" xml:space="preserve">
     <value>Invalid Alias format</value>
@@ -148,7 +148,7 @@
     <value>Confirm Phrase</value>
   </data>
   <data name="ConfirmPhraseLengthExceeded" xml:space="preserve">
-    <value>The length of Confirm Phrase should not exceed {5} characters!</value>
+    <value>The length of Confirm Phrase should not exceed {1} characters!</value>
   </data>
   <data name="ContentSelectionMode" xml:space="preserve">
     <value>Content selection mode</value>
@@ -187,7 +187,7 @@
     <value>Invalid Icon URL format</value>
   </data>
   <data name="IconUrlMaxLengthExceeded" xml:space="preserve">
-    <value>The length of Icon URL should not exceed {5} characters!</value>
+    <value>The length of Icon URL should not exceed {1} characters!</value>
   </data>
   <data name="IsInterface" xml:space="preserve">
     <value>Interface</value>
@@ -244,7 +244,7 @@
     <value>Invalid URL format</value>
   </data>
   <data name="UrlMaxLengthExceeded" xml:space="preserve">
-    <value>The length of URL should not exceed {5} characters!</value>
+    <value>The length of URL should not exceed {1} characters!</value>
   </data>
   <data name="UrlNotEntered" xml:space="preserve">
     <value>Please enter URL</value>

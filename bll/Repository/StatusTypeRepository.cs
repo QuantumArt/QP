@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -94,7 +96,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                var rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "[WEIGHT]", out totalRecords, cmd.StartRecord, cmd.PageSize);
+                var rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "WEIGHT", out totalRecords, cmd.StartRecord, cmd.PageSize);
                 return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
             }
         }

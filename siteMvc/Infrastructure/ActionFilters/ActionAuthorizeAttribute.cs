@@ -1,31 +1,63 @@
+using System;
 using System.Security;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
-    public class ActionAuthorizeAttribute : FilterAttribute, IAuthorizationFilter
+    /// <remarks>
+    /// We don't use <see cref="IAuthorizationFilter"/> because controller and
+    /// exception filters are not initialized during .OnAuthorization() execution
+    /// </summary>
+    public class ActionAuthorizeAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// Execute before any ActionFilter to simulate <see cref="IAuthorizationFilter"/> behaviour
+        /// </summary>
+        public static readonly int FilterOrder = ConnectionScopeAttribute.FilterOrder - 1;
+
         private readonly string _actionCode;
 
+        /// <summary>
+        /// If <paramref name="actionCode"/> is null then it taken from RouteData.Values["command"]
+        /// </summary>
         public ActionAuthorizeAttribute(string actionCode)
         {
+            Order = FilterOrder;
             _actionCode = actionCode;
         }
 
-        public void OnAuthorization(AuthorizationContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
+            // if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
+            // {
+            //     throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
+            // }
+
+            IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
+
+            string actionCode = _actionCode;
+
+            if (actionCode == null)
             {
-                throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
+                var getActionCode = serviceProvider.GetRequiredService<Func<string, IActionCode>>();
+                var command = (string)filterContext.RouteData.Values["command"];
+                actionCode = getActionCode(command).ActionCode;
             }
 
-            if (!DependencyResolver.Current.GetService<ISecurityService>().IsActionAccessible(_actionCode, out var action))
+            var securityService = serviceProvider.GetRequiredService<ISecurityService>();
+
+            if (!securityService.IsActionAccessible(actionCode, out BackendAction action))
             {
                 throw new SecurityException(string.Format(GlobalStrings.ActionIsNotAccessible, action.Name));
             }
+
+            base.OnActionExecuting(filterContext);
         }
     }
 }

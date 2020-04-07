@@ -1,132 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BD9A445E-8510-489D-8001-409B777C46CD}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Quantumart.QP8.ArticleScheduler</RootNamespace>
-    <AssemblyName>Quantumart.QP8.ArticleScheduler</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="netstandard" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Interfaces\IDbScheduler.cs" />
-    <Compile Include="Interfaces\ISchedulerTask.cs" />
-    <Compile Include="Recurring\DateRangeExtensions.cs" />
-    <Compile Include="DbScheduler.cs" />
-    <Compile Include="Interfaces\IScheduler.cs" />
-    <Compile Include="Interfaces\IOnetimeTaskScheduler.cs" />
-    <Compile Include="Onetime\OnetimeTask.cs" />
-    <Compile Include="Onetime\OnetimeTaskScheduler.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Interfaces\IPublishingTaskScheduler.cs" />
-    <Compile Include="Publishing\PublishingTask.cs" />
-    <Compile Include="Publishing\PublishingTaskScheduler.cs" />
-    <Compile Include="QpScheduler.cs" />
-    <Compile Include="QpSchedulerProcessor.cs" />
-    <Compile Include="Recurring\RecurringCalculators\DailyStartCalculator.cs" />
-    <Compile Include="Interfaces\ITaskScheduler.cs" />
-    <Compile Include="Interfaces\IRecurringTaskScheduler.cs" />
-    <Compile Include="Recurring\RecurringCalculators\RecurringStartCalculatorBase.cs" />
-    <Compile Include="Recurring\RecurringCalculators\RecurringStartCalculatorFactory.cs" />
-    <Compile Include="Recurring\RecurringTaskScheduler.cs" />
-    <Compile Include="Recurring\RecurringCalculators\WeeklyStartCalculator.cs" />
-    <Compile Include="Recurring\RecurringCalculators\MonthlyStartCalculator.cs" />
-    <Compile Include="Interfaces\IRecurringStartCalculator.cs" />
-    <Compile Include="Recurring\RecurringCalculators\MonthlyRelativeStartCalculator.cs" />
-    <Compile Include="Recurring\RecurringTask.cs" />
-    <Compile Include="Recurring\RecurringTaskTypes.cs" />
-    <Compile Include="UnityContainerCustomizer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
-      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
-      <Name>BLL</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
-      <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
-      <Name>Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
-      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
-      <Name>Constants</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
-      <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
-      <Name>Resources</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
-      <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring.Unity\QP8.Infrastructure.Logging.PrtgMonitoring.Unity.csproj">
-      <Project>{42975105-9837-4DBB-AA6D-E61309EE1CF8}</Project>
-      <Name>QP8.Infrastructure.Logging.PrtgMonitoring.Unity</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
-      <Project>{BD26AFAF-B07A-41DA-80D3-4B8BF6BC6589}</Project>
-      <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{A1397FA6-F0BA-4695-AF53-D03469013692}</Project>
-      <Name>QP8.Infrastructure.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
-      <Project>{EF8CC04A-6AE2-4CF4-9367-31701651639B}</Project>
-      <Name>QP8.Infrastructure</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring.Unity\QP8.Infrastructure.Logging.PrtgMonitoring.Unity.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Unity" Version="5.8.13" />
     <PackageReference Include="Castle.Core" Version="4.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Folder Include="Properties" />
+  </ItemGroup>
 </Project>

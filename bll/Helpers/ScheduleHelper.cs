@@ -1,13 +1,19 @@
-using System;
+﻿using System;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
     public static class ScheduleHelper
     {
-        public static DateTime GetStartDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultStartDate);
+        public static DateTime GetStartDateTime(int? dateValue, int? timeValue)
+        {
+            return GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultStartDate);
+        }
 
-        public static DateTime GetEndDateTime(int? dateValue, int? timeValue) => GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultEndDate);
+        public static DateTime GetEndDateTime(int? dateValue, int? timeValue)
+        {
+            return GetScheduleDateTimeFromSqlValues(dateValue, timeValue, DefaultEndDate);
+        }
 
         public static DateTime DefaultStartDate
         {

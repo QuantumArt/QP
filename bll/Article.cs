@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
+using NLog.Fluent;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
 using QP8.Infrastructure;
@@ -19,7 +23,6 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -88,24 +91,26 @@ namespace Quantumart.QP8.BLL
 
         public bool Splitted { get; set; }
 
-        [LocalizedDisplayName("Status", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
         public int StatusTypeId { get; set; }
 
-        [LocalizedDisplayName("DelayPublication", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "DelayPublication", ResourceType = typeof(ArticleStrings))]
         public bool Delayed { get; set; }
 
-        [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "UniqueId", ResourceType = typeof(ArticleStrings))]
         public Guid? UniqueId { get; set; }
 
         public string UniqueIdStr => UniqueId.HasValue ? UniqueId.ToString() : "";
 
-        [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "CancelSplit", ResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
 
-        [LocalizedDisplayName("LeaveComment", NameResourceType = typeof(ArticleStrings))]
+        [Display(Name = "LeaveComment", ResourceType = typeof(ArticleStrings))]
         public string Comment { get; set; }
 
         public Dictionary<string, string> PredefinedValues { get; set; }
+
+        [ValidateNever]
 
         public override string Name
         {
@@ -133,6 +138,7 @@ namespace Quantumart.QP8.BLL
 
         public override bool IsReadOnly => ViewType != ArticleViewType.Normal && ViewType != ArticleViewType.PreviewVersion;
 
+        [ValidateNever]
         public string AliasForTree
         {
             get
@@ -157,6 +163,7 @@ namespace Quantumart.QP8.BLL
 
         public bool UseInVariationUpdate { get; set; }
 
+        [ValidateNever]
         public Dictionary<string, RulesException<Article>> VariationsErrorModel { get; set; }
 
         internal string BackupPath => GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
@@ -197,11 +204,13 @@ namespace Quantumart.QP8.BLL
 
         public bool UseVariations => Content.VariationField != null;
 
+        [ValidateNever]
         public IEnumerable<FieldValue> VariationContextFieldValues
         {
             get { return FieldValues.Where(n => n.Field.UseForContext).OrderBy(n => n.Field.Order); }
         }
 
+        [ValidateNever]
         public IEnumerable<FieldValue> VariationEditableFieldValues
         {
             get { return FieldValues.Where(n => !n.Field.UseForContext && !n.Field.UseForVariations); }
@@ -258,12 +267,17 @@ namespace Quantumart.QP8.BLL
 
         public bool IsVariation => !string.IsNullOrEmpty(VariationContext);
 
+        [ValidateNever]
         public Content Content { get; set; }
 
+        [ValidateNever]
         public StatusType Status { get; set; }
 
+        [ValidateNever]
         public override EntityObject Parent => Content;
 
+        [BindNever]
+        [ValidateNever]
         public ArticleWorkflowBind WorkflowBinding
         {
             get => _workflowBinding ?? (_workflowBinding = WorkflowRepository.GetArticleWorkflow(this));
@@ -271,6 +285,7 @@ namespace Quantumart.QP8.BLL
         }
 
         [JsonIgnore]
+        [ValidateNever]
         public List<FieldValue> FieldValues
         {
             get => _fieldValues ?? LoadFieldValues();
@@ -278,6 +293,8 @@ namespace Quantumart.QP8.BLL
         }
 
         [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
         public List<FieldValue> LiveFieldValues
         {
             get => _liveFieldValues ?? LoadLiveFieldValues();
@@ -334,46 +351,62 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [BindNever]
+        [ValidateNever]
         public WorkflowBind Workflow => WorkflowBinding.IsAssigned ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Article> AggregatedArticles
         {
             get => _aggregatedArticles.Value;
             set => _aggregatedArticles.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<Article> LiveAggregatedArticles
         {
             get => _liveAggregatedArticles.Value;
             set => _liveAggregatedArticles.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public List<Article> VariationArticles
         {
             get => _variationArticles.Value;
             set => _variationArticles.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<ArticleVariationListItem> VariationListItems
         {
             get => _variationListItems.Value;
             set => _variationListItems.Value = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public IEnumerable<ArticleContextListItem> ContextListItems
         {
             get => _contextListItems.Value;
             set => _contextListItems.Value = value;
         }
 
-        public int CollaborativePublishedArticle { get; set; }       
+        [BindNever]
+        [ValidateNever]
+        public int CollaborativePublishedArticle { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public int ParentContentId
         {
             get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
             set => _parentContentId = value;
         }
-   
+
         public override void Validate()
         {
             var errors = new RulesException<Article>();
@@ -390,7 +423,7 @@ namespace Quantumart.QP8.BLL
             {
                 throw errors;
             }
-        }        
+        }
 
         public static void ValidateXamlById(int articleId, RulesException errors, string customerCode, bool persistChanges)
         {
@@ -784,7 +817,9 @@ namespace Quantumart.QP8.BLL
                 }
                 catch (Exception exp)
                 {
-                    errors.ErrorForModel(string.Format(ArticleStrings.CustomValidationFailed, exp.Message));
+                    var str = string.Format(ArticleStrings.CustomValidationFailed, exp.Message);
+                    CurrentLogger.Error().Exception(exp).Message(str).Write();
+                    errors.ErrorForModel(str);
                 }
             }
 
@@ -982,10 +1017,9 @@ namespace Quantumart.QP8.BLL
             if (versionId == 0)
             {
                 var linkIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToMany).Select(n => n.GetBaseField(article.Id).LinkId.Value).ToArray();
-                var backRelationIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToOne).Select(n => n.GetBaseField(article.Id).BackRelationId.Value).ToArray();
                 linkResult = ArticleRepository.GetLinkedItems(linkIds, article.Id, excludeArchive);
+                var backRelationIds = fieldsArr.Where(n => n.RelationType == RelationType.ManyToOne).Select(n => n.GetBaseField(article.Id).BackRelationId.Value).ToArray();
                 backRelationsResult = ArticleRepository.GetRelatedItems(backRelationIds, article.Id, excludeArchive);
-
             }
 
 
@@ -1001,15 +1035,12 @@ namespace Quantumart.QP8.BLL
                 switch (field.RelationType)
                 {
                     case RelationType.ManyToMany:
-                        if (!article.IsNew)
+                        var linkId = field.GetBaseField(article.Id).LinkId;
+                        if (linkId.HasValue)
                         {
-                            var linkId = field.GetBaseField(article.Id).LinkId;
-                            if (linkId.HasValue)
-                            {
-                                objectValue = (versionId == 0)
+                            objectValue = (versionId == 0)
                                 ? linkResult[linkId.Value]
                                 : ArticleVersionRepository.GetLinkedItems(versionId, field.Id);
-                            }
                         }
 
                         break;
@@ -1341,7 +1372,7 @@ namespace Quantumart.QP8.BLL
             foreach (var constraint in Content.Constraints)
             {
                 var fieldValuesToTest = constraint.Filter(FieldValues);
-                if (fieldValuesToTest[0].Field.Id != exceptFieldId)
+                if (fieldValuesToTest.Any() && fieldValuesToTest[0].Field.Id != exceptFieldId)
                 {
                     if (!ArticleRepository.ValidateUnique(fieldValuesToTest, out var constraintToDisplay, out var conflictingIds))
                     {
@@ -1552,7 +1583,7 @@ namespace Quantumart.QP8.BLL
         }
 
 
-    private int GetContentIdForArticle()
+        private int GetContentIdForArticle()
         {
             if (_parentContentId == 0 || CollaborativePublishedArticle != 0 )
             {
@@ -1560,6 +1591,27 @@ namespace Quantumart.QP8.BLL
             }
             return _parentContentId;
         }
+
+        public override void DoCustomBinding()
+        {
+            if (!Workflow.IsAssigned || !Workflow.IsAsync || !Workflow.CurrentUserHasWorkflowMaxWeight || StatusTypeId == Workflow.MaxStatus.Id)
+            {
+                CancelSplit = false;
+            }
+
+            if (Workflow.IsAssigned)
+            {
+                if (StatusTypeId != Workflow.MaxStatus.Id)
+                {
+                    Delayed = false;
+                }
+            }
+
+            Visible = Schedule.IsVisible || Delayed;
+
+            Schedule.DoCustomBinding();
+        }
+
     }
 
     public enum ArticleClearType
@@ -1567,4 +1619,6 @@ namespace Quantumart.QP8.BLL
         EmptyValue = 0,
         DefaultValue = 1
     }
+
+
 }

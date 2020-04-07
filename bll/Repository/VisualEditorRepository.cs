@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
+using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -85,8 +88,7 @@ namespace Quantumart.QP8.BLL.Repository
             var dal = MapperFacade.VisualEditorPluginMapper.GetDalObject(plugin);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             dal.Modified = timeStamp;
-            entities.VePluginSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
             UpdateCommands(plugin, entities, timeStamp);
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.VisualEditorPlugin, plugin);
             entities.SaveChanges();
@@ -94,14 +96,14 @@ namespace Quantumart.QP8.BLL.Repository
             return GetPluginPropertiesById(plugin.Id);
         }
 
-        private static void UpdateCommands(VisualEditorPlugin plugin, QP8Entities entities, DateTime timeStamp)
+        private static void UpdateCommands(VisualEditorPlugin plugin, QPModelDataContext entities, DateTime timeStamp)
         {
             // delete
             var newIds = new HashSet<decimal>(plugin.VeCommands.Select(c => Converter.ToDecimal(c.Id)));
             var commandsToDelete = entities.VeCommandSet.Where(n => n.PluginId == (decimal)plugin.Id && !newIds.Contains(n.Id));
-            foreach (var c in commandsToDelete)
+            foreach (var cmd in commandsToDelete)
             {
-                entities.VeCommandSet.DeleteObject(c);
+                entities.Entry(cmd).State = EntityState.Deleted;
             }
 
             // save and update
@@ -121,12 +123,11 @@ namespace Quantumart.QP8.BLL.Repository
                         dalCommand.Id = forceIds.Dequeue();
                     }
 
-                    entities.VeCommandSet.AddObject(dalCommand);
+                    entities.Entry(dalCommand).State = EntityState.Added;
                 }
                 else
                 {
-                    entities.VeCommandSet.Attach(dalCommand);
-                    entities.ObjectStateManager.ChangeObjectState(dalCommand, EntityState.Modified);
+                    entities.Entry(dalCommand).State = EntityState.Modified;
                 }
             }
         }
@@ -150,7 +151,7 @@ namespace Quantumart.QP8.BLL.Repository
             dal.Modified = timeStamp;
             dal.Created = timeStamp;
 
-            entities.VePluginSet.AddObject(dal);
+            entities.Entry(dal).State = EntityState.Added;
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.VisualEditorPlugin, plugin);
             if (plugin.ForceId != 0)
@@ -174,7 +175,8 @@ namespace Quantumart.QP8.BLL.Repository
                 dalCommand.LastModifiedBy = QPContext.CurrentUserId;
                 dalCommand.Modified = timeStamp;
                 dalCommand.Created = timeStamp;
-                entities.VeCommandSet.AddObject(dalCommand);
+                entities.Entry(dalCommand).State = EntityState.Added;
+
             }
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.VisualEditorCommand);
@@ -455,7 +457,8 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetCommandBindingBySiteId(scope.DbConnection, siteId).ToDictionary(r => Converter.ToInt32(r.Field<decimal>("COMMAND_ID")), r => r.Field<bool>("ON"));
+                return Common.GetCommandBindingBySiteId(scope.DbConnection, siteId)
+                    .ToDictionary(r => Converter.ToInt32(r.Field<decimal>("COMMAND_ID")), r => r.Field<bool>("ON"));
             }
         }
 

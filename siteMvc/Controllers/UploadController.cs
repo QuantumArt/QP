@@ -1,8 +1,12 @@
 using System;
 using System.IO;
-using System.Web;
-using System.Web.Mvc;
-using QP8.Infrastructure.Logging;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
@@ -13,26 +17,41 @@ using FileIO = System.IO.File;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class UploadController : QPController
+    public class UploadController : AuthQpController
     {
         private readonly IBackendActionLogRepository _logger;
+        private readonly FormOptions _formOptions;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        public UploadController(IBackendActionLogRepository logger)
+        public UploadController(IBackendActionLogRepository logger, FormOptions formOptions)
         {
             _logger = logger;
+            _formOptions = formOptions;
+        }
+
+        private void LogError(string msg, string fileName, Exception ex = null)
+        {
+            var msgBuilder = Logger.Error().Message(msg).Property("fileName", fileName);
+            if (ex != null)
+            {
+                msgBuilder.Exception(ex);
+            }
+            msgBuilder.Write();
         }
 
         [HttpPost]
-        public ActionResult UploadChunk(int? chunk, int? chunks, string name, string destinationUrl)
+        public async Task<ActionResult> UploadChunk(
+            IFormFile file, int? chunk, int? chunks, string name, string destinationUrl
+        )
         {
             if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
             {
                 var errorMsg = $"File to upload: \"{name}\" has invalid characters";
-                Logger.Log.Warn(errorMsg);
+                LogError(errorMsg, name);
                 return Json(new { message = errorMsg, isError = true });
             }
 
-            destinationUrl = HttpUtility.UrlDecode(destinationUrl);
+            destinationUrl = WebUtility.UrlDecode(destinationUrl);
             if (string.IsNullOrEmpty(destinationUrl))
             {
                 throw new ArgumentException("Folder Path is empty");
@@ -47,7 +66,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             chunks = chunks ?? 1;
             PathSecurityResult securityResult;
 
-            var fileUpload = Request.Files[0];
             var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
             var destPath = Path.Combine(destinationUrl, name);
 
@@ -57,23 +75,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 if (!securityResult.Result)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
-                    Logger.Log.Warn(errorMsg);
+
+                    LogError(errorMsg, name);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
 
                 try
                 {
-                    using (var fs = new FileStream(destPath, FileMode.Create))
+                    using (var fileStream = new FileStream(destPath, FileMode.Create))
                     {
-                        var buffer = new byte[fileUpload.InputStream.Length];
-                        fileUpload.InputStream.Read(buffer, 0, buffer.Length);
-                        fs.Write(buffer, 0, buffer.Length);
+                        await file.CopyToAsync(fileStream);
                     }
                 }
                 catch (Exception ex)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message);
-                    Logger.Log.Error(errorMsg, ex);
+
+                    LogError(errorMsg, name, ex);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
             }
@@ -81,17 +101,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 try
                 {
-                    using (var fs = new FileStream(tempPath, chunk == 0 ? FileMode.Create : FileMode.Append))
+                    using (var fileStream = new FileStream(tempPath, chunk == 0 ? FileMode.Create : FileMode.Append))
                     {
-                        var buffer = new byte[fileUpload.InputStream.Length];
-                        fileUpload.InputStream.Read(buffer, 0, buffer.Length);
-                        fs.Write(buffer, 0, buffer.Length);
+                       await file.CopyToAsync(fileStream);
                     }
                 }
                 catch (Exception ex)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, tempPath, ex.Message);
-                    Logger.Log.Error(errorMsg, ex);
+
+                    LogError(errorMsg, name, ex);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
 
@@ -106,7 +126,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         if (!securityResult.Result)
                         {
                             var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
-                            Logger.Log.Warn(errorMsg);
+
+                            LogError(errorMsg, name);
+
                             return Json(new { message = errorMsg, isError = true });
                         }
 
@@ -128,7 +150,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (Exception ex)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, ex.Message);
-                    Logger.Log.Error(errorMsg, ex);
+
+                    LogError(errorMsg, name, ex);
+
                     return Json(new { message = errorMsg, isError = true });
                 }
 

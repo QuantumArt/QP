@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -267,15 +267,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static IEnumerable<ListItem> ContainerInfoPropertiesAsListItems(int? netLanguageId, string assemblingType, bool presentationOrCodeBehind)
         {
-            var result = ContainerInfoProperties(netLanguageId, assemblingType, presentationOrCodeBehind).Select(x => new ListItem { Text = HttpUtility.HtmlEncode(x.Key), Value = HttpUtility.HtmlEncode(x.Value) }).ToList();
-            result.Insert(0, new ListItem { Text = HttpUtility.HtmlEncode(TemplateStrings.SelectProperty), Value = string.Empty });
+            var result = ContainerInfoProperties(netLanguageId, assemblingType, presentationOrCodeBehind).Select(x => new ListItem { Text = WebUtility.HtmlEncode(x.Key), Value = WebUtility.HtmlEncode(x.Value) }).ToList();
+            result.Insert(0, new ListItem { Text = WebUtility.HtmlEncode(TemplateStrings.SelectProperty), Value = string.Empty });
             return result;
         }
 
         public static IEnumerable<ListItem> FunctionsAsListItems(int? netLanguageId, string assemblingType, bool presentationOrCodeBehind, bool isContainer)
         {
-            var result = Functions(netLanguageId, assemblingType, presentationOrCodeBehind, isContainer).Select(x => new ListItem { Text = HttpUtility.HtmlEncode(x.Key), Value = HttpUtility.HtmlEncode(x.Value) }).ToList();
-            result.Insert(0, new ListItem { Text = HttpUtility.HtmlEncode(TemplateStrings.SelectFunction), Value = string.Empty });
+            var result = Functions(netLanguageId, assemblingType, presentationOrCodeBehind, isContainer).Select(x => new ListItem { Text = WebUtility.HtmlEncode(x.Key), Value = WebUtility.HtmlEncode(x.Value) }).ToList();
+            result.Insert(0, new ListItem { Text = WebUtility.HtmlEncode(TemplateStrings.SelectFunction), Value = string.Empty });
             return result;
         }
 

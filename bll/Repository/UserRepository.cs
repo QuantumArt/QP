@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -59,11 +62,13 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static List<User> GetNtUsers()
         {
-            var users = QPContext.EFContext.UserSet.Include("Groups").Where(u => u.NTLogOn != null).ToList();
+            var users = QPContext.EFContext.UserSet
+                .Include(x => x.UserGroupBinds).ThenInclude(y=> y.UserGroup)
+                .Where(u => u.NTLogOn != null).ToList();
             return MapperFacade.UserMapper.GetBizList(users);
         }
 
-        internal static bool CheckAuthenticate(string login, string password) => QPContext.EFContext.Authenticate(login, password, false, false) != null;
+        internal static bool CheckAuthenticate(string login, string password) => Common.Authenticate(QPConnectionScope.Current.DbConnection, login, password, false, false) != null;
 
         internal static bool GetUserMustChangePassword(int userId) => QPContext.EFContext.UserSet.Where(w => w.Id == userId).Select(s => s.MustChangePassword).Single();
         internal static User GetById(int id, bool stopRecursion = false)
@@ -103,8 +108,8 @@ namespace Quantumart.QP8.BLL.Repository
         internal static User GetPropertiesById(int id)
         {
             var dal = QPContext.EFContext.UserSet
-                .Include("Groups")
-                .Include("LastModifiedByUser")
+                .Include(x => x.UserGroupBinds).ThenInclude(y => y.UserGroup)
+                .Include(x => x.LastModifiedByUser)
                 .SingleOrDefault(u => u.Id == id);
 
             return MapperFacade.UserMapper.GetBizObject(dal);
@@ -116,9 +121,9 @@ namespace Quantumart.QP8.BLL.Repository
 
         public static bool NewPasswordMathCurrentPassword(int userId, string newPassword)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                return Common.NewPasswordMatchCurrentPassword(QPConnectionScope.Current.DbConnection, userId, newPassword);
+                return Common.NewPasswordMatchCurrentPassword(scope.DbConnection, userId, newPassword);
             }
         }
 
@@ -132,20 +137,21 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
             }
 
-            entities.UserSet.Attach(dal);
-            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            entities.Entry(dal).State = EntityState.Modified;
+
             if (!profileOnly)
             {
                 // Save Groups
-                var dalDb = entities.UserSet.Include("Groups").Single(u => u.Id == dal.Id);
+                var dalDb = entities.UserSet
+                    .Include(x => x.UserGroupBinds).ThenInclude(y => y.UserGroup)
+                    .Single(u => u.Id == dal.Id);
                 var inmemoryGroupIDs = new HashSet<decimal>(user.Groups.Select(g => Converter.ToDecimal(g.Id)));
                 var indbGroupIDs = new HashSet<decimal>(dalDb.Groups.Select(g => g.Id));
-                foreach (var g in dalDb.Groups.ToArray())
+                foreach (var g in dalDb.UserGroupBinds.ToArray())
                 {
-                    if (!inmemoryGroupIDs.Contains(g.Id) && !g.IsReadOnly && !(g.BuiltIn && user.BuiltIn))
+                    if (!inmemoryGroupIDs.Contains(g.UserGroupId) && !g.UserGroup.IsReadOnly && !(g.UserGroup.BuiltIn && user.BuiltIn))
                     {
-                        entities.UserGroupSet.Attach(g);
-                        dalDb.Groups.Remove(g);
+                        dalDb.UserGroupBinds.Remove(g);
                     }
                 }
                 foreach (var g in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
@@ -153,7 +159,8 @@ namespace Quantumart.QP8.BLL.Repository
                     if (!indbGroupIDs.Contains(g.Id))
                     {
                         entities.UserGroupSet.Attach(g);
-                        dal.Groups.Add(g);
+                        var bind = new UserUserGroupBindDAL { User = dal, UserGroup = g };
+                        dal.UserGroupBinds.Add(bind);
                     }
                 }
 
@@ -163,11 +170,11 @@ namespace Quantumart.QP8.BLL.Repository
             // User Default Filters
             foreach (var f in entities.UserDefaultFilterSet.Where(r => r.UserId == dal.Id))
             {
-                entities.UserDefaultFilterSet.DeleteObject(f);
+                entities.Entry(f).State = EntityState.Deleted;
             }
             foreach (var f in MapUserDefaultFilter(user, dal))
             {
-                entities.UserDefaultFilterSet.AddObject(f);
+                entities.Entry(f).State = EntityState.Added;
             }
 
             //--------------------------
@@ -201,6 +208,11 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
+        private static void ChangeInsertBindTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_add_to_everyone_group", enable);
+        }
+
         internal static User SaveProperties(User user)
         {
             var entities = QPContext.EFContext;
@@ -213,14 +225,37 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.PasswordModified = dal.Created;
             }
 
-            entities.UserSet.AddObject(dal);
+            var everyoneGroups = UserGroupRepository.GetEveryoneGroups();
+            foreach (var everyoneGroup in everyoneGroups)
+            {
+                if (dal.UserGroupBinds.All(x => x.UserGroupId != everyoneGroup.Id))
+                {
+                    var newBind = new UserUserGroupBindDAL();
+                    newBind.UserGroupId = everyoneGroup.Id;
+                    dal.UserGroupBinds.Add(newBind);
+                    entities.Add(newBind);
+                }
+            }
+
+            entities.Entry(dal).State = EntityState.Added;
+
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(false);
+            }
+
             entities.SaveChanges();
+
 
             // Save Groups
             foreach (var s in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
             {
                 entities.UserGroupSet.Attach(s);
-                dal.Groups.Add(s);
+                var userGroupBind = new UserUserGroupBindDAL{User = dal, UserGroup = s};
+                dal.UserGroupBinds.Add(userGroupBind);
+                //#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
+                // dal.Groups.Add(s);
             }
 
             //---------------
@@ -228,7 +263,7 @@ namespace Quantumart.QP8.BLL.Repository
             // User Default Filters
             foreach (var f in MapUserDefaultFilter(user, dal))
             {
-                entities.UserDefaultFilterSet.AddObject(f);
+                entities.Entry(f).State = EntityState.Added;
             }
 
             //----------------
@@ -237,6 +272,11 @@ namespace Quantumart.QP8.BLL.Repository
             if (!string.IsNullOrEmpty(user.Password))
             {
                 UpdatePassword(user.Id, user.Password);
+            }
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(true);
             }
 
             var updated = MapperFacade.UserMapper.GetBizObject(dal);
@@ -248,10 +288,74 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         internal static int CopyUser(User user, int currentUserId)
         {
-            using (var scope = new QPConnectionScope())
+            var entities = QPContext.EFContext;
+
+            var userDal = entities
+                .UserSet
+                .AsNoTracking()
+                .Include(x => x.UserGroupBinds)
+                .Include(x => x.SiteAccess)
+                .Include(x => x.ContentAccess)
+                .Include(x => x.AccessRules)
+                .Include(x => x.FolderAccess)
+                .Include(x => x.ENTITY_TYPE_ACCESS)
+                .Include(x => x.ACTION_ACCESS)
+                .Include(x => x.DefaultFilter)
+                .First(x => x.Id == user.Id);
+
+
+            userDal.Id = 0;
+            userDal.PASSWORD = GeneratePassword();
+            userDal.Created = userDal.Modified = DateTime.Now;
+            userDal.LastModifiedBy = currentUserId;
+            userDal.BuiltIn = false;
+            userDal.LogOn = user.LogOn;
+            foreach (var contentPermissionDAL in userDal.ContentAccess)
             {
-                return Common.CopyUser(user.Id, user.LogOn, currentUserId, scope.DbConnection);
+                contentPermissionDAL.Id = 0;
             }
+
+            foreach (var sitePermissionDAL in userDal.SiteAccess)
+            {
+                sitePermissionDAL.Id = 0;
+            }
+
+            foreach (var userDalAccessRule in userDal.AccessRules)
+            {
+                userDalAccessRule.Id = 0;
+            }
+
+            foreach (var folderPermissionDAL in userDal.FolderAccess)
+            {
+                folderPermissionDAL.Id = 0;
+            }
+
+            foreach (var entityTypePermissionDAL in userDal.ENTITY_TYPE_ACCESS)
+            {
+                entityTypePermissionDAL.Id = 0;
+            }
+
+            foreach (var actionPermissionDAL in userDal.ACTION_ACCESS)
+            {
+                actionPermissionDAL.Id = 0;
+            }
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(false);
+            }
+
+            var newUserEntityEntry = entities.UserSet.Add(userDal);
+            entities.SaveChanges();
+
+            if (QPContext.DatabaseType == DatabaseType.SqlServer)
+            {
+                ChangeInsertBindTriggerState(true);
+            }
+
+            var newUser = newUserEntityEntry.Entity;
+            return (int)newUser.Id;
+
         }
 
         internal static IEnumerable<User> GetUsers(IEnumerable<int> userIDs)
@@ -288,7 +392,7 @@ namespace Quantumart.QP8.BLL.Repository
         private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQpEntityObject dal)
         {
             return biz.ContentDefaultFilters
-                .Where(f => f.ArticleIDs.Any())
+                .Where(f => f.ArticleIDs.Any() && f.ContentId.HasValue)
                 .SelectMany(f =>
                     f.ArticleIDs.Select(aid => new UserDefaultFilterItemDAL
                         {

@@ -6,7 +6,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
 {
     public class ContentGroupViewModel : EntityViewModel
     {
-        public new B.ContentGroup Data
+        public B.ContentGroup Data
         {
             get => (B.ContentGroup)EntityData;
             set => EntityData = value;

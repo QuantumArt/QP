@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.User
@@ -23,9 +23,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
             return model;
         }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override IEnumerable<ValidationResult> ValidateViewModel()
         {
-            base.Validate(modelState);
             if (!Data.IsNew && Data.BuiltIn)
             {
                 // проверка на то, что удалять builtin пользователей из builtin групп запрещено
@@ -37,10 +36,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 
                 if (builtinGroups.Any())
                 {
-                    IsValid = false;
                     var message = string.Format(UserStrings.UnbindBuitInGroup, string.Join(",", Service.GetUserGroups(builtinGroups).Select(g => "\"" + g.Name + "\"")));
                     Expression<Func<object>> f = () => SelectedGroups;
-                    modelState.AddModelError(f.GetPropertyName(), message);
+                    yield return new ValidationResult(message, new []{ "SelectedGroups"});
                 }
             }
         }
@@ -58,7 +56,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
         /// <summary>
         /// Группы в которые входит пользователь
         /// </summary>
-        [LocalizedDisplayName("SelectedGroupIDs", NameResourceType = typeof(UserStrings))]
+        [Display(Name = "SelectedGroupIDs", ResourceType = typeof(UserStrings))]
         public IList<QPCheckedItem> SelectedGroups { get; set; }
 
         /// <summary>
@@ -80,9 +78,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
         /// <summary>
         /// Устанавливает свойства модели, которые не могут быть установлены автоматически
         /// </summary>
-        internal override void DoCustomBinding()
+        public override void DoCustomBinding()
         {
-            Data.DoCustomBinding();
+            base.DoCustomBinding();
+
+            SelectedGroups = SelectedGroups?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
             Data.Groups = SelectedGroups.Any() ? Service.GetUserGroups(Converter.ToInt32Collection(SelectedGroups.Select(g => g.Value).ToArray())) : Enumerable.Empty<BLL.UserGroup>();
         }
     }

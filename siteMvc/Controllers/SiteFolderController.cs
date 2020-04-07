@@ -1,24 +1,27 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class SiteFolderController : QPController
+    public class SiteFolderController : AuthQpController
     {
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSiteFolder)]
         [BackendActionContext(ActionCode.AddNewSiteFolder)]
-        public ActionResult New(string tabId, int parentId, int id)
+        public async Task<ActionResult> New(string tabId, int parentId, int id)
         {
             var folder = SiteFolderService.New(parentId, id);
             var model = SiteFolderViewModel.Create(folder, tabId, parentId);
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         [HttpPost, Record]
@@ -28,13 +31,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewSiteFolder)]
         [BackendActionContext(ActionCode.AddNewSiteFolder)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, int id, IFormCollection collection)
         {
             var folder = SiteFolderService.NewForSave(parentId, id);
             var model = SiteFolderViewModel.Create(folder, tabId, parentId);
 
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
                 model.Data = SiteFolderService.Save(model.Data);
@@ -42,19 +44,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSiteFolder });
             }
 
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteFolderProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "id")]
         [BackendActionContext(ActionCode.SiteFolderProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var folder = SiteFolderService.Read(id);
             var model = SiteFolderViewModel.Create(folder, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
         [HttpPost]
@@ -64,22 +66,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.UpdateSiteFolder)]
         [BackendActionLog]
         [Record]
-        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var folder = SiteFolderService.ReadForUpdate(id);
             var model = SiteFolderViewModel.Create(folder, tabId, parentId);
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
                 model.Data = SiteFolderService.Update(model.Data);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
 
-            return JsonHtml("FolderProperties", model);
+            return await JsonHtml("FolderProperties", model);
         }
 
-        public ActionResult RemovePreAction(int parentId, int id) => Json(SiteFolderService.RemovePreAction(id));
+        public ActionResult RemovePreAction(int parentId, int id)
+        {
+            return Json(SiteFolderService.RemovePreAction(id));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -98,12 +102,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.SiteFileProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "parentId")]
         [BackendActionContext(ActionCode.SiteFileProperties)]
-        public ActionResult FileProperties(string tabId, int parentId, string id, string successfulActionCode)
+        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, string successfulActionCode)
         {
             var file = SiteFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, true);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("FileProperties", model);
+            return await JsonHtml("FileProperties", model);
         }
 
         [HttpPost]
@@ -112,19 +116,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "parentId")]
         [BackendActionContext(ActionCode.UpdateSiteFile)]
         [BackendActionLog]
-        public ActionResult FileProperties(string tabId, int parentId, string id, FormCollection collection)
+        public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, IFormCollection collection)
         {
             var file = SiteFolderService.GetFile(parentId, id);
             var model = FileViewModel.Create(file, tabId, parentId, true);
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
                 SiteFolderService.SaveFile(model.File);
                 return Redirect("FileProperties", new { tabId, parentId, id = model.Id, successfulActionCode = ActionCode.UpdateSiteFile });
             }
 
-            return JsonHtml("FileProperties", model);
+            return await JsonHtml("FileProperties", model);
         }
 
         [HttpPost]
@@ -133,10 +136,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "parentId")]
         [BackendActionContext(ActionCode.MultipleRemoveSiteFile)]
         [BackendActionLog]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemoveFiles(int parentId, string[] IDs)
+        public ActionResult MultipleRemoveFiles(int parentId, [FromBody] SelectedStringItemsViewModel selModel)
         {
-            var result = SiteFolderService.RemoveFiles(parentId, IDs);
+            var result = SiteFolderService.RemoveFiles(parentId, selModel.Ids);
             return Json(result);
         }
 

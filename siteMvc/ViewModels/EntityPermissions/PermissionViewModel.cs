@@ -24,7 +24,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
             return model;
         }
 
-        public new EntityPermission Data
+        public EntityPermission Data
         {
             get => (EntityPermission)EntityData;
             set => EntityData = value;
@@ -40,10 +40,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
             Data.Init(_service.Repository);
         }
 
-        internal void DoCustomBinding()
-        {
-            Data.DoCustomBinding();
-        }
 
         public override string EntityTypeCode => _settings.EntityTypeCode;
 

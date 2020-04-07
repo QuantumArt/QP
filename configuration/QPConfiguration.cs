@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Web.Configuration;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using Npgsql;
 using QP.ConfigurationService.Client;
 using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Extensions;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
+using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.Configuration
 {
@@ -21,11 +23,13 @@ namespace Quantumart.QP8.Configuration
     {
         internal static string _configPath;
 
-        internal static string _tempDirectory;
+        private static string _tempDirectory;
 
         internal static string _configServiceUrl;
 
         internal static string _configServiceToken;
+
+        public static QPublishingOptions Options { get; set; }
 
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
@@ -44,7 +48,7 @@ namespace Quantumart.QP8.Configuration
         {
             if (ConfigServiceUrl != null && ConfigServiceToken != null)
             {
-                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                 var variables = AsyncHelper.RunSync(() => service.GetVariables());
 
@@ -62,12 +66,18 @@ namespace Quantumart.QP8.Configuration
 
         public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
+            return GetConnectionInfo(customerCode, appName).ConnectionString;
+        }
+
+        public static QpConnectionInfo GetConnectionInfo(string customerCode, string appName = "QP8Backend")
+        {
             if (!String.IsNullOrWhiteSpace(customerCode))
             {
                 string connectionString;
+                DatabaseType dbType = default(DatabaseType);
                 if (ConfigServiceUrl != null && ConfigServiceToken != null)
                 {
-                    var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                    var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                     var customer = AsyncHelper.RunSync(() => service.GetCustomer(customerCode));
 
@@ -79,6 +89,7 @@ namespace Quantumart.QP8.Configuration
                     }
 
                     connectionString = customer.ConnectionString;
+                    dbType = (DatabaseType)(int)customer.DbType;
                 }
                 else
                 {
@@ -92,11 +103,17 @@ namespace Quantumart.QP8.Configuration
                     }
 
                     connectionString = customerElement.Element("db")?.Value;
+                    var dbTypeString = customerElement.Attribute("db_type")?.Value;
+                    if (!string.IsNullOrEmpty(dbTypeString) && Enum.TryParse(dbTypeString, true, out DatabaseType parsed))
+                    {
+                        dbType = parsed;
+                    }
                 }
 
                 if (!String.IsNullOrEmpty(connectionString))
                 {
-                    return TuneConnectionString(connectionString, appName);
+                    connectionString = TuneConnectionString(connectionString, appName, dbType);
+                    return new QpConnectionInfo(connectionString, dbType);
                 }
             }
 
@@ -109,13 +126,14 @@ namespace Quantumart.QP8.Configuration
 
             if (ConfigServiceUrl != null && ConfigServiceToken != null)
             {
-                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                 customers = AsyncHelper.RunSync(() => service.GetCustomers()).ConvertAll(c => new QaConfigCustomer
                 {
                     CustomerName = c.Name,
                     ExcludeFromSchedulers = c.ExcludeFromSchedulers,
-                    ConnectionString = c.ConnectionString
+                    ConnectionString = c.ConnectionString,
+                    DbType = (DatabaseType)(int)c.DbType
                 });
             }
             else
@@ -125,7 +143,7 @@ namespace Quantumart.QP8.Configuration
 
             foreach (QaConfigCustomer entry in customers)
             {
-                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
+                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName, entry.DbType);
             }
 
             return customers;
@@ -135,7 +153,7 @@ namespace Quantumart.QP8.Configuration
         {
             if (ConfigServiceUrl != null && ConfigServiceToken != null)
             {
-                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken);
+                var service = new CachedQPConfigurationService(ConfigServiceUrl, ConfigServiceToken, Options.QpConfigPollingInterval);
 
                 var customers = AsyncHelper.RunSync(() => service.GetCustomers());
 
@@ -145,35 +163,26 @@ namespace Quantumart.QP8.Configuration
             return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
         }
 
-        public static string TuneConnectionString(string connectionString, string appName = null)
+        public static string TuneConnectionString(string connectionString, string appName = "QpApp", DatabaseType dbType = DatabaseType.SqlServer)
         {
-            try
+            DbConnectionStringBuilder cnsBuilder;
+            if (dbType == DatabaseType.SqlServer)
             {
-                var cnsBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
-                if (!string.IsNullOrWhiteSpace(appName))
-                {
-                    cnsBuilder.ApplicationName = appName;
-                }
-                else
-                {
-                    cnsBuilder.ApplicationName = string.IsNullOrWhiteSpace(appName)
-                        ? cnsBuilder.ApplicationName ?? "QpApp"
-                        : cnsBuilder.ApplicationName = appName;
-                }
+                var sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
+                cnsBuilder = sqlConnectionStringBuilder;
+                sqlConnectionStringBuilder.ApplicationName = appName;
 
-                if (cnsBuilder.ConnectTimeout < 120)
+                if (sqlConnectionStringBuilder.ConnectTimeout < 120)
                 {
-                    cnsBuilder.ConnectTimeout = 120;
+                    sqlConnectionStringBuilder.ConnectTimeout = 120;
                 }
-
-                return cnsBuilder.ToString();
             }
-            catch
+            else
             {
-                return connectionString;
+                cnsBuilder = new NpgsqlConnectionStringBuilder(connectionString);
             }
 
-
+            return cnsBuilder.ToString();
         }
 
         public static string TempDirectory
@@ -182,7 +191,14 @@ namespace Quantumart.QP8.Configuration
             {
                 if (string.IsNullOrWhiteSpace(_tempDirectory))
                 {
-                    _tempDirectory = ConfigVariable(Config.TempKey).ToLowerInvariant();
+                    if (!string.IsNullOrEmpty(Options?.TempDirectory))
+                    {
+                        _tempDirectory = Options.TempDirectory;
+                    }
+                    else
+                    {
+                        _tempDirectory = ConfigVariable(Config.TempKey).ToLowerInvariant();
+                    }
                 }
 
                 return _tempDirectory;
@@ -194,7 +210,13 @@ namespace Quantumart.QP8.Configuration
 
         public static string ApplicationTitle => ConfigVariable(Config.ApplicationTitle);
 
-        public static bool AllowSelectCustomerCode => ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
+        public static bool AllowSelectCustomerCode
+        {
+            get
+            {
+                return Options.AllowSelectCustomerCode || ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
+            }
+        }
 
         public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
 
@@ -214,30 +236,30 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
-                    if (!string.IsNullOrEmpty(WebConfigSection?.QpConfigPath))
+                    if (!string.IsNullOrEmpty(Options?.QpConfigPath))
                     {
-                        _configPath = WebConfigSection.QpConfigPath;
-                    }
-                    else if (!string.IsNullOrEmpty(AppConfigSection?.QpConfigPath))
-                    {
-                        _configPath = AppConfigSection.QpConfigPath;
+                        _configPath = Options.QpConfigPath;
                     }
                     else
                     {
-                        var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
-                        if (qKey != null)
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         {
-                            _configPath = qKey.GetValue(Registry.XmlConfigValue).ToString();
-                        }
-                        else
-                        {
-                            throw new Exception("QP is not installed");
+                            var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
+                            if (qKey != null)
+                            {
+                                _configPath = qKey.GetValue(Registry.XmlConfigValue).ToString();
+                            }
+                            else
+                            {
+                                throw new Exception("QP is not installed");
+                            }
                         }
                     }
                 }
 
                 return _configPath;
             }
+            set { _configPath = value; }
         }
 
         public static string ConfigServiceUrl
@@ -246,13 +268,9 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceUrl == null)
                 {
-                    if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigUrl))
+                    if (!String.IsNullOrEmpty(Options?.QpConfigUrl))
                     {
-                        _configServiceUrl = WebConfigSection.QpConfigUrl;
-                    }
-                    else if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigUrl))
-                    {
-                        _configServiceUrl = AppConfigSection.QpConfigUrl;
+                        _configServiceUrl = Options.QpConfigUrl;
                     }
                     else
                     {
@@ -261,6 +279,7 @@ namespace Quantumart.QP8.Configuration
                 }
                 return _configServiceUrl != String.Empty ? _configServiceUrl : null;
             }
+            set { _configServiceUrl = value; }
         }
 
         public static string ConfigServiceToken
@@ -269,13 +288,9 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configServiceToken == null)
                 {
-                    if (!String.IsNullOrEmpty(WebConfigSection?.QpConfigToken))
+                    if (!String.IsNullOrEmpty(Options?.QpConfigToken))
                     {
-                        _configServiceToken = WebConfigSection.QpConfigToken;
-                    }
-                    else if (!String.IsNullOrEmpty(AppConfigSection?.QpConfigToken))
-                    {
-                        _configServiceToken = AppConfigSection.QpConfigToken;
+                        _configServiceToken = Options.QpConfigToken;
                     }
                     else
                     {
@@ -284,25 +299,19 @@ namespace Quantumart.QP8.Configuration
                 }
                 return _configServiceToken != String.Empty ? _configServiceToken : null;
             }
+            set { _configServiceToken = value; }
         }
 
-        /// <summary>
-        /// Возвращает кастомную конфигурационную секцию в файле web.config
-        /// </summary>
-        public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
+        public static int CommandTimeout => Options?.CommandTimeout ?? 0;
 
-        /// <summary>
-        /// Возвращает кастомную конфигурационную секцию в файле web.config
-        /// </summary>
-        public static QPublishingSection AppConfigSection => ConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 
-        public static void SetAppSettings(NameValueCollection settings)
+        public static void SetAppSettings(DbConnectorSettings settings)
         {
-            settings[Config.MailHostKey] = ConfigVariable(Config.MailHostKey);
-            settings[Config.MailLoginKey] = ConfigVariable(Config.MailLoginKey);
-            settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
-            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty;
-            settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
+            settings.MailHost = ConfigVariable(Config.MailHostKey);
+            settings.MailLogin = ConfigVariable(Config.MailLoginKey);
+            settings.MailPassword = ConfigVariable(Config.MailPasswordKey);
+            settings.MailAssemble = ConfigVariable(Config.MailAssembleKey) != "no";
+            settings.MailFromName = ConfigVariable(Config.MailFromNameKey);
         }
 
         private static QaConfiguration GetQaConfiguration() => XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig).LogTraceFormat("Load customers from config {0}");

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -12,6 +13,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
     internal class AssembleTemplatesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         private const int ItemsPerStep = 1;
 
         public int SiteId { get; }
@@ -36,15 +39,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
             var templateIds = AssembleRepository.GetSiteTemplatesId(SiteId);
             _itemCount = templateIds.Count();
 
-            HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] = new AssembleTemplatesCommandContext
-            {
-                TemplateIds = templateIds.ToArray()
-            };
+            HttpContext.Session.SetValue(
+                HttpContextSession.AssembleTemplatesCommandProcessingContext,
+                new AssembleTemplatesCommandContext
+                {
+                    TemplateIds = templateIds.ToArray()
+                });
         }
 
         internal static void TearDown()
         {
-            HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] = null;
+            HttpContext.Session.Remove(HttpContextSession.AssembleTemplatesCommandProcessingContext);
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -63,7 +68,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
         public MultistepActionStepResult Step(int step)
         {
-            var context = HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] as AssembleTemplatesCommandContext;
+            var context = HttpContext.Session.GetValue<AssembleTemplatesCommandContext>(HttpContextSession.AssembleTemplatesCommandProcessingContext);
+
             IEnumerable<int> templateIds = context.TemplateIds
                 .Skip(step * ItemsPerStep)
                 .Take(ItemsPerStep)

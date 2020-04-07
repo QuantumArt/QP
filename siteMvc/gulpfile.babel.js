@@ -48,8 +48,8 @@ custom.isProduction = function isProduction() {
 
 custom.destPaths = {
   scripts: 'Scripts/build',
-  styles: 'Content/build',
-  images: 'Content/build'
+  styles: 'Static/build',
+  images: 'Static/build'
 };
 
 custom.paths = {
@@ -68,6 +68,7 @@ custom.paths = {
     'Scripts/polyfills/console.fns.polyfill.js',
     'Scripts/polyfills/promise.polyfill.js',
 
+    // 'Scripts/jquery/jquery-1.8.3.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/telerik/telerik.common.js',
     'Scripts/microsoft/MicrosoftAjax.js',
@@ -86,7 +87,6 @@ custom.paths = {
     'Scripts/jquery/jquery.imgareaselect.js',
     'Scripts/jquery/jquery.nouislider.link.js',
     'Scripts/jquery/jquery.nouislider.js',
-    'Scripts/jquery/jquery.signalR-2.2.1.js',
 
     'Scripts/telerik/telerik.draganddrop.js',
     'Scripts/telerik/telerik.treeview.js',
@@ -105,59 +105,60 @@ custom.paths = {
     'Scripts/telerik/telerik.upload.js',
     'Scripts/telerik/telerik.splitter.js',
 
-    'Content/ckeditor/ckeditor.js',
-    'Content/jsoneditor/dist/jsoneditor.js',
-    'Content/codemirror/lib/codemirror.js',
-    'Content/codemirror/mode/clike/clike.js',
-    'Content/codemirror/mode/sql/sql.js',
-    'Content/codemirror/mode/xml/xml.js',
-    'Content/codemirror/mode/css/css.js',
-    'Content/codemirror/mode/vb/vb.js',
-    'Content/codemirror/mode/javascript/javascript.js',
-    'Content/codemirror/mode/htmlmixed/htmlmixed.js',
-    'Content/codemirror/mode/htmlembedded/htmlembedded.js',
-    'Content/codemirror/addon/mode/multiplex.js',
-    'Content/jsoneditor/dist/jsoneditor.js',
+    'Static/ckeditor/ckeditor.js',
+    'Static/jsoneditor/dist/jsoneditor.js',
+    'Static/codemirror/lib/codemirror.js',
+    'Static/codemirror/mode/clike/clike.js',
+    'Static/codemirror/mode/sql/sql.js',
+    'Static/codemirror/mode/xml/xml.js',
+    'Static/codemirror/mode/css/css.js',
+    'Static/codemirror/mode/vb/vb.js',
+    'Static/codemirror/mode/javascript/javascript.js',
+    'Static/codemirror/mode/htmlmixed/htmlmixed.js',
+    'Static/codemirror/mode/htmlembedded/htmlembedded.js',
+    'Static/codemirror/addon/mode/multiplex.js',
+    'Static/jsoneditor/dist/jsoneditor.js',
 
     'Scripts/PlUpload/moxie.js',
     'Scripts/PlUpload/plupload.dev.js'
   ],
   vendorsjsLogon: [
+    // 'Scripts/jquery/jquery-1.8.3.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/microsoft/MicrosoftAjax.js'
   ],
   styles: [
-    'Content/basic.css',
-    'Content/page.css',
-    'Content/telerik.common.css',
-    'Content/jquery.nouislider.css',
-    'Content/jquery.qtip.css',
-    'Content/imgCropResizeClient.css',
-    'Content/imgareaselect.css',
-    'Content/jquery.jeegoocontext.qp8.css',
-    'Content/telerik.qp8.css',
-    'Content/codemirror/lib/codemirror.css',
-    'Content/codemirrorTheme.css',
-    'Content/jsoneditor/dist/jsoneditor.css',
-    'Content/QpCodemirror.css',
-    'Content/custom/**/*.{scss,css}',
+    'Static/basic.css',
+    'Static/page.css',
+    'Static/telerik.common.css',
+    'Static/jquery.nouislider.css',
+    'Static/jquery.qtip.css',
+    'Static/imgCropResizeClient.css',
+    'Static/imgareaselect.css',
+    'Static/jquery.jeegoocontext.qp8.css',
+    'Static/telerik.qp8.css',
+    'Static/codemirror/lib/codemirror.css',
+    'Static/codemirrorTheme.css',
+    'Static/jsoneditor/dist/jsoneditor.css',
+    'Static/QpCodemirror.css',
+    'Static/custom/**/*.{scss,css}',
 
-    '!Content/build/**/*.css'
+    '!Static/build/**/*.css'
   ],
   stylesLogon: [
-    'Content/basic.css',
-    'Content/page.css'
+    'Static/basic.css',
+    'Static/page.css'
   ],
   images: [
-    'Content/**/*.{jpg,jpeg,png,gif,svg}',
-    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
-    '!Content/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
-    '!Content/build/**/*.{jpg,jpeg,png,gif,svg}',
-    '!Content/build/**/*.{jpg,jpeg,png,gif,svg}'
+    'Static/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Static/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Static/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Static/build/**/*.{jpg,jpeg,png,gif,svg}',
+    '!Static/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
     'Scripts/Quantumart/**/*.{min.js,map}',
-    'Content/custom/**/*.{min.css,map}',
+    'Static/custom/**/*.{min.css,map}',
     custom.destPaths.scripts,
     custom.destPaths.styles,
     custom.destPaths.images

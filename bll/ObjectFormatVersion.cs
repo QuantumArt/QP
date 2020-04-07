@@ -1,44 +1,44 @@
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class ObjectFormatVersion : EntityObject
     {
-        [LocalizedDisplayName("CodeBehind", NameResourceType = typeof(ObjectFormatStrings))]
+        [Display(Name = "CodeBehind", ResourceType = typeof(ObjectFormatStrings))]
         public string CodeBehind { get; set; }
 
-        [LocalizedDisplayName("Presentation", NameResourceType = typeof(ObjectFormatStrings))]
+        [Display(Name = "Presentation", ResourceType = typeof(ObjectFormatStrings))]
         public string FormatBody { get; set; }
 
-        [LocalizedDisplayName("NetClassName", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetClassName", ResourceType = typeof(TemplateStrings))]
         public string NetFormatName { get; set; }
 
         public NetLanguage NetLanguage { get; set; }
 
-        [LocalizedDisplayName("NetLanguage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetLanguage", ResourceType = typeof(TemplateStrings))]
         public string NetLanguageName => NetLanguage.Name;
 
         public ObjectFormat ObjectFormat { get; set; }
 
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
         public string NameToMerge { get; set; }
 
-        [LocalizedDisplayName("NetClassName", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetClassName", ResourceType = typeof(TemplateStrings))]
         public string NetFormatNameToMerge { get; set; }
 
-        [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Description", ResourceType = typeof(EntityObjectStrings))]
         public string DescriptionToMerge { get; set; }
 
-        [LocalizedDisplayName("NetLanguage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "NetLanguage", ResourceType = typeof(TemplateStrings))]
         public string NetLanguageNameToMerge { get; set; }
 
-        [LocalizedDisplayName("Presentation", NameResourceType = typeof(ObjectFormatStrings))]
+        [Display(Name = "Presentation", ResourceType = typeof(ObjectFormatStrings))]
         public string PresentationToMerge { get; set; }
 
-        [LocalizedDisplayName("CodeBehind", NameResourceType = typeof(ObjectFormatStrings))]
+        [Display(Name = "CodeBehind", ResourceType = typeof(ObjectFormatStrings))]
         public string CodeBehindToMerge { get; set; }
 
         public int? NetLanguageId { get; set; }
@@ -89,7 +89,7 @@ namespace Quantumart.QP8.BLL
             return result.Replace(prefix, "").Replace(suffix, "");
         }
 
-        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
+        [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
         public string ExpandedName => Id == CurrentVersionId || Id == 0 ? ArticleStrings.CurrentVersion : string.Format(ArticleStrings.VersionN, Id);
     }
 }

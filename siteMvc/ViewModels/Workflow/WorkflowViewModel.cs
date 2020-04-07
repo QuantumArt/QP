@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
+using Quantumart.QP8.Utils.Binders;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -22,16 +25,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewWorkflow : Constants.ActionCode.WorkflowProperties;
 
-        public new BLL.Workflow Data
+        public BLL.Workflow Data
         {
             get => (BLL.Workflow)EntityData;
             set => EntityData = value;
         }
 
-        [LocalizedDisplayName("Contents", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "Contents", ResourceType = typeof(WorkflowStrings))]
+        [ModelBinder(BinderType = typeof(IdArrayBinder))]
         public IEnumerable<int> ActiveContentsIds { get; set; }
 
-        [LocalizedDisplayName("Contents", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "Contents", ResourceType = typeof(WorkflowStrings))]
         public IEnumerable<ListItem> ActiveContentsListItems { get; set; }
 
         public static WorkflowViewModel Create(BLL.Workflow workflow, string tabId, int parentId, IWorkflowService service)
@@ -43,15 +47,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public EntityDataListArgs EntityDataListArgs { get; set; }
 
-        public override void Validate(ModelStateDictionary modelState)
+        public override IEnumerable<ValidationResult> ValidateViewModel()
         {
-            modelState.Clear();
             if (ActiveStatuses.Count == 0)
             {
-                modelState.AddModelError("ActiveStatuses", WorkflowStrings.StatusNotSelected);
+                yield return new ValidationResult(WorkflowStrings.StatusNotSelected, new[] {"ActiveStatuses"});
             }
-
-            base.Validate(modelState);
         }
 
         private InitPropertyValue<IEnumerable<BLL.StatusType>> _statuses;
@@ -80,11 +81,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public string WorkflowsWorkflowRulesDisplay { get; set; }
 
-        [LocalizedDisplayName("Statuses", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "Statuses", ResourceType = typeof(WorkflowStrings))]
         public IList<QPCheckedItem> ActiveStatuses { get; set; }
 
         private InitPropertyValue<IEnumerable<BLL.Content>> _contents;
 
+        [ValidateNever]
+        [BindNever]
         public IEnumerable<BLL.Content> Contents
         {
             get => _contents.Value;
@@ -110,7 +113,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
             }
         }
 
-        [LocalizedDisplayName("User", NameResourceType = typeof(WorkflowStrings))]
+        [Display(Name = "User", ResourceType = typeof(WorkflowStrings))]
         public string O2MDefaultValue { get; set; }
 
         public QPSelectListItem DefaultValueListItem => O2MDefaultValue != null ? new QPSelectListItem { Value = "0", Text = @"Select User", Selected = true } : null;
@@ -141,8 +144,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         private List<WorkflowRuleItem> _workflowRules;
 
-        internal void DoCustomBinding()
+        public override void DoCustomBinding()
         {
+            ActiveStatuses = ActiveStatuses?.Where(n => n != null).ToArray() ?? new QPCheckedItem[] { };
+
             _workflowRules = JsonConvert.DeserializeObject<List<WorkflowRuleItem>>(WorkflowsWorkflowRulesDisplay);
             Data.DoCustomBinding(_workflowRules);
         }

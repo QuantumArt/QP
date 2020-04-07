@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
 {
@@ -17,8 +18,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         internal readonly bool DisableDataIntegrity;
 
-        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution, bool disableDataIntegrity)
-            : base(filePathes, customerCode, configPath)
+        public XmlSettingsModel(IList<string> filePathes, string customerCode, DatabaseType dbType, string configPath, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution, bool disableDataIntegrity)
+            : base(filePathes, customerCode, dbType, configPath)
         {
             GenerateNewFieldIds = generateNewFieldIds;
             GenerateNewContentIds = generateNewContentIds;

@@ -1,15 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class EntityTypeRepository
     {
-        private static ObjectQuery<EntityTypeDAL> DefaultEntityTypeQuery => QPContext.EFContext.EntityTypeSet.Include("Parent").Include("CancelAction").Include("ContextMenu");
+        private static IQueryable<EntityTypeDAL> DefaultEntityTypeQuery => QPContext
+            .EFContext
+            .EntityTypeSet
+            .Include(x => x.Parent)
+            .Include(x => x.CancelAction)
+            .Include(x => x.ContextMenu);
 
         /// <summary>
         /// Возвращает тип сущности по ее идентификатору
@@ -32,20 +39,17 @@ namespace Quantumart.QP8.BLL.Repository
             return entityType;
         }
 
-        private static readonly Lazy<IEnumerable<EntityType>> EntityTypesCache = new Lazy<IEnumerable<EntityType>>(LoadEntityTypes);
-
-        private static IEnumerable<EntityType> LoadEntityTypes()
+        internal static List<EntityTypeDAL> GetDbList()
         {
-            var mapper = MapperFacade.EntityTypeMapper;
-            mapper.DisableTranslations = true;
-
-            var result = mapper.GetBizList(DefaultEntityTypeQuery.ToList());
-            mapper.DisableTranslations = false;
-
-            return result;
+            return EntityTypeCache.GetEntityTypes(
+                QPContext.EFContext, QPContext.CurrentCustomerCode, QPContext.CurrentUserId
+            );
         }
 
-        internal static IEnumerable<EntityType> GetList() => EntityTypesCache.Value;
+        internal static List<EntityType> GetList()
+        {
+            return MapperFacade.EntityTypeMapper.GetBizList(GetDbList());
+        }
 
         internal static IEnumerable<EntityType> GetListByCodes(IEnumerable<string> entityCodes)
         {
@@ -59,8 +63,9 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>код типа родительской сущности</returns>
         internal static string GetParentCodeByCode(string entityTypeCode)
         {
-            return QPContext.EFContext.EntityTypeSet.Include("Parent").SingleOrDefault(et => et.Code == entityTypeCode).Parent?.Code;
+            return GetDbList().SingleOrDefault(et => et.Code == entityTypeCode)?.Parent?.Code;
         }
+
 
         /// <summary>
         /// Возвращает код действия по умолчанию для указанного типа сущности
@@ -69,7 +74,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>код действия по умолчанию</returns>
         internal static string GetDefaultActionCodeByEntityTypeCode(string entityTypeCode)
         {
-            return QPContext.EFContext.EntityTypeSet.Include("DefaultAction").SingleOrDefault(et => et.Code == entityTypeCode).DefaultAction?.Code;
+            return GetDbList().SingleOrDefault(et => et.Code == entityTypeCode)?.DefaultAction?.Code;
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Quantumart.QP8.BLL.Services
 
             var allButtons = ToolbarRepository.GetButtonListByActionCode(action.Code, entityId);
 
+
             // если неопределен id сущности, то нужно работать с родительским entity type
             var etypeCode = entityId != 0 ? action.EntityType.Code : action.EntityType.ParentCode;
             IEnumerable<string> legalActionCodes = CustomActionResolver.CanExecuteFilter(etypeCode, id, parentEntityId, allButtons.Select(b => b.ActionCode)).ToArray();

@@ -1,5 +1,6 @@
 using System;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -8,6 +9,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteFilesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
         public int SiteId { get; set; }
 
         public int? NewSiteId { get; set; }
@@ -30,7 +33,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             SiteId = siteId;
             SiteName = siteName;
 
-            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            var prms = HttpContext.Session.GetValue<CopySiteSettings>(HttpContextSession.CopySiteServiceSettings);
             NewSiteId = prms.DestinationSiteId;
 
             var sourceSite = SiteRepository.GetById(SiteId);

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -27,7 +27,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
             }
 
-            HtmlAttributes.AddData("count_limit", QPConfiguration.WebConfigSection.RelationCountLimit);
+            HtmlAttributes.AddData("count_limit", QPConfiguration.Options.RelationCountLimit);
             SetDataListOptions(name, eventArgs);
         }
 

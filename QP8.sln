@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "bll\BLL.csproj", "{2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security", "security\Security.csproj", "{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinLogOnMvc", "winLogonMvc\WinLogOnMvc.csproj", "{DE073901-E0A0-4B83-816A-C65B34955CFE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validators", "validators\Validators.csproj", "{289708F2-2275-4FAD-858F-1499AA467E28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}"
@@ -36,8 +34,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Notification", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj", "{4751A066-0F3B-400C-8303-30C1606EC34D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Service", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service\Quantumart.QP8.Scheduler.Service.csproj", "{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Users", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj", "{BD000ADE-0B97-464D-9376-73BB679A21FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DA4FC952-0EA9-4C16-A9FD-14662B603709}"
@@ -48,9 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "Integra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Integration.Tests", "QuantumArt.Tests\QP8.Integration.Tests\QP8.Integration.Tests.csproj", "{89D19F8D-069F-47CA-9655-5B4D6618F875}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\UnitTests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\UnitTests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42BD44AF-78C8-4799-9EC5-113923D18639}"
 	ProjectSection(SolutionItems) = preProject
@@ -66,11 +62,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C154FDD0-B9E5-4398-8462-F8243B45B73E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCustomActionsHost", "QP8.TestCustomActionsHost\TestCustomActionsHost.csproj", "{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\UnitTests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Services.Tests", "QuantumArt.Tests\QP8.Services.Tests\QP8.Services.Tests.csproj", "{F41EA3C2-919A-4C4D-A56B-4DB42F07BB70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Services.Tests", "QuantumArt.Tests\UnitTests\QP8.Services.Tests\QP8.Services.Tests.csproj", "{F41EA3C2-919A-4C4D-A56B-4DB42F07BB70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.CdcDataImport.Tarantool", "QuantumArt.Schedulers\Quantumart.QP8.CdcDataImport.Tarantool\Quantumart.QP8.CdcDataImport.Tarantool.csproj", "{E8E1D72A-60CF-475C-9A62-25150ACA26E6}"
 EndProject
@@ -434,50 +428,6 @@ Global
 		{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}.Stage|Mixed Platforms.Build.0 = Release|Any CPU
 		{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}.Stage|x86.ActiveCfg = Release|Any CPU
 		{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}.Stage|x86.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug_AspnetCore|x86.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug_AspnetCore|x86.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Live|Any CPU.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Live|Any CPU.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Live|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Live|Mixed Platforms.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Live|x86.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Live|x86.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release MVC2 NET35|Any CPU.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release MVC2 NET35|Any CPU.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release MVC2 NET35|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release MVC2 NET35|Mixed Platforms.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release MVC2 NET35|x86.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release_AspnetCore|Any CPU.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release_AspnetCore|Any CPU.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release_AspnetCore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release_AspnetCore|Mixed Platforms.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release_AspnetCore|x86.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release_AspnetCore|x86.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Release|x86.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Stage|Any CPU.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Stage|Any CPU.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Stage|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Stage|Mixed Platforms.Build.0 = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Stage|x86.ActiveCfg = Release|Any CPU
-		{DE073901-E0A0-4B83-816A-C65B34955CFE}.Stage|x86.Build.0 = Release|Any CPU
 		{289708F2-2275-4FAD-858F-1499AA467E28}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
 		{289708F2-2275-4FAD-858F-1499AA467E28}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
 		{289708F2-2275-4FAD-858F-1499AA467E28}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -846,54 +796,6 @@ Global
 		{4751A066-0F3B-400C-8303-30C1606EC34D}.Stage|Mixed Platforms.Build.0 = Release|Any CPU
 		{4751A066-0F3B-400C-8303-30C1606EC34D}.Stage|x86.ActiveCfg = Release|Any CPU
 		{4751A066-0F3B-400C-8303-30C1606EC34D}.Stage|x86.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug MVC2 NET35|x86.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug_AspnetCore|x86.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug_AspnetCore|x86.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Debug|x86.Build.0 = Debug|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Live|Any CPU.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Live|Any CPU.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Live|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Live|Mixed Platforms.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Live|x86.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Live|x86.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release MVC2 NET35|Any CPU.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release MVC2 NET35|Any CPU.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release MVC2 NET35|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release MVC2 NET35|Mixed Platforms.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release MVC2 NET35|x86.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release MVC2 NET35|x86.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release_AspnetCore|Any CPU.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release_AspnetCore|Any CPU.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release_AspnetCore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release_AspnetCore|Mixed Platforms.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release_AspnetCore|x86.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release_AspnetCore|x86.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release|x86.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Release|x86.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Stage|Any CPU.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Stage|Any CPU.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Stage|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Stage|Mixed Platforms.Build.0 = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Stage|x86.ActiveCfg = Release|Any CPU
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}.Stage|x86.Build.0 = Release|Any CPU
 		{BD000ADE-0B97-464D-9376-73BB679A21FC}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD000ADE-0B97-464D-9376-73BB679A21FC}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
 		{BD000ADE-0B97-464D-9376-73BB679A21FC}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -1086,54 +988,6 @@ Global
 		{1B992EFD-F6DC-45C2-948C-AF4027D05F65}.Stage|Mixed Platforms.Build.0 = Release|Any CPU
 		{1B992EFD-F6DC-45C2-948C-AF4027D05F65}.Stage|x86.ActiveCfg = Release|Any CPU
 		{1B992EFD-F6DC-45C2-948C-AF4027D05F65}.Stage|x86.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug MVC2 NET35|x86.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug_AspnetCore|x86.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug_AspnetCore|x86.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Debug|x86.Build.0 = Debug|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Live|Any CPU.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Live|Any CPU.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Live|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Live|Mixed Platforms.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Live|x86.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Live|x86.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release MVC2 NET35|Any CPU.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release MVC2 NET35|Any CPU.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release MVC2 NET35|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release MVC2 NET35|Mixed Platforms.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release MVC2 NET35|x86.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release MVC2 NET35|x86.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release_AspnetCore|Any CPU.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release_AspnetCore|Any CPU.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release_AspnetCore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release_AspnetCore|Mixed Platforms.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release_AspnetCore|x86.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release_AspnetCore|x86.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release|x86.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Release|x86.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Stage|Any CPU.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Stage|Any CPU.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Stage|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Stage|Mixed Platforms.Build.0 = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Stage|x86.ActiveCfg = Release|Any CPU
-		{4CF7A3D4-AD4C-498F-AD90-C21DF7E579EB}.Stage|x86.Build.0 = Release|Any CPU
 		{0B42B98E-EC14-4306-9B1D-C0E2205747AA}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B42B98E-EC14-4306-9B1D-C0E2205747AA}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
 		{0B42B98E-EC14-4306-9B1D-C0E2205747AA}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -1864,7 +1718,6 @@ Global
 		{4E3C069F-0648-4989-81FB-A026B03562E8} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 		{B35FEB42-4052-493F-B4EB-328A50453208} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 		{4751A066-0F3B-400C-8303-30C1606EC34D} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
-		{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 		{BD000ADE-0B97-464D-9376-73BB679A21FC} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 		{4C807A7B-E9D6-4933-9B33-F4706FDFC8E8} = {DA4FC952-0EA9-4C16-A9FD-14662B603709}
 		{214AED83-DC72-4279-A9F9-9BBA69CB785C} = {DA4FC952-0EA9-4C16-A9FD-14662B603709}

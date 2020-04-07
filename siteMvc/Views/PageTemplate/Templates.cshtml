@@ -1,58 +1,57 @@
-﻿@using Quantumart.QP8.BLL.ListItems
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.SearchInTemplatesViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-    <div id="@Model.MainComponentId" class="alMainContaner">	
-	    <form class="formLayout" action='javascript:void(0);'>
-		    <div id="@Model.FilterElementId" class="simpleSeachBlock">
-                @using (Html.BeginFieldGroup(TemplateStrings.FiltrationParameters))
-	            {
-                    <div class="sic_filter">                    
-                        @Html.TextBoxFieldFor(s => s.Filter)
-                    </div>                			    			    
-			        <input id="@Html.UniqueId("findButton")" type="button" class="sic_search_button button" value="@AuditStrings.Find" />
-			        <input id="@Html.UniqueId("resetButton")" type="button" class="sic_reset_button button" value="@AuditStrings.ResetFilter" />
-                }
-		    </div>
-	    </form>			
+  <div id="@Model.MainComponentId" class="alMainContaner">
+    <form class="formLayout" action='javascript:void(0);'>
+      <div id="@Model.FilterElementId" class="simpleSeachBlock">
+        @using (Html.BeginFieldGroup(TemplateStrings.FiltrationParameters))
+        {
+          <div class="sic_filter">
+            @Html.TextBoxFieldFor(s => s.Filter)
+          </div>
+          <input id="@Html.UniqueId("findButton")" type="button" class="sic_search_button button" value="@AuditStrings.Find" />
+          <input id="@Html.UniqueId("resetButton")" type="button" class="sic_reset_button button" value="@AuditStrings.ResetFilter" />
+        }
+      </div>
+    </form>
 
-	    @(Html.Telerik().Grid<PageTemplateSearchListItem>().Name(Model.GridElementId)
-                .DataKeys(k => k.Add(s => s.Id))
-                .Columns(c =>
-                    {
-                        c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                        .Width(30)
-                        .HtmlAttributes(new { @class = "id" });
-                        c.Bound(s => s.Name)
-                        .HtmlAttributes(new { @class = "title" }); 
-                        c.Bound(s => s.Description).Encoded(false); ;
-                        c.Bound(s => s.Created);
-                        c.Bound(s => s.Modified);
-                        c.Bound(s => s.LastModifiedByLogin);                        
-                    }
-                )
-                .DataBinding(db => db.Ajax().Select("_Templates", "PageTemplate"))
-                .EnableCustomBinding(true)
-                .Sortable()
-                .Selectable(s => s.Enabled(false))
-                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))                
-                .ClientEvents(e => e
-                    .OnDataBinding("$q.preventDefaultFunction")
-                    .OnRowDataBound("$q.preventDefaultFunction")
-                )
-        )
-    </div>
+    <div id="@Model.GridElementId"></div>
+    <script>
+      $(function () {
+        $('#@Model.GridElementId').qpGrid({
+          selectable: false,
+          columns: [
+            { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
+            { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+            { field: 'Description', title: '@EntityObjectStrings.Description', encoded: false },
+            { field: 'Created', title: '@EntityObjectStrings.Created' },
+            { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+            { field: 'LastModifiedByLogin', title: '@EntityObjectStrings.LastModifiedBy' },
+          ],
+          dataSource: {
+            transport: {
+              read: {
+                url: '@Url.Action("_Templates", "PageTemplate", new { tabId = Model.TabId, parentId = Model.ParentEntityId, id = Model.SiteId } )',
+              },
+            },
+            pageSize: @Default.GridPageSize,
+          },
+        });
+      });
+    </script>
+  </div>
 }
 
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
-	@(Model.ContextObjectName).setInitializedCallback(function() {				
-	    this.filterComponent = new Quantumart.QP8.SearchInCodeComponent("@Model.FilterElementId", "@Model.GridElementId");		
+<script type="text/javascript">
+	@(Model.ContextObjectName).setInitializedCallback(function() {
+    this.filterComponent = new Quantumart.QP8.SearchInCodeComponent("@Model.FilterElementId", "@Model.GridElementId");
 		this.filterComponent.initialize();
-	});	
-	@(Model.ContextObjectName).setTerminatingCallback(function() {								
+	});
+	@(Model.ContextObjectName).setTerminatingCallback(function() {
 		this.filterComponent.dispose();
 		this.filterComponent = null;
 	});

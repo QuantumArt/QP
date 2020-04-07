@@ -1,29 +1,45 @@
-﻿@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
 @model Quantumart.QP8.WebMvc.ViewModels.Audit.FailedSessionsAreaViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-    <div id="@Model.MainComponentId" class="alMainContaner">
-    @(Html.Telerik().Grid<SessionsLog>().Name(Model.GridElementId)
-                .DataKeys(k => k.Add(s => s.SessionId))
-                .Columns(c =>
-                    {
-                        c.Bound(s => s.Login);
-                        c.Bound(s => s.FailedTime);
-                        c.Bound(s => s.AutoLogged).ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <#= AutoLoggedChecked #> />");
-                        c.Bound(s => s.IP);
-                        c.Bound(s => s.Browser);
-                        c.Bound(s => s.ServerName);
-                        c.Bound(s => s.IsQP7).ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <#= IsQP7Checked #> />");
-                    }
-                )
-                .DataBinding(db => db.Ajax().Select("_FailedSessions", "ActionLog"))
-                .EnableCustomBinding(true)
-                .Sortable()
-                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
-                .Selectable(s => s.Enabled(false))
-        )
-    </div>
+  <div id="@Model.MainComponentId" class="alMainContaner">
+    <div id="@Model.GridElementId"></div>
+    <script>
+      $(function () {
+        $('#@Model.GridElementId').qpGrid({
+          selectable: false,
+          autoBind: true,
+          columns: [
+            { field: 'Login', title: '@AuditStrings.UserLogin' },
+            { field: 'StartTime', title: '@AuditStrings.FailedTime' },
+            {
+              field: 'AutoLogged',
+              title: '@AuditStrings.AutoLogged',
+              template: '<input type="checkbox" disabled="disabled" # AutoLoggedChecked # />'
+            },
+            { field: 'IP', title: '@AuditStrings.IP' },
+            { field: 'Browser', title: '@AuditStrings.Browser' },
+            { field: 'ServerName', title: '@AuditStrings.ServerName' },
+            {
+              field: 'IsQP7',
+              title: '@AuditStrings.IsQP7',
+              template: '<input type="checkbox" disabled="disabled" # IsQP7Checked # />'
+            },
+          ],
+          dataSource: {
+            transport: {
+              read: {
+                url: "@Url.Action("_FailedSessions", "ActionLog")",
+              }
+            },
+            pageSize: @Default.GridPageSize,
+          },
+        })
+      });
+    </script>
+  </div>
 }
 
 @Html.PrepareAndRunInitScript(Model)

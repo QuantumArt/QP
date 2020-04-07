@@ -1,15 +1,17 @@
 using System;
 using System.Transactions;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using QP8.Infrastructure.Web.Extensions;
+using QP8.Infrastructure;
+using QP8.Infrastructure.Extensions;
 using NLog;
 using NLog.Fluent;
-using QP8.Infrastructure;
-
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -17,6 +19,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesCommand : IMultistepActionStageCommand
     {
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
         private static readonly ILogger ImportLogger = LogManager.GetCurrentClassLogger();
 
@@ -48,7 +51,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public MultistepActionStepResult Step(int step)
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             Ensure.NotNull(settings);
 
             var reader = new CsvReader(SiteId, ContentId, settings);
@@ -67,6 +70,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
                         }
 
+                        settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
+
                         var logData = new ImportArticlesLogData()
                         {
                             Id = settings.Id,
@@ -78,6 +83,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                         ImportLogger.Trace()
                             .Message("Import articles step: {step}.", step)
                             .Property("result", logData)
+                            .Property("customerCode", QPContext.CurrentCustomerCode)
                             .Write();
 
                         result.ProcessedItemsCount = processedItemsCount;
@@ -104,3 +110,4 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         };
     }
 }
+

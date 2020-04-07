@@ -3,13 +3,16 @@
 @using (Html.BeginDocumentPadding())
 {
   if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
     {
-        using (Html.BeginLinkButtonsList())
-        {
-        @Html.AddNewItemLink(Model)
-        }
+      @Html.AddNewItemLink(Model)
     }
-    @Html.Telerik().TreeView().Name(Model.MainComponentId)
+  }
+  <div class="t-widget t-treeview t-reset" id="@Model.MainComponentId"></div>
+  <script type="text/javascript">
+    $('#@Model.MainComponentId').tTreeView();
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)

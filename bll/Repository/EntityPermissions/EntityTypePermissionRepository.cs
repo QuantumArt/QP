@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
@@ -24,7 +25,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
         public EntityPermission GetById(int id, bool include = true)
         {
-            ObjectQuery<EntityTypePermissionDAL> set = QPContext.EFContext.EntityTypePermissionSet;
+            var set = QPContext.EFContext.EntityTypePermissionSet.AsQueryable();
             if (include)
             {
                 set = set
@@ -41,11 +42,14 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
         {
             return !QPContext.EFContext.EntityTypePermissionSet
                 .Any(p =>
-                    p.EntityTypeId == permission.ParentEntityId &&
-                    (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
-                    (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null)
+                    PermissionUserOrGroupEquals(permission, p)
                 );
         }
+
+        private static bool PermissionUserOrGroupEquals(EntityPermission permission, EntityTypePermissionDAL p) =>
+            p.EntityTypeId == permission.ParentEntityId &&
+            (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
+            (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
 
         public EntityPermission Update(EntityPermission permission) => DefaultRepository.Update<EntityPermission, EntityTypePermissionDAL>(permission);
 

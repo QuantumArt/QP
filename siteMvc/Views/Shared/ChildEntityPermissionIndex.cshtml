@@ -1,87 +1,93 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.EntityPermissions.ChildEntityPermissionListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-	using (Html.BeginLinkButtonsList())
-	{
-		if (Model.ShowParentPermissionButton)
-		{ 			
-			@Html.ParentPermissionLink(Model)
-		}
-        @Html.UnselectLink(Model)
-	}
-	
-	<div id="@Model.SearchBlockId" class="alMainContaner">
-		@Html.Partial("UserAndGroupSearchBlock", Model)		
+  using (Html.BeginLinkButtonsList())
+  {
+    if (Model.ShowParentPermissionButton)
+    {
+      @Html.ParentPermissionLink(Model)
+    }
+    @Html.UnselectLink(Model)
+  }
 
-		@(Html.Telerik().Grid<ChildEntityPermissionListItem>().Name(Model.MainComponentId)
-            .DataKeys(k => k.Add(s => s.Id))
-            .Columns(c =>
+  <div id="@Model.SearchBlockId" class="alMainContaner">
+    <partial name="UserAndGroupSearchBlock" model="@Model" />
+    <div id="@Model.MainComponentId"></div>
+    <script>
+      $(function () {
+        $('#@Model.MainComponentId').qpGrid({
+          columns: [
             {
-                c.Bound("")
-                    .Title(@"<input type='checkbox' />")
-                    .Width(30)
-                    .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                    .ClientTemplate(@"<input type='checkbox' name='SelectedSitePermissionIDs' value='<#= Id #>' />")
-                    .HtmlAttributes(new { @class = "t-select-cell" })
-                    .Sortable(false);
-
-                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                       .Width(30)
-                       .HtmlAttributes(new { @class = "id" });
-
-                c.Bound(s => s.Title).Title(EntityPermissionStrings.ParentEntityTitle);
-                c.Bound(s => s.LevelName).Title(EntityPermissionStrings.PermissionLevel);
-
-                c.Bound(s => s.IsExplicit)
-                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (IsExplicit)  { #> checked=""checked"" <# } #>/>")
-                    .Title(EntityPermissionStrings.IsExplicit);
-
-                if (Model.IsPropagateable)
+              field: '',
+              headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+              headerAttributes: { 'class': 't-select-header' },
+              template: '<input type="checkbox" name="SelectedSitePermissionIDs" value="#= Id #" />',
+              sortable: false,
+              attributes: { 'class': 't-select-cell' },
+              width: 35,
+            },
+            { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+            { field: 'Title', title: '@EntityPermissionStrings.ParentEntityTitle' },
+            { field: 'LevelName', title: '@EntityPermissionStrings.PermissionLevel', attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+            {
+              field: 'IsExplicit',
+              title: '@EntityPermissionStrings.IsExplicit',
+              template: '<input type="checkbox" disabled="disabled" # if (IsExplicit) { # checked="checked" # } # />',
+              attributes: { 'class': 'isCentered' },
+              headerAttributes: { 'class': 'isCentered' },
+            },
+            @if (Model.IsPropagateable) {
+              <text>
                 {
-                    c.Bound(s => s.PropagateToItems)
-                        .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (PropagateToItems)  { #> checked=""checked"" <# } #>/>")
-                        .Title(EntityPermissionStrings.PropagateToItems);
-                }
-
-                if (Model.CanHide)
+                  field: 'PropagateToItems',
+                  title: '@EntityPermissionStrings.PropagateToItems',
+                  template: '<input type="checkbox" disabled="disabled" # if (PropagateToItems) { # checked="checked" # } # />',
+                  attributes: { 'class': 'isCentered' },
+                  headerAttributes: { 'class': 'isCentered' },
+                },
+              </text>
+            }
+            @if (Model.CanHide)
+            {
+              <text>
                 {
-                    c.Bound(s => s.Hide)
-                        .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (Hide)  { #> checked=""checked"" <# } #>/>")
-                        .Title(EntityPermissionStrings.Hide);
-                }
-
-            })
-            .DataBinding(db => db.Ajax()
-                    .Select(Model.GettingDataActionName, Model.GettingDataControllerName)
-            )
-            .EnableCustomBinding(true)
-            .Sortable()
-            .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-            .Selectable(s => s.Enabled(true))
-            .ClientEvents(e =>
-                e.OnDataBinding("$q.preventDefaultFunction")
-                 .OnRowDataBound("$q.preventDefaultFunction")
-            )
-            .HtmlAttributes(new { @class = "pep-grid" })
-		)		
-	</div>
+                  field: 'Hide',
+                  title: '@EntityPermissionStrings.Hide',
+                  template: '<input type="checkbox" disabled="disabled" # if (Hide) { # checked="checked" # } # />',
+                  attributes: { 'class': 'isCentered' },
+                  headerAttributes: { 'class': 'isCentered' },
+                },
+              </text>
+            }
+          ],
+          dataSource: {
+            transport: {
+              read: {
+                url: "@Url.Action(Model.GettingDataActionName, Model.GettingDataControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+              },
+            },
+            pageSize: @Default.GridPageSize,
+          },
+          class: 'pep-grid',
+        })
+      });
+    </script>
+  </div>
 }
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).setInitializedCallback(function() {
-		this.mediatorComponent = new Quantumart.QP8.BackendChildEntityPermissionList("@Model.SearchBlockId");
-		this.modifyEventArgsContext = this.mediatorComponent.modifyEventArgsContext;		
-	});
-	@(Model.ContextObjectName).setTerminatingCallback(function() {								
-		this.mediatorComponent.dispose();
-		this.mediatorComponent = null;
-	});
+  @(Model.ContextObjectName).setInitializedCallback(function () {
+    console.log('setInitializedCallback');
+    this.mediatorComponent = new Quantumart.QP8.BackendChildEntityPermissionList('@Model.SearchBlockId', '@Model.MainComponentId');
+    this.modifyEventArgsContext = this.mediatorComponent.modifyEventArgsContext;
+  });
+  @(Model.ContextObjectName).setTerminatingCallback(function() {
+    this.mediatorComponent.dispose();
+    this.mediatorComponent = null;
+  });
 </script>
 @Html.RunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

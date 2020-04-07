@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
-using System.Web;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -133,8 +133,8 @@ namespace Quantumart.QP8.BLL.Services
 
         private void ManagePageTemplateFolders(PageTemplate template, FolderManagingType type)
         {
-            var stageDirectory = template.Site.StageDirectory + "\\" + template.TemplateFolder;
-            var liveDirectory = template.Site.LiveDirectory + "\\" + template.TemplateFolder;
+            var stageDirectory = template.Site.StageDirectory + Path.DirectorySeparatorChar + template.TemplateFolder;
+            var liveDirectory = template.Site.LiveDirectory + Path.DirectorySeparatorChar + template.TemplateFolder;
 
             switch (type)
             {
@@ -186,8 +186,8 @@ namespace Quantumart.QP8.BLL.Services
                             return;
                         }
 
-                        var oldStageDirectory = oldTemplate.Site.StageDirectory + "\\" + oldFolder;
-                        var oldLiveDirectory = oldTemplate.Site.LiveDirectory + "\\" + oldFolder;
+                        var oldStageDirectory = oldTemplate.Site.StageDirectory + Path.DirectorySeparatorChar + oldFolder;
+                        var oldLiveDirectory = oldTemplate.Site.LiveDirectory + Path.DirectorySeparatorChar + oldFolder;
                         if (Directory.Exists(oldStageDirectory))
                         {
                             Directory.Move(oldStageDirectory, stageDirectory);
@@ -301,7 +301,7 @@ namespace Quantumart.QP8.BLL.Services
             var format = ObjectFormatRepository.ReadObjectFormat(formatId, true);
             var obj = ObjectRepository.GetObjectPropertiesById(format.ParentEntityId);
             var netLanguagePrefix = GetLangPrefix(format.NetLanguageId);
-            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
+            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + Path.DirectorySeparatorChar + "default" + Path.DirectorySeparatorChar;
             return ReadFileAsString(obj.IsObjectContainerType ? $"{pathToCopy}container_code_{netLanguagePrefix}.txt" : $"{pathToCopy}generic_code_{netLanguagePrefix}.txt");
         }
 
@@ -309,7 +309,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             var format = ObjectFormatRepository.ReadObjectFormat(formatId, true);
             var obj = ObjectRepository.GetObjectPropertiesById(format.ParentEntityId);
-            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
+            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + Path.DirectorySeparatorChar + "default" + Path.DirectorySeparatorChar;
             return obj.IsObjectContainerType ? ReadFileAsString($"{pathToCopy}container_presentation.txt") : string.Empty;
         }
 
@@ -419,21 +419,6 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        public MessageResult AssemblePageFromPageObject(int pageId) => AssemblePage(pageId);
-
-        public MessageResult AssemblePageFromPageObjectPreAction(int pageId) => AssemblePagePreAction(pageId);
-
-        public MessageResult AssemblePageFromPageObjectFormatPreAction(int objectId)
-        {
-            var props = ReadObjectProperties(objectId, false);
-            if (props.PageId == null)
-            {
-                throw new ArgumentException(@"Wrong argument", nameof(objectId));
-            }
-
-            return AssemblePagePreAction(props.PageId.Value);
-        }
-
         public BllObject ReadObjectProperties(int id, bool withAutoLock = true)
         {
             var obj = ObjectRepository.GetObjectPropertiesById(id);
@@ -449,6 +434,21 @@ namespace Quantumart.QP8.BLL.Services
 
             obj.LoadLockedByUser();
             return obj;
+        }
+
+        public MessageResult AssemblePageFromPageObject(int pageId) => AssemblePage(pageId);
+
+        public MessageResult AssemblePageFromPageObjectPreAction(int pageId) => AssemblePagePreAction(pageId);
+
+        public MessageResult AssemblePageFromPageObjectFormatPreAction(int objectId)
+        {
+            var props = ReadObjectProperties(objectId, false);
+            if (props.PageId == null)
+            {
+                throw new ArgumentException(@"Wrong argument", nameof(objectId));
+            }
+
+            return AssemblePagePreAction(props.PageId.Value);
         }
 
         public MessageResult AssemblePageFromPageObjectList(int parentId) => AssemblePage(parentId);
@@ -518,13 +518,13 @@ namespace Quantumart.QP8.BLL.Services
                 var format = ObjectFormatRepository.ReadObjectFormat(item.Id, true);
                 if (!string.IsNullOrWhiteSpace(format.CodeBehind) && format.CodeBehind.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(format.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(format.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                     continue;
                 }
 
                 if (!string.IsNullOrWhiteSpace(format.FormatBody) && format.FormatBody.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(format.FormatBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(format.FormatBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                 }
             }
         }
@@ -552,13 +552,13 @@ namespace Quantumart.QP8.BLL.Services
                 var template = PageTemplateRepository.GetPageTemplatePropertiesById(item.Id);
                 if (!string.IsNullOrWhiteSpace(template.CodeBehind) && template.CodeBehind.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(template.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(template.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                     continue;
                 }
 
                 if (!string.IsNullOrWhiteSpace(template.TemplateBody) && template.TemplateBody.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(template.TemplateBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(template.TemplateBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                 }
             }
         }
@@ -591,7 +591,7 @@ namespace Quantumart.QP8.BLL.Services
                     var dName = names.Any() ? names.First() : null;
                     if (dName != null)
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(dName.VariableName), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(dName.VariableName), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
 
@@ -599,7 +599,7 @@ namespace Quantumart.QP8.BLL.Services
                     var dVal = filteredDefaultValues.Any() ? filteredDefaultValues.First() : null;
                     if (dVal != null)
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(dVal.VariableValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(dVal.VariableValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
                 }
@@ -608,13 +608,13 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     if (!string.IsNullOrWhiteSpace(obj.Container.FilterValue) && obj.Container.FilterValue.Contains(filter))
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(obj.Container.FilterValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(obj.Container.FilterValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
 
                     if (!string.IsNullOrWhiteSpace(obj.Container.OrderDynamic) && obj.Container.OrderDynamic.Contains(filter))
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(obj.Container.OrderDynamic), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(WebUtility.HtmlEncode(obj.Container.OrderDynamic), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
 

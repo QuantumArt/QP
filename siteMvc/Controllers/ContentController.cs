@@ -1,13 +1,14 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net.Mime;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services;
@@ -16,12 +17,12 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
@@ -29,11 +30,10 @@ using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class ContentController : QPController
+    public class ContentController : AuthQpController
     {
         private readonly IContentRepository _contentRepository;
 
@@ -45,44 +45,47 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
-        public ActionResult Index(string tabId, int parentId)
+        public async Task<ActionResult> Index(string tabId, int parentId)
         {
             var result = ContentService.InitList(parentId);
             var model = ContentListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+        public ActionResult _Index(
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? ContentListFilter.Empty;
             filter.SiteId = parentId > 0 ? (int?)parentId : null;
-            var serviceResult = ContentService.List(filter, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualContents)]
         [BackendActionContext(ActionCode.VirtualContents)]
-        public ActionResult VirtualIndex(string tabId, int parentId)
+        public async Task<ActionResult> VirtualIndex(string tabId, int parentId)
         {
             var result = ContentService.InitList(parentId, true);
             var model = ContentListViewModel.Create(result, tabId, parentId);
-            return JsonHtml("Index", model);
+            return await JsonHtml("Index", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.VirtualContents)]
         [BackendActionContext(ActionCode.VirtualContents)]
-        public ActionResult _VirtualIndex(string tabId, int parentId, GridCommand command)
+        public ActionResult _VirtualIndex(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
             var normFilter = ContentListFilter.Empty;
             normFilter.SiteId = parentId;
-            var serviceResult = VirtualContentService.List(normFilter, command.GetListCommand());
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = VirtualContentService.List(normFilter, listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -91,11 +94,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContent)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewContent)]
-        public ActionResult New(string tabId, int parentId, int? groupId)
+        public async Task<ActionResult> New(string tabId, int parentId, int? groupId)
         {
             var content = ContentService.New(parentId, groupId);
             var model = ContentViewModel.Create(content, tabId, parentId);
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record]
@@ -104,14 +107,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContent)]
         [BackendActionContext(ActionCode.AddNewContent)]
         [BackendActionLog]
-        [ValidateInput(false)]
-        public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> New(string tabId, int parentId, string backendActionCode, IFormCollection collection)
         {
             var content = ContentService.New(parentId, null);
             var model = ContentViewModel.Create(content, tabId, parentId);
 
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -129,13 +131,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = backendActionCode });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -143,13 +145,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ContentProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "id")]
         [BackendActionContext(ActionCode.ContentProperties)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? groupChanged = null)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode, bool? groupChanged = null)
         {
             var content = ContentService.Read(id);
             var model = ContentViewModel.Create(content, tabId, parentId);
             model.GroupChanged = groupChanged ?? false;
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [HttpPost, Record(ActionCode.ContentProperties)]
@@ -158,14 +160,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateContent)]
         [BackendActionContext(ActionCode.UpdateContent)]
         [BackendActionLog]
-        [ValidateInput(false)]
-        public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
+        public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, IFormCollection collection)
         {
             var content = ContentService.ReadForUpdate(id);
             var model = ContentViewModel.Create(content, tabId, parentId);
             var oldGroupId = model.Data.GroupId;
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 try
@@ -180,13 +182,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     }
 
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-                    return JsonHtml("Properties", model);
+                    return await JsonHtml("Properties", model);
                 }
 
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = backendActionCode, groupChanged = oldGroupId != model.Data.GroupId });
             }
 
-            return JsonHtml("Properties", model);
+            return await JsonHtml("Properties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -194,11 +196,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContentGroup)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewContentGroup)]
-        public ActionResult NewGroup(string tabId, int parentId)
+        public async Task<ActionResult> NewGroup(string tabId, int parentId)
         {
             var group = ContentService.NewGroup(parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [HttpPost, Record]
@@ -207,12 +209,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.AddNewContentGroup)]
         [BackendActionContext(ActionCode.AddNewContentGroup)]
         [BackendActionLog]
-        public ActionResult NewGroup(string tabId, int parentId, FormCollection collection)
+        public async Task<ActionResult> NewGroup(string tabId, int parentId, IFormCollection collection)
         {
             var group = ContentService.NewGroupForSave(parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = ContentService.SaveGroup(model.Data);
@@ -220,19 +223,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Redirect("GroupProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveContentGroup });
             }
 
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.ContentGroupProperties)]
         [BackendActionContext(ActionCode.ContentGroupProperties)]
-        public ActionResult GroupProperties(string tabId, int parentId, int id, string successfulActionCode)
+        public async Task<ActionResult> GroupProperties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var group = ContentService.ReadGroup(id, parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [HttpPost, Record(ActionCode.ContentGroupProperties)]
@@ -241,20 +244,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateContentGroup)]
         [BackendActionContext(ActionCode.UpdateContentGroup)]
         [BackendActionLog]
-        public ActionResult GroupProperties(string tabId, int parentId, int id, FormCollection collection)
+        public async Task<ActionResult> GroupProperties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var group = ContentService.ReadGroupForUpdate(id, parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
 
-            TryUpdateModel(model);
-            model.Validate(ModelState);
+            await TryUpdateModelAsync(model);
+
             if (ModelState.IsValid)
             {
                 model.Data = ContentService.UpdateGroup(model.Data);
                 return Redirect("GroupProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateContentGroup });
             }
 
-            return JsonHtml("GroupProperties", model);
+            return await JsonHtml("GroupProperties", model);
         }
 
         [HttpPost, Record]
@@ -265,7 +268,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Copy(int id, int? forceId, string forceFieldIds, string forceLinkIds)
         {
-            var result = ContentService.Copy(id, forceId, forceFieldIds.ToIntArray(), forceLinkIds.ToIntArray());
+            var result = ContentService.Copy(id, forceId, forceFieldIds?.ToIntArray(), forceLinkIds?.ToIntArray());
             PersistResultId(result.Id);
             PersistFromId(id);
             PersistFieldIds(result.FieldIds);
@@ -300,33 +303,36 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        public ActionResult SearchBlock(int id, string actionCode, string hostId)
+        public async Task<ActionResult> SearchBlock(int id, string actionCode, string hostId)
         {
             var model = new ContentSearchBlockViewModel(id, actionCode, hostId);
-            return JsonHtml("SearchBlock", model);
+            return await JsonHtml("SearchBlock", model);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentLibrary)]
         [BackendActionContext(ActionCode.ContentLibrary)]
-        public ActionResult Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
+        public async Task<ActionResult> Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
         {
             var result = ContentService.Library(id, subFolder);
             var model = LibraryViewModel.Create(result, tabId, id, filterFileTypeId, allowUpload, LibraryMode.Content);
-            return JsonHtml("Library", model);
+            return await JsonHtml("Library", model);
         }
 
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "gridParentId")]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Files(GridCommand command, int gridParentId, [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
+        public ActionResult _Files(
+            string tabId, int parentId, int gridParentId, int page, int pageSize, string orderBy,
+            [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
         {
-            var serviceResult = ContentService.GetFileList(command.GetListCommand(), gridParentId, searchQuery);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.GetFileList(listCommand, gridParentId, searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "folderId")]
-        public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
+        public JsonResult _FileList(
+            int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
         {
             var serviceResult = ContentService.GetFileList(
                 new ListCommand
@@ -342,19 +348,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
             );
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
+                success = true,
+                data = new ListResult<FileListItem>
                 {
-                    success = true,
-                    data = new ListResult<FileListItem>
-                    {
-                        Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
-                        TotalRecords = serviceResult.TotalRecords
-                    }
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                    Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
+                    TotalRecords = serviceResult.TotalRecords
+                }
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -362,17 +364,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult _FolderPath(int folderId)
         {
             var folder = ContentFolderService.GetById(folderId);
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    path = folder.PathInfo.Path,
-                    url = folder.PathInfo.Url,
-                    libraryPath = folder.Path
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                path = folder.PathInfo.Path,
+                url = folder.PathInfo.Url,
+                libraryPath = folder.OsSpecificPath
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -381,14 +379,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             if (contentId == null)
             {
-                return new JsonResult
+                return Json(new
                 {
-                    Data = new
-                    {
-                        success = true
-                    },
-                    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-                };
+                    success = true
+                });
             }
 
             if (contentId == 0 && fieldId.HasValue)
@@ -408,15 +402,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 fieldFilter = f => !f.IsNew && f.Id != fieldId.Value;
             }
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    data = content.RelateableFields.Where(fieldFilter).Select(f => new { id = f.Id, text = f.Name })
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                data = content.RelateableFields.Where(fieldFilter).Select(f => new { id = f.Id, text = f.Name })
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -429,153 +419,164 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 throw new ArgumentException(string.Format(ContentStrings.ContentNotFound, contentId));
             }
 
-            return new JsonResult
+            return Json(new
             {
-                Data = new
-                {
-                    success = true,
-                    data = content.Fields
-                        .Where(f => f.IsClassifier)
-                        .OrderBy(f => f.Id)
-                        .Select(f => new { id = f.Id, text = f.Name })
-                },
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
+                success = true,
+                data = content.Fields
+                    .Where(f => f.IsClassifier)
+                    .OrderBy(f => f.Id)
+                    .Select(f => new { id = f.Id, text = f.Name })
+            });
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Select(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> Select(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new ContentSelectableListViewModel(result, tabId, parentId, IDs);
-            return JsonHtml("SelectIndex", model);
+            var model = new ContentSelectableListViewModel(result, tabId, parentId, selModel?.Ids ?? new int[]{});
+            return await JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
         public ActionResult _Select(
-            string tabId,
-            int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.List(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
-        public ActionResult SelectForObjectContainer(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForObjectContainer(string tabId, int parentId, int id)
         {
             var result = ContentService.InitListForObject();
             var model = new ObjectContentViewModel(result, tabId, parentId, new[] { id }, ContentSelectMode.ForContainer);
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
         public ActionResult _SelectForObjectContainer(
-            string tabId,
-            int id,
-            GridCommand command,
-            int parentId,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForContainer(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForContainer(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
-        public ActionResult SelectForObjectForm(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForObjectForm(string tabId, int parentId, int id)
         {
             var result = ContentService.InitListForObject();
             var model = new ObjectContentViewModel(result, tabId, parentId, new[] { id }, ContentSelectMode.ForForm);
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
         public ActionResult _SelectForObjectForm(
-            string tabId,
-            int id,
-            GridCommand command,
-            int parentId,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForForm(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForForm(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
-        public ActionResult SelectForJoin(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForJoin(string tabId, int parentId, int id)
         {
             var result = ContentService.InitList(parentId);
             var model = new JoinContentViewModel(result, tabId, parentId, new[] { id });
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
         public ActionResult _SelectForJoin(
-            string tabId,
-            int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
+
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForJoin(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForJoin(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]
-        public ActionResult SelectForField(string tabId, int parentId, int id)
+        public async Task<ActionResult> SelectForField(string tabId, int parentId, int id)
         {
             var result = ContentService.InitList(parentId);
             ContentSelectableListViewModel model = new FieldContentViewModel(result, tabId, parentId, new[] { id });
-            return JsonHtml("SelectIndex", model);
+            return await JsonHtml("SelectIndex", model);
         }
 
+        /// <param name="IDs">
+        /// Идентификатор выбранного компонента: BackendEntityGrid сериализует один или несколько выбранных Id
+        /// в строку через запятую. Т.о. для единственного Id, строковое представление совпадает с числовым.
+        /// </param>
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]
         public ActionResult _SelectForField(
-            string tabId,
-            int parentId,
-            int id,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            int IDs = 0)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForField(filter, command.GetListCommand(), id);
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForField(filter, listCommand, IDs);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -583,29 +584,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelect(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new ContentSelectableListViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
-            return JsonHtml("MultiSelectIndex", model);
+            var model = new ContentSelectableListViewModel(result, tabId, parentId, selModel.Ids) { IsMultiple = true };
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.List(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.List(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -613,29 +610,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForCustomAction(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForCustomAction(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new CustomActionContentViewModel(result, tabId, parentId, IDs)
+            var model = new CustomActionContentViewModel(result, tabId, parentId, selModel.Ids)
             {
                 IsMultiple = true
             };
 
-            return JsonHtml("MultiSelectIndex", model);
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForCustomAction(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             string customFilter)
         {
             filter = filter ?? new ContentListFilter();
@@ -644,7 +636,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 filter.CustomFilter = customFilter;
             }
 
-            var serviceResult = ContentService.ListForCustomAction(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForCustomAction(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -652,31 +645,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForWorkflow(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new WorkflowContentViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
-            return JsonHtml("MultiSelectIndex", model);
+            var model = new WorkflowContentViewModel(result, tabId, parentId, selModel.Ids) { IsMultiple = true };
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForWorkflow(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
             string customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
             filter.CustomFilter = customFilter;
-            var serviceResult = ContentService.ListForWorkflow(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForWorkflow(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -684,39 +673,35 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleSelectForUnion(string tabId, int parentId, int[] IDs)
+        public async Task<ActionResult> MultipleSelectForUnion(string tabId, int parentId, [FromBody] SelectedItemsViewModel selModel)
         {
             var result = ContentService.InitList(parentId);
-            var model = new UnionContentViewModel(result, tabId, parentId, IDs) { IsMultiple = true };
-            return JsonHtml("MultiSelectIndex", model);
+            var model = new UnionContentViewModel(result, tabId, parentId, selModel.Ids) { IsMultiple = true };
+            return await JsonHtml("MultiSelectIndex", model);
         }
 
         [HttpPost]
-        [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForUnion(
-            string tabId,
-            int parentId,
-            string IDs,
-            GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+            string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
+            [Bind(Prefix = "searchQuery")]
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
-            var serviceResult = ContentService.ListForUnion(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
+            var listCommand = GetListCommand(page, pageSize, orderBy);
+            var serviceResult = ContentService.ListForUnion(filter, listCommand, Converter.ToInt32Collection(ids, ','));
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetContentFormScript(int contentId) => new JSendResponse
+        public ActionResult GetContentFormScript(int contentId) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
             Data = _contentRepository.GetById(contentId).FormScript
-        };
+        });
 
         [ConnectionScope]
         public ActionResult GetTraceImportScript(int id) => Content(

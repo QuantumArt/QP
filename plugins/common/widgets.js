@@ -219,8 +219,8 @@
 
     Quantumart.QP8.BackendDocumentContext.prototype.addToggleBlockButton = function (fieldName, options) {
         var defaults = {
-            unlockIcon: "/Backend/Content/QP8/icons/16x16/unlock.gif",
-            lockIcon: "/Backend/Content/QP8/icons/16x16/lock.gif",
+            unlockIcon: window.APPLICATION_ROOT_URL + "Static/QP8/icons/16x16/unlock.gif",
+            lockIcon: window.APPLICATION_ROOT_URL + "Static/QP8/icons/16x16/lock.gif",
             unlockTitle: "Unlock",
             lockTitle: "Lock",
             fieldName: fieldName

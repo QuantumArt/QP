@@ -1,79 +1,90 @@
-﻿@using Quantumart.QP8.BLL.ListItems
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.EntityPermissions.PermissionListViewModel
 
 @using (Html.BeginDocumentPadding())
 {
-	if (Model.ShowDisableArticlePermissionForContentWarning)
-	{
-		@Html.Warning(new[]
-		{
-			new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled),
-			Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, string.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
-		})
-	}
+  if (Model.ShowDisableArticlePermissionForContentWarning)
+  {
+    @Html.Warning(
+      Html.Raw(EntityPermissionStrings.ContentArticlePermissionIsDisabled),
+      Html.BackendActionLink(
+      Model.UniqueId("eapActionLink"),
+      EntityPermissionStrings.EnableContentArticlePermissionAction,
+      Model.ParentArticle.ContentId,
+      string.Empty,
+      0,
+      ActionTypeCode.SimpleUpdate,
+      ActionCode.EnableArticlesPermissions
+      )
+    )
+  }
 
-	if (Model.ShowAddNewItemButton)
-	{
-		using (Html.BeginLinkButtonsList())
-		{
-			@Html.AddNewItemLink(Model)
-		}
-	}
+  if (Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
+    {
+      @Html.AddNewItemLink(Model)
+    }
+  }
 
-	@(Html.Telerik().Grid<EntityPermissionListItem>().Name(Model.MainComponentId)
-        .DataKeys(k => k.Add(s => s.Id))
-        .Columns(c =>
-        {
-            c.Bound("")
-                .Title(@"<input type='checkbox' />")
-                .Width(30)
-                .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                .ClientTemplate(@"<input type='checkbox' name='SelectedSitePermissionIDs' value='<#= Id #>' />")
-                .HtmlAttributes(new { @class = "t-select-cell" })
-                .Sortable(false);
-
-            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                   .Width(30)
-                   .HtmlAttributes(new { @class = "id" });
-
-            c.Bound(s => s.UserLogin).Title(EntityPermissionStrings.User);
-            c.Bound(s => s.GroupName).Title(EntityPermissionStrings.Group);
-            c.Bound(s => s.LevelName).Title(EntityPermissionStrings.PermissionLevel);
-
-            if (Model.IsPropagateable)
-            {
-                c.Bound(s => s.PropagateToItems)
-                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (PropagateToItems)  { #> checked=""checked"" <# } #>/>")
-                    .Title(EntityPermissionStrings.PropagateToItems);
-            }
-
-            if (Model.CanHide)
-            {
-                c.Bound(s => s.Hide)
-                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (Hide)  { #> checked=""checked"" <# } #>/>")
-                    .Title(EntityPermissionStrings.Hide);
-            }
-
-            c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
-            c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
-            c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
-        })
-        .DataBinding(db => db.Ajax()
-                .Select(Model.GettingDataActionName, Model.GettingDataControllerName)
-        )
-        .EnableCustomBinding(true)
-        .Sortable()
-        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
-        .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e.OnDataBinding("$q.preventDefaultFunction")
-             .OnRowDataBound("$q.preventDefaultFunction")
-        )
-	)
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          {
+            field: '',
+            headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+            headerAttributes: { 'class': 't-select-header' },
+            template: '<input type="checkbox" name="SelectedSitePermissionIDs" value="#= Id #" />',
+            sortable: false,
+            attributes: { 'class': 't-select-cell' },
+            width: 35,
+          },
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+          { field: 'UserLogin', title: '@EntityPermissionStrings.User' },
+          { field: 'GroupName', title: '@EntityPermissionStrings.Group' },
+          { field: 'LevelName', title: '@EntityPermissionStrings.PermissionLevel' },
+          @if (Model.IsPropagateable) {
+            <text>
+              {
+                field: 'PropagateToItems',
+                title: '@EntityPermissionStrings.PropagateToItems',
+                template: '<input type="checkbox" disabled="disabled" # if (PropagateToItems) { # checked="checked" # } # />',
+                attributes: { 'class': 'isCentered' },
+                headerAttributes: { 'class': 'isCentered' },
+              },
+            </text>
+          }
+          @if (Model.CanHide)
+          {
+            <text>
+              {
+                field: 'Hide',
+                title: '@EntityPermissionStrings.Hide',
+                template: '<input type="checkbox" disabled="disabled" # if (Hide) { # checked="checked" # } # />',
+                attributes: { 'class': 'isCentered' },
+                headerAttributes: { 'class': 'isCentered' },
+              },
+            </text>
+          }
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByUser', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GettingDataActionName, Model.GettingDataControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+        class: 'pep-grid',
+      })
+    });
+  </script>
 }
 
 @Html.PrepareAndRunInitScript(Model)
-
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

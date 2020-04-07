@@ -295,7 +295,7 @@
     <value>Field can not be Unique and has Default Value at the same time</value>
   </data>
   <data name="FriendlyNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of field friendly name should not exceed {5} characters</value>
+    <value>The length of field friendly name should not exceed {1} characters</value>
   </data>
   <data name="ReadOnlyAndRequiredBothAreTrue" xml:space="preserve">
     <value>Field can not be Read-only and Required at the same time</value>
@@ -307,7 +307,7 @@
     <value>Invalid Backward Field Name format</value>
   </data>
   <data name="BackwardFieldNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of Backward Field Name should not exceed {5} characters!</value>
+    <value>The length of Backward Field Name should not exceed {1} characters!</value>
   </data>
   <data name="BackwardFieldNameNotEntered" xml:space="preserve">
     <value>Please enter Backward Field Name</value>
@@ -328,7 +328,7 @@
     <value>The length of Default Value should not exceed 255 characters!</value>
   </data>
   <data name="DocTypeMaxLengthExceeded" xml:space="preserve">
-    <value>The length of DocType should not exceed {5} characters!</value>
+    <value>The length of DocType should not exceed {1} characters!</value>
   </data>
   <data name="DynamicImageHeightNotInRange" xml:space="preserve">
     <value>Value of Height is not in acceptable range: from 1 to 9999</value>
@@ -343,7 +343,7 @@
     <value>Value of Width is not in acceptable range: from 1 to 9999</value>
   </data>
   <data name="InputMaskMaxLengthExceeded" xml:space="preserve">
-    <value>The length of Input Mask should not exceed {5} characters!</value>
+    <value>The length of Input Mask should not exceed {1} characters!</value>
   </data>
   <data name="InputMaskNotEntered" xml:space="preserve">
     <value>Please enter Input Mask</value>
@@ -352,7 +352,7 @@
     <value>Invalid LINQ Back Property Name format</value>
   </data>
   <data name="LinqBackPropertyNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of LINQ Back Property Name should not exceed {5} characters!</value>
+    <value>The length of LINQ Back Property Name should not exceed {1} characters!</value>
   </data>
   <data name="LinqBackPropertyNameNonUnique" xml:space="preserve">
     <value>Such Back LINQ Property Name is already in using</value>
@@ -364,7 +364,7 @@
     <value>Invalid LINQ Property Name format</value>
   </data>
   <data name="LinqPropertyNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of LINQ Property Name should not exceed {5} characters!</value>
+    <value>The length of LINQ Property Name should not exceed {1} characters!</value>
   </data>
   <data name="LinqPropertyNameNonUnique" xml:space="preserve">
     <value>Such LINQ Property Name is already in using</value>
@@ -379,7 +379,7 @@
     <value>Invalid LINQ Junction Class Name (singular) format</value>
   </data>
   <data name="NetLinkNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of LINQ Junction Class Name (singular) should not exceed {5} characters!</value>
+    <value>The length of LINQ Junction Class Name (singular) should not exceed {1} characters!</value>
   </data>
   <data name="NetLinkNameNonUnique" xml:space="preserve">
     <value>Such LINQ Junction Class Name (singular) is already in using</value>
@@ -394,7 +394,7 @@
     <value>Invalid LINQ Junction Class Name (plural) format</value>
   </data>
   <data name="NetPluralLinkNameMaxLengthExceeded" xml:space="preserve">
-    <value>The length of LINQ Junction Class Name (plural) should not exceed {5} characters!</value>
+    <value>The length of LINQ Junction Class Name (plural) should not exceed {1} characters!</value>
   </data>
   <data name="NetPluralLinkNameNonUnique" xml:space="preserve">
     <value>Such LINQ Junction Class Name (plural) is already in using</value>
@@ -406,7 +406,7 @@
     <value>"Relate to" is not selected</value>
   </data>
   <data name="RelationConditionMaxLengthExceeded" xml:space="preserve">
-    <value>The length of Relation Condition should not exceed {5} characters!</value>
+    <value>The length of Relation Condition should not exceed {1} characters!</value>
   </data>
   <data name="RelationIdNotSelected" xml:space="preserve">
     <value>Display Field is not selected</value>
@@ -415,7 +415,7 @@
     <value>Value of String Length  is not in acceptable range: from 1 to 3500</value>
   </data>
   <data name="SubFolderMaxLengthExceeded" xml:space="preserve">
-    <value>The length of File Subfolder name should not exceed {5} characters!</value>
+    <value>The length of File Subfolder name should not exceed {1} characters!</value>
   </data>
   <data name="TextboxRowsNotInRange" xml:space="preserve">
     <value>Value of Rows is not in acceptable range: from 5 to 30</value>
@@ -777,11 +777,11 @@
   <data name="BackwardFieldId" xml:space="preserve">
     <value>Backward Field</value>
   </data>
-  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
-    <value>Backward Field  could not be created for Aggregated field</value>
-  </data>
   <data name="TraceImport" xml:space="preserve">
     <value>Trace while importing CSV</value>
+  </data>
+  <data name="BackwardFieldForAggregatedNotAllowed" xml:space="preserve">
+    <value>Backward Field  could not be created for Aggregated field</value>
   </data>
   <data name="DenyPastDates" xml:space="preserve">
     <value>Deny dates in the past</value>

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -33,10 +33,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public int SiteId { get; set; }
 
-        [LocalizedDisplayName("SelectPage", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SelectPage", ResourceType = typeof(TemplateStrings))]
         public int? PageId { get; set; }
 
-        [LocalizedDisplayName("SelectTemplate", NameResourceType = typeof(TemplateStrings))]
+        [Display(Name = "SelectTemplate", ResourceType = typeof(TemplateStrings))]
         public int? TemplateId { get; set; }
 
         public QPSelectListItem PageListItem => PageId == null ? null : new QPSelectListItem { Value = PageId.ToString(), Text = _service.ReadPageProperties(PageId.Value).Name, Selected = true };

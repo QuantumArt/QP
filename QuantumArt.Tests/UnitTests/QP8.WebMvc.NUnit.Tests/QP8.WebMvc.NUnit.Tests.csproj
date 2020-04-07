@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Alex Kostyukov</Authors>
+    <Company>Quantum Art</Company>
+    <Product>QP8.Framework</Product>
+    <Description>QP webmvc nunit tests</Description>
+    <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
+    <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
+    <PackageLicenseUrl>https://github.com/QuantumArt/QP/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>QP</PackageTags>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <RootNamespace>QP8.WebMvc.NUnit.Tests</RootNamespace>
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.6.0" />
+    <PackageReference Include="AutoFixture.Xunit2" Version="4.6.0" />
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Moq" Version="4.10.1" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="QA.Validation.Xaml" Version="1.3.0-portable6" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\bll\BLL.csproj" />
+    <ProjectReference Include="..\..\..\constants\Constants.csproj" />
+    <ProjectReference Include="..\..\..\utils\Utils.csproj" />
+  </ItemGroup>
+</Project>

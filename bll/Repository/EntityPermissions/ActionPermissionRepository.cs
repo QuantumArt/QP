@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
@@ -22,7 +23,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
         public EntityPermission GetById(int id, bool include = true)
         {
-            ObjectQuery<BackendActionPermissionDAL> set = QPContext.EFContext.BackendActionPermissionSet;
+            var set = QPContext.EFContext.BackendActionPermissionSet.AsQueryable();
             if (include)
             {
                 set = set.Include("User").Include("Group").Include("LastModifiedByUser");
@@ -35,11 +36,14 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
         public bool CheckUnique(EntityPermission permission)
         {
-            return !QPContext.EFContext.BackendActionPermissionSet.Any(p =>
-                p.ActionId == permission.ParentEntityId &&
-                (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
-                (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null));
+            return !QPContext.EFContext.BackendActionPermissionSet.Any(p => PermissionUserOrGroupEquals(permission, p));
         }
+
+        private static bool PermissionUserOrGroupEquals(EntityPermissionBase permission, BackendActionPermissionDAL p) =>
+            p.ActionId == permission.ParentEntityId &&
+            (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
+            (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
+
 
         public EntityPermission Update(EntityPermission permission) => DefaultRepository.Update<EntityPermission, BackendActionPermissionDAL>(permission);
 

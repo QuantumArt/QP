@@ -1,5 +1,6 @@
 ﻿Quantumart.QP8.BackendDocumentContext.prototype.notifyCustomButtonExistence = false;
 Quantumart.QP8.BackendDocumentContext.setGlobal('Transliterator', {
+  dash: '_',
   symbols: {
     'а': 'a',
     'б': 'b',
@@ -31,11 +32,8 @@ Quantumart.QP8.BackendDocumentContext.setGlobal('Transliterator', {
     'ы': 'y',
     'э': 'e',
     'ю': 'yu',
-    'я': 'ya',
-    ' ': '_'
+    'я': 'ya'
   },
-
-  dashCode: '_'.charCodeAt(0),
   enLettersStartCode: 'a'.charCodeAt(0),
   enLettersEndCode: 'z'.charCodeAt(0),
   digitsStartCode: '0'.charCodeAt(0),
@@ -50,26 +48,28 @@ Quantumart.QP8.BackendDocumentContext.setGlobal('Transliterator', {
       var currentSymbol = input[i];
       var symbolToReplace = this.symbols[currentSymbol];
 
-      if (symbolToReplace != undefined) {
+      if (symbolToReplace !== undefined) {
         result += symbolToReplace;
       } else {
         var currentSymbolCode = currentSymbol.charCodeAt(0);
-
-        if (currentSymbolCode == this.dashCode
+        if (currentSymbol === ' ') {
+          result += this.dash;
+        }
+        else if (currentSymbol === this.dash
           || currentSymbolCode >= this.enLettersStartCode && currentSymbolCode <= this.enLettersEndCode
           || currentSymbolCode >= this.digitsStartCode && currentSymbolCode <= this.digitsEndCode) {
-          result += currentSymbol;
+            result += currentSymbol;
         }
       }
     }
 
-    result = result.replace(/_+/g, '_');
+    result = result.replace(new RegExp(this.dash + "+", "g"), this.dash);
 
-    if (result.length > 0 && result[0] == '_') {
+    if (result.length > 0 && result[0] === this.dash) {
       result = result.substr(1);
     }
 
-    if (result.length > 0 && result[result.length - 1] == '_') {
+    if (result.length > 0 && result[result.length - 1] === this.dash) {
       result = result.substr(0, result.length - 1);
     }
 
@@ -83,7 +83,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.addTransliterateButton = functio
       title: 'Transliterate',
       suffix: 'translit',
       'class': 'customLinkButton',
-      url: '/Backend/Content/QP8/icons/16x16/insert_call.gif',
+      url: window.APPLICATION_ROOT_URL + 'Static/QP8/icons/16x16/insert_call.gif',
       onClick: function(evt) {
         var resultInput = evt.data.$input;
         var textToProcess = evt.data.$form.find('[name=' + srcInputName + '],[data-content_field_name=' + srcInputName + ']').val();

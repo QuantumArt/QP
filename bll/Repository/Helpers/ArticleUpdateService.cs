@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,19 @@ using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
-    public class ArticleUpdateService
+    public interface IArticleUpdateService
+    {
+        Article Article { get; set; }
+        Article Update();
+    }
+
+    public class ArticleUpdateService : IArticleUpdateService
     {
         private int Counter { get; set; }
 
-        private Article Article { get; set; }
+        public Article Article { get; set; }
 
-        private List<SqlParameter> Parameters { get; }
+        private List<DbParameter> Parameters { get; }
 
         private string FieldParamName => $"@field{Counter}";
 
@@ -27,13 +34,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
         public ArticleUpdateService()
         {
             Counter = 0;
-            Parameters = new List<SqlParameter>();
-        }
-
-        public ArticleUpdateService(Article item)
-            : this()
-        {
-            Article = item;
+            Parameters = new List<DbParameter>();
         }
 
         private string GetSqlQuery()

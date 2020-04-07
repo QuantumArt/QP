@@ -1,16 +1,16 @@
-﻿using System;
-using System.Web.Mvc;
+using System;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
     public static class HtmlHelperFieldGroupExtensions
     {
-        internal class FieldGroup : IDisposable
+        private class FieldGroup : IDisposable
         {
             private bool _disposed;
-            private readonly HtmlHelper _html;
+            private readonly IHtmlHelper _html;
 
-            public FieldGroup(HtmlHelper html)
+            public FieldGroup(IHtmlHelper html)
             {
                 _html = html ?? throw new ArgumentNullException(nameof(html));
             }
@@ -37,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="html">HTML-хелпер</param>
         /// <param name="title">заголовок группы</param>
         /// <returns>объект типа FieldGroup</returns>
-        public static IDisposable BeginFieldGroup(this HtmlHelper html, string title)
+        public static IDisposable BeginFieldGroup(this IHtmlHelper html, string title)
         {
             html.ViewContext.Writer.WriteLine("<fieldset><legend>{0}</legend>", title);
             return new FieldGroup(html);
@@ -47,7 +47,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// Генерирует конечную часть группы полей стандартной формы QP8
         /// </summary>
         /// <param name="html">HTML-хелпер</param>
-        public static void EndFieldGroup(this HtmlHelper html)
+        public static void EndFieldGroup(this IHtmlHelper html)
         {
             html.ViewContext.Writer.WriteLine("</fieldset>");
         }

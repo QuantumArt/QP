@@ -1,6 +1,8 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
@@ -10,17 +12,23 @@ namespace Quantumart.QP8.BLL.Repository
     {
         internal static bool IsEntityAccessible(string entityTypeCode, int entityId, string actionTypeCode)
         {
-            using (new QPConnectionScope())
-            {
-                return Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, entityTypeCode, entityId, actionTypeCode);
-            }
+            return IsEntityAccessible(entityTypeCode, entityId, actionTypeCode, QPContext.CurrentUserId);
         }
+
+        internal static int GetRequiredPermissionLevel(string actionTypeCode)
+        {
+            return BackendActionTypeRepository.GetList()
+                .SingleOrDefault(n => n.Code == actionTypeCode)?.RequiredPermissionLevel ?? PermissionLevel.Deny;
+        }
+
 
         internal static bool IsEntityAccessible(string entityTypeCode, int entityId, string actionTypeCode, int userId)
         {
             using (new QPConnectionScope())
             {
-                return Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, userId, entityTypeCode, entityId, actionTypeCode);
+                var requiredPermissionLevel = GetRequiredPermissionLevel(actionTypeCode);
+                var actualLevel = CommonSecurity.GetEntityAccessLevel(QPConnectionScope.Current.DbConnection, QPContext.EFContext, userId, 0, entityTypeCode, entityId);
+                return actualLevel >= requiredPermissionLevel;
             }
         }
 
@@ -28,7 +36,9 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new QPConnectionScope())
             {
-                return Common.IsEntityAccessibleForUserGroup(QPConnectionScope.Current.DbConnection, userGroupId, entityTypeCode, entityId, actionTypeCode);
+                var requiredPermissionLevel = GetRequiredPermissionLevel(actionTypeCode);
+                var actualLevel = CommonSecurity.GetEntityAccessLevel(QPConnectionScope.Current.DbConnection, QPContext.EFContext, 0, userGroupId, entityTypeCode, entityId);
+                return actualLevel >= requiredPermissionLevel;
             }
         }
 
@@ -69,7 +79,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                var row = Common.GetActionPermissionsForUser(scope.DbConnection, userId, action.EntityTypeId, action.Id).FirstOrDefault();
+                var row = Common.GetActionPermissionsForUser(QPContext.EFContext, scope.DbConnection, userId, action.EntityTypeId, action.Id).FirstOrDefault();
                 if (row != null && !row.IsNull("PERMISSION_LEVEL"))
                 {
                     return Converter.ToInt32(row.Field<decimal>("PERMISSION_LEVEL"));

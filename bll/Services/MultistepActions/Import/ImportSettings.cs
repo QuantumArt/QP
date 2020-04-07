@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
+using System.Net;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Configuration;
@@ -12,9 +12,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportSettings : IMultistepActionParams
     {
-        private int SiteId { get; }
+        public int SiteId { get; set; }
 
-        private int ContentId { get; }
+        public int ContentId { get; set; }
 
         public ImportSettings(int siteId, int contentId)
         {
@@ -25,29 +25,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             InsertedArticleIds = new List<int>();
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
         public string UploadFilePath => GetUploadFilePath();
 
-        public string TempFileUploadPath
-        {
-            get
-            {
-                var url = HttpUtility.UrlDecode(UploadFilePath) ?? string.Empty;
-                var fileInfo = new FileInfo(url);
-                return $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
-            }
-        }
+        public string TempFileUploadPath => UploadFilePath + FileName;
 
-        public string TempFileForRelFields
-        {
-            get
-            {
-                var fileName = Path.GetFileNameWithoutExtension(UploadFilePath) + "_rel";
-                var fileNameExtension = fileName + ".dat";
-                return $"{QPConfiguration.TempDirectory}\\{fileNameExtension}";
-            }
-        }
+        public string TempFileForRelFields => UploadFilePath + Path.GetFileNameWithoutExtension(FileName) + "_rel" + ".dat";
 
         public bool ContainsO2MRelationOrM2MRelationFields
         {
@@ -70,13 +54,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public bool UpdateAndInsert { get; set; }
 
-        public Field UniqueContentField { get; set; }
+        public int UniqueContentFieldId { get; set; }
 
         public string UniqueFieldToUpdate { get; set; } = string.Empty;
 
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
 
-        public List<KeyValuePair<string, Field>> FieldsList { get; set; }
+        public List<KeyValuePair<string, int>> FieldsList { get; set; }
 
         public List<int> UpdatedArticleIds { get; set; }
 
@@ -90,7 +74,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new DirectoryNotFoundException();
             }
 
-            return HttpUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\_temp\\{FileName}");
+            return WebUtility.UrlDecode(ImportArticlesParams.GetUploadPath(currentSite, ContentId));
         }
 
         public bool IsWorkflowAssigned { get; set; }

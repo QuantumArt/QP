@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -77,6 +79,16 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.OrderBy(ss => ss.Name).ToList());
         }
 
+        private static void ChangeInsertAccessTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_access_site", enable);
+        }
+
+        private static void ChangeInsertDefaultTriggerState(bool enable)
+        {
+            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_statuses_and_default_notif", enable);
+        }
+
         /// <summary>
         /// Добавляет новый сайт
         /// </summary>
@@ -84,10 +96,89 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>информация о сайте</returns>
         internal static Site Save(Site site)
         {
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Site, site);
-            var result = DefaultRepository.Save<Site, SiteDAL>(site);
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Site);
-            return result;
+            using (var scope = new QPConnectionScope())
+            {
+                if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                {
+                    ChangeInsertAccessTriggerState(false);
+                    ChangeInsertDefaultTriggerState(false);
+                    DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Site, site);
+                }
+
+                var result = DefaultRepository.Save<Site, SiteDAL>(site);
+
+                CommonSecurity.CreateSiteAccess(scope.DbConnection, result.Id);
+                CreateDefaultStatuses(result);
+                CreateDefaultNotificationTemplate(result);
+                CreateDefaultGroup(result);
+                QPContext.EFContext.SaveChanges();
+
+                if (QPContext.DatabaseType == DatabaseType.SqlServer)
+                {
+                    DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Site);
+                    ChangeInsertAccessTriggerState(true);
+                    ChangeInsertDefaultTriggerState(true);
+                }
+
+                return result;
+            }
+        }
+
+        private static void CreateDefaultGroup(Site site)
+        {
+
+            var group = new ContentGroupDAL() { Name = ContentGroup.DefaultName, SiteId = site.Id };
+            DefaultRepository.SimpleSave(group);
+        }
+
+        private static void CreateDefaultNotificationTemplate(Site site)
+        {
+            if (!site.ExternalDevelopment)
+            {
+                var template = new PageTemplateDAL()
+                {
+                    SiteId = site.Id,
+                    Name = "Default Notification Template",
+                    NetTemplateName = "Default_Notification_Template",
+                    TemplatePicture = "",
+                    Created = site.Created,
+                    Modified = site.Modified,
+                    LastModifiedBy = site.LastModifiedBy,
+                    Charset = "utf-8",
+                    Locale = 65001,
+                    Codepage = 1049,
+                    IsSystem = true,
+                    NetLanguageId = NetLanguage.GetcSharp().Id
+                };
+                DefaultRepository.SimpleSave(template);
+            }
+        }
+
+        private static StatusTypeDAL GetNewBuiltInStatus(Site site, int weight, string name, string description) =>
+
+            new StatusTypeDAL
+            {
+                SiteId = site.Id,
+                Name = name,
+                Weight = weight,
+                Description = description,
+                Created = site.Created,
+                Modified = site.Modified,
+                LastModifiedBy = site.LastModifiedBy,
+                BuiltIn = true,
+            };
+
+        private static void CreateDefaultStatuses(Site site)
+        {
+            var statuses = new StatusTypeDAL[]
+            {
+                GetNewBuiltInStatus(site, 10, "Created","Article has been created"),
+                GetNewBuiltInStatus(site, 50, "Approved","Article has been approved"),
+                GetNewBuiltInStatus(site, 100, "Published","Article has been published"),
+                GetNewBuiltInStatus(site, 0, "None","No Status has been assigned")
+            };
+
+            DefaultRepository.SimpleSaveBulk(statuses);
         }
 
         /// <summary>

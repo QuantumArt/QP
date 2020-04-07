@@ -121,7 +121,7 @@
     <value>Некорректное имя дополнительного контекстного класса</value>
   </data>
   <data name="AddContextClassNameLengthExceeded" xml:space="preserve">
-    <value>Длина имени дополнительного контекстного класса не должна превышать {5} символов</value>
+    <value>Длина имени дополнительного контекстного класса не должна превышать {1} символов</value>
   </data>
   <data name="AddContextClassNameNonUnique" xml:space="preserve">
     <value>Имя дополнительного контекстного класса не является уникальным на уровне сайта</value>
@@ -181,7 +181,7 @@
     <value>Описание</value>
   </data>
   <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
-    <value>Длина описания не должна превышать {5} символов</value>
+    <value>Длина описания не должна превышать {1} символов</value>
   </data>
   <data name="EnableArticlesPermissions" xml:space="preserve">
     <value>Включить права доступа для статей</value>
@@ -190,10 +190,10 @@
     <value>Разрешить доступ из других сайтов</value>
   </data>
   <data name="FriendlyPluralMaxLengthExceeded" xml:space="preserve">
-    <value>Длина дружественного имени во множественном числе не должна превышать {5} символов</value>
+    <value>Длина дружественного имени во множественном числе не должна превышать {1} символов</value>
   </data>
   <data name="FriendlySingularMaxLengthExceeded" xml:space="preserve">
-    <value>Длина дружественного имени в единственном числе не должна превышать {5} символов</value>
+    <value>Длина дружественного имени в единственном числе не должна превышать {1} символов</value>
   </data>
   <data name="Group" xml:space="preserve">
     <value>Группа</value>
@@ -205,7 +205,7 @@
     <value>Некорректное имя группы контентов</value>
   </data>
   <data name="GroupNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени группы контентов не должна превышать {5} символов</value>
+    <value>Длина имени группы контентов не должна превышать {1} символов</value>
   </data>
   <data name="GroupNameNonUnique" xml:space="preserve">
     <value>Имя группы контентов не является уникальным на уровне сайта</value>
@@ -265,7 +265,7 @@
     <value>Некорректное имя контента</value>
   </data>
   <data name="NameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени контента не должна превышать {5} символов</value>
+    <value>Длина имени контента не должна превышать {1} символов</value>
   </data>
   <data name="NameNonUnique" xml:space="preserve">
     <value>Имя контента не является уникальным на уровне сайта</value>
@@ -283,7 +283,7 @@
     <value>Некорректное имя LINQ-класса во множественном числе</value>
   </data>
   <data name="NamePluralMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени LINQ-класса во множественном числе не должна превышать {5} символов</value>
+    <value>Длина имени LINQ-класса во множественном числе не должна превышать {1} символов</value>
   </data>
   <data name="NamePluralNonUnique" xml:space="preserve">
     <value>Имя LINQ-класса во множественном числе не является уникальным на уровне сайта</value>
@@ -301,7 +301,7 @@
     <value>Некорректное имя LINQ-класса в единственном числе</value>
   </data>
   <data name="NameSingularMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени  LINQ-класса в единственном числе не должна превышать {5} символов</value>
+    <value>Длина имени  LINQ-класса в единственном числе не должна превышать {1} символов</value>
   </data>
   <data name="NameSingularNonUnique" xml:space="preserve">
     <value>Имя LINQ-класса в единственном числе не является уникальным на уровне сайта</value>

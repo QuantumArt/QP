@@ -11,16 +11,14 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
         private readonly int _recurrenceFactor;
         private readonly DateTime _startDate;
         private readonly DateTime _endDate;
-        private readonly TimeSpan _startTime;
 
-        public MonthlyRelativeStartCalculator(int interval, int relativeInterval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
+        public MonthlyRelativeStartCalculator(int interval, int relativeInterval, int recurrenceFactor, DateTime startDate, DateTime endDate)
         {
             _interval = interval;
             _relativeInterval = relativeInterval;
             _recurrenceFactor = recurrenceFactor;
             _startDate = startDate;
             _endDate = endDate;
-            _startTime = startTime;
 
             CalculateNearestStartDateFunc = GetNearestStartDate;
         }
@@ -75,14 +73,13 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
 
         private DateTime? GetNearestStartDate(DateTime dateTime)
         {
-            var allStarts = Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+            var allStarts = Optimize(new Tuple<DateTime, DateTime>(_startDate, _endDate), dateTime)
                 .GetEveryFullMonthLimitedByFactor(_recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor
                 .GetAllDaysFromRange()
-                .Where(GetIntervalPredicate(_interval));
+                .Where(GetIntervalPredicate(_interval)).ToArray();
 
             allStarts = ApplyRelativeInternalConditions(allStarts, _relativeInterval)
-                .Where(d => _startDate.Date <= d.Date && _endDate.Date >= d.Date) // только те даты что в диапазоне
-                .Select(d => d.Add(_startTime)); // получаем точное время старта
+                .Where(d => _startDate <= d && _endDate >= d).ToArray(); // только те даты что в диапазоне
 
             return allStarts.GetNearestPreviousDateFromList(dateTime); // ближайшее время старта до или если нет то null
         }

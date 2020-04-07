@@ -1,93 +1,122 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
-using QP8.Infrastructure.Web.AspNet.ActionResults;
+using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    public class EntityObjectController : QPController
+    public class EntityObjectController : AuthQpController
     {
-        public JsonNetResult<bool> CheckExistence(string entityTypeCode, int entityId) => EntityObjectService.CheckExistence(entityTypeCode, entityId);
+        private readonly ArticleFullTextSearchQueryParser _parser;
 
-        public JsonNetResult<bool> CheckPresenceSelfRelations(string entityTypeCode, int entityId) => EntityObjectService.CheckPresenceSelfRelations(entityTypeCode, entityId);
-
-        public JsonNetResult<bool> CheckForVariations(string entityTypeCode, int entityId) => EntityObjectService.CheckForVariations(entityTypeCode, entityId);
-
-        public JsonNetResult<EntityTreeItem> GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter) => EntityObjectService.GetByTypeAndIdForTree(entityTypeCode, entityId, loadChilds, filter);
-
-        [HttpPost]
-        public JsonNetResult<IList<EntityTreeItem>> GetChildList(
-            string entityTypeCode,
-            int? parentEntityId,
-            int? entityId,
-            bool returnSelf,
-            string filter,
-            string hostFilter,
-            string selectItemIDs,
-            [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery)
+        public EntityObjectController(ArticleFullTextSearchQueryParser parser)
         {
-            var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var data = EntityObjectService.GetEntityTreeItems(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser);
-            return new JsonNetResult<IList<EntityTreeItem>>(data);
+            _parser = parser;
+        }
+
+        public JsonResult CheckExistence(string entityTypeCode, int entityId)
+        {
+            return Json(EntityObjectService.CheckExistence(entityTypeCode, entityId));
+        }
+
+        public JsonResult CheckPresenceSelfRelations(string entityTypeCode, int entityId)
+        {
+            return Json(EntityObjectService.CheckPresenceSelfRelations(entityTypeCode, entityId));
+        }
+
+        public JsonResult CheckForVariations(string entityTypeCode, int entityId)
+        {
+            return Json(EntityObjectService.CheckForVariations(entityTypeCode, entityId));
+        }
+
+        public JsonResult GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter)
+        {
+            return Json(EntityObjectService.GetByTypeAndIdForTree(entityTypeCode, entityId, loadChilds, filter));
         }
 
         [HttpPost]
-        public JsonNetResult<IList<ListItem>> GetSimpleList(string entityTypeCode, int parentEntityId, int? entityId, int? listId, int selectionMode, int[] selectedEntitiesIDs, string filter, int testEntityId = 0) => EntityObjectService.SimpleList(
-            entityTypeCode,
-            parentEntityId,
-            entityId > 0 ? entityId : null,
-            listId > 0 ? listId : null,
-            (ListSelectionMode)Enum.Parse(typeof(ListSelectionMode), selectionMode.ToString()),
-            selectedEntitiesIDs,
-            filter,
-            testEntityId
-        );
-
-        public JsonNetResult<string> GetName(string entityTypeCode, int entityId, int? parentEntityId) => EntityObjectService.GetName(entityTypeCode, entityId, parentEntityId ?? 0);
-
-        public JsonNetResult<int?> GetParentId(string entityTypeCode, int entityId) => EntityObjectService.GetParentId(entityTypeCode, entityId);
+        public JsonResult GetChildList([FromBody]ChildListQuery query)
+        {
+            query.Parser = _parser;
+            var data = EntityObjectService.GetEntityTreeItems(query);
+            return Json(data);
+        }
 
         [HttpPost]
-        public JsonNetResult<int[]> GetParentIdsForTree(string entityTypeCode, int[] ids) => EntityObjectService.GetParentIdsForTree(entityTypeCode, ids);
+        public JsonResult GetSimpleList([FromBody]SimpleListQuery query)
+        {
+            return Json(EntityObjectService.SimpleList(query));
+        }
 
-        public JsonNetResult<IEnumerable<EntityInfo>> GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode) => EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode).ToList();
+        public JsonResult GetName(string entityTypeCode, int entityId, int? parentEntityId)
+        {
+            return Json(EntityObjectService.GetName(entityTypeCode, entityId, parentEntityId ?? 0));
+        }
 
-        public JsonNetResult<IEnumerable<EntityInfo>> GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId) => EntityObjectService.GetParentInfo(entityTypeCode, entityId, parentEntityId).ToList();
+        public JsonResult GetParentId(string entityTypeCode, int entityId)
+        {
+            return Json(EntityObjectService.GetParentId(entityTypeCode, entityId));
+        }
 
-        public JsonNetResult<string> GetArticleFieldValue(int contentId, string fieldName, int articleId) => EntityObjectService.GetArticleFieldValue(contentId, fieldName, articleId);
+        [HttpPost]
+        public JsonResult GetParentIdsForTree([FromBody]ParentIdsForTreeQuery query)
+        {
+            return Json(EntityObjectService.GetParentIdsForTree(query));
+        }
 
-        public JsonNetResult<Dictionary<int, string>> GetContentFieldValues(int contentId, string fieldName) => EntityObjectService.GetContentFieldValues(contentId, fieldName);
+        public JsonResult GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode)
+        {
+            return Json(EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode)?.ToList());
+        }
 
-        public JsonNetResult<string> GetArticleLinkedItems(int linkId, int articleId) => EntityObjectService.GetArticleLinkedItems(linkId, articleId);
+        public JsonResult GetParentInfo(string entityTypeCode, long entityId, long? parentEntityId)
+        {
+            return Json(EntityObjectService.GetParentInfo(entityTypeCode, entityId, parentEntityId)?.ToList());
+        }
 
-        public JsonNetResult<int> GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue) => EntityObjectService.GetArticleIdByFieldValue(contentId, fieldName, fieldValue);
+        public JsonResult GetArticleFieldValue(int contentId, string fieldName, int articleId)
+        {
+            return Json(EntityObjectService.GetArticleFieldValue(contentId, fieldName, articleId));
+        }
+
+        public JsonResult GetContentFieldValues(int contentId, string fieldName)
+        {
+            return Json(EntityObjectService.GetContentFieldValues(contentId, fieldName));
+        }
+
+        public JsonResult GetArticleLinkedItems(int linkId, int articleId)
+        {
+            return Json(EntityObjectService.GetArticleLinkedItems(linkId, articleId));
+        }
+
+        public JsonResult GetArticleIdByFieldValue(int contentId, string fieldName, string fieldValue)
+        {
+            return Json(EntityObjectService.GetArticleIdByFieldValue(contentId, fieldName, fieldValue));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope]
-        public JsonNetResult<object> UnlockAllEntities()
+        public JsonResult UnlockAllEntities()
         {
             EntityObjectService.UnlockAllEntitiesLockedByCurrentUser();
-            return null;
+            return Json(null);
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public JsonNetResult<object> AutosaveRestoringCheck([ModelBinder(typeof(JsonStringModelBinder<AutosavedEntityRecordHeader[]>))] AutosavedEntityRecordHeader[] recordHeaders) => new
+        public JsonResult AutosaveRestoringCheck([ModelBinder(typeof(JsonStringModelBinder<AutosavedEntityRecordHeader[]>))] AutosavedEntityRecordHeader[] recordHeaders)
         {
-            success = true,
-            approvedRecordIDs = EntityObjectService.AutosaveRestoringCheck(recordHeaders)
-        };
+            return Json(new
+            {
+                success = true,
+                approvedRecordIDs = EntityObjectService.AutosaveRestoringCheck(recordHeaders)
+            });
+        }
     }
 }

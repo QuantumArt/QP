@@ -17,7 +17,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
                 return new Tuple<DateTime, DateTime>(range.Item1, range.Item1);
             }
 
-            return position == 0 ? new Tuple<DateTime, DateTime>(range.Item1, dt.Date) : range;
+            return position == 0 ? new Tuple<DateTime, DateTime>(range.Item1, dt) : range;
         }
     }
 }

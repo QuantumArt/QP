@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Mono.Options;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
@@ -63,7 +65,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 var settings = argsParser.ParseConsoleArguments(args);
                 Logger.Debug($"Parsed settings: {settings.ToJsonLog()}");
 
-                var dataProcessor = DataProcessorFactory.Create(settings);
+                var factory = new WebApplicationFactory<Startup>();
+                factory.CreateDefaultClient();
+                var dataProcessor = DataProcessorFactory.Create(
+                    settings, factory.Server.Host.Services, factory.CreateClient()
+                    );
+
                 if (Console.IsInputRedirected && !DisablePipedInput)
                 {
                     dataProcessor.Process(StandardInputData);
