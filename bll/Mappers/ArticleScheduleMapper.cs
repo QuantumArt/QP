@@ -13,16 +13,16 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateDalMapper(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<ArticleSchedule, ArticleScheduleDAL>(MemberList.Destination)
-
-                //.ForMember(data => data.MaximumOccurences, opt => opt.MapFrom(src => Utils.Converter.ToNullableDecimal(src.MaximumOccurences)))
-                .ForMember(data => data.Article, opt => opt.Ignore());
+                .ForMember(data => data.Article, opt => opt.Ignore())
+                ;
         }
 
         public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<ArticleScheduleDAL, ArticleSchedule>(MemberList.Source)
                 .ForMember(data => data.Article, opt => opt.Ignore())
-                .ForMember(data => data.Recurring, opt => opt.Ignore());
+                .ForMember(data => data.Recurring, opt => opt.Ignore())
+                ;
         }
 
         public ArticleSchedule GetBizObject(ArticleScheduleDAL dataObject, Article item)
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.BLL.Mappers
 
             if (result.FreqType == ScheduleFreqTypes.OneTime || result.FreqType == ScheduleFreqTypes.Publishing)
             {
-                ProceedOneTimeScheduleToDal(item, result);
+                ProceedOneTimeScheduleToDal(result);
             }
             else if (result.FreqType >= ScheduleFreqTypes.RecurringDaily && result.FreqType <= ScheduleFreqTypes.RecurringMonthlyRelative)
             {
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.BLL.Mappers
             result.PublicationDate = result.Article.Delayed ? result.StartDate : ScheduleHelper.DefaultStartDate;
         }
 
-        private static void ProceedOneTimeScheduleToDal(ArticleSchedule item, ArticleScheduleDAL result)
+        private static void ProceedOneTimeScheduleToDal(ArticleScheduleDAL result)
         {
             result.Duration = 1M;
             result.DurationUnits = "dd";

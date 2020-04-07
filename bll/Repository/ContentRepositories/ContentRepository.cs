@@ -49,23 +49,6 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 .ThenByDescending(x => x.FieldPriority(withRelations))
                 .ThenBy(x => x.Order)
                 .Select(x => x.Id);
-
-            // using (new QPConnectionScope())
-            // {
-            //     IEnumerable<DataRow> rows = Common.GetDisplayFields(QPConnectionScope.Current.DbConnection, contentId, withRelations).AsEnumerable();
-            //     return rows.Select(n => new
-            //         {
-            //             id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
-            //             viewInList = n.Field<bool>("view_in_list"),
-            //             priority = n.Field<int>("attribute_priority"),
-            //             order = n.Field<decimal>("attribute_order")
-            //         })
-            //         .Where(n => n.id != excludeId)
-            //         .OrderByDescending(n => n.viewInList)
-            //         .ThenByDescending(n => n.priority)
-            //         .ThenBy(n => n.order)
-            //         .Select(n => n.id);
-            // }
         }
 
         internal static IEnumerable<Field> GetDisplayFields(int contentId, bool withRelations)
@@ -439,9 +422,6 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     }
                 }
             }
-
-
-
         }
 
         internal static Content Copy(Content content, int? forceId, int[] forceFieldIds, int[] forceLinkIds, bool forHierarchy)
@@ -590,12 +570,6 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 .FirstOrDefault();
 
             return fieldName?.Name ?? ContentDataColumnName.ContentItemId;
-
-
-            // using (new QPConnectionScope())
-            // {
-            //     return Common.GetTitleName(QPConnectionScope.Current.DbConnection, contentId);
-            // }
         }
 
         internal static IEnumerable<Field> GetDisplayFields(int contentId, Field field = null)

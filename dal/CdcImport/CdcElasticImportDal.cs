@@ -25,7 +25,6 @@ namespace Quantumart.QP8.DAL.CdcImport
             using (var cmd = DbCommandFactory.Create(sb.ToString(), connection))
             using (var da = DataAdapterFactory.Create(cmd))
             {
-
                 cmd.Parameters.AddWithValue(@CaptureInstance, captureInstance);
                 cmd.Parameters.AddWithValue(@RawLsnFrom, (object)fromLsn ?? DBNull.Value);
                 cmd.Parameters.AddWithValue(@RawLsnTo, (object)toLsn ?? DBNull.Value);

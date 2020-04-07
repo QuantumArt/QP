@@ -92,7 +92,6 @@ namespace Quantumart.QP8.BLL.Services
 
             foreach (var cnt in notifications.Select(notification =>
             {
-
                 if (notification.FormatId != null)
                 {
                     return new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification,

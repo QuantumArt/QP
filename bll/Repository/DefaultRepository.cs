@@ -101,8 +101,6 @@ namespace Quantumart.QP8.BLL.Repository
                 entities.Entry( result).State = EntityState.Deleted;
                 entities.SaveChanges();
             }
-
-            // SimpleDelete(new EntityKey(GetSetNameByType(typeof(TDal), true), "Id", (decimal)id));
         }
 
         internal static void Delete<TDal>(int[] id)
@@ -193,17 +191,6 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
             return dalItem;
         }
-
-        // internal static void SimpleDelete(EntityKey key)
-        // {
-        //     var entities = QPContext.EFContext;
-        //
-        //     if ((entities as IObjectContextAdapter).ObjectContext.TryGetObjectByKey(key, out var result))
-        //     {
-        //         entities.Entry(result).State = EntityState.Deleted;
-        //     }
-        //     entities.SaveChanges();
-        // }
 
         internal static void SimpleDelete<TDal>(TDal dalItem, QPModelDataContext context = null)
             where TDal : class

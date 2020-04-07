@@ -32,8 +32,6 @@ namespace Quantumart.QP8.BLL.Repository
                     entity.ParentEntityId,
                     entity.RecurringId
                 );
-
-                // return Common.CheckUnique(QPConnectionScope.Current.DbConnection, entity.EntityTypeCode, entity.Name, entity.Id, entity.ParentEntityId, entity.RecurringId);
             }
         }
 
@@ -45,7 +43,6 @@ namespace Quantumart.QP8.BLL.Repository
                 var source = entityType?.Source;
                 var idField = entityType?.IdField;
                 return Common.Lock(QPConnectionScope.Current.DbConnection, source, idField, item.Id, userId);
-                // return Common.Lock(QPConnectionScope.Current.DbConnection, item.EntityTypeCode, item.Id, userId);
             }
         }
 
