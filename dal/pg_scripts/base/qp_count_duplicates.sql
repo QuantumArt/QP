@@ -14,7 +14,7 @@ AS $BODY$
         raise notice '%', attr_names;
 
         if ids is not null and array_length(ids, 1) > 0 then
-            condition := 'c.content_item_id = ANY($1)';
+            condition := 'and c.content_item_id = ANY($1)';
         else
             condition := '';
         end if;
