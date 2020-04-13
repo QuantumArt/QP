@@ -47,7 +47,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public async Task<ActionResult> About(string tabId, int parentId)
         {
-            var model = ViewModel.Create<AboutViewModel>(tabId, parentId);
+            var model = AboutViewModel.Create(tabId, parentId, _options.Version);
             return await JsonHtml("About", model);
         }
 

@@ -9,14 +9,21 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
     public sealed class AboutViewModel : AreaViewModel
     {
-        public static AboutViewModel Create(string tabId, int parentId) => Create<AboutViewModel>(tabId, parentId);
+        public static AboutViewModel Create(string tabId, int parentId, string version)
+        {
+            var model = Create<AboutViewModel>(tabId, parentId);
+            model.Version = version;
+            return model;
+        }
+
+        public string Version { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 
         public override string ActionCode => Constants.ActionCode.About;
 
         [Display(Name = "ProductName", ResourceType = typeof(HomeStrings))]
-        public string Product => string.Format(HomeStrings.ProductValue, Default.ReleaseNumber, DateTime.Now.Year);
+        public string Product => string.Format(HomeStrings.ProductValue, Version, DateTime.Now.Year);
 
         [Display(Name = "DBName", ResourceType = typeof(HomeStrings))]
         public string DbName => DbRepository.GetDbName();

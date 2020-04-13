@@ -2084,28 +2084,30 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
-                return (int)cmd.ExecuteScalar();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
         public static int GetArticlesWaitingForApprovalCount(DbConnection sqlConnection, int userId)
         {
-            const string query =
-                @"select count(*) from content_item_workflow ciw with(nolock)
-                    INNER JOIN content_item ci with(nolock) ON ci.content_item_id = ciw.content_item_id
-                    INNER JOIN full_workflow_rules wr with(nolock) on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
-                    INNER JOIN full_workflow_rules wr2 with(nolock) on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
-                    WHERE (wr2.user_id = @userId OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id = @userId))
+            var dbType = GetDbType(sqlConnection);
+            var nolock = WithNoLock(dbType);
+            var query =
+                $@"select count(*) from content_item_workflow ciw {nolock}
+                    INNER JOIN content_item ci {nolock} ON ci.content_item_id = ciw.content_item_id
+                    INNER JOIN full_workflow_rules wr {nolock} on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
+                    INNER JOIN full_workflow_rules wr2 {nolock} on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
+                    WHERE (wr2.user_id = @userId OR wr2.group_id IN (SELECT group_id FROM user_group_bind {nolock} WHERE user_id = @userId))
                     AND (
-                        ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
-                        OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = @userId)
+                        ci.content_item_id not in (select content_item_id from waiting_for_approval {nolock})
+                        OR ci.content_item_id in (select content_item_id from waiting_for_approval {nolock} where user_id = @userId)
                     )";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId);
-                return (int)cmd.ExecuteScalar();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -3281,10 +3283,6 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 return dt.AsEnumerable().ToArray();
             }
         }
-
-
-
-
 
         public static DataRow GetContextMenuById(DbConnection sqlConnection, int userId, int menuId, bool loadRelatedData = false)
         {
