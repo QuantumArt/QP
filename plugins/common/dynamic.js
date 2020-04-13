@@ -5,6 +5,54 @@
 /* eslint no-inner-declarations: 0 */
 /* eslint spaced-comment: 0 */
 
+Quantumart.QP8.BackendDocumentContext.prototype.addInitHandler = function (callback) {
+  if (typeof (callback) == "function") {
+    if (!Array.isArray(this._initHandlerCallbacks)) {
+      this._initHandlerCallbacks = [];
+    }
+    this._initHandlerCallbacks.push(callback);
+  }
+};
+
+Quantumart.QP8.BackendDocumentContext.prototype.addValueChangedHandler = function (callback) {
+  if (typeof (callback) == "function") {
+    if (!Array.isArray(this._fieldValueChangedHandlerCallbacks)) {
+      this._fieldValueChangedHandlerCallbacks = [];
+    }
+    this._fieldValueChangedHandlerCallbacks.push(callback);
+  }
+};
+
+Quantumart.QP8.BackendDocumentContext.prototype.fieldValueChangedHandler = function (editor, data, $rootElem) {
+  // выполняем зарегистрированные обработчики
+  if (Array.isArray(this._fieldValueChangedHandlerCallbacks)) {
+    $.each(this._fieldValueChangedHandlerCallbacks, function (i, handler) {
+      if (typeof (handler) == "function") {
+        Sys.Debug.trace("execute fieldValueChanged handler");
+        handler(editor, data, $rootElem);
+      }
+    });
+  }
+};
+
+Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, $elem) {
+  Sys.Debug.trace("form initializer");
+  // выполняем зарегистрированные обработчики
+  if (Array.isArray(this._initHandlerCallbacks)) {
+    $.each(this._initHandlerCallbacks, function (i, handler) {
+      if (typeof (handler) == "function") {
+        Sys.Debug.trace("execute init handler");
+        handler(editor, $elem);
+      }
+    });
+  }
+};
+
+Quantumart.QP8.BackendDocumentContext.prototype.initDynamicResolvers = function() {
+  this.addInitHandler($.proxy(this.addDynamicResolvers, this));
+  this.addValueChangedHandler($.proxy(this.changeDynamicResolvers, this));
+};
+
 Quantumart.QP8.BackendDocumentContext.prototype.getTypeByProduct = function (product) {
   return this.getGlobal('typesByProduct')[product];
 };
@@ -13,7 +61,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.getResolverNames = function () {
   return jQuery.isArray(this.resolverNames) ? this.resolverNames : ['Type'];
 };
 
-Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, $elem) {
+Quantumart.QP8.BackendDocumentContext.prototype.addDynamicResolvers = function (editor, $elem) {
   editor._hideFields = jQuery.isArray(editor._hideFields) // eslint-disable-line no-param-reassign
     ? editor._hideFields.concat(this.fieldsToHide) : this.fieldsToHide;
 
@@ -32,7 +80,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, 
   }
 };
 
-Quantumart.QP8.BackendDocumentContext.prototype.fieldValueChangedHandler = function (editor, data) {
+Quantumart.QP8.BackendDocumentContext.prototype.changeDynamicResolvers = function (editor, data) {
   if (this.changeFilters) {
     var resolverNames = this.getResolverNames();
     var that = this;
