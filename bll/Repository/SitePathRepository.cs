@@ -190,9 +190,7 @@ namespace Quantumart.QP8.BLL.Repository
         public static void CreateBinDirectory(string binPath)
         {
             Directory.CreateDirectory(binPath);
-            #if !NET_STANDARD
             CopySiteDirectory(binPath, RELATIVE_BIN_PATH);
-            #endif
         }
 
     }
