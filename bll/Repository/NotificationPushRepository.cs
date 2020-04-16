@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Transactions;
 using System.Xml.Linq;
 using NLog;
 using NLog.Fluent;
@@ -12,10 +13,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
-
-#if !NET_STANDARD
 using Quantumart.QP8.Configuration;
-#endif
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -227,20 +225,21 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
-            var cnn = new DBConnector(connectionString)
+            using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                CacheData = false,
-                DisableServiceNotifications = true,
-                DisableInternalNotifications = disableInternalNotifications,
-                ExternalExceptionHandler = HandleException,
-                ThrowNotificationExceptions = false
-            };
-#if !NET_STANDARD
-            QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
-#endif
-            foreach (var simpleCode in code.Split(';'))
-            {
-                cnn.SendNotification(id, simpleCode);
+                var cnn = new DBConnector(connectionString)
+                {
+                    CacheData = false,
+                    DisableServiceNotifications = true,
+                    DisableInternalNotifications = disableInternalNotifications,
+                    ExternalExceptionHandler = HandleException,
+                    ThrowNotificationExceptions = false
+                };
+                QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
+                foreach (var simpleCode in code.Split(';'))
+                {
+                    cnn.SendNotification(id, simpleCode);
+                }
             }
         }
 

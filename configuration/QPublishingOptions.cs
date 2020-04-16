@@ -16,7 +16,10 @@ namespace Quantumart.QP8.Configuration
             SessionTimeout = 60;
             QpConfigPollingInterval = TimeSpan.FromMinutes(2);
             EnableSignalR = true;
+            Version = "8.0.0.0";
         }
+
+        public string Version { get; set; }
 
         public bool EnableSignalR { get; set; }
 

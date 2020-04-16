@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +48,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public async Task<ActionResult> About(string tabId, int parentId)
         {
-            var model = ViewModel.Create<AboutViewModel>(tabId, parentId);
+            var envVersion = Environment.GetEnvironmentVariable("SERVICE_VERSION");
+            var model = AboutViewModel.Create(tabId, parentId, envVersion ?? _options.Version);
             return await JsonHtml("About", model);
         }
 

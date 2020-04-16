@@ -1,82 +1,10 @@
 (function () {
-    //#region Расширение BackendDocumentContext (Регистрация и выполнение обработчиков событий формы)
-    Quantumart.QP8.BackendDocumentContext.prototype.addInitHandler = function (callback) {
-        if (typeof (callback) == "function") {
-            if (!Array.isArray(this._initHandlerCallbacks)) {
-                this._initHandlerCallbacks = [];
-            }
-            this._initHandlerCallbacks.push(callback);
-        }
-    };
-
-
-    Quantumart.QP8.BackendDocumentContext.prototype.addValueChangedHandler = function (callback) {
-        if (typeof (callback) == "function") {
-            if (!Array.isArray(this._fieldValueChangedHandlerCallbacks)) {
-                this._fieldValueChangedHandlerCallbacks = [];
-            }
-            this._fieldValueChangedHandlerCallbacks.push(callback);
-        }
-    };
-
-    Quantumart.QP8.BackendDocumentContext.prototype.fieldValueChangedHandler = function (editor, data, $rootElem) {
-        // выполняем зарегистрированные обработчики
-        if (Array.isArray(this._fieldValueChangedHandlerCallbacks)) {
-            $.each(this._fieldValueChangedHandlerCallbacks, function (i, handler) {
-                if (typeof (handler) == "function") {
-                    handler(editor);
-                }
-            });
-        }
-    };
-
-    Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, $elem) {
-        Sys.Debug.trace("form initializer");
-        // выполняем зарегистрированные обработчики
-        if (Array.isArray(this._initHandlerCallbacks)) {
-            $.each(this._initHandlerCallbacks, function (i, handler) {
-                if (typeof (handler) == "function") {
-                    Sys.Debug.trace("execute init handler");
-                    handler(editor);
-                }
-            });
-        }
-    };
-
-
-    //#endregion
-
     //#region Расширение BackendDocumentContext (Работа с полями)
-    Quantumart.QP8.BackendDocumentContext.prototype.toggleField = function (editor, inputName, state, preserveHidden) {
-        var $elem = jQuery(editor._formElement).find("dl[data-field_form_name='" + inputName + "']");
-        var list = $elem.find(".dataList[data-list_item_name='" + inputName + "']").data("entity_data_list_component");
-        if (state) {
-            $elem.show();
-            if (list) {
-                list._fixListOverflow();
-            }
-        }
-        else {
-            $elem.hide();
-            if (!preserveHidden) {
-                if (list) {
-                    list.selectEntities();
-                }
-                else {
-                    $elem.val("");
-                }
-            }
-        }
-    };
 
     Quantumart.QP8.BackendDocumentContext.prototype.toggleFields = function (editor, inputNames, state) {
         $.each(inputNames, $.proxy(function (i, inputName) {
             this.toggleField(editor, inputName, state, true);
         }, this));
-    };
-
-    Quantumart.QP8.BackendDocumentContext.prototype.getValue = function (editor, inputName) {
-        return jQuery(editor._formElement).find("[name='" + inputName + "']").val();
     };
 
     Quantumart.QP8.BackendDocumentContext.prototype.getBooleanValue = function (editor, inputName) {
@@ -86,7 +14,7 @@
         }
     };
 
-    Quantumart.QP8.BackendDocumentContext.prototype.setValue = function (editor, fieldValues, disableChangeTracking) {
+    Quantumart.QP8.BackendDocumentContext.prototype.setValues = function (editor, fieldValues, disableChangeTracking) {
         var $form = editor._formElement;
 
         $c.setAllVisualEditorValues($form, fieldValues);
@@ -253,7 +181,7 @@
             this.toggleField(editor, options.fields.isPage, false, true);
 
             if (isPage != null && isPageFieldValue != isPage) {
-                this.setValue(editor, [{ fieldName: options.fields.isPage, value: (isPage == true).toString() }]);
+                this.setValues(editor, [{ fieldName: options.fields.isPage, value: (isPage == true).toString() }]);
             }
 
             if (isPage == true) {
@@ -282,7 +210,7 @@
             if (extensionId > 0) {
                 if ((currentExtensionIdValue == 0 || editor._actionCode == ACTION_CODE_ADD_NEW_ARTICLE) && currentExtensionIdValue != extensionId) {
                     // если не выставлено значение, то выставляется
-                    this.setValue(editor, [{ fieldName: options.fields.extensionId, value: extensionId }]);
+                    this.setValues(editor, [{ fieldName: options.fields.extensionId, value: extensionId }]);
                     $c.makeReadonlyClassifierFields(editor._formElement, [options.fields.extensionId]);
                 }
             } else {
@@ -314,9 +242,11 @@
             }
         }, opts || {});
 
-        this.addInitHandler($.proxy(this.checkWidgetSystemFields, this, options));
+      this.addInitHandler($.proxy(this.addDynamicResolvers, this));
+      this.addValueChangedHandler($.proxy(this.changeDynamicResolvers, this));
 
-        this.addValueChangedHandler($.proxy(this.checkWidgetSystemFields, this, options));
+      this.addInitHandler($.proxy(this.checkWidgetSystemFields, this, options));
+      this.addValueChangedHandler($.proxy(this.checkWidgetSystemFields, this, options));
     };
 
     //#endregion
