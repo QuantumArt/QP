@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj" />
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
+    <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties" />
+    <ProjectReference Include="..\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj" />
   </ItemGroup>
 </Project>

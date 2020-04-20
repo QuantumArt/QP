@@ -5,7 +5,7 @@ using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Helpers;
-using QP8.Infrastructure.Logging;
+using NLog;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
@@ -110,7 +110,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             }
 
             CustomerCode = noNamedOptions.Single();
-            Logger.Log.SetGlobalContext(LoggerData.CustomerCodeCustomVariable, CustomerCode);
+            //Logger.SetGlobalContext(LoggerData.CustomerCodeCustomVariable, CustomerCode);
         }
 
         private static void ShowCommandLineHelp(OptionSet optionsSet)

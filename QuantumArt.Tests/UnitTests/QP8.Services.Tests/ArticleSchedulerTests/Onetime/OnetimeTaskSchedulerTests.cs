@@ -2,7 +2,6 @@ using System;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Moq;
-using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.TestTools.AutoFixture.Helpers;
 using QP8.Services.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.ArticleScheduler.Onetime;
@@ -20,7 +19,6 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Onetime
         {
             _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             FixtureArticleHelpers.InjectSimpleArticle(_fixture);
-            LogProvider.LogFactory = new NullLogFactory();
         }
 
         [Fact, Trait("ArticleScheduler", "OnetimeTaskRunner")]

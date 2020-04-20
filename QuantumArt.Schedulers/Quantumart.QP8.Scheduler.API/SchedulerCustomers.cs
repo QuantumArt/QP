@@ -8,16 +8,21 @@ namespace Quantumart.QP8.Scheduler.API
 {
     public class SchedulerCustomerCollection : ISchedulerCustomerCollection
     {
-        private readonly ServiceDescriptor _descriptor;
+        private readonly string AppName = "QP8.CommonScheduler";
 
-        public SchedulerCustomerCollection(ServiceDescriptor descriptor)
-        {
-            _descriptor = descriptor;
-        }
+        // private readonly QPublishingOptions _options;
+        // public SchedulerCustomerCollection(QPublishingOptions options)
+        // {
+        //     _options = options;
+        // }
 
         public QaConfigCustomer[] GetItems()
         {
-            return QPConfiguration.GetCustomers(_descriptor.Name).Where(c => !c.ExcludeFromSchedulers).ToArray();
+            // QPConfiguration.ConfigServiceUrl = _options.QpConfigUrl;
+            // QPConfiguration.ConfigServiceToken = _options.QpConfigToken;
+            // QPConfiguration.XmlConfigPath = _options.QpConfigPath;
+
+            return QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToArray();
         }
     }
 }

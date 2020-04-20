@@ -22,7 +22,7 @@
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
     <PackageReference Include="Moq" Version="4.10.1" PrivateAssets="None" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" PrivateAssets="None" />
-    <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="NLog" Version="4.7.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.1" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.0" />
     <PackageReference Include="NLog.WindowsIdentity" Version="4.6.8" />
@@ -36,12 +36,10 @@
     <ProjectReference Include="..\constants\Constants.csproj" />
     <ProjectReference Include="..\Merger\Merger.csproj" />
     <ProjectReference Include="..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj" />
+    <ProjectReference Include="..\QuantumArt.Schedulers\Quantumart.QP8.CommonScheduler\Quantumart.QP8.CommonScheduler.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
     <ProjectReference Include="..\security\Security.csproj" />
     <ProjectReference Include="..\utils\Utils.csproj" />
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.Unity\QP8.Infrastructure.Logging.Unity.csproj" />
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web.AspNet\QP8.Infrastructure.Web.AspNet.csproj" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
   </ItemGroup>
@@ -60,13 +58,6 @@
     <None Include="..\dal\pg_scripts\current.sql" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" LinkBase="pg_scripts\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Helpers" />
     <Folder Include="Infrastructure\Converters" />
-    <Folder Include="Views\WinLogon" />
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
-    <DefineConstants>NET_STANDARD</DefineConstants>
-  </PropertyGroup>
-
 </Project>

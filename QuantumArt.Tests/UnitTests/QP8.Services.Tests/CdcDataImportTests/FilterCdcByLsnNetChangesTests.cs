@@ -5,11 +5,9 @@ using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using AutoMapper;
 using FluentAssertions;
-using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.TestTools.AutoFixture.Specimens;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.NotificationSender;
-using Quantumart.QP8.CdcDataImport.Common.Infrastructure.Extensions;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.DbColumns;
 using Xunit;
@@ -33,7 +31,6 @@ namespace QP8.Services.Tests.CdcDataImportTests
             Mapper.AssertConfigurationIsValid();
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
-            LogProvider.LogFactory = new NullLogFactory();
         }
 
         [Theory, AutoData, Trait("CdcTarantool", "DataImportJob")]

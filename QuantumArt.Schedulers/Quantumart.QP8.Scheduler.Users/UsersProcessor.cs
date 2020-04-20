@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using QP8.Infrastructure.Logging.Interfaces;
+using NLog;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
@@ -15,28 +13,22 @@ namespace Quantumart.QP8.Scheduler.Users
     {
         private const int DelayDuration = 100;
 
-        private readonly ILog _logger;
-        private readonly PrtgErrorsHandler _prtgLogger;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISchedulerCustomerCollection _schedulerCustomers;
-        private readonly Func<IUserSynchronizationService> _getSynchronizationService;
+        private readonly IUserSynchronizationService _synchronizationService;
 
         public UsersProcessor(
-            ILog logger,
-            PrtgErrorsHandler prtgLogger,
             ISchedulerCustomerCollection schedulerCustomers,
-            Func<IUserSynchronizationService> getSynchronizationService)
+            UserSynchronizationService synchronizationService)
         {
-            _logger = logger;
-            _prtgLogger = prtgLogger;
             _schedulerCustomers = schedulerCustomers;
-            _getSynchronizationService = getSynchronizationService;
+            _synchronizationService = synchronizationService;
         }
 
         public async Task Run(CancellationToken token)
         {
-            _logger.Info("Start users synchronization");
+            Logger.Info("Start users synchronization");
             var items = _schedulerCustomers.GetItems();
-            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(items);
             foreach (var customer in items)
             {
                 if (token.IsCancellationRequested)
@@ -50,28 +42,23 @@ namespace Quantumart.QP8.Scheduler.Users
                 }
                 catch (Exception ex)
                 {
-                    ex.Data.Clear();
-                    ex.Data.Add("CustomerCode", customer.CustomerName);
-                    _logger.Error($"There was an error on customer code: {customer.CustomerName}", ex);
-                    prtgErrorsHandlerVm.EnqueueNewException(ex);
+                    Logger.Warn(ex,"There was an error while processing customer code: {customerCode}", customer.CustomerName);
                 }
 
                 await Task.Delay(DelayDuration, token);
             }
 
-            _prtgLogger.LogMessage(prtgErrorsHandlerVm);
-            _logger.Info("End users synchronization");
+            Logger.Info("End users synchronization");
         }
 
         private void ProcessCustomer(QaConfigCustomer customer)
         {
-            using (new QPConnectionScope(customer.ConnectionString))
+            using (new QPConnectionScope(customer.ConnectionString, customer.DbType))
             {
-                var service = _getSynchronizationService();
-                if (service.NeedSynchronization())
+                if (_synchronizationService.NeedSynchronization())
                 {
-                    _logger.Info($"Start synchronization for customer code: ${customer.CustomerName}");
-                    service.Synchronize();
+                    Logger.Info($"Start synchronization for customer code: ${customer.CustomerName}");
+                    _synchronizationService.Synchronize();
                 }
             }
         }

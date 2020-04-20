@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QP8.Infrastructure.Logging.Interfaces;
+using NLog;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 
@@ -12,13 +12,12 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         private const string DefaultMail = "undefined@domain.com";
         private const string DefaultValue = "undefined";
 
-        private readonly ILog _logger;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly int _languageId;
         private readonly ActiveDirectoryRepository _activeDirectory;
 
-        public UserSynchronizationService(ILog logger, int currentUserId, int languageId)
+        public UserSynchronizationService(int currentUserId, int languageId)
         {
-            _logger = logger;
             _languageId = languageId;
             _activeDirectory = new ActiveDirectoryRepository();
             QPContext.CurrentUserId = currentUserId;
@@ -48,11 +47,11 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                     MapUser(adUser, ref qpUser);
                     MapGroups(adUser, ref qpUser, adGroups, qpGroups);
                     UserRepository.SaveProperties(qpUser);
-                    _logger.Info($"User {qpUser.DisplayName} from groups {string.Join(",", GetGroupNames(qpUser))} was added");
+                    Logger.Info($"User {qpUser.DisplayName} from groups {string.Join(",", GetGroupNames(qpUser))} was added");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error("There was an exception while adding user", ex);
+                    Logger.Error(ex,"There was an exception while adding user");
                 }
             }
         }
@@ -71,11 +70,11 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                     MapUser(user.AD, ref qpUser);
                     MapGroups(user.AD, ref qpUser, adGroups, qpGroups);
                     UserRepository.UpdateProperties(qpUser);
-                    _logger.Info($"User {qpUser.DisplayName} from groups {string.Join(",", GetGroupNames(qpUser))} was updated");
+                    Logger.Info($"User {qpUser.DisplayName} from groups {string.Join(",", GetGroupNames(qpUser))} was updated");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error("There was an exception while updating user", ex);
+                    Logger.Error(ex,"There was an exception while updating user");
                 }
             }
         }
@@ -89,11 +88,11 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                 {
                     qpUser.Disabled = true;
                     UserRepository.UpdateProperties(qpUser);
-                    _logger.Info($"User {qpUser.DisplayName} was disabled");
+                    Logger.Info($"User {qpUser.DisplayName} was disabled");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warn("There was an exception while disabling user", ex);
+                    Logger.Warn(ex,"There was an exception while disabling user");
                 }
             }
         }
@@ -107,7 +106,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             var missedAdGroups = qpGroupNames.Except(adGroupNames).ToArray();
             if (missedAdGroups.Any())
             {
-                _logger.Warn($"Groups \"{string.Join(", ", missedAdGroups)}\" not exist at active directory");
+                Logger.Warn($"Groups \"{string.Join(", ", missedAdGroups)}\" not exist at active directory");
             }
 
             var adGroupRelations = from adg in adGroups
@@ -128,7 +127,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             var wrongMembershipAdGroups = adGroupNames.Except(adGroupsToProcess.Select(g => g.Name)).ToArray();
             if (wrongMembershipAdGroups.Any())
             {
-                _logger.Warn($"Group(s) \"{string.Join(", ", wrongMembershipAdGroups)}\" have wrong membership");
+                Logger.Warn($"Group(s) \"{string.Join(", ", wrongMembershipAdGroups)}\" have wrong membership");
             }
 
             return adGroupsToProcess;

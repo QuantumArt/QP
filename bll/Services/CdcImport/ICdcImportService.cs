@@ -38,5 +38,7 @@ namespace Quantumart.QP8.BLL.Services.CdcImport
         /// <param name="toLsn">Upper bound lsn, if null - max lsn for database will be used</param>
         /// <returns>Get cdc table data</returns>
         List<CdcTableTypeModel> ImportData(string captureInstance, string fromLsn = null, string toLsn = null);
+
+        List<CdcTableTypeModel> GetCdcDataFromTables(string fromLsn = null, string toLsn = null);
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Version>2.2.0</Version>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
@@ -33,7 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
     <ProjectReference Include="..\QP8.Infrastructure\QP8.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes" />
   </ItemGroup>
 </Project>

@@ -264,6 +264,7 @@ siteMvc/Scripts/Quantumart/**/*.min.js
 npm-debug.log.*
 Elmah.txt
 
+siteMvc/Static/build
 siteMvc/Scripts/build
 siteMvc/Content/build
 package/pack/qp8release

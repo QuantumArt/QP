@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Quantumart.QP8.CdcDataImport.Elastic\Quantumart.QP8.CdcDataImport.Elastic.csproj" />
+    <ProjectReference Include="..\Quantumart.QP8.CdcDataImport.Tarantool\Quantumart.QP8.CdcDataImport.Tarantool.csproj" />
+    <ProjectReference Include="..\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj" />
+    <ProjectReference Include="..\Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Unity" Version="5.8.13" />
+  </ItemGroup>
+</Project>

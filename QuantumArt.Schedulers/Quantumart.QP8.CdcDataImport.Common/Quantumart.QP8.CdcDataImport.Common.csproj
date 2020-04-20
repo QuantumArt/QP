@@ -1,18 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\bll\BLL.csproj" />
     <ProjectReference Include="..\..\configuration\Configuration.csproj" />
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Quartz" Version="2.6.1" />
-    <PackageReference Include="Topshelf" Version="4.2.0" />
-    <PackageReference Include="Topshelf.Quartz" Version="0.4.0.1" />
+    <PackageReference Include="NLog" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Infrastructure\Extensions" />
     <Folder Include="Properties" />
   </ItemGroup>
 </Project>

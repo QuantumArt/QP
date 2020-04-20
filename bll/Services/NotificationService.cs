@@ -233,7 +233,7 @@ namespace Quantumart.QP8.BLL.Services
         public void SendNotification(string connectionString, int id, string code)
         {
             Site site;
-            using (new QPConnectionScope(connectionString))
+            using (new QPConnectionScope())
             {
                 var article = ArticleRepository.GetById(id);
                 if (article == null)

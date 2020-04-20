@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Fluent;
-using QP8.Infrastructure.Web.AspNet.Helpers;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
