@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using NLog.Fluent;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -39,7 +40,10 @@ namespace Quantumart.QP8.ArticleScheduler
                         QPConfiguration.ConfigServiceToken = _props.ConfigServiceToken;
                         QPConfiguration.XmlConfigPath = _props.XmlConfigPath;
 
-                        var customers = QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToList();
+                        var customers = QPConfiguration.GetCustomers(AppName)
+                            .Where(c => c.DbType == DatabaseType.SqlServer)
+                            .Where(c => !c.ExcludeFromSchedulers)
+                            .ToList();
                         new QpScheduler(unityConfig.UnityContainer, customers, _props.PrtgLoggerTasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)

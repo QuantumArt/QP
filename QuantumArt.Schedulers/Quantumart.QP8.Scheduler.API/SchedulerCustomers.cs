@@ -10,18 +10,8 @@ namespace Quantumart.QP8.Scheduler.API
     {
         private readonly string AppName = "QP8.CommonScheduler";
 
-        // private readonly QPublishingOptions _options;
-        // public SchedulerCustomerCollection(QPublishingOptions options)
-        // {
-        //     _options = options;
-        // }
-
         public QaConfigCustomer[] GetItems()
         {
-            // QPConfiguration.ConfigServiceUrl = _options.QpConfigUrl;
-            // QPConfiguration.ConfigServiceToken = _options.QpConfigToken;
-            // QPConfiguration.XmlConfigPath = _options.QpConfigPath;
-
             return QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToArray();
         }
     }

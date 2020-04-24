@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.CdcDataImport.Common.Infrastructure;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Scheduler.API;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
@@ -29,7 +30,10 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
 
         public Task Run(CancellationToken token)
         {
-            var customers = QPConfiguration.GetCustomers(AppName).Where(c => !(c.ExcludeFromSchedulers || c.ExcludeFromSchedulersCdcElastic)).ToList();
+            var customers = QPConfiguration.GetCustomers(AppName)
+                .Where(c => c.DbType == DatabaseType.SqlServer)
+                .Where(c => !(c.ExcludeFromSchedulers || c.ExcludeFromSchedulersCdcElastic))
+                .ToList();
             var customersDictionary = new Dictionary<QaConfigCustomer, bool>();
 
             var customersWithEnabledCdc = customers.Where(customer =>
