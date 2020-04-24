@@ -328,11 +328,12 @@ namespace Quantumart.QP8.WebMvc
 
             app.UseSession();
 
-            app.UseSignalR(routes =>
+            /*app.UseSignalR(routes =>
             {
                 routes.MapHub<CommunicationHub>("/signalr/communication");
                 routes.MapHub<SingleUserModeHub>("/signalr/singleUserMode");
             });
+            */
 
             app.UseMvc(RegisterRoutes);
         }
