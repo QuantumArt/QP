@@ -3,17 +3,16 @@ LABEL stage=intermediate
 
 RUN apt-get install -y \
     && curl -sL https://deb.nodesource.com/setup_10.x | bash \
-    && apt-get install -y nodejs \
-	&& npm install gulp cross-env -g
+    && apt-get install -y nodejs
+
+RUN	npm install gulp cross-env -g
+COPY package.json package-lock.json ./
+RUN npm ci
 
 WORKDIR /src
 COPY *.sln NuGet.config ./
 ADD projectfiles.tar .
 RUN dotnet restore
-
-COPY package.json .
-COPY package-lock.json .
-RUN npm ci
 
 COPY . .
 RUN npm run build
