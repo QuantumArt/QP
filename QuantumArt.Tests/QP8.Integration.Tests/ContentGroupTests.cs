@@ -1,11 +1,7 @@
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Hosting;
+using System.IO;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using QP8.Integration.Tests.Infrastructure;
@@ -15,11 +11,9 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
-using DatabaseType = QP.ConfigurationService.Models.DatabaseType;
 
 namespace QP8.Integration.Tests
 {
@@ -55,7 +49,7 @@ namespace QP8.Integration.Tests
                 false
             );
 
-            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"TestData\group.xml")), "Create content group");
+            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}group.xml")), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             var id = cnn.GetRealScalarData(cnn.CreateDbCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
             Assert.That(id, Is.EqualTo(SpecificGroupId), "Specific id created");
@@ -88,7 +82,7 @@ namespace QP8.Integration.Tests
                 false
             );
 
-            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"TestData\group.xml").Replace(GroupName, NewGroupName)), "Create content group");
+            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}group.xml").Replace(GroupName, NewGroupName)), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             var id = cnn.GetRealScalarData(cnn.CreateDbCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));
             Assert.That(id, Is.Not.EqualTo(SpecificGroupId), "Generated id created");

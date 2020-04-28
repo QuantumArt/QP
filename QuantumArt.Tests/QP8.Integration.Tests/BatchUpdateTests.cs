@@ -1,8 +1,8 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
@@ -14,7 +14,6 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
-using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -179,7 +178,7 @@ namespace QP8.Integration.Tests
                 Global.Factory.Server.Host.Services,
                 false);
 
-            service.Process(Global.GetXml(@"TestData\batchupdate.xml"));
+            service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}batchupdate.xml"));
 
             Random = new Random();
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
