@@ -4,16 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using NLog.Fluent;
-using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
-using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration;
-using Unity;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
     public class QpSchedulerProcessor
     {
-        private const string AppName = "QP8ArticleSchedulerService";
+        private const string AppName = "QP8.ArticleScheduler";
         private static ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly ArticleSchedulerProperties _props;
@@ -30,7 +28,6 @@ namespace Quantumart.QP8.ArticleScheduler
         {
             Logger.Info("QP8.ArticleScheduler starting...");
             var unityConfig = new UnityContainerCustomizer();
-            var prtgLogger = new PrtgErrorsHandler(unityConfig.UnityContainer.Resolve<IPrtgNLogFactory>());
 
             _cancellationTokenSource = new CancellationTokenSource();
             _task = new Task(() =>
@@ -43,8 +40,11 @@ namespace Quantumart.QP8.ArticleScheduler
                         QPConfiguration.ConfigServiceToken = _props.ConfigServiceToken;
                         QPConfiguration.XmlConfigPath = _props.XmlConfigPath;
 
-                        var customers = QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToList();
-                        new QpScheduler(unityConfig.UnityContainer, prtgLogger, customers, _props.PrtgLoggerTasksQueueCheckShiftTime).Run();
+                        var customers = QPConfiguration.GetCustomers(AppName)
+                            .Where(c => c.DbType == DatabaseType.SqlServer)
+                            .Where(c => !c.ExcludeFromSchedulers)
+                            .ToList();
+                        new QpScheduler(unityConfig.UnityContainer, customers, _props.PrtgLoggerTasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)
                     {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Version>2.2.0</Version>
     <Authors>Alex Kostyukov</Authors>
     <Company>Quantum Art</Company>
@@ -26,14 +26,17 @@
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.6.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.6.0" />
     <PackageReference Include="FluentAssertions" Version="5.6.0" />
-    <PackageReference Include="Flurl" Version="2.8.0" />
+    <PackageReference Include="Flurl" Version="2.8.2" />
     <PackageReference Include="Flurl.Http" Version="2.4.0" />
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
     <ProjectReference Include="..\QP8.Infrastructure\QP8.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes" />
   </ItemGroup>
 </Project>

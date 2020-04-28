@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Quantumart.QP8.Constants</AssemblyName>
     <RootNamespace>Quantumart.QP8.Constants</RootNamespace>
   </PropertyGroup>

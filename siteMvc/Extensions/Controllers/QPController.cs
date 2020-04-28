@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using QP8.Infrastructure.Logging;
+using NLog;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;

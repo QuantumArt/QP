@@ -1,11 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
-using QP.ConfigurationService.Client;
 using QP8.Integration.Tests.Infrastructure;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
@@ -13,8 +12,6 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -80,7 +77,7 @@ namespace QP8.Integration.Tests
                     false
                 );
 
-                service.Process(Global.GetXml(@"TestData\hierarchy.xml"));
+                service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}hierarchy.xml"));
 
                 RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
                 ProductContentId = Global.GetContentId(DbConnector, ProductContentName);

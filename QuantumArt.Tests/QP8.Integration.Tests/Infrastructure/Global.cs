@@ -31,6 +31,11 @@ namespace QP8.Integration.Tests.Infrastructure
                     return $"{basePart}User Id={EnvHelpers.PgDbLoginToRunTests};Password={EnvHelpers.PgDbPasswordToRunTests}";
                 }
 
+                if (!String.IsNullOrEmpty(EnvHelpers.SqlDbLoginToRunTests))
+                {
+                    return $"{basePart}User Id={EnvHelpers.SqlDbLoginToRunTests};Password={EnvHelpers.SqlDbPasswordToRunTests}";
+                }
+
                 return $"{basePart}Integrated Security=True;Connection Timeout=600";
             }
         }

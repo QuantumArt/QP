@@ -8,7 +8,7 @@ using System.Net;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using NpgsqlTypes;
-using QP8.Infrastructure.Logging;
+using NLog;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;

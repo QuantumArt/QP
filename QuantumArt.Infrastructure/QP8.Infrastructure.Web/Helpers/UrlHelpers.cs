@@ -1,5 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace QP8.Infrastructure.Web.Helpers
 {
@@ -46,5 +50,45 @@ namespace QP8.Infrastructure.Web.Helpers
             Ensure.Argument.Is(IsValidWebFolderUrl(url, out uriResult), UrlInvalidFormat);
             return Regex.IsMatch(url, AbsoluteWebFolderUrl);
         }
+
+        private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+
+        public static string ConvertToAbsoluteUrl(string url)
+        {
+            if (Web.Helpers.UrlHelpers.IsRelativeUrl(url))
+            {
+                url = url.Trim();
+                if (url.StartsWith("~/"))
+                {
+                    var urlHelper = HttpContext.RequestServices.GetRequiredService<IUrlHelper>();
+
+                    url = urlHelper.Content(url);
+                }
+
+                var baseUri = new Uri(GetBaseUrl());
+                return new Uri(baseUri, url).ToString();
+            }
+
+            return url;
+        }
+
+        public static string GetBaseUrl()
+        {
+            Ensure.NotNull(HttpContext, "HttpContext not exists here");
+            return GetBaseUrl(HttpContext.Request);
+        }
+
+        public static string GetBaseUrl(HttpContext context)
+        {
+            Ensure.Argument.NotNull(context, "HttpContext not exists here");
+            return GetBaseUrl(context.Request);
+        }
+
+        public static string GetBaseUrl(HttpRequest request)
+        {
+            Ensure.Argument.NotNull(request, "HttpRequest not exists here");
+            return new Uri(request.GetEncodedUrl()).GetLeftPart(UriPartial.Path);
+        }
+
     }
 }

@@ -43,13 +43,17 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NLog;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
-using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.ArticleScheduler;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Services.CdcImport;
+using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.BLL.Services.UserSynchronization;
+using Quantumart.QP8.Scheduler.API;
+using Quantumart.QP8.CommonScheduler;
+using Quantumart.QP8.Scheduler.Notification.Providers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using A = Quantumart.QP8.BLL.Services.ArticleServices;
@@ -59,12 +63,6 @@ namespace Quantumart.QP8.WebMvc
 {
     public class Startup
     {
-        //public void Configuration(IAppBuilder app)
-        //{
-        //    app.MapSignalR();
-        //    GlobalHost.HubPipeline.RequireAuthentication();
-        //}
-
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -91,6 +89,15 @@ namespace Quantumart.QP8.WebMvc
 
                 services.AddHostedService<S.ArticleService>();
             }
+            if (qpOptions.EnableCommonScheduler)
+            {
+                var commonSchedulerProperties = new CommonSchedulerProperties();
+                Configuration.Bind("CommonScheduler", commonSchedulerProperties);
+                services.AddSingleton(commonSchedulerProperties);
+
+                services.AddHostedService<CommonService>();
+            }
+
 
             // used by Session middleware
             services.AddDistributedMemoryCache();
@@ -108,6 +115,7 @@ namespace Quantumart.QP8.WebMvc
 
             services.AddOptions();
             services.AddHttpContextAccessor();
+            services.AddHttpClient();
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper>(x => {
@@ -151,7 +159,6 @@ namespace Quantumart.QP8.WebMvc
 
             // services
             services
-                    .AddSingleton<INLogFactory, NLogFactory>()
                     .AddTransient<AuthenticationHelper>()
                     .AddTransient<JsLanguageHelper>()
                     .AddTransient<JsConstantsHelper>()
@@ -217,6 +224,17 @@ namespace Quantumart.QP8.WebMvc
             services
                 .AddTransient<ISearchGrammarParser, IronySearchGrammarParser>()
                 .AddTransient<ArticleFullTextSearchQueryParser>()
+                ;
+
+            services
+                .AddTransient<IInterfaceNotificationProvider, InterfaceNotificationProvider>()
+                .AddTransient<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>()
+                .AddTransient<IExternalSystemNotificationService, ExternalSystemNotificationService>()
+                .AddTransient<ISchedulerCustomerCollection, SchedulerCustomerCollection>()
+                .AddTransient<IUserSynchronizationService, UserSynchronizationService>()
+                .AddTransient<ElasticCdcImportService>()
+                .AddTransient<TarantoolCdcImportService>()
+                .AddTransient<IDbService, DbService>()
                 ;
 
             RegisterMultistepActionServices(services);
@@ -310,16 +328,14 @@ namespace Quantumart.QP8.WebMvc
 
             app.UseSession();
 
-            app.UseSignalR(routes =>
+            /*app.UseSignalR(routes =>
             {
                 routes.MapHub<CommunicationHub>("/signalr/communication");
                 routes.MapHub<SingleUserModeHub>("/signalr/singleUserMode");
             });
+            */
 
             app.UseMvc(RegisterRoutes);
-
-
-            LogProvider.LogFactory = provider.GetService<INLogFactory>();
         }
 
         private static void RegisterRoutes(IRouteBuilder routes)

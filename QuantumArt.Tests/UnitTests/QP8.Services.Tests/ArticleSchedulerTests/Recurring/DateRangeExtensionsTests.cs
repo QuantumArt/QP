@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QP8.Infrastructure.Logging.Factories;
 using QP8.Services.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.ArticleScheduler.Recurring;
 using Xunit;
@@ -12,7 +11,6 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
     {
         public DateRangeExtensionsTests()
         {
-            LogProvider.LogFactory = new NullLogFactory();
         }
 
         [Fact, Trait("DateRangeExtensions", "EveryFullMonth")]

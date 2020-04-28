@@ -7,9 +7,14 @@ namespace Quantumart.QP8.Scheduler.Notification.Providers
 {
     public class InterfaceNotificationProvider : IInterfaceNotificationProvider
     {
+        private IHttpClientFactory _factory;
+        public InterfaceNotificationProvider(IHttpClientFactory factory)
+        {
+            _factory = factory;
+        }
         public async Task<HttpStatusCode> Notify(InterfaceNotificationModel notification)
         {
-            using (var client = new HttpClient())
+            using (var client = _factory.CreateClient())
             {
                 var content = new MultipartFormDataContent();
                 foreach (var param in notification.Parameters)

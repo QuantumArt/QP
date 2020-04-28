@@ -3,7 +3,6 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using Moq;
-using QP8.Infrastructure.Logging.Factories;
 using QP8.Services.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.ArticleScheduler.Publishing;
 using Quantumart.QP8.BLL;
@@ -20,7 +19,6 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Publishing
         {
             _fixture = new Fixture().Customize(new AutoMoqCustomization(){ ConfigureMembers = true});
             FixtureArticleHelpers.InjectSimpleArticle(_fixture);
-            LogProvider.LogFactory = new NullLogFactory();
         }
 
         [Theory, AutoData, Trait("ArticleScheduler", "PublishingTaskRunner")]

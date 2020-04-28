@@ -1,47 +1,46 @@
 using System;
 using QP8.Infrastructure.Extensions;
-using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 {
     internal class QpUpdateLoggingWrapper : IDisposable
     {
-        private readonly ILog _logger;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
 
         private ConsoleLogLevel _consoleLogLevel;
 
         public QpUpdateLoggingWrapper(ConsoleLogLevel consoleLogLevel = ConsoleLogLevel.Fatal)
         {
-            LogProvider.LogFactory = new NLogFactory();
-            _logger = LogProvider.GetLogger();
             _consoleLogLevel = consoleLogLevel;
         }
 
-        public bool IsDebugEnabled => _logger.IsDebugEnabled;
+        public bool IsDebugEnabled => Logger.IsDebugEnabled;
 
-        public bool IsInfoEnabled => _logger.IsInfoEnabled;
+        public bool IsInfoEnabled => Logger.IsInfoEnabled;
 
-        public bool IsWarnEnabled => _logger.IsWarnEnabled;
+        public bool IsWarnEnabled => Logger.IsWarnEnabled;
 
-        public bool IsErrorEnabled => _logger.IsErrorEnabled;
+        public bool IsErrorEnabled => Logger.IsErrorEnabled;
 
-        public bool IsFatalEnabled => _logger.IsFatalEnabled;
+        public bool IsFatalEnabled => Logger.IsFatalEnabled;
 
         public void Debug(object message)
         {
-            _logger.Debug(message);
+            Logger.Debug(message);
         }
 
         public void Debug(object message, Exception exception)
         {
-            _logger.Debug(message, exception);
+            Logger.Debug().Exception(exception).Message(message.ToString()).Write();
         }
 
         public void DebugFormat(string format, params object[] args)
         {
-            _logger.DebugFormat(format, args);
+            Logger.Debug(format, args);
         }
 
         public void Info(object message)
@@ -53,7 +52,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Info(message);
+            Logger.Info(message);
         }
 
         public void Info(object message, Exception exception)
@@ -66,7 +65,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Info(message, exception);
+            Logger.Info().Exception(exception).Message(message.ToString()).Write();
         }
 
         public void InfoFormat(string format, params object[] args)
@@ -78,7 +77,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.InfoFormat(format, args);
+            Logger.Info(format, args);
         }
 
         public void Warn(object message)
@@ -90,7 +89,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Warn(message);
+            Logger.Warn(message);
         }
 
         public void Warn(object message, Exception exception)
@@ -103,7 +102,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Warn(message, exception);
+            Logger.Warn().Exception(exception).Message(message.ToString()).Write();
         }
 
         public void WarnFormat(string format, params object[] args)
@@ -115,7 +114,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.WarnFormat(format, args);
+            Logger.Warn(format, args);
         }
 
         public void Error(object message)
@@ -127,7 +126,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Error(message);
+            Logger.Error(message);
         }
 
         public void Error(object message, Exception exception)
@@ -139,8 +138,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.Error.WriteLine($@"Exceptions:{Environment.NewLine}{exception.Dump()}");
                 Console.ResetColor();
             }
-
-            _logger.Error(message, exception);
+            Logger.Error().Exception(exception).Message(message.ToString()).Write();
         }
 
         public void ErrorFormat(string format, params object[] args)
@@ -152,7 +150,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.ErrorFormat(format, args);
+            Logger.Error(format, args);
         }
 
         public void Fatal(object message)
@@ -164,7 +162,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Fatal(message);
+            Logger.Fatal(message);
         }
 
         public void Fatal(object message, Exception exception)
@@ -177,7 +175,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.Fatal(message, exception);
+            Logger.Fatal().Exception(exception).Message(message.ToString()).Write();
         }
 
         public void FatalFormat(string format, params object[] args)
@@ -189,7 +187,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            _logger.FatalFormat(format, args);
+            Logger.Fatal(format, args);
         }
 
         public void SetLogLevel(int verboseLevel)
@@ -211,20 +209,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             }
         }
 
-        public void Flush()
-        {
-            _logger.Flush();
-        }
-
-        public void Shutdown()
-        {
-            _logger.Shutdown();
-        }
-
         public void Dispose()
         {
-            Flush();
-            Shutdown();
         }
     }
 }

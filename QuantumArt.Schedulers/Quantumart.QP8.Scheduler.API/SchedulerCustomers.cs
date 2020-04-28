@@ -8,16 +8,11 @@ namespace Quantumart.QP8.Scheduler.API
 {
     public class SchedulerCustomerCollection : ISchedulerCustomerCollection
     {
-        private readonly ServiceDescriptor _descriptor;
-
-        public SchedulerCustomerCollection(ServiceDescriptor descriptor)
-        {
-            _descriptor = descriptor;
-        }
+        private readonly string AppName = "QP8.CommonScheduler";
 
         public QaConfigCustomer[] GetItems()
         {
-            return QPConfiguration.GetCustomers(_descriptor.Name).Where(c => !c.ExcludeFromSchedulers).ToArray();
+            return QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToArray();
         }
     }
 }

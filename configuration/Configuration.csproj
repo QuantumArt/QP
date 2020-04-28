@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Quantumart.QP8.Configuration</AssemblyName>
     <RootNamespace>Quantumart.QP8.Configuration</RootNamespace>
   </PropertyGroup>
@@ -21,16 +21,9 @@
   <ItemGroup>
     <ProjectReference Include="..\constants\Constants.csproj" />
     <ProjectReference Include="..\utils\Utils.csproj" />
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
-    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties" />
   </ItemGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NET_STANDARD</DefineConstants>
-  </PropertyGroup>
 </Project>

@@ -32,70 +32,6 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        /* public static string GetTitleName(DbConnection connection, long contentId)
-         {
-
-             var displayFieldsQuery = GetDisplayFieldsQuery(connection, contentId, true);
-             var isPostgres = IsPostgresConnection(connection);
-
-             var query = $@"
- select
- case when attribute_name is not null then attribute_name else 'content_item_id' end
- from (
-     select {(isPostgres ? string.Empty : "TOP 1")} attribute_name
-     from ({displayFieldsQuery}) as df
-     order by view_in_list desc, attribute_priority desc, attribute_order asc
-     {(isPostgres ? "LIMIT 1" : string.Empty)}
- ) as a
- ";
-
-
-             using (var cmd = DbCommandFactory.Create(query, connection))
-             {
-                 cmd.CommandType = CommandType.Text;
-                 // cmd.Parameters.AddWithValue("@id", contentId);
-                 return cmd.ExecuteScalar().ToString();
-             }
-         }
-
-         public static DataTable GetDisplayFields(DbConnection connection, long contentId, bool withRelations = false)
-         {
-             var query = GetDisplayFieldsQuery(connection, contentId, withRelations);
-
-             using (var cmd = DbCommandFactory.Create(query, connection))
-             {
-                 cmd.CommandType = CommandType.Text;
-                 // cmd.Parameters.AddWithValue("@contentId", contentId);
-                 // cmd.Parameters.AddWithValue("@with_relation_field", withRelations);
-                 var ds = new DataSet();
-                 DataAdapterFactory.Create(cmd).Fill(ds);
-                 return 0 == ds.Tables.Count ? null : ds.Tables[0];
-             }
-         }
-
-         private static string GetDisplayFieldsQuery(DbConnection connection, long contentId, bool withRelations)
-         {
-
-             return $@"
- select *
- from (
-         SELECT attribute_id, attribute_name,
-         CASE
-             WHEN attribute_type_id in (9, 10)
-                 THEN {(withRelations ? "1" : "0")}
-             WHEN attribute_type_id = 13 or is_classifier = 1 or
-                  attribute_type_id = 11 AND {(!withRelations ? "1=1" : "1=0")} THEN -1
-             ELSE 1
-             END AS attribute_priority,
-         view_in_list,
-         attribute_order
-         FROM content_attribute ca
-         WHERE content_id = {contentId}
-     ) as c
- where attribute_priority >= 0
- ";
-         }*/
-
         public static string GetFieldName(DbConnection connection, int fieldId)
         {
             using (var cmd = DbCommandFactory.Create("select ATTRIBUTE_NAME from CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @fieldId", connection))
@@ -834,13 +770,6 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
                 from content_{contentId}_united as u {WithNoLock(dbType)} where {fieldName} in ({string.Join(",", ids)})) as subsel
                 where subsel.{Escape(dbType, "RowNum")} <= {maxNumberOfRecords + 1}
 ";
-
-
-            // var query = new StringBuilder();
-            // query.Append($" select subsel.content_item_id, {fieldName}, Title from ( ", );
-            // query.AppendFormatLine(" select u.content_item_id, u.{0}, CONVERT(NVARCHAR(255),[{1}]) as Title, ROW_NUMBER () over (PARTITION BY {0} order by u.content_item_id) AS [RowNum]", fieldName, displayFieldName);
-            // query.AppendFormatLine(" from content_{0}_united as u with(nolock) where {2} in ({1})) as subsel ", contentId, string.Join(",", ids), fieldName);
-            // query.AppendFormatLine(" where subsel.[RowNum] <= {0}", maxNumberOfRecords + 1);
             return query;
         }
 
@@ -1070,8 +999,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                // cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
-                // cmd.Parameters.AddWithValue("@entityIds", string.Join(",", ids));
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
@@ -1096,40 +1023,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 return dt.AsEnumerable().ToArray();
             }
         }
-
-
-
-        // public static DataTable GetBreadCrumbsList(DbConnection connection, int userId, string entityTypeCode, long entityId, long? parentEntityId, bool oneLevel)
-        // {
-        //     DataTable dt = null;
-        //     #warning реализовать для postgres
-        //     if (IsPostgresConnection(connection))
-        //     {
-        //         return dt;
-        //     }
-        //     using (var cmd = DbCommandFactory.Create("qp_get_breadcrumbs", connection))
-        //     {
-        //         cmd.CommandType = CommandType.StoredProcedure;
-        //         cmd.Parameters.AddWithValue("@user_id", userId);
-        //         cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-        //         cmd.Parameters.AddWithValue("@entity_id", entityId);
-        //         cmd.Parameters.AddWithValue("@one_level", oneLevel);
-        //
-        //         if (parentEntityId != null)
-        //         {
-        //             cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
-        //         }
-        //
-        //         var ds = new DataSet();
-        //         DataAdapterFactory.Create(cmd).Fill(ds);
-        //         if (ds.Tables.Count > 0)
-        //         {
-        //             dt = ds.Tables[0];
-        //         }
-        //     }
-        //
-        //     return dt;
-        // }
 
         public static bool IsAdmin(DbConnection connection, int userId)
         {
@@ -1874,26 +1767,6 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             }
         }
 
-        // public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection sqlConnection, string entityTypeCode, List<int> entitiesIDs)
-        // {
-        //
-        //     if (entitiesIDs != null && entitiesIDs.Any())
-        //     {
-        //         using (var cmd = DbCommandFactory.Create("qp_get_entity_titles_for_log", sqlConnection))
-        //         {
-        //             cmd.CommandType = CommandType.StoredProcedure;
-        //             cmd.Parameters.AddWithValue("@entity_type_code", entityTypeCode);
-        //             cmd.Parameters.AddWithValue("@entity_item_ids", string.Join(",", entitiesIDs));
-        //
-        //             var dt = new DataTable();
-        //             DataAdapterFactory.Create(cmd).Fill(dt);
-        //             return dt.AsEnumerable().ToArray();
-        //         }
-        //     }
-        //
-        //     return Enumerable.Empty<DataRow>();
-        // }
-
         public static IEnumerable<DataRow> GetEntitiesTitles(DbConnection connection, string titleField, decimal? contentId, List<int> entitiesIDs)
         {
             if (entitiesIDs != null && entitiesIDs.Any() && !string.IsNullOrWhiteSpace(titleField) && contentId.HasValue)
@@ -2380,43 +2253,6 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                     {
                         cmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
-
-                    // switch (databaseType)
-                    // {
-                    //     case DatabaseType.SqlServer:
-                    //         cmd.Parameters.Add(new SqlParameter("@startRow", SqlDbType.Int) { Value = startRow });
-                    //         cmd.Parameters.Add(new SqlParameter("@endRow", SqlDbType.Int) { Value = endRow });
-                    //         cmd.Parameters.Add(new SqlParameter("@itemIds", SqlDbType.Structured)
-                    //         {
-                    //             TypeName = "Ids",
-                    //             Value = IdsToDataTable(selectedIds)
-                    //         });
-                    //
-                    //         cmd.Parameters.Add(new SqlParameter("@filterIds", SqlDbType.Structured)
-                    //         {
-                    //             TypeName = "Ids",
-                    //             Value = IdsToDataTable(filterIds)
-                    //         });
-                    //
-                    //         if (sqlParameters != null)
-                    //         {
-                    //             cmd.Parameters.AddRange(sqlParameters.ToArray());
-                    //         }
-                    //         break;
-                    //     case DatabaseType.Postgres:
-                    //         cmd.Parameters.Add(new NpgsqlParameter("@startRow", NpgsqlDbType.Integer) { Value = startRow });
-                    //         cmd.Parameters.Add(new NpgsqlParameter("@endRow", NpgsqlDbType.Integer) { Value = endRow });
-                    //         cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", selectedIds, databaseType));
-                    //         cmd.Parameters.Add(GetIdsDatatableParam("@filterIds", filterIds, databaseType));
-                    //
-                    //         if (sqlParameters != null)
-                    //         {
-                    //             cmd.Parameters.AddRange(sqlParameters.ToArray());
-                    //         }
-                    //         break;
-                    //     default:
-                    //         throw new ArgumentOutOfRangeException();
-                    // }
 
 
                     var ds = new DataSet();
@@ -5549,21 +5385,6 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
             }
 
             return PermissionHelper.GetPermittedItemsAsQuery(context, userId, groupId, startLevel, endLevel, entityTypeName, parentEntityTypeName, parentEntityId);
-            // using (var cmd = DbCommandFactory.Create("qp_GetPermittedItemsAsQuery", connection))
-            // {
-            //     cmd.CommandType = CommandType.StoredProcedure;
-            //     cmd.Parameters.AddWithValue("@user_id", userId);
-            //     cmd.Parameters.AddWithValue("@group_id", groupId);
-            //     cmd.Parameters.AddWithValue("@start_level", startLevel);
-            //     cmd.Parameters.AddWithValue("@end_level", endLevel);
-            //     cmd.Parameters.AddWithValue("@entity_name", entityName);
-            //     cmd.Parameters.AddWithValue("@parent_entity_name", parentEntityName);
-            //     cmd.Parameters.AddWithValue("@parent_entity_id", parentEntityId);
-            //
-            //     cmd.Parameters.Add(new SqlParameter("@SQLOut", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output });
-            //     cmd.ExecuteNonQuery();
-            //     return (string)cmd.Parameters["@SQLOut"].Value;
-            // }
         }
 
         public static string GetPermittedItemsAsQueryV2(DbConnection connection, int userId, int groupId, int startLevel, int endLevel, string entityName, string parentEntityName, int parentEntityId)
@@ -5984,36 +5805,6 @@ order by ActionDate desc
         {
             var dbType = GetDbType(sqlConnection);
 
-
-
-
-            // string query = @"
-            //     DECLARE @query NVARCHAR(MAX)
-            //     SET @query = ''
-            //
-            //     SELECT
-            //         @query = @query + '
-            //         SELECT
-            //             ids.Id [Id],' +
-            //             CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
-            //             a.CONTENT_ITEM_ID [ExtensionId]
-            //         FROM
-            //             @ids ids
-            //             JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
-            //         UNION'
-            //     FROM
-            //         [CONTENT_ATTRIBUTE] f
-            //         JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
-            //     WHERE
-            //         f.CONTENT_ID = @contentId
-            //
-            //     IF @query <> ''
-            //     BEGIN
-            //         SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
-            //         EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
-            //     END";
-
-
             var fields = efContext
                 .FieldSet
                 .Include(x => x.Aggregators)
@@ -6037,7 +5828,6 @@ order by ActionDate desc
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                // cmd.Parameters.AddWithValue("@contentId", contentId);
                 cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds, dbType));
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -6654,7 +6444,6 @@ order by ActionDate desc
         public static int GetDefaultGroupId(DbConnection sqlConnection, int siteId)
         {
             var query = $@"select content_group_id from content_group where site_id = {siteId} and name = 'Default Group'";
-            // var query = $@"select [dbo].qp_default_group_id({siteId})";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -10260,10 +10049,6 @@ order by ActionDate desc
             FROM {Escape(dbType, "USERS")}
             WHERE {Escape(dbType, "user_id")} = @userId
 ";
-            // var query = @"declare @salt bigint, @hash binary(20), @old_hash binary(20)
-            //               select @salt = salt, @old_hash = hash from users where USER_ID = @userId
-            //               set @hash = dbo.qp_get_hash(@password, @salt)
-            //               select case when @old_hash = @hash then 1 else 0 end as bit";
             using (var cmd = DbCommandFactory.Create(q, connection))
             {
                 cmd.CommandType = CommandType.Text;

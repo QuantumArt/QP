@@ -8,6 +8,14 @@
     }
   },
   "profiles": {
+    "QP": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Dev"
+      },
+      "applicationUrl": "http://localhost:5400"
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
@@ -17,3 +25,4 @@
     }
   }
 }
+

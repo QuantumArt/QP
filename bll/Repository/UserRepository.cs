@@ -254,19 +254,13 @@ namespace Quantumart.QP8.BLL.Repository
                 entities.UserGroupSet.Attach(s);
                 var userGroupBind = new UserUserGroupBindDAL{User = dal, UserGroup = s};
                 dal.UserGroupBinds.Add(userGroupBind);
-                //#warning Закомментировано при переезде на EF CORE. Надо пофиксить и раскомментить.
-                // dal.Groups.Add(s);
             }
-
-            //---------------
 
             // User Default Filters
             foreach (var f in MapUserDefaultFilter(user, dal))
             {
                 entities.Entry(f).State = EntityState.Added;
             }
-
-            //----------------
 
             entities.SaveChanges();
             if (!string.IsNullOrEmpty(user.Password))

@@ -77,7 +77,7 @@ namespace Quantumart.QP8.DAL.NotificationSender
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var query = $@"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
 				SENT = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)},
-				MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)};
+				MODIFIED = {SqlQuerySyntaxHelper.Now(dbType)}
 			WHERE ID IN (SELECT Id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")})";
             ExecuteIdsQuery(connection, query, ids);
         }

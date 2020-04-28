@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Quantumart.QP8.Validators</AssemblyName>
     <RootNamespace>Quantumart.QP8.Validators</RootNamespace>
   </PropertyGroup>
@@ -13,10 +13,6 @@
     <PackageReference Include="EnterpriseLibrary.Common.NetCore" Version="6.0.1312" />
     <PackageReference Include="EnterpriseLibrary.Validation.NetCore" Version="6.0.1312" />
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NET_STANDARD</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\constants\Constants.csproj" />
