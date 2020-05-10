@@ -283,7 +283,7 @@
     <value>Minimum password length is 7 chars</value>
   </data>
   <data name="PasswordNotComplex" xml:space="preserve">
-    <value>Password must contain characters from from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alfanumeric characters</value>
+    <value>Password must contain characters from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alfanumeric characters</value>
   </data>
   <data name="PasswordNotEntered" xml:space="preserve">
     <value>Please enter password!</value>

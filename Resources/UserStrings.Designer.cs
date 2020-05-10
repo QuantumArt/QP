@@ -556,7 +556,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password must contain characters from from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alfanumeric characters.
+        ///   Looks up a localized string similar to Password must contain characters from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alfanumeric characters.
         /// </summary>
         public static string PasswordNotComplex {
             get {
