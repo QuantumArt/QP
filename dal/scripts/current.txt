@@ -36,3 +36,4 @@ ExcludeArchiveDuplicate
 AddReplaceUrlsIbDBColumn
 ContentItemSchedule
 TraceImport
+ContentDataUpdateColumn
