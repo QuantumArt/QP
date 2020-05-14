@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Transactions;
 using System.Web.Configuration;
 using System.Xml.Linq;
 using QP.ConfigurationService.Client;
@@ -290,6 +291,22 @@ namespace Quantumart.QP8.Configuration
         /// Возвращает кастомную конфигурационную секцию в файле web.config
         /// </summary>
         public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
+
+        public static int CommandTimeout => WebConfigSection?.CommandTimeout ?? 120;
+
+        public static TimeSpan TransactionTimeout => TimeSpan.FromSeconds(CommandTimeout + 30);
+
+        public static TransactionScope CreateTransactionScope(IsolationLevel level = IsolationLevel.ReadUncommitted) =>
+            new TransactionScope(
+                TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = level, Timeout = TransactionTimeout }
+            );
+
+        public static TransactionScope OutOfTransaction() =>
+            new TransactionScope(
+                TransactionScopeOption.Suppress,
+                new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted, Timeout = TransactionTimeout }
+            );
 
         /// <summary>
         /// Возвращает кастомную конфигурационную секцию в файле web.config

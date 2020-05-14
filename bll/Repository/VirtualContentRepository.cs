@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Results;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
@@ -182,7 +183,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static bool IsQueryQueryCorrect(string userQuery, out string errorMessage)
         {
             errorMessage = null;
-            using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            using (QPConfiguration.OutOfTransaction())
             {
                 try
                 {

@@ -547,7 +547,7 @@ namespace Quantumart.QP8.BLL
 
         public static string LogOut()
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            using (var tscope = QPConfiguration.OutOfTransaction())
             {
                 using (var scope = new QPConnectionScope())
                 {
@@ -559,7 +559,7 @@ namespace Quantumart.QP8.BLL
                 }
 
                 var loginUrl = AuthenticationHelper.LogOut();
-                transaction.Complete();
+                tscope.Complete();
                 HttpContext.Current.Session.Abandon();
                 return loginUrl;
             }

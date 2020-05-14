@@ -17,12 +17,14 @@ using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.Sorting;
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 {
@@ -1470,7 +1472,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             if (articles.Any())
             {
                 using (var scope = new QPConnectionScope())
-                using (var transaction = new TransactionScope())
+                using (var transaction = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
                 {
                     if (formatArticleData)
                     {

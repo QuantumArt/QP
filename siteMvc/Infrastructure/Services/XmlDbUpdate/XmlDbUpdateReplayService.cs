@@ -9,6 +9,7 @@ using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -79,7 +80,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             };
 
             using (new ThreadStorageScopeContext())
-            using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            using (var ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))

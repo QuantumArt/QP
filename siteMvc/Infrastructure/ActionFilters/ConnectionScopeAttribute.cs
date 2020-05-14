@@ -3,6 +3,7 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -77,10 +78,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (Mode == ConnectionScopeMode.TransactionOn)
                 {
-                    TransactionScope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
-                    {
-                        IsolationLevel = IsolationLevel.ReadUncommitted
-                    });
+                    TransactionScope = QPConfiguration.CreateTransactionScope();
                 }
 
                 ConnectionScope = new QPConnectionScope();

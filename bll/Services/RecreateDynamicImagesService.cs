@@ -7,6 +7,7 @@ using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -98,7 +99,7 @@ namespace Quantumart.QP8.BLL.Services
 
                 foreach (var dfs in dataForStep)
                 {
-                    using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+                    using (var transaction = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
                     {
                         var newValue = dimg.GetValue(dimg.GetDesiredFileName(dfs.Item2));
                         RecreateDynamicImagesRepository.UpdateDynamicFieldValue(dimg.Field.Id, dfs.Item1, newValue);

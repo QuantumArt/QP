@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -53,7 +54,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
             var reader = new CsvReader(SiteId, ContentId, settings);
             var result = new MultistepActionStepResult();
-            using (var ts = new TransactionScope())
+            using (var ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             {
                 using (new QPConnectionScope())
                 {
