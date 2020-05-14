@@ -56,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
             var reader = new CsvReader(SiteId, ContentId, settings);
             var result = new MultistepActionStepResult();
-            using (var ts = new TransactionScope())
+            using (var ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             {
                 using (new QPConnectionScope())
                 {

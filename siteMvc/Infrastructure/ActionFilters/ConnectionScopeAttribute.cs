@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Transactions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -72,14 +73,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (Mode == ConnectionScopeMode.TransactionOn)
                 {
-                    var transactionScope = new TransactionScope(
-                        TransactionScopeOption.Required,
-                        new TransactionOptions
-                        {
-                            IsolationLevel = IsolationLevel.ReadUncommitted
-                        },
-                        TransactionScopeAsyncFlowOption.Enabled);
-
+                    var transactionScope = QPConfiguration.CreateTransactionScope();
                     SetTransactionScope(filterContext.HttpContext, transactionScope);
                 }
 
