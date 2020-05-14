@@ -39,3 +39,4 @@ AddReplaceUrlsIbDBColumn
 ContentItemSchedule
 TraceImport
 O2MData
+ContentDataUpdateColumn

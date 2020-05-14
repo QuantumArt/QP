@@ -180,7 +180,7 @@ begin
             set @sql = @sql + ' from content_item ci'
             set @sql = @sql + ' inner join @ids i on i.id = ci.content_item_id'
             set @sql = @sql + ' left join @ids2 i2 on i.id = ci.content_item_id'
-            set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
+            set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c WITH(UPDLOCK, ROWLOCK) on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
             set @sql = @sql + ' inner join STATUS_TYPE st1 on ci.STATUS_TYPE_ID = st1.STATUS_TYPE_ID'
             set @sql = @sql + ' inner join STATUS_TYPE st2 on c.STATUS_TYPE_ID = st2.STATUS_TYPE_ID'
             set @sql = @sql + ' left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id'
@@ -5749,6 +5749,28 @@ begin
     create index IX_O2M_DATA on VERSION_CONTENT_DATA(O2M_DATA) WHERE O2M_DATA IS NOT NULL
 end
 go
+
+GO
+ALTER PROCEDURE [dbo].[qp_get_update_column_sql]
+@table_name nvarchar(255),
+@content_item_ids nvarchar(max),
+@attribute_id numeric,
+@attribute_type_id numeric,
+@attribute_size numeric,
+@default_value nvarchar(255),
+@attribute_name nvarchar(255),
+@sql nvarchar(max) output
+AS
+BEGIN
+	declare @source_function nvarchar(512)
+	set @source_function = 'dbo.qp_correct_data( cast(coalesce(cd.blob_data, cd.data) as nvarchar(max)), ' + convert(nvarchar, @attribute_type_id) + ', ' + convert(nvarchar, @attribute_size) + ', N''' + isnull(@default_value, '') + ''')'
+
+	set @sql = ' update ' + @table_name + ' set [' + @attribute_name + '] = ' + @source_function + ' from ' + @table_name + ' c '
+	set @sql = @sql + ' inner join content_data cd on cd.content_item_id = c.content_item_id'
+	set @sql = @sql + ' where cd.content_item_id in (' + @content_item_ids + ')'
+	set @sql = @sql + ' and cd.attribute_id = ' + convert(nvarchar, @attribute_id)
+END
+;
 
 GO
 
