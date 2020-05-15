@@ -64,7 +64,7 @@ begin
             set @sql = @sql + ' from content_item ci'
             set @sql = @sql + ' inner join @ids i on i.id = ci.content_item_id'
             set @sql = @sql + ' left join @ids2 i2 on i.id = ci.content_item_id'
-            set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
+            set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c WITH(UPDLOCK, ROWLOCK) on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
             set @sql = @sql + ' inner join STATUS_TYPE st1 on ci.STATUS_TYPE_ID = st1.STATUS_TYPE_ID'
             set @sql = @sql + ' inner join STATUS_TYPE st2 on c.STATUS_TYPE_ID = st2.STATUS_TYPE_ID'
             set @sql = @sql + ' left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id'
