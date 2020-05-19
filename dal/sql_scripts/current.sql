@@ -5296,4 +5296,459 @@ END
 GO
 
 GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_DATA' AND COLUMN_NAME = 'O2M_DATA')
+BEGIN
+    ALTER TABLE CONTENT_DATA ADD O2M_DATA NUMERIC(18, 0) NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VERSION_CONTENT_DATA' AND COLUMN_NAME = 'O2M_DATA')
+BEGIN
+    ALTER TABLE VERSION_CONTENT_DATA ADD O2M_DATA NUMERIC(18, 0) NULL
+END
+GO
+
+
+ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
+BEGIN
+  set nocount on
+  IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
+    BEGIN
+        IF NOT EXISTS(select content_data_id from deleted) -- insert or update without special columns
+               OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)) AND NOT (UPDATE(O2M_DATA)))
+        BEGIN
+
+            update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
+
+            DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC
+            DECLARE @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC, @link_id NUMERIC
+            DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
+
+            declare @ca table
+            (
+                id numeric primary key
+            )
+
+            insert into @ca
+            select distinct attribute_id from inserted
+
+
+            declare @ids table
+            (
+                id numeric primary key,
+                splitted bit
+            )
+
+            while exists(select id from @ca)
+            begin
+
+                select @attribute_id = id from @ca
+
+                select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id,
+                       @attribute_size = attribute_size, @default_value = default_value,
+                       @content_id = content_id, @link_id = link_id
+                from content_attribute
+                where ATTRIBUTE_ID = @attribute_id
+
+                insert into @ids
+                select i.content_item_id, ci.SPLITTED from inserted i
+                inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
+                inner join content c on ci.CONTENT_ID = c.CONTENT_ID
+                where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
+
+                if @attribute_type_id = 11 and @link_id is null
+                begin
+                    update content_data set O2M_DATA = DATA
+                    where CONTENT_ITEM_ID in (select id from @ids) and ATTRIBUTE_ID = @attribute_id
+                    and (isnumeric(data) = 1 or data is null)
+                end
+
+                set @ids_list = null
+                select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
+                set @async_ids_list = null
+                select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
+
+                set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
+
+                if @ids_list <> ''
+                begin
+                    exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
+                    print @sql
+                    exec sp_executesql @sql
+                end
+
+                if @async_ids_list <> ''
+                begin
+                    set @table_name = @table_name + '_async'
+                    exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
+                    print @sql
+                    exec sp_executesql @sql
+                end
+
+                delete from @ca where id = @attribute_id
+
+                delete from @ids
+            end --while
+        end --if
+    end --if
+END
+;
+go
+
+ALTER PROCEDURE [dbo].[qp_replicate_items]
+@ids nvarchar(max),
+@attr_ids nvarchar(max) = '',
+@modification_update_interval numeric = -1
+-- <0   throttling with default value (setting or constant)
+-- 0    no throttling
+-- >0   throttling with specified value
+
+AS
+BEGIN
+    set nocount on
+    declare @setting_name nvarchar(255) = 'CONTENT_MODIFICATION_UPDATE_INTERVAL'
+    declare @setting_value nvarchar(255)
+    declare @default_modification_update_interval numeric = 30
+    select @setting_value = VALUE from APP_SETTINGS where [KEY] = @setting_name
+    set @default_modification_update_interval = case when @setting_value is not null and ISNUMERIC(@setting_value) = 1 then convert(numeric, @setting_value) else @default_modification_update_interval end
+    set @modification_update_interval = case when @modification_update_interval < 0 then @default_modification_update_interval else @modification_update_interval end
+
+    declare @sql nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
+    declare @table_name nvarchar(50), @async_table_name nvarchar(50)
+
+    declare @content_id numeric, @published_id numeric
+    declare @live_modified datetime, @stage_modified datetime
+    declare @live_expired bit, @stage_expired bit
+
+    declare @articles table
+    (
+        id numeric primary key,
+        splitted bit,
+        cancel_split bit,
+        delayed bit,
+        status_type_id numeric,
+        content_id numeric
+    )
+
+    insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids, ',')
+
+    update base set base.content_id = ci.content_id, base.splitted = ci.SPLITTED, base.cancel_split = ci.cancel_split, base.delayed = ci.schedule_new_version_publication, base.status_type_id = ci.STATUS_TYPE_ID from @articles base inner join content_item ci on base.id = ci.CONTENT_ITEM_ID
+
+    declare @contents table
+    (
+        id numeric primary key,
+        none_id numeric
+    )
+
+    insert into @contents
+    select distinct a.content_id, st.STATUS_TYPE_ID from @articles a
+    inner join content c on a.CONTENT_ID = c.CONTENT_ID and c.virtual_type = 0
+    inner join STATUS_TYPE st on st.STATUS_TYPE_NAME = 'None' and st.SITE_ID = c.SITE_ID
+
+
+    declare @articleIds [Ids], @syncIds [Ids], @syncIds2 [Ids], @asyncIds [Ids], @asyncIds2 [Ids]
+    declare @noneId numeric
+
+    insert into @articleIds select id from @articles
+
+    while exists (select id from @contents)
+    begin
+        select @content_id = id, @noneId = none_id from @contents
+
+        if @modification_update_interval <= 0
+        begin
+            set @live_expired = 1
+            set @stage_expired = 1
+        end
+        else
+        begin
+            select @live_modified = live_modified, @stage_modified = stage_modified from CONTENT_MODIFICATION with(nolock) where CONTENT_ID = @content_id
+            set @live_expired = case when datediff(s, @live_modified, GETDATE()) >= @modification_update_interval then 1 else 0 end
+            set @stage_expired = case when datediff(s, @stage_modified, GETDATE()) >= @modification_update_interval then 1 else 0 end
+        end
+
+        insert into @syncIds select id from @articles where content_id = @content_id and splitted = 0
+        insert into @asyncIds select id from @articles where content_id = @content_id and splitted = 1
+        insert into @syncIds2 select id from @articles where content_id = @content_id and splitted = 0 and delayed = 1
+
+        set @sync_ids_list = null
+        select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @syncIds
+        set @async_ids_list = null
+        select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @asyncIds
+
+        set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
+        set @async_table_name = @table_name + '_async'
+
+        if @sync_ids_list <> ''
+        begin
+            exec qp_get_upsert_items_sql_new @table_name, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY, @noneId numeric', @ids = @syncIds, @ids2 = @syncIds2, @noneId = @noneId
+
+            exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql
+
+            exec qp_update_items_with_content_data_pivot @content_id, @sync_ids_list, 0, @attr_ids
+        end
+
+        if @async_ids_list <> ''
+        begin
+            exec qp_get_upsert_items_sql_new @async_table_name, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY, @noneId numeric', @ids = @asyncIds, @ids2 = @asyncIds2, @noneId = @noneId
+
+            exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql
+
+            exec qp_update_items_with_content_data_pivot @content_id, @async_ids_list, 1, @attr_ids
+        end
+
+        select @published_id = status_type_id from STATUS_TYPE where status_type_name = 'Published' and SITE_ID in (select SITE_ID from content where CONTENT_ID = @content_id)
+        if exists (select * from @articles where content_id = @content_id and (cancel_split = 1 or (splitted = 0 and status_type_id = @published_id)))
+        begin
+            if (@live_expired = 1 or @stage_expired = 1)
+                update content_modification with(rowlock) set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @content_id
+        end
+        else
+        begin
+            if (@stage_expired = 1)
+                update content_modification with(rowlock) set stage_modified = GETDATE() where content_id = @content_id
+        end
+
+
+        delete from @contents where id = @content_id
+
+        delete from @syncIds
+        delete from @syncIds2
+        delete from @asyncIds
+    end
+
+    update content_data set O2M_DATA = data from content_data cd
+    inner join content_attribute ca on ca.attribute_id = cd.attribute_id
+    where cd.CONTENT_ITEM_ID in (select id from @articleIds)
+    and ca.attribute_type_id = 11 and ca.link_id is null
+    and (isnumeric(data) = 1 or data is null)
+
+    update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @articleIds)
+END
+GO
+ALTER PROCEDURE [dbo].[qp_update_m2o]
+@id numeric,
+@fieldId numeric,
+@value nvarchar(max),
+@update_archive bit = 1
+AS
+BEGIN
+    declare @ids table (id numeric primary key)
+    declare @new_ids table (id numeric primary key);
+    declare @cross_ids table (id numeric primary key);
+
+    declare @contentId numeric, @fieldName nvarchar(255)
+    select @contentId = content_id, @fieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @fieldId
+
+    insert into @ids
+    select content_item_id from content_data where O2M_DATA = @id and ATTRIBUTE_ID = @fieldId
+
+    insert into @new_ids select * from dbo.split(@value, ',');
+
+    insert into @cross_ids select t1.id from @ids t1 inner join @new_ids t2 on t1.id = t2.id
+    delete from @ids where id in (select id from @cross_ids);
+    delete from @new_ids where id in (select id from @cross_ids);
+
+    if @update_archive = 0
+    begin
+        delete from @ids where id in (select content_item_id from content_item where ARCHIVE = 1)
+    end
+
+    insert into #resultIds(id, attribute_id, to_remove)
+    select id, @fieldId as attribute_id, 1 as to_remove from @ids
+    union all
+    select id, @fieldId as attribute_id, 0 as to_remove from @new_ids
+END
+GO
+ALTER function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
+returns @ids table (id numeric primary key)
+as
+begin
+
+	declare @ids2 table (id numeric primary key, attribute_id numeric)
+	insert into @ids2(id, attribute_id)
+	select id, ca.ATTRIBUTE_ID from @itemIds i inner join content_item ci with(nolock) on i.ID = ci.CONTENT_ITEM_ID
+	inner join CONTENT_ATTRIBUTE ca with(nolock) on ca.CONTENT_ID = ci.CONTENT_ID and ca.IS_CLASSIFIER = 1
+
+	declare @attrIds Ids
+	insert into @attrIds
+	select distinct attribute_id from @ids2
+
+	insert into @ids
+	select id from @itemIds
+
+	union
+
+	select AGG_DATA.CONTENT_ITEM_ID
+	from CONTENT_ATTRIBUTE AGG_ATT with(nolock)
+	INNER JOIN CONTENT_DATA AGG_DATA with(nolock) ON AGG_DATA.ATTRIBUTE_ID = AGG_ATT.ATTRIBUTE_ID
+	where AGG_ATT.AGGREGATED = 1 and AGG_ATT.CLASSIFIER_ATTRIBUTE_ID in (select id from @attrIds)
+	and AGG_DATA.O2M_DATA in (select id from @ids2)
+	return
+end
+GO
+ALTER FUNCTION [dbo].[qp_aggregates_to_remove](@itemIds Ids READONLY)
+returns @ids table (id numeric primary key)
+as
+begin
+
+    declare @ids2 Ids
+    insert into @ids2
+    select id from @itemIds i inner join content_item ci on i.ID = ci.CONTENT_ITEM_ID and ci.SPLITTED = 0
+	where exists(select * from CONTENT_ATTRIBUTE ca where ca.CONTENT_ID = ci.CONTENT_ID and ca.IS_CLASSIFIER = 1)
+
+    if exists (select * from @ids2)
+    begin
+        insert into @ids
+
+        select AGG_DATA.CONTENT_ITEM_ID
+        from CONTENT_ATTRIBUTE ATT
+        JOIN CONTENT_ATTRIBUTE AGG_ATT ON AGG_ATT.CLASSIFIER_ATTRIBUTE_ID = ATT.ATTRIBUTE_ID
+        JOIN CONTENT_DATA AGG_DATA with(nolock) ON AGG_DATA.ATTRIBUTE_ID = AGG_ATT.ATTRIBUTE_ID
+        JOIN CONTENT_DATA CLF_DATA with(nolock) ON CLF_DATA.ATTRIBUTE_ID = ATT.ATTRIBUTE_ID AND CLF_DATA.CONTENT_ITEM_ID = AGG_DATA.O2M_DATA
+        where ATT.IS_CLASSIFIER = 1 AND AGG_ATT.AGGREGATED = 1 AND CLF_DATA.DATA <> cast(AGG_ATT.CONTENT_ID as nvarchar(8))
+        and ATT.CONTENT_ID in (
+            select content_id from content_item with(nolock)
+            where content_item_id in (select id from @itemIds)
+        )
+        AND AGG_DATA.O2M_DATA in (select id from @ids2)
+    end
+
+    return
+end
+GO
+
+ALTER PROCEDURE [dbo].[create_content_item_version]
+    @uid NUMERIC,
+    @content_item_id NUMERIC
+AS
+BEGIN
+    declare @ids [Ids]
+
+    insert into @ids values (@content_item_id)
+
+    exec qp_create_content_item_versions @ids, @uid
+END
+GO
+ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
+
+    if object_id('tempdb..#disable_td_delete_item') is null
+    begin
+
+        declare @content_id numeric, @virtual_type numeric, @published_id numeric
+        declare @sql nvarchar(max)
+        declare @ids_list nvarchar(max)
+
+
+        declare @c table (
+            id numeric primary key,
+            virtual_type numeric
+        )
+
+        insert into @c
+        select distinct d.content_id, c.virtual_type
+        from deleted d inner join content c
+        on d.content_id = c.content_id
+
+        declare @ids table
+        (
+            id numeric primary key,
+            char_id nvarchar(30),
+            status_type_id numeric,
+            splitted bit
+        )
+
+
+        declare @attr_ids table
+        (
+            id numeric primary key
+        )
+
+        while exists(select id from @c)
+        begin
+
+            select @content_id = id, @virtual_type = virtual_type from @c
+
+            insert into @ids
+            select content_item_id, CONVERT(nvarchar, content_item_id), status_type_id, splitted from deleted where content_id = @content_id
+
+            insert into @attr_ids
+            select ca1.attribute_id from CONTENT_ATTRIBUTE ca1
+            inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
+            where ca2.CONTENT_ID = @content_id
+
+            set @ids_list = null
+            select @ids_list = coalesce(@ids_list + ', ', '') + char_id from @ids
+
+            select @published_id = status_type_id from STATUS_TYPE where status_type_name = 'Published' and SITE_ID in (select SITE_ID from content where CONTENT_ID = @content_id)
+            if exists (select * from @ids where status_type_id = @published_id and splitted = 0)
+                update content_modification set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @content_id
+            else
+                update content_modification set stage_modified = GETDATE() where content_id = @content_id
+
+            /* Drop relations to current item */
+            if exists(select id from @attr_ids) and object_id('tempdb..#disable_td_delete_item_o2m_nullify') is null
+            begin
+                UPDATE content_attribute SET default_value = null
+                    WHERE attribute_id IN (select id from @attr_ids)
+                    AND default_value IN (select char_id from @ids)
+
+                UPDATE content_data SET data = NULL, blob_data = NULL
+                    WHERE O2M_DATA in (select id from @ids)
+                    AND attribute_id IN (select id from @attr_ids)
+
+                DELETE from VERSION_CONTENT_DATA
+                    WHERE O2M_DATA in (select id from @ids)
+                    AND attribute_id IN (select id from @attr_ids)
+
+            end
+
+            if @virtual_type = 0
+            begin
+                exec qp_get_delete_items_sql @content_id, @ids_list, 0, @sql = @sql out
+                exec sp_executesql @sql
+
+                exec qp_get_delete_items_sql @content_id, @ids_list, 1, @sql = @sql out
+                exec sp_executesql @sql
+            end
+
+            delete from @c where id = @content_id
+
+            delete from @ids
+
+            delete from @attr_ids
+        end
+    end
+END
+GO
+update content_data set O2M_DATA = cd.data from content_data cd
+inner join content_attribute ca on ca.attribute_id = cd.attribute_id
+where ca.attribute_type_id = 11 and ca.link_id is null
+and cd.data is not null and cd.data <> '0' and cd.O2M_DATA is null
+GO
+
+update version_content_data set O2M_DATA = vcd.data from version_content_data vcd
+inner join content_attribute ca on ca.attribute_id = vcd.attribute_id
+where ca.attribute_type_id = 11 and ca.link_id is null
+and vcd.data is not null and vcd.data <> '0' and vcd.O2M_DATA is null
+GO
+if not exists(select * from sys.indexes where name = 'IX_O2M_DATA' and [object_id] = object_id('CONTENT_DATA'))
+begin
+    create index IX_O2M_DATA on CONTENT_DATA(O2M_DATA) WHERE O2M_DATA IS NOT NULL
+end
+
+if not exists(select * from sys.indexes where name = 'IX_O2M_DATA' and [object_id] = object_id('VERSION_CONTENT_DATA'))
+begin
+    create index IX_O2M_DATA on VERSION_CONTENT_DATA(O2M_DATA) WHERE O2M_DATA IS NOT NULL
+end
+go
+
+GO
 

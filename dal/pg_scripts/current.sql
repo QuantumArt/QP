@@ -2301,18 +2301,12 @@ AS $BODY$
 	DECLARE
         delete_ids numeric[];
 	    ext_ids numeric[];
-	    agg_attrs content_attribute[];
+	    agg_ids numeric[];
 	    attr content_attribute;
-	    base_attr content_attribute;
-	    current_exts link_multiple[];
 	    exts link_multiple[];
 	    main link_multiple[];
 	    main2 link_multiple[];
-	    attr_name text;
-	    cid numeric;
-	    sql text;
 	    m2o_attrs content_attribute[];
-	    base_attrs content_attribute[];
 	    current_ids numeric[];
 	    current_m2o link[];
 
@@ -2378,28 +2372,15 @@ AS $BODY$
 
 	    RAISE NOTICE 'Extensions defined: %',  clock_timestamp();
 
-	    select array_agg(ca.*) into agg_attrs
-	    from CONTENT_ATTRIBUTE ca where ca.aggregated and ca.CONTENT_ID = ANY(ext_ids);
+	    agg_ids := array_agg(ca.attribute_id) from CONTENT_ATTRIBUTE ca
+	    where ca.aggregated and ca.CONTENT_ID = ANY(ext_ids);
 
-	    exts := ARRAY[]::link_multiple[];
+	    exts := array_agg(row(cd.o2m_data, ca.content_id, cd.content_item_id))
+	    from content_data cd inner join CONTENT_ATTRIBUTE ca on ca.attribute_id = cd.attribute_id
+	    where cd.o2m_data = ANY(ids) and cd.attribute_id = ANY(agg_ids);
 
-	    if agg_attrs is not null then
-            FOREACH attr in ARRAY agg_attrs
-            loop
-                sql := 'select array_agg(row("%s", %s, content_item_id)) from content_%s_united where "%s" = ANY($1)';
-                attr_name := lower(attr.attribute_name);
-                sql := format(sql, attr_name, attr.content_id, attr.content_id, attr_name);
-                execute sql using ids into current_exts;
-
-                if current_exts is not null then
-                    exts := array_cat(exts, current_exts);
-                end if;
-
-                RAISE NOTICE 'Extension % received: %', attr.content_id,  clock_timestamp();
-                RAISE NOTICE 'exts: %', exts;
-
-            end loop;
-	    end if;
+	    RAISE NOTICE 'Extensions received: %',  clock_timestamp();
+        RAISE NOTICE 'exts: %', exts;
 
         main := array_agg(row(i.new_version_id, e.link_id, e.linked_id))
         from unnest(exts) e inner join version_items i on e.id = i.id;
@@ -2428,11 +2409,6 @@ AS $BODY$
 
 	    RAISE NOTICE 'M2M saved: %',  clock_timestamp();
 
-
-        base_attrs := array_agg(ca.*) from content_attribute ca
-        inner join content_attribute rca on ca.attribute_id = rca.back_related_attribute_id
-        where rca.content_id in (select link_id from unnest(main));
-
         m2o_attrs := array_agg(ca.*) from content_attribute ca
         where back_related_attribute_id is not null and content_id in (select link_id from unnest(main));
 
@@ -2441,16 +2417,11 @@ AS $BODY$
 	    if m2o_attrs is not null then
             foreach attr in array m2o_attrs
             loop
-
-                base_attr := row(a.*) from unnest(base_attrs) a
-                where a.attribute_id = attr.back_related_attribute_id;
-
                 current_ids := array_agg(m.linked_id) from unnest(main) m
                 where m.link_id = attr.content_id;
 
-                current_m2o := qp_get_m2o_ids_multiple(
-                    base_attr.content_id::int, base_attr.attribute_name::text, current_ids::int[]
-                );
+                current_m2o := array_agg(row(cd.o2m_data, cd.content_item_id)) from content_data cd
+                where cd.attribute_id = attr.back_related_attribute_id and cd.content_item_id = ANY(current_ids);
 
                 INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
                 SELECT i.new_version_id, attr.attribute_id, v.linked_id from unnest(current_m2o) v
@@ -3469,7 +3440,8 @@ AS $BODY$
 	    archive_ids int[];
 	BEGIN
 	    attr := row(ca.*) from content_attribute ca where ca.attribute_id = field_id;
-	    old_ids := qp_get_m2o_ids(attr.content_id::int, attr.attribute_name::text, id::int);
+	    old_ids := array_agg(cd.content_item_id)
+	    from content_data cd where cd.attribute_id = field_id and cd.o2m_data = id;
 
 		RAISE NOTICE 'Start: %', clock_timestamp();
 		IF ids is null OR ids = '' THEN

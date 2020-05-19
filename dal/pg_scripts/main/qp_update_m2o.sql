@@ -18,7 +18,8 @@ AS $BODY$
 	    archive_ids int[];
 	BEGIN
 	    attr := row(ca.*) from content_attribute ca where ca.attribute_id = field_id;
-	    old_ids := qp_get_m2o_ids(attr.content_id::int, attr.attribute_name::text, id::int);
+	    old_ids := array_agg(cd.content_item_id)
+	    from content_data cd where cd.attribute_id = field_id and cd.o2m_data = id;
 
 		RAISE NOTICE 'Start: %', clock_timestamp();
 		IF ids is null OR ids = '' THEN
