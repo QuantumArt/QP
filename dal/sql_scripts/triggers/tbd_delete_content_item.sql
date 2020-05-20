@@ -29,3 +29,4 @@ delete content_data from content_data cd inner join deleted d on cd.content_item
 delete content_item from content_item ci inner join deleted d on ci.content_item_id = d.content_item_id
 
 END
+GO

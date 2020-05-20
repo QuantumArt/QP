@@ -42,3 +42,4 @@ BEGIN
 	exec sp_executesql @sql
 
 END
+GO

@@ -1,7 +1,4 @@
-exec qp_drop_existing 'qp_m2o_titles', 'IsScalarFunction'
-GO
-
-CREATE FUNCTION [dbo].[qp_m2o_titles](@id int, @field_related_id int, @related_attribute_id int, @maxlength int)
+ALTER FUNCTION [dbo].[qp_m2o_titles](@id int, @field_related_id int, @related_attribute_id int, @maxlength int)
 RETURNS nvarchar(max)
 AS
 BEGIN
@@ -26,3 +23,4 @@ BEGIN
 	return @result
 
 END
+GO

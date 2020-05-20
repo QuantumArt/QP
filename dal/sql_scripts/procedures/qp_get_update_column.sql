@@ -17,4 +17,4 @@ BEGIN
 	set @sql = @sql + ' where cd.content_item_id in (' + @content_item_ids + ')'
 	set @sql = @sql + ' and cd.attribute_id = ' + convert(nvarchar, @attribute_id)
 END
-;
+GO

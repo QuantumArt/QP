@@ -83,6 +83,5 @@ BEGIN
         end --if
     end --if
 END
-;
 go
 

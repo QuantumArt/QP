@@ -69,3 +69,4 @@ BEGIN
 
   delete users from users c inner join deleted d on c.user_id = d.user_id
 END
+GO
