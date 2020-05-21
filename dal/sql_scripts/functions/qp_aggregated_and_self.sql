@@ -1,4 +1,7 @@
-ALTER function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
+exec qp_drop_existing 'qp_aggregated_and_self', 'IsTableFunction'
+GO
+
+CREATE function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
 returns @ids table (id numeric primary key)
 as
 begin

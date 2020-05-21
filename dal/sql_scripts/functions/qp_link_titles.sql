@@ -1,4 +1,7 @@
-ALTER function [dbo].[qp_link_titles](@link_id int, @id int, @display_attribute_id int, @maxlength int)
+exec qp_drop_existing 'qp_link_titles', 'IsScalarFunction'
+GO
+
+CREATE FUNCTION [dbo].[qp_link_titles](@link_id int, @id int, @display_attribute_id int, @maxlength int)
 returns nvarchar(max)
 AS
 BEGIN

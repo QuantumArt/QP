@@ -1,4 +1,7 @@
-ALTER FUNCTION [dbo].[qp_aggregates_to_remove](@itemIds Ids READONLY)
+exec qp_drop_existing 'qp_aggregates_to_remove', 'IsTableFunction'
+GO
+
+CREATE FUNCTION [dbo].[qp_aggregates_to_remove](@itemIds Ids READONLY)
 returns @ids table (id numeric primary key)
 as
 begin

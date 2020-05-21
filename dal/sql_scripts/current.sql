@@ -364,7 +364,34 @@ GO
 exec sp_refreshview 'item_link_united_full'
 
 GO
-ALTER function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
+exec qp_drop_existing 'get_schedule_date', 'IsScalarFunction'
+GO
+
+CREATE FUNCTION dbo.get_schedule_date(@dt int, @tm int) returns datetime
+AS BEGIN
+    declare @result datetime;
+    declare @year int, @month int, @day int;
+    declare @hour int, @minute int, @second int;
+
+    set @year = @dt / 100;
+    set @day = @dt % 100;
+    set @month = @year % 100;
+    set @year = @year / 100;
+
+    set @hour = @tm / 100;
+    set @second = @tm % 100;
+    set @minute = @hour % 100;
+    set @hour = @hour / 100;
+
+    set @result = DATETIMEFROMPARTS(@year, @month, @day, @hour, @minute, @second, 0);
+
+    return @result;
+end
+GO
+exec qp_drop_existing 'qp_aggregated_and_self', 'IsTableFunction'
+GO
+
+CREATE function [dbo].[qp_aggregated_and_self](@itemIds Ids READONLY)
 returns @ids table (id numeric primary key)
 as
 begin
@@ -391,7 +418,10 @@ begin
 	return
 end
 GO
-ALTER FUNCTION [dbo].[qp_aggregates_to_remove](@itemIds Ids READONLY)
+exec qp_drop_existing 'qp_aggregates_to_remove', 'IsTableFunction'
+GO
+
+CREATE FUNCTION [dbo].[qp_aggregates_to_remove](@itemIds Ids READONLY)
 returns @ids table (id numeric primary key)
 as
 begin
@@ -419,30 +449,6 @@ begin
     end
 
     return
-end
-GO
-exec qp_drop_existing 'get_schedule_date', 'IsScalarFunction'
-GO
-
-CREATE FUNCTION dbo.get_schedule_date(@dt int, @tm int) returns datetime
-AS BEGIN
-    declare @result datetime;
-    declare @year int, @month int, @day int;
-    declare @hour int, @minute int, @second int;
-
-    set @year = @dt / 100;
-    set @day = @dt % 100;
-    set @month = @year % 100;
-    set @year = @year / 100;
-
-    set @hour = @tm / 100;
-    set @second = @tm % 100;
-    set @minute = @hour % 100;
-    set @hour = @hour / 100;
-
-    set @result = DATETIMEFROMPARTS(@year, @month, @day, @hour, @minute, @second, 0);
-
-    return @result;
 end
 GO
 ALTER FUNCTION [dbo].[qp_correct_data] (
@@ -488,7 +494,10 @@ begin
 	return @result
 end
 GO
-ALTER function [dbo].[qp_link_titles](@link_id int, @id int, @display_attribute_id int, @maxlength int)
+exec qp_drop_existing 'qp_link_titles', 'IsScalarFunction'
+GO
+
+CREATE FUNCTION [dbo].[qp_link_titles](@link_id int, @id int, @display_attribute_id int, @maxlength int)
 returns nvarchar(max)
 AS
 BEGIN
@@ -515,7 +524,10 @@ BEGIN
 
 END
 GO
-ALTER FUNCTION [dbo].[qp_m2o_titles](@id int, @field_related_id int, @related_attribute_id int, @maxlength int)
+exec qp_drop_existing 'qp_m2o_titles', 'IsScalarFunction'
+GO
+
+CREATE FUNCTION [dbo].[qp_m2o_titles](@id int, @field_related_id int, @related_attribute_id int, @maxlength int)
 RETURNS nvarchar(max)
 AS
 BEGIN
