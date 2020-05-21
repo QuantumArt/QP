@@ -30,11 +30,14 @@ AS $BODY$
                     RAISE NOTICE 'Delays merged: %', clock_timestamp();
                 end if;
 
+                ids := array_agg(o.id) from o2m_result_ids o;
+
+                if ids is null then
+                    return;
+                end if;
+
                 update o2m_result_ids o set remove_delays = true
                 from child_delays cd where o.id = cd.child_id and cd.id = $1;
-
-                ids := array_agg(o.id) from o2m_result_ids o;
-                ids = coalesce(ids, ARRAY[]::int[]);
 
                 update content_item
                 set modified = now(), last_modified_by = item.last_modified_by, not_for_replication = true
