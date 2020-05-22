@@ -1,4 +1,5 @@
-﻿tables
+﻿MinCompatLevel
+tables
 views
 functions
 procedures
