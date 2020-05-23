@@ -138,40 +138,12 @@ BEGIN
 
     --print 'm2m saved'
 
-    -- Store Many-to-One data
-    declare @many_to_ones table (id numeric, content_id numeric, base_content_id numeric, name nvarchar(255))
-    insert into @many_to_ones (id, content_id, base_content_id, name)
-    select ca.attribute_id, rca.CONTENT_ID, ca.content_id, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca
-    inner join CONTENT_ATTRIBUTE rca on ca.BACK_RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID
-    inner join @main_ids i on i.content_id = ca.CONTENT_ID
-
-    --print 'm2o defined'
-
-    while exists(select * from @many_to_ones)
-    begin
-
-        declare @currentFieldId numeric, @currentBaseContentId numeric, @currentContentId numeric
-        declare @currentIds [Ids], @currentFieldName nvarchar(255)
-        select @currentFieldId = id, @currentContentId = content_id, @currentBaseContentId = base_content_id, @currentFieldName = name from @many_to_ones
-
-        insert into @currentIds
-        select id from @main_ids where content_id = @currentBaseContentId
-
-        declare @m2o_values table (id numeric, related_id numeric)
-        insert into @m2o_values
-        select O2M_DATA, CONTENT_ITEM_ID from content_data
-        where O2M_DATA in (select id from @currentIds) and ATTRIBUTE_ID = @currentFieldId
-
-        INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-        SELECT i.new_version_id, @currentFieldId, v.related_id from @m2o_values v
-        inner join @items i on v.id = i.id
-
-        delete from @m2o_values
-
-        delete from @currentIds
-
-        delete from @many_to_ones where id = @currentFieldId
-    end
+    -- Store Many-to-One slice
+    INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
+    SELECT m.version_id, ca.attribute_id, cd.content_item_id
+    FROM content_data AS cd
+    INNER JOIN content_attribute AS ca ON ca.BACK_RELATED_ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+    inner join @main_ids m on cd.O2M_DATA = m.id and ca.CONTENT_ID = m.content_id
 
     --print 'm2o saved'
 

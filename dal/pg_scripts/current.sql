@@ -2409,28 +2409,13 @@ AS $BODY$
 
 	    RAISE NOTICE 'M2M saved: %',  clock_timestamp();
 
-        m2o_attrs := array_agg(ca.*) from content_attribute ca
-        where back_related_attribute_id is not null and content_id in (select link_id from unnest(main));
+	    INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
+        SELECT m.id, ca.attribute_id, cd.content_item_id
+        FROM content_data AS cd
+        INNER JOIN content_attribute AS ca ON ca.BACK_RELATED_ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+        inner join unnest(main) m on cd.O2M_DATA = m.linked_id and ca.CONTENT_ID = m.link_id;
 
-	    RAISE NOTICE 'M20 defined: %',  clock_timestamp();
-
-	    if m2o_attrs is not null then
-            foreach attr in array m2o_attrs
-            loop
-                current_ids := array_agg(m.linked_id) from unnest(main) m
-                where m.link_id = attr.content_id;
-
-                current_m2o := array_agg(row(cd.o2m_data, cd.content_item_id)) from content_data cd
-                where cd.attribute_id = attr.back_related_attribute_id and cd.content_item_id = ANY(current_ids);
-
-                INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-                SELECT i.new_version_id, attr.attribute_id, v.linked_id from unnest(current_m2o) v
-                inner join version_items i on v.id = i.id;
-
-                RAISE NOTICE 'M2O % saved: %', attr.attribute_id,  clock_timestamp();
-
-            end loop;
-        end if;
+	    RAISE NOTICE 'M2O saved: %',  clock_timestamp();
 
         INSERT INTO content_item_status_history
         (content_item_id, user_id, description, created, content_item_version_id,system_status_type_id)
