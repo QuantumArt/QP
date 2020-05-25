@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Transactions;
 using System.Xml.Linq;
 using Npgsql;
 using QP.ConfigurationService.Client;
@@ -300,7 +301,22 @@ namespace Quantumart.QP8.Configuration
             set { _configServiceToken = value; }
         }
 
-        public static int CommandTimeout => Options?.CommandTimeout ?? 0;
+        public static int CommandTimeout => Options?.CommandTimeout ?? 120;
+
+        public static TimeSpan TransactionTimeout => TimeSpan.FromSeconds(CommandTimeout + 30);
+
+        public static TransactionScope CreateTransactionScope(IsolationLevel level = IsolationLevel.ReadUncommitted) =>
+            new TransactionScope(
+                TransactionScopeOption.Required,
+                new TransactionOptions { IsolationLevel = level, Timeout = TransactionTimeout },
+                TransactionScopeAsyncFlowOption.Enabled
+            );
+
+        public static TransactionScope OutOfTransaction() =>
+            new TransactionScope(
+                TransactionScopeOption.Suppress,
+                new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted, Timeout = TransactionTimeout }
+            );
 
 
         public static void SetAppSettings(DbConnectorSettings settings)

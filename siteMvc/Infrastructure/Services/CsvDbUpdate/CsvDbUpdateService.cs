@@ -11,6 +11,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using ILogger = NLog.ILogger;
 
@@ -36,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
 
         public void Process(IEnumerable<CsvDbUpdateModel> data)
         {
-            using (var ts = new TransactionScope())
+            using (var ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             using (new QPConnectionScope())
             {
                 var articlesData = new List<ArticleData>();

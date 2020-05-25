@@ -18,7 +18,11 @@ AS $BODY$
 	    archive_ids int[];
 	BEGIN
 	    attr := row(ca.*) from content_attribute ca where ca.attribute_id = field_id;
-	    old_ids := qp_get_m2o_ids(attr.content_id::int, attr.attribute_name::text, id::int);
+
+	    old_ids := array_agg(cd.content_item_id)
+	    from content_data cd where cd.attribute_id = attr.back_related_attribute_id and cd.o2m_data = id;
+	    old_ids = coalesce(old_ids, ARRAY[]::int[]);
+
 
 		RAISE NOTICE 'Start: %', clock_timestamp();
 		IF ids is null OR ids = '' THEN
@@ -31,7 +35,7 @@ AS $BODY$
 		old_ids := old_ids - cross_ids;
 		new_ids := new_ids - cross_ids;
 
-		RAISE NOTICE 'Arrays calculated: %',  clock_timestamp();
+		RAISE NOTICE 'Arrays calculated: %, to add: %', clock_timestamp(), new_ids;
 
 		IF not update_archive and array_length(old_ids, 1) > 1 THEN
 			archive_ids := array_agg(content_item_id) from content_item where content_item_id = ANY(old_ids) AND archive = 1;
@@ -39,7 +43,7 @@ AS $BODY$
 			old_ids := old_ids - archive_ids;
 		END IF;
 
-		RAISE NOTICE 'Archive calculated: %',  clock_timestamp();
+		RAISE NOTICE 'Archive calculated: %, to remove: %, ', clock_timestamp(), old_ids;
 
 		create temp table if not exists o2m_result_ids
 		(
@@ -47,9 +51,9 @@ AS $BODY$
 		);
 
 		insert into o2m_result_ids
-        select unnest, attr.attribute_id, true, false from unnest(old_ids)
+        select unnest, attr.back_related_attribute_id, true, false from unnest(old_ids)
         union all
-        select unnest, attr.attribute_id, false, false from unnest(new_ids);
+        select unnest, attr.back_related_attribute_id, false, false from unnest(new_ids);
 
 		RAISE NOTICE 'Result returned: %',  clock_timestamp();
 
