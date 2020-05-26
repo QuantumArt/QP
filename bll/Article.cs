@@ -366,14 +366,14 @@ namespace Quantumart.QP8.BLL
             set => _contextListItems.Value = value;
         }
 
-        public int CollaborativePublishedArticle { get; set; }       
+        public int CollaborativePublishedArticle { get; set; }
 
         public int ParentContentId
         {
             get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
             set => _parentContentId = value;
         }
-   
+
         public override void Validate()
         {
             var errors = new RulesException<Article>();
@@ -383,19 +383,19 @@ namespace Quantumart.QP8.BLL
             ValidateRelationSecurity(errors);
             ValidateFields(errors);
             ValidateAggregated(errors);
-            ValidateXaml(errors, QPContext.CurrentCustomerCode);
+            ValidateXaml(errors, QPContext.CurrentCustomerCode, true);
             ValidateSchedule(errors, Schedule);
 
             if (!errors.IsEmpty)
             {
                 throw errors;
             }
-        }        
+        }
 
         public static void ValidateXamlById(int articleId, RulesException errors, string customerCode, bool persistChanges)
         {
             var article = ArticleRepository.GetById(articleId);
-            var hasChanges = article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode);
+            var hasChanges = article.ValidateXaml(errors, customerCode ?? QPContext.CurrentCustomerCode, false);
             if (hasChanges && persistChanges)
             {
                 article.Persist(true);
@@ -733,7 +733,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private bool ValidateXaml(RulesException errors, string customerCode)
+        private bool ValidateXaml(RulesException errors, string customerCode, bool localizeMessages)
         {
             bool result = false;
 
@@ -763,6 +763,7 @@ namespace Quantumart.QP8.BLL
                         AggregatedValidatorList = aggregatedXamlValidators,
                         DynamicResource = Content.Site.XamlDictionaries,
                         CustomerCode = customerCode,
+                        LocalizeMessages = localizeMessages,
                         SiteId = Content.SiteId,
                         ContentId = ContentId
                     };
