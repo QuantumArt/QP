@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  name: qp-media
+  namespace: qp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-media
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: qp-media
+        logging: enabled
+    spec:
+      containers:
+      - env:
+        - name: Properties__QpConfigPath
+          value: /app/config/config_media.xml
+        - name: Properties__TempDirectory
+          value: /qptemp
+        - name: Properties__EnableSignalR
+          value: "false"
+        - name: Properties__EnableArticleScheduler
+          value: "true"
+        - name: Properties__EnableCommonScheduler
+          value: "true"
+        image: spbdocker03:5000/qp:||version||
+        imagePullPolicy: IfNotPresent
+        name: qp-media
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /qptemp
+          name: temp-volume
+        - mountPath: /qplibrary
+          name: library-volume
+        - mountPath: /etc/localtime
+          name: tz-config
+        - mountPath: /app/config
+          name: config-pv 
+      volumes:
+      - emptyDir: {}
+        name: temp-volume
+      - name: library-volume
+        persistentVolumeClaim:
+          claimName: qp-library
+      - hostPath:
+          path: /usr/share/zoneinfo/Europe/Moscow
+          type: ""
+        name: tz-config
+      - name: config-pv
+        persistentVolumeClaim:
+          claimName: qp-config  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-media
+  namespace: qp
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: qp-media
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  name: qp-media
+  namespace: qp
+spec:
+  rules:
+  - host: qp-media.dev.qsupport.ru
+    http:
+      paths:
+      - backend:
+          serviceName: qp-media
+          servicePort: 80
+
