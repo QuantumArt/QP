@@ -21,7 +21,6 @@
     "webpack": "webpack --watch --config siteMvc/webpack.config.js"
   },
   "dependencies": {
-    "@aspnet/signalr": "^1.1.4",
     "natives": "^1.1.6",
     "tslib": "^1.8.1"
   },
