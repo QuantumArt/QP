@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
   name: qp-media
   namespace: qp
 spec:
@@ -11,7 +10,6 @@ spec:
       app: qp-media
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: qp-media
         logging: enabled
@@ -76,7 +74,6 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  annotations:
   name: qp-media
   namespace: qp
 spec:
