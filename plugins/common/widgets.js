@@ -14,20 +14,6 @@
         }
     };
 
-    Quantumart.QP8.BackendDocumentContext.prototype.setValues = function (editor, fieldValues, disableChangeTracking) {
-        var $form = editor._formElement;
-
-        $c.setAllVisualEditorValues($form, fieldValues);
-        $c.setAllSimpleTextBoxValues($form, fieldValues);
-        $c.setAllBooleanValues($form, fieldValues);
-        $c.setAllNumericBoxValues($form, fieldValues);
-        $c.setAllDateTimePickersValues($form, fieldValues);
-        $c.setAllRadioListValues($form, fieldValues);
-        $c.setAllAggregationListValues($form, fieldValues);
-        $c.setAllClassifierFieldValues($form, fieldValues, disableChangeTracking);
-        $c.setAllHighlightedTextAreaValues($form, fieldValues);
-    };
-
     Quantumart.QP8.BackendDocumentContext.prototype.getParentContentId = function (editor) {
         var $form = jQuery(editor._formElement);
         return (!this.typeResolverInputName) ? 0 : $form.find("[name='" + this.typeResolverInputName + "']").parent(".singleItemPicker").data("parent_entity_id");
@@ -181,7 +167,7 @@
             this.toggleField(editor, options.fields.isPage, false, true);
 
             if (isPage != null && isPageFieldValue != isPage) {
-                this.setValues(editor, [{ fieldName: options.fields.isPage, value: (isPage == true).toString() }]);
+                $c.setAllBooleanValues(editor._formElement, [{ fieldName: options.fields.isPage, value: (isPage == true).toString() }]);
             }
 
             if (isPage == true) {
@@ -210,7 +196,7 @@
             if (extensionId > 0) {
                 if ((currentExtensionIdValue == 0 || editor._actionCode == ACTION_CODE_ADD_NEW_ARTICLE) && currentExtensionIdValue != extensionId) {
                     // если не выставлено значение, то выставляется
-                    this.setValues(editor, [{ fieldName: options.fields.extensionId, value: extensionId }]);
+                    $c.setAllClassifierFieldValues(editor._formElement, [{ fieldName: options.fields.extensionId, value: extensionId }]);
                     $c.makeReadonlyClassifierFields(editor._formElement, [options.fields.extensionId]);
                 }
             } else {
