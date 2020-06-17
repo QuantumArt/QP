@@ -1022,4 +1022,12 @@ $q.captureUserInput = function (element, capture, ...events) {
   }
 };
 
+$q.isFullUrl = function(input) {
+  if (!input) {
+    return false;
+  }
+  const m = input.match(/^http(s):/);
+  return m && m.index === 0;
+};
+
 window.$q = $q;

@@ -404,7 +404,7 @@ export class BackendTreeMenu extends BackendTreeBase {
   }
 
   getTreeViewItemFromTreeNode(node) {
-    const iconUrl = node.Icon.left(7).toLowerCase() === 'http://'
+    const iconUrl = $q.isFullUrl(node.Icon)
       ? node.Icon
       : window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + node.Icon;
 
