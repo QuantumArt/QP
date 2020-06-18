@@ -153,7 +153,11 @@
 
     //#region Настройки виджетной системы
 
-    Quantumart.QP8.BackendDocumentContext.prototype.checkWidgetSystemFields = function (options, editor) {
+    Quantumart.QP8.BackendDocumentContext.prototype.checkWidgetSystemFields = function (options, editor, data) {
+        if (data && data.contentFieldName && data.contentFieldName !== "Discriminator") {
+          return;
+        }
+
         // проверяем, какие поля надо скрыть
         var itemType = this.getValue(editor, options.fields.discriminator);
         var isPageFieldValue = this.getBooleanValue(editor, options.fields.isPage);
@@ -162,11 +166,11 @@
         if (itemType > 0) {
             // выбран тип сущности
 
-            var isPage = $o.getArticleFieldValue(itemDefinitionContentId, options.system.isPageFieldName, itemType);
+            var isPage = $o.getArticleFieldValue(itemDefinitionContentId, options.system.isPageFieldName, itemType) === "1";
 
             this.toggleField(editor, options.fields.isPage, false, true);
 
-            if (isPage != null && isPageFieldValue !== isPage) {
+            if (isPageFieldValue !== isPage) {
                 $c.setAllBooleanValues(editor._formElement, [{ fieldName: options.fields.isPage, value: isPage }]);
             }
 
