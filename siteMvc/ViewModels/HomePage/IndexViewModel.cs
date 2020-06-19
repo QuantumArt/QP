@@ -26,6 +26,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         public string DbHash { get; }
 
+        public string Version => _options.Version;
+
         public string Title
         {
             get
