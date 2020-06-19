@@ -1022,7 +1022,7 @@ $q.captureUserInput = function (element, capture, ...events) {
   }
 };
 
-$q.isFullUrl = function(input) {
+$q.isFullUrl = function (input) {
   if (!input) {
     return false;
   }
