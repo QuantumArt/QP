@@ -12,7 +12,8 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Dev"
+        "ASPNETCORE_ENVIRONMENT": "Dev",
+        "SERVICE_VERSION": "8.0.0.0-abcdef"
       },
       "applicationUrl": "http://localhost:5400"
     },
