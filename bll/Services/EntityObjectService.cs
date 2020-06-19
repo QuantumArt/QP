@@ -208,7 +208,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="recordHeaders"></param>
         /// <returns></returns>
-        public static IEnumerable<long> AutosaveRestoringCheck(IEnumerable<AutosavedEntityRecordHeader> recordHeaders)
+        public static IEnumerable<long> AutosaveRestoringCheck(IList<AutosavedEntityRecordHeader> recordHeaders)
         {
             if (recordHeaders != null && recordHeaders.Any())
             {
