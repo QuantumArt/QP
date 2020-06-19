@@ -27,7 +27,6 @@ using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Utils.FullTextSearch;
-using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -148,16 +147,7 @@ namespace Quantumart.QP8.WebMvc
                 options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode"));
             });
 
-            // TODO: review Authentication and CultureInfo in SignalR
-            services
-                .
-                AddSignalR()
-                .AddNewtonsoftJsonProtocol(options => {
-                    options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.PayloadSerializerSettings.ContractResolver = new DefaultContractResolver();
-                });
-
-            // services
+            // servicesn
             services
                     .AddTransient<AuthenticationHelper>()
                     .AddTransient<JsLanguageHelper>()
@@ -195,7 +185,6 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<INotificationService, NotificationService>()
                     .AddTransient<IActionPermissionTreeService, ActionPermissionTreeService>()
                     .AddTransient<ISecurityService, SecurityService>()
-                    .AddTransient<ICommunicationService, CommunicationService>()
                     .AddTransient<IVisualEditorService, VisualEditorService>()
                     .AddTransient<IWorkflowService, WorkflowService>()
                     .AddTransient<IStatusTypeService, StatusTypeService>()
@@ -327,13 +316,6 @@ namespace Quantumart.QP8.WebMvc
             });
 
             app.UseSession();
-
-            /*app.UseSignalR(routes =>
-            {
-                routes.MapHub<CommunicationHub>("/signalr/communication");
-                routes.MapHub<SingleUserModeHub>("/signalr/singleUserMode");
-            });
-            */
 
             app.UseMvc(RegisterRoutes);
         }

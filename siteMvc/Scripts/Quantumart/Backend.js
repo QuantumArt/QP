@@ -1,5 +1,4 @@
 /* eslint max-lines: 'off' */
-import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr'; // eslint-disable-line no-unused-vars
 import { BackendActionPermissionViewManager } from './Managers/BackendActionPermissionViewManager';
 import { BackendBreadCrumbsManager } from './Managers/BackendBreadCrumbsManager';
 import { BackendBrowserHistoryManager } from './Managers/BackendBrowserHistoryManager';
@@ -49,15 +48,12 @@ export class Backend {
       if (options.mustChangePassword) {
         this._userMustChangePassword = options.mustChangePassword;
       }
-
-      if (options.enableSignalR) {
-        this._enableSignalR = options.enableSignalR;
-      }
     }
 
     this._loadHandler = $.proxy(this._initialize, this);
     this._unloadHandler = $.proxy(this._dispose, this);
     this._errorHandler = $.proxy(this._error, this);
+    this._refreshDbMode = $.proxy(this._updateSingleUserMode, this);
 
     this._onResizeSplitterHandler = this._onResizeSplitter.bind(this);
     this._onDragStartSplitterHandler = this._onDragStartSplitter.bind(this);
@@ -114,6 +110,7 @@ export class Backend {
   _loadHandler = null;
   _unloadHandler = null;
   _errorHandler = null;
+  _refreshDbMode = null;
   _onResizeSplitterHandler = null;
   _onEditingAreaEventHandler = null;
   _onActionExecutingHandler = null;
@@ -121,7 +118,7 @@ export class Backend {
   _onEntityReadedHandler = null;
   _onHostExternalCallerContextsUnbindedHandler = null;
   _userMustChangePassword = false;
-  _enableSignalR = false;
+  _checkSingleUserModeDB = null;
 
   _initialize() {
     this._backendBrowserHistoryManager.initialize();
@@ -276,9 +273,14 @@ export class Backend {
 
       this._initializeSignOut();
     });
-    if (this._enableSignalR) {
-      this._initializeSignalrHubs();
-    }
+    this._onCheckSingleUserModeDB();
+    this._checkSingleUserModeDB = setInterval(this._onCheckSingleUserModeDB.bind(this), window.CHECK_DB_MODE_INTERVAL);
+  }
+
+  _onCheckSingleUserModeDB() {
+    $q.getAjax(`${window.CONTROLLER_URL_DB}CheckDbMode`, {}).success(response => {
+      this._updateSingleUserMode(response.data);
+    });
   }
 
   _error() {
@@ -295,51 +297,6 @@ export class Backend {
     $('.signOut').unbind('click');
   }
 
-
-  async _initializeSignalrHubs() {
-    const communicationConn = new HubConnectionBuilder()
-      .withUrl('/signalR/communication')
-      .build();
-
-    // TODO: $.connection.hub.logging = false;
-
-    communicationConn.on('Message', (key, data) => {
-      if (key === 'singleusermode') {
-        this._updateSingleUserMode(data);
-      } else {
-        $(`.${key}`).text(data);
-      }
-    });
-
-    const singleUserModeConn = new HubConnectionBuilder()
-      .withUrl('/signalR/singleUserMode')
-      .build();
-
-    singleUserModeConn.on('Message', this._updateSingleUserMode);
-
-    this._setReconnectionPolicy(communicationConn);
-    this._setReconnectionPolicy(singleUserModeConn);
-
-    await Promise.all([communicationConn.start(), singleUserModeConn.start()]);
-
-    const hash = $('body').data('dbhash');
-
-    await communicationConn.invoke('AddHash', hash);
-  }
-
-  /**
-   * @param {HubConnection} connection
-   */
-  _setReconnectionPolicy(connection) {
-    // TODO: review SignalR reconnect
-    connection.onclose(async error => {
-      if (error) {
-        await Promise.resolve();
-        await connection.start();
-      }
-    });
-  }
-
   _updateSingleUserMode(data) {
     const $elem = $('.singleusermode');
     const userId = $('.userName').data('userid');
@@ -349,7 +306,7 @@ export class Backend {
       $('form :input').prop('disabled', false);
       $elem.hide();
     } else {
-      if (data.userId === userId) {
+      if (data === userId || data.userId === userId) {
         message = $l.Communacation.singleUserModeMessage;
         $elem.addClass('info');
         $elem.removeClass('warning');
@@ -702,6 +659,10 @@ export class Backend {
         this._backendActionExecutor = null;
       }
 
+      if (this._checkSingleUserModeDB) {
+        clearInterval(this._checkSingleUserModeDB);
+      }
+
       this._terminateSignOut();
       $(document).unbind('click');
       $(window).unbind('load', this._loadHandler);
@@ -716,6 +677,7 @@ export class Backend {
       this._loadHandler = null;
       this._unloadHandler = null;
       this._errorHandler = null;
+      this._refreshDbMode = null;
       this._onResizeSplitterHandler = null;
       this._onDragStartSplitterHandler = null;
       this._onDropSplitterHandler = null;

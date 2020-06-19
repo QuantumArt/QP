@@ -89,10 +89,6 @@ interface JQueryStatic {
   telerik: any;
 }
 
-interface SignalR {
-  [name: string]: any;
-}
-
 // Internet Explorer
 declare function escape(input: string): string;
 

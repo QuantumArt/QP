@@ -110,6 +110,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.ACTION_TYPE_UNSELECT_CHILD_ARTICLES = \"{ActionTypeCode.UnselectChildArticles}\"");
 
             constants.AppendLine();
+            constants.AppendLine($"window.CHECK_DB_MODE_INTERVAL = {30000}");
             constants.AppendLine($"window.MAX_ITEMS_AFFECTED_NUMBER = {255}");
             constants.AppendLine($"window.CHANGED_FIELD_CLASS_NAME = \"{CssClasses.ChangedField}\"");
             constants.AppendLine($"window.REFRESHED_FIELD_CLASS_NAME = \"{CssClasses.RefreshedField}\"");
@@ -216,6 +217,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.CONTROLLER_URL_PAGE_TEMPLATE = \"{_urlHelper.Content("~/PageTemplate/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_CUSTOM_ACTION = \"{_urlHelper.Content("~/CustomAction/")}\"");
             constants.AppendLine($"window.CONTROLLER_URL_AUTH = \"{_urlHelper.Content("~/LogOn/")}\"");
+            constants.AppendLine($"window.CONTROLLER_URL_DB = \"{_urlHelper.Content("~/Db/")}\"");
             constants.AppendLine();
 
             // Константы URL`ов директорий с рисунками

@@ -144,8 +144,14 @@
     });
   });
 
+
+  if (this.backend) {
+    this.backend._refreshDbMode(@Model.Data.SingleUserId);
+  }
+
   @(Model.ContextObjectName).setTerminatingCallback(function() {
     $editingForm.off('click');
   });
+
 </script>
 @Html.RunInitScript(Model)

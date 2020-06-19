@@ -8,10 +8,10 @@ using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -27,24 +27,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class DbController : AuthQpController
     {
-        private readonly ICommunicationService _communicationService;
         private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;
         private readonly IApplicationInfoRepository _appInfoRepository;
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
         private readonly IXmlDbUpdateActionCorrecterService _actionsCorrecterService;
+        private readonly IUserService _userService;
 
         public DbController(
-            ICommunicationService communicationService,
             IXmlDbUpdateLogService xmlDbUpdateServce,
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
-            IXmlDbUpdateActionCorrecterService actionsCorrecterService)
+            IXmlDbUpdateActionCorrecterService actionsCorrecterService,
+            IUserService userService)
         {
-            _communicationService = communicationService;
             _xmlDbUpdateLogService = xmlDbUpdateServce;
             _appInfoRepository = appInfoRepository;
             _actionsCorrecterService = actionsCorrecterService;
             _httpContextProcessor = httpContextProcessor;
+            _userService = userService;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -74,8 +74,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                object message = null;
-                var needSendMessage = false;
                 if (model.Data.RecordActions)
                 {
                     if (model.OverrideRecordsFile)
@@ -87,25 +85,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
                     {
                         model.Data.SingleUserId = QPContext.CurrentUserId;
-                        needSendMessage = true;
-                        message = new
-                        {
-                            userId = QPContext.CurrentUserId,
-                            userName = QPContext.CurrentUserName
-                        };
                     }
                 }
                 else
                 {
-                    needSendMessage = true;
                     model.Data.SingleUserId = null;
                 }
 
                 model.Data = DbService.UpdateSettings(model.Data);
-                if (needSendMessage)
-                {
-                    await _communicationService.Send("singleusermode", message);
-                }
 
                 return Redirect("Settings", new { successfulActionCode = ActionCode.UpdateDbSettings });
             }
@@ -146,6 +133,38 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 Status = JSendStatus.Success,
                 Message = "Xml data successfully processed"
+            });
+        }
+
+        [HttpGet]
+        [ActionAuthorize(ActionCode.DbSettings)]
+        public ActionResult CheckDbMode()
+        {
+            var settings = DbService.ReadSettings();
+
+            object message = null;
+
+            if (settings.SingleUserId.HasValue)
+            {
+                string userName = null;
+
+                if (settings.SingleUserId.Value != QPContext.CurrentUserId)
+                {
+                    var user = _userService.ReadProfile(settings.SingleUserId.Value);
+                    userName = user.Name;
+                }
+
+                message = new
+                {
+                    userId = settings.SingleUserId.Value,
+                    userName
+                };
+            }
+
+            return JsonCamelCase(new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Data = message
             });
         }
     }
