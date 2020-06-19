@@ -178,7 +178,7 @@ namespace QP8.Integration.Tests
                 Global.Factory.Server.Host.Services,
                 false);
 
-            service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}batchupdate.xml"));
+            service.Process(Global.GetXml($"TestData{Path.DirectorySeparatorChar}batchupdate.xml"));
 
             Random = new Random();
             DbConnector = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };

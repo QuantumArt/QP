@@ -303,7 +303,6 @@ export class Backend {
     let message = '';
 
     if ($q.isNull(data)) {
-      $('form :input').prop('disabled', false);
       $elem.hide();
     } else {
       if (data === userId || data.userId === userId) {

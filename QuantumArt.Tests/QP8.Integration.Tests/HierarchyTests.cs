@@ -77,7 +77,7 @@ namespace QP8.Integration.Tests
                     false
                 );
 
-                service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}hierarchy.xml"));
+                service.Process(Global.GetXml($"TestData{Path.DirectorySeparatorChar}hierarchy.xml"));
 
                 RegionContentId = Global.GetContentId(DbConnector, RegionContentName);
                 ProductContentId = Global.GetContentId(DbConnector, ProductContentName);

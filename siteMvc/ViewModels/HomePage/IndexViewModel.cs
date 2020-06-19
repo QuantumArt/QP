@@ -1,3 +1,4 @@
+using System;
 using System.Dynamic;
 using Microsoft.AspNetCore.Html;
 using QP8.Infrastructure.Extensions;
@@ -25,6 +26,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
         public Db Data { get; }
 
         public string DbHash { get; }
+
+        public string Version => Environment.GetEnvironmentVariable("SERVICE_VERSION") ?? _options.Version;
 
         public string Title
         {

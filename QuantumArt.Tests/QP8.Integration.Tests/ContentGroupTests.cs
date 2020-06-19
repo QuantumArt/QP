@@ -49,7 +49,7 @@ namespace QP8.Integration.Tests
                 false
             );
 
-            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}group.xml")), "Create content group");
+            Assert.DoesNotThrow(() => service.Process(Global.GetXml($"TestData{Path.DirectorySeparatorChar}group.xml")), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             var id = cnn.GetRealScalarData(cnn.CreateDbCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
             Assert.That(id, Is.EqualTo(SpecificGroupId), "Specific id created");
@@ -82,7 +82,7 @@ namespace QP8.Integration.Tests
                 false
             );
 
-            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@$"TestData{Path.DirectorySeparatorChar}group.xml").Replace(GroupName, NewGroupName)), "Create content group");
+            Assert.DoesNotThrow(() => service.Process(Global.GetXml($"TestData{Path.DirectorySeparatorChar}group.xml").Replace(GroupName, NewGroupName)), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString, Global.ClientDbType) { ForceLocalCache = true };
             var id = cnn.GetRealScalarData(cnn.CreateDbCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));
             Assert.That(id, Is.Not.EqualTo(SpecificGroupId), "Generated id created");

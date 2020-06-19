@@ -14,20 +14,6 @@
         }
     };
 
-    Quantumart.QP8.BackendDocumentContext.prototype.setValues = function (editor, fieldValues, disableChangeTracking) {
-        var $form = editor._formElement;
-
-        $c.setAllVisualEditorValues($form, fieldValues);
-        $c.setAllSimpleTextBoxValues($form, fieldValues);
-        $c.setAllBooleanValues($form, fieldValues);
-        $c.setAllNumericBoxValues($form, fieldValues);
-        $c.setAllDateTimePickersValues($form, fieldValues);
-        $c.setAllRadioListValues($form, fieldValues);
-        $c.setAllAggregationListValues($form, fieldValues);
-        $c.setAllClassifierFieldValues($form, fieldValues, disableChangeTracking);
-        $c.setAllHighlightedTextAreaValues($form, fieldValues);
-    };
-
     Quantumart.QP8.BackendDocumentContext.prototype.getParentContentId = function (editor) {
         var $form = jQuery(editor._formElement);
         return (!this.typeResolverInputName) ? 0 : $form.find("[name='" + this.typeResolverInputName + "']").parent(".singleItemPicker").data("parent_entity_id");
@@ -167,7 +153,11 @@
 
     //#region Настройки виджетной системы
 
-    Quantumart.QP8.BackendDocumentContext.prototype.checkWidgetSystemFields = function (options, editor) {
+    Quantumart.QP8.BackendDocumentContext.prototype.checkWidgetSystemFields = function (options, editor, data) {
+        if (data && data.contentFieldName && data.contentFieldName !== "Discriminator") {
+          return;
+        }
+
         // проверяем, какие поля надо скрыть
         var itemType = this.getValue(editor, options.fields.discriminator);
         var isPageFieldValue = this.getBooleanValue(editor, options.fields.isPage);
@@ -176,15 +166,15 @@
         if (itemType > 0) {
             // выбран тип сущности
 
-            var isPage = $o.getArticleFieldValue(itemDefinitionContentId, options.system.isPageFieldName, itemType);
+            var isPage = $o.getArticleFieldValue(itemDefinitionContentId, options.system.isPageFieldName, itemType) === "1";
 
             this.toggleField(editor, options.fields.isPage, false, true);
 
-            if (isPage != null && isPageFieldValue != isPage) {
-                this.setValues(editor, [{ fieldName: options.fields.isPage, value: (isPage == true).toString() }]);
+            if (isPageFieldValue !== isPage) {
+                $c.setAllBooleanValues(editor._formElement, [{ fieldName: options.fields.isPage, value: isPage }]);
             }
 
-            if (isPage == true) {
+            if (isPage) {
                 // скрывается набор полей для виджетов
                 this.toggleFields(editor, options.widgetsFields, false);
                 // отображается набор полей для страниц
@@ -200,22 +190,15 @@
             var extensionId = $o.getArticleFieldValue(itemDefinitionContentId, options.system.preferredContentIdName, itemType);
             var currentExtensionIdValue = this.getValue(editor, options.fields.extensionId);
 
-            if (currentExtensionIdValue != extensionId) {
-                Sys.Debug.trace("У статьи неправильный контент-расширение. Ожидается " + extensionId + " на самом деле: " + currentExtensionIdValue);
-            } else {
-                // блокируется поле extensionId
-                $c.makeReadonlyClassifierFields(editor._formElement, [options.fields.extensionId]);
-            }
-
             if (extensionId > 0) {
-                if ((currentExtensionIdValue == 0 || editor._actionCode == ACTION_CODE_ADD_NEW_ARTICLE) && currentExtensionIdValue != extensionId) {
+                if (currentExtensionIdValue !== extensionId) {
                     // если не выставлено значение, то выставляется
-                    this.setValues(editor, [{ fieldName: options.fields.extensionId, value: extensionId }]);
-                    $c.makeReadonlyClassifierFields(editor._formElement, [options.fields.extensionId]);
+                    $c.setAllClassifierFieldValues(editor._formElement, [{ fieldName: options.fields.extensionId, value: extensionId }]);
                 }
+                $c.makeReadonlyClassifierFields(editor._formElement, [options.fields.extensionId]);
             } else {
                 // скрывается поле extensionId
-                this.toggleField(editor, options.fields.extensionId, false, true);
+                this.toggleField(editor, options.fields.extensionId, false, false);
             }
         }
     };

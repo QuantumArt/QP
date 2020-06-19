@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
@@ -110,12 +111,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public JsonResult AutosaveRestoringCheck([ModelBinder(typeof(JsonStringModelBinder<AutosavedEntityRecordHeader[]>))] AutosavedEntityRecordHeader[] recordHeaders)
+        public JsonResult AutosaveRestoringCheck([FromBody] AutoSaveData data)
         {
             return Json(new
             {
                 success = true,
-                approvedRecordIDs = EntityObjectService.AutosaveRestoringCheck(recordHeaders)
+                approvedRecordIDs = EntityObjectService.AutosaveRestoringCheck(data.RecordHeaders)
             });
         }
     }

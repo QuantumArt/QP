@@ -291,7 +291,7 @@ export class BackendActionPermissionTree extends BackendTreeBase {
 
   _convertToTreeViewItem(item) {
     let iconUrl = '';
-    iconUrl = item.IconUrl.left(7).toLowerCase() === 'http://'
+    iconUrl = $q.isFullUrl(item.IconUrl)
       ? item.IconUrl
       : window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + item.IconUrl;
 

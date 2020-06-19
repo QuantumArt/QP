@@ -788,7 +788,7 @@ export class BackendEntityTree extends BackendTreeBase {
 
   fillTreeViewItemFromEntityObject(dataItem, entity) {
     const icon = this._getIcon(entity);
-    const iconUrl = icon.left(7).toLowerCase() === 'http://' ? icon : window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon;
+    const iconUrl = $q.isFullUrl(icon) ? icon : window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon;
     const result = {
       Value: entity.Id,
       Text: entity.Alias,

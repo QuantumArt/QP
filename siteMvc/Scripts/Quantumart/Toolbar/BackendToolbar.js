@@ -396,7 +396,7 @@ export class BackendToolbar extends Observable {
   }
 
   _getToolbarButtonHtml(html, dataItem) {
-    const iconUrl = dataItem.Icon.left(7).toLowerCase() === 'http://'
+    const iconUrl = $q.isFullUrl(dataItem.Icon)
       ? dataItem.Icon
       : window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon;
 

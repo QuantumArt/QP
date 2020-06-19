@@ -5,7 +5,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string version = typeof(Startup).Assembly.GetCommitHash();
+    var version = Model.Version;
 }
 
 <head>
@@ -16,7 +16,7 @@
 
   <link rel="stylesheet" href="@Url.Content("~/Static/kendo/kendo.common.min.css")" />
   <link rel="stylesheet" href="@Url.Content("~/Static/kendo/kendo.silver.min.css")" />
-  <link rel="stylesheet" href="@Url.Content("~/Static/build/app.css?sha=" + version)" />
+  <link rel="stylesheet" href="@Url.Content("~/Static/build/app.css?version=" + version)" />
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")" />
 
   <script>
@@ -79,11 +79,11 @@
     </div>
   </div>
 
-  <script src="@Url.Content("~/Scripts/build/vendors.js?sha=" + version)"></script>
+  <script src="@Url.Content("~/Scripts/build/vendors.js?version=" + version)"></script>
   <script src="@Url.Content("~/Scripts/kendo/kendo.all.min.js")"></script>
   <script src="@Url.Content("~/Home/Constants")"></script>
   <script src="@Url.Content("~/Home/Lang")"></script>
-  <script src="@Url.Content("~/Scripts/build/app.js?sha=" + version)"></script>
+  <script src="@Url.Content("~/Scripts/build/app.js?version=" + version)"></script>
 
   <script type="text/javascript">
     CKEDITOR.timestamp = '@DateTime.Now.Ticks';

@@ -190,14 +190,14 @@ export class EntityEditorAutoSaver extends Observable {
     const dfr = $.Deferred();
     if ($q.isArray(stateRecords) && !$q.isNullOrEmpty(stateRecords)) {
       const requestData = {
-        recordHeaders: JSON.stringify(stateRecords.map(rh => ({
+        RecordHeaders: stateRecords.map(rh => ({
           RecordId: rh.recordId,
           ActionCode: rh.actionCode,
           EntityTypeCode: rh.entityTypeCode,
           EntityId: rh.entityId,
           ParentEntityId: rh.parentEntityId,
           ModifiedTicks: rh.modifiedDateTime
-        })))
+        }))
       };
 
       $q.getJsonFromUrl(
