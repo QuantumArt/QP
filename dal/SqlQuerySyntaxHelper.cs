@@ -17,7 +17,7 @@ namespace Quantumart.QP8.DAL
             switch (databaseType)
             {
                 case DatabaseType.SqlServer:
-                    return $"CAST({columnName} as nvarchar)";
+                    return $"CAST({columnName} as nvarchar(255))";
                 case DatabaseType.Postgres:
                     return $"{columnName.ToLower()}::varchar";
                 default:
