@@ -295,9 +295,9 @@ export class BackendContextMenu extends Observable {
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
       .catIf(` style="background-image: url('${window.THEME_IMAGE_FOLDER_URL_SMALL_ICONS}${dataItem.Icon}')"`,
-        !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() !== 'http://')
+        !$q.isNullOrWhiteSpace(dataItem.Icon) && !$q.isFullUrl(dataItem.Icon))
       .catIf(` style="background-image: url('${dataItem.Icon}')"`,
-        !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() === 'http://')
+        !$q.isNullOrWhiteSpace(dataItem.Icon) && $q.isFullUrl(dataItem.Icon))
       .cat('>')
       .cat(`<img src="${window.COMMON_IMAGE_FOLDER_URL_ROOT}0.gif" width="16px" height="16px" />`)
       .cat('</span>\n')
