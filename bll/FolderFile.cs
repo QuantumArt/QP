@@ -62,6 +62,7 @@ namespace Quantumart.QP8.BLL
             { ".png", FolderFileType.Image },
             { ".bmp", FolderFileType.Image },
             { ".svg", FolderFileType.Image },
+            { ".webp", FolderFileType.Image},
 
             { ".css", FolderFileType.CSS },
 

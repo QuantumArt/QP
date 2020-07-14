@@ -19,6 +19,7 @@ namespace Quantumart.QP8.BLL
         public const string PNG_EXTENSION = "PNG";
         public const string GIF_EXTENSION = "GIF";
         public const string SVG_EXTENSION = "SVG";
+        public const string WEBP_EXTENSION = "WEBP";
 
         public const short MinImageSize = 1;
         public const short MaxImageSize = 9999;
@@ -208,6 +209,11 @@ namespace Quantumart.QP8.BLL
         {
             if (File.Exists(baseImagePath))
             {
+                if (imageValue.ToUpper().EndsWith(WEBP_EXTENSION))
+                {
+                    throw new FormatException("Image format not supported");
+                }
+
                 if (!imageValue.ToUpper().EndsWith(SVG_EXTENSION))
                 {
                     using (var input = new Bitmap(baseImagePath))
