@@ -12,9 +12,9 @@
     ## QP configuration directory
     [string] $configDir = 'C:\QA',
     ## QP directory for temporary files
-    [string] $tempDir = 'С:\Temp',
+    [string] $tempDir = 'C:\Temp',
     ## QP directory for logs
-    [string] $logDir = 'С:\Logs',
+    [string] $logDir = 'C:\Logs',
     ## Use (or not) windows authentication
     [bool] $useWinAuth = $false,
     ## Use (or not) article scheduler
@@ -95,8 +95,10 @@ if (!$configServiceUrl -and !$configServiceToken -and !$configFile) {
     }
 
     Copy-Item "$qaPath\*" -Destination $configDir -Force
-    Rename-Item -Path (Join-Path $configDir "sample_config.xml") -NewName "config.xml"
     $qaConfig = Join-Path $configDir "config.xml"
+    if (-not(Test-Path($qaConfig))) {
+        Rename-Item -Path (Join-Path $configDir "sample_config.xml") -NewName "config.xml"
+    }
     Set-ItemProperty $qaConfig -name IsReadOnly -value $false
     Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
 
@@ -141,7 +143,7 @@ $nLogPath = Join-Path $qp8Path "NLog.config"
 $nlog = [xml](Get-Content -Path $nLogPath)
 
 $nlog.nlog.internalLogFile = [string](Join-Path $logDir "internal-log.txt")
-($nlog.nlog.variable | Where-Object {$_.name -eq 'logDirectory'}).value = [string](Join-Path $logDir $name)
+($nlog.nlog.variable | Where-Object {$_.name -eq 'defaultLogDir'}).value = [string](Join-Path $logDir $name)
 ($nlog.nlog.rules.logger | Where-Object {$_.name -eq 'Quantumart.QP8.BLL.Services.MultistepActions.Import*'}).writeTo = "csvImport"
 ($nlog.nlog.rules.logger | Where-Object {$_.name -eq '*'}).writeTo = "default"
 
