@@ -15,6 +15,8 @@
     [string] $tempDir = 'C:\Temp',
     ## QP directory for logs
     [string] $logDir = 'C:\Logs',
+    ## Make this QP instance global or not
+    [bool] $makeGlobal = $true,
     ## Use (or not) windows authentication
     [bool] $useWinAuth = $false,
     ## Use (or not) article scheduler
@@ -35,6 +37,29 @@ function Give-Access ([String] $name, [String] $path, [String] $permission)
     Write-Host "Done"
 }
 
+function Register-Global([string] $configPath) {
+    $path1 = "hklm:\Software\Quantum Art\Q-Publishing"
+    $path2 = "hklm:\Software\Wow6432Node\Quantum Art\Q-Publishing"
+    if (-not(Test-Path $path1)) { New-Item -Path $path1 -Force | Out-Null }
+    if (-not(Test-Path $path2)) { New-Item -Path $path2 -Force | Out-Null }
+
+    $prop1 = Get-ItemProperty -path $path1 -name "Configuration file" -ErrorAction SilentlyContinue
+    $prop2 = Get-ItemProperty -path $path2 -name "Configuration file" -ErrorAction SilentlyContinue
+    $prop = if ($prop1) { $prop1 } else { $prop2 }
+    $oldConfigPath = $prop.'Configuration file'
+    $oldConfigPath
+    Test-Path $oldConfigPath
+    Test-Path $configPath
+    if ($oldConfigPath -and (Test-Path $oldConfigPath) -and -not(Test-Path $configPath)) {
+        Write-Host "Copying old configuration file $oldConfigPath..."
+        Copy-Item $oldConfigPath $configPath
+        Write-Host "Done"
+    }
+
+    Set-ItemProperty -path $path1 -name "Configuration file" -value $configPath
+    Set-ItemProperty -path $path2 -name "Configuration file" -value $configPath
+}
+
 if (-not(Get-Module -Name WebAdministration)) {
     Import-Module WebAdministration
 }
@@ -48,6 +73,12 @@ if ($b) { throw "Binding for port $port already exists"}
 $connected = $false
 Try { $connected = (New-Object System.Net.Sockets.TcpClient('localhost', $port)).Connected } Catch { }
 If ($connected) { throw "$port is busy"}
+
+$requiredRuntime = "3.1.[456]"
+$runtimes = (Get-ChildItem (Get-Command dotnet).Path.Replace('dotnet.exe', 'shared\Microsoft.NETCore.App')).Name
+if (-not([bool]($runtimes -match $requiredRuntime))) {
+    throw ".Net Core Runtime (min 3.1.4) is not found"
+}
 
 $p = Get-Item "IIS:\AppPools\$name" -ErrorAction SilentlyContinue
 
@@ -96,11 +127,17 @@ if (!$configServiceUrl -and !$configServiceToken -and !$configFile) {
 
     Copy-Item "$qaPath\*" -Destination $configDir -Force
     $qaConfig = Join-Path $configDir "config.xml"
+
+    if ($makeGlobal) {
+        Register-Global $qaConfig
+    }
+
     if (-not(Test-Path($qaConfig))) {
         Rename-Item -Path (Join-Path $configDir "sample_config.xml") -NewName "config.xml"
     }
     Set-ItemProperty $qaConfig -name IsReadOnly -value $false
     Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
+
 
     $sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.7.1 Tools"
     $sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
@@ -184,9 +221,7 @@ if ($useWinAuth) {
 }
 Write-Host "Done"
 
-Write-Host "Giving $name pool user access to $siteRoot..."
 if ($siteRoot -and (Test-Path $siteRoot))
 {
     Give-Access "IIS AppPool\$name" $siteRoot 'Modify'
 }
-Write-Host "Done"
