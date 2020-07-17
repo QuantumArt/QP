@@ -45,11 +45,12 @@ $makeGlobal = Read-YesOrNo "Install globally"
 $useWinAuth = Read-YesOrNo "Use windows authentication"
 $enableArticleScheduler = Read-YesOrNo "Enable article scheduler"
 $enableCommonScheduler = Read-YesOrNo "Enable common scheduler"
+$cleanOld = Read-YesOrNo "Clean old installation"
 
 $currentPath = Split-Path -parent $MyInvocation.MyCommand.Definition
 $scriptName = Join-Path $currentPath "InstallQP8.ps1"
 $expr = "$scriptName -name $name -port $port -configUrl '$configUrl' -configToken '$configToken' -configDir '$configDir' -tempDir '$tempDir' -logDir '$logDir' " +
-"-makeGlobal `$$makeGlobal -useWinAuth `$$useWinAuth -enableArticleScheduler `$$enableArticleScheduler -enableCommonScheduler `$$enableCommonScheduler "
+"-makeGlobal `$$makeGlobal -useWinAuth `$$useWinAuth -enableArticleScheduler `$$enableArticleScheduler -enableCommonScheduler `$$enableCommonScheduler -cleanOld `$$cleanOld"
 Write-Host "Invoking script..."
 Write-Host $expr
 Invoke-Expression $expr
