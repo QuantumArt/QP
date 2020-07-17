@@ -1,1 +1,1 @@
-powershell.exe -noexit "%~dp0InstallQP8.ps1"
+powershell.exe -noexit "%~dp0\Deploy\InstallQP8.ps1"

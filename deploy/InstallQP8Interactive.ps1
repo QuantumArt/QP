@@ -48,7 +48,11 @@ $enableCommonScheduler = Read-YesOrNo "Enable common scheduler"
 
 $currentPath = Split-Path -parent $MyInvocation.MyCommand.Definition
 $scriptName = Join-Path $currentPath "InstallQP8.ps1"
-"$scriptName -name $name -port $port -configUrl '$configUrl' -configToken '$configToken' -configDir '$configDir' -tempDir '$tempDir' -logDir '$logDir' ``
--makeGlobal `$$makeGlobal -useWinAuth `$$useWinAuth -enableArticleScheduler `$$enableArticleScheduler -enableCommonScheduler `$$enableCommonScheduler "
+$expr = "$scriptName -name $name -port $port -configUrl '$configUrl' -configToken '$configToken' -configDir '$configDir' -tempDir '$tempDir' -logDir '$logDir' " +
+"-makeGlobal `$$makeGlobal -useWinAuth `$$useWinAuth -enableArticleScheduler `$$enableArticleScheduler -enableCommonScheduler `$$enableCommonScheduler "
+Write-Host "Invoking script..."
+Write-Host $expr
+Invoke-Expression $expr
+Write-Host "Done"
 
 
