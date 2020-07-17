@@ -1,0 +1,1 @@
+powershell.exe -noexit "%~dp0\Deploy\InstallQP8Interactive.ps1"
