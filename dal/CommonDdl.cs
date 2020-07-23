@@ -204,7 +204,8 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var tableName = "content_" + id;
             var asyncTableName = tableName + "_async";
-            var sql = $@"drop table if exists {DbSchemaName(dbType)}.{{0}}";
+            var sql = (dbType == DatabaseType.Postgres) ? $@"drop table if exists {DbSchemaName(dbType)}.{{0}}" :
+                $@"exec qp_drop_existing '{DbSchemaName(dbType)}.{{0}}', 'IsUserTable'";
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
