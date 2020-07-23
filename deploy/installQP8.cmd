@@ -1,1 +1,0 @@
-powershell.exe -noexit "%~dp0InstallQP8.ps1"

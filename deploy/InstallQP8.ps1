@@ -1,10 +1,31 @@
-﻿# restart as admin
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{
-    $arguments = "-noexit & '" + $myinvocation.mycommand.definition + "'"
-    Start-Process powershell -Verb runAs -ArgumentList $arguments
-    Break
-}
+﻿param(
+    ## QP site name
+    [string] $name = 'QP8',
+    ## QP site port
+    [int] $port = 89,
+    ## existing QP configuration  file
+    [string] $configFile = '',
+    ## QP configuration service URL
+    [string] $configServiceUrl = '',
+    ## QP configuration service token
+    [string] $configServiceToken = '',
+    ## QP configuration directory
+    [string] $configDir = 'C:\QA',
+    ## QP directory for temporary files
+    [string] $tempDir = 'C:\Temp',
+    ## QP directory for logs
+    [string] $logDir = 'C:\Logs',
+    ## Make this QP instance global or not
+    [bool] $makeGlobal = $true,
+    ## Use (or not) windows authentication
+    [bool] $useWinAuth = $false,
+    ## Use (or not) article scheduler
+    [bool] $enableArticleScheduler = $false,
+    ## Use (or not) common scheduler
+    [bool] $enableCommonScheduler = $false,
+    ## Clean old installation
+    [bool] $cleanOld = $true
+)
 
 function Give-Access ([String] $name, [String] $path, [String] $permission)
 {
@@ -18,122 +39,134 @@ function Give-Access ([String] $name, [String] $path, [String] $permission)
     Write-Host "Done"
 }
 
-Import-Module WebAdministration
+function Register-Global([string] $configPath) {
+    $path1 = "hklm:\Software\Quantum Art\Q-Publishing"
+    $path2 = "hklm:\Software\Wow6432Node\Quantum Art\Q-Publishing"
+    if (-not(Test-Path $path1)) { New-Item -Path $path1 -Force | Out-Null }
+    if (-not(Test-Path $path2)) { New-Item -Path $path2 -Force | Out-Null }
 
-$defaultName = "QP8"
-$name = Read-Host "Please enter site name to install (default - $defaultName)"
-if ([string]::IsNullOrEmpty($name))
-{
-    $name = $defaultName
+    $prop1 = Get-ItemProperty -path $path1 -name "Configuration file" -ErrorAction SilentlyContinue
+    $prop2 = Get-ItemProperty -path $path2 -name "Configuration file" -ErrorAction SilentlyContinue
+    $prop = if ($prop1) { $prop1 } else { $prop2 }
+    $oldConfigPath = $prop.'Configuration file'
+    $oldConfigPath
+    Test-Path $oldConfigPath
+    Test-Path $configPath
+    if ($oldConfigPath -and (Test-Path $oldConfigPath) -and -not(Test-Path $configPath)) {
+        Write-Host "Copying old configuration file $oldConfigPath..."
+        Copy-Item $oldConfigPath $configPath
+        Write-Host "Done"
+    }
+
+    Set-ItemProperty -path $path1 -name "Configuration file" -value $configPath
+    Set-ItemProperty -path $path2 -name "Configuration file" -value $configPath
 }
 
-$s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
-if ($s) { throw "Site $name already exists"}
-
-$defaultPort = "90"
-$port = Read-Host "Please enter port for site (default - $defaultPort)"
-$intPort = 0;
-if ([string]::IsNullOrEmpty($port) -or -not([int32]::TryParse($port, [ref] $intPort)))
+function Delete-Site([string] $name)
 {
-    Write-Host "Used default value for port"
-    $port = $defaultPort
+    $app = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
+
+    if ($app) {
+        $path =  $app.PhysicalPath
+        $poolName = $app.applicationPool
+
+        if ($poolName) {
+            Stop-AppPool $poolName | Out-Null
+            Remove-Item "IIS:\AppPools\$poolName" -Recurse -Force
+            Write-Host "pool $poolName deleted"
+        }
+
+        Remove-Item "IIS:\sites\$name" -Recurse -Force
+        Write-Host "Site $name deleted"
+
+        if (Test-Path $path){
+            Remove-Item $path -Recurse -Force
+            Write-Host "files of site $name deleted"
+        }
+    }
+}
+
+function Stop-AppPool([string] $name)
+{
+    $s = Get-Item "IIS:\AppPools\$name" -ErrorAction SilentlyContinue
+
+    if ($s -and $s.State -ne "Stopped")
+    {
+        Write-Verbose "Stopping AppPool $name..." -Verbose
+        $s.Stop()
+        $endTime = $(get-date).AddMinutes('1')
+        while($(get-date) -lt $endtime)
+        {
+            Start-Sleep -Seconds 1
+            if ($s.State -ne "Stopping")
+            {
+                if ($s.State -eq "Stopped") {
+                    Write-Verbose "Stopped" -Verbose
+                }
+                break
+            }
+        }
+    }
+
+    return $s.State -eq "Stopped"
+}
+
+
+if (-not(Get-Module -Name WebAdministration)) {
+    Import-Module WebAdministration
+}
+
+if ($cleanOld) {
+    Delete-Site $name
+}
+else {
+    $s = Get-Item "IIS:\sites\$name" -ErrorAction SilentlyContinue
+    if ($s) { throw "Site $name already exists"}
 }
 
 $b = Get-WebBinding -Port $port
 if ($b) { throw "Binding for port $port already exists"}
 
+$connected = $false
+Try { $connected = (New-Object System.Net.Sockets.TcpClient('localhost', $port)).Connected } Catch { }
+If ($connected) { throw "$port is busy"}
+
+$requiredRuntime = "3.1.[456]"
+$runtimes = (Get-ChildItem (Get-Command dotnet).Path.Replace('dotnet.exe', 'shared\Microsoft.NETCore.App')).Name
+if (-not([bool]($runtimes -match $requiredRuntime))) {
+    throw ".Net Core Runtime (min 3.1.4) is not found"
+}
+
 $p = Get-Item "IIS:\AppPools\$name" -ErrorAction SilentlyContinue
 
 if (!$p) {
 
-    Write-Host "Creating application pool..."
+    Write-Host "Creating application pool $name..."
 
     $p = New-Item –Path "IIS:\AppPools\$name"
-    $p.startMode = "AlwaysRunning"
-    $p.managedRuntimeVersion = "v4.0"
-    Set-Item –Path "IIS:\AppPools\$name" $p
+    $p | Set-ItemProperty -Name managedRuntimeVersion -Value "v4.0"
+    $p | Set-ItemProperty -Name startMode -Value "AlwaysRunning"
+    $p | Set-ItemProperty -Name processModel.idleTimeout -value ( [TimeSpan]::FromMinutes(0))
 
     Write-Host "Done"
 }
 
-$defaultcurrentPath = "E:\Git projects\QP"
-
-$BackendZipPath = Join-Path $defaultcurrentPath "Backend.zip"
-$WinlogonZipPath = Join-Path $defaultcurrentPath "WinLogon.zip"
-$pluginsZipPath = Join-Path $defaultcurrentPath "plugins.zip"
-$sitesZipPath = Join-Path $defaultcurrentPath "sites.zip"
-$qaZipPath = Join-Path $defaultcurrentPath "qa.zip"
-
-if (Test-Path($BackendZipPath))
-{
-    $def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
-    if ($def)
-    {
-        $siteRoot = $def.PhysicalPath -replace "%SystemDrive%",$env:SystemDrive
-        $currentPath = Join-Path $siteRoot $name
-    }
-    else
-    {
-        $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
-        if ([string]::IsNullOrEmpty($currentPath)) { $currentPath = $defaultcurrentPath }
-    }
-
-    if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory }
-}
-
-else
-{
-    $currentPath = $defaultcurrentPath
-}
-
-$rootPath = Join-Path $currentPath "sites"
-$pluginsPath = Join-Path $currentPath "plugins"
-$BackendPath = Join-Path $currentPath "siteMvc"
+$currentPath = Split-Path -parent $MyInvocation.MyCommand.Definition
+$sourcePath = Split-Path -parent $currentPath
+$backendPath = Join-Path $sourcePath "backend"
 $qaPath = Join-Path $currentPath "QA"
-$WinlogonPath = Join-Path $currentPath "WinLogonMvc"
-$contentPath = Join-Path $BackendPath "Content"
-$scriptsPath = Join-Path $BackendPath "Scripts"
 
-
-if (Test-Path($BackendZipPath))
-{
-    Write-Host "Zip files found. Unpacking..."
-    if (-not(Test-Path($BackendPath))) { New-Item $BackendPath -ItemType Directory}
-    if (-not(Test-Path($WinlogonPath))) { New-Item $WinlogonPath -ItemType Directory}
-    if (-not(Test-Path($pluginsPath))) { New-Item $pluginsPath -ItemType Directory}
-    if (-not(Test-Path($rootPath))) { New-Item $rootPath -ItemType Directory}
-    if (-not(Test-Path($qaPath))) { New-Item $qaPath -ItemType Directory}
-
-    Expand-Archive -LiteralPath $BackendZipPath -DestinationPath $BackendPath
-    Expand-Archive -LiteralPath $WinlogonZipPath -DestinationPath $WinlogonPath
-    if ((Test-Path($pluginsZipPath))) { Expand-Archive -LiteralPath $pluginsZipPath -DestinationPath $pluginsPath }
-    Expand-Archive -LiteralPath $sitesZipPath -DestinationPath  $rootPath
-    Expand-Archive -LiteralPath $qaZipPath -DestinationPath  $qaPath
+$def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
+if (!$def) {
+    throw "Default Web site not found"
 }
+$siteRoot = $def.PhysicalPath -replace "%SystemDrive%", $env:SystemDrive
+$qp8Path = Join-Path $siteRoot $name
 
-Give-Access "IIS AppPool\$name" $currentPath 'ReadAndExecute'
-
-Write-Host "Creating site, applications and virtual directories..."
-
-$s = New-Item "IIS:\sites\$name" -bindings @{protocol="http";bindingInformation="*:${port}:"} -physicalPath $rootPath -type Site
-$s | Set-ItemProperty -Name applicationPool -Value $name
-
-New-Item "IIS:\sites\$name\Backend" -physicalPath $backendPath -type Application
-Set-ItemProperty -Path "IIS:\sites\$name\Backend" -Name applicationPool -Value $name
-Set-ItemProperty -Path "IIS:\sites\$name\Backend" -Name serviceAutoStartEnabled -Value $true
-
-New-Item "IIS:\sites\$name\Backend\WinLogon" -physicalPath $winlogonPath -type Application
-Set-ItemProperty -Path "IIS:\sites\$name\Backend\WinLogon"  -Name applicationPool -Value $name
-Set-ItemProperty -Path "IIS:\sites\$name\Backend\WinLogon"  -Name serviceAutoStartEnabled -Value $true
-
-New-Item "IIS:\sites\$name\Backend\WinLogon\Content" -physicalPath $contentPath -type VirtualDirectory
-
-New-Item "IIS:\sites\$name\plugins" -physicalPath $pluginsPath -type VirtualDirectory
-
-New-Item "IIS:\sites\$name\Backend\WinLogon\Scripts" -physicalPath $scriptsPath -type VirtualDirectory
-
+Write-Host "Creating site folder for $name..."
+New-Item -Path $qp8Path -ItemType Directory -Force | Out-Null
+Copy-Item "$backendPath\*" -Destination $qp8Path -Force -Recurse
 Write-Host "Done"
-
 
 Write-Host "Unlocking configuration..."
 Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/anonymousAuthentication""";
@@ -141,95 +174,111 @@ Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /sectio
 Write-Host "Done"
 
 
-$defaultConfigDir = "C:\QA"
-$configDir = Read-Host "Please enter configuration directory (default - $defaultConfigDir)"
-if ([string]::IsNullOrEmpty($configDir))
-{
-    $configDir = $defaultConfigDir
+if (!$configServiceUrl -and !$configServiceToken -and !$configFile) {
+    Write-Host "Creating configuration directory..."
+
+    if (-not(Test-Path $configDir -PathType Container))
+    {
+        New-Item $configDir -ItemType Directory | Out-Null
+    }
+
+    Copy-Item "$qaPath\*" -Destination $configDir -Force
+    $qaConfig = Join-Path $configDir "config.xml"
+
+    if ($makeGlobal) {
+        Register-Global $qaConfig
+    }
+
+    if (-not(Test-Path($qaConfig))) {
+        Rename-Item -Path (Join-Path $configDir "sample_config.xml") -NewName "config.xml"
+    }
+    Set-ItemProperty $qaConfig -name IsReadOnly -value $false
+    Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
+
+
+    $sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.7.1 Tools"
+    $sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+    $sdk3path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools"
+
+    if (Test-Path $sdk1path -PathType Container)
+    {
+        Copy-Item "$sdk1path\sqlmetal.*" $configDir
+    }
+    elseif (Test-Path $sdk2path -PathType Container)
+    {
+        Copy-Item "$sdk2path\sqlmetal.*" $configDir
+    }
+    elseif (Test-Path $sdk3path -PathType Container)
+    {
+        Copy-Item "$sdk3path\sqlmetal.*" $configDir
+    }
+    Write-Host "Done"
 }
 
-Write-Host "Creating configuration directory..."
-
-$tempDir = "C:\temp"
-$logDir = "C:\logs"
-$configPath = Join-Path $configDir "config.xml"
-$psPath = Join-Path $configDir "AddToRegistry.ps1"
-$sourceConfigPath = Join-Path $qaPath "sample_config.xml"
-$sourcePsPath = Join-Path $qaPath "AddToRegistry.ps1"
-
-if (-not(Test-Path $configDir -PathType Container))
-{
-    New-Item $configDir -ItemType Directory
-}
-
-if (-not(Test-Path $configPath -PathType Leaf))
-{
-    Copy-Item $sourceConfigPath $configPath
-
-    Invoke-Expression "attrib -r ""$configPath"""
-}
-
-if (-not(Test-Path $psPath -PathType Leaf))
-{
-    Copy-Item $sourcePsPath $psPath
-    Invoke-Expression "attrib -r ""$psPath"""
-}
-
-Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
-
-$sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6 Tools"
-$sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
-$sdk3path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools"
-
-if (Test-Path $sdk1path -PathType Container)
-{
-    Copy-Item "$sdk1path\sqlmetal.*" $configDir
-}
-elseif (Test-Path $sdk2path -PathType Container)
-{
-    Copy-Item "$sdk2path\sqlmetal.*" $configDir
-}
-elseif (Test-Path $sdk3path -PathType Container)
-{
-    Copy-Item "$sdk3path\sqlmetal.*" $configDir
-}
-
-Write-Host "Done"
-
-
-$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule('Everyone', 'Modify', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
 
 if (-not(Test-Path $tempDir -PathType Container))
 {
-    Write-Host "Creating temporary directory..."
-
-    New-Item $tempDir -ItemType Directory
-
+    Write-Host "Creating temporary directory $tempDir..."
+    New-Item $tempDir -ItemType Directory | Out-Null
     Give-Access 'Everyone' $tempDir 'Modify'
+    Write-Host "Done"
 }
-
 
 if (-not(Test-Path $logDir -PathType Container))
 {
-    Write-Host "Creating directory for logs..."
-
+    Write-Host "Creating directory for logs $logDir..."
     New-Item $logDir -ItemType Directory
-
     Give-Access 'Everyone' $logDir 'Modify'
+    Write-Host "Done"
 }
 
 
-Import-Module WebAdministration
+$nLogPath = Join-Path $qp8Path "NLog.config"
+$nlog = [xml](Get-Content -Path $nLogPath)
 
-$siteRoot = "c:\inetpub\wwwroot"
-$def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
-if ($def) { $siteRoot = $def.PhysicalPath -replace "%SystemDrive%",$env:SystemDrive }
+$nlog.nlog.internalLogFile = [string](Join-Path $logDir "internal-log.txt")
+($nlog.nlog.variable | Where-Object {$_.name -eq 'defaultLogDir'}).value = [string](Join-Path $logDir $name)
+($nlog.nlog.rules.logger | Where-Object {$_.name -eq 'Quantumart.QP8.BLL.Services.MultistepActions.Import*'}).writeTo = "csvImport"
+($nlog.nlog.rules.logger | Where-Object {$_.name -eq '*'}).writeTo = "default"
+
+Set-ItemProperty $nLogPath -name IsReadOnly -value $false
+$nlog.Save($nLogPath)
 
 
-if (Test-Path $siteRoot)
+$appSettingsPath = Join-Path $qp8Path "appsettings.json"
+$json = Get-Content -Path $appSettingsPath | ConvertFrom-Json
+$properties = $json.Properties
+
+if ($configServiceUrl -and $configServiceToken) {
+    $properties | Add-Member NoteProperty "QpConfigUrl" $configServiceUrl -Force
+    $properties | Add-Member NoteProperty "QpConfigToken" $configServiceToken -Force
+}
+else {
+    $properties | Add-Member NoteProperty "QpConfigPath" $qaConfig -Force
+}
+
+if ($enableArticleScheduler) {
+    $properties | Add-Member NoteProperty "EnableArticleScheduler" $true -Force
+}
+
+if ($enableCommonScheduler) {
+    $properties | Add-Member NoteProperty "EnableCommonScheduler" $true -Force
+}
+
+Set-ItemProperty $appSettingsPath -name IsReadOnly -value $false
+$json | ConvertTo-Json | Out-File $appSettingsPath
+
+
+Write-Host "Creating site $name..."
+$s = New-Item "IIS:\sites\$name" -bindings @{protocol="http";bindingInformation="*:${port}:"} -physicalPath $qp8Path
+$s | Set-ItemProperty -Name applicationPool -Value $name
+$s | Set-ItemProperty -Name applicationDefaults.preloadEnabled -Value True
+if ($useWinAuth) {
+    Set-WebConfigurationProperty -Filter "/system.webServer/security/authentication/windowsAuthentication" -Name Enabled -Value $false -PSPath "IIS:\Sites\$name"
+}
+Write-Host "Done"
+
+if ($siteRoot -and (Test-Path $siteRoot))
 {
     Give-Access "IIS AppPool\$name" $siteRoot 'Modify'
 }
-
-
-
