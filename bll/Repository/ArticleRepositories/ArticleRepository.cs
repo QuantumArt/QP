@@ -880,7 +880,9 @@ cil.locked_by,
                 var contentId = fieldValuesToTest[0].Article.Content.Id;
                 var filters = fieldValuesToTest.Select(GetSqlExpression).Union(Enumerable.Repeat("ARCHIVE = 0", 1));
                 var condition = SqlFilterComposer.Compose(filters);
-                var parameters = fieldValuesToTest.Select(n => new FieldParameter
+                var parameters = fieldValuesToTest
+                    .Where(n => !string.IsNullOrEmpty(n.Value))
+                    .Select(n => new FieldParameter
                 {
                     Name = n.Field.FormName,
                     DbType = n.Field.Type.DbType,
