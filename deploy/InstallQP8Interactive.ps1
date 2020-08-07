@@ -41,7 +41,12 @@ if (!$configFile) {
 
 $tempDir = Read-ValueOrDefault  "Please enter directory for temp files" "C:\Temp"
 $logDir = Read-ValueOrDefault  "Please enter directory for log files" "C:\Logs"
-$makeGlobal = Read-YesOrNo "Install globally"
+if ($configUrl) {
+    $makeGlobal = $false
+}
+else {
+    $makeGlobal = Read-YesOrNo "Install globally"
+}
 $useWinAuth = Read-YesOrNo "Use windows authentication"
 $enableArticleScheduler = Read-YesOrNo "Enable article scheduler"
 $enableCommonScheduler = Read-YesOrNo "Enable common scheduler"
@@ -49,7 +54,7 @@ $cleanOld = Read-YesOrNo "Clean old installation"
 
 $currentPath = Split-Path -parent $MyInvocation.MyCommand.Definition
 $scriptName = Join-Path $currentPath "InstallQP8.ps1"
-$expr = "$scriptName -name $name -port $port -configUrl '$configUrl' -configToken '$configToken' -configDir '$configDir' -tempDir '$tempDir' -logDir '$logDir' " +
+$expr = "$scriptName -name $name -port $port -configFile '$configFile' -configUrl '$configUrl' -configToken '$configToken' -configDir '$configDir' -tempDir '$tempDir' -logDir '$logDir' " +
 "-makeGlobal `$$makeGlobal -useWinAuth `$$useWinAuth -enableArticleScheduler `$$enableArticleScheduler -enableCommonScheduler `$$enableCommonScheduler -cleanOld `$$cleanOld"
 Write-Host "Invoking script..."
 Write-Host $expr

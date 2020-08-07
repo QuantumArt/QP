@@ -173,46 +173,51 @@ Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /sectio
 Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/windowsAuthentication""";
 Write-Host "Done"
 
-
-if (!$configServiceUrl -and !$configServiceToken -and !$configFile) {
-    Write-Host "Creating configuration directory..."
-
-    if (-not(Test-Path $configDir -PathType Container))
-    {
-        New-Item $configDir -ItemType Directory | Out-Null
+if (!$configServiceUrl -and !$configServiceToken) {
+    if ($configFile -and (Test-Path $configFile)) {
+        $qaConfig = $configFile
     }
+    else {
 
-    Copy-Item "$qaPath\*" -Destination $configDir -Force
-    $qaConfig = Join-Path $configDir "config.xml"
+        Write-Host "Setting up configuration directory $configDir..."
 
-    if ($makeGlobal) {
-        Register-Global $qaConfig
+        if (-not(Test-Path $configDir -PathType Container))
+        {
+            New-Item $configDir -ItemType Directory | Out-Null
+        }
+
+        Copy-Item "$qaPath\*" -Destination $configDir -Force
+        $qaConfig = Join-Path $configDir "config.xml"
+
+        if ($makeGlobal) {
+            Register-Global $qaConfig
+        }
+
+        if (-not(Test-Path($qaConfig))) {
+            Rename-Item -Path (Join-Path $configDir "sample_config.xml") -NewName "config.xml"
+        }
+        Set-ItemProperty $qaConfig -name IsReadOnly -value $false
+        Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
+
+
+        $sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.7.1 Tools"
+        $sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+        $sdk3path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools"
+
+        if (Test-Path $sdk1path -PathType Container)
+        {
+            Copy-Item "$sdk1path\sqlmetal.*" $configDir
+        }
+        elseif (Test-Path $sdk2path -PathType Container)
+        {
+            Copy-Item "$sdk2path\sqlmetal.*" $configDir
+        }
+        elseif (Test-Path $sdk3path -PathType Container)
+        {
+            Copy-Item "$sdk3path\sqlmetal.*" $configDir
+        }
+        Write-Host "Done"
     }
-
-    if (-not(Test-Path($qaConfig))) {
-        Rename-Item -Path (Join-Path $configDir "sample_config.xml") -NewName "config.xml"
-    }
-    Set-ItemProperty $qaConfig -name IsReadOnly -value $false
-    Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
-
-
-    $sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.7.1 Tools"
-    $sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
-    $sdk3path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools"
-
-    if (Test-Path $sdk1path -PathType Container)
-    {
-        Copy-Item "$sdk1path\sqlmetal.*" $configDir
-    }
-    elseif (Test-Path $sdk2path -PathType Container)
-    {
-        Copy-Item "$sdk2path\sqlmetal.*" $configDir
-    }
-    elseif (Test-Path $sdk3path -PathType Container)
-    {
-        Copy-Item "$sdk3path\sqlmetal.*" $configDir
-    }
-    Write-Host "Done"
 }
 
 
