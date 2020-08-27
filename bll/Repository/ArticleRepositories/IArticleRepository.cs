@@ -16,5 +16,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         List<Article> GetByIds(int[] ids);
 
         bool IsExist(int id);
+
+        int GetContentId(int id);
     }
 }

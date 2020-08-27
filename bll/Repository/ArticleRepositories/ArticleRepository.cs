@@ -246,6 +246,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             return contentId;
         }
 
+        public int GetContentId(int id) => GetContentIdForArticle(id);
+
         public static IEnumerable<int> GetIds(IList<int> ids, bool excludeArchive = false,
             int contentId = 0, string filter = "")
         {

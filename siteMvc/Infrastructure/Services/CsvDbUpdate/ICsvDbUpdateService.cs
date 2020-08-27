@@ -12,6 +12,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
         /// Import csv data
         /// </summary>
         /// <param name="data">Csv data to import</param>
-        void Process(IEnumerable<CsvDbUpdateModel> data);
+        void Process(IEnumerable<CsvDbUpdateModel> data, bool updateExisting);
     }
 }

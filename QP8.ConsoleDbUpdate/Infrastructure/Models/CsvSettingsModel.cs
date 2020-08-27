@@ -9,10 +9,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         public CsvConfiguration CsvConfiguration { get; set; }
 
-        public CsvSettingsModel(IList<string> filePathes, string customerCode, string configPath, CsvConfiguration csvConfiguration)
+        [JsonProperty]
+        public bool UpdateExisting { get; set; }
+
+        public CsvSettingsModel(IList<string> filePathes, string customerCode, string configPath, CsvConfiguration csvConfiguration, bool updateExisting)
             : base(filePathes, customerCode, configPath)
         {
             CsvConfiguration = csvConfiguration;
+            UpdateExisting = updateExisting;
         }
     }
 }

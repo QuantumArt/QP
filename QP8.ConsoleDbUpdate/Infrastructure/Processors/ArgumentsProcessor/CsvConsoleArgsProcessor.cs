@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using CsvHelper.Configuration;
 using Mono.Options;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor
@@ -11,13 +12,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
     {
         private string _encoding = "windows-1251";
         private string _cultureInfo = "ru-RU";
+        private bool _updateExisting = false;
 
         protected internal override OptionSet BuildOptionSet()
         {
             return new OptionSet
             {
-                { "encoding=", "csv file encoding", enc => _encoding = enc },
-                { "culture=", "csv file culture info", ci => _cultureInfo = ci }
+                { "e|encoding=", "csv file encoding", enc => _encoding = enc },
+                { "l|culture=", "csv file culture info", ci => _cultureInfo = ci },
+                { "u|updateExisting", "update existing articles", ue => _updateExisting = ue != null }
             };
         }
 
@@ -25,6 +28,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         {
             Console.WriteLine("File Encoding: " + _encoding);
             Console.WriteLine("File Culture: " + _cultureInfo);
+            Console.WriteLine("Use existing articles: " + _updateExisting);
             base.PrintEnteredData();
         }
 
@@ -36,6 +40,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             Encoding = Encoding.GetEncoding(_encoding),
             CultureInfo = CultureInfo.GetCultureInfo(_cultureInfo),
             HasExcelSeparator = true
-        });
+        }, _updateExisting);
     }
 }
