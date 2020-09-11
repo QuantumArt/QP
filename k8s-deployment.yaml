@@ -15,7 +15,7 @@ spec:
         logging: enabled
     spec:
       containers:
-      - image: spbdocker03:5000/qp:||version||
+      - image: ||registry||/qp:||version||
         name: qp
         env:
         - name: Properties__QpConfigUrl
@@ -35,7 +35,7 @@ spec:
         - name: Properties__EnableArticleScheduler
           value: "true"
         - name: Properties__EnableCommonScheduler
-          value: "true"  
+          value: "true"
         ports:
         - containerPort: 80
         volumeMounts:
