@@ -13,7 +13,6 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace Quantumart.QP8.BLL
 {
@@ -221,7 +220,7 @@ namespace Quantumart.QP8.BLL
                 }
                 if (!imageValue.ToUpper().EndsWith(SVG_EXTENSION))
                 {
-                    using (Image<Rgba32> image = Image.Load(baseImagePath))
+                    using (var image = Image.Load(baseImagePath))
                     {
                         var desiredSize = GetDesiredImageSize(new Size(image.Width, image.Height));
                         image.Mutate(x => x.Resize(desiredSize.Width, desiredSize.Height));

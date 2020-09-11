@@ -81,7 +81,7 @@ namespace Quantumart.QP8.BLL
                     throw new ApplicationException("Database type unknown");
                 case DatabaseType.SqlServer:
                     dbContext = new SqlServerQPModelDataContext(cnnInfo.ConnectionString);
-                    dbContext.Database.ExecuteSqlCommand($"SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+                    dbContext.Database.ExecuteSqlRaw($"SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
                     break;
                 case DatabaseType.Postgres:
                     dbContext = new NpgSqlQPModelDataContext(cnnInfo.ConnectionString);
