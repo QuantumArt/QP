@@ -124,21 +124,25 @@ else {
     if ($s) { throw "Site $name already exists"}
 }
 
+
 $b = Get-WebBinding -Port $port
 if ($b) { throw "Binding for port $port already exists"}
-
 $connected = $false
 Try { $connected = (New-Object System.Net.Sockets.TcpClient('localhost', $port)).Connected } Catch { }
 If ($connected) { throw "$port is busy"}
 
-$requiredRuntime = "3.1.[456]"
-$runtimes = (Get-ChildItem (Get-Command dotnet).Path.Replace('dotnet.exe', 'shared\Microsoft.NETCore.App')).Name
-if (-not([bool]($runtimes -match $requiredRuntime))) {
-    throw ".Net Core Runtime (min 3.1.4) is not found"
+
+$requiredRuntime = '3.1.8'
+Try {
+    $actualRuntime = (Get-ChildItem (Get-Command dotnet).Path.Replace('dotnet.exe', 'shared\Microsoft.AspNetCore.App')).Name
+} Catch {
+    Write-Error $_.Exception
+    Throw "Check ASP.NET Core runtime : failed"
 }
+If ($actualRuntime -notcontains $requiredRuntime){ Throw "Check ASP.NET Core runtime $requiredRuntime : failed" }
+
 
 $p = Get-Item "IIS:\AppPools\$name" -ErrorAction SilentlyContinue
-
 if (!$p) {
 
     Write-Host "Creating application pool $name..."
