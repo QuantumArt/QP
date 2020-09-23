@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
@@ -327,8 +326,10 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     }
                     else
                     {
-                        var maxOrder = (int)QPContext.EFContext.FieldSet.Where(n => n.ContentId == item.ContentId)
-                            .Select(n => n.Order).DefaultIfEmpty(0).Max();
+                        var fieldsExists = QPContext.EFContext.FieldSet.Any(n => n.ContentId == item.ContentId);
+                        var maxOrder = fieldsExists ?
+                            (int)QPContext.EFContext.FieldSet.Where(n => n.ContentId == item.ContentId)
+                                .Select(n => n.Order).Max() : 0;
                         item.Order = maxOrder + 1;
                     }
 
