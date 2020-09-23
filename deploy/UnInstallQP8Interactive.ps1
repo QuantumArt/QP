@@ -35,8 +35,36 @@ function Delete-Site([string] $name)
             Write-Host "files of site $name deleted"
         }
     }
+    else {
+        Write-Host "Site $name not found"
+    }
 }
 
+function Stop-AppPool([string] $name)
+{
+    $s = Get-Item "IIS:\AppPools\$name" -ErrorAction SilentlyContinue
+
+    if ($s -and $s.State -ne "Stopped")
+    {
+        Write-Verbose "Stopping AppPool $name..." -Verbose
+        $s.Stop()
+        $endTime = $(get-date).AddMinutes('1')
+        while($(get-date) -lt $endtime)
+        {
+            Start-Sleep -Seconds 1
+            if ($s.State -ne "Stopping")
+            {
+                if ($s.State -eq "Stopped") {
+                    Write-Verbose "Stopped" -Verbose
+                }
+                break
+            }
+        }
+    }
+
+    return $s.State -eq "Stopped"
+}
+
+Import-Module WebAdministration
 $name = Read-ValueOrDefault "Please enter site name to remove" "QP8"
 Delete-Site $name
-

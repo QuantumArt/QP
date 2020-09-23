@@ -11,17 +11,14 @@ using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

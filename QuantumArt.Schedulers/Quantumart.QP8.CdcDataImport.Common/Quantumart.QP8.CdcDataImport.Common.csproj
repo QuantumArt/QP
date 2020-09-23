@@ -7,7 +7,7 @@
     <ProjectReference Include="..\..\configuration\Configuration.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.0" />
+    <PackageReference Include="NLog" Version="4.7.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastructure\Extensions" />
