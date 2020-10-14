@@ -85,8 +85,8 @@ namespace Quantumart.QP8.DAL
             var result = new List<int>();
             var withGuidsStr = withGuids ? ", UNIQUE_ID" : "";
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            string baseInsert = $@"INSERT INTO CONTENT_ITEM (VISIBLE, STATUS_TYPE_ID, CONTENT_ID, LAST_MODIFIED_BY {withGuidsStr}) " +
-                                $@"SELECT VISIBLE, STATUS_TYPE_ID, CONTENT_ID, LAST_MODIFIED_BY {withGuidsStr} ";
+            string baseInsert = $@"INSERT INTO CONTENT_ITEM (VISIBLE, STATUS_TYPE_ID, CONTENT_ID, LAST_MODIFIED_BY {withGuidsStr}) ";
+            string baseSelect = $@"SELECT VISIBLE, STATUS_TYPE_ID, CONTENT_ID, LAST_MODIFIED_BY {withGuidsStr} ";
             string sql = dbType == DatabaseType.SqlServer ? $@"
                     DECLARE @NewArticles TABLE (CONTENT_ID int, STATUS_TYPE_ID int, VISIBLE int, LAST_MODIFIED_BY int, UNIQUE_ID uniqueidentifier)
                     DECLARE @NewIds TABLE ([ID] INT);
@@ -97,17 +97,19 @@ namespace Quantumart.QP8.DAL
                         ,doc.col.value('./@statusId', 'int') STATUS_TYPE_ID
                         ,doc.col.value('./@visible', 'int') VISIBLE
                         ,doc.col.value('./@userId', 'int') LAST_MODIFIED_BY
-                        ,doc.col.value('./@guid', 'int') UNIQUE_ID
+                        ,doc.col.value('./@guid', 'uniqueidentifier') UNIQUE_ID
                         FROM @xml.nodes('ITEMS/ITEM') doc(col)
 
                     {baseInsert}
-                    from @NewArticles
                     OUTPUT inserted.CONTENT_ITEM_ID INTO @NewIds
+                    {baseSelect}
+                    from @NewArticles
                     SELECT ID FROM @NewIds;
                 " : $@"
                 WITH inserted(id) AS
                 (
                     {baseInsert}
+                    {baseSelect}
                     from XMLTABLE('ITEMS/ITEM' passing @xml COLUMNS
                         CONTENT_ID int PATH '@contentId',
                         STATUS_TYPE_ID int PATH '@statusId',
