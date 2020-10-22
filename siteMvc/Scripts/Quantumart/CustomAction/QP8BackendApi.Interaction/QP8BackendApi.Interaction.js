@@ -26,7 +26,8 @@
     CheckHost: 4,
     PreviewImage: 5,
     DownloadFile: 6,
-    OpenFileLibrary: 7
+    OpenFileLibrary: 7,
+    SendNotification: 8
   };
 
   // class ExecuteActionOptions (Парамеры сообщения на выполнение BackendAction)
@@ -108,6 +109,14 @@
     libraryParentEntityId: 0,
     selectWindowUID: null, // ID для идентификации окна со списком
     callerCallback: ''
+  };
+
+  // class SendNotificationOptions (Параметры отправки уведомления)
+  const SendNotificationOptions = function () { };
+
+  SendNotificationOptions.prototype = {
+    message: '',
+    icon: ''
   };
 
   // class BackendEventObserver (Observer сообщений от хоста)
@@ -248,6 +257,19 @@
       message.type = BackendExternalMessage.Types.OpenFileLibrary;
       message.hostUID = hostUID;
       message.data = openFileLibraryOptions;
+      pmrpc.call({
+        destination: destination,
+        publicProcedureName: message.hostUID,
+        params: [message]
+      });
+    },
+
+    // Отправка уведомления
+    sendNotification: function (sendNotificationOptions, hostUID, destination) {
+      const message = new BackendExternalMessage();
+      message.type = BackendExternalMessage.Types.SendNotification;
+      message.hostUID = hostUID;
+      message.data = sendNotificationOptions;
       pmrpc.call({
         destination: destination,
         publicProcedureName: message.hostUID,
