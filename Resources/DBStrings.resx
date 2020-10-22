@@ -195,6 +195,7 @@
   <data name="OtherSettings" xml:space="preserve">
     <value>Other settings</value>
   </data>
-
-
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Allow push-notifications</value>
+  </data>
 </root>

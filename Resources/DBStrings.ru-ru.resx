@@ -195,4 +195,7 @@
   <data name="OtherSettings" xml:space="preserve">
     <value>Прочие настройки</value>
   </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Разрешить push-уведомления</value>
+  </data>
 </root>

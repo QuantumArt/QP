@@ -52,6 +52,9 @@ export class BackendCustomActionHost extends Observable {
     } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.OpenFileLibrary) {
       this._onOpenFileLibraryMessageReceived(message);
       successCallback(0);
+    } else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.SendNotification) {
+      this._onSendNotificationMessageReceived(message);
+      successCallback(0);
     }
   }
 
@@ -119,6 +122,17 @@ export class BackendCustomActionHost extends Observable {
     };
     const testUrl = BackendLibrary.generateActionUrl('GetImageProperties', urlParams);
     this._previewWindowComponent = $c.preview(testUrl);
+  }
+
+  _onSendNotificationMessageReceived(message) {
+    const { title, icon, body } = message.data;
+    if (Notification.permission !== "granted") {
+      console.warn("External notification received, but push notifications are not allowed");
+    }
+    else {
+      const notification = new Notification(title, {icon: icon, body: body});
+      console.log(notification);
+    }
   }
 
   _onDownloadFileMessageReceived(message) {
