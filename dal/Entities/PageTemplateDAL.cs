@@ -107,7 +107,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.AssembleInLive).HasColumnName("ASSEMBLE_IN_LIVE");
 				builder.Property(x => x.AssembleInStage).HasColumnName("ASSEMBLE_IN_STAGE");
 				builder.Property(x => x.DisableDatabind).HasColumnName("DISABLE_DATABIND");
-				builder.Property(x => x.Using).HasColumnName("@using");
+				builder.Property(x => x.Using).HasColumnName("using");
 
 
                 builder.HasKey(x => x.Id);
