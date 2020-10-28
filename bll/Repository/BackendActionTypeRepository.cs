@@ -13,9 +13,7 @@ namespace Quantumart.QP8.BLL.Repository
         private static IQueryable<ActionTypeDAL> DefaultActionTypeQuery => QPContext.EFContext.ActionTypeSet
             .Include("PermissionLevel");
 
-        private static readonly Lazy<IEnumerable<BackendActionType>> actionTypesCache = new Lazy<IEnumerable<BackendActionType>>(() => LoadActionTypes());
-
-        private static IEnumerable<BackendActionType> LoadActionTypes()
+        internal static IEnumerable<BackendActionType> GetList()
         {
             var mapper = MapperFacade.BackendActionTypeMapper;
             mapper.DisableTranslations = true;
@@ -23,8 +21,6 @@ namespace Quantumart.QP8.BLL.Repository
             mapper.DisableTranslations = false;
             return result;
         }
-
-        internal static IEnumerable<BackendActionType> GetList() => actionTypesCache.Value;
 
         /// <summary>
         /// Возвращает тип действия по его идентификатору

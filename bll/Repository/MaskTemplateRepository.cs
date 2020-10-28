@@ -7,14 +7,14 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class MaskTemplateRepository
     {
-        private static readonly Lazy<IEnumerable<MaskTemplate>> allMaskTemplates = new Lazy<IEnumerable<MaskTemplate>>(
-            () => MapperFacade.MaskTemplateMapper.GetBizList(QPContext.EFContext.MaskTemplateSet.ToList()),
-            true
-        );
-
         /// <summary>
         /// Получить все шаблоны масок
         /// </summary>
-        public static IEnumerable<MaskTemplate> GetAllMaskTemplates() => allMaskTemplates.Value;
+        public static IEnumerable<MaskTemplate> GetAllMaskTemplates()
+        {
+            return MapperFacade.MaskTemplateMapper.GetBizList(
+                QPContext.EFContext.MaskTemplateSet.ToList()
+            );
+        }
     }
 }
