@@ -126,7 +126,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 _xmlDbUpdateLogService,
                 _appInfoRepository,
                 _actionsCorrecterService,
-                _httpContextProcessor
+                _httpContextProcessor,
+                throwActionReplayed: true
             ).Process(model.XmlString);
 
             return JsonCamelCase(new JSendResponse

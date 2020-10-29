@@ -35,6 +35,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private readonly bool _useGuidSubstitution;
 
+        private readonly bool _throwActionReplayed;
+
         private readonly HashSet<string> _identityInsertOptions;
 
         private readonly IXmlDbUpdateLogService _dbLogService;
@@ -49,18 +51,21 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider provider = null)
-            : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider)
+        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IServiceProvider provider = null, bool throwActionReplayed = false)
+            : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider, throwActionReplayed)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor, IServiceProvider serviceProvider = null )
+        public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IServiceProvider serviceProvider = null, bool throwActionReplayed = false)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
             _userId = userId;
             _useGuidSubstitution = useGuidSubstitution;
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
+            _throwActionReplayed = throwActionReplayed;
 
             ConnectionString = connectionString;
             DbType = dbType;
@@ -163,6 +168,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                         .Message("XmlDbUpdateAction conflict: Current action already applied and exist at database")
                         .Property("logEntry", logEntry)
                         .Write();
+
+                    if (_throwActionReplayed)
+                    {
+                        var throwEx = new XmlDbUpdateReplayActionException(
+                            $"Current action (code: {action.Code}, ids: [{String.Join(",", action.Ids)}], parentId: {action.ParentId}) already applied and exists in database. "
+                            );
+                        throw throwEx;
+                    }
 
                     continue;
                 }
