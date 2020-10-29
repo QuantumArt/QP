@@ -2,7 +2,6 @@ create extension IF NOT EXISTS hstore;
 create extension IF NOT EXISTS intarray;
 create extension IF NOT EXISTS pgcrypto;
 create extension IF NOT EXISTS tablefunc;
-
 ALTER TABLE content_data ALTER COLUMN data TYPE text;
 
 ALTER TABLE content_data ADD COLUMN IF NOT EXISTS o2m_data numeric(18,0) NULL;
@@ -64,6 +63,7 @@ BEGIN
 
 END $$;
 
+
 -- Table: public.content_data
 
 -- DROP TABLE public.content_data;
@@ -92,6 +92,7 @@ CREATE INDEX IF NOT EXISTS ix_content_item_ft_data
 
 
 
+
 ALTER TABLE version_content_data ALTER COLUMN data TYPE text;
 
 ALTER TABLE version_content_data ADD COLUMN IF NOT EXISTS o2m_data numeric(18,0) NULL;
@@ -106,7 +107,6 @@ CREATE INDEX IF NOT EXISTS ix_version_o2m_data
     ON public.version_content_data USING btree
     (o2m_data)
     TABLESPACE pg_default;
-
 DO $$ BEGIN
     create type content_link as
     (
@@ -123,6 +123,7 @@ EXCEPTION
 END $$;
 
 
+
 DO $$ BEGIN
     create type link as
     (
@@ -135,6 +136,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
     create type link_data as
     (
@@ -150,6 +152,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
 	CREATE TYPE public.link_multiple AS
 	(
@@ -164,6 +167,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
     create type link_multiple_splitted as
     (
@@ -178,6 +182,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
     create type value as
     (
@@ -212,6 +217,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_change_timestamp_zone_time(text, text, boolean) owner to postgres;
+
 DO $$ BEGIN
     create type column_to_process as
     (
@@ -294,7 +300,6 @@ DO $$
 		end if;
 	end;
 $$ LANGUAGE plpgsql;
-
 create or replace view backend_action_access_permlevel(action_access_id, user_id, group_id, permission_level, backend_action_id) as
 SELECT c.action_access_id,
        c.user_id,
@@ -307,6 +312,7 @@ FROM ((action_access c
 
 alter table backend_action_access_permlevel
     owner to postgres;
+
 
 create or replace view content_access_permlevel(content_id, user_id, group_id, permission_level_id, created, modified,
                                       last_modified_by, propagate_to_items, content_access_id, hide,
@@ -327,6 +333,7 @@ FROM (content_access c
 
 alter table content_access_permlevel
     owner to postgres;
+
 
 create or replace view content_access_permlevel_site(content_id, user_id, group_id, permission_level_id, created, modified,
                                            last_modified_by, propagate_to_items, content_access_id, hide,
@@ -349,6 +356,7 @@ FROM ((content_access c
 
 alter table content_access_permlevel_site
     owner to postgres;
+
 
 create or replace view content_attribute_type(database_type, input_type, icon, type_name, attribute_id, content_id, attribute_name,
                                    format_mask, input_mask, attribute_size, default_value, attribute_type_id,
@@ -455,6 +463,7 @@ FROM (content_attribute ca
 alter table content_attribute_type
     owner to postgres;
 
+
 create or replace view content_item_access_permlevel(content_item_id, user_id, group_id, permission_level_id, created, modified,
                                           last_modified_by, content_item_access_id, permission_level) as
 SELECT c.content_item_id,
@@ -471,6 +480,7 @@ FROM (content_item_access c
 
 alter table content_item_access_permlevel
     owner to postgres;
+
 
 create or replace view content_item_access_permlevel_content(content_item_id, user_id, group_id, permission_level_id, created,
                                                   modified, last_modified_by, content_item_access_id, permission_level,
@@ -491,6 +501,7 @@ FROM ((content_item_access c
 
 alter table content_item_access_permlevel_content
     owner to postgres;
+
 
 create or replace view content_item_workflow(content_item_id, content_id, workflow_id, is_async, article_workflow) as
 SELECT ci.content_item_id,
@@ -513,6 +524,7 @@ FROM content_item ci
 alter table content_item_workflow
     owner to postgres;
 
+
 create or replace view entity_type_access_permlevel(entity_type_access_id, user_id, group_id, permission_level, entity_type_id) as
 SELECT c.entity_type_access_id,
        c.user_id,
@@ -526,12 +538,14 @@ FROM ((entity_type_access c
 alter table entity_type_access_permlevel
     owner to postgres;
 
+
 create or replace view folder_access_permlevel as
     SELECT c.*, pl.permission_level from FOLDER_ACCESS as c
     INNER JOIN Permission_Level as pl ON c.permission_level_id = pl.permission_level_id;
 
 alter table folder_access_permlevel
     owner to postgres;
+
 
 create or replace view folder_access_permlevel_site as
     SELECT c.*, pl.permission_level, x.site_id from FOLDER_ACCESS as c
@@ -540,6 +554,7 @@ create or replace view folder_access_permlevel_site as
 
 alter table folder_access_permlevel_site
     owner to postgres;
+
 
 create or replace view full_workflow_rules(workflow_rule_id, user_id, group_id, rule_order, predecessor_permission_id,
                                 successor_permission_id, successor_status_id, comment, workflow_id) as
@@ -570,6 +585,7 @@ create or replace view full_workflow_rules(workflow_rule_id, user_id, group_id, 
 alter table full_workflow_rules
     owner to postgres;
 
+
 create or replace view item_link(link_id, item_id, linked_item_id, is_rev, is_self) as
 SELECT ii.link_id,
        ii.l_item_id AS item_id,
@@ -580,6 +596,7 @@ FROM item_to_item ii;
 
 alter table item_link
     owner to postgres;
+
 
 create or replace view item_link_united(link_id, item_id, linked_item_id, is_rev, is_self) as
     SELECT il.link_id,
@@ -602,6 +619,7 @@ create or replace view item_link_united(link_id, item_id, linked_item_id, is_rev
 alter table item_link_united
     owner to postgres;
 
+
 -- View: public.site_access_permlevel
 
 -- DROP VIEW public.site_access_permlevel;
@@ -623,11 +641,13 @@ CREATE OR REPLACE VIEW public.site_access_permlevel AS
 ALTER TABLE public.site_access_permlevel
     OWNER TO postgres;
 
+
 CREATE OR REPLACE VIEW public.status_type_new AS
  SELECT cast(site_id as int) as site_id, cast(status_type_id as int) as id, status_type_name as name, cast(weight as int) as weight from STATUS_TYPE;
 
 ALTER TABLE public.status_type_new
     OWNER TO postgres;
+
 
 create or replace view template_object(object_id, parent_object_id, page_template_id, page_id, object_name, object_format_id,
                             description, object_type_id, use_default_values, created, modified, last_modified_by,
@@ -662,16 +682,19 @@ WHERE (o.page_id IS NULL);
 alter table template_object
     owner to postgres;
 
+
 CREATE OR REPLACE VIEW public.user_group_bind_new AS
  SELECT cast(group_id as int) as group_id, cast(user_id as int) as user_id from user_group_bind;
 
 ALTER TABLE public.user_group_bind_new
     OWNER TO postgres;
+
 CREATE OR REPLACE VIEW public.user_group_new AS
  SELECT cast(group_id as int) as id, group_name as name from user_group;
 
 ALTER TABLE public.user_group_new
     OWNER TO postgres;
+
 create or replace view user_group_tree(group_id, group_name, description, created, modified, last_modified_by,
                             last_modified_by_login, shared_content_items, nt_group, ad_sid, built_in, readonly,
                             use_parallel_workflow, can_unlock_items, parent_group_id) as
@@ -697,21 +720,14 @@ FROM ((user_group ug
 alter table user_group_tree
     owner to postgres;
 
+
 CREATE OR REPLACE VIEW public.user_new AS
  SELECT cast(user_id as int) as id, login ,nt_login, l.iso_code, first_name, last_name, email  from users u
      inner join LANGUAGES l on l.language_id = u.language_id;
 
 ALTER TABLE public.user_new
     OWNER TO postgres;
-create or replace view v_user_query_attrs AS
-	select vca.ATTRIBUTE_ID as USER_QUERY_ATTR_ID, ca.ATTRIBUTE_ID BASE_ATTR_ID
-	from user_query_attrs uqa
-	join CONTENT_ATTRIBUTE vca on uqa.virtual_content_id = vca.CONTENT_ID
-	join CONTENT_ATTRIBUTE ca on uqa.user_query_attr_id = ca.ATTRIBUTE_ID
-	where vca.ATTRIBUTE_NAME = ca.ATTRIBUTE_NAME;
 
-alter table v_user_query_attrs
-    owner to postgres;
 create or replace view VIRTUAL_ATTR_BASE_ATTR_RELATION AS
 	WITH V2BREL AS
 		(SELECT USER_QUERY_ATTR_ID as VIRTUAL_ATTR_ID
@@ -736,6 +752,7 @@ create or replace view VIRTUAL_ATTR_BASE_ATTR_RELATION AS
 
 alter table v_user_query_attrs
     owner to postgres;
+
 CREATE OR REPLACE VIEW VIRTUAL_CONTENT_RELATION AS
 	select  DISTINCT
 			PA.CONTENT_ID AS BASE_CONTENT_ID,		
@@ -754,11 +771,22 @@ CREATE OR REPLACE VIEW VIRTUAL_CONTENT_RELATION AS
 
 alter table VIRTUAL_CONTENT_RELATION
     owner to postgres;
+create or replace view v_user_query_attrs AS
+	select vca.ATTRIBUTE_ID as USER_QUERY_ATTR_ID, ca.ATTRIBUTE_ID BASE_ATTR_ID
+	from user_query_attrs uqa
+	join CONTENT_ATTRIBUTE vca on uqa.virtual_content_id = vca.CONTENT_ID
+	join CONTENT_ATTRIBUTE ca on uqa.user_query_attr_id = ca.ATTRIBUTE_ID
+	where vca.ATTRIBUTE_NAME = ca.ATTRIBUTE_NAME;
+
+alter table v_user_query_attrs
+    owner to postgres;
+
 create or replace view workflow_access_permlevel as
 SELECT c.*, pl.permission_level from workflow_access as c INNER JOIN permission_level as pl ON c.permission_level_id = pl.permission_level_id;
 
 alter table workflow_access_permlevel
     owner to postgres;
+
 
 CREATE OR REPLACE VIEW workflow_access_permlevel_site AS
   SELECT c.*, pl.permission_level, x.site_id from workflow_access as c
@@ -807,6 +835,7 @@ BEGIN
 	return item_ids;
 END;
 $$;
+
 create or replace function qp_aggregates_to_remove(ids integer[]) returns integer[]
     stable
     language plpgsql
@@ -825,6 +854,7 @@ BEGIN
 	return coalesce(agg_ids, ARRAY[]::int[]);
 END;
 $$;
+
 create or replace function public.qp_batch_insert(input xml, visible int, user_id int)
     returns table("OriginalArticleId" int, "CreatedArticleId" int, "ContentId" int)
     volatile
@@ -899,6 +929,7 @@ ALTER PROCEDURE public.qp_before_content_item_version_delete(integer[])
     OWNER TO postgres;
 
 
+
 CREATE OR REPLACE PROCEDURE public.qp_content_frontend_views_create(
 	cid numeric,
 	is_new boolean DEFAULT false
@@ -927,6 +958,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_content_frontend_views_create(numeric, boolean) owner to postgres;
+
 
 CREATE OR REPLACE PROCEDURE public.qp_content_frontend_views_drop(
 	cid numeric,
@@ -1044,6 +1076,7 @@ $BODY$;
 alter procedure qp_content_new_views_create(numeric) owner to postgres;
 
 
+
 CREATE OR REPLACE PROCEDURE public.qp_content_new_views_drop(
     cid numeric
 )
@@ -1081,6 +1114,7 @@ $BODY$;
 alter procedure qp_content_new_views_drop(numeric) owner to postgres;
 
 
+
 CREATE OR REPLACE PROCEDURE public.qp_content_united_view_create(
 	cid numeric,
 	is_new boolean DEFAULT false
@@ -1107,6 +1141,7 @@ $BODY$;
 alter procedure qp_content_united_view_create(numeric, boolean) owner to postgres;
 
 
+
 CREATE OR REPLACE PROCEDURE public.qp_content_united_view_drop(
 	cid numeric,
 	is_new boolean DEFAULT false
@@ -1126,6 +1161,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_content_united_view_drop(numeric, boolean) owner to postgres;
+
 
 
 CREATE OR REPLACE PROCEDURE public.qp_content_user_query_view_recreate(
@@ -1197,6 +1233,7 @@ AS $BODY$
     END;
 $BODY$;
 
+
 create or replace function qp_default_link_ids(field_id numeric) returns text
     stable
     language plpgsql
@@ -1238,6 +1275,7 @@ $$;
 
 alter procedure qp_delete_items(integer, integer[], boolean) owner to postgres;
 
+
 -- PROCEDURE: public.qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
 
 -- DROP PROCEDURE public.qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean);
@@ -1278,6 +1316,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean) owner to postgres;
+
 
 create or replace function qp_get_aggregated_ids(id integer, classifier_ids integer[], content_ids integer[], is_live boolean)
 returns integer[]
@@ -1351,6 +1390,7 @@ $BODY$;
 
 ALTER FUNCTION public.qp_get_article_title_func(numeric, numeric)
     OWNER TO postgres;
+
 create or replace function qp_get_base_field(field_id integer, article_id integer)
 returns integer
     stable
@@ -1426,6 +1466,7 @@ $BODY$;
 
 ALTER FUNCTION public.qp_get_display_field(numeric, boolean)
     OWNER TO postgres;
+
 -- FUNCTION: public.qp_get_display_fields(numeric, boolean)
 
 -- DROP FUNCTION public.qp_get_display_fields(numeric, boolean);
@@ -1465,6 +1506,7 @@ $BODY$;
 
 ALTER FUNCTION public.qp_get_display_fields(numeric, boolean)
     OWNER TO postgres;
+
 -- FUNCTION: public.qp_get_hash(text, bigint)
 
 -- DROP FUNCTION public.qp_get_hash(text, bigint);
@@ -1483,6 +1525,7 @@ $BODY$;
 
 ALTER FUNCTION public.qp_get_hash(text, bigint)
     OWNER TO postgres;
+
 create or replace function qp_get_user_weight(user_id int, workflow_id int)
 returns int
     stable
@@ -1518,6 +1561,7 @@ $$;
 
 ALTER FUNCTION public.qp_get_user_weight(int, int)
     OWNER TO postgres;
+
 -- FUNCTION: public.qp_get_version_data(numeric, numeric)
 
 -- DROP FUNCTION public.qp_get_version_data(numeric, numeric);
@@ -1540,6 +1584,7 @@ $BODY$;
 
 ALTER FUNCTION public.qp_get_version_data(numeric, numeric)
     OWNER TO postgres;
+
 -- PROCEDURE: public.qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
 
 -- DROP PROCEDURE public.qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean);
@@ -1612,6 +1657,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean) owner to postgres;
+
 create or replace function qp_is_date(s character varying) returns boolean
     language plpgsql
 as
@@ -1625,6 +1671,7 @@ end;
 $$;
 
 alter function qp_is_date(varchar) owner to postgres;
+
 
 create or replace function qp_is_numeric(text) returns boolean
     immutable
@@ -1642,6 +1689,7 @@ END;
 $$;
 
 alter function qp_is_numeric(text) owner to postgres;
+
 
 create or replace function qp_link_ids(link_id integer, id integer, is_stage boolean) returns text
     stable
@@ -1666,6 +1714,7 @@ END;
 $$;
 
 alter function qp_link_ids(int, int, boolean) owner to postgres;
+
 create or replace function qp_link_titles(
     link_id integer, id integer, display_attribute_id integer, maxlength integer
 ) returns text
@@ -1695,6 +1744,7 @@ END;
 $$;
 
 alter function qp_link_titles(int, int, int, int) owner to postgres;
+
 
 CREATE OR REPLACE PROCEDURE public.qp_link_view_create(
 	id int
@@ -1804,6 +1854,7 @@ END;
 $$;
 
 alter function qp_m2o_titles(int, int, int, int) owner to postgres;
+
 -- PROCEDURE: public.qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[])
 
 -- DROP PROCEDURE public.qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[]);
@@ -1916,6 +1967,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[]) owner to postgres;
+
 create or replace procedure qp_upsert_items(content_id integer, ids integer[], delayed_ids integer[], none_id integer, is_async boolean)
     language plpgsql
 as
@@ -1983,6 +2035,7 @@ alter procedure qp_archive(int[], boolean, int, boolean) owner to postgres;
 
 
 
+
 -- FUNCTION: public.qp_authenticate(text, text, boolean, boolean)
 
 -- DROP FUNCTION public.qp_authenticate(text, text, boolean, boolean);
@@ -2032,6 +2085,7 @@ $BODY$;
 ALTER FUNCTION public.qp_authenticate(text, text, boolean, boolean)
     OWNER TO postgres;
 
+
 CREATE OR REPLACE PROCEDURE public.qp_batch_delete_contents(site_id int, count_to_del int DEFAULT 20)
 LANGUAGE 'plpgsql'
 
@@ -2064,6 +2118,7 @@ AS $BODY$
 
     END;
 $BODY$;
+
 CREATE OR REPLACE PROCEDURE public.qp_before_content_delete(
 	ids integer[])
 LANGUAGE 'plpgsql'
@@ -2121,6 +2176,7 @@ $BODY$;
 
 ALTER PROCEDURE public.qp_before_content_delete(integer[])
     OWNER TO postgres;
+
 CREATE OR REPLACE PROCEDURE public.qp_before_content_item_delete(
 	ids integer[])
 LANGUAGE 'plpgsql'
@@ -2147,6 +2203,7 @@ $BODY$;
 
 ALTER PROCEDURE public.qp_before_content_item_delete(integer[])
     OWNER TO postgres;
+
 CREATE OR REPLACE PROCEDURE public.qp_before_content_to_content_delete(
 	ids integer[])
 LANGUAGE 'plpgsql'
@@ -2163,6 +2220,7 @@ $BODY$;
 
 ALTER PROCEDURE public.qp_before_content_to_content_delete(integer[])
     OWNER TO postgres;
+
 
 CREATE OR REPLACE PROCEDURE public.qp_content_united_views_recreate()
 LANGUAGE 'plpgsql'
@@ -2182,6 +2240,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_content_united_views_recreate() owner to postgres;
+
 
 CREATE OR REPLACE PROCEDURE public.qp_copy_schedule_to_child_delays(id int)
 LANGUAGE 'plpgsql'
@@ -2213,6 +2272,7 @@ $BODY$;
 
 ALTER PROCEDURE public.qp_copy_schedule_to_child_delays(int)
     OWNER TO postgres;
+
 
 create or replace function qp_correct_data(value text, type_id numeric, length numeric, default_value text) returns text
     immutable
@@ -2249,6 +2309,7 @@ $$;
 
 
 alter function qp_correct_data(text, numeric, numeric, text) owner to postgres;
+
 
 CREATE OR REPLACE PROCEDURE public.qp_create_content_item_access(
 	ids numeric[]
@@ -2463,6 +2524,7 @@ alter function qp_get_article_tsvector(int) owner to postgres;
 
 
 
+
 create or replace function qp_get_m2o_ids(content_id integer, field_name text, id integer default NULL)
     returns int[]
     called on null input
@@ -2485,6 +2547,7 @@ $$;
 
 alter function qp_get_m2o_ids(integer, text, integer) owner to postgres;
 
+
 create or replace function qp_get_m2o_ids_multiple(content_id integer, field_name text, ids integer[])
     returns link[]
     language plpgsql
@@ -2503,6 +2566,7 @@ $$;
 
 
 alter function qp_get_m2o_ids_multiple(integer, text, integer[]) owner to postgres;
+
 
 CREATE OR REPLACE FUNCTION public.qp_mass_update_content_item(input xml, content_id int, last_modified_by int, not_for_replication int, create_versions bool, import_only bool DEFAULT false)
 RETURNS TABLE(id numeric)
@@ -2609,6 +2673,7 @@ alter FUNCTION qp_mass_update_content_item(xml, int, int, int, bool, bool) owner
 
 
 
+
 create or replace procedure qp_merge_articles(ids integer[], last_modified_by integer DEFAULT 1, force_merge boolean DEFAULT false)
     language plpgsql
 as
@@ -2641,6 +2706,7 @@ $$;
 
 alter procedure qp_merge_articles(integer[], integer, boolean) owner to postgres;
 
+
 CREATE OR REPLACE PROCEDURE qp_merge_delays(ids integer[], last_modified_by integer DEFAULT 1)
     language plpgsql
 as
@@ -2665,6 +2731,7 @@ DECLARE
 $$;
 
 alter procedure qp_merge_delays(integer[], integer) owner to postgres;
+
 
 -- PROCEDURE: public.qp_merge_links_multiple(integer[], boolean)
 
@@ -2773,6 +2840,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_merge_links_multiple(integer[], boolean) owner to postgres;
+
 DROP FUNCTION IF EXISTS qp_persist_article;
 
 CREATE OR REPLACE FUNCTION public.qp_persist_article(input xml)
@@ -2925,6 +2993,7 @@ alter function qp_persist_article(xml) owner to postgres;
 
 
 
+
 CREATE OR REPLACE PROCEDURE public.qp_publish(
 	ids int[],
 	last_modified_by int,
@@ -2971,6 +3040,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_publish(int[], int, boolean) owner to postgres;
+
 
 
 
@@ -3110,6 +3180,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_replicate_items(integer[], integer[], integer) owner to postgres;
+
 create or replace procedure qp_split_articles(ids integer[], last_modified_by integer DEFAULT 1)
     language plpgsql
 as
@@ -3151,6 +3222,7 @@ DECLARE
 $$;
 
 alter procedure qp_split_articles(integer[], integer) owner to postgres;
+
 
 -- PROCEDURE: public.qp_update_m2m(numeric, numeric, text, boolean, boolean)
 
@@ -3271,6 +3343,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_update_m2m(numeric, numeric, text, boolean, boolean) owner to postgres;
+
 -- PROCEDURE: public.qp_update_m2m_values(xml)
 
 -- DROP PROCEDURE public.qp_update_m2m_values(xml);
@@ -3473,6 +3546,7 @@ AS $BODY$
 $BODY$;
 
 alter procedure qp_update_m2o(numeric, numeric, text, boolean) owner to postgres;
+
 CREATE OR REPLACE PROCEDURE public.qp_update_m2o_final(
 	id numeric)
 LANGUAGE 'plpgsql'
@@ -3601,6 +3675,7 @@ $$
 $$;
 
 alter function process_before_content_delete() owner to postgres;
+
 create or replace function process_before_content_item_delete() returns trigger
     language plpgsql
 as
@@ -3615,6 +3690,7 @@ $$
 $$;
 
 alter function process_before_content_item_delete() owner to postgres;
+
 create or replace function process_before_content_item_version_delete() returns trigger
     language plpgsql
 as
@@ -3630,6 +3706,7 @@ $$;
 
 alter function process_before_content_item_version_delete() owner to postgres;
 
+
 create or replace function process_before_content_to_content_delete() returns trigger
     language plpgsql
 as
@@ -3644,6 +3721,7 @@ $$
 $$;
 
 alter function process_before_content_to_content_delete() owner to postgres;
+
 -- FUNCTION: public.process_content_data_upsert()
 
 -- DROP FUNCTION public.process_content_data_upsert();
@@ -3784,6 +3862,7 @@ $BODY$;
 
 ALTER FUNCTION public.process_content_data_upsert()
     OWNER TO postgres;
+
 -- FUNCTION: public.process_content_item_insert()
 
 -- DROP FUNCTION public.process_content_item_insert();
@@ -3859,6 +3938,7 @@ $BODY$;
 
 ALTER FUNCTION public.process_content_item_delete()
     OWNER TO postgres;
+
 -- FUNCTION: public.process_content_item_insert()
 
 -- DROP FUNCTION public.process_content_item_insert();
@@ -3911,6 +3991,7 @@ $BODY$;
 
 ALTER FUNCTION public.process_content_item_insert()
     OWNER TO postgres;
+
 -- FUNCTION: public.process_content_item_update()
 
 -- DROP FUNCTION public.process_content_item_update();
@@ -4068,6 +4149,7 @@ $BODY$;
 
 ALTER FUNCTION public.process_content_item_update()
     OWNER TO postgres;
+
 -- FUNCTION: public.process_item_to_item_delete()
 
 -- DROP FUNCTION public.process_item_to_item_delete();
@@ -4108,6 +4190,7 @@ $BODY$;
 
 ALTER FUNCTION public.process_item_to_item_delete()
     OWNER TO postgres;
+
 -- FUNCTION: public.process_item_to_item_insert()
 
 -- DROP FUNCTION public.process_item_to_item_insert();
@@ -4150,6 +4233,7 @@ $BODY$;
 
 ALTER FUNCTION public.process_item_to_item_insert()
     OWNER TO postgres;
+
 CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 	DECLARE 
 		salt bigint;
@@ -4193,6 +4277,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
     create trigger tbd_delete_item_version
         before delete
@@ -4202,6 +4287,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
     create trigger tbd_content_to_content
         before delete
@@ -4211,6 +4297,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 DO $$ BEGIN
     create trigger tbd_delete_item
         before delete
@@ -4220,6 +4307,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 
 DO $$ BEGIN
     create trigger td_delete_item
@@ -4233,6 +4321,7 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+
 DO $$ BEGIN
     create trigger td_item_link_async
         after delete
@@ -4245,6 +4334,7 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+
 DO $$ BEGIN
     create trigger td_item_to_item
         after delete
@@ -4256,6 +4346,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 
 
 DO $$ BEGIN
@@ -4271,6 +4362,7 @@ EXCEPTION
 END $$;
 
 
+
 DO $$ BEGIN
     create trigger ti_insert_item
         after insert
@@ -4284,6 +4376,7 @@ EXCEPTION
 END $$;
 
 
+
 DO $$ BEGIN
     create trigger ti_item_link_async
         after insert
@@ -4295,6 +4388,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 
 
 
@@ -4312,6 +4406,7 @@ END $$;
 
 
 
+
 DO $$ BEGIN
     create trigger tiu_update_hash
         before insert or update
@@ -4322,6 +4417,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 
 
 DO $$ BEGIN
@@ -4335,6 +4431,7 @@ DO $$ BEGIN
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
 
 DO $$ BEGIN
     create trigger tu_update_item
@@ -4386,7 +4483,6 @@ BEGIN
 	end loop;
 END;
 $$;
-
 ALTER TABLE public.site ADD COLUMN IF NOT EXISTS replace_urls_in_db boolean NOT NULL DEFAULT false;
 ALTER TABLE public.content_item_schedule 
     ADD COLUMN IF NOT EXISTS start_date timestamp NULL;
@@ -4394,8 +4490,10 @@ ALTER TABLE public.content_item_schedule
 ALTER TABLE public.content_item_schedule 
     ADD COLUMN IF NOT EXISTS end_date timestamp NULL;
 
+
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS TRACE_IMPORT boolean NOT NULL DEFAULT false;
 ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
 
+ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
 
