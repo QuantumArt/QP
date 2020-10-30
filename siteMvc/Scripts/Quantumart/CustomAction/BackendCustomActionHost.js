@@ -126,12 +126,11 @@ export class BackendCustomActionHost extends Observable {
 
   _onSendNotificationMessageReceived(message) {
     const { title, icon, body } = message.data;
-    if (Notification.permission !== "granted") {
-      console.warn("External notification received, but push notifications are not allowed");
-    }
-    else {
-      const notification = new Notification(title, {icon: icon, body: body});
+    if (Notification.permission === 'granted') {
+      const notification = new Notification(title, { icon, body });
       console.log(notification);
+    } else {
+      console.warn('External notification received, but push notifications are not allowed');
     }
   }
 
