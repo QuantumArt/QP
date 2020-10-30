@@ -798,7 +798,7 @@ namespace Quantumart.QP8.BLL
 
         public void LoadWorkflowBinding()
         {
-            _workflowBinding = WorkflowRepository.GetContentWorkflow(this);
+            _workflowBinding = IsNew ? WorkflowRepository.GetDefaultWorkflow(this) : WorkflowRepository.GetContentWorkflow(this);
         }
 
         public int GetMaxFieldsOrder()

@@ -111,6 +111,7 @@
 		@Html.TextAreaFieldFor(s => s.Data.Description)
         @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultNotification)
         @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
+        @Html.CheckBoxFieldFor(s => s.Data.IsDefault)
 
         @Html.CheckboxListFieldFor(
 			model => model.ActiveStatuses,
