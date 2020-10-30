@@ -7,10 +7,11 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
     internal static class CommonPermissionRepository
     {
-        private static readonly Lazy<IEnumerable<EntityPermissionLevel>> permissionLevel = new Lazy<IEnumerable<EntityPermissionLevel>>(() =>
-                MapperFacade.EntityPermissionLevelMapper.GetBizList(QPContext.EFContext.PermissionLevelSet.OrderByDescending(p => p.Level).ToList()),
-            true);
-
-        internal static IEnumerable<EntityPermissionLevel> GetPermissionLevels() => permissionLevel.Value;
+        internal static IEnumerable<EntityPermissionLevel> GetPermissionLevels()
+        {
+            return MapperFacade.EntityPermissionLevelMapper.GetBizList(
+                QPContext.EFContext.PermissionLevelSet.OrderByDescending(p => p.Level).ToList()
+            );
+        }
     }
 }

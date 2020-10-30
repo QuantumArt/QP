@@ -5202,6 +5202,18 @@
   <phrase key="multiple select">
     <translation languageId="2">Множественный выбор</translation>
   </phrase>
+  <phrase key="multiple update">
+    <translation languageId="2">Множественное обновление</translation>
+  </phrase>
+  <phrase key="multiple export">
+    <translation languageId="2">Множественный экспорт</translation>
+  </phrase>
+  <phrase key="deselect all">
+    <translation languageId="2">Снять выделение для всех</translation>
+  </phrase>
+  <phrase key="crop">
+    <translation languageId="2">Кадрировать</translation>
+  </phrase>
   <phrase key="edit profile">
     <translation languageId="2">Свойства профиля</translation>
   </phrase>

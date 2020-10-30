@@ -22,12 +22,6 @@ namespace Quantumart.QP8.BLL.Services
             _repository = repository;
         }
 
-        static CustomActionService()
-        {
-            EntityTypeList = new Lazy<IEnumerable<ListItem>>(LoadEntityTypeList, true);
-            ActionTypeList = new Lazy<IEnumerable<ListItem>>(LoadActionTypeList, true);
-        }
-
         public CustomActionPrepareResult PrepareForExecuting(string hostId, int parentId, CustomActionQuery query)
         {
             var action = CustomActionRepository.GetByCode(query.ActionCode);
@@ -246,7 +240,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public IEnumerable<ListItem> GetActionTypeList()
         {
-            return ActionTypeList.Value
+            return LoadActionTypeList()
                 .Select(i => new ListItem(i.Value, Translator.Translate(i.Text), i.DependentItemIDs))
                 .OrderBy(n => n.Text)
                 .ToArray();
@@ -254,7 +248,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public IEnumerable<ListItem> GetEntityTypeList()
         {
-            return EntityTypeList.Value
+            return LoadEntityTypeList()
                 .Select(i => new ListItem(i.Value, Translator.Translate(i.Text), i.DependentItemIDs))
                 .OrderBy(n => n.Text)
                 .ToArray();
@@ -284,9 +278,6 @@ namespace Quantumart.QP8.BLL.Services
         {
             return LoadEntityTypeList().Any(l => l.Value == entityTypeId.ToString() && l.DependentItemIDs != null && l.DependentItemIDs.Contains(ContentSelectionModePanelName));
         }
-
-        private static readonly Lazy<IEnumerable<ListItem>> EntityTypeList;
-        private static readonly Lazy<IEnumerable<ListItem>> ActionTypeList;
 
         private const string SiteSelectionModePanelName = "siteSelectionModePanel";
         private const string ContentSelectionModePanelName = "contentSelectionModePanel";

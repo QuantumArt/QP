@@ -81,12 +81,23 @@
 
   using (Html.BeginFieldGroup(DBStrings.OtherSettings))
   {
-
     @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
     @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
     @Html.CheckBoxFieldFor(s => s.Data.UseTokens)
     @Html.CheckBoxFieldFor(s => s.Data.UseDpc)
     @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <span class="allowNotifications linkButton actionLink">
+          <a href="javascript: void(0)">
+            <span class="icon expandParents"><img src="Static/Common/0.gif" alt="allow push notifications"></span>
+            <span class="text">@DBStrings.AllowNotifications</span>
+          </a>
+        </span>
+      </dd>
+    </dl>
 
     @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
   }
@@ -125,6 +136,26 @@
   @(Model.ContextObjectName).setInitializedCallback(function() {
     $editingForm.on('click', '.downloadRecords', function() {
       $c.downloadFile("@Url.Action("GetRecordedUserActions")");
+    });
+
+    $editingForm.on('click', '.allowNotifications', function() {
+      if (!("Notification" in window)) {
+         console.warn("This browser does not support desktop notification");
+      }
+
+      else if (Notification.permission === "granted") {
+         console.info("Notification permission granted");
+      }
+
+      else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+          if (permission === "granted") {
+            console.info("Notification permission granted");
+          } else {
+             console.warn("Notification permission not granted");
+          }
+        });
+      }
     });
 
     $editingForm.on('click', '.downloadRecords .disabled', function(e) {

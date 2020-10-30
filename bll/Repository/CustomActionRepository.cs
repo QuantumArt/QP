@@ -336,13 +336,13 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static bool DoesNameExist(string name)
         {
-            return QPContext.EFContext.CustomActionSet.Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            return QPContext.EFContext.CustomActionSet.Any(a => a.Name.Equals(name));
         }
 
         private static bool DoesAliasExist(string alias)
         {
             return QPContext.EFContext.CustomActionSet.Any(
-                a => a.Alias != null && a.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase)
+                a => a.Alias != null && a.Alias.Equals(alias)
             );
         }
 
