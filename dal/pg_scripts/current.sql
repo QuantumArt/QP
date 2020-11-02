@@ -4350,6 +4350,19 @@ END $$;
 
 
 DO $$ BEGIN
+    create trigger tiu_update_hash
+        before insert or update
+        on users
+        for each row
+    execute procedure update_hash();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+
+DO $$ BEGIN
     create trigger ti_content_data_fill
         after insert
         on content_data
@@ -4404,19 +4417,6 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
-
-
-
-DO $$ BEGIN
-    create trigger tiu_update_hash
-        before insert or update
-        on users
-        for each row
-    execute procedure update_hash();
-
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
 
 
 

@@ -1,4 +1,4 @@
-﻿DECLARE @articles_with_wrong_statuses TABLE (
+declare @articles_with_wrong_statuses TABLE (
 Site_ID int,
 CONTENT_ID int,
 STATUS_TYPE_ID int,

@@ -3352,6 +3352,104 @@ BEGIN
 END
 GO
 
+ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
+AS BEGIN
+	if object_id('tempdb..#disable_tiud_remove_empty_content_groups') is null
+	begin
+      DELETE FROM content_group
+      WHERE NAME <> 'Default Group'
+      AND NOT EXISTS(SELECT * FROM content WHERE content.content_group_id = content_group.content_group_id)
+    END
+END
+GO
+
+
+ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
+BEGIN
+  set nocount on
+  IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
+    BEGIN
+        IF NOT EXISTS(select content_data_id from deleted) -- insert or update without special columns
+               OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)) AND NOT (UPDATE(O2M_DATA)))
+        BEGIN
+
+            update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
+
+            DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC
+            DECLARE @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC, @link_id NUMERIC
+            DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
+
+            declare @ca table
+            (
+                id numeric primary key
+            )
+
+            insert into @ca
+            select distinct attribute_id from inserted
+
+
+            declare @ids table
+            (
+                id numeric primary key,
+                splitted bit
+            )
+
+            while exists(select id from @ca)
+            begin
+
+                select @attribute_id = id from @ca
+
+                select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id,
+                       @attribute_size = attribute_size, @default_value = default_value,
+                       @content_id = content_id, @link_id = link_id
+                from content_attribute
+                where ATTRIBUTE_ID = @attribute_id
+
+                insert into @ids
+                select i.content_item_id, ci.SPLITTED from inserted i
+                inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
+                inner join content c on ci.CONTENT_ID = c.CONTENT_ID
+                where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
+
+                if @attribute_type_id = 11 and @link_id is null
+                begin
+                    update content_data set O2M_DATA = DATA
+                    where CONTENT_ITEM_ID in (select id from @ids) and ATTRIBUTE_ID = @attribute_id
+                    and (isnumeric(data) = 1 or data is null)
+                end
+
+                set @ids_list = null
+                select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
+                set @async_ids_list = null
+                select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
+
+                set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
+
+                if @ids_list <> ''
+                begin
+                    exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
+                    print @sql
+                    exec sp_executesql @sql
+                end
+
+                if @async_ids_list <> ''
+                begin
+                    set @table_name = @table_name + '_async'
+                    exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
+                    print @sql
+                    exec sp_executesql @sql
+                end
+
+                delete from @ca where id = @attribute_id
+
+                delete from @ids
+            end --while
+        end --if
+    end --if
+END
+go
+
+
 ALTER TRIGGER [dbo].[ti_access_content] ON [dbo].[CONTENT] FOR INSERT
 AS
   if object_id('tempdb..#disable_ti_access_content') is null
@@ -3869,104 +3967,6 @@ END
 go
 
 
-
-
-ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
-BEGIN
-  set nocount on
-  IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
-    BEGIN
-        IF NOT EXISTS(select content_data_id from deleted) -- insert or update without special columns
-               OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)) AND NOT (UPDATE(O2M_DATA)))
-        BEGIN
-
-            update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
-
-            DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC
-            DECLARE @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC, @link_id NUMERIC
-            DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
-
-            declare @ca table
-            (
-                id numeric primary key
-            )
-
-            insert into @ca
-            select distinct attribute_id from inserted
-
-
-            declare @ids table
-            (
-                id numeric primary key,
-                splitted bit
-            )
-
-            while exists(select id from @ca)
-            begin
-
-                select @attribute_id = id from @ca
-
-                select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id,
-                       @attribute_size = attribute_size, @default_value = default_value,
-                       @content_id = content_id, @link_id = link_id
-                from content_attribute
-                where ATTRIBUTE_ID = @attribute_id
-
-                insert into @ids
-                select i.content_item_id, ci.SPLITTED from inserted i
-                inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
-                inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
-
-                if @attribute_type_id = 11 and @link_id is null
-                begin
-                    update content_data set O2M_DATA = DATA
-                    where CONTENT_ITEM_ID in (select id from @ids) and ATTRIBUTE_ID = @attribute_id
-                    and (isnumeric(data) = 1 or data is null)
-                end
-
-                set @ids_list = null
-                select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
-                set @async_ids_list = null
-                select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
-
-                set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
-
-                if @ids_list <> ''
-                begin
-                    exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
-                    print @sql
-                    exec sp_executesql @sql
-                end
-
-                if @async_ids_list <> ''
-                begin
-                    set @table_name = @table_name + '_async'
-                    exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
-                    print @sql
-                    exec sp_executesql @sql
-                end
-
-                delete from @ca where id = @attribute_id
-
-                delete from @ids
-            end --while
-        end --if
-    end --if
-END
-go
-
-
-ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
-AS BEGIN
-	if object_id('tempdb..#disable_tiud_remove_empty_content_groups') is null
-	begin
-      DELETE FROM content_group
-      WHERE NAME <> 'Default Group'
-      AND NOT EXISTS(SELECT * FROM content WHERE content.content_group_id = content_group.content_group_id)
-    END
-END
-GO
 ALTER TRIGGER [dbo].[tu_content_attribute_clean_empty_links] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
 AS
 BEGIN
@@ -4462,6 +4462,18 @@ begin
 end
 GO
 
+if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
+insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
+VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'multiple_export_archive_article')
+insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
+VALUES(dbo.qp_action_type_id('multiple_export'), dbo.qp_entity_type_id('archive_article'), 'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', 1, 600, 400, 1, 1)
+
+if not exists (select * from ACTION_TOOLBAR_BUTTON where parent_action_id = dbo.qp_action_id('list_archive_article') and name = 'Export')
+insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], icon)
+values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
+
 IF NOT EXISTS(SELECT * FROM CONTEXT_MENU_ITEM WHERE NAME = 'Unselect Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
 INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER],  ICON)
 VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('unselect_child_articles'), 'Unselect Child Articles', 90, 'deselect_all.gif')
@@ -4481,18 +4493,6 @@ begin
   VALUES (dbo.qp_context_menu_id('custom_action'), dbo.qp_action_id('copy_custom_action'), N'Create Like', 5, 'create_like.gif', 1)
 
 end
-
-if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
-VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
-
-if not exists (select * from BACKEND_ACTION where code = 'multiple_export_archive_article')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
-VALUES(dbo.qp_action_type_id('multiple_export'), dbo.qp_entity_type_id('archive_article'), 'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', 1, 600, 400, 1, 1)
-
-if not exists (select * from ACTION_TOOLBAR_BUTTON where parent_action_id = dbo.qp_action_id('list_archive_article') and name = 'Export')
-insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], icon)
-values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
 
 update content_data set O2M_DATA = try_convert(numeric, cd.data) from content_data cd
 inner join content_attribute ca on ca.attribute_id = cd.attribute_id
@@ -4599,7 +4599,7 @@ begin
 end
 GO
 
-﻿DECLARE @articles_with_wrong_statuses TABLE (
+declare @articles_with_wrong_statuses TABLE (
 Site_ID int,
 CONTENT_ID int,
 STATUS_TYPE_ID int,
