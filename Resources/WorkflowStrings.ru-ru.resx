@@ -162,4 +162,10 @@
   <data name="InAccessibleForUser" xml:space="preserve">
     <value>Контент "{0}" недоступен для этого пользователя</value>
   </data>
+  <data name="IsDefault" xml:space="preserve">
+    <value>По умолчанию для новых контентов</value>
+  </data>
+  <data name="WorkflowDefaultAlreadyExists" xml:space="preserve">
+    <value>Workflow по умолчанию уже существует (Id = {0})</value>
+  </data>
 </root>

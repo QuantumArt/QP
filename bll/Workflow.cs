@@ -14,6 +14,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "ApplyRulesByDefault", ResourceType = typeof(WorkflowStrings))]
         public bool ApplyByDefault { get; set; }
 
+        [Display(Name = "IsDefault", ResourceType = typeof(WorkflowStrings))]
+        public bool IsDefault { get; set; }
+
         [Display(Name = "CreateAutoNotifications", ResourceType = typeof(WorkflowStrings))]
         public bool CreateDefaultNotification { get; set; }
 
@@ -43,8 +46,17 @@ namespace Quantumart.QP8.BLL
 
         public override void Validate()
         {
-            WorkflowRules.ForEach(x => x.IsInvalid = false);
             var errors = new RulesException<Workflow>();
+            if (IsDefault)
+            {
+                var another = WorkflowRepository.AnotherDefaultExists(Id);
+                if (another != 0)
+                {
+                    errors.ErrorFor(w => w.IsDefault, string.Format(WorkflowStrings.WorkflowDefaultAlreadyExists, another));
+                }
+            }
+            WorkflowRules.ForEach(x => x.IsInvalid = false);
+
             base.Validate(errors);
 
             var workflowRulesArray = WorkflowRules.ToArray();

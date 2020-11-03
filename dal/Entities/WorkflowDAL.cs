@@ -31,6 +31,8 @@ namespace Quantumart.QP8.DAL.Entities
         public bool CreateDefaultNotification { get; set; }
         public bool ApplyByDefault { get; set; }
 
+        public bool IsDefault { get; set; }
+
         public ICollection<NotificationsDAL> Notifications { get; set; }
         public SiteDAL Site { get; set; }
         public ICollection<WorkflowPermissionDAL> WorkflowAccess { get; set; }
@@ -52,6 +54,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
 				builder.Property(x => x.CreateDefaultNotification).HasColumnName("create_default_notification");
 				builder.Property(x => x.ApplyByDefault).HasColumnName("apply_by_default");
+                builder.Property(x => x.IsDefault).HasColumnName("is_default");
 
 
                 builder.HasKey(x => x.Id);

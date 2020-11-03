@@ -37,6 +37,19 @@ namespace Quantumart.QP8.BLL.Repository
             return binding;
         }
 
+        internal static ContentWorkflowBind GetDefaultWorkflow(Content content, QPModelDataContext context = null)
+        {
+            var currentContext = context ?? QPContext.EFContext;
+            var workflowDal = currentContext.WorkflowSet.FirstOrDefault(s => s.IsDefault);
+            if (workflowDal != null)
+            {
+                var workflow = MapperFacade.WorkflowMapper.GetBizObject(workflowDal);
+                return new ContentWorkflowBind { Content = content, WorkflowId = workflow.Id };
+            }
+
+            return null;
+        }
+
         internal static ArticleWorkflowBindDAL GetArticleWorkflowDal(int articleId)
         {
             return QPContext.EFContext.ArticleWorkflowBindSet.SingleOrDefault(s => s.ArticleId == (decimal)articleId);
@@ -79,6 +92,14 @@ namespace Quantumart.QP8.BLL.Repository
                 .Where(s => s.WorkflowId == workflowId)
                 .Select(s => s.StatusType)
                 .Any(s => s.Id == statusTypeId);
+        }
+
+        internal static int AnotherDefaultExists(int workflowId)
+        {
+            return QPContext.EFContext.WorkflowSet
+                .Where(s => s.Id != workflowId && s.IsDefault)
+                .Select(n => (int)n.Id)
+                .SingleOrDefault();
         }
 
         internal static StatusType GetClosestStatus(int workflowId, int statusWeight)
