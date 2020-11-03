@@ -100,7 +100,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             };
 
             // Exercise system
-            sut.Process(csvData);
+            sut.Process(csvData, false);
 
             // Verify outcome
             fieldRepository.Verify();
@@ -151,7 +151,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             };
 
             // Exercise system
-            sut.Process(csvData);
+            sut.Process(csvData, false);
 
             // Verify outcome
             fieldRepository.Verify();
