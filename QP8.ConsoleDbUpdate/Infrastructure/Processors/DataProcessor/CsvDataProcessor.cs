@@ -28,13 +28,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         public override void Process()
         {
             var csvData = CsvReaderProcessor.Process(_settings.FilePathes, _settings.CsvConfiguration);
-            _csvDbUpdateService.Process(csvData);
+            _csvDbUpdateService.Process(csvData, _settings.UpdateExisting);
         }
 
         public override void Process(string csvRawData)
         {
             var csvData = CsvReaderProcessor.Process(csvRawData, _settings.CsvConfiguration);
-            _csvDbUpdateService.Process(csvData);
+            _csvDbUpdateService.Process(csvData, _settings.UpdateExisting);
         }
     }
 }

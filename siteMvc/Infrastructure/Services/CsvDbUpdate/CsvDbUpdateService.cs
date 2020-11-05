@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
             _articleService = articleService;
         }
 
-        public void Process(IEnumerable<CsvDbUpdateModel> data)
+        public void Process(IEnumerable<CsvDbUpdateModel> data, bool updateExisting)
         {
             using (var ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             using (new QPConnectionScope())
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                     foreach (var csvRowFields in csvFileData.Fields.Values)
                     {
                         var dbFields = GetFieldsByNames(csvFileData.ContentId, csvRowFields);
-                        var dataToAdd = CreateArticleDatas(csvFileData.ContentId, csvRowFields, dbFields);
+                        var dataToAdd = CreateArticleDatas(csvFileData.ContentId, csvRowFields, dbFields, updateExisting);
                         dataToAdd = InsertFields(csvFileData.ContentId, dataToAdd, dbFields, csvRowFields);
                         foreach (var extensionContentId in dataToAdd.Where(ad => ad.ContentId != csvFileData.ContentId).Select(ad => ad.ContentId))
                         {
@@ -81,6 +81,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                             continue;
                         }
 
+                        if (listOfIds.Contains(-relatedId))
+                        {
+                            result.Add(-relatedId);
+                            continue;
+                        }
+
                         if (_articleRepository.IsExist(-relatedId))
                         {
                             result.Add(-relatedId);
@@ -102,13 +108,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
             return articlesData;
         }
 
-        private IList<ArticleData> CreateArticleDatas(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IEnumerable<Field> dbFields)
+        private IList<ArticleData> CreateArticleDatas(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IEnumerable<Field> dbFields, bool updateExisting)
         {
             var result = new List<ArticleData>
             {
                 new ArticleData
                 {
-                    Id = CreateSimpleArticleId(csvRowFields),
+                    Id = CreateSimpleArticleId(contentId, csvRowFields, updateExisting),
                     ContentId = contentId
                 }
             };
@@ -121,7 +127,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                     var extensionContentId = Convert.ToInt32(fieldValue);
                     result.Add(new ArticleData
                     {
-                        Id = CreateExtensionArticleId(extensionContentId, csvRowFields),
+                        Id = CreateExtensionArticleId(extensionContentId, csvRowFields, updateExisting),
                         ContentId = extensionContentId
                     });
                 }
@@ -136,14 +142,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
             return _fieldRepository.GetByNames(contentId, fieldNames);
         }
 
-        private int CreateExtensionArticleId(int extensionContentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
+        private int CreateExtensionArticleId(int extensionContentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields, bool useExisting)
         {
             var contentName = _contentRepository.GetById(extensionContentId).Name;
             var getExtensionContentId = StringFilter($"{contentName}.{FieldName.ContentItemId}");
-            return -Convert.ToInt32(csvRowFields.Single(getExtensionContentId).Value);
+            var result = Convert.ToInt32(csvRowFields.Single(getExtensionContentId).Value);
+            return useExisting && _articleRepository.GetContentId(result) == extensionContentId ? result : -result;
         }
 
-        private static int CreateSimpleArticleId(IEnumerable<CsvDbUpdateFieldModel> csvRowFields) => -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.ContentItemId)).Value);
+        private int CreateSimpleArticleId(int contentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields, bool useExisting)
+        {
+            var result = Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.ContentItemId)).Value);
+            return useExisting && _articleRepository.GetContentId(result) == contentId ? result : -result;
+        }
 
         private static IList<ArticleData> InsertFields(int contentId, IList<ArticleData> dataToAdd, IEnumerable<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
         {
