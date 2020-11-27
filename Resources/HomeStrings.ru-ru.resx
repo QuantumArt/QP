@@ -142,7 +142,7 @@
     <value>Имя продукта</value>
   </data>
   <data name="ProductValue" xml:space="preserve">
-    <value>QP8.Framework (релиз {0}) &amp;copy; 1998-{1} Quantum Art</value>
+    <value>QP8.CMS c поддержкой PostgreSQL (сборка {0}) &amp;copy; 1998-{1} Quantum Art</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Искать</value>

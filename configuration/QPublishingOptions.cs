@@ -15,10 +15,13 @@ namespace Quantumart.QP8.Configuration
             CookieTimeout = 1440;
             SessionTimeout = 60;
             QpConfigPollingInterval = TimeSpan.FromMinutes(2);
-            Version = "8.0.0.0";
+            Version = "8.0.0";
+            BuildVersion = "8.0.0.0-00000000";
         }
 
         public string Version { get; set; }
+
+        public string BuildVersion { get; set; }
 
         public string BackendUrl { get; set; }
 
