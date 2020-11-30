@@ -142,7 +142,7 @@
     <value>Product name</value>
   </data>
   <data name="ProductValue" xml:space="preserve">
-    <value>QP8.Framework (release {0}) &amp;copy; 1998-{1} Quantum Art</value>
+    <value>QP8.CMS with PostgreSQL support (build {0}) &amp;copy; 1998-{1} Quantum Art</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>

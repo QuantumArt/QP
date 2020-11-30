@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> About(string tabId, int parentId)
         {
             var envVersion = Environment.GetEnvironmentVariable("SERVICE_VERSION");
-            var model = AboutViewModel.Create(tabId, parentId, envVersion ?? _options.Version);
+            var model = AboutViewModel.Create(tabId, parentId, envVersion ?? _options.BuildVersion);
             return await JsonHtml("About", model);
         }
 

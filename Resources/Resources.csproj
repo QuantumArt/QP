@@ -26,12 +26,30 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>WorkflowStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="HomeStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HomeStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="LogOnStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LogOnStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="WorkflowStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>WorkflowStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="HomeStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>HomeStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LogOnStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LogOnStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
