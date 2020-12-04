@@ -4535,11 +4535,16 @@ SET
 GO
 
 
-update item_link set is_rev = 1
-from item_link il
-inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
-inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
-and is_rev = 0
+declare @cnt numeric
+select @cnt = count(*) from item_link where is_rev = 1
+if @cnt < 1000
+begin
+	update item_link set is_rev = 1
+	from item_link il
+	inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
+	inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
+	and is_rev = 0
+end
 GO
 
 update item_link_async set is_rev = 1
