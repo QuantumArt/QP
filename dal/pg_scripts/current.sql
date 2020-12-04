@@ -4496,5 +4496,5 @@ ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
 
 ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
-update workflow set is_default = true where workflow_name = 'general';
+update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 

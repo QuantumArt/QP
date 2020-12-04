@@ -4725,7 +4725,7 @@ EXEC qp_update_translations 'Disable list auto wrapping (ul, ol, dl)', 'Откл
 GO
 
 
-update workflow set is_default = 1 where workflow_name = 'general'
+update workflow set is_default = 1 where workflow_name = 'general' and not exists (select * from workflow where is_default = 1)
 GO
 if not exists(select * from sys.indexes where name = 'IX_O2M_DATA' and [object_id] = object_id('CONTENT_DATA'))
 begin
