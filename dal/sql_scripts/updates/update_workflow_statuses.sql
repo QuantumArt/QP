@@ -1,4 +1,4 @@
-declare @articles_with_wrong_statuses TABLE (
+DECLARE @articles_with_wrong_statuses TABLE (
 Site_ID int,
 CONTENT_ID int,
 STATUS_TYPE_ID int,
@@ -8,11 +8,9 @@ CONTENT_ITEM_ID int
 INSERT INTO @articles_with_wrong_statuses
 	SELECT c.Site_ID, c.CONTENT_ID, ci.STATUS_TYPE_ID, ci.CONTENT_ITEM_ID FROM [dbo].[CONTENT_ITEM] ci
 	INNER JOIN [dbo].[CONTENT] c ON ci.CONTENT_ID = c.CONTENT_ID
-	WHERE  ci.STATUS_TYPE_ID NOT IN (
-					SELECT STATUS_TYPE_ID
-					FROM [dbo].[STATUS_TYPE] i_st
-					WHERE i_st.SITE_ID = c.SITE_ID
-					)
+	INNER JOIN [dbo].[STATUS_TYPE] st ON ci.STATUS_TYPE_ID = st.STATUS_TYPE_ID
+	WHERE st.SITE_ID <> c.SITE_ID
+
 IF EXISTS (SELECT * FROM @articles_with_wrong_statuses)
 BEGIN
 DECLARE @statuses_names TABLE (
