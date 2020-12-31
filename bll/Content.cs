@@ -826,6 +826,14 @@ namespace Quantumart.QP8.BLL
                     contentToCopy.Name = Name;
                     contentToCopy.ParentContentId = ParentContentId.Value;
                     contentToCopy.Description = Description;
+                    contentToCopy.FriendlySingularName = FriendlySingularName;
+                    contentToCopy.FriendlyPluralName = FriendlyPluralName;
+                    contentToCopy.MapAsClass = MapAsClass;
+                    if (contentToCopy.MapAsClass)
+                    {
+                        contentToCopy.NetName = NetName;
+                        contentToCopy.NetPluralName = NetPluralName;
+                    }
                     result = ContentRepository.Copy(contentToCopy, ForceId, ForceFieldIds, ForceLinkIds, true);
                 }
 
