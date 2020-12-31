@@ -2355,6 +2355,9 @@ namespace Quantumart.QP8.BLL
                 // обнулить поле E-mail для уведомлений
                 new NotificationRepository().ClearEmailField(Id);
 
+                // Удалить записи OrderField
+                _fieldRepository.ClearTreeOrder(Id);
+
                 // Удалить версии линков M2M
                 _fieldRepository.RemoveLinkVersions(Id);
 
@@ -2376,16 +2379,11 @@ namespace Quantumart.QP8.BLL
                 // Удалить поле
                 _fieldRepository.Delete(Id);
 
-
-
                 // Перестроить подчиненные контенты
                 if (removeVirtualFields)
                 {
                     helper.RebuildSubContentViews(contents);
                 }
-
-                // Удалить записи OrderField
-                _fieldRepository.ClearTreeOrder(Id);
             }
         }
 
