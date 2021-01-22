@@ -25,7 +25,10 @@
 
 @using (Html.BeginTabForm(Model))
 {
-  <partial name="Locking" model="@Model" />
+  if (!Model.Data.IsReadOnly || Model.Data.LockedByAnyone)
+  {
+    <partial name="Locking" model="@Model" />
+  }
 
   using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
   {

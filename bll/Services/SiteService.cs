@@ -257,7 +257,7 @@ namespace Quantumart.QP8.BLL.Services
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, id));
             }
 
-            if (site.LockedByAnyoneElse || !site.IsUpdatable)
+            if (site.LockedByAnyoneElse || !site.IsUpdatable || !SecurityRepository.IsActionAccessible(ActionCode.UpdateSite))
             {
                 site.IsReadOnly = true;
             }
