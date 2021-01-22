@@ -49,18 +49,22 @@ AS $BODY$
 		Raise notice 'O2M to sync: %', o2m_ids;
 		Raise notice 'FT to sync: %', ft_ids;
 
-
-
         IF o2m_ids is not null THEN
             update content_data set o2m_data = data::numeric where content_data_id = ANY(o2m_ids);
         END IF;
 
 		IF ft_ids is not null THEN
             update content_data set ft_data = to_tsvector('russian', data) where content_data_id = ANY(ft_ids);
+            Raise notice 'content_data FT updated';
 
-            update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from (
-                select distinct cd.content_item_id::int as id from content_data cd where cd.content_data_id = ANY(ft_ids)
-            ) i;
+            INSERT INTO content_item_ft (content_item_id, ft_data)
+            SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
+            WHERE content_item_id in (select content_item_id from content_data where content_data_id = ANY(ft_ids))
+            ON CONFLICT(content_item_id)
+            DO UPDATE SET ft_data = qp_get_article_tsvector(EXCLUDED.content_item_id::int);
+
+            Raise notice 'content_item FT updated';
+
         END IF;
 
 		IF TG_OP = 'UPDATE' THEN

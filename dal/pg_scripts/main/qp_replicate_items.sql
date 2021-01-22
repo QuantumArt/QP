@@ -108,10 +108,11 @@ AS $BODY$
 		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id
 		      and coalesce(cd2.ft_data, to_tsvector('russian', '')) <> coalesce(a.ft_data, to_tsvector('russian', ''));
 
-		update content_item_ft ci set ft_data = a.ft_data from
-        (
-		    select qp_get_article_tsvector(i.id) ft_data, i.id from unnest(ids) i(id)
-		) a where ci.content_item_id = a.id and ci.ft_data <> a.ft_data;
+        INSERT INTO content_item_ft (content_item_id, ft_data)
+            SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
+                WHERE content_item_id = ANY(ids)
+            ON CONFLICT(content_item_id)
+                DO UPDATE SET ft_data = qp_get_article_tsvector(EXCLUDED.content_item_id::int);
 
    		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids)
    		    and (not_for_replication or cancel_split);
