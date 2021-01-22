@@ -3166,10 +3166,11 @@ AS $BODY$
 		) a where a.attribute_id = cd2.attribute_id and a.content_item_id = cd2.content_item_id
 		      and coalesce(cd2.ft_data, to_tsvector('russian', '')) <> coalesce(a.ft_data, to_tsvector('russian', ''));
 
-		update content_item_ft ci set ft_data = a.ft_data from
-        (
-		    select qp_get_article_tsvector(i.id) ft_data, i.id from unnest(ids) i(id)
-		) a where ci.content_item_id = a.id and ci.ft_data <> a.ft_data;
+        INSERT INTO content_item_ft (content_item_id, ft_data)
+            SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
+                WHERE content_item_id = ANY(ids)
+            ON CONFLICT(content_item_id)
+                DO UPDATE SET ft_data = qp_get_article_tsvector(EXCLUDED.content_item_id::int);
 
    		update content_item set not_for_replication = false, CANCEL_SPLIT = false where content_item_id = ANY(ids)
    		    and (not_for_replication or cancel_split);
@@ -3773,18 +3774,22 @@ AS $BODY$
 		Raise notice 'O2M to sync: %', o2m_ids;
 		Raise notice 'FT to sync: %', ft_ids;
 
-
-
         IF o2m_ids is not null THEN
             update content_data set o2m_data = data::numeric where content_data_id = ANY(o2m_ids);
         END IF;
 
 		IF ft_ids is not null THEN
             update content_data set ft_data = to_tsvector('russian', data) where content_data_id = ANY(ft_ids);
+            Raise notice 'content_data FT updated';
 
-            update content_item_ft set ft_data = qp_get_article_tsvector(i.id) from (
-                select distinct cd.content_item_id::int as id from content_data cd where cd.content_data_id = ANY(ft_ids)
-            ) i;
+            INSERT INTO content_item_ft (content_item_id, ft_data)
+            SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
+            WHERE content_item_id in (select content_item_id from content_data where content_data_id = ANY(ft_ids))
+            ON CONFLICT(content_item_id)
+            DO UPDATE SET ft_data = qp_get_article_tsvector(EXCLUDED.content_item_id::int);
+
+            Raise notice 'content_item FT updated';
+
         END IF;
 
 		IF TG_OP = 'UPDATE' THEN
@@ -4498,3 +4503,8 @@ ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean N
 ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
 update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 
+INSERT INTO content_item_ft (content_item_id, ft_data)
+SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
+where not exists(
+    select * from content_item_ft cif where cif.content_item_id = ci.content_item_id
+);
