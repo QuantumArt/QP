@@ -27,4 +27,5 @@ packages
 *.ps1
 LICENSE
 README.md
+global.json
 k8s-deployment.yaml

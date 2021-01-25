@@ -8,7 +8,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
     public abstract class LockableEntityViewModel : EntityViewModel
     {
         [ValidateNever]
-        [BindNever]
         public LockableEntityObject LockableData
         {
             get => (LockableEntityObject)EntityData;

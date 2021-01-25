@@ -361,7 +361,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             script.MergeAttribute("type", "text/javascript");
             script.InnerHtml.AppendHtml($@"
               $('#{inputId}').tTextBox({{
-                val: {doubleValue?.ToString() ?? "null"},
+                val: '{doubleValue?.ToString() ?? "null"}',
+                separator: '{CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator}',
+                groupSeparator: '{CultureInfo.CurrentCulture.NumberFormat.CurrencyGroupSeparator}',
                 step: 1,
                 minValue: {minValue?.ToString() ?? "null"},
                 maxValue: {maxValue?.ToString() ?? "null"},
