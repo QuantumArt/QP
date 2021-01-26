@@ -111,6 +111,14 @@ export class FieldSearchBase {
       .filter(num => num)
       .filter(distinct());
   }
+
+  _getStrings(/** @type {string} */ text) {
+    return text
+      .replace(/\r?\n|\r|;/g, ',')
+      .split(',')
+      .filter(str => str)
+      .filter(distinct());
+  }
 }
 
 

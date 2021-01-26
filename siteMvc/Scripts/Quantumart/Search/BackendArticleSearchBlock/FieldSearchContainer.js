@@ -369,7 +369,7 @@ export class FieldSearchContainer extends Observable {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier:
         return { width: 365, height: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Text:
-        return { width: 410, height: 150 };
+        return { width: 410, height: 200 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum:
         return { width: 410, height: 130 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean:

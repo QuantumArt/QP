@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
@@ -132,7 +132,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             ViewBag.InverseCheckBoxElementID = string.Format("{0}_inverseCheckBox", ViewBag.ElementIdPrefix);
             ViewBag.ExactMatchCheckBoxElementID = string.Format("{0}_exactCheckBox", ViewBag.ElementIdPrefix);
             ViewBag.StartBeginningCheckBoxElementID = string.Format("{0}_beginningCheckBox", ViewBag.ElementIdPrefix);
-            return JsonHtml("TextSearch", null);
+            ViewBag.ListTextElementID = $"{elementIdPrefix}_listTextBox";
+            ViewBag.ByValueElementID = string.Format("{0}_byValueSelector", ViewBag.ElementIdPrefix);
+            return await JsonHtml("TextSearch", null);
         }
 
         /// <summary>
