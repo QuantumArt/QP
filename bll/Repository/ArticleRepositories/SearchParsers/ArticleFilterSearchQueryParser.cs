@@ -250,6 +250,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             var exactMatch = p.QueryParams.Length > 3 && p.QueryParams[3] is bool && (bool)p.QueryParams[3];
             var startFromBegin = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
+            var listTexts = (p.QueryParams.Length > 5 && p.QueryParams[5] is object[]) ? (object[])p.QueryParams[5] : null;
 
             var dbType = QPContext.DatabaseType;
             var escapedFieldColumnName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
@@ -267,7 +268,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             }
 
             // Иначе формируем результат
-            var value = Cleaner.ToSafeSqlLikeCondition(dbType, ((string)p.QueryParams[1]).Trim());
+            var value = exactMatch ?
+                Cleaner.ToSafeSqlString(((string)p.QueryParams[1]).Trim()) :
+                Cleaner.ToSafeSqlLikeCondition(dbType, ((string)p.QueryParams[1]).Trim());
+
             if (exactMatch)
             {
                 return $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "<> " : "=")} '{value}')";
