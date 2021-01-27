@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Xml.Linq;
 using QP8.Infrastructure;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
@@ -63,7 +64,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                         return ParseIdentifierParam(p, sqlParams);
                     case ArticleFieldSearchType.Text:
                     case ArticleFieldSearchType.StringEnum:
-                        return ParseTextParam(p);
+                        return ParseTextParam(p, sqlParams);
                     case ArticleFieldSearchType.DateRange:
                         return ParseDateRangeParam(p);
                     case ArticleFieldSearchType.DateTimeRange:
@@ -208,7 +209,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
         /// <summary>
         /// Парсинг параметра поиска по тексту
         /// </summary>
-        private static string ParseTextParam(ArticleSearchQueryParam p)
+        private static string ParseTextParam(ArticleSearchQueryParam p, ICollection<SqlParameter> sqlParams)
         {
             Ensure.NotNull(p);
             Ensure.That(p.SearchType == ArticleFieldSearchType.Text || p.SearchType == ArticleFieldSearchType.StringEnum);
@@ -240,13 +241,26 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 throw new InvalidCastException("param 1");
             }
 
+            var fieldId = p.FieldID ?? string.Empty;
+            var paramName = "@field" + fieldId.Replace("-", "_");
+            var escapedFieldColumnName = $"[{p.FieldColumn.ToLower()}]";
+
             var isNull = (bool)p.QueryParams[0];
             var inverse = p.QueryParams.Length > 2 && p.QueryParams[2] is bool && (bool)p.QueryParams[2];
 
             var exactMatch = p.QueryParams.Length > 3 && p.QueryParams[3] is bool && (bool)p.QueryParams[3];
             var startFromBegin = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
-            var listTexts = (p.QueryParams.Length > 5 && p.QueryParams[5] is object[]) ? (object[])p.QueryParams[5] : null;
+            var listTexts = (p.QueryParams.Length > 5 && p.QueryParams[5] is object[]) ? (object[])p.QueryParams[5] : Array.Empty<object>();
 
+            if (listTexts.Length > 0)
+            {
+                sqlParams.Add(new SqlParameter(paramName, SqlDbType.Structured) {
+                    TypeName = "Values",
+                    Value = Common.StringsToDataTable(listTexts.Select(n => n.ToString()))
+                });
+                return string.Format(inverse ? "({1}.{0} NOT IN (select value from {2} v) OR {1}.{0} IS NULL)" : "({1}.{0} IN (select value from {2} v))",
+                    escapedFieldColumnName, GetTableAlias(p), paramName);
+            }
             // isnull == true
             if (isNull)
             {
@@ -262,7 +276,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // Иначе формируем результат
             var value = exactMatch ?
                 Cleaner.ToSafeSqlString(((string)p.QueryParams[1]).Trim()) :
-                Cleaner.ToSafeSqlLikeCondition(dbType, ((string)p.QueryParams[1]).Trim());
+                Cleaner.ToSafeSqlLikeCondition(((string)p.QueryParams[1]).Trim());
 
             if (exactMatch)
             {

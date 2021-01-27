@@ -10164,6 +10164,22 @@ namespace Quantumart.QP8.DAL
             return dt;
         }
 
+        public static DataTable StringsToDataTable(IEnumerable<string> strItems)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("articleId");
+            dt.Columns.Add("contentId");
+            dt.Columns.Add("fieldId");
+            dt.Columns.Add("value");
+            var i = 0;
+            foreach (var strItem in strItems ?? Enumerable.Empty<string>())
+            {
+                dt.Rows.Add(i, i, i, strItem);
+                i++;
+            }
+            return dt;
+        }
+
         public static IList<int> GetParentIdsTreeResult(SqlConnection cn, IList<int> ids, int fieldId, string fieldName)
         {
             var query = GetParentIdsTreeQuery(ids, fieldId, fieldName);

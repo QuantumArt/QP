@@ -134,7 +134,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             ViewBag.StartBeginningCheckBoxElementID = string.Format("{0}_beginningCheckBox", ViewBag.ElementIdPrefix);
             ViewBag.ListTextElementID = $"{elementIdPrefix}_listTextBox";
             ViewBag.ByValueElementID = string.Format("{0}_byValueSelector", ViewBag.ElementIdPrefix);
-            return await JsonHtml("TextSearch", null);
+            return JsonHtml("TextSearch", null);
         }
 
         /// <summary>
