@@ -2,6 +2,7 @@ using System.Dynamic;
 using System.Web.Mvc;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
@@ -21,6 +22,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
         }
 
         public Db Data { get; }
+
+        public string Version => SitePathRepository.GetVersion(Default.ReleaseNumber);
 
         public string DbHash { get; }
 

@@ -16,12 +16,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
         public override string ActionCode => Constants.ActionCode.About;
 
         [LocalizedDisplayName("ProductName", NameResourceType = typeof(HomeStrings))]
-        public string Product => string.Format(HomeStrings.ProductValue, Default.ReleaseNumber, DateTime.Now.Year);
+        public string Product => string.Format(HomeStrings.ProductValue, Version, DateTime.Now.Year);
 
         [LocalizedDisplayName("DBName", NameResourceType = typeof(HomeStrings))]
         public string DbName => DbRepository.GetDbName();
 
         [LocalizedDisplayName("DBServerName", NameResourceType = typeof(HomeStrings))]
         public string DbServerName => DbRepository.GetDbServerName();
+
+        private string Version => SitePathRepository.GetVersion(Default.ReleaseNumber);
     }
 }

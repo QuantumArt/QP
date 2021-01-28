@@ -6,7 +6,7 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
 {
-    internal class SitePathRepository
+    public class SitePathRepository
     {
         public static string RELATIVE_PATH_TO_COPY = @"\ToCopy";
         public static string RELATIVE_PREVIEW_PATH = @"\temp\preview\objects";
@@ -27,6 +27,14 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var qpConfig = WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
             return qpConfig == null ? string.Empty : qpConfig.BackendUrl;
+        }
+
+        public static string GetVersion(string defaultValue)
+        {
+            var rootUrl = GetCurrentRootUrl();
+            var folder = HttpContext.Current == null || string.IsNullOrEmpty(rootUrl) ? string.Empty : HttpContext.Current.Server.MapPath(rootUrl);
+            var path = Path.Combine(folder, "version.txt");
+            return File.Exists(path) ? File.ReadAllText(path) : defaultValue;
         }
 
         /// <summary>

@@ -5,7 +5,6 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string version = typeof(Startup).Assembly.GetCommitHash();
 }
 
 <head>
@@ -14,7 +13,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
   <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
-  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?sha=" + version)" />
+  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?sha=" + Model.Version)" />
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")" />
 
   <script>
@@ -88,13 +87,13 @@
     }
   </div>
 
-  <script src="@Url.Content("~/Scripts/build/vendors.js?sha=" + version)"></script>
+  <script src="@Url.Content("~/Scripts/build/vendors.js?sha=" + Model.Version)"></script>
 
   <script src="@Url.Content("~/Scripts/Quantumart/JsConstants.ashx")"></script>
   <script src="@Url.Content("~/Scripts/Quantumart/JsLanguage.ashx")"></script>
   <script src="@Url.Content("~/signalr/hubs")"></script>
 
-  <script src="@Url.Content("~/Scripts/build/app.js?sha=" + version)"></script>
+  <script src="@Url.Content("~/Scripts/build/app.js?sha=" + Model.Version)"></script>
   @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true))
 
   <script>
