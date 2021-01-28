@@ -157,7 +157,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
                 var fieldId = p.FieldId ?? string.Empty;
                 var paramName = "@field" + fieldId.Replace("-", "_");
-                var values = ((object[])p.QueryParams[4]).Select(n => int.Parse(n.ToString())).ToArray();
+                var values = ((object[])p.QueryParams[4]).Select(n => n.ToString()?.Trim())
+                    .Where(n => !String.IsNullOrEmpty(n)).Select(int.Parse).ToArray();
                 if (values.Length == 1)
                 {
                     sqlParams.Add(SqlQuerySyntaxHelper.CreateDbParameter(dbType, paramName, values[0]));
@@ -261,7 +262,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             if (listTexts.Length > 0)
             {
                 sqlParams.Add(SqlQuerySyntaxHelper.GetStringsDatatableParam(
-                    paramName, listTexts.Select(n => n.ToString()), dbType)
+                    paramName, listTexts.Select(n => n.ToString()?.Trim()), dbType)
                 );
                 return string.Format(inverse ? "({1}.{0} NOT IN (select value from {2}) OR {1}.{0} IS NULL)" : "({1}.{0} IN (select value from {2}))",
                     escapedFieldColumnName, GetTableAlias(p), SqlQuerySyntaxHelper.StrList(dbType, paramName, "v"));
