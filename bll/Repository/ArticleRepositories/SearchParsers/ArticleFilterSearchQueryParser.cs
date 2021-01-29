@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Xml.Linq;
 using QP8.Infrastructure;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
@@ -64,7 +65,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                         return ParseIdentifierParam(p, sqlParams);
                     case ArticleFieldSearchType.Text:
                     case ArticleFieldSearchType.StringEnum:
-                        return ParseTextParam(p);
+                        return ParseTextParam(p, sqlParams);
                     case ArticleFieldSearchType.DateRange:
                         return ParseDateRangeParam(p);
                     case ArticleFieldSearchType.DateTimeRange:
@@ -156,7 +157,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
                 var fieldId = p.FieldId ?? string.Empty;
                 var paramName = "@field" + fieldId.Replace("-", "_");
-                var values = ((object[])p.QueryParams[4]).Select(n => int.Parse(n.ToString())).ToArray();
+                var values = ((object[])p.QueryParams[4]).Select(n => n.ToString()?.Trim())
+                    .Where(n => !String.IsNullOrEmpty(n)).Select(int.Parse).ToArray();
                 if (values.Length == 1)
                 {
                     sqlParams.Add(SqlQuerySyntaxHelper.CreateDbParameter(dbType, paramName, values[0]));
@@ -213,7 +215,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
         /// <summary>
         /// Парсинг параметра поиска по тексту
         /// </summary>
-        private static string ParseTextParam(ArticleSearchQueryParam p)
+        private static string ParseTextParam(ArticleSearchQueryParam p, ICollection<DbParameter> sqlParams)
         {
             Ensure.NotNull(p);
             Ensure.That(p.SearchType == ArticleFieldSearchType.Text || p.SearchType == ArticleFieldSearchType.StringEnum);
@@ -245,16 +247,28 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 throw new InvalidCastException("param 1");
             }
 
+            var dbType = QPContext.DatabaseType;
+            var fieldId = p.FieldId ?? string.Empty;
+            var paramName = "@field" + fieldId.Replace("-", "_");
+            var escapedFieldColumnName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
+
             var isNull = (bool)p.QueryParams[0];
             var inverse = p.QueryParams.Length > 2 && p.QueryParams[2] is bool && (bool)p.QueryParams[2];
 
             var exactMatch = p.QueryParams.Length > 3 && p.QueryParams[3] is bool && (bool)p.QueryParams[3];
             var startFromBegin = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
+            var listTexts = (p.QueryParams.Length > 5 && p.QueryParams[5] is object[]) ? (object[])p.QueryParams[5] : Array.Empty<object>();
 
-            var dbType = QPContext.DatabaseType;
-            var escapedFieldColumnName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
+            if (listTexts.Length > 0)
+            {
+                sqlParams.Add(SqlQuerySyntaxHelper.GetStringsDatatableParam(
+                    paramName, listTexts.Select(n => n.ToString()?.Trim()), dbType)
+                );
+                return string.Format(inverse ? "({1}.{0} NOT IN (select value from {2}) OR {1}.{0} IS NULL)" : "({1}.{0} IN (select value from {2}))",
+                    escapedFieldColumnName, GetTableAlias(p), SqlQuerySyntaxHelper.StrList(dbType, paramName, "v"));
+            }
+
             // isnull == true
-
             if (isNull)
             {
                 return $"({GetTableAlias(p)}.{escapedFieldColumnName} IS {(inverse ? "NOT " : "")}NULL)";
@@ -267,7 +281,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             }
 
             // Иначе формируем результат
-            var value = Cleaner.ToSafeSqlLikeCondition(dbType, ((string)p.QueryParams[1]).Trim());
+            var value = exactMatch ?
+                Cleaner.ToSafeSqlString(((string)p.QueryParams[1]).Trim()) :
+                Cleaner.ToSafeSqlLikeCondition(dbType, ((string)p.QueryParams[1]).Trim());
+
             if (exactMatch)
             {
                 return $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "<> " : "=")} '{value}')";
