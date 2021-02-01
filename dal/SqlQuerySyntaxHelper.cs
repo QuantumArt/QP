@@ -204,6 +204,19 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string StrList(DatabaseType databaseType, string name, string alias)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return $"{name} {alias}";
+                case DatabaseType.Postgres:
+                    return $"unnest({name}) {alias}(value)";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
         public static DbParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids, DatabaseType databaseType = DatabaseType.SqlServer)
         {
             switch (databaseType)
@@ -224,6 +237,26 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static DbParameter GetStringsDatatableParam(string paramName, IEnumerable<string> strItems, DatabaseType databaseType = DatabaseType.SqlServer)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.SqlServer:
+                    return new SqlParameter(paramName, SqlDbType.Structured)
+                    {
+                        TypeName = "Values",
+                        Value = StringsToDataTable(strItems)
+                    };
+                case DatabaseType.Postgres:
+                    return new NpgsqlParameter(paramName, NpgsqlDbType.Array | NpgsqlDbType.Text)
+                    {
+                        Value = strItems?.ToArray() ?? new string[0]
+                    };
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
+            }
+        }
+
         public static DbParameter GetXmlParameter(string paramName, string xml, DatabaseType databaseType = DatabaseType.SqlServer)
         {
             if (databaseType == DatabaseType.SqlServer)
@@ -236,7 +269,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable IdsToDataTable(IEnumerable<int> ids)
+        private static DataTable IdsToDataTable(IEnumerable<int> ids)
         {
             var dt = new DataTable();
             dt.Columns.Add("id");
@@ -245,6 +278,22 @@ namespace Quantumart.QP8.DAL
                 dt.Rows.Add(id);
             }
 
+            return dt;
+        }
+
+        private static DataTable StringsToDataTable(IEnumerable<string> strItems)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("articleId");
+            dt.Columns.Add("contentId");
+            dt.Columns.Add("fieldId");
+            dt.Columns.Add("value");
+            var i = 0;
+            foreach (var strItem in strItems ?? Enumerable.Empty<string>())
+            {
+                dt.Rows.Add(i, i, i, strItem);
+                i++;
+            }
             return dt;
         }
 

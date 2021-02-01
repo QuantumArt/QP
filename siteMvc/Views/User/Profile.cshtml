@@ -18,13 +18,47 @@
     using (Html.BeginFieldGroup(UserStrings.ViewSettings))
     {
         @Html.CheckBoxFieldFor(n => n.Data.EnableContentGroupingInTree)
+
+      <dl class="row">
+        <dt class="label"></dt>
+        <dd class="field">
+          <span class="allowNotifications linkButton actionLink">
+            <a href="javascript: void(0)">
+              <span class="icon expandParents"><img src="Static/Common/0.gif" alt="allow push notifications"></span>
+              <span class="text">@DBStrings.AllowNotifications</span>
+            </a>
+          </span>
+        </dd>
+      </dl>
     }
 }
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
+  var $editingForm = $("#@Model.UniqueId("editingForm")");
 	@(Model.ContextObjectName).setInitializedCallback(function() {
 	  this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
+
+    $editingForm.on('click', '.allowNotifications', function() {
+      if (!("Notification" in window)) {
+         console.warn("This browser does not support desktop notification");
+      }
+
+      else if (Notification.permission === "granted") {
+         console.info("Notification permission granted");
+      }
+
+      else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+          if (permission === "granted") {
+            console.info("Notification permission granted");
+          } else {
+             console.warn("Notification permission not granted");
+          }
+        });
+      }
+    });
+
 	});
 
   @(Model.ContextObjectName).setHostLoadedCallback(function() {
@@ -37,6 +71,7 @@
     if(this.contentDefaultFiltersMediator){
       this.contentDefaultFiltersMediator.dispose();
     }
+    $editingForm.off('click')
   });
 </script>
 @Html.RunInitScript(Model)
