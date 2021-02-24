@@ -120,7 +120,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (!string.IsNullOrEmpty(path))
             {
                 var dir = Path.GetDirectoryName(path);
-                var readStream = new PhysicalFileProvider(dir).GetFileInfo(fileName).CreateReadStream();
+                var file = Path.GetFileName(path);
+                var readStream = new PhysicalFileProvider(dir).GetFileInfo(file).CreateReadStream();
                 return File(readStream, MimeTypes.OctetStream, fileName);
             }
 

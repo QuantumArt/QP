@@ -38,6 +38,11 @@ namespace Quantumart.QP8.BLL
 
         public void Validate(RulesException<Article> errors)
         {
+            if (Field.IsReadOnly)
+            {
+                return;
+            }
+
             if (Field.Required && string.IsNullOrEmpty(Value))
             {
                 errors.Error(Field.FormName, Value, string.Format(ArticleStrings.MissingValue, Field.DisplayName));
