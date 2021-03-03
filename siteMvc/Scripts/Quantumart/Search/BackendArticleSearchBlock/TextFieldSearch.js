@@ -86,8 +86,9 @@ export class TextFieldSearch extends FieldSearchBase {
     return BackendArticleSearchBlock.createFieldSearchQuery(
       Quantumart.QP8.Enums.ArticleFieldSearchType.Text,
       this._fieldID, this._fieldColumn, this._contentID, this._referenceFieldID, this.getIsNull(),
-      $(this._queryTextBoxElement).val(), this.getInverse(), this.getExactMatch(), this.getBeginningStart(),
-      this._getStrings($(this._queryListTextBoxElement).val()));
+      this._isByList ? '' : $(this._queryTextBoxElement).val(),
+      this.getInverse(), this.getExactMatch(), this.getBeginningStart(),
+      this._isByList ? this._getStrings($(this._queryListTextBoxElement).val()) : null);
   }
 
   getBlockState() {
