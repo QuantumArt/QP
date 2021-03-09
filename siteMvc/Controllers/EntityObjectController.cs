@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public JsonResult CheckExistence(string entityTypeCode, int entityId)
         {
-            return Json(EntityObjectService.CheckExistence(entityTypeCode, entityId));
+            return Json(entityTypeCode == "null" || EntityObjectService.CheckExistence(entityTypeCode, entityId));
         }
 
         public JsonResult CheckPresenceSelfRelations(string entityTypeCode, int entityId)

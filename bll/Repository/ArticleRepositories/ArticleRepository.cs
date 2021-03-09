@@ -423,6 +423,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             {
                 var field = query.ListId != 0 ? FieldRepository.GetById(query.ListId) : null;
                 var fields = ContentRepository.GetDisplayFields(query.ParentEntityId, field).ToList();
+                if (!fields.Any())
+                {
+                    return new List<ListItem>{};
+                }
                 var displayExpression = GetDisplayExpression(fields);
                 var isMany = field != null && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation);
                 var orderByExpression = isMany
