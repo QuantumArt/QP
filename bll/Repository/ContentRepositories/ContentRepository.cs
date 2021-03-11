@@ -583,7 +583,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 .Select(FieldRepository.GetById);
 
             var displayField = field?.Relation != null && field.ExactType == FieldExactTypes.O2MRelation ? field.Relation : GetTitleField(contentId);
-            return fields ?? new[] { displayField };
+            return fields ?? (displayField != null ? new[] { displayField } : new Field[]{});
         }
 
         internal static bool HasVariationField(int contentId, int exceptId = 0)

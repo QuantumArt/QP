@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.MultistepActions.Base;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
@@ -24,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
         /// <summary>
         /// If <paramref name="actionCode"/> is null then it taken from RouteData.Values["command"]
         /// </summary>
-        public BackendActionContextAttribute(string actionCode, string entitySingleIdParamName = "id", string entityMultiIdParamName = "IDs", string parentEntityIdParamName = "parentId")
+        public BackendActionContextAttribute(string actionCode, string entitySingleIdParamName = "id", string entityMultiIdParamName = "selModel", string parentEntityIdParamName = "parentId")
         {
             Order = FilterOrder;
             _entitySingleIdParamName = entitySingleIdParamName;
@@ -49,15 +50,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (filterContext.ActionArguments.ContainsKey(_entityMultiIdParamName))
                 {
-                    var ids = filterContext.ActionArguments[_entityMultiIdParamName] as IEnumerable<int>;
-                    var strIds = filterContext.ActionArguments[_entityMultiIdParamName] as IEnumerable<string>;
-                    if (ids != null)
+                    if (filterContext.ActionArguments[_entityMultiIdParamName] is SelectedItemsViewModel selModel)
                     {
-                        stringEntityIDs.AddRange(ids.Select(id => id.ToString()));
-                    }
-                    else if (strIds != null)
-                    {
-                        stringEntityIDs.AddRange(strIds);
+                        stringEntityIDs.AddRange(selModel.Ids.Select(id => id.ToString()));
                     }
                 }
             }
