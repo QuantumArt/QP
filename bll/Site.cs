@@ -486,6 +486,16 @@ namespace Quantumart.QP8.BLL
                 SendNotifications = false;
             }
 
+            if (!SeparateDns)
+            {
+                StageDns = null;
+            }
+
+            if (!UseAbsoluteUploadUrl)
+            {
+                UploadUrlPrefix = null;
+            }
+
             if (!ProceedDbIndependentGeneration)
             {
                 GenerateMapFileOnly = false;
@@ -504,16 +514,6 @@ namespace Quantumart.QP8.BLL
                 if (!ForceTestDirectory)
                 {
                     TestDirectory = null;
-                }
-
-                if (!SeparateDns)
-                {
-                    StageDns = null;
-                }
-
-                if (!UseAbsoluteUploadUrl)
-                {
-                    UploadUrlPrefix = null;
                 }
             }
         }
