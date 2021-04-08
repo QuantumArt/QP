@@ -16,7 +16,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         private static void SetupQpContext(string connectionStringOrCustomerCode, DatabaseType dbType)
         {
-            if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, dbType, out var cnsBuilder))
+            if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, (QP.ConfigurationService.Models.DatabaseType)(int)dbType, out var cnsBuilder))
             {
                 QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(
                     QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString, dbType:dbType),
@@ -35,7 +35,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         public abstract void Process(string inputData);
 
-        protected static string GetConnectionString(string connectionStringOrCustomerCode, DatabaseType dbType) => SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, dbType,  out var cnsBuilder)
+        protected static string GetConnectionString(string connectionStringOrCustomerCode, DatabaseType dbType) => SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, (QP.ConfigurationService.Models.DatabaseType)(int)dbType,  out var cnsBuilder)
             ? cnsBuilder.ConnectionString
             : QPConfiguration.GetConnectionString(connectionStringOrCustomerCode);
     }
