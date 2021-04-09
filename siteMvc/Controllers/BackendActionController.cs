@@ -31,6 +31,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.OperationAction)]
+        public JsonResult GetByAlias(string alias)
+        {
+            var action = BackendActionService.GetByAlias(alias);
+            return Json(new
+            {
+                success = true,
+                action
+            });
+        }
+
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
         public JsonResult GetEntityTypeIdToActionListItemsDictionary()
         {
             var dictionary = BackendActionService.GetEntityTypeIdToActionListItemsDictionary();

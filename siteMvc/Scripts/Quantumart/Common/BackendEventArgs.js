@@ -7,6 +7,7 @@ export class BackendEventArgs {
   _parentEntityId = 0;
   _actionTypeCode = '';
   _actionCode = '';
+  _actionAlias = '';
   _actionName = '';
   _isInterface = false;
   _isCustomAction = false;
@@ -92,6 +93,14 @@ export class BackendEventArgs {
 
   set_actionCode(value) {
     this._actionCode = value;
+  }
+
+  get_actionAlias() {
+    return this._actionAlias;
+  }
+
+  set_actionAlias(value) {
+    this._actionAlias = value;
   }
 
   get_actionName() {
@@ -340,6 +349,7 @@ export class BackendEventArgs {
       targetArgs.set_entityTypeName(sourceArgs.get_entityTypeName());
       targetArgs.set_parentEntityId(sourceArgs.get_parentEntityId());
       targetArgs.set_actionCode(sourceArgs.get_actionCode());
+      targetArgs.set_actionAlias(sourceArgs.get_actionAlias());
       targetArgs.set_actionName(sourceArgs.get_actionName());
       targetArgs.set_actionTypeCode(sourceArgs.get_actionTypeCode());
       targetArgs.set_isInterface(sourceArgs.get_isInterface());

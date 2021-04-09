@@ -715,6 +715,22 @@ export class BackendEntityEditor extends Observable {
         title: newSettings.title
       };
 
+      let dataAttributes = '';
+
+      if (newSettings.actionCode) {
+        dataAttributes = ` data-action_code="${newSettings.actionCode}"`;
+      }
+      if (newSettings.actionAlias) {
+        dataAttributes += ` data-action_alias="${newSettings.actionAlias}"`;
+      }
+      if (newSettings.entityId > 0) {
+        dataAttributes += ` data-entity_id="${newSettings.entityId}"`;
+      }
+      if (newSettings.parentEntityId > 0) {
+        dataAttributes += ` data-parent_entity_id="${newSettings.parentEntityId}"`;
+      }
+
+
       if ($ul.find(`#${options.id}`).length > 0) {
         if (this._notifyCustomButtonExistence) {
           $q.alertError(`Button ${options.id} already exists`);
@@ -725,7 +741,7 @@ export class BackendEntityEditor extends Observable {
 
       const builder = new $.telerik.stringBuilder();
       builder
-        .cat(`<li><span id="${options.id}" class="linkButton actionLink">`)
+        .cat(`<li><span id="${options.id}" class="linkButton actionLink" ${dataAttributes}>`)
         .cat('<a href="javascript:void(0);">')
         .cat(`<span class="icon ${options.class}"><img src="Static/Common/0.gif"></span>`)
         .cat(`<span class="text">${options.title}</span>`)
