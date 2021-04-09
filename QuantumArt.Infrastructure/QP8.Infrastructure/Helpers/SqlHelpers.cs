@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Data.SqlClient;
 using Npgsql;
-using Quantumart.QP8.Constants;
+using QP.ConfigurationService.Models;
 
 namespace QP8.Infrastructure.Helpers
 {
