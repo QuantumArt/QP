@@ -33,6 +33,18 @@ namespace Quantumart.QP8.BLL.Repository
             return action;
         }
 
+        internal static BackendAction GetByAlias(string alias)
+        {
+            var actionId = BackendActionCache.CustomActions.SingleOrDefault(a => String.Equals(a.Alias, alias, StringComparison.InvariantCultureIgnoreCase))?.ActionId;
+            var action = BackendActionCache.Actions.SingleOrDefault(a => a.Id == actionId);
+            if (action == null)
+            {
+                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByAlias, alias));
+            }
+
+            return action;
+        }
+
         internal static IEnumerable<BackendActionCacheRecord> GetActionContextCacheData()
         {
             return BackendActionCache.Actions.Select(a => new BackendActionCacheRecord { ActionCode = a.Code, ActionTypeCode = a.ActionType.Code, EntityTypeCode = a.EntityType.Code }).ToArray();

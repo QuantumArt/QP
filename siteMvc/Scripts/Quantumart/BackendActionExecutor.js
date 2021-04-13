@@ -515,6 +515,30 @@ BackendActionExecutor.getBackendActionByCode = function (actionCode) {
   return action;
 };
 
+BackendActionExecutor.getBackendActionByAlias = function (alias) {
+  const cacheKey = `ActionByCustomActionAlias_${alias}`;
+  let action = GlobalCache.getItem(cacheKey);
+
+  if (!action) {
+    $q.getJsonFromUrl('GET', `${window.CONTROLLER_URL_BACKEND_ACTION}GetByAlias`, { alias }, false, false)
+      .done(data => {
+        if (data.success) {
+          ({ action } = data);
+        } else {
+          action = null;
+          $q.alertFail(data.Text);
+        }
+      }).fail(jqXHR => {
+        action = null;
+        $q.processGenericAjaxError(jqXHR);
+      });
+
+    GlobalCache.addItem(cacheKey, action);
+  }
+
+  return action;
+};
+
 BackendActionExecutor.getBackendActionById = function (actionId) {
   const cacheKey = `ActionByActionId_${actionId}`;
   let actionCode = GlobalCache.getItem(cacheKey);

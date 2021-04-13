@@ -35,6 +35,10 @@ export class BackendActionLink extends Observable {
         this._context = options.context;
       }
 
+      if (options.actionAlias) {
+        this._actionAlias = options.actionAlias;
+      }
+
       if ($q.isNull(options.actionTargetType)) {
         this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
       } else {
@@ -56,6 +60,7 @@ export class BackendActionLink extends Observable {
   _actionCode = '';
   _actionTargetType = null;
   _context = null;
+  _actionAlias = '';
 
   ACTION_LINK_DISABLED_CLASS_NAME = 'disabled';
   ACTION_LINK_BUSY_CLASS_NAME = 'busy';
@@ -98,6 +103,14 @@ export class BackendActionLink extends Observable {
 
   set_actionCode(value) { // eslint-disable-line camelcase
     this._actionCode = value;
+  }
+
+  get_actionAlias() { // eslint-disable-line camelcase
+    return this._actionAlias;
+  }
+
+  set_actionAlias(value) { // eslint-disable-line camelcase
+    this._actionAlias = value;
   }
 
   get_actionTargetType() { // eslint-disable-line camelcase
@@ -195,7 +208,13 @@ export class BackendActionLink extends Observable {
         $q.alertFail($l.ActionLink.actionTargetTypeNotSpecified);
       } else {
         const actionCode = this._actionCode;
-        const action = $a.getBackendActionByCode(actionCode);
+        let action = null;
+        if (!this._actionCode && this._actionAlias) {
+          action = $a.getBackendActionByAlias(this._actionAlias);
+        } else {
+          action = $a.getBackendActionByCode(actionCode);
+        }
+
         if (action) {
           let params = new BackendActionParameters({
             entityId: this._entityId,
