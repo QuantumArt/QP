@@ -1493,6 +1493,7 @@ export class BackendDocumentHost extends Observable {
         const parentEntityId = $q.toInt($link.data('parent_entity_id'), null);
         const actionTypeCode = $link.data('action_type_code');
         const actionCode = $link.data('action_code');
+        const actionAlias = $link.data('action_alias');
         const actionTargetType = $q.toInt($link.data('action_target_type'), null);
         const context = $link.data('context');
         const actionLink = new BackendActionLink(linkId, {
@@ -1502,7 +1503,8 @@ export class BackendDocumentHost extends Observable {
           actionTypeCode,
           actionCode,
           actionTargetType,
-          context
+          context,
+          actionAlias
         });
 
         actionLink.initialize();

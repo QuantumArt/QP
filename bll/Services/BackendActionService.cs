@@ -14,6 +14,8 @@ namespace Quantumart.QP8.BLL.Services
 
         public static BackendAction GetByCode(string actionCode) => string.IsNullOrWhiteSpace(actionCode) ? null : BackendActionRepository.GetByCode(actionCode);
 
+        public static BackendAction GetByAlias(string alias) => string.IsNullOrWhiteSpace(alias) ? null : BackendActionRepository.GetByAlias(alias);
+
         public static IEnumerable<BackendActionStatus> GetStatusesList(string actionCode, int entityId, int parentEntityId) => ResolveStatusForCustomActions(actionCode, entityId, parentEntityId, BackendActionRepository.GetStatusesList(actionCode, entityId));
 
         /// <summary>

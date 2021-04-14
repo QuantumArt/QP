@@ -10,8 +10,8 @@
 
 namespace Quantumart.QP8.Resources {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Quantumart.QP8.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class CustomActionStrings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal CustomActionStrings() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Quantumart.QP8.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Action not found (Id = {0}).
         /// </summary>
@@ -68,7 +68,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ActionNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Action not found (Code = {0}).
         /// </summary>
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ActionNotFoundByCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select Action Type.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ActionTypeNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add New Action.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AddNewCustomAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Alias.
         /// </summary>
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Alias", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of Alias should not exceed {1} characters!.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AliasExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid Alias format.
         /// </summary>
@@ -122,7 +122,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AliasInvalidFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Basic Parameters.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("BasicParametersTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cannot copy custom action because you have no enough permissions.
         /// </summary>
@@ -140,7 +140,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CannotCopyBecauseOfSecurity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Confirm Phrase.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ConfirmPhrase", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of Confirm Phrase should not exceed {1} characters!.
         /// </summary>
@@ -158,7 +158,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ConfirmPhraseLengthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Content selection mode.
         /// </summary>
@@ -167,7 +167,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ContentSelectionMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Entity Type.
         /// </summary>
@@ -176,7 +176,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CustomActionEntityType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Action Type.
         /// </summary>
@@ -185,7 +185,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CustomActionType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select action type.
         /// </summary>
@@ -194,7 +194,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("DefaultActionTypeOption", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select entity type.
         /// </summary>
@@ -203,7 +203,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("DefaultEntityTypeOption", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select Entity Type.
         /// </summary>
@@ -212,7 +212,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("EntityTypeNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Has pre-action.
         /// </summary>
@@ -221,7 +221,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("HasPreAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Has settings.
         /// </summary>
@@ -230,7 +230,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("HasSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide in all  contents  except selected.
         /// </summary>
@@ -239,7 +239,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("HideExceptSelectedContents", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide on all sites except selected.
         /// </summary>
@@ -248,7 +248,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("HideExceptSelectedSites", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Icon URL.
         /// </summary>
@@ -257,7 +257,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("IconUrl", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid Icon URL format.
         /// </summary>
@@ -266,7 +266,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("IconUrlInvalidFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of Icon URL should not exceed {1} characters!.
         /// </summary>
@@ -275,7 +275,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("IconUrlMaxLengthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Interface.
         /// </summary>
@@ -284,7 +284,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("IsInterface", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Window.
         /// </summary>
@@ -293,7 +293,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("IsWindow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Order.
         /// </summary>
@@ -302,7 +302,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Order", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Values of Order value must be greater than zero .
         /// </summary>
@@ -311,7 +311,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("OrderIsNotInRange", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The value of Order is not unique for the selected Entity Type. The valid value is {0} ..
         /// </summary>
@@ -320,7 +320,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("OrderValueIsNotUniq", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Selected contents.
         /// </summary>
@@ -329,7 +329,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SelectedContentIDs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Selected sites.
         /// </summary>
@@ -338,7 +338,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SelectedSiteIDs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show in all contents except selected.
         /// </summary>
@@ -347,7 +347,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ShowExpectSelectedContents", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show on all sites except selected.
         /// </summary>
@@ -356,7 +356,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ShowExpectSelectedSites", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show in context menu.
         /// </summary>
@@ -365,7 +365,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ShowInMenu", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show on toolbar.
         /// </summary>
@@ -374,7 +374,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ShowInToolbar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Site selection mode.
         /// </summary>
@@ -383,7 +383,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SiteSelectionMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Some entities have not been processed because of insufficient permissions. IDs: {0}.
         /// </summary>
@@ -392,7 +392,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SomeEntitiesNotAccessable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to There is no Context Menu for Entity Type &apos;{0}&apos;.
         /// </summary>
@@ -401,7 +401,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ThereIsNoContextMenuForEntityType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to For Action.
         /// </summary>
@@ -410,7 +410,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ToolbarButtonParentActionId", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select Action.
         /// </summary>
@@ -419,7 +419,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ToolbarButtonParentActionNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to URL.
         /// </summary>
@@ -428,7 +428,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Url", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid URL format.
         /// </summary>
@@ -437,7 +437,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UrlInvalidFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of URL should not exceed {1} characters!.
         /// </summary>
@@ -446,7 +446,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UrlMaxLengthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter URL.
         /// </summary>
@@ -455,7 +455,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UrlNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Window Height.
         /// </summary>
@@ -464,7 +464,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("WindowHeight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter Window Height.
         /// </summary>
@@ -473,7 +473,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("WindowHeightIsNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Values of Window Height is not in acceptable range: from {0} to {1}.
         /// </summary>
@@ -482,7 +482,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("WindowHeightIsNotInRange", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Window Width.
         /// </summary>
@@ -491,7 +491,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("WindowWidth", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter Window Width.
         /// </summary>
@@ -500,7 +500,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("WindowWidthIsNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Values of Window Width is not in acceptable range: from {0} to {1}.
         /// </summary>
@@ -509,5 +509,15 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("WindowWidthIsNotInRange", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Action not found (Alias = {0}).
+        /// </summary>
+        public static string ActionNotFoundByAlias {
+            get {
+                return ResourceManager.GetString("ActionNotFoundByAlias", resourceCulture);
+            }
+        }
+
     }
 }
