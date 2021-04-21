@@ -738,7 +738,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             if (list != null && list.Count >= QPConfiguration.Options.RelationCountLimit)
             {
                 var value = string.Join(",", list.Select(n => n.Value).ToArray());
-                wrapper.InnerHtml.AppendHtml(source.Hidden(name, value, new { @class = MultiplePickerOverflowHiddenValue, id = source.UniqueId(name) }).ToString());
+                wrapper.InnerHtml.AppendHtml(source.Hidden(name, value, new { @class = MultiplePickerOverflowHiddenValue, id = source.UniqueId(name) }));
             }
 
             var ul = new TagBuilder("ul");
