@@ -61,14 +61,14 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
         public bool CheckUnique(EntityPermission permission)
         {
-            return !QPContext.EFContext.ContentPermissionSet.Any(p =>
-                PermissionUserOrGroupEquals(permission, p)
+            return !QPContext.EFContext.ContentPermissionSet.Where(p => p.ContentId == permission.ParentEntityId)
+                .AsEnumerable()
+                .Any(p => PermissionUserOrGroupEquals(permission, p)
             );
         }
 
         private static bool PermissionUserOrGroupEquals(EntityPermission permission, ContentPermissionDAL p) =>
-            p.ContentId == permission.ParentEntityId
-            && (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null)
+            (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null)
             && (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
 
         public void MultipleRemove(IEnumerable<int> ids)
