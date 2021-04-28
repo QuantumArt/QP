@@ -28,8 +28,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ActionAuthorize(ActionCode.ExportArticles)]
-        [BackendActionContext(ActionCode.ExportArticles)]
+        [ActionAuthorize(ActionCode.ExportSelectedArticles)]
+        [BackendActionContext(ActionCode.ExportSelectedArticles)]
         public ActionResult PreSettings(int parentId, [FromBody] SelectedItemsViewModel model)
         {
             return Json(_service.MultistepActionSettings(parentId, 0, model.Ids));
@@ -37,8 +37,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ActionAuthorize(ActionCode.ExportArticles)]
-        [BackendActionContext(ActionCode.ExportArticles)]
+        [ActionAuthorize(ActionCode.ExportSelectedArticles)]
+        [BackendActionContext(ActionCode.ExportSelectedArticles)]
         public async Task<ActionResult> Settings(string tabId, int parentId,  [FromBody] SelectedItemsViewModel model)
         {
             return await JsonHtml($"{FolderForTemplate}/ExportTemplate", new ExportViewModel
@@ -50,8 +50,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ActionAuthorize(ActionCode.ExportArticles)]
-        [BackendActionContext(ActionCode.ExportArticles)]
+        [ActionAuthorize(ActionCode.ExportSelectedArticles)]
+        [BackendActionContext(ActionCode.ExportSelectedArticles)]
         public ActionResult Setup(int parentId, [FromBody] SelectedItemsViewModel model, bool? boundToExternal)
         {
             return Json(_service.Setup(parentId, 0, model.Ids, boundToExternal));
@@ -59,8 +59,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ActionAuthorize(ActionCode.ExportArticles)]
-        [BackendActionContext(ActionCode.ExportArticles)]
+        [ActionAuthorize(ActionCode.ExportSelectedArticles)]
+        [BackendActionContext(ActionCode.ExportSelectedArticles)]
         public JsonResult SetupWithParams(int parentId, [FromBody] ExportViewModel model)
         {
             var settings = new ExportSettings
