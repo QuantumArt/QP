@@ -41,13 +41,14 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
         public bool CheckUnique(EntityPermission permission)
         {
             return !QPContext.EFContext.EntityTypePermissionSet
+                .Where(p => p.EntityTypeId == permission.ParentEntityId)
+                .AsEnumerable()
                 .Any(p =>
                     PermissionUserOrGroupEquals(permission, p)
                 );
         }
 
         private static bool PermissionUserOrGroupEquals(EntityPermission permission, EntityTypePermissionDAL p) =>
-            p.EntityTypeId == permission.ParentEntityId &&
             (permission.GroupId.HasValue ? p.GroupId == permission.GroupId.Value : p.GroupId == null) &&
             (permission.UserId.HasValue ? p.UserId == permission.UserId.Value : p.UserId == null);
 
