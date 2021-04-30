@@ -2012,7 +2012,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                     INNER JOIN users as us on us.USER_ID = ci.LAST_MODIFIED_BY",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
                 $@"(wr2.user_id = {userId}
-                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind {withNoLock} WHERE user_id={userId})
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind_recursive {withNoLock} WHERE user_id={userId})
                                         )
                                         AND (
                                             ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
