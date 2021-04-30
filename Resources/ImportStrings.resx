@@ -199,4 +199,7 @@ Last successfully processed line: {1}</value>
   <data name="UpdateRelationSecurityViolation" xml:space="preserve">
     <value>Articles couldn't be updated because of insufficient relation permissions (ID: {0})</value>
   </data>
+  <data name="InaccessibleByWorkflow" xml:space="preserve">
+    <value>A try to save articles inaccessible by workflow: {0}</value>
+  </data>
 </root>

@@ -626,11 +626,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return ArticleRepository.InsertArticleIds(doc.ToString(), preserveGuids);
         }
 
-        private static void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)
+        private void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)
         {
             var guidsByIdToUpdate = new List<Tuple<int, Guid>>();
             if (updateArticles)
             {
+                ValidateWorkflowStatus(idsList);
                 UpdateArticlesDateTime(idsList);
             }
 
@@ -677,6 +678,21 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             UpdateM2MValues(m2MValues);
 
             ArticleRepository.UpdateArticleGuids(guidsByIdToUpdate);
+        }
+
+        private void ValidateWorkflowStatus(int[] idsList)
+        {
+            if (QPContext.IsAdmin) return;
+            var workflow = ContentRepository.GetById(_contentId).WorkflowBinding;
+            if (workflow.IsAssigned)
+            {
+                var statusList = workflow.AvailableStatuses.Select(n => n.Id).ToArray();
+                var wrongIds = ArticleRepository.GetArticleIdsWithWrongStatuses(idsList, statusList);
+                if (wrongIds.Any())
+                {
+                    throw new ArgumentException(String.Format(ImportStrings.InaccessibleByWorkflow, string.Join(",", wrongIds)));
+                }
+            }
         }
 
         private static XElement GetFieldValueElement(FieldValue fieldValue, int articleId)

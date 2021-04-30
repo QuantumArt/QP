@@ -1776,5 +1776,13 @@ cil.locked_by,
         }
 
         #endregion
+
+        public static int[] GetArticleIdsWithWrongStatuses(int[] idsList, int[] statusList)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleIdsWithWrongStatuses(scope.DbConnection, idsList, statusList);
+            }
+        }
     }
 }
