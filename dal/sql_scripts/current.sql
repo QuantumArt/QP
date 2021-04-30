@@ -391,6 +391,21 @@ GO
 
 exec sp_refreshview 'item_link_united_full'
 
+exec qp_drop_existing 'USER_GROUP_BIND_RECURSIVE', 'IsView'
+GO
+
+CREATE VIEW dbo.USER_GROUP_BIND_RECURSIVE AS
+	WITH UserGroupBind([USER_ID], GROUP_ID) AS   
+	(  
+		SELECT [USER_ID], GROUP_ID FROM dbo.USER_GROUP_BIND   
+		UNION ALL  
+		SELECT [USER_ID], PARENT_GROUP_ID FROM UserGroupBind 
+		INNER JOIN Group_To_Group on GROUP_ID = Child_Group_Id
+	)  
+	SELECT [USER_ID], GROUP_ID 
+	FROM UserGroupBind
+GO  
+
 exec qp_drop_existing 'get_schedule_date', 'IsScalarFunction'
 GO
 

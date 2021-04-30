@@ -161,6 +161,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A try to save articles inaccessible by workflow: {0}.
+        /// </summary>
+        public static string InaccessibleByWorkflow {
+            get {
+                return ResourceManager.GetString("InaccessibleByWorkflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A try to save incorrect M2M Relation value occured (article: {0}, field: {1}, inaccessible related articles: {2}) .
         /// </summary>
         public static string InaccessibleM2M {

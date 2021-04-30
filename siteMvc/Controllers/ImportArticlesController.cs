@@ -6,7 +6,7 @@ using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
@@ -17,6 +17,8 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
+using ContentService = Quantumart.QP8.BLL.Services.ContentServices.ContentService;
+using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -37,10 +39,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public ActionResult PreSettings(int parentId, int id)
         {
+
             var db = DbService.ReadSettings();
             if (db.RecordActions && db.SingleUserId != QPContext.CurrentUserId)
             {
                 throw new Exception(DBStrings.SingeUserModeMessage);
+            }
+            var content = ContentService.Read(id);
+            if (!content.WorkflowBinding.CurrentUserCanUpdateArticles)
+            {
+                throw new Exception(ArticleStrings.CannotAddBecauseOfWorkflow);
             }
 
             return Json(_service.MultistepActionSettings(parentId, id));

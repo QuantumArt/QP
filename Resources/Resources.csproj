@@ -36,6 +36,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>LogOnStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="ImportStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ImportStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +55,10 @@
     <EmbeddedResource Update="LogOnStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LogOnStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ImportStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ImportStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

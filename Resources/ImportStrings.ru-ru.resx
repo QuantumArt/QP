@@ -197,6 +197,9 @@
     <value>Статьи не могут быть обновлены из-за блокировки другими пользователями (ID: {0})</value>
   </data>
   <data name="BoolFormatError" xml:space="preserve">
-    <value> Ошибка в формате булева значения'{0}'</value>
+    <value>Ошибка в формате булева значения'{0}'</value>
+  </data>
+  <data name="InaccessibleByWorkflow" xml:space="preserve">
+    <value>Произошла попытка сохранить статьи, недоступные по workflow: {0}</value>
   </data>
 </root>

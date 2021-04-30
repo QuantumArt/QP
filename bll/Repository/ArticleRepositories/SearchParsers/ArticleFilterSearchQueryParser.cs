@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Xml.Linq;
 using QP8.Infrastructure;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
 
@@ -290,9 +291,11 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 return $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "<> " : "=")} '{value}')";
             }
 
+            var like = dbType == DatabaseType.Postgres ? "ILIKE" : "LIKE";
+
             return startFromBegin
-                ? $"({GetTableAlias(p)}.{escapedFieldColumnName} LIKE '{(inverse ? "%" + value : value + "%")}')"
-                : $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "NOT " : "")}LIKE '%{value}%')";
+                ? $"({GetTableAlias(p)}.{escapedFieldColumnName} {like} '{(inverse ? "%" + value : value + "%")}')"
+                : $"({GetTableAlias(p)}.{escapedFieldColumnName} {(inverse ? "NOT " : "")}{like} '%{value}%')";
         }
 
         private static string ParseDateRangeParam(ArticleSearchQueryParam p)

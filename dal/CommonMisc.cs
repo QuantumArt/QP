@@ -705,5 +705,23 @@ WHERE content_item_id = {contentItemId}
 
              return result;
          }
+
+         public static int[] GetArticleIdsWithWrongStatuses(DbConnection connection, int[] idsList, int[] statusList)
+         {
+             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+             var sql = $@"
+                select content_item_id from content_item {WithNoLock(dbType)}
+                where content_item_id in (select id from {IdList(dbType, "@ids")})
+                and status_type_id not in (select id from {IdList(dbType, "@status_ids")})
+             ";
+             using (var cmd = DbCommandFactory.Create(sql, connection))
+             {
+                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", idsList, dbType));
+                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@status_ids", statusList, dbType));
+
+                 return GetDataTableForCommand(cmd).AsEnumerable()
+                     .Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+             }
+         }
     }
 }

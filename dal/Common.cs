@@ -2012,7 +2012,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                     INNER JOIN users as us on us.USER_ID = ci.LAST_MODIFIED_BY",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
                 $@"(wr2.user_id = {userId}
-                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind {withNoLock} WHERE user_id={userId})
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind_recursive {withNoLock} WHERE user_id={userId})
                                         )
                                         AND (
                                             ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
@@ -3974,7 +3974,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var dbType = GetDbType(sqlConnection);
             var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.USER_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
-                                {SqlQuerySyntaxHelper.CastToBool(dbType, "coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
+                                coalesce(P2.PROPAGATE_TO_ITEMS, cast(0 as numeric(18, 0))) AS PropagateToItems,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.HIDE, {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)})")} AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
@@ -4007,7 +4007,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
             var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
-                                {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.PROPAGATE_TO_ITEMS, 0)")} AS PropagateToItems,
+                                coalesce(P2.PROPAGATE_TO_ITEMS, cast(0 as numeric(18, 0))) As PropagateToItems,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, $"coalesce(P2.HIDE, {falseValue})")} AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
@@ -4043,7 +4043,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN {trueValue} ELSE {falseValue} END")}  AS IsExplicit
-                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS PropagateToItems
+                                ,cast(0 as numeric(18, 0)) as PropagateToItems
                                 ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS Hide
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
@@ -4075,7 +4075,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
             var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.GROUP_ID IS NOT NULL THEN {trueValue} ELSE {falseValue} END")}  AS IsExplicit
-                                ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS PropagateToItems
+                                ,cast(0 as numeric(18, 0)) as PropagateToItems
                                 ,{SqlQuerySyntaxHelper.CastToBool(dbType, falseValue)} AS Hide
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
@@ -4102,6 +4102,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
 
             var dbType = GetDbType(sqlConnection);
+            var now = SqlQuerySyntaxHelper.Now(dbType);
             if (contentIds == null || !contentIds.Any() || !userId.HasValue && !groupId.HasValue)
             {
                 return;
@@ -4117,7 +4118,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                        ,CREATED
                                        ,MODIFIED
                                        ,LAST_MODIFIED_BY)
-                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, {Now(dbType)}, {Now(dbType)}, @modifiedUserId
+                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propagateToItems, @hide, {now}, {now}, @modifiedUserId
                             from CONTENT C where C.CONTENT_ID in ({string.Join(",", contentIds)})";
 
 
@@ -4126,11 +4127,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
-
-
-
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
-                cmd.Parameters.AddWithValue("@propageteToItems", SqlQuerySyntaxHelper.BooleanToNumeric(dbType, propagateToItems));
+                cmd.Parameters.AddWithValue("@propagateToItems", propagateToItems ? 1 : 0, DbType.Decimal);
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
                 cmd.Parameters.AddWithValue("@hide", hide);
 
@@ -4140,43 +4138,29 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static void InsertChildContentPermissions(DbConnection sqlConnection, int siteId, int? userId, int? groupId, int permissionLevel, bool propagateToItems, int currentUserId, bool hide)
         {
-            const string query = @"INSERT INTO [CONTENT_ACCESS]
-                                       ([CONTENT_ID]
-                                       ,[USER_ID]
-                                       ,[GROUP_ID]
-                                       ,[PERMISSION_LEVEL_ID]
-                                       ,[PROPAGATE_TO_ITEMS]
-                                       ,[HIDE]
-                                       ,[CREATED]
-                                       ,[MODIFIED]
-                                       ,[LAST_MODIFIED_BY])
-                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propageteToItems, @hide, GETDATE(), GETDATE(), @modifiedUserId
+            var dbType = GetDbType(sqlConnection);
+            var now = SqlQuerySyntaxHelper.Now(dbType);
+            var query = $@"INSERT INTO CONTENT_ACCESS
+                                       (CONTENT_ID
+                                       ,{Escape(dbType, "USER_ID")}
+                                       ,GROUP_ID
+                                       ,PERMISSION_LEVEL_ID
+                                       ,PROPAGATE_TO_ITEMS
+                                       ,HIDE
+                                       ,CREATED
+                                       ,MODIFIED
+                                       ,LAST_MODIFIED_BY)
+                            select C.CONTENT_ID, @userId, @groupId, @permissionLevel, @propagateToItems, @hide, {now}, {now}, @modifiedUserId
                             from CONTENT C where C.SITE_ID = @siteId";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
-
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
-
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@siteId", siteId);
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
-                cmd.Parameters.AddWithValue("@propageteToItems", propagateToItems);
+                cmd.Parameters.AddWithValue("@propagateToItems", propagateToItems ? 1 : 0, DbType.Decimal);
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
                 cmd.Parameters.AddWithValue("@hide", hide);
 
@@ -4202,7 +4186,6 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
-
                 cmd.ExecuteNonQuery();
             }
         }
@@ -4210,16 +4193,14 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static void RemoveChildContentPermissions(DbConnection sqlConnection, int siteId, int? userId, int? groupId)
         {
             var dbType = GetDbType(sqlConnection);
-            var query = $@"delete CONTENT_ACCESS from CONTENT_ACCESS A
-                            JOIN CONTENT C ON A.CONTENT_ID = C.CONTENT_ID
-                            where C.SITE_ID = @siteId
-                            and (@userId IS NULL OR A.{Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
+            var query = $@"delete from CONTENT_ACCESS
+                            WHERE CONTENT_ID IN (SELECT CONTENT_ID FROM CONTENT WHERE SITE_ID = @siteId)
+                            and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddWithValue("@userId", userId);
-                cmd.Parameters.AddWithValue("@groupId", groupId);
-
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@siteId", siteId);
                 cmd.ExecuteNonQuery();
             }
@@ -4254,38 +4235,25 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static void InsertChildArticlePermissions(DbConnection sqlConnection, int contentId, int? userId, int? groupId, int permissionLevel, int currentUserId)
         {
-            const string query = @"INSERT INTO [CONTENT_ITEM_ACCESS]
-                            ([CONTENT_ITEM_ID]
-                            ,[USER_ID]
-                            ,[GROUP_ID]
-                            ,[PERMISSION_LEVEL_ID]
-                            ,[CREATED]
-                            ,[MODIFIED]
-                            ,[LAST_MODIFIED_BY])
-                            select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, GETDATE(), GETDATE(), @modifiedUserId
+            var dbType = GetDbType(sqlConnection);
+            var now = SqlQuerySyntaxHelper.Now(dbType);
+            var query = $@"INSERT INTO CONTENT_ITEM_ACCESS
+                            (CONTENT_ITEM_ID
+                            ,USER_ID
+                            ,GROUP_ID
+                            ,PERMISSION_LEVEL_ID
+                            ,CREATED
+                            ,MODIFIED
+                            ,LAST_MODIFIED_BY)
+                            select CI.CONTENT_ITEM_ID, @userId, @groupId, @permissionLevel, {now}, {now}, @modifiedUserId
                             from CONTENT_ITEM CI where CI.CONTENT_ID = @contentId";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                if (userId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@userId", DBNull.Value);
-                }
 
-                if (groupId.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@groupId", groupId);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@groupId", DBNull.Value);
-                }
-
+                cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
+                cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 cmd.Parameters.AddWithValue("@permissionLevel", permissionLevel);
                 cmd.Parameters.AddWithValue("@modifiedUserId", currentUserId);
@@ -4297,10 +4265,15 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static void RemoveChildArticlePermissions(DbConnection sqlConnection, IEnumerable<int> articleIDs, int? userId, int? groupId)
         {
             var dbType = GetDbType(sqlConnection);
-            var query = $@"delete from CONTENT_ITEM_ACCESS where CONTENT_ITEM_ID in ({string.Join(",", articleIDs)}) and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)";
+            var query = $@"
+                delete from CONTENT_ITEM_ACCESS
+                where CONTENT_ITEM_ID in ({string.Join(",", articleIDs)})
+                and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)
+            ";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
+
                 cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
 
@@ -4311,14 +4284,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static void RemoveChildArticlePermissions(DbConnection sqlConnection, int contentId, int? userId, int? groupId)
         {
             var dbType = GetDbType(sqlConnection);
-            var query = $@"delete CONTENT_ITEM_ACCESS from CONTENT_ITEM_ACCESS A
-                            JOIN CONTENT_ITEM CI ON A.CONTENT_ITEM_ID = CI.CONTENT_ITEM_ID
-                            where CI.CONTENT_ID = @contentId
-                            and (@userId IS NULL OR A.{Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR A.GROUP_ID = @groupId)";
+            var query = $@"
+                delete from CONTENT_ITEM_ACCESS
+                WHERE CONTENT_ITEM_ID IN (SELECT CONTENT_ITEM_ID FROM CONTENT_ITEM WHERE CONTENT_ID = @contentId)
+                and (@userId IS NULL OR {Escape(dbType, "USER_ID")} = @userId) and (@groupId IS NULL OR GROUP_ID = @groupId)
+            ";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
+
                 cmd.Parameters.AddWithValue("@userId", userId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@groupId", groupId, DbType.Int32);
                 cmd.Parameters.AddWithValue("@contentId", contentId, DbType.Int32);
