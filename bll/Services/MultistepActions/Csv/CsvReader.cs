@@ -1011,12 +1011,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private static void UpdateArticlesDateTime(int[] articlesIds)
         {
             var doc = new XDocument();
-            var items = new XElement("items");
+            var items = new XElement("ITEMS");
             doc.Add(items);
 
             foreach (var id in articlesIds)
             {
-                var itemXml = new XElement("item");
+                var itemXml = new XElement("ITEM");
                 itemXml.Add(new XAttribute("id", id));
                 itemXml.Add(new XAttribute("modifiedBy", QPContext.CurrentUserId));
                 doc.Root?.Add(itemXml);
