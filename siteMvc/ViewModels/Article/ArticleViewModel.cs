@@ -144,6 +144,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             new ListItem(ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
         };
 
+        public List<ListItem> DirectionTypes => new List<ListItem>
+        {
+            new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards),
+            new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame),
+            new ListItem(ArticleWorkflowDirection.DirectChange.ToString(), ArticleStrings.DirectChange, new[] {"statusPanel"}),
+            new ListItem(ArticleWorkflowDirection.Forwards.ToString(), ArticleStrings.Forwards)
+        };
+
         public string WorkflowWarning => IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow;
 
         public string RelationSecurityWarning => ArticleStrings.CannotUpdateBecauseOfRelationSecurity;
@@ -212,22 +220,24 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 HasDependentItems = true
             };
 
+            var panels = new List<string>();
+
             if (st.Weight != Data.Workflow.MaxStatus.Weight && Data.Workflow.IsAsync && Data.Workflow.CurrentUserHasWorkflowMaxWeight && (Data.Splitted || !Data.Splitted && Data.StatusTypeId == Data.Workflow.MaxStatus.Id))
             {
-                result.DependentItemIDs = new[] { "cancelSplitPanel" };
+                panels.Add("cancelSplitPanel");
             }
 
             if (Data.StatusTypeId != st.Id)
             {
-                if (result.DependentItemIDs != null)
-                {
-                    result.DependentItemIDs[result.DependentItemIDs.Length - 1] = "comment";
-                }
-                else
-                {
-                    result.DependentItemIDs = new[] { "comment" };
-                }
+                panels.Add("comment");
             }
+
+            if (Data.StatusTypeId == Data.Workflow.MaxStatus.Id)
+            {
+                panels.Add("maxStatusPanel");
+            }
+
+            result.DependentItemIDs = panels.ToArray();
 
             return result;
         }

@@ -133,6 +133,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Backwards by workflow.
+        /// </summary>
+        public static string Backwards {
+            get {
+                return ResourceManager.GetString("Backwards", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Base relation field is required, so you cannot reset values.
         /// </summary>
         public static string BaseRelationFieldRequired {
@@ -439,6 +448,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change status directly.
+        /// </summary>
+        public static string DirectChange {
+            get {
+                return ResourceManager.GetString("DirectChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duration (units).
         /// </summary>
         public static string DurationUnit {
@@ -525,6 +543,15 @@ namespace Quantumart.QP8.Resources {
         public static string FirstWeek {
             get {
                 return ResourceManager.GetString("FirstWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forwards.
+        /// </summary>
+        public static string Forwards {
+            get {
+                return ResourceManager.GetString("Forwards", resourceCulture);
             }
         }
         
@@ -678,6 +705,15 @@ namespace Quantumart.QP8.Resources {
         public static string LeaveComment {
             get {
                 return ResourceManager.GetString("LeaveComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use the same status.
+        /// </summary>
+        public static string LeaveTheSame {
+            get {
+                return ResourceManager.GetString("LeaveTheSame", resourceCulture);
             }
         }
         

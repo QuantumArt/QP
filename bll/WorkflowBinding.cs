@@ -20,6 +20,8 @@ namespace Quantumart.QP8.BLL
 
         private List<StatusType> _AvailableStatuses;
 
+        private Workflow _Workflow;
+
         #endregion
 
         public static int UnassignedId = 0;
@@ -55,18 +57,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [ValidateNever]
         [BindNever]
-        public List<StatusType> StatusTypes
-        {
-            get
-            {
-                if (_StatusTypes == null)
-                {
-                    _StatusTypes = WorkflowRepository.GetStatuses(WorkflowId).ToList();
-                }
-                return _StatusTypes;
-            }
-        }
-
+        public List<StatusType> StatusTypes => _StatusTypes ?? (_StatusTypes = WorkflowRepository.GetStatuses(WorkflowId).ToList());
 
         /// <summary>
         /// Список статусов Workflow, доступных для текущего пользователя в виде элементов списка
@@ -77,14 +68,10 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                if (_AvailableStatuses == null)
-                {
-                    _AvailableStatuses = StatusTypes
-                        .Where(n => n.Weight <= CurrentUserMaxWeight)
-                        .OrderBy(n => n.Weight)
-                        .ToList();
-                }
-                return _AvailableStatuses;
+                return _AvailableStatuses ?? (_AvailableStatuses = StatusTypes
+                    .Where(n => n.Weight <= CurrentUserMaxWeight)
+                    .OrderBy(n => n.Weight)
+                    .ToList());
             }
         }
 
@@ -94,17 +81,9 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [ValidateNever]
         [BindNever]
-        public StatusType MaxStatus
-        {
-            get
-            {
-                if (_MaxStatus == null)
-                {
-                    _MaxStatus = WorkflowRepository.GetMaxStatus(WorkflowId);
-                }
-                return _MaxStatus;
-            }
-        }
+        public StatusType MaxStatus => _MaxStatus ?? (_MaxStatus = WorkflowRepository.GetMaxStatus(WorkflowId));
+
+        public Workflow Workflow => _Workflow ?? (_Workflow = WorkflowRepository.GetById(WorkflowId));
 
         /// <summary>
         /// Максимальный вес, доступный текущему пользователю
@@ -117,14 +96,7 @@ namespace Quantumart.QP8.BLL
             {
                 if (_CurrentUserMaxWeight == 0)
                 {
-                    if (QPContext.IsAdmin)
-                    {
-                        _CurrentUserMaxWeight = MaxStatus.Weight;
-                    }
-                    else
-                    {
-                        _CurrentUserMaxWeight = WorkflowRepository.GetCurrentUserMaxWeight(WorkflowId);
-                    }
+                    _CurrentUserMaxWeight = QPContext.IsAdmin ? MaxStatus.Weight : WorkflowRepository.GetCurrentUserMaxWeight(WorkflowId);
                 }
                 return _CurrentUserMaxWeight;
             }

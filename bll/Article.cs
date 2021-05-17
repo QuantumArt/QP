@@ -91,6 +91,9 @@ namespace Quantumart.QP8.BLL
 
         public bool Splitted { get; set; }
 
+        [Display(Name = "Direction", ResourceType = typeof(ArticleStrings))]
+        public ArticleWorkflowDirection Direction { get; set; }
+
         [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
         public int StatusTypeId { get; set; }
 
@@ -1613,6 +1616,14 @@ namespace Quantumart.QP8.BLL
             Schedule.DoCustomBinding();
         }
 
+    }
+
+    public enum ArticleWorkflowDirection
+    {
+        UseTheSame,
+        DirectChange,
+        Forwards,
+        Backwards
     }
 
     public enum ArticleClearType

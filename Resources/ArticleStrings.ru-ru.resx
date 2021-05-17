@@ -621,4 +621,16 @@
   <data name="CollaborativePublication" xml:space="preserve">
     <value>Совместная публикация с</value>
   </data>
+  <data name="Forwards" xml:space="preserve">
+    <value>Вперед</value>
+  </data>
+  <data name="Backwards" xml:space="preserve">
+    <value> Назад</value>
+  </data>
+  <data name="DirectChange" xml:space="preserve">
+    <value>Сменить статус напрямую</value>
+  </data>
+  <data name="LeaveTheSame" xml:space="preserve">
+    <value>Оставить тот же статус</value>
+  </data>
 </root>

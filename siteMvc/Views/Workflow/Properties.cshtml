@@ -107,28 +107,29 @@
 {
 	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
-		@Html.TextBoxFieldFor(s => s.Data.Name)
-		@Html.TextAreaFieldFor(s => s.Data.Description)
-        @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultNotification)
-        @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
-        @Html.CheckBoxFieldFor(s => s.Data.IsDefault)
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+	  @Html.TextAreaFieldFor(s => s.Data.Description)
+    @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultNotification)
+    @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
+    @Html.CheckBoxFieldFor(s => s.Data.IsDefault)
+	  @Html.CheckBoxFieldFor(s => s.Data.IsDefault)
 
-        @Html.CheckboxListFieldFor(
+    @Html.CheckboxListFieldFor(
 			model => model.ActiveStatuses,
 			Html.List(Model.AllStatusListItems),
 			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true, AddNewActionCode = ActionCode.AddNewStatusType, ParentEntityId = Model.Data.SiteId, ShowIds = true},
 			new Dictionary<string, object> { { "id", Model.UniqueId("ActiveStatuses") }, {"class", "workflow_control_selector"},
-            {"data-weights", Model.StatusWeightsDictionary}}
+      {"data-weights", Model.StatusWeightsDictionary}}
 		)
 
-        @Html.MultipleItemPickerFieldFor(x => x.ActiveContentsIds, Model.ActiveContentsListItems, Model.EntityDataListArgs,
-            new Dictionary<string, object> {{"class", "workflow_content_selector"}})
+    @Html.MultipleItemPickerFieldFor(x => x.ActiveContentsIds, Model.ActiveContentsListItems, Model.EntityDataListArgs,
+    new Dictionary<string, object> {{"class", "workflow_content_selector"}})
 	}
 
-    @Html.WorkflowFor(s => s.WorkflowRulesDisplay, Model.WorkflowRulesDisplay)
+  @Html.WorkflowFor(s => s.WorkflowRulesDisplay, Model.WorkflowRulesDisplay)
 
-    <partial name="Version" model="@Model.Data"/>
-    <partial name="EntityDirectLink" model="@Model"/>
+  <partial name="Version" model="@Model.Data"/>
+  <partial name="EntityDirectLink" model="@Model"/>
 
 }
 
