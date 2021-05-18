@@ -69,5 +69,16 @@
 {
     @Html.CustomScript(aggrArticle.Content.FormScript, Model.ContextObjectName)
 }
+<script>
+  var $editingForm = $("#@Model.UniqueId("editingForm")");
+  @(Model.ContextObjectName).setInitializedCallback(function() {
+    $(".workflowDirections input[type='radio']", $editingForm).click(function (e) {
+      console.log($(e.currentTarget).val());
+    });
+	});
 
+	@(Model.ContextObjectName).setTerminatingCallback(function() {
+    $(".workflowDirections input[type='radio']", $editingForm).unbind();
+	});
+</script>
 @Html.RunInitScript(Model)

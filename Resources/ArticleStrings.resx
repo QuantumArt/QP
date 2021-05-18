@@ -636,4 +636,7 @@
   <data name="DirectChange" xml:space="preserve">
     <value>Change status directly</value>
   </data>
+  <data name="Direction" xml:space="preserve">
+    <value>Use Workflow Rules</value>
+  </data>
 </root>

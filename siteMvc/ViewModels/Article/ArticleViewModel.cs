@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -15,6 +16,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+using DayOfWeek = Quantumart.QP8.Constants.DayOfWeek;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
@@ -144,13 +146,24 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             new ListItem(ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
         };
 
-        public List<ListItem> DirectionTypes => new List<ListItem>
+        public int CurrentWeight => Data.Workflow.StatusTypes.Single(n => n.Id == Data.StatusTypeId).Weight;
+
+        public List<ListItem> DirectionTypes
         {
-            new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards),
-            new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame),
-            new ListItem(ArticleWorkflowDirection.DirectChange.ToString(), ArticleStrings.DirectChange, new[] {"statusPanel"}),
-            new ListItem(ArticleWorkflowDirection.Forwards.ToString(), ArticleStrings.Forwards)
-        };
+            get
+            {
+                var result = new List<ListItem>();
+                result.Add(new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards));
+                result.Add(new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame));
+                result.Add(new ListItem(ArticleWorkflowDirection.DirectChange.ToString(), ArticleStrings.DirectChange, new[] { "statusPanel" }));
+                if (CurrentWeight < Data.Workflow.AvailableStatuses.Last().Weight)
+                {
+                    result.Add(new ListItem(ArticleWorkflowDirection.Forwards.ToString(), ArticleStrings.Forwards));
+                }
+
+                return result;
+            }
+        }
 
         public string WorkflowWarning => IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow;
 

@@ -457,6 +457,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use Workflow Rules.
+        /// </summary>
+        public static string Direction {
+            get {
+                return ResourceManager.GetString("Direction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duration (units).
         /// </summary>
         public static string DurationUnit {

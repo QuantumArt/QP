@@ -110,11 +110,11 @@
     @Html.TextBoxFieldFor(s => s.Data.Name)
 	  @Html.TextAreaFieldFor(s => s.Data.Description)
     @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultNotification)
-    @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
     @Html.CheckBoxFieldFor(s => s.Data.IsDefault)
-	  @Html.CheckBoxFieldFor(s => s.Data.IsDefault)
+	  @Html.CheckBoxFieldFor(s => s.Data.UseDirectionControls)
+	  @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
 
-    @Html.CheckboxListFieldFor(
+	  @Html.CheckboxListFieldFor(
 			model => model.ActiveStatuses,
 			Html.List(Model.AllStatusListItems),
 			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true, AddNewActionCode = ActionCode.AddNewStatusType, ParentEntityId = Model.Data.SiteId, ShowIds = true},

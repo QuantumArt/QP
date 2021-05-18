@@ -633,4 +633,7 @@
   <data name="LeaveTheSame" xml:space="preserve">
     <value>Оставить тот же статус</value>
   </data>
+  <data name="Direction" xml:space="preserve">
+    <value>Применить правила Workflow</value>
+  </data>
 </root>
