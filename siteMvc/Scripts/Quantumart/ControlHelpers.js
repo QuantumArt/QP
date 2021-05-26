@@ -344,7 +344,7 @@ $c.setAllRadioListValues = function (parentElement, fieldValues) {
     const $glists = $c.getAllRadioLists(parentElement);
     $(fieldValues).each((i, fv) => {
       const $list = $glists.filter(`[data-field_form_name="${fv.fieldName}"]:first`);
-      $list.find(`input:radio[value="${fv.value}"]`).prop('checked', true);
+      $list.find(`input:radio[value="${fv.value}"]`).prop('checked', true).change();
       $c.setValidator($list, fv.errors);
     });
   }

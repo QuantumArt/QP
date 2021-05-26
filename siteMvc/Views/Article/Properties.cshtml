@@ -72,7 +72,7 @@
 <script>
   var $editingForm = $("#@Model.UniqueId("editingForm")");
   @(Model.ContextObjectName).setInitializedCallback(function() {
-    $(".workflowDirections input[type='radio']", $editingForm).click(function (e) {
+    $(".workflowDirections input[type='radio']", $editingForm).change(function (e) {
       const value = $(e.currentTarget).val();
       const currentStatus = $("dl[data-field_form_name='StatusTypeId'] span", $editingForm).text();
       const $a = $("select[name='Data.StatusTypeId']", $editingForm)
@@ -90,7 +90,7 @@
           return $(this).text() === currentStatus;
         }).first().attr("value");
       }
-      if (targetValue) { $a.val(targetValue); }
+      if (targetValue) { $a.val(targetValue).change(); }
     });
 	});
 
