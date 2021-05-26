@@ -21,7 +21,7 @@
 
   }
 
-  @Html.DisplayField("StatusTypeId", ArticleStrings.CurrentStatus, Model.Data.Status.Name)
+  @Html.DisplayField("StatusTypeId", ArticleStrings.CurrentStatus, Model.Data.Status.DisplayName)
 
   if (Model.Data.Workflow.IsAssigned && Model.Data.IsUpdatableWithWorkflow)
   {

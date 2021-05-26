@@ -79,7 +79,6 @@
       let targetValue = 0;
       if (value === 'Forwards') {
         targetValue = $a.children("option:last").val();
-
       } else if (value === 'Backwards') {
         $a.children("option").each(function (index, elem) {
           if ($(elem).text() === currentStatus) { return false; }

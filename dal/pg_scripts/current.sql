@@ -4526,3 +4526,5 @@ SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from
 where not exists(
     select * from content_item_ft cif where cif.content_item_id = ci.content_item_id
 );
+ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
+

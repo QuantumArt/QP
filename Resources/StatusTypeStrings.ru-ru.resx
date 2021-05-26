@@ -162,4 +162,7 @@
   <data name="WeightIsInUse" xml:space="preserve">
     <value>Статус с таким весом уже существует в текущем сайте</value>
   </data>
+  <data name="Alias" xml:space="preserve">
+    <value>Пользовательское имя</value>
+  </data>
 </root>

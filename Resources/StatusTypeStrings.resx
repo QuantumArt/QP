@@ -162,4 +162,7 @@
   <data name="WeightIsInUse" xml:space="preserve">
     <value>This site already has a status with such weight</value>
   </data>
+  <data name="Alias" xml:space="preserve">
+    <value>User Name</value>
+  </data>
 </root>

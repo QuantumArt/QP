@@ -236,7 +236,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
         {
             var result = new ListItem
             {
-                Text = st.Name,
+                Text = st.DisplayName,
                 Value = st.Id.ToString(),
                 HasDependentItems = true
             };
