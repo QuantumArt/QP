@@ -73,7 +73,24 @@
   var $editingForm = $("#@Model.UniqueId("editingForm")");
   @(Model.ContextObjectName).setInitializedCallback(function() {
     $(".workflowDirections input[type='radio']", $editingForm).click(function (e) {
-      console.log($(e.currentTarget).val());
+      const value = $(e.currentTarget).val();
+      const currentStatus = $("dl[data-field_form_name='StatusTypeId'] span", $editingForm).text();
+      const $a = $("select[name='Data.StatusTypeId']", $editingForm)
+      let targetValue = 0;
+      if (value === 'Forwards') {
+        targetValue = $a.children("option:last").val();
+
+      } else if (value === 'Backwards') {
+        $a.children("option").each(function (index, elem) {
+          if ($(elem).text() === currentStatus) { return false; }
+          targetValue = $(elem).val();
+        })
+      } else {
+        targetValue = $("option").filter(function() {
+          return $(this).text() === currentStatus;
+        }).first().attr("value");
+      }
+      if (targetValue) { $a.val(targetValue); }
     });
 	});
 

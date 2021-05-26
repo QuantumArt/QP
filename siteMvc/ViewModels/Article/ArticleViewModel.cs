@@ -146,17 +146,25 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             new ListItem(ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
         };
 
-        public int CurrentWeight => Data.Workflow.StatusTypes.Single(n => n.Id == Data.StatusTypeId).Weight;
 
         public List<ListItem> DirectionTypes
         {
             get
             {
                 var result = new List<ListItem>();
-                result.Add(new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards));
-                result.Add(new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame));
+                if (Data.CurrentWeight > Data.Workflow.AvailableStatuses.First().Weight)
+                {
+                    result.Add(new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards));
+                }
+
+                if (Data.CurrentWeight <= Data.Workflow.AvailableStatuses.Last().Weight)
+                {
+                    result.Add(new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame));
+                }
+
                 result.Add(new ListItem(ArticleWorkflowDirection.DirectChange.ToString(), ArticleStrings.DirectChange, new[] { "statusPanel" }));
-                if (CurrentWeight < Data.Workflow.AvailableStatuses.Last().Weight)
+
+                if (Data.CurrentWeight < Data.Workflow.AvailableStatuses.Last().Weight)
                 {
                     result.Add(new ListItem(ArticleWorkflowDirection.Forwards.ToString(), ArticleStrings.Forwards));
                 }
@@ -240,12 +248,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 panels.Add("cancelSplitPanel");
             }
 
-            if (Data.StatusTypeId != st.Id)
+            if (st.Id != Data.StatusTypeId)
             {
                 panels.Add("comment");
             }
 
-            if (Data.StatusTypeId == Data.Workflow.MaxStatus.Id)
+            if (st.Id == Data.Workflow.MaxStatus.Id)
             {
                 panels.Add("maxStatusPanel");
             }

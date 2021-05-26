@@ -52,6 +52,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
         private int _parentContentId;
+        private ArticleWorkflowDirection? _articleWorkflowDirection;
 
         internal Article()
         {
@@ -92,7 +93,14 @@ namespace Quantumart.QP8.BLL
         public bool Splitted { get; set; }
 
         [Display(Name = "Direction", ResourceType = typeof(ArticleStrings))]
-        public ArticleWorkflowDirection Direction { get; set; }
+        public ArticleWorkflowDirection Direction
+        {
+            get => _articleWorkflowDirection ?? GetCurrentWorkflowDirection();
+            set => _articleWorkflowDirection = value;
+        }
+
+        private ArticleWorkflowDirection GetCurrentWorkflowDirection() => CurrentWeight > Workflow.CurrentUserMaxWeight ?
+                ArticleWorkflowDirection.DirectChange : ArticleWorkflowDirection.UseTheSame;
 
         [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
         public int StatusTypeId { get; set; }
@@ -409,6 +417,8 @@ namespace Quantumart.QP8.BLL
             get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
             set => _parentContentId = value;
         }
+
+        public int CurrentWeight => Workflow.StatusTypes.Single(n => n.Id == StatusTypeId).Weight;
 
         public override void Validate()
         {

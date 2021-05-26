@@ -331,6 +331,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current status.
+        /// </summary>
+        public static string CurrentStatus {
+            get {
+                return ResourceManager.GetString("CurrentStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current version.
         /// </summary>
         public static string CurrentVersion {

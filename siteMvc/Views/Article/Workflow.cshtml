@@ -21,6 +21,8 @@
 
   }
 
+  @Html.DisplayField("StatusTypeId", ArticleStrings.CurrentStatus, Model.Data.Status.Name)
+
   if (Model.Data.Workflow.IsAssigned && Model.Data.IsUpdatableWithWorkflow)
   {
     if (Model.Data.Workflow.Workflow.UseDirectionControls)
@@ -73,10 +75,6 @@
                           </div>
                                                                      )}
 
-  }
-  else
-  {
-    @Html.DisplayField("StatusTypeId", ArticleStrings.Status, Model.Data.Status.Name)
   }
 
 

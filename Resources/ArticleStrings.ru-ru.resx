@@ -636,4 +636,7 @@
   <data name="Direction" xml:space="preserve">
     <value>Применить правила Workflow</value>
   </data>
+  <data name="CurrentStatus" xml:space="preserve">
+    <value>Текущий статус</value>
+  </data>
 </root>
