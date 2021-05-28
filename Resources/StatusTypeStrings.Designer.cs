@@ -151,6 +151,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The article status was demoted from [{0}] to [{1}]. Comment: {2}.
+        /// </summary>
+        public static string DemotedMessage {
+            get {
+                return ResourceManager.GetString("DemotedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The article status was promoted from [{0}] to [{1}]. Comment: {2}.
+        /// </summary>
+        public static string PromotedMessage {
+            get {
+                return ResourceManager.GetString("PromotedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This status is used by an article and can not be deleted.
         /// </summary>
         public static string StatusArticleUsage {

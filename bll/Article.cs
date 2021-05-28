@@ -910,12 +910,12 @@ namespace Quantumart.QP8.BLL
                 if (previousStatus.Weight > currentStatus.Weight)
                 {
                     historyStatusId = (int)SystemStatusType.ForcedDemoting;
-                    message = $"The article status was demoted from [{previousStatus.Name}] to [{currentStatus.Name}]. Comment: {message}";
+                    message = String.Format(StatusTypeStrings.DemotedMessage, previousStatus.DisplayName, currentStatus.DisplayName, message);
                 }
                 else
                 {
                     historyStatusId = (int)SystemStatusType.ForcedPromoting;
-                    message = $"The article status was promoted from [{previousStatus.Name}] to [{currentStatus.Name}]. Comment: {message}";
+                    message = String.Format(StatusTypeStrings.PromotedMessage, previousStatus.DisplayName, currentStatus.DisplayName, message);
                 }
             }
 
