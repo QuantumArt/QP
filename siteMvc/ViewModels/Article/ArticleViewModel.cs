@@ -152,19 +152,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             get
             {
                 var result = new List<ListItem>();
-                if (Data.CurrentWeight > Data.Workflow.AvailableStatuses.First().Weight)
+                if (Data.CurrentWeight > Data.ActualWorkflowBinding.AvailableStatuses.First().Weight)
                 {
                     result.Add(new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards));
                 }
 
-                if (Data.CurrentWeight <= Data.Workflow.AvailableStatuses.Last().Weight)
+                if (Data.CurrentWeight <= Data.ActualWorkflowBinding.AvailableStatuses.Last().Weight)
                 {
                     result.Add(new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame));
                 }
 
                 result.Add(new ListItem(ArticleWorkflowDirection.DirectChange.ToString(), ArticleStrings.DirectChange, new[] { "statusPanel" }));
 
-                if (Data.CurrentWeight < Data.Workflow.AvailableStatuses.Last().Weight)
+                if (Data.CurrentWeight < Data.ActualWorkflowBinding.AvailableStatuses.Last().Weight)
                 {
                     result.Add(new ListItem(ArticleWorkflowDirection.Forwards.ToString(), ArticleStrings.Forwards));
                 }
@@ -243,7 +243,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
             var panels = new List<string>();
 
-            if (st.Weight != Data.Workflow.MaxStatus.Weight && Data.Workflow.IsAsync && Data.Workflow.CurrentUserHasWorkflowMaxWeight && (Data.Splitted || !Data.Splitted && Data.StatusTypeId == Data.Workflow.MaxStatus.Id))
+            if (st.Weight != Data.ActualWorkflowBinding.MaxStatus.Weight && Data.ActualWorkflowBinding.IsAsync && Data.ActualWorkflowBinding.CurrentUserHasWorkflowMaxWeight && (Data.Splitted || !Data.Splitted && Data.StatusTypeId == Data.ActualWorkflowBinding.MaxStatus.Id))
             {
                 panels.Add("cancelSplitPanel");
             }
@@ -253,7 +253,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 panels.Add("comment");
             }
 
-            if (st.Id == Data.Workflow.MaxStatus.Id)
+            if (st.Id == Data.ActualWorkflowBinding.MaxStatus.Id)
             {
                 panels.Add("maxStatusPanel");
             }
@@ -265,7 +265,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         [ValidateNever]
         [BindNever]
-        public IEnumerable<ListItem> AvailableStatuses => Data.Workflow.AvailableStatuses.Select(GetStatusListItem);
+        public IEnumerable<ListItem> AvailableStatuses => Data.ActualWorkflowBinding.AvailableStatuses.Select(GetStatusListItem);
 
         internal static RelationListResult GetListForRelation(BLL.Field field, string value, int articleId)
         {
