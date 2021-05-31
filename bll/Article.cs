@@ -694,9 +694,24 @@ namespace Quantumart.QP8.BLL
 
             if (!IsAggregated)
             {
+                IEnumerable<Article> liveArticles = new Article[0];
+
+                if (AggregatedArticles.Any(article => article.IsNew))
+                {
+                    liveArticles = ArticleRepository.LoadAggregatedArticles(this, true);
+                }
+
                 foreach (var a in AggregatedArticles)
                 {
                     a.AggregateToRootArticle(result);
+
+                    var liveArticle = liveArticles.FirstOrDefault(i => i.ContentId == a.ContentId && a.IsNew);
+
+                    if (liveArticle != null)
+                    {
+                        a.Id = liveArticle.Id;                        
+                    }
+
                     a.Persist(true);
                 }
 

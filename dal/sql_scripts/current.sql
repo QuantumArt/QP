@@ -1,4 +1,4 @@
-declare @level int
+﻿declare @level int
 declare @sql nvarchar(max)
 select @level = compatibility_level from sys.databases where name = db_name()
 if @level < 110
@@ -9,6 +9,7 @@ begin
 end
 GO
 
+GO
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 BEGIN
   CREATE TABLE dbo.XML_DB_UPDATE (
@@ -24,7 +25,6 @@ BEGIN
   ON [PRIMARY]
   TEXTIMAGE_ON [PRIMARY]
 END
-
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE_ACTIONS]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 BEGIN
   CREATE TABLE dbo.XML_DB_UPDATE_ACTIONS (
@@ -43,7 +43,6 @@ BEGIN
   ON [PRIMARY]
   TEXTIMAGE_ON [PRIMARY]
 END
-
 if not exists(select * from sys.tables where name = 'ACCESS_TOKEN')
 BEGIN
 	CREATE TABLE [dbo].[ACCESS_TOKEN](
@@ -103,7 +102,6 @@ BEGIN
   PRINT 'CREATE [dbo].[CdcLastExecutedLsn]';
 END
 GO
-
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[CONTENT]') AND name = 'FOR_REPLICATION')
   ALTER TABLE [dbo].[CONTENT] ADD [FOR_REPLICATION] [bit] NOT NULL DEFAULT ((1))
 GO
@@ -114,7 +112,6 @@ BEGIN
     ALTER TABLE CONTENT ADD TRACE_IMPORT_SCRIPT NVARCHAR(MAX) NULL
 END
 GO
-
 
 
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ATTRIBUTE' AND COLUMN_NAME = 'OPTIMIZE_FOR_HIERARCHY')
@@ -167,7 +164,6 @@ GO
 
 
 
-
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[CONTENT_DATA]') AND name = 'SPLITTED')
     ALTER TABLE [dbo].[CONTENT_DATA] ADD [SPLITTED] [bit] NOT NULL DEFAULT ((0))
 GO
@@ -177,7 +173,6 @@ BEGIN
     ALTER TABLE CONTENT_DATA ADD O2M_DATA NUMERIC(18, 0) NULL
 END
 GO
-
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM' AND COLUMN_NAME = 'UNIQUE_ID')
 BEGIN
   ALTER TABLE dbo.CONTENT_ITEM ADD UNIQUE_ID uniqueidentifier NOT NULL CONSTRAINT DF_CONTENT_ITEM_UNIQUE_ID DEFAULT newid()
@@ -187,7 +182,6 @@ if not exists(select * from sys.indexes where name = 'IX_UNIQUE_ID' and [object_
 begin
   CREATE UNIQUE NONCLUSTERED INDEX [IX_UNIQUE_ID] ON dbo.CONTENT_ITEM ( UNIQUE_ID )
 end
-
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[CONTENT_ITEM_SCHEDULE]') AND name = 'START_DATE')
   ALTER TABLE [dbo].[CONTENT_ITEM_SCHEDULE]
   ADD START_DATE DATETIME NULL
@@ -197,7 +191,6 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[C
   ALTER TABLE [dbo].[CONTENT_ITEM_SCHEDULE]
   ADD END_DATE DATETIME NULL
 GO
-
 
 
 
@@ -215,7 +208,6 @@ begin
 end
 
 GO
-
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_TOKENS')
 	ALTER TABLE [dbo].[DB] ADD [USE_TOKENS] [bit] NOT NULL DEFAULT ((0))
 GO
@@ -227,7 +219,6 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_CDC')
   ALTER TABLE [dbo].[DB] ADD [USE_CDC] [bit] NOT NULL DEFAULT ((0))
 GO
-
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'MODIFIED' and TABLE_NAME = 'EXTERNAL_NOTIFICATION_QUEUE')
   ALTER TABLE dbo.EXTERNAL_NOTIFICATION_QUEUE ADD
@@ -243,7 +234,6 @@ if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'SITE
     alter table [EXTERNAL_NOTIFICATION_QUEUE]
     add [SITE_ID] numeric NULL
 GO
-
 IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_LINK_ASYNC]') AND name = 'IS_REV')
 	ALTER TABLE [dbo].[ITEM_LINK_ASYNC] ADD [IS_REV] [bit] NOT NULL DEFAULT ((0))
 GO
@@ -251,7 +241,6 @@ GO
 IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_LINK_ASYNC]') AND name = 'IS_SELF')
 	ALTER TABLE [dbo].[ITEM_LINK_ASYNC] ADD [IS_SELF] [bit] NOT NULL DEFAULT ((0))
 GO
-
 IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_TO_ITEM]') AND name = 'IS_REV')
 	ALTER TABLE [dbo].[ITEM_TO_ITEM] ADD [IS_REV] [bit] NOT NULL DEFAULT ((0))
 GO
@@ -259,7 +248,6 @@ GO
 IF NOT EXISTS (  SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[ITEM_TO_ITEM]') AND name = 'IS_SELF')
 	ALTER TABLE [dbo].[ITEM_TO_ITEM] ADD [IS_SELF] [bit] NOT NULL DEFAULT ((0))
 GO
-
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'SITE' AND COLUMN_NAME = 'EXTERNAL_DEVELOPMENT')
 BEGIN
     ALTER TABLE SITE ADD EXTERNAL_DEVELOPMENT BIT NOT NULL CONSTRAINT DF_SITE_EXTERNAL_DEVELOPMENT DEFAULT 1
@@ -287,7 +275,6 @@ GO
   alter table SITE alter column stage_directory nvarchar(255) null
   alter table SITE alter column stage_virtual_root nvarchar(255) null
 GO
-
 
 
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'STATUS_TYPE' AND COLUMN_NAME = 'ALIAS')
@@ -335,10 +322,8 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[SYSTEM_NOTIFICATION_QUEUE]') AND name = 'LastExceptionMessage')
   ALTER TABLE [dbo].[SYSTEM_NOTIFICATION_QUEUE] ADD [LastExceptionMessage] [nvarchar](max) NULL
 GO
-
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[USERS]') AND name = 'MUST_CHANGE_PASSWORD')
   ALTER TABLE [dbo].[USERS] ADD [MUST_CHANGE_PASSWORD] [bit] NOT NULL CONSTRAINT DF_MUST_CHANGE_PASSWORD DEFAULT 0 
-
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VERSION_CONTENT_DATA' AND COLUMN_NAME = 'O2M_DATA')
 BEGIN
     ALTER TABLE VERSION_CONTENT_DATA ADD O2M_DATA NUMERIC(18, 0) NULL
@@ -350,6 +335,7 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[WO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[WORKFLOW]') AND name = 'USE_DIRECTION_CONTROLS')
   ALTER TABLE [dbo].[WORKFLOW] ADD [USE_DIRECTION_CONTROLS] [bit] NOT NULL CONSTRAINT DF_WORKFLOW_USE_DIRECTION_CONTROLS DEFAULT 0
 
+GO
 
 exec qp_drop_existing 'STATUS_TYPE_NEW', 'IsView'
 GO
@@ -399,7 +385,6 @@ FROM item_to_item AS l
 GO
 
 exec sp_refreshview 'item_link_united_full'
-
 exec qp_drop_existing 'USER_GROUP_BIND_RECURSIVE', 'IsView'
 GO
 
@@ -415,6 +400,7 @@ CREATE VIEW dbo.USER_GROUP_BIND_RECURSIVE AS
 	FROM UserGroupBind
 GO  
 
+GO
 exec qp_drop_existing 'get_schedule_date', 'IsScalarFunction'
 GO
 
@@ -491,7 +477,7 @@ begin
         JOIN CONTENT_ATTRIBUTE AGG_ATT ON AGG_ATT.CLASSIFIER_ATTRIBUTE_ID = ATT.ATTRIBUTE_ID
         JOIN CONTENT_DATA AGG_DATA with(nolock) ON AGG_DATA.ATTRIBUTE_ID = AGG_ATT.ATTRIBUTE_ID
         JOIN CONTENT_DATA CLF_DATA with(nolock) ON CLF_DATA.ATTRIBUTE_ID = ATT.ATTRIBUTE_ID AND CLF_DATA.CONTENT_ITEM_ID = AGG_DATA.O2M_DATA
-        where ATT.IS_CLASSIFIER = 1 AND AGG_ATT.AGGREGATED = 1 AND CLF_DATA.DATA <> cast(AGG_ATT.CONTENT_ID as nvarchar(8))
+        where ATT.IS_CLASSIFIER = 1 AND AGG_ATT.AGGREGATED = 1 AND (CLF_DATA.DATA IS NULL OR CLF_DATA.DATA <> cast(AGG_ATT.CONTENT_ID as nvarchar(8)))
         and ATT.CONTENT_ID in (
             select content_id from content_item with(nolock)
             where content_item_id in (select id from @itemIds)
@@ -502,7 +488,6 @@ begin
     return
 end
 GO
-
 ALTER FUNCTION [dbo].[qp_correct_data] (
 @data nvarchar(max),
 @type_id numeric,
@@ -576,7 +561,6 @@ BEGIN
 
 END
 GO
-
 exec qp_drop_existing 'qp_m2o_titles', 'IsScalarFunction'
 GO
 
@@ -607,6 +591,7 @@ BEGIN
 END
 GO
 
+GO
 
 ALTER PROCEDURE [dbo].[create_content_item_version]
     @uid NUMERIC,
@@ -620,7 +605,6 @@ BEGIN
     exec qp_create_content_item_versions @ids, @uid
 END
 GO
-
 
 exec qp_drop_existing 'qp_build_link_table', 'IsProcedure'
 GO
@@ -908,7 +892,6 @@ AS BEGIN
   exec qp_drop_existing @table_name, 'IsView'
 END
 GO
-
 exec qp_drop_existing 'qp_content_new_views_create', 'IsProcedure'
 go
 
@@ -1277,7 +1260,6 @@ end
 GO
 
 
-
 ALTER PROCEDURE [dbo].[qp_all_article_search]
     @p_site_id int,
     @p_user_id int,
@@ -1448,7 +1430,6 @@ BEGIN
   end
 END
 GO
-
 exec qp_drop_existing 'qp_count_duplicates', 'IsProcedure'
 GO
 
@@ -1650,7 +1631,6 @@ BEGIN
     from @items
 END
 GO
-
 exec qp_drop_existing 'qp_default_link_ids', 'IsScalarFunction'
 GO
 
@@ -1663,7 +1643,6 @@ BEGIN
   return @result
 END
 GO
-
 exec qp_drop_existing 'qp_fast_delete', 'IsProcedure'
 GO
 
@@ -1689,7 +1668,6 @@ BEGIN
     drop table  #disable_td_delete_item_o2m_nullify
 END
 GO
-
 ALTER procedure [dbo].[qp_get_content_data_pivot]
 @item_id numeric
 as
@@ -1745,7 +1723,6 @@ BEGIN
 END
 
 GO
-
 exec qp_drop_existing 'qp_GetPermittedItemsAsQuery', 'IsProcedure'
 go
 
@@ -1894,7 +1871,6 @@ Select @SQLOut = @sSQLStart + @sSQL + @sSQLEnd
 return
 
 GO
-
 ALTER PROCEDURE [dbo].[qp_get_update_cell_sql]
 @table_name nvarchar(255),
 @content_item_id numeric,
@@ -1934,7 +1910,6 @@ BEGIN
 	set @sql = @sql + ' and cd.attribute_id = ' + convert(nvarchar, @attribute_id)
 END
 GO
-
 exec qp_drop_existing 'qp_get_upsert_items_sql_new', 'IsProcedure'
 GO
 
@@ -1961,7 +1936,6 @@ BEGIN
     set @sql = @sql + ' where base.content_item_id is null'
 END
 GO
-
 ALTER procedure [dbo].[qp_get_versions]
 @item_id numeric,
 @version_id numeric = 0
@@ -2033,7 +2007,6 @@ begin
 end
 end
 GO
-
 ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric,
 @last_modified_by numeric = 1
@@ -2045,7 +2018,6 @@ BEGIN
 	EXEC qp_merge_articles @ids, @last_modified_by, 0
 END
 GO
-
 exec qp_drop_existing 'qp_merge_articles', 'IsProcedure'
 GO
 
@@ -2076,7 +2048,6 @@ BEGIN
   end
 END
 GO
-
 EXEC qp_drop_existing 'qp_merge_delays', 'IsProcedure'
 GO
 
@@ -2099,7 +2070,6 @@ BEGIN
     END
 END
 GO
-
 exec qp_drop_existing 'qp_merge_links_multiple', 'IsProcedure'
 GO
 
@@ -2171,7 +2141,6 @@ BEGIN
 
 END
 GO
-
 exec qp_drop_existing 'qp_remove_old_aggregates', 'IsProcedure'
 GO
 
@@ -2183,7 +2152,6 @@ begin
     DELETE FROM content_item WITH(ROWLOCK) WHERE content_item_id IN (SELECT id FROM dbo.qp_aggregates_to_remove(@ids))
 end
 GO
-
 ALTER PROCEDURE [dbo].[qp_replicate]
 @content_item_id numeric
 AS
@@ -2193,7 +2161,6 @@ BEGIN
   exec qp_replicate_items @list, '', 0
 END
 GO
-
 ALTER PROCEDURE [dbo].[qp_replicate_items]
 @ids nvarchar(max),
 @attr_ids nvarchar(max) = '',
@@ -2333,7 +2300,6 @@ BEGIN
     update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @articleIds)
 END
 GO
-
 exec qp_drop_existing 'qp_split_articles', 'IsProcedure'
 GO
 
@@ -2374,7 +2340,6 @@ BEGIN
 
 END
 GO
-
 
 ALTER procedure [dbo].[qp_update_items_with_content_data_pivot]
 @content_id numeric,
@@ -2429,7 +2394,6 @@ begin
 	end
 end
 GO
-
 exec qp_drop_existing 'qp_update_links', 'IsProcedure'
 GO
 
@@ -2461,7 +2425,6 @@ BEGIN
 
 END
 GO
-
 exec qp_drop_existing 'qp_update_m2m', 'IsProcedure'
 GO
 
@@ -2653,7 +2616,6 @@ END
 GO
 
 
-
 ALTER PROCEDURE [dbo].[qp_update_m2o]
 @id numeric,
 @fieldId numeric,
@@ -2688,7 +2650,6 @@ BEGIN
     select id, @fieldId as attribute_id, 0 as to_remove from @new_ids
 END
 GO
-
 exec qp_drop_existing 'qp_update_m2o_final', 'IsProcedure'
 GO
 
@@ -2769,7 +2730,6 @@ BEGIN
     end
 END
 GO
-
 exec qp_drop_existing 'qp_update_values', 'IsProcedure'
 GO
 
@@ -2801,7 +2761,6 @@ BEGIN
 
 END
 GO
-
 ALTER procedure [dbo].[qp_update_with_content_data_pivot]
 @item_id numeric
 as
@@ -2850,7 +2809,6 @@ begin
 end
 end
 GO
-
 ALTER  PROCEDURE [dbo].[restore_content_item_version]
   @uid NUMERIC,
   @version_id NUMERIC
@@ -2941,6 +2899,7 @@ AS
   END
 GO
 
+GO
 exec qp_drop_existing 'tbd_delete_content', 'IsTrigger'
 GO
 
@@ -2999,7 +2958,6 @@ BEGIN
 END
 
 GO
-
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
 AS
 BEGIN
@@ -3032,7 +2990,6 @@ delete content_item from content_item ci inner join deleted d on ci.content_item
 
 END
 GO
-
 ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
@@ -3105,7 +3062,6 @@ BEGIN
   delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
-
 ALTER TRIGGER [dbo].[td_content_and_article_workflow_bind]
 ON [dbo].[workflow]
 FOR DELETE
@@ -3239,7 +3195,6 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 END
 GO
 
-
 ALTER TRIGGER [dbo].[td_drop_table] ON [dbo].[CONTENT]
 FOR  DELETE
 AS
@@ -3265,7 +3220,6 @@ BEGIN
     END
 END
 GO
-
 
 
 
@@ -3315,7 +3269,6 @@ BEGIN
   end
 END
 GO
-
 
 ALTER TRIGGER [dbo].[td_item_to_item] ON [dbo].[item_to_item] AFTER DELETE
 AS
@@ -3375,105 +3328,6 @@ BEGIN
   end
 END
 GO
-
-ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
-AS BEGIN
-	if object_id('tempdb..#disable_tiud_remove_empty_content_groups') is null
-	begin
-      DELETE FROM content_group
-      WHERE NAME <> 'Default Group'
-      AND NOT EXISTS(SELECT * FROM content WHERE content.content_group_id = content_group.content_group_id)
-    END
-END
-GO
-
-
-ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
-BEGIN
-  set nocount on
-  IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
-    BEGIN
-        IF NOT EXISTS(select content_data_id from deleted) -- insert or update without special columns
-               OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)) AND NOT (UPDATE(O2M_DATA)))
-        BEGIN
-
-            update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
-
-            DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC
-            DECLARE @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC, @link_id NUMERIC
-            DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
-
-            declare @ca table
-            (
-                id numeric primary key
-            )
-
-            insert into @ca
-            select distinct attribute_id from inserted
-
-
-            declare @ids table
-            (
-                id numeric primary key,
-                splitted bit
-            )
-
-            while exists(select id from @ca)
-            begin
-
-                select @attribute_id = id from @ca
-
-                select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id,
-                       @attribute_size = attribute_size, @default_value = default_value,
-                       @content_id = content_id, @link_id = link_id
-                from content_attribute
-                where ATTRIBUTE_ID = @attribute_id
-
-                insert into @ids
-                select i.content_item_id, ci.SPLITTED from inserted i
-                inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
-                inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-                where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
-
-                if @attribute_type_id = 11 and @link_id is null
-                begin
-                    update content_data set O2M_DATA = DATA
-                    where CONTENT_ITEM_ID in (select id from @ids) and ATTRIBUTE_ID = @attribute_id
-                    and (isnumeric(data) = 1 or data is null)
-                end
-
-                set @ids_list = null
-                select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
-                set @async_ids_list = null
-                select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
-
-                set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
-
-                if @ids_list <> ''
-                begin
-                    exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
-                    print @sql
-                    exec sp_executesql @sql
-                end
-
-                if @async_ids_list <> ''
-                begin
-                    set @table_name = @table_name + '_async'
-                    exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
-                    print @sql
-                    exec sp_executesql @sql
-                end
-
-                delete from @ca where id = @attribute_id
-
-                delete from @ids
-            end --while
-        end --if
-    end --if
-END
-go
-
-
 ALTER TRIGGER [dbo].[ti_access_content] ON [dbo].[CONTENT] FOR INSERT
 AS
   if object_id('tempdb..#disable_ti_access_content') is null
@@ -3532,7 +3386,6 @@ BEGIN
     end
 END
 go
-
 
 ALTER TRIGGER [dbo].[ti_access_workflow] ON [dbo].[workflow] FOR INSERT
 AS
@@ -3679,7 +3532,6 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
 END
 go
 
-
 ALTER TRIGGER [dbo].[ti_content_to_content] ON [dbo].[content_to_content] AFTER INSERT
 AS
 BEGIN
@@ -3788,7 +3640,6 @@ BEGIN
 	END
 END
 GO
-
 ALTER TRIGGER [dbo].[ti_insert_item] ON [dbo].[CONTENT_ITEM] FOR INSERT AS
 BEGIN
     declare @content_id numeric
@@ -3843,7 +3694,6 @@ BEGIN
 
 END
 GO
-
 ALTER TRIGGER [dbo].[ti_insert_modify_row] ON [dbo].[CONTENT] FOR INSERT
 AS
 BEGIN
@@ -3899,7 +3749,6 @@ BEGIN
   end
 END
 GO
-
 
 ALTER TRIGGER [dbo].[ti_item_to_item] ON [dbo].[item_to_item] AFTER INSERT
 AS
@@ -3962,7 +3811,6 @@ if object_id('tempdb..#disable_ti_item_to_item') is null
   end
 END
 GO
-
 ALTER TRIGGER [dbo].[ti_statuses_and_default_notif] ON [dbo].[SITE]
 FOR INSERT
 AS
@@ -3991,6 +3839,102 @@ END
 go
 
 
+
+ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
+BEGIN
+  set nocount on
+  IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
+    BEGIN
+        IF NOT EXISTS(select content_data_id from deleted) -- insert or update without special columns
+               OR (NOT(UPDATE(SPLITTED)) AND NOT (UPDATE(not_for_replication)) AND NOT (UPDATE(O2M_DATA)))
+        BEGIN
+
+            update content_item set modified = getdate() where content_item_id in (select content_item_id from deleted where not_for_replication = 0)
+
+            DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC
+            DECLARE @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC, @link_id NUMERIC
+            DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
+
+            declare @ca table
+            (
+                id numeric primary key
+            )
+
+            insert into @ca
+            select distinct attribute_id from inserted
+
+
+            declare @ids table
+            (
+                id numeric primary key,
+                splitted bit
+            )
+
+            while exists(select id from @ca)
+            begin
+
+                select @attribute_id = id from @ca
+
+                select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id,
+                       @attribute_size = attribute_size, @default_value = default_value,
+                       @content_id = content_id, @link_id = link_id
+                from content_attribute
+                where ATTRIBUTE_ID = @attribute_id
+
+                insert into @ids
+                select i.content_item_id, ci.SPLITTED from inserted i
+                inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
+                inner join content c on ci.CONTENT_ID = c.CONTENT_ID
+                where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
+
+                if @attribute_type_id = 11 and @link_id is null
+                begin
+                    update content_data set O2M_DATA = DATA
+                    where CONTENT_ITEM_ID in (select id from @ids) and ATTRIBUTE_ID = @attribute_id
+                    and (isnumeric(data) = 1 or data is null)
+                end
+
+                set @ids_list = null
+                select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
+                set @async_ids_list = null
+                select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
+
+                set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
+
+                if @ids_list <> ''
+                begin
+                    exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
+                    print @sql
+                    exec sp_executesql @sql
+                end
+
+                if @async_ids_list <> ''
+                begin
+                    set @table_name = @table_name + '_async'
+                    exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
+                    print @sql
+                    exec sp_executesql @sql
+                end
+
+                delete from @ca where id = @attribute_id
+
+                delete from @ids
+            end --while
+        end --if
+    end --if
+END
+go
+
+ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
+AS BEGIN
+	if object_id('tempdb..#disable_tiud_remove_empty_content_groups') is null
+	begin
+      DELETE FROM content_group
+      WHERE NAME <> 'Default Group'
+      AND NOT EXISTS(SELECT * FROM content WHERE content.content_group_id = content_group.content_group_id)
+    END
+END
+GO
 ALTER TRIGGER [dbo].[tu_content_attribute_clean_empty_links] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
 AS
 BEGIN
@@ -4161,7 +4105,6 @@ AS BEGIN
     END
 END
 GO
-
 exec qp_drop_existing 'tu_item_to_item', 'IsTrigger'
 go
 
@@ -4213,7 +4156,6 @@ BEGIN
     END
 END
 GO
-
 ALTER TRIGGER [dbo].[tu_not_for_replication] ON [dbo].[CONTENT_ITEM] FOR UPDATE
 AS
 BEGIN
@@ -4354,7 +4296,6 @@ if not update(attribute_order) and object_id('tempdb..#disable_tu_update_field')
 	end
 END
 GO
-
 ALTER TRIGGER [dbo].[tu_update_item] ON [dbo].[CONTENT_ITEM] FOR UPDATE
 AS
 begin
@@ -4486,18 +4427,7 @@ begin
 end
 GO
 
-if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
-VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
-
-if not exists (select * from BACKEND_ACTION where code = 'multiple_export_archive_article')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
-VALUES(dbo.qp_action_type_id('multiple_export'), dbo.qp_entity_type_id('archive_article'), 'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', 1, 600, 400, 1, 1)
-
-if not exists (select * from ACTION_TOOLBAR_BUTTON where parent_action_id = dbo.qp_action_id('list_archive_article') and name = 'Export')
-insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], icon)
-values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
-
+GO
 IF NOT EXISTS(SELECT * FROM CONTEXT_MENU_ITEM WHERE NAME = 'Unselect Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
 INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER],  ICON)
 VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('unselect_child_articles'), 'Unselect Child Articles', 90, 'deselect_all.gif')
@@ -4505,7 +4435,6 @@ VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('unselect_chi
 IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Select Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
 INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('select_child_articles'), 'Select Child Articles', 80, 'select_all.gif')
-
 GO
 if not exists (select * From BACKEND_ACTION where code = 'copy_custom_action')
 begin
@@ -4517,7 +4446,17 @@ begin
   VALUES (dbo.qp_context_menu_id('custom_action'), dbo.qp_action_id('copy_custom_action'), N'Create Like', 5, 'create_like.gif', 1)
 
 end
+if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
+insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
+VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
 
+if not exists (select * from BACKEND_ACTION where code = 'multiple_export_archive_article')
+insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
+VALUES(dbo.qp_action_type_id('multiple_export'), dbo.qp_entity_type_id('archive_article'), 'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', 1, 600, 400, 1, 1)
+
+if not exists (select * from ACTION_TOOLBAR_BUTTON where parent_action_id = dbo.qp_action_id('list_archive_article') and name = 'Export')
+insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], icon)
+values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
 declare @cnt numeric
 
 ;with numbers(num)  as
@@ -4541,7 +4480,6 @@ begin
 end
 GO
 
-
 update CONTENT_DATA set SPLITTED = i.splitted
 from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
 WHERE i.SPLITTED = 1
@@ -4550,14 +4488,12 @@ if not exists (select * from APP_SETTINGS where [key] = 'CONTENT_MODIFICATION_UP
   insert into APP_SETTINGS
   values ('CONTENT_MODIFICATION_UPDATE_INTERVAL', '30')
 GO
-
 update CONTENT_ITEM_SCHEDULE
 SET
     START_DATE = dbo.get_schedule_date(isnull(active_start_date, 17530101), active_start_time),
     END_DATE = dbo.get_schedule_date(active_end_date, active_end_time)
 
 GO
-
 
 declare @cnt numeric
 select @cnt = count(*) from item_link where is_rev = 1
@@ -4587,7 +4523,6 @@ update item_link_async set is_self = 1
 from item_link_async il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
 GO
 
-
 if not exists (select * From BACKEND_ACTION where code = 'select_child_articles')
 begin
 
@@ -4615,7 +4550,6 @@ update CONTEXT_MENU_ITEM set icon = 'select_all.gif' where ACTION_ID = dbo.qp_ac
 
 exec qp_update_translations 'Select Child Articles', 'Выбрать дочерние статьи'
 exec qp_update_translations 'Unselect Child Articles', 'Отменить выбор дочерних статей'
-
 if not exists(
 	select * From INFORMATION_SCHEMA.VIEWS where table_name like 'content%' and TABLE_NAME like '%new'
 ) or object_id('tempdb..#qp_rebuild_all_new_views') is not null
@@ -4639,7 +4573,6 @@ begin
 	exec qp_recreate_link_tables
 end
 GO
-
 DECLARE @articles_with_wrong_statuses TABLE (
 Site_ID int,
 CONTENT_ID int,
@@ -4710,7 +4643,6 @@ SET SUCCESSOR_STATUS_ID = (
 	)
 WHERE WORKFLOW_RULE_ID IN (SELECT WORKFLOW_RULE_ID FROM @workflow_rules_ids)
 END
-
 update VE_COMMAND set NAME = 'Spellchecker' where NAME = 'SpellCheck'
 update VE_COMMAND set NAME = 'SpecialChar' where NAME = 'QSpecChar'
 update VE_COMMAND set NAME = 'ShowBlocks', COMMAND_IN_GROUP_ORDER = 5 where NAME = 'LineBreak'
@@ -4748,8 +4680,9 @@ GO
 EXEC qp_update_translations 'Disable list auto wrapping (ul, ol, dl)', 'Отключить автоматическое оборачивание списков (ul, ol, dl)'
 GO
 
-
 update workflow set is_default = 1 where workflow_name = 'general' and not exists (select * from workflow where is_default = 1)
+GO
+
 GO
 if not exists(select * from sys.indexes where name = 'IX_O2M_DATA' and [object_id] = object_id('CONTENT_DATA'))
 begin
@@ -4762,6 +4695,8 @@ begin
 end
 go
 
+GO
+
 exec qp_drop_existing 'RegionUpdates', 'IsUserTable'
 GO
 
@@ -4773,7 +4708,6 @@ GO
 
 exec qp_drop_existing 'RegionUpdated', 'IsProcedure'
 GO
-
 
 if not exists(select * from sys.tables where name = 'Products')
 BEGIN
@@ -4847,7 +4781,6 @@ END
 GO
 
 
-
 if not exists(select * from sys.tables where name = 'ProductRegions')
 BEGIN
     CREATE TABLE [dbo].[ProductRegions]
@@ -4860,7 +4793,6 @@ BEGIN
     )
 END
 GO
-
 if not exists(select * from sys.tables where name = 'ProductRelevance')
 BEGIN
     CREATE TABLE [dbo].[ProductRelevance]
@@ -4874,7 +4806,6 @@ BEGIN
     )
 END
 GO
-
 CREATE PROCEDURE [dbo].[ClearAllProducts]
 AS
 BEGIN
@@ -4886,7 +4817,6 @@ BEGIN
     delete from  Products
 END
 GO
-
 CREATE PROCEDURE [dbo].[DeleteProduct]
     @id int
 AS
@@ -4895,7 +4825,6 @@ BEGIN
     delete from Products with(rowlock) where Id = @id
 END
 GO
-
 CREATE TABLE [dbo].[RegionUpdates](
     [Id] [int] IDENTITY(1,1) NOT NULL,
     [Updated] [datetime] NOT NULL,
@@ -4903,7 +4832,6 @@ CREATE TABLE [dbo].[RegionUpdates](
  CONSTRAINT [PK_RegionUpdates] PRIMARY KEY CLUSTERED ([Id] ASC)
 )
 GO
-
 CREATE PROCEDURE [dbo].[RegionUpdated]
     -- Add the parameters for the stored procedure here
     @regionId int
@@ -4927,6 +4855,7 @@ BEGIN
 END
 GO
 
+GO
 
 exec qp_drop_existing  'GetProducts', 'IsTableFunction'
 exec qp_drop_existing  'SyncProductVersions', 'IsProcedure'
@@ -5059,3 +4988,6 @@ BEGIN
 	print('End update ProductVersions')
 END
 GO
+
+GO
+
