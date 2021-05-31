@@ -146,7 +146,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             new ListItem(ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
         };
 
-
+        [ValidateNever]
+        [BindNever]
         public List<ListItem> DirectionTypes
         {
             get

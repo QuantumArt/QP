@@ -99,8 +99,22 @@ namespace Quantumart.QP8.BLL
             set => _articleWorkflowDirection = value;
         }
 
-        private ArticleWorkflowDirection GetCurrentWorkflowDirection() => CurrentWeight > ActualWorkflowBinding.CurrentUserMaxWeight ? ArticleWorkflowDirection.DirectChange :
-            ActualWorkflowBinding.Workflow.ApplyByDefault && CurrentWeight < ActualWorkflowBinding.CurrentUserMaxWeight ? ArticleWorkflowDirection.Forwards : ArticleWorkflowDirection.UseTheSame;
+        private ArticleWorkflowDirection GetCurrentWorkflowDirection()
+        {
+            if (ActualWorkflowBinding.IsAssigned)
+            {
+                if (CurrentWeight > ActualWorkflowBinding.CurrentUserMaxWeight)
+                {
+                    return ArticleWorkflowDirection.DirectChange;
+                }
+
+                if (ActualWorkflowBinding.Workflow.ApplyByDefault && CurrentWeight < ActualWorkflowBinding.CurrentUserMaxWeight)
+                {
+                    return ArticleWorkflowDirection.Forwards;
+                }
+            }
+            return ArticleWorkflowDirection.UseTheSame;
+        }
 
         [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
         public int StatusTypeId { get; set; }
@@ -418,6 +432,8 @@ namespace Quantumart.QP8.BLL
             set => _parentContentId = value;
         }
 
+        [BindNever]
+        [ValidateNever]
         public int CurrentWeight => ActualWorkflowBinding.StatusTypes.Single(n => n.Id == StatusTypeId).Weight;
 
         public override void Validate()
