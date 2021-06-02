@@ -2923,6 +2923,7 @@ AS $BODY$
                         archive = coalesce(i.archive, ci.archive),
                         visible = coalesce(i.visible, ci.visible),
                         schedule_new_version_publication = coalesce(i.delayed, ci.schedule_new_version_publication),
+                        cancel_split = coalesce(i.cancel_split, ci.cancel_split),
                         permanent_lock = coalesce(i.permanent_lock, ci.permanent_lock),
                         unique_id = coalesce(i.unique_id, ci.unique_id)
                 from item i where i.id = ci.content_item_id
