@@ -91,6 +91,7 @@
       }
       if (targetValue) { $a.val(targetValue).change(); }
     });
+    $(".workflowDirections input[type='radio']:checked").trigger("change");
 	});
 
 	@(Model.ContextObjectName).setTerminatingCallback(function() {
