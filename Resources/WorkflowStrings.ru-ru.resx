@@ -168,4 +168,7 @@
   <data name="WorkflowDefaultAlreadyExists" xml:space="preserve">
     <value>Workflow по умолчанию уже существует (Id = {0})</value>
   </data>
+  <data name="UseDirectionControls" xml:space="preserve">
+    <value>Использовать контролы направления</value>
+  </data>
 </root>

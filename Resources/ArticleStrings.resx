@@ -624,4 +624,22 @@
   <data name="CollaborativePublication" xml:space="preserve">
     <value>Collaborative Publication with</value>
   </data>
+  <data name="Forwards" xml:space="preserve">
+    <value>Forwards</value>
+  </data>
+  <data name="Backwards" xml:space="preserve">
+    <value>Backwards by workflow</value>
+  </data>
+  <data name="LeaveTheSame" xml:space="preserve">
+    <value>Use the same status</value>
+  </data>
+  <data name="DirectChange" xml:space="preserve">
+    <value>Change status directly</value>
+  </data>
+  <data name="Direction" xml:space="preserve">
+    <value>Use Workflow Rules</value>
+  </data>
+  <data name="CurrentStatus" xml:space="preserve">
+    <value>Current status</value>
+  </data>
 </root>

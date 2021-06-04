@@ -162,4 +162,13 @@
   <data name="WeightIsInUse" xml:space="preserve">
     <value>This site already has a status with such weight</value>
   </data>
+  <data name="Alias" xml:space="preserve">
+    <value>User Name</value>
+  </data>
+  <data name="DemotedMessage" xml:space="preserve">
+    <value>The article status was demoted from [{0}] to [{1}]. Comment: {2}</value>
+  </data>
+  <data name="PromotedMessage" xml:space="preserve">
+    <value>The article status was promoted from [{0}] to [{1}]. Comment: {2}</value>
+  </data>
 </root>

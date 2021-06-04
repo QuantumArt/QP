@@ -25,6 +25,8 @@ namespace Quantumart.QP8.DAL.Entities
         public string Color { get; set; }
         public string AltColor { get; set; }
 
+        public string Alias { get; set; }
+
         public ICollection<ArticleDAL> Articles { get; set; }
         public ICollection<NotificationsDAL> Notifications { get; set; }
         public SiteDAL Site { get; set; }
@@ -47,6 +49,7 @@ namespace Quantumart.QP8.DAL.Entities
 
             builder.Property(x => x.AltColor).HasColumnName("ALT_COLOR");
             builder.Property(x => x.Color).HasColumnName("COLOR");
+            builder.Property(x => x.Alias).HasColumnName("ALIAS");
             builder.Property(x => x.BuiltIn).HasColumnName("BUILT_IN");
             builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
             builder.Property(x => x.Id).HasColumnName("STATUS_TYPE_ID").ValueGeneratedOnAdd();

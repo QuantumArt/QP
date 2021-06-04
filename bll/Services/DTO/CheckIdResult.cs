@@ -98,7 +98,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
                 var relationCheckResult = ArticleRepository.CheckRelationSecurity(contentId, ids, false);
                 foreach (var article in list)
                 {
-                    if (article.StatusTypeId == article.Workflow.MaxStatus.Id && !article.Splitted)
+                    if (article.StatusTypeId == article.ActualWorkflowBinding.MaxStatus.Id && !article.Splitted)
                     {
                         result._RedundantIds.Add(article.Id);
                     }

@@ -26,6 +26,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>WorkflowStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="ArticleStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ArticleStrings.resx</DependentUpon>
+    </Compile>
+
     <Compile Update="HomeStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -41,12 +47,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ImportStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="StatusTypeStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StatusTypeStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="WorkflowStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>WorkflowStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ArticleStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ArticleStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="HomeStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -59,6 +74,10 @@
     <EmbeddedResource Update="ImportStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ImportStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="StatusTypeStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>StatusTypeStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

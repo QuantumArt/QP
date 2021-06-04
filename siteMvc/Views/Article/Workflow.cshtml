@@ -21,9 +21,23 @@
 
   }
 
-  if (Model.Data.Workflow.IsAssigned && Model.Data.IsUpdatableWithWorkflow)
+  @Html.DisplayField("StatusTypeId", ArticleStrings.CurrentStatus, Model.Data.Status.DisplayName)
+
+  if (Model.Data.ActualWorkflowBinding.IsAssigned && Model.Data.IsUpdatableWithWorkflow)
   {
-    @Html.SelectFieldFor(s => s.Data.StatusTypeId, Html.List(Model.AvailableStatuses))
+    if (Model.Data.ActualWorkflowBinding.Workflow.UseDirectionControls)
+    {
+      @Html.RadioFieldFor(s => s.Data.Direction, Html.List(Model.DirectionTypes),
+        options: new ControlOptions
+        {
+          HtmlAttributes = new Dictionary<string, object> {{ "class", "workflowDirections" }}
+        })
+    }
+
+    using (Html.BeginPanel("statusPanel", !Model.Data.ActualWorkflowBinding.Workflow.UseDirectionControls, false))
+    {
+      @Html.SelectFieldFor(s => s.Data.StatusTypeId, Html.List(Model.AvailableStatuses))
+    }
 
     using (Html.BeginPanel("cancelSplitPanel"))
     {
@@ -35,7 +49,7 @@
       }
     }
 
-    using (Html.BeginPanel(s => s.Data.StatusTypeId, Model.Data.Workflow.MaxStatus.Id))
+    using (Html.BeginPanel("maxStatusPanel"))
     {
       @Html.CheckBoxFieldFor(s => s.Data.Delayed, "delayedPanel")
       using (Html.BeginPanel("delayedPanel", true))
@@ -61,10 +75,6 @@
                           </div>
                                                                      )}
 
-  }
-  else
-  {
-    @Html.DisplayField("StatusTypeId", ArticleStrings.Status, Model.Data.Status.Name)
   }
 
 

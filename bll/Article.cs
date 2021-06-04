@@ -52,6 +52,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
         private int _parentContentId;
+        private ArticleWorkflowDirection? _articleWorkflowDirection;
 
         internal Article()
         {
@@ -90,6 +91,30 @@ namespace Quantumart.QP8.BLL
         public bool Archived { get; set; }
 
         public bool Splitted { get; set; }
+
+        [Display(Name = "Direction", ResourceType = typeof(ArticleStrings))]
+        public ArticleWorkflowDirection Direction
+        {
+            get => _articleWorkflowDirection ?? GetCurrentWorkflowDirection();
+            set => _articleWorkflowDirection = value;
+        }
+
+        private ArticleWorkflowDirection GetCurrentWorkflowDirection()
+        {
+            if (ActualWorkflowBinding.IsAssigned)
+            {
+                if (CurrentWeight > ActualWorkflowBinding.CurrentUserMaxWeight)
+                {
+                    return ArticleWorkflowDirection.DirectChange;
+                }
+
+                if (ActualWorkflowBinding.Workflow.ApplyByDefault && CurrentWeight < ActualWorkflowBinding.CurrentUserMaxWeight)
+                {
+                    return ArticleWorkflowDirection.Forwards;
+                }
+            }
+            return ArticleWorkflowDirection.UseTheSame;
+        }
 
         [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
         public int StatusTypeId { get; set; }
@@ -176,11 +201,11 @@ namespace Quantumart.QP8.BLL
 
         public string DisplayContentName => DisplayContentId == ContentId ? Content?.Name : ContentRepository.GetById(DisplayContentId).Name;
 
-        public bool IsUpdatableWithWorkflow => Workflow.CurrentUserCanUpdateArticles;
+        public bool IsUpdatableWithWorkflow => ActualWorkflowBinding.CurrentUserCanUpdateArticles;
 
-        public bool IsPublishableWithWorkflow => Workflow.CurrentUserCanPublishArticles && !WorkflowBinding.IsAssigned;
+        public bool IsPublishableWithWorkflow => ActualWorkflowBinding.CurrentUserCanPublishArticles && !WorkflowBinding.IsAssigned;
 
-        public bool IsRemovableWithWorkflow => Workflow.CurrentUserCanRemoveArticles;
+        public bool IsRemovableWithWorkflow => ActualWorkflowBinding.CurrentUserCanRemoveArticles;
 
         public bool IsUpdatableWithRelationSecurity
         {
@@ -353,7 +378,7 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         [ValidateNever]
-        public WorkflowBind Workflow => WorkflowBinding.IsAssigned ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
+        public WorkflowBind ActualWorkflowBinding => WorkflowBinding.IsAssigned ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
 
         [BindNever]
         [ValidateNever]
@@ -406,6 +431,10 @@ namespace Quantumart.QP8.BLL
             get => _parentContentId != 0 || CollaborativePublishedArticle == 0 ? _parentContentId : GetContentIdForArticle();
             set => _parentContentId = value;
         }
+
+        [BindNever]
+        [ValidateNever]
+        public int CurrentWeight => ActualWorkflowBinding.StatusTypes.Single(n => n.Id == StatusTypeId).Weight;
 
         public override void Validate()
         {
@@ -912,12 +941,12 @@ namespace Quantumart.QP8.BLL
                 if (previousStatus.Weight > currentStatus.Weight)
                 {
                     historyStatusId = (int)SystemStatusType.ForcedDemoting;
-                    message = $"The article status was demoted from [{previousStatus.Name}] to [{currentStatus.Name}]. Comment: {message}";
+                    message = String.Format(StatusTypeStrings.DemotedMessage, previousStatus.DisplayName, currentStatus.DisplayName, message);
                 }
                 else
                 {
                     historyStatusId = (int)SystemStatusType.ForcedPromoting;
-                    message = $"The article status was promoted from [{previousStatus.Name}] to [{currentStatus.Name}]. Comment: {message}";
+                    message = String.Format(StatusTypeStrings.PromotedMessage, previousStatus.DisplayName, currentStatus.DisplayName, message);
                 }
             }
 
@@ -979,11 +1008,11 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void FixNonUsedStatus(bool fixUnassignedWorkflow)
         {
-            if (Workflow.IsAssigned)
+            if (ActualWorkflowBinding.IsAssigned)
             {
-                if (!Workflow.UseStatus(Status.Id) && Status.Id != StatusType.GetNone(Content.SiteId).Id)
+                if (!ActualWorkflowBinding.UseStatus(Status.Id) && Status.Id != StatusType.GetNone(Content.SiteId).Id)
                 {
-                    Status = Workflow.GetClosestStatus(Status.Weight);
+                    Status = ActualWorkflowBinding.GetClosestStatus(Status.Weight);
                     StatusTypeId = Status.Id;
                 }
             }
@@ -1610,14 +1639,14 @@ namespace Quantumart.QP8.BLL
 
         public override void DoCustomBinding()
         {
-            if (!Workflow.IsAssigned || !Workflow.IsAsync || !Workflow.CurrentUserHasWorkflowMaxWeight || StatusTypeId == Workflow.MaxStatus.Id)
+            if (!ActualWorkflowBinding.IsAssigned || !ActualWorkflowBinding.IsAsync || !ActualWorkflowBinding.CurrentUserHasWorkflowMaxWeight || StatusTypeId == ActualWorkflowBinding.MaxStatus.Id)
             {
                 CancelSplit = false;
             }
 
-            if (Workflow.IsAssigned)
+            if (ActualWorkflowBinding.IsAssigned)
             {
-                if (StatusTypeId != Workflow.MaxStatus.Id)
+                if (StatusTypeId != ActualWorkflowBinding.MaxStatus.Id)
                 {
                     Delayed = false;
                 }
@@ -1628,6 +1657,14 @@ namespace Quantumart.QP8.BLL
             Schedule.DoCustomBinding();
         }
 
+    }
+
+    public enum ArticleWorkflowDirection
+    {
+        UseTheSame,
+        DirectChange,
+        Forwards,
+        Backwards
     }
 
     public enum ArticleClearType

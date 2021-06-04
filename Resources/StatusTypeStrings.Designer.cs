@@ -70,6 +70,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User Name.
+        /// </summary>
+        public static string Alias {
+            get {
+                return ResourceManager.GetString("Alias", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alternate color.
         /// </summary>
         public static string AltColor {
@@ -138,6 +147,24 @@ namespace Quantumart.QP8.Resources {
         public static string ColorMissed {
             get {
                 return ResourceManager.GetString("ColorMissed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The article status was demoted from [{0}] to [{1}]. Comment: {2}.
+        /// </summary>
+        public static string DemotedMessage {
+            get {
+                return ResourceManager.GetString("DemotedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The article status was promoted from [{0}] to [{1}]. Comment: {2}.
+        /// </summary>
+        public static string PromotedMessage {
+            get {
+                return ResourceManager.GetString("PromotedMessage", resourceCulture);
             }
         }
         

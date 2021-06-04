@@ -162,4 +162,13 @@
   <data name="WeightIsInUse" xml:space="preserve">
     <value>Статус с таким весом уже существует в текущем сайте</value>
   </data>
+  <data name="Alias" xml:space="preserve">
+    <value>Пользовательское имя</value>
+  </data>
+  <data name="DemotedMessage" xml:space="preserve">
+    <value>Статус статьи был понижен с [{0}] до [{1}]. Комментарий: {2}</value>
+  </data>
+  <data name="PromotedMessage" xml:space="preserve">
+    <value>Статус статьи был повышен с [{0}] до [{1}]. Комментарий: {2}</value>
+  </data>
 </root>

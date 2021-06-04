@@ -19,6 +19,11 @@ namespace Quantumart.QP8.BLL
         [RegularExpression(RegularExpressions.RgbColor, ErrorMessageResourceName = "ColorInvalidFormat", ErrorMessageResourceType = typeof(StatusTypeStrings))]
         public string Color { get; set; }
 
+        [Display(Name = "Alias", ResourceType = typeof(StatusTypeStrings))]
+        public string Alias { get; set; }
+
+        public string DisplayName => Alias ?? Name;
+
         [StringLength(6, ErrorMessageResourceName = "AltColorLengthExceeded", ErrorMessageResourceType = typeof(StatusTypeStrings))]
         [RegularExpression(RegularExpressions.RgbColor, ErrorMessageResourceName = "AltColorInvalidFormat", ErrorMessageResourceType = typeof(StatusTypeStrings))]
         [Display(Name = "AltColor", ResourceType = typeof(StatusTypeStrings))]

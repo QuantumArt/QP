@@ -191,7 +191,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 ViewBag.StatusTypes = _articleSearchService.GetStatusListByContentId(model.ParentEntityId)
                     .Select(s => new QPSelectListItem
                 {
-                    Text = s.Name,
+                    Text = s.DisplayName,
                     Value = s.Id.ToString(),
                     Selected = model.Ids?.Contains(s.Id) ?? false
                 }).ToArray();

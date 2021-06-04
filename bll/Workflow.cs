@@ -17,6 +17,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "IsDefault", ResourceType = typeof(WorkflowStrings))]
         public bool IsDefault { get; set; }
 
+        [Display(Name = "UseDirectionControls", ResourceType = typeof(WorkflowStrings))]
+        public bool UseDirectionControls { get; set; }
+
         [Display(Name = "CreateAutoNotifications", ResourceType = typeof(WorkflowStrings))]
         public bool CreateDefaultNotification { get; set; }
 

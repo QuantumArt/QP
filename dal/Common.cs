@@ -2872,7 +2872,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             {
                 const string colorString = ", CASE WHEN st.COLOR IS NOT NULL AND ST.ALT_COLOR IS NOT NULL THEN ST.STATUS_TYPE_ID ELSE NULL END AS STATUS_TYPE_COLOR";
                 selectBuilder.Append(
-                    $" {tablePrefix}.CONTENT_ITEM_ID, {tablePrefix}.CREATED, {tablePrefix}.MODIFIED, {tablePrefix}.LAST_MODIFIED_BY, st.STATUS_TYPE_NAME{colorString}, {SqlQuerySyntaxHelper.CastToBool(databaseType, $"{tablePrefix}.visible")} as visible"
+                    $" {tablePrefix}.CONTENT_ITEM_ID, {tablePrefix}.CREATED, {tablePrefix}.MODIFIED, {tablePrefix}.LAST_MODIFIED_BY, COALESCE(st.ALIAS, st.STATUS_TYPE_NAME) AS STATUS_TYPE_NAME{colorString}, {SqlQuerySyntaxHelper.CastToBool(databaseType, $"{tablePrefix}.visible")} as visible"
                 );
 
                 var falseValue = SqlQuerySyntaxHelper.ToBoolSql(databaseType, false);

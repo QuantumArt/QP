@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -15,6 +16,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+using DayOfWeek = Quantumart.QP8.Constants.DayOfWeek;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
@@ -144,6 +146,34 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             new ListItem(ShowDurationUnit.Years.ToString(), ArticleStrings.YearsLimitationUnit)
         };
 
+        [ValidateNever]
+        [BindNever]
+        public List<ListItem> DirectionTypes
+        {
+            get
+            {
+                var result = new List<ListItem>();
+                if (Data.CurrentWeight > Data.ActualWorkflowBinding.AvailableStatuses.First().Weight)
+                {
+                    result.Add(new ListItem(ArticleWorkflowDirection.Backwards.ToString(), ArticleStrings.Backwards));
+                }
+
+                if (Data.CurrentWeight <= Data.ActualWorkflowBinding.AvailableStatuses.Last().Weight)
+                {
+                    result.Add(new ListItem(ArticleWorkflowDirection.UseTheSame.ToString(), ArticleStrings.LeaveTheSame));
+                }
+
+                result.Add(new ListItem(ArticleWorkflowDirection.DirectChange.ToString(), ArticleStrings.DirectChange, new[] { "statusPanel" }));
+
+                if (Data.CurrentWeight < Data.ActualWorkflowBinding.AvailableStatuses.Last().Weight)
+                {
+                    result.Add(new ListItem(ArticleWorkflowDirection.Forwards.ToString(), ArticleStrings.Forwards));
+                }
+
+                return result;
+            }
+        }
+
         public string WorkflowWarning => IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow;
 
         public string RelationSecurityWarning => ArticleStrings.CannotUpdateBecauseOfRelationSecurity;
@@ -207,34 +237,36 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
         {
             var result = new ListItem
             {
-                Text = st.Name,
+                Text = st.DisplayName,
                 Value = st.Id.ToString(),
                 HasDependentItems = true
             };
 
-            if (st.Weight != Data.Workflow.MaxStatus.Weight && Data.Workflow.IsAsync && Data.Workflow.CurrentUserHasWorkflowMaxWeight && (Data.Splitted || !Data.Splitted && Data.StatusTypeId == Data.Workflow.MaxStatus.Id))
+            var panels = new List<string>();
+
+            if (st.Weight != Data.ActualWorkflowBinding.MaxStatus.Weight && Data.ActualWorkflowBinding.IsAsync && Data.ActualWorkflowBinding.CurrentUserHasWorkflowMaxWeight && (Data.Splitted || !Data.Splitted && Data.StatusTypeId == Data.ActualWorkflowBinding.MaxStatus.Id))
             {
-                result.DependentItemIDs = new[] { "cancelSplitPanel" };
+                panels.Add("cancelSplitPanel");
             }
 
-            if (Data.StatusTypeId != st.Id)
+            if (st.Id != Data.StatusTypeId)
             {
-                if (result.DependentItemIDs != null)
-                {
-                    result.DependentItemIDs[result.DependentItemIDs.Length - 1] = "comment";
-                }
-                else
-                {
-                    result.DependentItemIDs = new[] { "comment" };
-                }
+                panels.Add("comment");
             }
+
+            if (st.Id == Data.ActualWorkflowBinding.MaxStatus.Id)
+            {
+                panels.Add("maxStatusPanel");
+            }
+
+            result.DependentItemIDs = panels.ToArray();
 
             return result;
         }
 
         [ValidateNever]
         [BindNever]
-        public IEnumerable<ListItem> AvailableStatuses => Data.Workflow.AvailableStatuses.Select(GetStatusListItem);
+        public IEnumerable<ListItem> AvailableStatuses => Data.ActualWorkflowBinding.AvailableStatuses.Select(GetStatusListItem);
 
         internal static RelationListResult GetListForRelation(BLL.Field field, string value, int articleId)
         {

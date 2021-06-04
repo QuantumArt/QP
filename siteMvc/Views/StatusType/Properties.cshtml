@@ -8,8 +8,10 @@
 		@Html.TextBoxFieldFor(s => s.Data.Name, htmlAttributes: (Model.Data.BuiltIn ? new Dictionary<string, object> { { "disabled", "disabled" } } : null))
 		@Html.TextAreaFieldFor(s => s.Data.Description)
 		@Html.NumericFieldFor(s => s.Data.Weight, 0, 100, 0, htmlAttributes: (Model.Data.BuiltIn ? new Dictionary<string, object> { { "disabled", "disabled" } } : null))
-		@Html.TextBoxFieldFor(s => s.Data.Color)
+	  @Html.TextBoxFieldFor(s => s.Data.Alias)
+	  @Html.TextBoxFieldFor(s => s.Data.Color)
 		@Html.TextBoxFieldFor(s => s.Data.AltColor)
+
 	}
   <partial name="Version" model="@Model.Data" />
   <partial name="EntityDirectLink" model="@Model" />

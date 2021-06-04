@@ -69,5 +69,33 @@
 {
     @Html.CustomScript(aggrArticle.Content.FormScript, Model.ContextObjectName)
 }
+<script>
+  var $editingForm = $("#@Model.UniqueId("editingForm")");
+  @(Model.ContextObjectName).setInitializedCallback(function() {
+    $(".workflowDirections input[type='radio']", $editingForm).change(function (e) {
+      const value = $(e.currentTarget).val();
+      const currentStatus = $("dl[data-field_form_name='StatusTypeId'] span", $editingForm).text();
+      const $a = $("select[name='Data.StatusTypeId']", $editingForm)
+      let targetValue = 0;
+      if (value === 'Forwards') {
+        targetValue = $a.children("option:last").val();
+      } else if (value === 'Backwards') {
+        $a.children("option").each(function (index, elem) {
+          if ($(elem).text() === currentStatus) { return false; }
+          targetValue = $(elem).val();
+        })
+      } else {
+        targetValue = $("option").filter(function() {
+          return $(this).text() === currentStatus;
+        }).first().attr("value");
+      }
+      if (targetValue) { $a.val(targetValue).change(); }
+    });
+    $(".workflowDirections input[type='radio']:checked").trigger("change");
+	});
 
+	@(Model.ContextObjectName).setTerminatingCallback(function() {
+    $(".workflowDirections input[type='radio']", $editingForm).unbind();
+	});
+</script>
 @Html.RunInitScript(Model)
