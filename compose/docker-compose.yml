@@ -3,7 +3,7 @@ volumes:
   qp-library-volume:
 services:
   qp:
-    container_name: qp
+    container_name: qp-stable
     image: qpcms/qp:${QP_TAG}
     restart: always
     ports:
@@ -26,7 +26,7 @@ services:
      - qp-library-volume:/qplibrary
      - ${HOST_CONFIG_PATH}:/qpconfig/config.xml
   qp-storage:
-    container_name: qp-storage
+    container_name: qp-storage-stable
     image: 'qpcms/qp-storage:${STORAGE_TAG}'
     restart: always
     ports:
