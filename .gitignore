@@ -277,3 +277,4 @@ package/pack/qp8release
 **/appsettings.*.json
 
 /projectfiles.tar
+/.env
