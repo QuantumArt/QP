@@ -79,7 +79,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CR (carriage return).
+        ///   Looks up a localized string similar to CR (early MacOS style).
         /// </summary>
         public static string CR {
             get {
@@ -88,7 +88,16 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CRLF (Carriage return, Line feed).
+        ///   Looks up a localized string similar to Create versions while updating articles.
+        /// </summary>
+        public static string CreateVersions {
+            get {
+                return ResourceManager.GetString("CreateVersions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CRLF (Windows style).
         /// </summary>
         public static string CRLF {
             get {
@@ -214,7 +223,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LF (Line feed).
+        ///   Looks up a localized string similar to LF (Linux style).
         /// </summary>
         public static string LF {
             get {
@@ -331,7 +340,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Settings on insert.
+        ///   Looks up a localized string similar to Insert and Update Settings.
         /// </summary>
         public static string SettingsOnInsert {
             get {

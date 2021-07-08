@@ -52,6 +52,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>StatusTypeStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="MultistepActionStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MultistepActionStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -78,6 +83,10 @@
     <EmbeddedResource Update="StatusTypeStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>StatusTypeStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="MultistepActionStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MultistepActionStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

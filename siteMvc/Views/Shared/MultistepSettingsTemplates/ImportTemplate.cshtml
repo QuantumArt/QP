@@ -20,7 +20,7 @@
       @Html.HiddenFor(model => model.FileName)
     }
 
-    @Html.CheckBoxFieldFor(model => model.NoHeaders, string.Empty, false, new Dictionary<string, object> { { "class", "noPaddingForCheckbox" } })
+    @Html.CheckBoxFieldFor(model => model.NoHeaders, htmlAttributes: new Dictionary<string, object> { { "class", "noPaddingForCheckbox" } })
   }
 
   using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))
@@ -43,6 +43,7 @@
     {
       @Html.SelectFieldFor(model => model.UniqueContentFieldId, Html.List(Model.UniqueContentFieldsToUpdate), new Dictionary<string, object> { { "class", "dropDownList dataList" } })
     }
+    @Html.CheckBoxFieldFor(model => model.CreateVersions, htmlAttributes: new Dictionary<string, object> { { "class", "noPaddingForCheckbox" } })
   }
 
   <div id="@Html.UniqueId("mapping_fields_selects")" style="display:none;">

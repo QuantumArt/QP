@@ -59,7 +59,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public async Task<ActionResult> Settings(string tabId, int parentId, int id)
         {
-            return await JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel { ContentId = id });
+            return await JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
+            {
+                ContentId = id,
+                CreateVersions = true
+            });
         }
 
         [HttpPost]

@@ -31,6 +31,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         [Display(Name = "ImportNoHeaders", ResourceType = typeof(MultistepActionStrings))]
         public bool NoHeaders { get; set; }
 
+        [Display(Name = "CreateVersions", ResourceType = typeof(MultistepActionStrings))]
+        public bool CreateVersions { get; set; }
+
         [Display(Name = "ImportAction", ResourceType = typeof(MultistepActionStrings))]
         public int ImportAction { get; set; } = (int)CsvImportMode.InsertAndUpdate;
 
@@ -117,6 +120,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             UniqueFieldToUpdate = UniqueFieldToUpdate,
             UniqueContentFieldId = UniqueContentField?.Id ?? 0,
             NoHeaders = NoHeaders,
+            CreateVersions = CreateVersions,
             ImportAction = ImportAction,
             FieldsList = NewFieldsList,
             UniqueAggregatedFieldsToUpdate = UniqueAggregatedFieldsToUpdate

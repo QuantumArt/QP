@@ -23,6 +23,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             Id = Guid.NewGuid();
             UpdatedArticleIds = new List<int>();
             InsertedArticleIds = new List<int>();
+            CreateVersions = true;
         }
 
         public Guid Id { get; set; }
@@ -78,5 +79,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         }
 
         public bool IsWorkflowAssigned { get; set; }
+
+        public bool CreateVersions { get; set; }
     }
 }
