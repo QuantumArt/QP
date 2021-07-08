@@ -518,13 +518,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var extensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
             var idsList = existingArticles.GetBaseArticleIds().ToArray();
             _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Update);
+
+            if (_importSettings.CreateVersions)
+            {
+                ArticleVersionRepository.Create(idsList);
+            }
+
             var articlesInDb = _traceFields.Any() ?
                 ArticleRepository.GetList(idsList, true).ToDictionary(n => n.Id, m => m) : new Dictionary<int, Article>();
 
 
             InsertArticleValues(idsList, existingArticles.GetBaseArticles(), true);
 
-            var idsToDelete = new List<int>();
             var articlesToInsert = new List<Article>();
             var idsToUpdate = new List<int>();
             var articlesToUpdate = new List<Article>();
@@ -559,11 +564,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     var parent = aggregatedArticle.FieldValues.Find(fv => fv.Field.Aggregated);
                     parent.Value = article.BaseArticle.Id.ToString();
                 }
-            }
-
-            if (idsToDelete.Any())
-            {
-                ArticleRepository.MultipleDelete(idsToDelete);
             }
 
             if (articlesToInsert.Any())

@@ -124,10 +124,10 @@
     <value>Archive articles</value>
   </data>
   <data name="CR" xml:space="preserve">
-    <value>CR (carriage return)</value>
+    <value>CR (early MacOS style)</value>
   </data>
   <data name="CRLF" xml:space="preserve">
-    <value>CRLF (Carriage return, Line feed)</value>
+    <value>CRLF (Windows style)</value>
   </data>
   <data name="DownloadedFile" xml:space="preserve">
     <value>Downloaded file</value>
@@ -159,6 +159,9 @@
   <data name="ImportNoHeaders" xml:space="preserve">
     <value>First line doesnt contain column titles</value>
   </data>
+  <data name="CreateVersions" xml:space="preserve">
+    <value>Create versions while updating articles</value>
+  </data>
   <data name="ImportSemicolon" xml:space="preserve">
     <value>Semicolon (;)</value>
   </data>
@@ -169,7 +172,7 @@
     <value>Inserted</value>
   </data>
   <data name="LF" xml:space="preserve">
-    <value>LF (Line feed)</value>
+    <value>LF (Linux style)</value>
   </data>
   <data name="LineSeparator" xml:space="preserve">
     <value>Line separator</value>
@@ -208,7 +211,7 @@
     <value>Select a file</value>
   </data>
   <data name="SettingsOnInsert" xml:space="preserve">
-    <value>Settings on insert</value>
+    <value>Insert and Update Settings</value>
   </data>
   <data name="SiteSettings" xml:space="preserve">
     <value>Site settings</value>

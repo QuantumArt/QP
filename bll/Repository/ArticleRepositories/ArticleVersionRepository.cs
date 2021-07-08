@@ -50,6 +50,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
+        internal static void Create(int[] articleIds)
+        {
+            using (new QPConnectionScope())
+            {
+                Common.CreateArticleVersions(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, articleIds);
+            }
+        }
+
         /// <summary>
         /// Возвращает версию статьи
         /// </summary>
