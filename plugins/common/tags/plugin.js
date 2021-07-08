@@ -155,7 +155,7 @@ CKEDITOR.plugins.add('tags', {
       editor.ui.addButton(buttonName, {
         label: buttonLabel,
         command: commandName,
-        icon: CKEDITOR.plugins.getPath('tags') + 'images/tag_plus.png'
+        icon: CKEDITOR.plugins.getPath('tags') + 'Images/tag_plus.png'
       });
     };
 

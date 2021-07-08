@@ -1,0 +1,43 @@
+volumes:
+  qp-temp-volume:
+  qp-library-volume:
+services:
+  qp:
+    container_name: qp-stable
+    image: qpcms/qp:${QP_TAG}
+    restart: always
+    ports:
+     - '5400:80'
+    environment:
+     - Properties__TempDirectory=/qptemp
+     - Properties__EnableSignalR=false
+     - Properties__EnableArticleScheduler=true
+     - Properties__EnableCommonScheduler=true
+     - Properties__QpConfigPath=/qpconfig/config.xml
+     - TZ=Europe/Moscow
+    deploy:
+      resources:
+        limits:
+          memory: 1GB
+        reservations:
+          memory: 256MB
+    volumes:
+     - qp-temp-volume:/qptemp
+     - qp-library-volume:/qplibrary
+     - ${HOST_CONFIG_PATH}:/qpconfig/config.xml
+  qp-storage:
+    container_name: qp-storage-stable
+    image: 'qpcms/qp-storage:${STORAGE_TAG}'
+    restart: always
+    ports:
+     - '5000:80'
+    environment:
+     - TZ=Europe/Moscow
+    deploy:
+      resources:
+        limits:
+          memory: 128MB
+        reservations:
+          memory: 128MB
+    volumes:
+     - qp-library-volume:/app/wwwroot
