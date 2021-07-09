@@ -352,6 +352,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await JsonHtml("Properties", model);
         }
 
+        [RequestHeader(RequestHeaders.XRequestedWith, "XMLHttpRequest")]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ViewLiveArticle)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]
+        [BackendActionContext(ActionCode.ViewLiveArticle)]
+        public async Task<ActionResult> LiveProperties(string tabId, int parentId, int id, bool? boundToExternal)
+        {
+            var data = ArticleService.ReadLive(id, parentId);
+            var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
+            model.IsLive = true;
+            return await JsonHtml("Properties", model);
+        }
+
         [HttpPost, ActionName("Properties"), Record(ActionCode.EditArticle)]
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.UiAction)]

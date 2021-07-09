@@ -46,6 +46,7 @@ namespace Quantumart.QP8.Constants
         public const string AddNewArticle = "new_article";
         public const string AddNewChildArticle = "new_child_article";
         public const string EditArticle = "edit_article";
+        public const string ViewLiveArticle = "view_live_article";
         public const string ViewVirtualArticle = "view_virtual_article";
         public const string ViewArchiveArticle = "view_archive_article";
         public const string SaveArticle = "save_article";

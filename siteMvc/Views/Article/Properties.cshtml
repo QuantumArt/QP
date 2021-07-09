@@ -41,7 +41,7 @@
             @Html.HiddenFor(n => n.ErrorModel, new { id = Html.UniqueId("ErrorModel"), @class = "errorModel qp-notChangeTrack textbox simple-text" })
     }
 
-    foreach (var pair in Model.Data.VariationEditableFieldValues)
+    foreach (var pair in Model.ActualFieldValues)
     {
             @Html.Field(pair, forceReadonly: Model.IsChangingActionsProhibited)
     }

@@ -205,6 +205,16 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return article;
         }
 
+        public static Article ReadLive(int id, int contentId)
+        {
+            var article = Read(id, contentId, false);
+            article.ViewType = ArticleViewType.ViewLive;
+            article.LastModifiedByUser = article.LiveLastModifiedBy;
+            article.LastModifiedBy = article.LastModifiedByUser?.Id ?? 0;
+            article.Modified = article.LiveModified;
+            return article;
+        }
+
         public static Article ReadVirtual(int id, int contentId)
         {
             var result = ArticleRepository.GetVirtualById(id, contentId);

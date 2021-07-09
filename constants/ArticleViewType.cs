@@ -10,6 +10,7 @@
         Virtual,
         Archived,
         PreviewVersion,
-        CompareVersions
+        CompareVersions,
+        ViewLive
     }
 }
