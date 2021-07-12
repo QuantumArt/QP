@@ -9,3 +9,4 @@ trigger_functions
 triggers
 content_views
 table_changes
+data_changes

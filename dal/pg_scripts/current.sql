@@ -4514,11 +4514,14 @@ ALTER TABLE public.content_item_schedule
 
 
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS TRACE_IMPORT boolean NOT NULL DEFAULT false;
-ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
 
+ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
 ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
 ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS use_direction_controls boolean NOT NULL DEFAULT false;
+
+
+ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
 
 update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 
@@ -4527,5 +4530,17 @@ SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from
 where not exists(
     select * from content_item_ft cif where cif.content_item_id = ci.content_item_id
 );
-ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
+insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
+select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
+       'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', true
+where not exists(select * from backend_action where name = 'Article Live Properties');
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+select (select id from context_menu where code = 'article'), (select id from backend_action where code = 'view_live_article'),
+       'Live Properties', 52, 'properties.gif'
+where not exists(select * from context_menu_item where context_menu_id = any(select id from context_menu where code = 'article') and name = 'Live Properties');
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+select (select id from backend_action where code = 'view_live_article'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
+where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'view_live_article'));
 
