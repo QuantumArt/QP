@@ -2093,6 +2093,8 @@ AS $BODY$
 				END IF;
 			END IF;
 		END IF;
+
+        update USERS set LAST_LOGIN = now() where USER_ID = user_row.user_id;
 		RETURN user_row;
 	END;
 
