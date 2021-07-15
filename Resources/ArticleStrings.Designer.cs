@@ -97,7 +97,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Article is not found (ID = {0}).
+        ///   Looks up a localized string similar to Article is not found (Id = {0}).
         /// </summary>
         public static string ArticleRepository_GetByIdForTree_NotFound {
             get {
@@ -759,6 +759,15 @@ namespace Quantumart.QP8.Resources {
         public static string Link_AddNewArticle {
             get {
                 return ResourceManager.GetString("Link_AddNewArticle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Live-version.
+        /// </summary>
+        public static string LiveVersion {
+            get {
+                return ResourceManager.GetString("LiveVersion", resourceCulture);
             }
         }
         

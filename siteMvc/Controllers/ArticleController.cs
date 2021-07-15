@@ -12,6 +12,7 @@ using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -25,6 +26,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

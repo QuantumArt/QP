@@ -41,6 +41,10 @@ namespace Quantumart.QP8.BLL
             {
                 result = Article.FieldValues;
             }
+            else if (Id == LiveVersionId)
+            {
+                result = Article.LiveFieldValues;
+            }
             else
             {
                 if (_versionRowData.Value == null)
@@ -64,6 +68,10 @@ namespace Quantumart.QP8.BLL
             if (Id == CurrentVersionId)
             {
                 AggregatedArticles = Article.AggregatedArticles.ToList();
+            }
+            else if (Id == LiveVersionId)
+            {
+                AggregatedArticles = Article.LiveAggregatedArticles.ToList();
             }
             else
             {
@@ -184,6 +192,12 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public static readonly int CurrentVersionId = 1;
 
+
+        /// <summary>
+        /// Фальшивый идентификатор для live-версии
+        /// </summary>
+        public static readonly int LiveVersionId = -1;
+
         /// <summary>
         /// Подпапка для версий
         /// </summary>
@@ -216,7 +230,23 @@ namespace Quantumart.QP8.BLL
         /// Имя версии (используется в режиме просмотра)
         /// </summary>
         [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
-        public string ExpandedName => Id == CurrentVersionId ? ArticleStrings.CurrentVersion : string.Format(ArticleStrings.VersionN, Id);
+        public string ExpandedName
+        {
+            get
+            {
+                if (Id == CurrentVersionId)
+                {
+                    return ArticleStrings.CurrentVersion;
+                }
+
+                if (Id == LiveVersionId)
+                {
+                    return ArticleStrings.LiveVersion;
+                }
+
+                return string.Format(ArticleStrings.VersionN, Id);
+            }
+        }
 
         /// <summary>
         /// Поля данных версии

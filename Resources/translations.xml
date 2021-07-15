@@ -6672,4 +6672,7 @@
   <phrase key="live properties">
     <translation languageId="2">Свойства Live</translation>
   </phrase>
+  <phrase key="compare live version with current">
+    <translation languageId="2">Сравнить Live-версию с текущей</translation>
+  </phrase>
 </translations>

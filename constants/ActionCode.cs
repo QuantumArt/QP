@@ -85,6 +85,7 @@ namespace Quantumart.QP8.Constants
         public const string ArticleVersions = "list_article_version";
         public const string PreviewArticleVersion = "preview_article_version";
         public const string CompareArticleVersionWithCurrent = "compare_article_version_with_current";
+        public const string CompareArticleLiveWithCurrent = "compare_article_live_with_current";
         public const string CompareArticleVersions = "compare_article_versions";
         public const string RestoreArticleVersion = "restore_article_version";
         public const string RemoveArticleVersion = "remove_article_version";
