@@ -43,9 +43,13 @@ BEGIN
 
     DECLARE @NewVersions TABLE(ID INT)
 
-    INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
+    INSERT INTO content_item_version (
+        version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by,
+        status_type_id, archive, visible
+    )
     output inserted.[CONTENT_ITEM_VERSION_ID] INTO @NewVersions
-    SELECT @tm, 'backup', NULL, content_item_id, @last_modified_by, modified, last_modified_by
+    SELECT @tm, 'backup', NULL, content_item_id, @last_modified_by, modified, last_modified_by,
+           status_type_id, archive, visible
     from content_item where CONTENT_ITEM_ID in (select id from @ids);
 
     --print 'versions inserted'

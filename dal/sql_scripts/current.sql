@@ -203,6 +203,25 @@ GO
 
 
 
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM_VERSION' AND COLUMN_NAME = 'STATUS_TYPE_ID')
+BEGIN
+    ALTER TABLE CONTENT_ITEM_VERSION ADD STATUS_TYPE_ID NUMERIC(18,0) NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM_VERSION' AND COLUMN_NAME = 'ARCHIVE')
+BEGIN
+    ALTER TABLE CONTENT_ITEM_VERSION ADD ARCHIVE BIT NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM_VERSION' AND COLUMN_NAME = 'VISIBLE')
+BEGIN
+    ALTER TABLE CONTENT_ITEM_VERSION ADD VISIBLE BIT NULL
+END
+GO
+
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CUSTOM_ACTION' AND COLUMN_NAME = 'ALIAS')
 BEGIN
 	ALTER TABLE CUSTOM_ACTION ADD ALIAS nvarchar(255) NULL
@@ -1539,9 +1558,13 @@ BEGIN
 
     DECLARE @NewVersions TABLE(ID INT)
 
-    INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
+    INSERT INTO content_item_version (
+        version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by,
+        status_type_id, archive, visible
+    )
     output inserted.[CONTENT_ITEM_VERSION_ID] INTO @NewVersions
-    SELECT @tm, 'backup', NULL, content_item_id, @last_modified_by, modified, last_modified_by
+    SELECT @tm, 'backup', NULL, content_item_id, @last_modified_by, modified, last_modified_by,
+           status_type_id, archive, visible
     from content_item where CONTENT_ITEM_ID in (select id from @ids);
 
     --print 'versions inserted'
@@ -4545,6 +4568,32 @@ GO
 update CONTENT_DATA set SPLITTED = i.splitted
 from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
 WHERE i.SPLITTED = 1
+GO
+
+declare @hist1 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
+declare @hist2 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
+
+
+;with history(num, id, item_id, version_id, status_type_id, visible, archive) as (
+    select row_number() over(partition by CONTENT_ITEM_ID order by status_history_id desc) as num,
+           status_history_id, content_item_id,  content_item_version_id, status_type_id, visible, archive
+    from content_item_status_history where coalesce(system_status_type_id, 2) = 2
+)
+insert into @hist1
+select h.version_id, h1.status_type_id, h1.archive, h1.visible from history h
+inner join history h1 on h.num = h1.num - 1 and h.item_id = h1.item_id
+where h.version_id is not null order by h.id desc
+
+while exists(select * from @hist1)
+begin
+    delete top(100) from @hist1
+    output deleted.* into @hist2
+
+    update CONTENT_ITEM_VERSION
+    set STATUS_TYPE_ID = h.status_type_id, VISIBLE = h.visible, ARCHIVE = h.archive
+    FROM CONTENT_ITEM_VERSION v INNER JOIN @hist2 h ON v.content_item_version_id = h.version_id
+    Where v.STATUS_TYPE_ID is null
+end
 GO
 if not exists (select * from APP_SETTINGS where [key] = 'CONTENT_MODIFICATION_UPDATE_INTERVAL')
   insert into APP_SETTINGS

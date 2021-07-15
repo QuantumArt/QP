@@ -58,8 +58,11 @@ AS $BODY$
         RAISE NOTICE 'Exceeded deleted: %',  clock_timestamp();
 
         WITH inserted(id, content_item_id) AS (
-            INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
-            SELECT now(), 'backup', NULL, ci.content_item_id, $2, ci.modified, ci.last_modified_by
+            INSERT INTO content_item_version (
+                version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by,
+                status_type_id, archive, visible )
+            SELECT now(), 'backup', NULL, ci.content_item_id, $2, ci.modified, ci.last_modified_by,
+                ci.status_type_id, ci.archive, ci.visible
             FROM content_item ci WHERE CONTENT_ITEM_ID = ANY(ids)
             RETURNING content_item_version_id, content_item_id
         )

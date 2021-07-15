@@ -2428,8 +2428,11 @@ AS $BODY$
         RAISE NOTICE 'Exceeded deleted: %',  clock_timestamp();
 
         WITH inserted(id, content_item_id) AS (
-            INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
-            SELECT now(), 'backup', NULL, ci.content_item_id, $2, ci.modified, ci.last_modified_by
+            INSERT INTO content_item_version (
+                version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by,
+                status_type_id, archive, visible )
+            SELECT now(), 'backup', NULL, ci.content_item_id, $2, ci.modified, ci.last_modified_by,
+                ci.status_type_id, ci.archive, ci.visible
             FROM content_item ci WHERE CONTENT_ITEM_ID = ANY(ids)
             RETURNING content_item_version_id, content_item_id
         )
@@ -4523,13 +4526,6 @@ ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS use_direction_controls bool
 
 ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
 
-update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
-
-INSERT INTO content_item_ft (content_item_id, ft_data)
-SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
-where not exists(
-    select * from content_item_ft cif where cif.content_item_id = ci.content_item_id
-);
 insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
 select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
        'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', true
@@ -4558,4 +4554,25 @@ insert into action_toolbar_button(parent_action_id, action_id, name, icon, "orde
 select (select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
 where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'compare_article_live_with_current'));
 
+
+INSERT INTO content_item_ft (content_item_id, ft_data)
+SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
+where not exists(
+    select * from content_item_ft cif where cif.content_item_id = ci.content_item_id
+);
+with history(num, id, item_id, version_id, status_type_id, visible, archive) as (
+    select row_number() over(partition by CONTENT_ITEM_ID order by status_history_id desc) as num,
+           status_history_id, content_item_id,  content_item_version_id, status_type_id, visible, archive
+    from content_item_status_history where coalesce(system_status_type_id, 2) = 2
+)
+update content_item_version v set status_type_id = h1.status_type_id, visible = h1.visible, archive = h1.archive
+from history h
+inner join history h1 on h.num = h1.num - 1 and h.item_id = h1.item_id
+where h.version_id is not null and v.content_item_version_id = h.version_id
+  and v.status_type_id is null and h1.status_type_id is not null;
+
+
+
+
+update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 
