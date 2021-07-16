@@ -222,6 +222,9 @@
   <data name="LiveVersion" xml:space="preserve">
     <value>Live-version</value>
   </data>
+  <data name="StatusUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
   <data name="VersionN" xml:space="preserve">
     <value>Version № {0}</value>
   </data>

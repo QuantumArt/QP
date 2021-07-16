@@ -1384,6 +1384,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string StatusUnknown {
+            get {
+                return ResourceManager.GetString("StatusUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sunday.
         /// </summary>
         public static string Sunday {

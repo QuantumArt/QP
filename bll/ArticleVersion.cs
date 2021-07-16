@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -143,7 +144,7 @@ namespace Quantumart.QP8.BLL
             var result = EntityObject.TranslateSortExpression(sortExpression);
             var replaces = new Dictionary<string, string>
             {
-                { "Name", "Id" }
+                { "Name", "Id" }, {"Status", "StatusTypeId"}
             };
 
             return TranslateHelper.TranslateSortExpression(result, replaces);
@@ -205,6 +206,8 @@ namespace Quantumart.QP8.BLL
 
         public int ArticleId { get; set; }
 
+        public int? StatusTypeId { get; set; }
+
         public Article Article { get; set; }
 
         /// <summary>
@@ -245,6 +248,21 @@ namespace Quantumart.QP8.BLL
                 }
 
                 return string.Format(ArticleStrings.VersionN, Id);
+            }
+        }
+
+        [Display(Name = "Status", ResourceType = typeof(ArticleStrings))]
+        public string Status
+        {
+            get
+            {
+                var result = ArticleStrings.StatusUnknown;
+                if (StatusTypeId.HasValue)
+                {
+                    var status = StatusTypeRepository.GetById(StatusTypeId.Value);
+                    result = status.DisplayName ?? result;
+                }
+                return result;
             }
         }
 

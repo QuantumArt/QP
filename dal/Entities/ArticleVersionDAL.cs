@@ -32,6 +32,11 @@ namespace Quantumart.QP8.DAL.Entities
         public decimal CreatedBy { get; set; }
         public System.DateTime Modified { get; set; }
         public decimal ModifiedBy { get; set; }
+        public Nullable<decimal> StatusTypeId { get; set; }
+
+        public Nullable<bool> Visible { get; set; }
+
+        public Nullable<bool> Archive { get; set; }
 
         public ArticleDAL Article { get; set; }
         public UserDAL CreatedByUser { get; set; }
@@ -51,6 +56,9 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.VersionLabel).HasColumnName("VERSION_LABEL");
 				builder.Property(x => x.ContentVersionId).HasColumnName("CONTENT_VERSION_ID");
 				builder.Property(x => x.ArticleId).HasColumnName("CONTENT_ITEM_ID");
+                builder.Property(x => x.StatusTypeId).HasColumnName("STATUS_TYPE_ID");
+                builder.Property(x => x.Archive).HasColumnName("ARCHIVE");
+                builder.Property(x => x.Visible).HasColumnName("VISIBLE");
 				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
 				builder.Property(x => x.Created).HasColumnName("CREATED");
 				builder.Property(x => x.CreatedBy).HasColumnName("CREATED_BY");

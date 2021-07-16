@@ -645,4 +645,7 @@
   <data name="ArticleRepository_GetByIdForTree_NotFound" xml:space="preserve">
     <value>Статья не найдена (Id = {0})</value>
   </data>
+  <data name="StatusUnknown" xml:space="preserve">
+    <value>Неизвестен</value>
+  </data>
 </root>
