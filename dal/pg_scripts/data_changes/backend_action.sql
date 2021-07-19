@@ -1,3 +1,6 @@
+SELECT setval('backend_action_seq', cast(COALESCE((SELECT MAX(id)+1 FROM backend_action), 1) as int), false) into tmp_val_tbl;
+drop table tmp_val_tbl;
+
 insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
 select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
        'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', true
@@ -25,4 +28,3 @@ where not exists(select * from context_menu_item where context_menu_id = any(sel
 insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
 select (select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
 where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'compare_article_live_with_current'));
-
