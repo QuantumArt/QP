@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 
-namespace Quantumart.QP8.CommonScheduler
+namespace Quantumart.QP8.BLL.Services.API
 {
     public class CommonSchedulerProperties
     {
@@ -9,19 +8,23 @@ namespace Quantumart.QP8.CommonScheduler
         {
             DefaultLanguageId = 1;
             DefaultUserId = 1;
-            ServiceRepeatInterval = TimeSpan.FromSeconds(30);
-            ServiceRepeatOnErrorInterval = TimeSpan.FromSeconds(30);
             Tasks = new CommonSchedulerTaskProperties[] { };
         }
-
-        public TimeSpan ServiceRepeatInterval { get; set; }
-
-        public TimeSpan ServiceRepeatOnErrorInterval { get; set; }
 
         public CommonSchedulerTaskProperties[] Tasks { get; set; }
 
         public int DefaultLanguageId { get; set; }
 
         public int DefaultUserId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class CommonSchedulerTaskProperties
+    {
+        public string Name { get; set; }
+        public string Schedule { get; set; }
+        public string Description { get; set; }
+
+        public Dictionary<string, string> SpecifiedConditions { get; set; }
     }
 }

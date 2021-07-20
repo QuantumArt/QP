@@ -20,16 +20,17 @@ using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Notification.Data;
 using Quantumart.QP8.Scheduler.Notification.Properties;
+using Quartz;
 
 namespace Quantumart.QP8.Scheduler.Notification.Processors
 {
-    public class SystemNotificationProcessor : IProcessor
+    public class SystemNotificationJob: IJob
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISchedulerCustomerCollection _schedulerCustomers;
         private readonly IExternalSystemNotificationService _externalNotificationService;
 
-        public SystemNotificationProcessor(
+        public SystemNotificationJob(
             ISchedulerCustomerCollection schedulerCustomers,
             IExternalSystemNotificationService externalNotificationService)
         {
@@ -37,10 +38,11 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             _externalNotificationService = externalNotificationService;
         }
 
-        public async Task Run(CancellationToken token)
+         async Task IJob.Execute(IJobExecutionContext context)
         {
             Logger.Info("Start sending notifications");
             var items = _schedulerCustomers.GetItems();
+            var token = context.CancellationToken;
             foreach (var customer in items)
             {
                 if (token.IsCancellationRequested)
@@ -80,7 +82,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
             string httpNotSendedReason = null;
             var notSendedDtosQueue = new Queue<SystemNotificationDto>(notificationDtos);
-            while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
+
+            while (notSendedDtosQueue.Any() && token.IsCancellationRequested)
             {
                 var dto = notSendedDtosQueue.Peek();
                 Task<HttpResponseMessage> responseMessage = null;
@@ -124,7 +127,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
             string httpNotSendedReason = null;
             var notSendedDtosQueue = new Queue<SystemNotificationDto>(notificationDtos);
-            while (notSendedDtosQueue.Any() && !token.IsCancellationRequested)
+            while (notSendedDtosQueue.Any() && token.IsCancellationRequested)
             {
                 var dto = notSendedDtosQueue.Peek();
                 try

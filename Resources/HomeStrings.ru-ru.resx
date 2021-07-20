@@ -153,4 +153,25 @@
   <data name="Site" xml:space="preserve">
     <value>Сайт</value>
   </data>
+  <data name="ScheduledTasks" xml:space="preserve">
+    <value>Задачи по расписанию</value>
+  </data>
+  <data name="Task" xml:space="preserve">
+    <value>Задача</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Расписание</value>
+  </data>
+  <data name="LastStartTime" xml:space="preserve">
+    <value>Время последнего запуска</value>
+  </data>
+  <data name="NextStartTime" xml:space="preserve">
+    <value>Время следующего запуска</value>
+  </data>
 </root>

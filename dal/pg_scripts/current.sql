@@ -713,7 +713,7 @@ ALTER TABLE public.user_group_new
 
 create or replace view user_group_tree(group_id, group_name, description, created, modified, last_modified_by,
                             last_modified_by_login, shared_content_items, nt_group, ad_sid, built_in, readonly,
-                            use_parallel_workflow, can_unlock_items, parent_group_id) as
+                            use_parallel_workflow, can_unlock_items, parent_group_id, can_manage_scheduled_tasks) as
 SELECT ug.group_id,
        ug.group_name,
        ug.description,
@@ -728,14 +728,11 @@ SELECT ug.group_id,
        ug.readonly,
        ug.use_parallel_workflow,
        ug.can_unlock_items,
-       gtg.parent_group_id
+       gtg.parent_group_id,
+       ug.can_manage_scheduled_tasks
 FROM ((user_group ug
     LEFT JOIN group_to_group gtg ON ((ug.group_id = gtg.child_group_id)))
          JOIN users u ON ((u.user_id = ug.last_modified_by)));
-
-alter table user_group_tree
-    owner to postgres;
-
 
 CREATE OR REPLACE VIEW public.user_new AS
  SELECT cast(user_id as int) as id, login ,nt_login, l.iso_code, first_name, last_name, email  from users u
@@ -823,6 +820,50 @@ where v.order = 1;
 
 alter table workflow_max_statuses
     owner to postgres;
+
+create or replace function public.qp_context_menu_id(_code text) returns bigint
+immutable
+    strict
+    language plpgsql
+as
+$$
+begin
+	return (select id from context_menu where code = _code);
+end;
+$$;
+
+create or replace function public.qp_action_type_id(_code text) returns bigint
+immutable
+    strict
+    language plpgsql
+as
+$$
+begin
+	return (select id from action_type where code = _code);
+end;
+$$;
+
+create or replace function public.qp_entity_type_id(_code text) returns bigint
+immutable
+    strict
+    language plpgsql
+as
+$$
+begin
+	return (select id from entity_type where code = _code);
+end;
+$$;
+
+create or replace function public.qp_action_id(_code text) returns bigint
+immutable
+    strict
+    language plpgsql
+as
+$$
+begin
+	return (select id from backend_action where code = _code);
+end;
+$$;
 
 create or replace function qp_aggregated_and_self(ids integer[]) returns integer[]
     stable
@@ -4583,3 +4624,15 @@ where h.version_id is not null and v.content_item_version_id = h.version_id
 
 update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 
+ALTER TABLE public.user_group ADD COLUMN IF NOT EXISTS can_manage_scheduled_tasks boolean NOT NULL DEFAULT false;
+insert into backend_action (type_id, entity_type_id, name, code, controller_action_url, is_interface)
+VALUES(public.qp_action_type_id('read'), public.qp_entity_type_id('db'), 'Scheduled Tasks', 'scheduled_tasks', '~/Home/ScheduledTasks/', true) ON CONFLICT DO NOTHING;
+
+INSERT INTO context_menu_item(context_menu_id, action_id, name, "order")
+VALUES(public.qp_context_menu_id('db'), public.qp_action_id('scheduled_tasks'), 'Scheduled Tasks', 90) ON CONFLICT DO NOTHING;
+
+insert into backend_action(name, code, type_id, entity_type_id)
+values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', public.qp_action_type_id('refresh'), public.qp_entity_type_id('db')) ON CONFLICT DO NOTHING;
+
+insert into action_toolbar_button (parent_action_id, action_id, icon, "order", name)
+values (public.qp_action_id('scheduled_tasks'), public.qp_action_id('refresh_scheduled_tasks'), 'refresh.gif', 100, 'Refresh') ON CONFLICT DO NOTHING;

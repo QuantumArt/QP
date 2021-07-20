@@ -20,33 +20,37 @@ using Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Data;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Scheduler.API;
+using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
 {
-    public class CdcDataImportProcessor : IProcessor
+    public class CdcDataImportJob : IJob
     {
+        private readonly CancellationTokenSource _cts;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ICdcImportService _cdcImportService;
         private readonly IExternalSystemNotificationService _systemNotificationService;
 
-        public CdcDataImportProcessor(ICdcImportService cdcImportService, IExternalSystemNotificationService systemNotificationService)
+        public CdcDataImportJob(ICdcImportService cdcImportService, IExternalSystemNotificationService systemNotificationService)
         {
+            _cts = new CancellationTokenSource();
             _cdcImportService = cdcImportService;
             _systemNotificationService = systemNotificationService;
         }
 
-        public Task Run(CancellationToken token)
+        public Task Execute(IJobExecutionContext context)
         {
             var customersDictionary = CdcSynchronizationContext.CustomersDictionary;
+
             var po = new ParallelOptions
             {
-                CancellationToken = token,
+                CancellationToken = _cts.Token,
                 MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 
             Parallel.ForEach(customersDictionary, po, (customerKvp, loopState) =>
             {
-                if (token.IsCancellationRequested)
+                if (context.CancellationToken.IsCancellationRequested)
                 {
                     loopState.Break();
                 }
@@ -58,7 +62,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
 
                 try
                 {
-                    ProcessCustomer(customerKvp.Key, customerKvp.Value, token).Wait();
+                    ProcessCustomer(customerKvp.Key, customerKvp.Value, context.CancellationToken).Wait();
                 }
                 catch (Exception ex)
                 {
@@ -68,7 +72,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
             });
 
             Logger.Trace($"All tasks for thread #{Thread.CurrentThread.ManagedThreadId} were proceeded successfuly");
-            return token.IsCancellationRequested ? Task.FromCanceled(token) : Task.CompletedTask;
+            return context.CancellationToken.IsCancellationRequested ? Task.FromCanceled(context.CancellationToken) : Task.CompletedTask;
         }
 
         internal async Task ProcessCustomer(QaConfigCustomer customer, bool isNotificationQueueEmpty, CancellationToken token)
@@ -80,6 +84,7 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
 
             string lastPushedLsn = null;
             var notSendedDtosQueue = new Queue<CdcDataTableDto>(GetCdcDataTableDtos(customer.CustomerName, tableTypeModels));
+
             while (shouldSendHttpRequests && notSendedDtosQueue.Any() && !token.IsCancellationRequested)
             {
                 shouldSendHttpRequests = false;

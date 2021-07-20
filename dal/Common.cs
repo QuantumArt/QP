@@ -1075,6 +1075,33 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
+        public static bool CanManageScheduledTadsks(DbConnection connection, int userId)
+        {
+            var dbType = GetDbType(connection);
+            string sql = $@"
+                WITH
+                  {SqlQuerySyntaxHelper.RecursiveCte(dbType)} cte (group_id, parent_group_id, can_manage_scheduled_tasks)
+                  AS
+                  (
+                    SELECT ug.group_id, ug.parent_group_id, ug.can_manage_scheduled_tasks
+                    FROM user_group_tree ug
+                    inner join USER_GROUP_BIND ugb on ug.GROUP_ID = ugb.GROUP_ID
+                    WHERE ugb.USER_ID = @userId
+                    UNION ALL
+                    SELECT ug2.group_id, ug2.parent_group_id, ug2.can_manage_scheduled_tasks
+                    FROM user_group_tree ug2
+                    INNER JOIN cte r ON ug2.group_id = r.parent_group_id
+                  )
+                  select count(*) from cte where can_manage_scheduled_tasks = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}";
+
+            using (var cmd = DbCommandFactory.Create(sql, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId);
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         public static int CountArticles(DbConnection connection, int contentId, bool includeArchive)
         {
             var databaseType = GetDbType(connection);

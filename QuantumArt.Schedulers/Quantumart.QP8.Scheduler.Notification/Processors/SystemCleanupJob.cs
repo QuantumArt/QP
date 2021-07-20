@@ -7,17 +7,17 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
+using Quartz;
 
 namespace Quantumart.QP8.Scheduler.Notification.Processors
 {
-    public class SystemCleanupProcessor : IProcessor
+    public class SystemCleanupJob : IJob
     {
-        private const int DelayDuration = 100;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISchedulerCustomerCollection _schedulerCustomers;
         private readonly IExternalSystemNotificationService _externalNotificationService;
 
-        public SystemCleanupProcessor(
+        public SystemCleanupJob(
             ISchedulerCustomerCollection schedulerCustomers,
             IExternalSystemNotificationService externalNotificationService)
         {
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             _externalNotificationService = externalNotificationService;
         }
 
-        public async Task Run(CancellationToken token)
+        public Task Execute(IJobExecutionContext context)
         {
             Logger.Info("Start cleanup notification queue");
             var items = _schedulerCustomers.GetItems().ToArray();
@@ -34,7 +34,6 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 try
                 {
                     ProcessCustomer(customer);
-                    await Task.Delay(DelayDuration, token);
                 }
                 catch (Exception ex)
                 {
@@ -43,6 +42,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             }
 
             Logger.Info("End cleanup notification queue");
+            return Task.CompletedTask;
         }
 
         private void ProcessCustomer(QaConfigCustomer customer)

@@ -13,17 +13,18 @@ using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.API.Extensions;
 using Quantumart.QP8.Scheduler.Notification.Data;
 using Quantumart.QP8.Scheduler.Notification.Providers;
+using Quartz;
 
 namespace Quantumart.QP8.Scheduler.Notification.Processors
 {
-    public class InterfaceNotificationProcessor : IProcessor
+    public class InterfaceNotificationJob : IJob
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISchedulerCustomerCollection _schedulerCustomers;
         private readonly IExternalInterfaceNotificationService _externalNotificationService;
         private readonly IInterfaceNotificationProvider _notificationProvider;
 
-        public InterfaceNotificationProcessor(
+        public InterfaceNotificationJob(
             ISchedulerCustomerCollection schedulerCustomers,
             IExternalInterfaceNotificationService externalNotificationService,
             IInterfaceNotificationProvider notificationProvider)
@@ -33,19 +34,20 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             _notificationProvider = notificationProvider;
         }
 
-        public async Task Run(CancellationToken token)
+        async Task IJob.Execute(IJobExecutionContext context)
         {
             Logger.Info("Start sending notifications");
             var items = _schedulerCustomers.GetItems().ToArray();
+            var token = context.CancellationToken;
             foreach (var customer in items)
             {
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
-
                 try
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
                     var notificationIdsStatus = await ProcessCustomer(customer, token);
                 }
                 catch (Exception ex)
@@ -91,7 +93,6 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 UpdateDbNotificationsData(sentNotificationIds, unsentNotificationIds);
                 return Tuple.Create(sentNotificationIds, unsentNotificationIds);
             }
-
         }
 
         private IEnumerable<InterfaceNotificationViewModel> GetPendingNotificationsViewModels()

@@ -26,6 +26,7 @@ namespace Quantumart.QP8.DAL.Entities
         public bool IsReadOnly { get; set; }
         public bool UseParallelWorkflow { get; set; }
         public bool CanUnlockItems { get; set; }
+        public bool CanManageScheduledTasks { get; set; }
 
         public ICollection<ContentPermissionDAL> ContentAccess { get; set; }
         public ICollection<ContentFolderAccessDAL> ContentFolderAccess { get; set; }
@@ -63,6 +64,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.ToTable("USER_GROUP");
 
             builder.Property(x => x.CanUnlockItems).HasColumnName("CAN_UNLOCK_ITEMS");
+            builder.Property(x => x.CanManageScheduledTasks).HasColumnName("CAN_MANAGE_SCHEDULED_TASKS");
             builder.Property(x => x.Id).HasColumnName("GROUP_ID").ValueGeneratedOnAdd();
             builder.Property(x => x.Name).HasColumnName("GROUP_NAME");
             builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
