@@ -5588,7 +5588,7 @@ left join (select distinct parent_object_id as object_id from object) oo on o.OB
     ,COALESCE(h1.DESCRIPTION, h.DESCRIPTION) as Comment
     ,t.STATUS_TYPE_NAME as StatusTypeName
     ,u.LOGIN as ActionMadeBy
-    ,s.NAME as SystemStatusTypeName,
+    ,s.NAME as SystemStatusTypeName
     ,h.content_item_version_id AS Version
 from CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(databaseType)}
 LEFT JOIN STATUS_TYPE as t {WithNoLock(databaseType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
