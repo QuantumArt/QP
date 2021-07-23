@@ -212,6 +212,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             article.LastModifiedByUser = article.LiveLastModifiedBy;
             article.LastModifiedBy = article.LastModifiedByUser?.Id ?? 0;
             article.Modified = article.LiveModified;
+            article.StatusTypeId = article.LiveStatusTypeId;
             return article;
         }
 

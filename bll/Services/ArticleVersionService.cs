@@ -102,7 +102,8 @@ namespace Quantumart.QP8.BLL.Services
                     ArticleId = liveVersion.Id,
                     Modified = liveVersion.Modified,
                     LastModifiedBy = liveVersion.LastModifiedBy,
-                    LastModifiedByUser = liveVersion.LastModifiedByUser
+                    LastModifiedByUser = liveVersion.LastModifiedByUser,
+                    StatusTypeId = liveVersion.StatusTypeId
                 };
             }
             else
@@ -123,7 +124,8 @@ namespace Quantumart.QP8.BLL.Services
                     ArticleId = parent.Id,
                     Modified = parent.Modified,
                     LastModifiedBy = parent.LastModifiedBy,
-                    LastModifiedByUser = parent.LastModifiedByUser
+                    LastModifiedByUser = parent.LastModifiedByUser,
+                    StatusTypeId = parent.StatusTypeId
                 };
             }
             else

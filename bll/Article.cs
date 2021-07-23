@@ -45,6 +45,7 @@ namespace Quantumart.QP8.BLL
         private ArticleWorkflowBind _workflowBinding;
         private User _liveLastModifiedBy;
         private DateTime? _liveModified;
+        private int? _liveStatusTypeId;
         private readonly InitPropertyValue<IEnumerable<Article>> _aggregatedArticles;
         private readonly InitPropertyValue<IEnumerable<Article>> _liveAggregatedArticles;
         private readonly InitPropertyValue<bool> _isUpdatableWithRelationSecurity;
@@ -361,6 +362,22 @@ namespace Quantumart.QP8.BLL
             set => _liveModified = value;
         }
 
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public int LiveStatusTypeId
+        {
+            get
+            {
+                if (_liveStatusTypeId == null && _liveFieldValues == null)
+                {
+                    LoadLiveFieldValues();
+                }
+                return _liveStatusTypeId ?? 0;
+            }
+            set => _liveStatusTypeId = value;
+        }
+
         internal List<FieldValue> LoadLiveFieldValues(bool excludeArchive = false)
         {
             if (_liveFieldValues == null)
@@ -374,6 +391,7 @@ namespace Quantumart.QP8.BLL
                     {
                         _liveModified = (DateTime)data["MODIFIED"];
                         _liveLastModifiedBy = UserRepository.GetById((int)(decimal)data["LAST_MODIFIED_BY"]);
+                        _liveStatusTypeId = (int)(decimal)data["STATUS_TYPE_ID"];
                     }
                 }
             }
