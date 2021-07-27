@@ -2428,8 +2428,11 @@ AS $BODY$
         RAISE NOTICE 'Exceeded deleted: %',  clock_timestamp();
 
         WITH inserted(id, content_item_id) AS (
-            INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
-            SELECT now(), 'backup', NULL, ci.content_item_id, $2, ci.modified, ci.last_modified_by
+            INSERT INTO content_item_version (
+                version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by,
+                status_type_id, archive, visible )
+            SELECT now(), 'backup', NULL, ci.content_item_id, $2, ci.modified, ci.last_modified_by,
+                ci.status_type_id, ci.archive::int::boolean, ci.visible::int::boolean
             FROM content_item ci WHERE CONTENT_ITEM_ID = ANY(ids)
             RETURNING content_item_version_id, content_item_id
         )
@@ -4514,18 +4517,69 @@ ALTER TABLE public.content_item_schedule
 
 
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS TRACE_IMPORT boolean NOT NULL DEFAULT false;
-ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
 ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
 
+ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
 ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
 ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS use_direction_controls boolean NOT NULL DEFAULT false;
 
-update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
+
+ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
+
+ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS STATUS_TYPE_ID NUMERIC NULL;
+ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS ARCHIVE BOOLEAN NULL;
+ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS VISIBLE BOOLEAN NULL;
+
+
+SELECT setval('backend_action_seq', cast(COALESCE((SELECT MAX(id)+1 FROM backend_action), 1) as int), false) into tmp_val_tbl;
+drop table tmp_val_tbl;
+
+insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
+select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
+       'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', true
+where not exists(select * from backend_action where name = 'Article Live Properties');
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+select (select id from context_menu where code = 'article'), (select id from backend_action where code = 'view_live_article'),
+       'Live Properties', 52, 'properties.gif'
+where not exists(select * from context_menu_item where context_menu_id = any(select id from context_menu where code = 'article') and name = 'Live Properties');
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+select (select id from backend_action where code = 'view_live_article'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
+where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'view_live_article'));
+
+insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
+select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
+       'Compare Article Live version with Current', 'Compare Live version with Current', 'compare_article_live_with_current', '~/ArticleVersion/CompareLiveWithCurrent/', true
+where not exists(select * from backend_action where name = 'Compare Article Live version with Current');
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+select (select id from context_menu where code = 'article'), (select id from backend_action where code = 'compare_article_live_with_current'),
+       'Compare Live version with Current', 53, 'compare.gif'
+where not exists(select * from context_menu_item where context_menu_id = any(select id from context_menu where code = 'article') and name = 'Compare Live version with Current');
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+select (select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
+where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'compare_article_live_with_current'));
 
 INSERT INTO content_item_ft (content_item_id, ft_data)
 SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
 where not exists(
     select * from content_item_ft cif where cif.content_item_id = ci.content_item_id
 );
-ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
+with history(num, id, item_id, version_id, status_type_id, visible, archive) as (
+    select row_number() over(partition by CONTENT_ITEM_ID order by status_history_id desc) as num,
+           status_history_id, content_item_id,  content_item_version_id, status_type_id, visible, archive
+    from content_item_status_history where coalesce(system_status_type_id, 2) = 2
+)
+update content_item_version v set status_type_id = h1.status_type_id, visible = h1.visible, archive = h1.archive
+from history h
+inner join history h1 on h.num = h1.num - 1 and h.item_id = h1.item_id
+where h.version_id is not null and v.content_item_version_id = h.version_id
+  and v.status_type_id is null and h1.status_type_id is not null;
+
+
+
+
+update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 

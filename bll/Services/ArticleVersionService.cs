@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -23,12 +24,7 @@ namespace Quantumart.QP8.BLL.Services
             var id1 = ids[0];
             var id2 = ids[1];
 
-            if (id1 > id2)
-            {
-                Exchange(ref id1, ref id2);
-            }
-
-            if (id1 == ArticleVersion.CurrentVersionId)
+            if (id1 > id2 && id2 != ArticleVersion.CurrentVersionId)
             {
                 Exchange(ref id1, ref id2);
             }
@@ -87,30 +83,57 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ArgumentException("Wrong ids length");
             }
 
-            var result = GetOrderedIds(ids);
-            var version1 = ArticleVersionRepository.GetById(result.Item1, parentId);
-            if (version1 == null)
+            var parent = ArticleRepository.GetById(parentId);
+            if (parent == null)
             {
-                throw new Exception(string.Format(ArticleStrings.ArticleVersionNotFoundForArticle, result.Item1, parentId));
+                throw new Exception(string.Format(ArticleStrings.ArticleNotFound, parentId));
             }
 
-            ArticleVersion version2;
-            if (result.Item2 == ArticleVersion.CurrentVersionId)
-            {
-                var parent = ArticleRepository.GetById(parentId);
-                if (parent == null)
-                {
-                    throw new Exception(string.Format(ArticleStrings.ArticleNotFound, parentId));
-                }
+            var (item1, item2) = GetOrderedIds(ids);
+            ArticleVersion version1, version2;
 
-                version2 = new ArticleVersion { ArticleId = parent.Id, Article = parent, Id = ArticleVersion.CurrentVersionId, Modified = parent.Modified, LastModifiedBy = parent.LastModifiedBy, LastModifiedByUser = parent.LastModifiedByUser };
+            if (item1 == ArticleVersion.LiveVersionId)
+            {
+                var liveVersion = ArticleService.ReadLive(parentId, parent.ContentId);
+                version1 = new ArticleVersion
+                {
+                    Id = ArticleVersion.LiveVersionId,
+                    Article = liveVersion,
+                    ArticleId = liveVersion.Id,
+                    Modified = liveVersion.Modified,
+                    LastModifiedBy = liveVersion.LastModifiedBy,
+                    LastModifiedByUser = liveVersion.LastModifiedByUser,
+                    StatusTypeId = liveVersion.StatusTypeId
+                };
             }
             else
             {
-                version2 = ArticleVersionRepository.GetById(result.Item2, parentId);
+                version1 = ArticleVersionRepository.GetById(item1, parentId);
+                if (version1 == null)
+                {
+                    throw new Exception(string.Format(ArticleStrings.ArticleVersionNotFoundForArticle, item1, parentId));
+                }
+            }
+
+            if (item2 == ArticleVersion.CurrentVersionId)
+            {
+                version2 = new ArticleVersion
+                {
+                    Id = ArticleVersion.CurrentVersionId,
+                    Article = parent,
+                    ArticleId = parent.Id,
+                    Modified = parent.Modified,
+                    LastModifiedBy = parent.LastModifiedBy,
+                    LastModifiedByUser = parent.LastModifiedByUser,
+                    StatusTypeId = parent.StatusTypeId
+                };
+            }
+            else
+            {
+                version2 = ArticleVersionRepository.GetById(item2, parentId);
                 if (version2 == null)
                 {
-                    throw new Exception(string.Format(ArticleStrings.ArticleVersionNotFoundForArticle, result.Item2, parentId));
+                    throw new Exception(string.Format(ArticleStrings.ArticleVersionNotFoundForArticle, item2, parentId));
                 }
             }
 

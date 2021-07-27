@@ -13,6 +13,7 @@
 
     using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))
     {
+        @Html.DisplayFieldFor(e => e.Data.Status)
         @Html.DisplayFieldFor(e => e.Data.ExpandedName)
         @Html.DisplayFieldFor(e => e.Data.ModifiedToDisplay)
         @Html.DisplayFieldFor(e => e.Data.LastModifiedByUserToDisplay)
@@ -22,6 +23,7 @@
     {
         using (Html.BeginFieldGroup(EntityObjectStrings.ComparedVersionTitle))
         {
+            @Html.DisplayFieldFor(e => e.Data.VersionToMerge.Status)
             @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ExpandedName)
             @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ModifiedToDisplay)
             @Html.DisplayFieldFor(e => e.Data.VersionToMerge.LastModifiedByUserToDisplay)

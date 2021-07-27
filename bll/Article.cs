@@ -43,6 +43,9 @@ namespace Quantumart.QP8.BLL
         private ArticleSchedule _schedule;
         private bool _scheduleLoaded;
         private ArticleWorkflowBind _workflowBinding;
+        private User _liveLastModifiedBy;
+        private DateTime? _liveModified;
+        private int? _liveStatusTypeId;
         private readonly InitPropertyValue<IEnumerable<Article>> _aggregatedArticles;
         private readonly InitPropertyValue<IEnumerable<Article>> _liveAggregatedArticles;
         private readonly InitPropertyValue<bool> _isUpdatableWithRelationSecurity;
@@ -51,6 +54,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<List<Article>> _variationArticles;
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
+
         private int _parentContentId;
         private ArticleWorkflowDirection? _articleWorkflowDirection;
 
@@ -326,6 +330,54 @@ namespace Quantumart.QP8.BLL
             set => _liveFieldValues = value;
         }
 
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public User LiveLastModifiedBy
+        {
+            get
+            {
+                if (_liveLastModifiedBy == null && _liveFieldValues == null)
+                {
+                    LoadLiveFieldValues();
+                }
+                return _liveLastModifiedBy;
+            }
+            set => _liveLastModifiedBy = value;
+        }
+
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public DateTime LiveModified
+        {
+            get
+            {
+                if (_liveModified == null && _liveFieldValues == null)
+                {
+                    LoadLiveFieldValues();
+                }
+                return _liveModified ?? DateTime.MinValue;
+            }
+            set => _liveModified = value;
+        }
+
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public int LiveStatusTypeId
+        {
+            get
+            {
+                if (_liveStatusTypeId == null && _liveFieldValues == null)
+                {
+                    LoadLiveFieldValues();
+                }
+                return _liveStatusTypeId ?? 0;
+            }
+            set => _liveStatusTypeId = value;
+        }
+
         internal List<FieldValue> LoadLiveFieldValues(bool excludeArchive = false)
         {
             if (_liveFieldValues == null)
@@ -335,6 +387,12 @@ namespace Quantumart.QP8.BLL
                 {
                     var data = ArticleRepository.GetData(Id, DisplayContentId, true, excludeArchive);
                     _liveFieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
+                    if (data != null)
+                    {
+                        _liveModified = (DateTime)data["MODIFIED"];
+                        _liveLastModifiedBy = UserRepository.GetById((int)(decimal)data["LAST_MODIFIED_BY"]);
+                        _liveStatusTypeId = (int)(decimal)data["STATUS_TYPE_ID"];
+                    }
                 }
             }
             return _liveFieldValues;
@@ -709,7 +767,7 @@ namespace Quantumart.QP8.BLL
 
                     if (liveArticle != null)
                     {
-                        a.Id = liveArticle.Id;                        
+                        a.Id = liveArticle.Id;
                     }
 
                     a.Persist(true);

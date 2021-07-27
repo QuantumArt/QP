@@ -219,6 +219,12 @@
   <data name="CurrentVersion" xml:space="preserve">
     <value>Current version</value>
   </data>
+  <data name="LiveVersion" xml:space="preserve">
+    <value>Live-version</value>
+  </data>
+  <data name="StatusUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
   <data name="VersionN" xml:space="preserve">
     <value>Version № {0}</value>
   </data>
@@ -583,7 +589,7 @@
     <value>Text</value>
   </data>
   <data name="ArticleRepository_GetByIdForTree_NotFound" xml:space="preserve">
-    <value>Article is not found (ID = {0})</value>
+    <value>Article is not found (Id = {0})</value>
   </data>
   <data name="SearchBlock_FullTextBlockSearchResultLimitTitle" xml:space="preserve">
     <value>View result limit</value>

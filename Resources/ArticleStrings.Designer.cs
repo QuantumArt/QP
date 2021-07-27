@@ -97,7 +97,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Article is not found (ID = {0}).
+        ///   Looks up a localized string similar to Article is not found (Id = {0}).
         /// </summary>
         public static string ArticleRepository_GetByIdForTree_NotFound {
             get {
@@ -763,6 +763,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Live-version.
+        /// </summary>
+        public static string LiveVersion {
+            get {
+                return ResourceManager.GetString("LiveVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Article is locked by user {0}. .
         /// </summary>
         public static string LockedByAnyoneElse {
@@ -1371,6 +1380,15 @@ namespace Quantumart.QP8.Resources {
         public static string Status {
             get {
                 return ResourceManager.GetString("Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string StatusUnknown {
+            get {
+                return ResourceManager.GetString("StatusUnknown", resourceCulture);
             }
         }
         

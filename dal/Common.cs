@@ -5589,11 +5589,12 @@ left join (select distinct parent_object_id as object_id from object) oo on o.OB
     ,t.STATUS_TYPE_NAME as StatusTypeName
     ,u.LOGIN as ActionMadeBy
     ,s.NAME as SystemStatusTypeName
+    ,h.content_item_version_id AS Version
 from CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(databaseType)}
 LEFT JOIN STATUS_TYPE as t {WithNoLock(databaseType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
 LEFT JOIN USERS as u {WithNoLock(databaseType)} on u.USER_ID = h.USER_ID
 LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNoLock(databaseType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
-LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(databaseType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID
+LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(databaseType)} on s.ID = h.SYSTEM_STATUS_TYPE_ID
 where h.CONTENT_ITEM_ID = {articleId} AND h.SYSTEM_STATUS_TYPE_ID IS NULL
 order by ActionDate desc
 {(databaseType == DatabaseType.Postgres ? "LIMIT 1" : string.Empty)}
@@ -5617,13 +5618,13 @@ order by ActionDate desc
                                             ,COALESCE(h1.DESCRIPTION, h.DESCRIPTION) as Comment
                                             ,t.STATUS_TYPE_NAME as StatusTypeName
                                             ,u.LOGIN as ActionMadeBy
-                                            ,s.NAME as SystemStatusTypeName";
-
+                                            ,s.NAME as SystemStatusTypeName
+                                            ,h.content_item_version_id AS Version";
             var formattableString = $@"CONTENT_ITEM_STATUS_HISTORY as h {WithNoLock(dbType)}
                                     LEFT JOIN STATUS_TYPE as t {WithNoLock(dbType)} on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
                                     LEFT JOIN {Escape(dbType, "USERS")} as u {WithNoLock(dbType)} on u.USER_ID = h.USER_ID
                                     LEFT JOIN (SELECT DESCRIPTION, SYSTEM_STATUS_TYPE_ID, STATUS_HISTORY_ID FROM CONTENT_ITEM_STATUS_HISTORY {WithNoLock(dbType)} where SYSTEM_STATUS_TYPE_ID BETWEEN 9 AND 14 AND content_item_id={articleId}) as h1 ON h1.STATUS_HISTORY_ID = (h.STATUS_HISTORY_ID + 1)
-                                    LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(dbType)} on s.ID = h1.SYSTEM_STATUS_TYPE_ID";
+                                    LEFT JOIN SYSTEM_STATUS_TYPE as s {WithNoLock(dbType)} on s.ID = h.SYSTEM_STATUS_TYPE_ID";
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Article,

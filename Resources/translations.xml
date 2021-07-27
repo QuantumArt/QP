@@ -6669,4 +6669,10 @@
   <phrase key="disable list auto wrapping (ul, ol, dl)">
     <translation languageId="2">Отключить автоматическое оборачивание списков (ul, ol, dl)</translation>
   </phrase>
+  <phrase key="live properties">
+    <translation languageId="2">Свойства Live</translation>
+  </phrase>
+  <phrase key="compare live version with current">
+    <translation languageId="2">Сравнить Live-версию с текущей</translation>
+  </phrase>
 </translations>

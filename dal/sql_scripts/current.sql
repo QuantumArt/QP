@@ -203,6 +203,25 @@ GO
 
 
 
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM_VERSION' AND COLUMN_NAME = 'STATUS_TYPE_ID')
+BEGIN
+    ALTER TABLE CONTENT_ITEM_VERSION ADD STATUS_TYPE_ID NUMERIC(18,0) NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM_VERSION' AND COLUMN_NAME = 'ARCHIVE')
+BEGIN
+    ALTER TABLE CONTENT_ITEM_VERSION ADD ARCHIVE BIT NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM_VERSION' AND COLUMN_NAME = 'VISIBLE')
+BEGIN
+    ALTER TABLE CONTENT_ITEM_VERSION ADD VISIBLE BIT NULL
+END
+GO
+
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CUSTOM_ACTION' AND COLUMN_NAME = 'ALIAS')
 BEGIN
 	ALTER TABLE CUSTOM_ACTION ADD ALIAS nvarchar(255) NULL
@@ -1539,9 +1558,13 @@ BEGIN
 
     DECLARE @NewVersions TABLE(ID INT)
 
-    INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
+    INSERT INTO content_item_version (
+        version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by,
+        status_type_id, archive, visible
+    )
     output inserted.[CONTENT_ITEM_VERSION_ID] INTO @NewVersions
-    SELECT @tm, 'backup', NULL, content_item_id, @last_modified_by, modified, last_modified_by
+    SELECT @tm, 'backup', NULL, content_item_id, @last_modified_by, modified, last_modified_by,
+           status_type_id, archive, visible
     from content_item where CONTENT_ITEM_ID in (select id from @ids);
 
     --print 'versions inserted'
@@ -4546,6 +4569,38 @@ update CONTENT_DATA set SPLITTED = i.splitted
 from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
 WHERE i.SPLITTED = 1
 GO
+declare @hist1 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
+declare @hist2 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
+
+create table #status_history (num int, item_id decimal, version_id decimal, status_type_id int, visible bit, archive bit)
+create clustered index ix_temp_status_history ON #status_history (item_id, num)
+create nonclustered index ix_temp_version ON #status_history (version_id)
+
+insert into #status_history
+select row_number() over(partition by CONTENT_ITEM_ID order by status_history_id desc) as num,
+content_item_id,  content_item_version_id, status_type_id, visible, archive
+from content_item_status_history with(nolock) where datediff(month, CREATED, getdate()) <= 12
+
+insert into @hist1
+select h.version_id, h1.status_type_id, h1.archive, h1.visible
+from #status_history h
+inner join #status_history h1 on h.item_id = h1.item_id and h.num = h1.num - 1
+inner join content_item_version v with(nolock) on h.version_id = v.content_item_version_id
+where h1.status_type_id is not null
+
+while exists(select * from @hist1)
+begin
+    delete top(100) from @hist1
+    output deleted.* into @hist2
+
+    update CONTENT_ITEM_VERSION with(rowlock)
+    set STATUS_TYPE_ID = h.status_type_id, VISIBLE = h.visible, ARCHIVE = h.archive
+    FROM CONTENT_ITEM_VERSION v INNER JOIN @hist2 h ON v.content_item_version_id = h.version_id
+end
+
+drop table #status_history
+GO
+
 if not exists (select * from APP_SETTINGS where [key] = 'CONTENT_MODIFICATION_UPDATE_INTERVAL')
   insert into APP_SETTINGS
   values ('CONTENT_MODIFICATION_UPDATE_INTERVAL', '30')
@@ -4587,6 +4642,56 @@ update item_link_async set is_self = 1
 from item_link_async il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
 GO
 
+
+if not exists (select * from BACKEND_ACTION where ENTITY_TYPE_ID = dbo.qp_entity_type_id('article') and code = 'view_live_article')
+begin
+	insert into BACKEND_ACTION(TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('article'), 'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', 1)
+end
+GO
+
+if not exists(select * from CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Live Properties')
+begin
+	insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+	VALUES(dbo.qp_context_menu_id('article'), dbo.qp_action_id('view_live_article'), 'Live Properties', 52, 'properties.gif')
+end
+GO
+
+if not exists(select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('view_live_article'))
+begin
+	insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
+	values(dbo.qp_action_id('view_live_article'), dbo.qp_action_id('refresh_article'), 'Refresh', 'refresh.gif', 10)
+
+end
+GO
+
+if not exists (select * from BACKEND_ACTION where ENTITY_TYPE_ID = dbo.qp_entity_type_id('article') and code = 'compare_article_live_with_current')
+begin
+	insert into BACKEND_ACTION(TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('article'), 'Compare Article Live version with Current', 'Compare Live version with Current', 'compare_article_live_with_current', '~/ArticleVersion/CompareLiveWithCurrent/', 1)
+end
+GO
+
+if not exists(select * from CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Compare Live version with Current')
+begin
+	insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+	VALUES(dbo.qp_context_menu_id('article'), dbo.qp_action_id('compare_article_live_with_current'), 'Compare Live version with Current', 53, 'compare.gif')
+end
+GO
+
+if not exists(select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('compare_article_live_with_current'))
+begin
+	insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
+	values(dbo.qp_action_id('compare_article_live_with_current'), dbo.qp_action_id('refresh_article'), 'Refresh', 'refresh.gif', 10)
+
+end
+GO
+
+exec qp_update_translations 'Live Properties', 'Свойства Live'
+GO
+
+exec qp_update_translations 'Compare Live version with Current', 'Сравнить live-версию с текущей'
+GO
 
 if not exists (select * From BACKEND_ACTION where code = 'select_child_articles')
 begin

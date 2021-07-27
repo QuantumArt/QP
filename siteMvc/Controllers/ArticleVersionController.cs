@@ -57,6 +57,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await JsonHtml("Properties", model);
         }
 
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.CompareArticleLiveWithCurrent)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]
+        [BackendActionContext(ActionCode.CompareArticleLiveWithCurrent)]
+        public async Task<ActionResult> CompareLiveWithCurrent(string tabId, int parentId, int id, bool? boundToExternal)
+        {
+            var version = ArticleVersionService.GetMergedVersion(new[] { ArticleVersion.LiveVersionId, ArticleVersion.CurrentVersionId }, id);
+            var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
+            model.ViewType = ArticleVersionViewType.CompareWithCurrent;
+            return await JsonHtml("Properties", model);
+        }
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CompareArticleVersions)]

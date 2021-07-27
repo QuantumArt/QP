@@ -46,6 +46,7 @@ namespace Quantumart.QP8.Constants
         public const string AddNewArticle = "new_article";
         public const string AddNewChildArticle = "new_child_article";
         public const string EditArticle = "edit_article";
+        public const string ViewLiveArticle = "view_live_article";
         public const string ViewVirtualArticle = "view_virtual_article";
         public const string ViewArchiveArticle = "view_archive_article";
         public const string SaveArticle = "save_article";
@@ -84,6 +85,7 @@ namespace Quantumart.QP8.Constants
         public const string ArticleVersions = "list_article_version";
         public const string PreviewArticleVersion = "preview_article_version";
         public const string CompareArticleVersionWithCurrent = "compare_article_version_with_current";
+        public const string CompareArticleLiveWithCurrent = "compare_article_live_with_current";
         public const string CompareArticleVersions = "compare_article_versions";
         public const string RestoreArticleVersion = "restore_article_version";
         public const string RemoveArticleVersion = "remove_article_version";

@@ -10,9 +10,12 @@ namespace Quantumart.QP8.BLL.ListItems
 
         public string StatusTypeName { get; set; }
 
+
+        public string Version { get; set; }
+
         public string SystemStatusTypeName { get; set; }
 
-        public DateTime ActionDate { get; set; }
+        public string ActionDate { get; set; }
 
         public string ActionMadeBy { get; set; }
 

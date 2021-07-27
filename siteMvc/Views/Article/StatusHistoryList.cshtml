@@ -10,12 +10,15 @@
     $(function () {
       $('#@Model.MainComponentId').qpGrid({
         columns: [
-          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
-          { field: 'StatusTypeName', title: '@ArticleStrings.Status', width: 100, attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+          { field: 'Id', title: '@EntityObjectStrings.ID', width: 50},
           { field: 'SystemStatusTypeName', title: '@AuditStrings.SystemStatus', attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
-          { field: 'ActionMadeBy', title: '@EntityObjectStrings.LastModifiedBy', width: 150, attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
           { field: 'Comment', title: '@ArticleStrings.Comments' },
+          { field: 'Version', title: '@EntityObjectStrings.VersionTitle', width: 100, attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+          { field: 'StatusTypeName', title: '@ArticleStrings.Status', width: 100, attributes: { 'class': 'isCentered' }, headerAttributes: { 'class': 'isCentered' } },
+          { field: 'ActionDate', title: '@EntityObjectStrings.Created' },
+          { field: 'ActionMadeBy', title: '@EntityObjectStrings.LastModifiedBy' },
         ],
+        selectable: false,
         dataSource: {
           transport: {
             read: {

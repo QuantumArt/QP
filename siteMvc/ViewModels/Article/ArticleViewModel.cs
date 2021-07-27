@@ -65,6 +65,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return model;
         }
 
+        public bool IsLive { get; set; }
+
+        public List<FieldValue> ActualFieldValues => IsLive ? Data.LiveFieldValues : Data.FieldValues;
+
         public bool IsReadOnly => Data.ViewType != ArticleViewType.Normal && Data.ViewType != ArticleViewType.PreviewVersion || Data.IsAggregated || IsChangingActionsProhibited;
 
         public bool IsChangingActionsProhibited => !Data.IsArticleChangingActionsAllowed(BoundToExternal);
@@ -227,6 +231,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 if (IsVirtual)
                 {
                     return Constants.ActionCode.ViewVirtualArticle;
+                }
+
+                if (IsLive)
+                {
+                    return Constants.ActionCode.ViewLiveArticle;
                 }
 
                 return Constants.ActionCode.EditArticle;

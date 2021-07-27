@@ -20,8 +20,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-
-
             var result = QPContext.EFContext
                 .ArticleVersionSet
                 .Where(x => x.ArticleId == articleId)
@@ -33,7 +31,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             {
                 result = result.OrderBy(command.SortExpression);
             }
-
 
             return MapperFacade.ArticleVersionMapper.GetBizList(result.ToList());
         }

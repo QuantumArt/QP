@@ -12,6 +12,7 @@ using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -25,6 +26,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -349,6 +351,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var data = ArticleService.Read(id, parentId, successfulActionCode);
             var model = ArticleViewModel.Create(data, parentId, tabId, successfulActionCode, boundToExternal);
+            return await JsonHtml("Properties", model);
+        }
+
+        [RequestHeader(RequestHeaders.XRequestedWith, "XMLHttpRequest")]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ViewLiveArticle)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]
+        [BackendActionContext(ActionCode.ViewLiveArticle)]
+        public async Task<ActionResult> LiveProperties(string tabId, int parentId, int id, bool? boundToExternal)
+        {
+            var data = ArticleService.ReadLive(id, parentId);
+            var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
+            model.IsLive = true;
             return await JsonHtml("Properties", model);
         }
 
