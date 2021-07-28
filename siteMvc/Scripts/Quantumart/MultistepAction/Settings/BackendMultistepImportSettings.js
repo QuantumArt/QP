@@ -273,7 +273,7 @@ export class MultistepActionImportSettings {
     const $requiredSelects = $('select[data-aggregated="False"]select[data-required="True"]');
     if (($requiredSelects.length === 0 || !this._fieldsPredicate(null))
       && ($('select[data-aggregated="False"]select[value!="-1"]').length === 0
-        && $('select[data-aggregated="False"]select([data-excludeValid])').length === 0)) {
+        && $('select[data-aggregated="False"]select[data-excludeValid]').length === 0)) {
       errorMessage = that._addMessageLine(errorMessage);
       errorMessage += $l.MultistepAction.AnyFieldRequired;
     }
