@@ -239,7 +239,7 @@ namespace Quantumart.QP8.BLL
             {
                 if (Id == CurrentVersionId)
                 {
-                    return ArticleStrings.CurrentVersion;
+                    return EntityObjectStrings.CurrentVersion;
                 }
 
                 if (Id == LiveVersionId)
@@ -247,7 +247,7 @@ namespace Quantumart.QP8.BLL
                     return ArticleStrings.LiveVersion;
                 }
 
-                return string.Format(ArticleStrings.VersionN, Id);
+                return string.Format(EntityObjectStrings.VersionN, Id);
             }
         }
 

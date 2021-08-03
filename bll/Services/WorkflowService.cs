@@ -14,7 +14,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         ListResult<WorkflowListItem> GetWorkflowsBySiteId(ListCommand cmd, int siteId);
 
-        WorkflowInitListResult InitList(int parentId);
+        InitListResult InitList(int parentId);
 
         Workflow ReadProperties(int id);
 
@@ -57,7 +57,7 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public WorkflowInitListResult InitList(int parentId) => new WorkflowInitListResult
+        public InitListResult InitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewWorkflow) &&
                 SecurityRepository.IsEntityAccessible(EntityTypeCode.Workflow, parentId, ActionTypeCode.Update)

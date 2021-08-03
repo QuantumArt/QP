@@ -126,12 +126,12 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public UserGroupInitListResult InitList(int parentId) => new UserGroupInitListResult
+        public InitListResult InitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUserGroup)
         };
 
-        public UserGroupInitTreeResult InitTree(int parentId) => new UserGroupInitTreeResult
+        public InitTreeResult InitTree(int parentId) => new InitTreeResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUserGroup)
         };

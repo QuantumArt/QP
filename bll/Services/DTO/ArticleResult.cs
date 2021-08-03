@@ -1,6 +1,6 @@
 ﻿namespace Quantumart.QP8.BLL.Services.DTO
 {
-    public abstract class ArticleResultBase : InitListResultBase
+    public abstract class ArticleResult : InitListResult
     {
         public string ContentName { get; set; }
         public bool IsVirtual { get; set; }

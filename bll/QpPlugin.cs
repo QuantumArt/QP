@@ -1,0 +1,153 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text.RegularExpressions;
+using QP8.Infrastructure.Web.Helpers;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
+
+namespace Quantumart.QP8.BLL
+{
+    public class QpPlugin : EntityObject
+    {
+        internal const int BaseCommandOrder = 10;
+
+        internal QpPlugin()
+        {
+        }
+
+        internal static QpPlugin Create() => new QpPlugin
+        {
+            Order = QpPluginRepository.GetPluginMaxOrder() + 1
+        };
+
+        public override string EntityTypeCode => Constants.EntityTypeCode.QpPlugin;
+
+        public override int ParentEntityId => 1;
+
+        [StringLength(512, ErrorMessageResourceName = "ServiceUrlMaxLengthExceeded", ErrorMessageResourceType = typeof(QpPluginStrings))]
+        [Display(Name = "ServiceUrl", ResourceType = typeof(QpPluginStrings))]
+        public string ServiceUrl { get; set; }
+
+        [Display(Name = "Order", ResourceType = typeof(QpPluginStrings))]
+        public int Order { get; set; }
+
+        [Display(Name = "Contract", ResourceType = typeof(QpPluginStrings))]
+        public string Contract { get; set; }
+
+        [Display(Name = "Code", ResourceType = typeof(QpPluginStrings))]
+        public string Code { get; set; }
+
+        public List<VisualEditorCommand> VeCommands { get; set; }
+
+        public int[] ForceCommandIds { get; set; }
+
+        public void DoCustomBinding(List<VisualEditorCommand> jsonCommands)
+        {
+            Dictionary<int, VisualEditorCommand> oldVeCommands = null;
+            if (VeCommands != null)
+            {
+                oldVeCommands = VeCommands.ToDictionary(n => n.Id, m => m);
+            }
+
+            var rowOrder = VisualEditorRepository.GetCommandMaxRowOrder();
+            var toolbarInRowOrder = BaseCommandOrder + Order;
+            var commandInGroupOrder = 0;
+
+            foreach (var command in jsonCommands)
+            {
+                command.RowOrder = rowOrder;
+                command.ToolbarInRowOrder = toolbarInRowOrder;
+                command.GroupInToolbarOrder = 0;
+                command.CommandInGroupOrder = commandInGroupOrder;
+
+                command.PluginId = Id;
+                if (command.Id != 0 && oldVeCommands != null)
+                {
+                    var oldCommand = oldVeCommands[command.Id];
+                    command.Created = oldCommand.Created;
+                    command.Modified = oldCommand.Modified;
+                }
+
+                commandInGroupOrder++;
+            }
+
+            VeCommands = jsonCommands;
+        }
+
+        public override void Validate()
+        {
+            var errors = new RulesException<QpPlugin>();
+            base.Validate(errors);
+
+            if (!string.IsNullOrEmpty(ServiceUrl) && !UrlHelpers.IsValidWebFolderUrl(ServiceUrl))
+            {
+                errors.ErrorFor(n => ServiceUrl, QpPluginStrings.ServiceUrlInvalidFormat);
+            }
+
+            if (!errors.IsEmpty)
+            {
+                throw errors;
+            }
+        }
+
+        private void ValidateVeCommand(VisualEditorCommand command, RulesException errors, int index, IEnumerable<string> dupNames, IEnumerable<string> dupAliases)
+        {
+            if (!string.IsNullOrWhiteSpace(command.Name) && dupNames.Contains(command.Name))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameDuplicate, index));
+                command.IsInvalid = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(command.Alias) && dupAliases.Contains(command.Alias))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasDuplicate, index));
+                command.IsInvalid = true;
+            }
+
+            if (string.IsNullOrWhiteSpace(command.Name))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameRequired, index));
+                command.IsInvalid = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(command.Name) && !Regex.IsMatch(command.Name, RegularExpressions.EntityName))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameInvalidFormat, index));
+                command.IsInvalid = true;
+            }
+
+            if (string.IsNullOrWhiteSpace(command.Alias))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasRequired, index));
+                command.IsInvalid = true;
+            }
+
+            if (command.Name.Length > 255)
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameMaxLengthExceeded, index));
+                command.IsInvalid = true;
+            }
+
+            if (command.Alias.Length > 255)
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasMaxLengthExceeded, index));
+                command.IsInvalid = true;
+            }
+
+            if (!VisualEditorRepository.IsCommandNameFree(command.Name, Id))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameNonUnique, index));
+                command.IsInvalid = true;
+            }
+
+            if (!VisualEditorRepository.IsCommandAliasFree(command.Alias, Id))
+            {
+                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasNonUnique, index));
+                command.IsInvalid = true;
+            }
+        }
+    }
+}

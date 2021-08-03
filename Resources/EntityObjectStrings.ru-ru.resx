@@ -174,4 +174,10 @@
   <data name="VersionTitle" xml:space="preserve">
     <value>Версия</value>
   </data>
+  <data name="CurrentVersion" xml:space="preserve">
+    <value>Текущая версия</value>
+  </data>
+  <data name="VersionN" xml:space="preserve">
+    <value>Версия № {0}</value>
+  </data>
 </root>

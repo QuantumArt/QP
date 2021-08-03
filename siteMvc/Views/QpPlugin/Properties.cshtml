@@ -1,0 +1,45 @@
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.QpPlugin.QpPluginViewModel
+
+
+@using (Html.BeginTabForm(Model))
+{
+  using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+    @Html.TextAreaFieldFor(s => s.Data.Description)
+    @Html.NumericFieldFor(s => s.Data.Order, 0)
+    if (Model.IsNew)
+    {
+      @Html.RadioFieldFor(s => s.CreationMode, Html.List(Model.GetCreationModes()))
+      using(Html.BeginPanel("ByServiceUrlPanel"))
+      {
+        @Html.TextBoxFieldFor(s => s.Data.ServiceUrl)
+      }
+      using(Html.BeginPanel("ByContractPanel"))
+      {
+        @Html.TextAreaFieldFor(s => s.Data.Contract, new Dictionary<string, object>
+        {
+          { "class", "textbox hta-JsonTextArea highlightedTextarea" },
+          { "style", "height: 300px"}
+        })
+      }
+    }
+    else
+    {
+      @Html.TextBoxFieldFor(s => s.Data.ServiceUrl)
+      @Html.TextAreaFieldFor(s => s.Data.Contract, new Dictionary<string, object>
+      {
+        { "class", "textbox hta-JsonTextArea highlightedTextarea" },
+        { "style", "height: 300px"}
+      })
+    }
+
+
+  }
+
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
+}
+
+@Html.PrepareAndRunInitScript(Model)

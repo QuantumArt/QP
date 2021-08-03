@@ -1,0 +1,41 @@
+﻿@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.QpPlugin.QpPluginListViewModel
+
+@using (Html.BeginDocumentPadding())
+{
+  if (Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
+    {
+      @Html.AddNewItemLink(Model)
+    }
+  }
+
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 30 },
+          { field: 'Name', title: '@EntityObjectStrings.Name', attributes: { 'class': 'title' } },
+          { field: 'Description', title: '@EntityObjectStrings.Description' },
+          { field: 'ServiceUrl', title: '@QpPluginStrings.ServiceUrl' },
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByLogin', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: '@Url.Action(Model.GettingDataActionName, "QpPlugin", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )',
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
+}
+
+@Html.PrepareAndRunInitScript(Model)

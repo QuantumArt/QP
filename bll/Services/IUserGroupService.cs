@@ -6,7 +6,7 @@ namespace Quantumart.QP8.BLL.Services
 {
     public interface IUserGroupService
     {
-        UserGroupInitListResult InitList(int parentId);
+        InitListResult InitList(int parentId);
 
         ListResult<UserGroupListItem> List(ListCommand cmd, IEnumerable<int> selectedIds = null);
 
@@ -30,6 +30,6 @@ namespace Quantumart.QP8.BLL.Services
 
         CopyResult Copy(int id);
 
-        UserGroupInitTreeResult InitTree(int parentId);
+        InitTreeResult InitTree(int parentId);
     }
 }

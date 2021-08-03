@@ -15,7 +15,7 @@ namespace Quantumart.QP8.BLL.Services
 
         User ReadProfile(int id);
 
-        UserInitListResult InitList(int parentId);
+        InitListResult InitList(int parentId);
 
         ListResult<UserListItem> List(ListCommand cmd, UserListFilter filter, IEnumerable<int> selectedIDs = null);
 
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL.Services
             return user;
         }
 
-        public UserInitListResult InitList(int parentId) => new UserInitListResult
+        public InitListResult InitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewUser)
         };
@@ -158,7 +158,7 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-     
+
         public static bool GetUserMustChangePassword(int userId) => userId > 0 ? UserRepository.GetUserMustChangePassword(userId) : false;
 
         public IEnumerable<UserDefaultFilter> GetContentDefaultFilters(int userId) => userId > 0 ? UserRepository.GetContentDefaultFilters(userId) : Enumerable.Empty<UserDefaultFilter>();

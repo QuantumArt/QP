@@ -1,6 +1,6 @@
 ﻿namespace Quantumart.QP8.BLL.Services.DTO
 {
-    public abstract class InitListResultBase
+    public class InitListResult
     {
         public bool IsAddNewAccessable { get; set; }
     }

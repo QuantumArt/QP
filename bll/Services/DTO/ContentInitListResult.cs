@@ -2,7 +2,7 @@
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
-    public class ContentInitListResult : InitListResultBase
+    public class ContentInitListResult : InitListResult
     {
         public ContentInitListResult()
         {

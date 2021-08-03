@@ -57,6 +57,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>MultistepActionStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="QpPluginStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PluginStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="EntityObjectStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EntityObjectStrings.resx</DependentUpon>
+    </Compile>    
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +98,14 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MultistepActionStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="QpPluginStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>QpPluginStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="EntityObjectStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EntityObjectStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>    
   </ItemGroup>
 
 </Project>

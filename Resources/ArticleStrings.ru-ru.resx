@@ -219,12 +219,6 @@
   <data name="Link_AddNewArticle" xml:space="preserve">
     <value>Добавить новую статью</value>
   </data>
-  <data name="CurrentVersion" xml:space="preserve">
-    <value>Текущая версия</value>
-  </data>
-  <data name="VersionN" xml:space="preserve">
-    <value>Версия № {0}</value>
-  </data>
   <data name="ArticleVersionNotFoundForArticle" xml:space="preserve">
     <value>Версия (Id = {0}) не найдена для статьи (Id = {1})</value>
   </data>

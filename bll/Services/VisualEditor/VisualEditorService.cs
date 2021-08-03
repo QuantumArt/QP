@@ -10,13 +10,13 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
     public class VisualEditorService : IVisualEditorService
     {
-        public VisualEditorStyleInitListResult InitVisualEditorStyleList(int parentId) => new VisualEditorStyleInitListResult
+        public InitListResult InitVisualEditorStyleList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewVisualEditorStyle) &&
                 SecurityRepository.IsEntityAccessible(EntityTypeCode.VisualEditorStyle, parentId, ActionTypeCode.Update)
         };
 
-        public VisualEditorInitListResult InitList(int contentId) => new VisualEditorInitListResult
+        public InitListResult InitList(int contentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewVisualEditorPlugin) &&
                 SecurityRepository.IsEntityAccessible(EntityTypeCode.VisualEditorPlugin, contentId, ActionTypeCode.Update)

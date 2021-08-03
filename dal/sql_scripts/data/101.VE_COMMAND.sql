@@ -24,14 +24,3 @@ if not exists (select * From VE_COMMAND where name = 'AutoComplete')
 
 GO
 
-exec qp_update_translations 'Show Blocks', 'Отображать блоки'
-exec qp_update_translations 'Format Selection', 'Форматировать выбранное'
-exec qp_update_translations 'Comment Selection', 'Комментировать выбранное'
-exec qp_update_translations 'Uncomment Selection', 'Раскомментировать выбранное'
-exec qp_update_translations 'Enable\Disable HTML Tag Autocomplete', 'Включить/Выключить автозавершение HTML-тегов'
-
-GO
-
-EXEC qp_update_translations 'Disable list auto wrapping (ul, ol, dl)', 'Отключить автоматическое оборачивание списков (ul, ol, dl)'
-GO
-

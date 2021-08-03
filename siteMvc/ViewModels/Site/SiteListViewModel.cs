@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
 
         public string GettingDataActionName => IsSelect ? "_MultipleSelect" : "_Index";
 
-        public static SiteListViewModel Create(SiteInitListResult result, string tabId, int parentId, bool isSelect = false, int[] ids = null)
+        public static SiteListViewModel Create(InitListResult result, string tabId, int parentId, bool isSelect = false, int[] ids = null)
         {
             var model = Create<SiteListViewModel>(tabId, parentId);
             model.IsSelect = isSelect;

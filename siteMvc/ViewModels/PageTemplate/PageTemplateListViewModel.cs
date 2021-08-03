@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public string GettingDataActionName => "_IndexTemplates";
 
-        public static PageTemplateListViewModel Create(PageTemplateInitListResult result, string tabId, int parentId)
+        public static PageTemplateListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<PageTemplateListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

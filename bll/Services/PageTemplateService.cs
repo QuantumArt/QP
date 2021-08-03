@@ -29,7 +29,7 @@ namespace Quantumart.QP8.BLL.Services
 
         ListResult<PageTemplateListItem> GetPageTemplatesBySiteId(ListCommand cmd, int siteId);
 
-        PageTemplateInitListResult InitTemplateList(int parentId);
+        InitListResult InitTemplateList(int parentId);
 
         PageTemplate NewPageTemplateProperties(int parentId);
 
@@ -116,7 +116,7 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public PageTemplateInitListResult InitTemplateList(int contentId) => new PageTemplateInitListResult
+        public InitListResult InitTemplateList(int contentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewPageTemplate) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageTemplate, contentId, ActionTypeCode.Update)
         };

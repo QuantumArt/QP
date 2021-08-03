@@ -2,7 +2,7 @@
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
-    public class FieldInitListResult : InitListResultBase
+    public class FieldInitListResult : InitListResult
     {
         public FieldInitListResult()
         {

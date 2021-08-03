@@ -122,9 +122,11 @@ namespace Quantumart.QP8.BLL.Facades
             NotificationMapper = Create<NotificationMapper>(cfg, true);
             NotificationListItemRowMapper = Create<NotificationListItemRowMapper>(cfg);
             VisualEditorPluginListItemRowMapper = Create<VisualEditorPluginListItemRowMapper>(cfg);
+            QpPluginListItemRowMapper = Create<QpPluginListItemRowMapper>(cfg);
             WorkflowListItemRowMapper = Create<WorkflowListItemRowMapper>(cfg);
             VisualEditorPluginMapper = Create<VisualEditorPluginMapper>(cfg, true);
             VisualEditorCommandMapper = Create<VisualEditorCommandMapper>(cfg, true);
+            QpPluginMapper = Create<QpPluginMapper>(cfg, true);
             EntityPermissionLevelMapper = Create<EntityPermissionLevelMapper>(cfg);
             PermissionListItemRowMapper = Create<PermissionListItemRowMapper>(cfg);
             SitePermissionMapper = Create<SitePermissionMapper>(cfg, true);
@@ -221,9 +223,11 @@ namespace Quantumart.QP8.BLL.Facades
         internal static NotificationMapper NotificationMapper;
         internal static NotificationListItemRowMapper NotificationListItemRowMapper;
         internal static VisualEditorPluginListItemRowMapper VisualEditorPluginListItemRowMapper;
+        internal static QpPluginListItemRowMapper QpPluginListItemRowMapper;
         internal static WorkflowListItemRowMapper WorkflowListItemRowMapper;
         internal static VisualEditorPluginMapper VisualEditorPluginMapper;
         internal static VisualEditorCommandMapper VisualEditorCommandMapper;
+        internal static QpPluginMapper QpPluginMapper;
         internal static EntityPermissionLevelMapper EntityPermissionLevelMapper;
         internal static PermissionListItemRowMapper PermissionListItemRowMapper;
         internal static SitePermissionMapper SitePermissionMapper;

@@ -21,7 +21,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string AddNewItemActionCode => IsTemplateObjectFormats ? Constants.ActionCode.AddNewTemplateObjectFormatVersion : Constants.ActionCode.AddNewPageObjectFormatVersion;
 
-        public static ObjectFormatVersionListViewModel Create(FormatVersionInitListResult result, string tabId, int parentId, bool isTemplateObjectFormats)
+        public static ObjectFormatVersionListViewModel Create(InitListResult result, string tabId, int parentId, bool isTemplateObjectFormats)
         {
             var model = Create<ObjectFormatVersionListViewModel>(tabId, parentId);
             model.IsTemplateObjectFormats = isTemplateObjectFormats;

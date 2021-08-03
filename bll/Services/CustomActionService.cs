@@ -264,7 +264,7 @@ namespace Quantumart.QP8.BLL.Services
             return ContentRepository.GetList(action.ContentIds, true);
         }
 
-        public CustomActionInitListResult InitList(int parentId) => new CustomActionInitListResult
+        public InitListResult InitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewCustomAction)
         };

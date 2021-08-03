@@ -23,12 +23,12 @@ namespace Quantumart.QP8.BLL.Services
 
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
-        public static SiteInitListResult InitList(int parentId) => new SiteInitListResult
+        public static InitListResult InitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewSite)
         };
 
-        public static SiteInitListResult MultipleInitList(int parentId) => new SiteInitListResult
+        public static InitListResult MultipleInitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = false
         };

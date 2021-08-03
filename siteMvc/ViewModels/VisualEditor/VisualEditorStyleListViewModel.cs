@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public override string AddNewItemText => VisualEditorStrings.AddNewVisualEditorStyle;
 
-        public static VisualEditorStyleListViewModel Create(VisualEditorStyleInitListResult result, string tabId, int parentId)
+        public static VisualEditorStyleListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<VisualEditorStyleListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

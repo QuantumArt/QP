@@ -1,6 +1,6 @@
 namespace Quantumart.QP8.BLL.Services.DTO
 {
-    public class ArticleInitTreeResult : ArticleResultBase
+    public class ArticleInitTreeResult : ArticleResult
     {
         public string Filter { get; set; }
 

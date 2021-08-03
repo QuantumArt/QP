@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.StatusType
 
         public override string AddNewItemText => StatusTypeStrings.AddNewStatusType;
 
-        public static StatusTypeListViewModel Create(StatusTypeInitListResult result, string tabId, int parentId)
+        public static StatusTypeListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<StatusTypeListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
