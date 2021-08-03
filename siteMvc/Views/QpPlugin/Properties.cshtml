@@ -7,7 +7,6 @@
   using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
   {
     @Html.TextBoxFieldFor(s => s.Data.Name)
-    @Html.TextAreaFieldFor(s => s.Data.Description)
     @Html.NumericFieldFor(s => s.Data.Order, 0)
     if (Model.IsNew)
     {
@@ -27,12 +26,17 @@
     }
     else
     {
-      @Html.TextBoxFieldFor(s => s.Data.ServiceUrl)
+      @Html.TextBoxFieldFor(s => s.Data.ServiceUrl, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextAreaFieldFor(s => s.Data.Description, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextBoxFieldFor(s => s.Data.Code, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextBoxFieldFor(s => s.Data.Version, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextBoxFieldFor(s => s.Data.InstanceKey, new Dictionary<string, object> { { "disabled", "disabled" } })
       @Html.TextAreaFieldFor(s => s.Data.Contract, new Dictionary<string, object>
       {
         { "class", "textbox hta-JsonTextArea highlightedTextarea" },
         { "style", "height: 300px"}
       })
+
     }
 
 

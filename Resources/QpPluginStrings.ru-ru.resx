@@ -183,4 +183,7 @@
   <data name="Order" xml:space="preserve">
     <value>Порядок</value>
   </data>
+  <data name="InstanceKey" xml:space="preserve">
+    <value>Ключ экземпляра</value>
+  </data>
 </root>

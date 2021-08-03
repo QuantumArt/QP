@@ -18,35 +18,35 @@ namespace Quantumart.QP8.DAL.Entities
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
-    public partial class PluginVersionDAL
+    public partial class PluginFieldDAL
     {
         public decimal Id { get; set; }
         public decimal PluginId { get; set; }
-        public System.DateTime Created { get; set; }
-        public System.DateTime Modified { get; set; }
-        public decimal LastModifiedBy { get; set; }
-        public string Contract { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string ValueType { get; set; }
+        public string RelationType { get; set; }
+        public int SortOrder { get; set; }
         public PluginDAL Plugin { get; set; }
-        public UserDAL LastModifiedByUser { get; set; }
     }
-        public class PluginVersionDALConfiguration : IEntityTypeConfiguration<PluginVersionDAL>
+        public class PluginFieldDALConfiguration : IEntityTypeConfiguration<PluginFieldDAL>
         {
-            public void Configure(EntityTypeBuilder<PluginVersionDAL> builder)
+            public void Configure(EntityTypeBuilder<PluginFieldDAL> builder)
             {
-                builder.ToTable("PLUGIN_VERSION");
+                builder.ToTable("PLUGIN_FIELD");
 
                 builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
-				builder.Property(x => x.Created).HasColumnName("CREATED");
-				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
-				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
-				builder.Property(x => x.Contract).HasColumnName("CONTRACT");
 				builder.Property(x => x.PluginId).HasColumnName("PLUGIN_ID");
+                builder.Property(x => x.Name).HasColumnName("NAME");
+                builder.Property(x => x.Description).HasColumnName("DESCRIPTION");
+                builder.Property(x => x.ValueType).HasColumnName("VALUE_TYPE");
+                builder.Property(x => x.RelationType).HasColumnName("RELATION_TYPE");
+                builder.Property(x => x.SortOrder).HasColumnName("ORDER");
 
 
                 builder.HasKey(x => x.Id);
 
-    			builder.HasOne(x => x.Plugin).WithMany(y => y.Versions).HasForeignKey(x => x.PluginId);
-    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.PLUGIN_VERSION).HasForeignKey(x => x.LastModifiedBy);
+    			builder.HasOne(x => x.Plugin).WithMany(y => y.Fields).HasForeignKey(x => x.PluginId);
 
             }
         }

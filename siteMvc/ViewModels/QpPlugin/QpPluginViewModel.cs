@@ -32,5 +32,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
             new ListItem(QpPluginCreationMode.ByServiceUrl.ToString(), QpPluginStrings.ByServiceUrl, "ByServiceUrlPanel"),
             new ListItem(QpPluginCreationMode.ByContract.ToString(), QpPluginStrings.ByContract, "ByContractPanel")
         };
+
     }
 }

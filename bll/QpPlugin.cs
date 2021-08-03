@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.VisualEditor;
@@ -16,6 +18,7 @@ namespace Quantumart.QP8.BLL
 
         internal QpPlugin()
         {
+            Fields = new List<QpPluginField>();
         }
 
         internal static QpPlugin Create() => new QpPlugin
@@ -40,47 +43,51 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Code", ResourceType = typeof(QpPluginStrings))]
         public string Code { get; set; }
 
-        public List<VisualEditorCommand> VeCommands { get; set; }
+        [Display(Name = "Version", ResourceType = typeof(QpPluginStrings))]
+        public string Version { get; set; }
 
-        public int[] ForceCommandIds { get; set; }
+        [Display(Name = "InstanceKey", ResourceType = typeof(QpPluginStrings))]
+        public string InstanceKey { get; set; }
 
-        public void DoCustomBinding(List<VisualEditorCommand> jsonCommands)
+        public List<QpPluginField> Fields { get; set; }
+
+        public int[] ForceFieldIds { get; set; }
+
+        public QpPluginContract ParsedContract { get; set; }
+
+        public string ParsedContractInvalidMessage { get; set; }
+
+        public override void DoCustomBinding()
         {
-            Dictionary<int, VisualEditorCommand> oldVeCommands = null;
-            if (VeCommands != null)
+            try
             {
-                oldVeCommands = VeCommands.ToDictionary(n => n.Id, m => m);
+                ParsedContract = JsonConvert.DeserializeObject<QpPluginContract>(Contract);
+            }
+            catch (Exception ex)
+            {
+                ParsedContractInvalidMessage = ex.Message;
             }
 
-            var rowOrder = VisualEditorRepository.GetCommandMaxRowOrder();
-            var toolbarInRowOrder = BaseCommandOrder + Order;
-            var commandInGroupOrder = 0;
-
-            foreach (var command in jsonCommands)
+            if (ParsedContract != null)
             {
-                command.RowOrder = rowOrder;
-                command.ToolbarInRowOrder = toolbarInRowOrder;
-                command.GroupInToolbarOrder = 0;
-                command.CommandInGroupOrder = commandInGroupOrder;
-
-                command.PluginId = Id;
-                if (command.Id != 0 && oldVeCommands != null)
-                {
-                    var oldCommand = oldVeCommands[command.Id];
-                    command.Created = oldCommand.Created;
-                    command.Modified = oldCommand.Modified;
-                }
-
-                commandInGroupOrder++;
+                Code = ParsedContract.Code;
+                Version = ParsedContract.Version;
+                InstanceKey = ParsedContract.InstanceKey;
+                Description = ParsedContract.Description;
+                var fieldNames = new HashSet<string>(Fields.Select(n => n.Name.ToLower()));
+                Fields.AddRange(ParsedContract.Fields.Where(n => !fieldNames.Contains(n.Name.ToLower())));
             }
-
-            VeCommands = jsonCommands;
         }
 
         public override void Validate()
         {
             var errors = new RulesException<QpPlugin>();
             base.Validate(errors);
+
+            if (!string.IsNullOrEmpty(ParsedContractInvalidMessage))
+            {
+                errors.ErrorFor(n => Contract, ParsedContractInvalidMessage);
+            }
 
             if (!string.IsNullOrEmpty(ServiceUrl) && !UrlHelpers.IsValidWebFolderUrl(ServiceUrl))
             {

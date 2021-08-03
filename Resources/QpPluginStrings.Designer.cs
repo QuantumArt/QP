@@ -196,6 +196,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InstanceKey.
+        /// </summary>
+        public static string InstanceKey {
+            get {
+                return ResourceManager.GetString("InstanceKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Order.
         /// </summary>
         public static string Order {

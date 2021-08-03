@@ -38,6 +38,8 @@ namespace Quantumart.QP8.DAL.Entities
 
         public ICollection<PluginVersionDAL> Versions { get; set; }
 
+        public ICollection<PluginFieldDAL> Fields { get; set; }
+
         public UserDAL LastModifiedByUser { get; set; }
     }
         public class PluginDALConfiguration : IEntityTypeConfiguration<PluginDAL>
