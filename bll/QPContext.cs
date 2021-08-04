@@ -428,7 +428,7 @@ namespace Quantumart.QP8.BLL
                 {
                     using (new QPConnectionScope())
                     {
-                        result = Common.CanManageScheduledTadsks(QPConnectionScope.Current.DbConnection, CurrentUserId);
+                        result = Common.CanManageScheduledTasks(QPConnectionScope.Current.DbConnection, CurrentUserId);
                     }
                     SetCanManageScheduledTasksValueToStorage(result);
                 }

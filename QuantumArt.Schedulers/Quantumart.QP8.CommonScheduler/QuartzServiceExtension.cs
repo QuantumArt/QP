@@ -67,6 +67,7 @@ namespace Quantumart.QP8.CommonScheduler
                     j
                         .WithIdentity(jobType.Name)
                         .WithDescription(QuartzService.GetJobDescription(jobType, taskSettings.Description));
+
                     if (taskSettings.SpecifiedConditions != null)
                     {
                         j.UsingJobData(new JobDataMap(taskSettings.SpecifiedConditions));

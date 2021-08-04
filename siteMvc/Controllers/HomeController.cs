@@ -56,7 +56,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await JsonHtml("About", model);
         }
 
-        [HttpGet]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ScheduledTasks)]
+        [BackendActionContext(ActionCode.ScheduledTasks)]
         public async Task<IActionResult> ScheduledTasks(string tabId, int parentId)
         {
             var tasks = await _quartzService.GetAllTasks();
@@ -66,6 +68,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
+        [ActionAuthorize(ActionCode.ScheduledTasks)]
+        [BackendActionContext(ActionCode.ScheduledTasks)]
         public async Task<ActionResult> RunJob([FromBody] ScheduledTaskViewModel model)
         {
             var result = await _quartzService.RunJob(model.Name);
@@ -78,6 +82,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
+        [ActionAuthorize(ActionCode.ScheduledTasks)]
+        [BackendActionContext(ActionCode.ScheduledTasks)]
         public async Task<ActionResult> StopJob([FromBody] ScheduledTaskViewModel model)
         {
             var result = await _quartzService.InterruptJob(model.Name);

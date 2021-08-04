@@ -1075,7 +1075,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static bool CanManageScheduledTadsks(DbConnection connection, int userId)
+        public static bool CanManageScheduledTasks(DbConnection connection, int userId)
         {
             var dbType = GetDbType(connection);
             string sql = $@"

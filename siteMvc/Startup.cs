@@ -199,7 +199,7 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<IFormatService, FormatService>()
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
                     .AddTransient<ResourceDictionary>() // preload QA.Configuration
-                    .AddTransient<QuartzService>() // preload QA.Configuration
+                    .AddTransient<QuartzService>()
                 ;
 
             services
