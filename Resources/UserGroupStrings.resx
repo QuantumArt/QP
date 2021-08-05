@@ -189,4 +189,7 @@
   <data name="NtGroupLengthExceeded" xml:space="preserve">
     <value>The length of NT-group should not exceed {1} characters!</value>
   </data>
+  <data name="CanManageScheduledTasks" xml:space="preserve">
+    <value>Group members can manage scheduled tasks</value>
+  </data>
 </root>

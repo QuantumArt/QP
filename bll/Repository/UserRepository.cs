@@ -198,6 +198,15 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.UserMapper.GetBizList(QPContext.EFContext.UserSet.OrderBy(u => u.LogOn).ToList());
         }
 
+        /// <summary>
+        /// Возвращает список всех пользователей с заполненными группами
+        /// </summary>
+        internal static IEnumerable<User> GetAllUsersListWithGroups()
+        {
+            return MapperFacade.UserMapper.GetBizList(QPContext.EFContext.UserSet
+                .Include(x => x.UserGroupBinds).ThenInclude(y=> y.UserGroup).OrderBy(u => u.LogOn).ToList());
+        }
+
         internal static string GeneratePassword() => "aA1!" + Guid.NewGuid().ToString("N").Substring(0, 16);
 
         internal static void UpdatePassword(int userId, string password)

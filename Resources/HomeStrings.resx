@@ -153,4 +153,25 @@
   <data name="Site" xml:space="preserve">
     <value>Site</value>
   </data>
+  <data name="ScheduledTasks" xml:space="preserve">
+    <value>ScheduledTasks</value>
+  </data>
+  <data name="Task" xml:space="preserve">
+    <value>Task</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="LastStartTime" xml:space="preserve">
+    <value>Last start time</value>
+  </data>
+  <data name="NextStartTime" xml:space="preserve">
+    <value>Next start time</value>
+  </data>
 </root>

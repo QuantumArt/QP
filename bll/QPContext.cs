@@ -243,6 +243,8 @@ namespace Quantumart.QP8.BLL
 
         private static readonly AsyncLocal<bool?> _canUnlockItems = new AsyncLocal<bool?>();
 
+        private static readonly AsyncLocal<bool?> _canManageScheduledTasks = new AsyncLocal<bool?>();
+
         private static readonly AsyncLocal<bool?> _isLive = new AsyncLocal<bool?>();
 
         private static readonly AsyncLocal<Dictionary<int, Site>> _siteCache = new AsyncLocal<Dictionary<int, Site>>();
@@ -290,6 +292,11 @@ namespace Quantumart.QP8.BLL
         private static void SetCanUnlockItemsValueToStorage(bool? value)
         {
             SetValueToStorage(_canUnlockItems, value, HttpContextItems.CanUnlockItemsKey);
+        }
+
+        private static void SetCanManageScheduledTasksValueToStorage(bool? value)
+        {
+            SetValueToStorage(_canManageScheduledTasks, value, HttpContextItems.CanManageScheduledTasksKey);
         }
 
         private static void SetCurrentCustomerCodeValueToStorage(string value)
@@ -410,6 +417,24 @@ namespace Quantumart.QP8.BLL
                 return (bool)result;
             }
             set => SetCanUnlockItemsValueToStorage(value);
+        }
+
+        public static bool CanManageScheduledTasks
+        {
+            get
+            {
+                var result = GetValueFromStorage(_canManageScheduledTasks, HttpContextItems.CanManageScheduledTasksKey);
+                if (result == null)
+                {
+                    using (new QPConnectionScope())
+                    {
+                        result = Common.CanManageScheduledTasks(QPConnectionScope.Current.DbConnection, CurrentUserId);
+                    }
+                    SetCanManageScheduledTasksValueToStorage(result);
+                }
+                return (bool)result;
+            }
+            set => SetCanManageScheduledTasksValueToStorage(value);
         }
 
         public static bool IsLive

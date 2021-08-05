@@ -13,6 +13,7 @@ namespace Quantumart.QP8.Constants
         public const string UpdateProfile = "update_profile";
         public const string Home = "home";
         public const string About = "about";
+        public const string ScheduledTasks = "scheduled_tasks";
 
         public const string DbSettings = "db_settings";
         public const string UpdateDbSettings = "update_db_settings";

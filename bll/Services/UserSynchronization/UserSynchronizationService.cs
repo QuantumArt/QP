@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Options;
 using NLog;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
+using Quantumart.QP8.BLL.Services.API;
 
 namespace Quantumart.QP8.BLL.Services.UserSynchronization
 {
@@ -15,18 +17,20 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly int _languageId;
         private readonly ActiveDirectoryRepository _activeDirectory;
+        private readonly CommonSchedulerProperties settings;
 
-        public UserSynchronizationService(int currentUserId, int languageId)
+        public UserSynchronizationService(IOptions<CommonSchedulerProperties> options)
         {
-            _languageId = languageId;
+            _languageId = options.Value.DefaultLanguageId;
             _activeDirectory = new ActiveDirectoryRepository();
-            QPContext.CurrentUserId = currentUserId;
+            settings = options.Value;
         }
 
         public bool NeedSynchronization() => DbRepository.Get().UseAdSyncService;
 
         public void Synchronize()
         {
+            QPContext.CurrentUserId = settings.DefaultUserId;
             var qpGroups = UserGroupRepository.GetNtGroups().ToList();
             var adGroups = GetAdGroupsToProcess(qpGroups);
             var adUsers = _activeDirectory.GetUsers(adGroups);

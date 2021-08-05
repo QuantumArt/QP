@@ -116,5 +116,47 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Site", resourceCulture);
             }
         }
+        
+        public static string ScheduledTasks {
+            get {
+                return ResourceManager.GetString("ScheduledTasks", resourceCulture);
+            }
+        }
+        
+        public static string Task {
+            get {
+                return ResourceManager.GetString("Task", resourceCulture);
+            }
+        }
+        
+        public static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        public static string Schedule {
+            get {
+                return ResourceManager.GetString("Schedule", resourceCulture);
+            }
+        }
+        
+        public static string LastStartTime {
+            get {
+                return ResourceManager.GetString("LastStartTime", resourceCulture);
+            }
+        }
+        
+        public static string NextStartTime {
+            get {
+                return ResourceManager.GetString("NextStartTime", resourceCulture);
+            }
+        }
     }
 }

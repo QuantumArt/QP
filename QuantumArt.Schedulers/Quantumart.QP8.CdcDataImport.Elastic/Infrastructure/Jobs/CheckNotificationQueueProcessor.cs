@@ -12,23 +12,24 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Scheduler.API;
+using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
 {
-    public class CheckNotificationQueueProcessor : IProcessor
+    public class CheckNotificationQueueJob : IJob
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private const string AppName = "QP8CdcDataImportService.Elastic";
         private readonly IDbService _dbService;
         private readonly IExternalSystemNotificationService _systemNotificationService;
 
-        public CheckNotificationQueueProcessor(IDbService dbService, IExternalSystemNotificationService systemNotificationService)
+        public CheckNotificationQueueJob(IDbService dbService, IExternalSystemNotificationService systemNotificationService)
         {
             _dbService = dbService;
             _systemNotificationService = systemNotificationService;
         }
 
-        public Task Run(CancellationToken token)
+        public Task Execute(IJobExecutionContext context)
         {
             var customers = QPConfiguration.GetCustomers(AppName)
                 .Where(c => c.DbType == DatabaseType.SqlServer)
@@ -52,9 +53,9 @@ namespace Quantumart.QP8.CdcDataImport.Elastic.Infrastructure.Jobs
 
             foreach (var customer in customersWithEnabledCdc)
             {
-                if (token.IsCancellationRequested)
+                if (context.CancellationToken.IsCancellationRequested)
                 {
-                    return Task.FromCanceled(token);
+                    return Task.FromCanceled(context.CancellationToken);
                 }
                 try
                 {
