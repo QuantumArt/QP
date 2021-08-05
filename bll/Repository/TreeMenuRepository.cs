@@ -174,7 +174,7 @@ namespace Quantumart.QP8.BLL.Repository
             result = isFolder && IsEntityTypeParent(entityTypeCode)
                 || isGroup && IsEntityTypeParent(groupItemCode);
 
-            if (isFolder && entityTypeCode == EntityTypeCode.Content || entityTypeCode == EntityTypeCode.VirtualContent && enableContentGrouping)
+            if ((isFolder && entityTypeCode == EntityTypeCode.Content  || entityTypeCode == EntityTypeCode.VirtualContent) && enableContentGrouping)
             {
                 result = false;
             }
