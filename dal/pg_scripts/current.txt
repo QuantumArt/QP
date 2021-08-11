@@ -8,5 +8,6 @@ main
 trigger_functions
 triggers
 content_views
+sequences
 table_changes
 data_changes

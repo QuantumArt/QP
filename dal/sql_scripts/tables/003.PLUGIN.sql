@@ -1,4 +1,4 @@
-if not exists(select * from sys.tables where name = 'PLUGIN')
+IF NOT EXISTS(select * from sys.tables where name = 'PLUGIN')
 BEGIN
 	CREATE TABLE dbo.PLUGIN(
 		ID numeric(18,0) IDENTITY(1,1) PRIMARY KEY,
@@ -16,6 +16,14 @@ BEGIN
 	        CONSTRAINT FK_PLUGIN_LAST_MODIFIED_BY FOREIGN KEY REFERENCES dbo.USERS (USER_ID)
 	) ON [PRIMARY]
 END
+GO
+
+IF NOT EXISTS(select * from sys.indexes where name = 'IX_PLUGIN_NAME' and [object_id] = object_id('PLUGIN'))
+BEGIN
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_NAME ON PLUGIN(NAME)
+    drop index plugin.IX_PLUGIN_FIELD_NAME
+END
+GO
 
 --drop table plugin
 

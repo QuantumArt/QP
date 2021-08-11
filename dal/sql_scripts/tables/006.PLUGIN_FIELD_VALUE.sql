@@ -14,4 +14,22 @@ BEGIN
 	) ON [PRIMARY]
 
 END
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_VALUE_CONTENT_ID' and [object_id] = object_id('PLUGIN_FIELD_VALUE'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_VALUE_CONTENT_ID ON PLUGIN_FIELD_VALUE(PLUGIN_FIELD_ID, CONTENT_ID)
+        WHERE CONTENT_ID IS NOT NULL;
+end
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_VALUE_SITE_ID' and [object_id] = object_id('PLUGIN_FIELD_VALUE'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_VALUE_SITE_ID ON PLUGIN_FIELD_VALUE(PLUGIN_FIELD_ID, SITE_ID)
+        WHERE SITE_ID IS NOT NULL;
+end
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_VALUE_CONTENT_ATTRIBUTE_ID' and [object_id] = object_id('PLUGIN_FIELD_VALUE'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_VALUE_CONTENT_ATTRIBUTE_ID ON PLUGIN_FIELD_VALUE(PLUGIN_FIELD_ID, CONTENT_ATTRIBUTE_ID)
+        WHERE CONTENT_ATTRIBUTE_ID IS NOT NULL;
+end
 --drop table plugin_field_value

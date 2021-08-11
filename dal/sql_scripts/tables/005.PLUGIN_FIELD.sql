@@ -12,5 +12,11 @@ BEGIN
 	) ON [PRIMARY]
 
 END
+GO
 
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_NAME' and [object_id] = object_id('PLUGIN_FIELD'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_NAME ON PLUGIN_FIELD(PLUGIN_ID, NAME)
+end
+GO
 --drop table plugin_field

@@ -12,5 +12,5 @@ BEGIN
 	) ON [PRIMARY]
 
 END
-
+GO
 --drop table plugin_version

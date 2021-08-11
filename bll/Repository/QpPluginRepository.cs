@@ -52,39 +52,50 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 timeStamp = Common.GetSqlDate(scope.DbConnection);
-            }
 
-            var dal = MapperFacade.QpPluginMapper.GetDalObject(plugin);
-            dal.LastModifiedBy = QPContext.CurrentUserId;
-            dal.Modified = timeStamp;
-            entities.Entry(dal).State = EntityState.Modified;
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPlugin, plugin);
-            entities.SaveChanges();
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPlugin);
+                var dal = MapperFacade.QpPluginMapper.GetDalObject(plugin);
+                dal.LastModifiedBy = QPContext.CurrentUserId;
+                dal.Modified = timeStamp;
+                entities.Entry(dal).State = EntityState.Modified;
+                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPlugin, plugin);
+                entities.SaveChanges();
+                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPlugin);
 
-            var forceIds = plugin.ForceFieldIds == null ? null : new Queue<int>(plugin.ForceFieldIds);
-            foreach (var field in plugin.Fields.Where(n => n.Id == 0))
-            {
-                var dalField = MapperFacade.QpPluginFieldMapper.GetDalObject(field);
-                dalField.PluginId = dal.Id;
-                if (forceIds != null)
+                var forceIds = plugin.ForceFieldIds == null ? null : new Queue<int>(plugin.ForceFieldIds);
+                var fields = new List<PluginFieldDAL>();
+                foreach (var field in plugin.Fields.Where(n => n.Id == 0))
                 {
-                    dalField.Id = forceIds.Dequeue();
+                    var dalField = MapperFacade.QpPluginFieldMapper.GetDalObject(field);
+                    dalField.PluginId = dal.Id;
+                    if (forceIds != null)
+                    {
+                        dalField.Id = forceIds.Dequeue();
+                    }
+
+                    entities.Entry(dalField).State = EntityState.Added;
+                    fields.Add(dalField);
                 }
 
-                entities.Entry(dalField).State = EntityState.Added;
+                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPluginField);
+                entities.SaveChanges();
+                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPluginField);
+
+                foreach (var field in fields)
+                {
+                    Common.AddPluginColumn(scope.DbConnection, field);
+                }
+
+                return GetById(plugin.Id);
             }
-
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPluginField);
-            entities.SaveChanges();
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPluginField);
-
-            return GetById(plugin.Id);
         }
 
         internal static void Delete(int id)
         {
-            DefaultRepository.Delete<PluginDAL>(id);
+            using (var scope = new QPConnectionScope())
+            {
+                DefaultRepository.Delete<PluginDAL>(id);
+                Common.DropPluginTables(scope.DbConnection, id);
+            }
         }
 
         internal static QpPlugin SavePluginProperties(QpPlugin plugin)
@@ -94,42 +105,51 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 timeStamp = Common.GetSqlDate(scope.DbConnection);
-            }
 
-            var dal = MapperFacade.QpPluginMapper.GetDalObject(plugin);
-            dal.LastModifiedBy = QPContext.CurrentUserId;
-            dal.Modified = timeStamp;
-            dal.Created = timeStamp;
+                var dal = MapperFacade.QpPluginMapper.GetDalObject(plugin);
+                dal.LastModifiedBy = QPContext.CurrentUserId;
+                dal.Modified = timeStamp;
+                dal.Created = timeStamp;
 
-            entities.Entry(dal).State = EntityState.Added;
+                entities.Entry(dal).State = EntityState.Added;
 
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPlugin, plugin);
-            if (plugin.ForceId != 0)
-            {
-                dal.Id = plugin.ForceId;
-            }
-
-            entities.SaveChanges();
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPlugin);
-
-            var forceIds = plugin.ForceFieldIds == null ? null : new Queue<int>(plugin.ForceFieldIds);
-            foreach (var field in plugin.Fields)
-            {
-                var dalField = MapperFacade.QpPluginFieldMapper.GetDalObject(field);
-                dalField.PluginId = dal.Id;
-                if (forceIds != null)
+                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPlugin, plugin);
+                if (plugin.ForceId != 0)
                 {
-                    dalField.Id = forceIds.Dequeue();
+                    dal.Id = plugin.ForceId;
                 }
 
-                entities.Entry(dalField).State = EntityState.Added;
+                entities.SaveChanges();
+                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPlugin);
+
+                Common.CreatePluginTables(scope.DbConnection, (int)dal.Id);
+
+                var forceIds = plugin.ForceFieldIds == null ? null : new Queue<int>(plugin.ForceFieldIds);
+                var fields = new List<PluginFieldDAL>();
+                foreach (var field in plugin.Fields)
+                {
+                    var dalField = MapperFacade.QpPluginFieldMapper.GetDalObject(field);
+                    dalField.PluginId = dal.Id;
+                    if (forceIds != null)
+                    {
+                        dalField.Id = forceIds.Dequeue();
+                    }
+
+                    entities.Entry(dalField).State = EntityState.Added;
+                    fields.Add(dalField);
+                }
+
+                DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPluginField);
+                entities.SaveChanges();
+                DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPluginField);
+
+                foreach (var field in fields)
+                {
+                    Common.AddPluginColumn(scope.DbConnection, field);
+                }
+
+                return MapperFacade.QpPluginMapper.GetBizObject(dal);
             }
-
-            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.QpPluginField);
-            entities.SaveChanges();
-            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.QpPluginField);
-
-            return MapperFacade.QpPluginMapper.GetBizObject(dal);
         }
 
         internal static int GetPluginMaxOrder()
