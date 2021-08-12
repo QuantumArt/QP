@@ -81,3 +81,11 @@ on conflict do nothing;
 insert into backend_action(name, code, type_id, entity_type_id, is_interface)
 values('Refresh QP Plugins', 'refresh_plugins', (select id from action_type where code = 'refresh'), (select id from entity_type where code = 'plugin'), true)
 on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, code, controller_action_url, is_interface)
+VALUES((select id from action_type where code = 'read'), (select id from entity_type where code = 'db'), 'Scheduled Tasks', 'scheduled_tasks', '~/Home/ScheduledTasks/', true)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id)
+values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', (select id from action_type where code = 'refresh'), (select id from entity_type where code = 'db'))
+on conflict do nothing;

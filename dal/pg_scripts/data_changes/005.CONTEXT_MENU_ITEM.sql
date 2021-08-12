@@ -52,3 +52,8 @@ insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
 values((select id from context_menu where code = 'plugin'), (select id from backend_action where code = 'edit_plugin'),
        'Properties', 3, 'properties.gif')
 on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order")
+values((select id from context_menu where code = 'db'), (select id from backend_action where code = 'scheduled_tasks'),
+       'Scheduled Tasks', 90)
+on conflict do nothing;

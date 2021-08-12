@@ -43,5 +43,8 @@ if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.
     insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
     values (dbo.qp_action_id('list_plugin'), dbo.qp_action_id('refresh_plugin'), 'Refresh', 'refresh.gif', NULL, 3, 0)
 
+if not exists (select * from ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('scheduled_tasks') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
+    values (dbo.qp_action_id('scheduled_tasks'), dbo.qp_action_id('refresh_scheduled_tasks'), 'Refresh', 'refresh.gif', 100)
 GO
 

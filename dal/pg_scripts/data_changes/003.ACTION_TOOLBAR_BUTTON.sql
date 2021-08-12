@@ -63,5 +63,10 @@ values ((select id from backend_action where code = 'list_plugin'), (select id f
         'Refresh', 'refresh.gif', NULL, 3, false)
 on conflict do nothing;
 
+insert into action_toolbar_button (parent_action_id, action_id, icon, "order", name)
+values ((select id from backend_action where code = 'scheduled_tasks'), (select id from backend_action where code = 'refresh_scheduled_tasks'),
+        'refresh.gif', 100, 'Refresh')
+on conflict do nothing;
+
 
 

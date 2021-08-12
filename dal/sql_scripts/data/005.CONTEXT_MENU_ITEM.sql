@@ -41,3 +41,7 @@ if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_co
 if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugin') and name = 'Properties')
     insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
     values(dbo.qp_context_menu_id('plugin'), dbo.qp_action_id('edit_plugin'), 'Properties', 3, 'properties.gif')
+
+IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Scheduled Tasks' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('db'))
+    INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER])
+    VALUES(dbo.qp_context_menu_id('db'), dbo.qp_action_id('scheduled_tasks'), 'Scheduled Tasks', 90)
