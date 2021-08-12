@@ -46,6 +46,7 @@ using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.ArticleScheduler;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.CdcImport;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.NotificationSender;
@@ -57,6 +58,9 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using A = Quantumart.QP8.BLL.Services.ArticleServices;
 using S = Quantumart.QP8.ArticleScheduler;
+using ContentService = Quantumart.QP8.BLL.Services.ContentServices.ContentService;
+using CustomActionService = Quantumart.QP8.BLL.Services.CustomActionService;
+using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -94,7 +98,8 @@ namespace Quantumart.QP8.WebMvc
                 Configuration.Bind("CommonScheduler", commonSchedulerProperties);
                 services.AddSingleton(commonSchedulerProperties);
 
-                services.AddHostedService<CommonService>();
+                services.AddTransient<IUserSynchronizationService, UserSynchronizationService>();
+                services.AddQuartzService(commonSchedulerProperties);
             }
 
 
@@ -195,6 +200,7 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<IFormatService, FormatService>()
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
                     .AddTransient<ResourceDictionary>() // preload QA.Configuration
+                    .AddTransient<QuartzService>()
                 ;
 
             services
@@ -221,7 +227,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>()
                 .AddTransient<IExternalSystemNotificationService, ExternalSystemNotificationService>()
                 .AddTransient<ISchedulerCustomerCollection, SchedulerCustomerCollection>()
-                .AddTransient<IUserSynchronizationService, UserSynchronizationService>()
+                .AddTransient<ICommonUserService, CommonUserService>()
                 .AddTransient<ElasticCdcImportService>()
                 .AddTransient<TarantoolCdcImportService>()
                 .AddTransient<IDbService, DbService>()

@@ -30,6 +30,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "CanUnlockItems", ResourceType = typeof(UserGroupStrings))]
         public bool CanUnlockItems { get; set; }
 
+        [Display(Name = "CanManageScheduledTasks", ResourceType = typeof(UserGroupStrings))]
+        public bool CanManageScheduledTasks { get; set; }
+
         [StringLength(255, ErrorMessageResourceName = "NtGroupLengthExceeded", ErrorMessageResourceType = typeof(UserGroupStrings))]
         [RegularExpression(RegularExpressions.UserName, ErrorMessageResourceName = "NtGroupInvalidFormat", ErrorMessageResourceType = typeof(UserGroupStrings))]
         [Display(Name = "NtGroup", ResourceType = typeof(UserGroupStrings))]

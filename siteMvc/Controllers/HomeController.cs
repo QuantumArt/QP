@@ -1,10 +1,12 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using QA.Validation.Xaml.Extensions.Rules;
+using QP8.Infrastructure.Web.Enums;
+using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -13,7 +15,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
-using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 using Quantumart.QP8.WebMvc.ViewModels.HomePage;
 
@@ -25,12 +26,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private JsConstantsHelper _constantsHelper;
         private QPublishingOptions _options;
 
+        private QuartzService _quartzService;
 
-        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper, QPublishingOptions options)
+        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper, QPublishingOptions options, QuartzService quartzService)
         {
             _languageHelper = languageHelper;
             _constantsHelper = constantsHelper;
             _options = options;
+            _quartzService = quartzService;
         }
 
         [DisableBrowserCache]
@@ -51,6 +54,45 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var envVersion = Environment.GetEnvironmentVariable("SERVICE_VERSION");
             var model = AboutViewModel.Create(tabId, parentId, envVersion ?? _options.BuildVersion);
             return await JsonHtml("About", model);
+        }
+
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ScheduledTasks)]
+        [BackendActionContext(ActionCode.ScheduledTasks)]
+        public async Task<IActionResult> ScheduledTasks(string tabId, int parentId)
+        {
+            var tasks = await _quartzService.GetAllTasks();
+
+            var model = ScheduledTasksViewModel.Create(tabId, parentId, tasks);
+            return await JsonHtml("ScheduledTasks", model);
+        }
+
+        [HttpPost]
+        [ActionAuthorize(ActionCode.ScheduledTasks)]
+        [BackendActionContext(ActionCode.ScheduledTasks)]
+        public async Task<ActionResult> RunJob([FromBody] ScheduledTaskViewModel model)
+        {
+            var result = await _quartzService.RunJob(model.Name);
+
+            return JsonCamelCase(new JSendResponse
+            {
+                Status = result.Status,
+                Message = result.Message
+            });
+        }
+
+        [HttpPost]
+        [ActionAuthorize(ActionCode.ScheduledTasks)]
+        [BackendActionContext(ActionCode.ScheduledTasks)]
+        public async Task<ActionResult> StopJob([FromBody] ScheduledTaskViewModel model)
+        {
+            var result = await _quartzService.InterruptJob(model.Name);
+
+            return JsonCamelCase(new JSendResponse
+            {
+                Status = result.Status,
+                Message = result.Message
+            });
         }
 
         public ActionResult Lang()
@@ -121,5 +163,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             ArticleService.UnlockArticles(selModel.Ids);
             return Json(null);
         }
+
+
     }
 }

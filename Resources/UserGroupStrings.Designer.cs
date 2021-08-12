@@ -10,8 +10,8 @@
 
 namespace Quantumart.QP8.Resources {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Quantumart.QP8.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class UserGroupStrings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal UserGroupStrings() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Quantumart.QP8.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add new Group.
         /// </summary>
@@ -68,7 +68,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AddNewGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Basic Parameters.
         /// </summary>
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("BasicParameters", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Users.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("BindedUserIDs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Built-in users could not be removed from built-in group. Users: {0}.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("BuiltInUsersCouldntBeRemoved", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot remove built-in user group..
         /// </summary>
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CannotRemoveBuitInGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Group members can unlock entities.
         /// </summary>
@@ -113,7 +113,16 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CanUnlockItems", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Group members can unlock entities.
+        /// </summary>
+        public static string CanManageScheduledTasks {
+            get {
+                return ResourceManager.GetString("CanManageScheduledTasks", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Group has children. Continue?.
         /// </summary>
@@ -122,7 +131,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ConfirmHasChildren", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Group used parallel workflow could not be Administrators group descendant.
         /// </summary>
@@ -131,7 +140,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GroupCouldntBeAdminDescendant", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Group used parallel workflow could not contain users binded to Administrators group or it descendants. Users: {0}.
         /// </summary>
@@ -140,7 +149,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GroupCouldntBindAdminDescendantUsers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Administrators group or it descendants could not contain users binded to  groups used parallel workflow. Users: {0}.
         /// </summary>
@@ -149,7 +158,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GroupCouldntBindWorkflowGroupUsers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Group used parallel workflow could not be parent.
         /// </summary>
@@ -158,7 +167,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GroupCouldntUseWorkflow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to New user group has not been created..
         /// </summary>
@@ -167,7 +176,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GroupHasNotBeenCreated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User group is not found (Id={0}).
         /// </summary>
@@ -176,7 +185,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GroupNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to There is a cycle in the group hierarchy.
         /// </summary>
@@ -185,7 +194,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("IsGroupCycle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot remove group because there are notifications received by users in group. Notifications: {0}.
         /// </summary>
@@ -194,7 +203,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NotificationsExist", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to NT-group.
         /// </summary>
@@ -203,7 +212,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NtGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid NT-group.
         /// </summary>
@@ -212,7 +221,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NtGroupInvalidFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of NT-group should not exceed {1} characters!.
         /// </summary>
@@ -221,7 +230,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NtGroupLengthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Parent group could not use parallel workflow.
         /// </summary>
@@ -230,7 +239,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ParentCouldntUseWorkflow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Parent Group.
         /// </summary>
@@ -239,7 +248,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ParentGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select Parent Group.
         /// </summary>
@@ -248,7 +257,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SelectParentGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shared Ownership.
         /// </summary>
@@ -257,7 +266,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SharedArticles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Parallel Workflow.
         /// </summary>
@@ -266,7 +275,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UseParallelWorkflow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot remove group because there are workflows which involve users in group. Workflows: {0}.
         /// </summary>

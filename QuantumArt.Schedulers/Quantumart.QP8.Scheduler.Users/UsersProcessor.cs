@@ -1,41 +1,34 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
+using Quartz;
 
 namespace Quantumart.QP8.Scheduler.Users
 {
-    public class UsersProcessor : IProcessor
+    public class UsersSynchronizationJob : IJob
     {
-        private const int DelayDuration = 100;
-
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISchedulerCustomerCollection _schedulerCustomers;
         private readonly IUserSynchronizationService _synchronizationService;
 
-        public UsersProcessor(
+        public UsersSynchronizationJob(
             ISchedulerCustomerCollection schedulerCustomers,
-            UserSynchronizationService synchronizationService)
+            IUserSynchronizationService synchronizationService)
         {
             _schedulerCustomers = schedulerCustomers;
             _synchronizationService = synchronizationService;
         }
 
-        public async Task Run(CancellationToken token)
+        public Task Execute(IJobExecutionContext context)
         {
             Logger.Info("Start users synchronization");
             var items = _schedulerCustomers.GetItems();
             foreach (var customer in items)
             {
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
-
                 try
                 {
                     ProcessCustomer(customer);
@@ -45,10 +38,10 @@ namespace Quantumart.QP8.Scheduler.Users
                     Logger.Warn(ex,"There was an error while processing customer code: {customerCode}", customer.CustomerName);
                 }
 
-                await Task.Delay(DelayDuration, token);
             }
 
             Logger.Info("End users synchronization");
+            return Task.CompletedTask;
         }
 
         private void ProcessCustomer(QaConfigCustomer customer)

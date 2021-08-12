@@ -22,11 +22,11 @@ using Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Data;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Constants.Cdc.Tarantool;
-using Quantumart.QP8.Scheduler.API;
+using Quartz;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
 {
-    public class CdcDataImportProcessor : IProcessor
+    public class CdcDataImportJob : IJob
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
@@ -34,22 +34,22 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
         private readonly ICdcImportService _cdcImportService;
         private readonly IExternalSystemNotificationService _systemNotificationService;
 
-        public CdcDataImportProcessor(
+        public CdcDataImportJob(
             ICdcImportService cdcImportService,
             IExternalSystemNotificationService systemNotificationService
         )
         {
-            _cts = new CancellationTokenSource();
             _cdcImportService = cdcImportService;
             _systemNotificationService = systemNotificationService;
         }
 
-        public Task Run(CancellationToken token)
+        public Task Execute(IJobExecutionContext context)
         {
             var customersDictionary = CdcSynchronizationContext.CustomersDictionary;
+            var token = context.CancellationToken;
             var po = new ParallelOptions
             {
-                CancellationToken = _cts.Token,
+                CancellationToken = token,
                 MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 

@@ -1,0 +1,118 @@
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.HomePage.ScheduledTasksViewModel
+
+@using (Html.BeginTabForm(Model))
+{
+  foreach (var task in Model.Tasks)
+  {
+    using (Html.BeginFieldGroup(HomeStrings.Task))
+    {
+      <dl class="row">
+        <dt class="label">
+          @HomeStrings.Name
+        </dt>
+        <dd class="field">
+          @task.Name
+        </dd>
+      </dl>
+      <dl class="row">
+        <dt class="label">
+          @HomeStrings.Description
+        </dt>
+        <dd class="field">
+          @task.Description
+        </dd>
+      </dl>
+
+      @foreach (var trigger in task.Trigger)
+      {
+        using (Html.BeginFieldGroup(HomeStrings.Schedule))
+        {
+          <dl class="row">
+            <dt class="label">
+              @HomeStrings.Name
+            </dt>
+            <dd class="field">
+              @trigger.Name
+            </dd>
+          </dl>
+          <dl class="row">
+            <dt class="label">
+              @HomeStrings.Schedule
+            </dt>
+            <dd class="field">
+              @trigger.Schedule
+            </dd>
+          </dl>
+          <dl class="row">
+            <dt class="label">
+              @HomeStrings.LastStartTime
+            </dt>
+            <dd class="field">
+              @trigger.LastStartTime
+            </dd>
+          </dl>
+          <dl class="row">
+            <dt class="label">
+              @HomeStrings.NextStartTime
+            </dt>
+            <dd class="field">
+              @trigger.NextStartTime
+            </dd>
+          </dl>
+        }
+      }
+
+      @if (Model.CanManageScheduledTasks)
+      {
+        <span class="runJob linkButton actionLink" data-job-name="@task.Name">
+        <a href="javascript: void(0)">
+          <span class="icon restore"><img src="Static/Common/0.gif" alt="runJob"></span>
+          <span class="text" > Run Job</span>
+        </a>
+      </span>
+
+        <span class="stopJob linkButton actionLink" data-job-name="@task.Name">
+        <a href="javascript: void(0)">
+          <span class="icon restore"><img src="Static/Common/0.gif" alt="stop Job"></span>
+          <span class="text">Stop Job</span>
+        </a>
+      </span>
+      }
+    }
+  }
+}
+
+@Html.PrepareInitScript(Model)
+
+<script>
+  var $editingForm = $("#@Model.UniqueId("editingForm")");
+  @(Model.ContextObjectName).setInitializedCallback(function() {
+    $editingForm.on('click', '.runJob', function(e) {
+      $q.showLoader();
+
+      $q.postAjax("@Url.Action("RunJob")", {
+        name: $(e.currentTarget).data("jobName")
+      }, function(data, response) {
+        $q.alertSuccess(response.message);
+      });
+    });
+
+    $editingForm.on('click', '.stopJob', function(e) {
+          $q.showLoader();
+
+          $q.postAjax("@Url.Action("StopJob")", {
+            name: $(e.currentTarget).data("jobName")
+          }, function(data, response) {
+            $q.alertSuccess(response.message);
+          });
+        });
+
+  });
+
+  @(Model.ContextObjectName).setTerminatingCallback(function() {
+    $editingForm.off('click');
+  });
+
+</script>
+@Html.RunInitScript(Model)

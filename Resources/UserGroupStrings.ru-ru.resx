@@ -189,4 +189,7 @@
   <data name="NtGroupLengthExceeded" xml:space="preserve">
     <value>Длина NT-группы не может превышать {1} символов!</value>
   </data>
+  <data name="CanManageScheduledTasks" xml:space="preserve">
+    <value>Члены группы могут управлять задачами по расписанию</value>
+  </data>
 </root>

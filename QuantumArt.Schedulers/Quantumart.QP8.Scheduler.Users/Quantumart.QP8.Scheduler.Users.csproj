@@ -8,4 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Quartz" Version="3.3.2" />
+  </ItemGroup>
 </Project>

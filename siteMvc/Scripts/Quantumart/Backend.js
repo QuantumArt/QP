@@ -272,9 +272,11 @@ export class Backend {
       }
 
       this._initializeSignOut();
+      this._onCheckSingleUserModeDB();
+      this._checkSingleUserModeDB = setInterval(
+        this._onCheckSingleUserModeDB.bind(this),
+        window.CHECK_DB_MODE_INTERVAL);
     });
-    this._onCheckSingleUserModeDB();
-    this._checkSingleUserModeDB = setInterval(this._onCheckSingleUserModeDB.bind(this), window.CHECK_DB_MODE_INTERVAL);
   }
 
   _onCheckSingleUserModeDB() {

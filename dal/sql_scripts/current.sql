@@ -1468,6 +1468,63 @@ BEGIN
 END
 GO
 
+ALTER procedure [dbo].[qp_authenticate](@login nvarchar(255), @password varchar(20), @use_nt_login bit = 0, @check_admin_access bit = 0)
+as
+begin
+    declare @disabled bit, @hash binary(20), @salt binary(20), @user_id numeric, @auto_login bit
+    if @use_nt_login = 1
+    begin
+        select @disabled = disabled, @user_id = user_id, @auto_login = AUTO_LOGIN from users where NT_LOGIN = @login
+        if @user_id is null
+        begin
+            RAISERROR('Your Windows account is not mapped to any QP user', 16, 5)
+            RETURN
+        end
+        else if @disabled = 1
+        begin
+            RAISERROR('Account is disabled. Contact <@MailForErrors@>', 16, 2)
+            RETURN
+        end
+        else if @auto_login = 0
+        begin
+            RAISERROR('Auto login option is switched off for your account. Contact <@MailForErrors@>', 16, 6)
+            RETURN
+        end
+    end
+    else
+    begin
+        select @disabled = disabled, @hash = hash, @salt = salt, @user_id = user_id from users where login = @login
+        if @user_id is null
+        begin
+            RAISERROR('Login doesn''t exist', 16, 1)
+            RETURN
+        end
+        else if @disabled = 1
+        begin
+            RAISERROR('Account is disabled. Contact <@MailForErrors@>', 16, 2)
+            RETURN
+        end
+        else if dbo.qp_get_hash(cast(@password as CHAR(20)), @salt) <> @hash
+        begin
+            RAISERROR('Password is incorrect', 16, 3)
+            RETURN
+        end
+        else if @check_admin_access = 1
+        begin
+            if not exists(select * from USER_GROUP_BIND where GROUP_ID = 1 and USER_ID = @user_id)
+            begin
+                RAISERROR('Account is not a member of Administrators group', 16, 4)
+                RETURN
+            end
+        end
+    end
+
+    update USERS set LAST_LOGIN = GETDATE() where USER_ID = @user_id
+    select * from USERS where USER_ID = @user_id
+    RETURN
+end
+go
+
 exec qp_drop_existing 'qp_count_duplicates', 'IsProcedure'
 GO
 
@@ -4509,6 +4566,51 @@ begin
 end
 GO
 
+if not exists (select * from BACKEND_ACTION where code = 'scheduled_tasks')
+insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_INTERFACE)
+VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('db'), 'Scheduled Tasks', 'scheduled_tasks', '~/Home/ScheduledTasks/', 1)
+
+IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Scheduled Tasks' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('db'))
+INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER])
+VALUES(dbo.qp_context_menu_id('db'), dbo.qp_action_id('scheduled_tasks'), 'Scheduled Tasks', 90)
+
+if not exists (select * from BACKEND_ACTION where code = 'refresh_scheduled_tasks')
+insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
+values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('db'))
+
+if not exists (select * from ACTION_TOOLBAR_BUTTON where name = 'Refresh' and PARENT_ACTION_ID = dbo.qp_action_id('scheduled_tasks'))
+insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, ICON, [ORDER], NAME)
+values (dbo.qp_action_id('scheduled_tasks'), dbo.qp_action_id('refresh_scheduled_tasks'), 'refresh.gif', 100, 'Refresh')
+
+if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'CAN_MANAGE_SCHEDULED_TASKS' and TABLE_NAME = 'USER_GROUP')
+    alter table [USER_GROUP]
+    add [CAN_MANAGE_SCHEDULED_TASKS] bit NOT NULL CONSTRAINT [DF_USER_GROUP_CAN_MANAGE_SCHEDULED_TASKS] DEFAULT ((0))
+GO
+
+ALTER VIEW [dbo].[USER_GROUP_TREE]
+WITH SCHEMABINDING
+AS
+select ug.[GROUP_ID]
+      ,ug.[GROUP_NAME]
+      ,ug.[DESCRIPTION]
+      ,ug.[CREATED]
+      ,ug.[MODIFIED]
+      ,ug.[LAST_MODIFIED_BY]
+      ,U.[LOGIN] as LAST_MODIFIED_BY_LOGIN
+      ,ug.[shared_content_items]
+      ,ug.[nt_group]
+      ,ug.[ad_sid]
+      ,ug.[BUILT_IN]
+      ,ug.[READONLY]
+      ,ug.[use_parallel_workflow]
+      ,ug.[CAN_UNLOCK_ITEMS]
+      ,ug.[CAN_MANAGE_SCHEDULED_TASKS]
+      ,gtg.Parent_Group_Id AS PARENT_GROUP_ID
+from dbo.USER_GROUP ug
+left join dbo.Group_To_Group gtg on ug.GROUP_ID = gtg.Child_Group_Id
+join dbo.USERS U ON U.[USER_ID] = ug.LAST_MODIFIED_BY
+
+GO
 if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
 insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
 VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)

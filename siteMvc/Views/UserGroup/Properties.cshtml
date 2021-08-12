@@ -15,6 +15,7 @@
         {
             @Html.CheckBoxFieldFor(s => s.Data.UseParallelWorkflow)
             @Html.CheckBoxFieldFor(s => s.Data.CanUnlockItems)
+            @Html.CheckBoxFieldFor(s => s.Data.CanManageScheduledTasks)
         }
 
       @Html.MultipleItemPickerFieldFor(model => model.BindedUserIDs, Model.BindedUserListItems, new EntityDataListArgs
