@@ -3725,6 +3725,112 @@ $BODY$;
 alter procedure qp_update_m2o_final(numeric) owner to postgres;
 
 
+create sequence if not exists public.plugin_seq;
+create sequence if not exists public.plugin_version_seq;
+create sequence if not exists public.plugin_field_seq;
+create sequence if not exists public.plugin_field_value_seq;
+
+ALTER TABLE public.site ADD COLUMN IF NOT EXISTS replace_urls_in_db boolean NOT NULL DEFAULT false;
+CREATE TABLE IF NOT EXISTS public.plugin
+(
+    id               numeric(18)              NOT NULL default nextval('plugin_seq')
+       constraint pk_plugin primary key,
+    name             varchar(255)             NOT NULL,
+    description      text                     NULL,
+    code             varchar(50)              NULL,
+    contract         text                     NULL,
+    version          varchar(10)              NULL,
+    "order"          int                      NOT NULL DEFAULT (0),
+    service_url      varchar(512)             NULL,
+    instance_key     varchar(50)              NULL,
+    created          timestamp with time zone NOT NULL DEFAULT (now()),
+    modified         timestamp with time zone NOT NULL DEFAULT (now()),
+    last_modified_by numeric(18)              NOT NULL
+        constraint fk_plugin_last_modified_by references public.users (user_id)
+)
+
+
+CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_name ON plugin(name);
+
+-- drop table public.plugin
+
+CREATE TABLE IF NOT EXISTS public.plugin_field
+(
+    id            numeric(18)  NOT NULL default nextval('plugin_field_seq')
+        constraint pk_plugin_field primary key,
+    plugin_id     numeric(18)  NOT NULL
+        constraint fk_plugin_field_plugin_id references public.plugin (id) on delete cascade,
+    name          varchar(255) NOT NULL,
+    description   text         NULL,
+    value_type    varchar(50)  NOT NULL,
+    relation_type varchar(50)  NOT NULL,
+    "order"       int          NOT NULL default (0)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_field_name ON plugin_field(plugin_id, name);
+--drop index ix_plugin_field_name
+CREATE TABLE IF NOT EXISTS public.plugin_field_value
+(
+    id                   numeric(18) NOT NULL default nextval('plugin_field_value_seq')
+        constraint pk_plugin_field_value primary key,
+    plugin_field_id      numeric(18) NOT NULL
+        constraint fk_plugin_field_value_plugin_field_id references public.plugin_field (id) on delete cascade,
+    content_id           numeric(18) NULL
+        constraint fk_plugin_field_value_content_id references public.content (content_id),
+    site_id              numeric(18) NULL
+        constraint fk_plugin_field_value_site_id references public.site (site_id),
+    content_attribute_id numeric(18) NULL
+        constraint fk_plugin_field_value_content_attribute_id references public.content_attribute (attribute_id) ON DELETE CASCADE,
+    value                text        NULL
+)
+
+CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_field_value_content_id ON plugin_field_value(plugin_field_id, content_id)
+    WHERE content_id is not null;
+
+CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_field_value_site_id ON plugin_field_value(plugin_field_id, site_id)
+    WHERE site_id is not null;
+
+--drop table plugin_field_value
+CREATE TABLE IF NOT EXISTS public.plugin_version
+(
+    id               numeric(18)              NOT NULL default nextval('plugin_version_seq')
+        constraint pk_plugin_version primary key,
+    plugin_id        numeric(18)              NOT NULL
+        constraint fk_plugin_version_plugin_id references plugin(id) on delete cascade,
+    contract         text                     NOT NULL,
+    created          timestamp with time zone NOT NULL DEFAULT (now()),
+    modified         timestamp with time zone NOT NULL DEFAULT (now()),
+    last_modified_by numeric(18)              NOT NULL
+        constraint fk_plugin_version_last_modified_by references public.users (user_id)
+
+);
+
+-- drop table public.plugin_version
+
+
+ALTER TABLE public.content_item_schedule 
+    ADD COLUMN IF NOT EXISTS start_date timestamp NULL;
+
+ALTER TABLE public.content_item_schedule 
+    ADD COLUMN IF NOT EXISTS end_date timestamp NULL;
+
+
+ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS TRACE_IMPORT boolean NOT NULL DEFAULT false;
+ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
+
+ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
+ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
+ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS use_direction_controls boolean NOT NULL DEFAULT false;
+
+
+ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
+
+ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS STATUS_TYPE_ID NUMERIC NULL;
+ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS ARCHIVE BOOLEAN NULL;
+ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS VISIBLE BOOLEAN NULL;
+
+
+ALTER TABLE public.user_group ADD COLUMN IF NOT EXISTS can_manage_scheduled_tasks boolean NOT NULL DEFAULT false;
 create or replace function process_before_content_delete() returns trigger
     language plpgsql
 as
@@ -4302,6 +4408,231 @@ $BODY$;
 ALTER FUNCTION public.process_item_to_item_insert()
     OWNER TO postgres;
 
+-- FUNCTION: public.process_plugin_field_value_delete()
+
+-- DROP FUNCTION public.process_plugin_field_value_delete();
+
+CREATE OR REPLACE FUNCTION public.process_plugin_field_value_delete()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+	DECLARE
+	    plugin_ids int[];
+	    processed int[];
+	    plugin_field_ids int[];
+	    site_ids int[];
+	    content_ids int[];
+	    content_attribute_ids int[];
+	    ids int[];
+        field plugin_field;
+		pid int;
+	    field_id int;
+		source text;
+		sql_template text;
+	    sql text;
+	    table_name text;
+    BEGIN
+		plugin_ids := COALESCE(array_agg(distinct(p.plugin_id)), ARRAY[]::int[]) from old_table d
+		    inner join plugin_field p on d.plugin_field_id = p.id;
+		RAISE NOTICE 'plugin ids: %', plugin_ids;
+
+		processed = ARRAY[]::int[];
+        FOREACH pid in array plugin_ids
+		LOOP
+            plugin_field_ids := array_agg(distinct(p.id)) from plugin_field p where p.plugin_id = pid;
+            RAISE NOTICE 'plugin field ids: %', plugin_field_ids;
+
+            site_ids := array_agg(distinct(d.site_id)) from old_table d
+                where d.plugin_field_id = ANY(plugin_field_ids) and d.site_id is not null
+                and not exists(
+                    select * from plugin_field_value v where d.site_id = v.site_id
+                    and v.PLUGIN_FIELD_ID = ANY(plugin_field_ids)
+                );
+            RAISE NOTICE 'site ids: %', site_ids;
+
+            content_ids := array_agg(distinct(d.content_id)) from old_table d
+                where d.plugin_field_id = ANY(plugin_field_ids) and d.content_id is not null
+                and not exists(
+                    select * from plugin_field_value v where d.content_id = v.content_id
+                    and v.PLUGIN_FIELD_ID = ANY(plugin_field_ids)
+                );
+            RAISE NOTICE 'content ids: %', content_ids;
+
+            content_attribute_ids := array_agg(distinct(d.content_attribute_id)) from old_table d
+                where d.plugin_field_id = ANY(plugin_field_ids) and d.content_attribute_id is not null
+                and not exists(
+                    select * from plugin_field_value v where d.content_attribute_id = v.content_attribute_id
+                    and v.PLUGIN_FIELD_ID = ANY(plugin_field_ids)
+                );
+            RAISE NOTICE 'field ids: %', content_attribute_ids;
+
+			sql_template := 'delete from %s where id in (select id from unnest($1) i(id))';
+
+            IF site_ids is not null THEN
+                table_name := 'plugin_site_' || pid;
+                sql := FORMAT(sql_template, table_name);
+                RAISE NOTICE '%', sql;
+                execute sql using site_ids;
+            END IF;
+
+            IF content_ids is not null THEN
+                table_name := 'plugin_content_' || pid;
+                sql := FORMAT(sql_template, table_name);
+			    RAISE NOTICE '%', sql;
+                execute sql using content_ids;
+            END IF;
+
+            IF content_attribute_ids is not null THEN
+                table_name := 'plugin_content_attribute_' || pid;
+                sql := FORMAT(sql_template, table_name);
+			    RAISE NOTICE '%', sql;
+                execute sql using content_attribute_ids;
+            END IF;
+
+            ids := array_agg(d.id) from old_table d where d.plugin_field_id = ANY(plugin_field_ids)
+            and (d.site_id = ANY(site_ids) or d.content_id = ANY(content_ids)
+                    or d.content_attribute_id = ANY(content_attribute_ids));
+            processed := array_cat(processed, ids);
+        END LOOP;
+
+		Raise notice 'processed: %', processed;
+
+		plugin_field_ids := COALESCE(array_agg(distinct(d.plugin_field_id)), ARRAY[]::int[])from old_table d
+                            where NOT(d.id = ANY(processed));
+		Raise notice 'plugin field ids: %', plugin_field_ids;
+
+		FOREACH field_id in array plugin_field_ids
+		LOOP
+		    ids := array_agg(coalesce(d.site_id, d.content_id, d.content_attribute_id)) from old_table d
+		    where d.plugin_field_id = field_id;
+            RAISE NOTICE 'ids: %', ids;
+
+		    field := row(p.*) from plugin_field p where p.id = field_id;
+		    source := LOWER(field.relation_type);
+            table_name := 'plugin_' || source || '_' || pid;
+            sql_template := 'update %s p set "%s" = NULL from plugin_field_value v ' ||
+                'where v.id in (select id from unnest($1) i(id)) ';
+            sql := FORMAT(sql_template, table_name, LOWER(field.name), source);
+			RAISE NOTICE '%', sql;
+            execute sql using ids;
+        END LOOP;
+
+		RETURN NULL;
+	END
+$BODY$;
+
+
+ALTER FUNCTION public.process_plugin_field_value_delete()
+    OWNER TO postgres;
+
+-- FUNCTION: public.process_plugin_field_value_upsert()
+
+-- DROP FUNCTION public.process_plugin_field_value_upsert();
+
+CREATE OR REPLACE FUNCTION public.process_plugin_field_value_upsert()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+	DECLARE
+	    plugin_ids int[];
+	    plugin_field_ids int[];
+	    site_ids int[];
+	    content_ids int[];
+	    content_attribute_ids int[];
+	    ids int[];
+        field plugin_field;
+		pid int;
+	    field_id int;
+		source text;
+		sql_template text;
+	    sql text;
+	    table_name text;
+	    column_type text;
+    BEGIN
+		plugin_ids := COALESCE(array_agg(distinct(p.plugin_id)), ARRAY[]::int[]) from new_table i
+		    inner join plugin_field p on i.plugin_field_id = p.id;
+		RAISE NOTICE 'plugin ids: %', plugin_ids;
+
+        FOREACH pid in array plugin_ids
+		LOOP
+            plugin_field_ids := array_agg(distinct(i.plugin_field_id)) from new_table i
+                inner join plugin_field p on i.plugin_field_id = p.id
+                where p.plugin_id = pid;
+
+            site_ids := array_agg(distinct(i.site_id)) from new_table i
+                where i.plugin_field_id = ANY(plugin_field_ids) and i.site_id is not null;
+            RAISE NOTICE 'site ids: %', site_ids;
+
+            content_ids := array_agg(distinct(i.content_id)) from new_table i
+                where i.plugin_field_id = ANY(plugin_field_ids) and i.content_id is not null;
+            RAISE NOTICE 'content ids: %', content_ids;
+
+            content_attribute_ids := array_agg(distinct(i.content_attribute_id)) from new_table i
+                where i.plugin_field_id = ANY(plugin_field_ids) and i.content_attribute_id is not null;
+            RAISE NOTICE 'field ids: %', content_attribute_ids;
+
+			sql_template := 'insert into %s(id) select id from unnest($1) i(id) ' ||
+			       'where not exists(select * from %s i2 where i.id = i2.id)';
+
+            IF site_ids is not null THEN
+                table_name := 'plugin_site_' || pid;
+                sql := FORMAT(sql_template, table_name, table_name);
+                RAISE NOTICE '%', sql;
+                execute sql using site_ids;
+            END IF;
+
+            IF content_ids is not null THEN
+                table_name := 'plugin_content_' || pid;
+                sql := FORMAT(sql_template, table_name, table_name);
+			    RAISE NOTICE '%', sql;
+                execute sql using content_ids;
+            END IF;
+
+            IF content_attribute_ids is not null THEN
+                table_name := 'plugin_content_attribute_' || pid;
+                sql := FORMAT(sql_template, table_name, table_name);
+			    RAISE NOTICE '%', sql;
+                execute sql using content_attribute_ids;
+            END IF;
+
+        END LOOP;
+
+		plugin_field_ids := COALESCE(array_agg(distinct(plugin_field_id)), ARRAY[]::int[]) from new_table;
+		Raise notice 'plugin field ids: %', plugin_field_ids;
+
+		FOREACH field_id in array plugin_field_ids
+		LOOP
+		    ids := array_agg(i.id) from new_table i where i.plugin_field_id = plugin_field_id;
+            RAISE NOTICE 'ids: %', ids;
+		    field := row(p.*) from plugin_field p where p.id = field_id;
+		    column_type := LOWER(field.value_type);
+		    column_type := CASE
+		        WHEN column_type = 'bool' THEN 'boolean'
+		        WHEN column_type = 'string' THEN 'text'
+		        WHEN column_type = 'datetime' THEN 'timestamp with time zone'
+		        ELSE column_type
+		    END;
+		    source := LOWER(field.relation_type);
+            table_name := 'plugin_' || source || '_' || pid;
+            sql_template := 'update %s p set "%s" = v.value::%s from plugin_field_value v ' ||
+                'where p.id = v.%s_id and v.id in (select id from unnest($1) i(id)) ';
+
+            sql := FORMAT(sql_template, table_name, LOWER(field.name), column_type, source);
+			RAISE NOTICE '%', sql;
+            execute sql using ids;
+        END LOOP;
+
+		RETURN NULL;
+	END
+$BODY$;
+
+ALTER FUNCTION public.process_plugin_field_value_upsert()
+    OWNER TO postgres;
+
 CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 	DECLARE 
 		salt bigint;
@@ -4418,6 +4749,19 @@ END $$;
 
 
 DO $$ BEGIN
+    create trigger td_plugin_field_value
+        after delete
+        on plugin_field_value
+        REFERENCING OLD table as old_table
+        FOR EACH STATEMENT
+    execute procedure process_plugin_field_value_delete();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+DO $$ BEGIN
     create trigger tiu_update_hash
         before insert or update
         on users
@@ -4489,12 +4833,37 @@ END $$;
 
 
 DO $$ BEGIN
+    create trigger ti_plugin_field_value
+        after insert
+        on plugin_field_value
+        REFERENCING NEW TABLE AS new_table
+        FOR EACH STATEMENT
+    execute procedure process_plugin_field_value_upsert();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
     create trigger tu_content_data_fill
         after update
         on content_data
         REFERENCING NEW TABLE AS new_table OLD table as old_table
         FOR EACH STATEMENT
     execute procedure process_content_data_upsert();
+
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+
+DO $$ BEGIN
+    create trigger tu_plugin_field_value
+        after update
+        on plugin_field_value
+        REFERENCING NEW TABLE AS new_table OLD table as old_table
+        FOR EACH STATEMENT
+    execute procedure process_plugin_field_value_upsert();
 
 EXCEPTION
     WHEN duplicate_object THEN null;
@@ -4551,59 +4920,255 @@ BEGIN
 	end loop;
 END;
 $$;
-ALTER TABLE public.site ADD COLUMN IF NOT EXISTS replace_urls_in_db boolean NOT NULL DEFAULT false;
-ALTER TABLE public.content_item_schedule 
-    ADD COLUMN IF NOT EXISTS start_date timestamp NULL;
+insert into entity_type(name, code, parent_id, "order", source, id_field, title_field, order_field)
+values ('QP Plugin', 'plugin', (select id from entity_type where code = 'db'), 7, 'PLUGIN', 'ID', 'NAME', '[ORDER]')
+on conflict do nothing;
 
-ALTER TABLE public.content_item_schedule 
-    ADD COLUMN IF NOT EXISTS end_date timestamp NULL;
-
-
-ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS TRACE_IMPORT boolean NOT NULL DEFAULT false;
-ALTER TABLE CONTENT_ATTRIBUTE ADD COLUMN IF NOT EXISTS DENY_PAST_DATES boolean NOT NULL DEFAULT false;
-
-ALTER TABLE CONTENT ADD COLUMN IF NOT EXISTS TRACE_IMPORT_SCRIPT text NULL;
-ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL DEFAULT false;
-ALTER TABLE public.workflow ADD COLUMN IF NOT EXISTS use_direction_controls boolean NOT NULL DEFAULT false;
+insert into entity_type(name, code, parent_id, source, id_field, parent_id_field, disabled)
+values ('QP Plugin Version', 'plugin_version', (select id from entity_type where code = 'plugin'), 'PLUGIN_VERSION', 'ID', 'PARENT_ID', true)
+on conflict do nothing;
 
 
-ALTER TABLE public.status_type ADD COLUMN IF NOT EXISTS ALIAS TEXT NULL;
-
-ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS STATUS_TYPE_ID NUMERIC NULL;
-ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS ARCHIVE BOOLEAN NULL;
-ALTER TABLE public.content_item_version ADD COLUMN IF NOT EXISTS VISIBLE BOOLEAN NULL;
-
-
+--select * from ENTITY_TYPE
 SELECT setval('backend_action_seq', cast(COALESCE((SELECT MAX(id)+1 FROM backend_action), 1) as int), false) into tmp_val_tbl;
 drop table tmp_val_tbl;
 
 insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
 select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
        'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', true
-where not exists(select * from backend_action where name = 'Article Live Properties');
-
-insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
-select (select id from context_menu where code = 'article'), (select id from backend_action where code = 'view_live_article'),
-       'Live Properties', 52, 'properties.gif'
-where not exists(select * from context_menu_item where context_menu_id = any(select id from context_menu where code = 'article') and name = 'Live Properties');
+on conflict do nothing;
 
 insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
-select (select id from backend_action where code = 'view_live_article'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
-where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'view_live_article'));
+select (select id from backend_action where code = 'view_live_article'), (select id from backend_action where code = 'refresh_article'),
+       'Refresh', 'refresh.gif', 10
+on conflict do nothing;
 
 insert into backend_action(type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
 select (select id from action_type where code = 'read'), (select id from entity_type where code = 'article'),
        'Compare Article Live version with Current', 'Compare Live version with Current', 'compare_article_live_with_current', '~/ArticleVersion/CompareLiveWithCurrent/', true
-where not exists(select * from backend_action where name = 'Compare Article Live version with Current');
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+select (select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'),
+       'Refresh', 'refresh.gif', 10
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, short_name, code, controller_action_url, is_interface)
+values ((select id from action_type where code = 'copy'), (select id from entity_type where code = 'custom_action'),
+        'Create Like Custom Action', 'Create Like', N'copy_custom_action', '~/CustomAction/Copy/', false)
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, code, controller_action_url, is_window, window_width, window_height, is_multistep, has_settings)
+values ((select id from action_type where code = 'export'), (select id from entity_type where code = 'archive_article'),
+       'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', true, 600, 400, true, true)
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, code, controller_action_url, is_window, window_width, window_height, is_multistep, has_settings)
+values ((select id from action_type where code = 'multiple_export'), (select id from entity_type where code = 'archive_article'),
+       'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', true, 600, 400, true, true)
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, short_name, code, is_interface)
+values ((select id from action_type where code = 'select'), (select id from entity_type where code = 'article'),
+        'Select Child Articles', 'Select Child Articles', 'select_child_articles', false)
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, short_name, code, is_interface)
+values ((select id from action_type where code = 'select'), (select id from entity_type where code = 'article'),
+        'Unselect Child Articles', 'Unselect Child Articles', 'unselect_child_articles', false)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id, controller_action_url, is_interface, default_view_type_id)
+values('QP Plugins', 'list_plugin', (select id from action_type where code = 'list'), (select id from entity_type where code = 'plugin'),
+       '~/QpPlugin/Index/',  true, (select id from view_type where code = 'list'))
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id, controller_action_url, is_interface)
+values('New QP Plugin', 'new_plugin', (select id from action_type where code = 'new'), (select id from entity_type where code = 'plugin'),
+       '~/QpPlugin/New/', true)
+on conflict do nothing;
+
+insert into backend_action(name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface)
+values('QP Plugin Properties', 'Properties', 'edit_plugin', (select id from action_type where code = 'read'), (select id from entity_type where code = 'plugin'),
+       '~/QpPlugin/Properties/', true)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id, is_interface)
+values('Update QP Plugin', 'update_plugin', (select id from action_type where code = 'update'), (select id from entity_type where code = 'plugin'), false)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id)
+values('Refresh QP Plugin', 'refresh_plugin', (select id from action_type where code = 'refresh'), (select id from entity_type where code = 'plugin'))
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id, confirm_phrase, controller_action_url, has_pre_action)
+values('Remove QP Plugin', 'remove_plugin', (select id from action_type where code = 'remove'), (select id from entity_type where code = 'plugin'),
+       'Do you really want to remove this QP plugin?', '~/QpPlugin/Remove/', false)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id, is_interface)
+values('Save QP Plugin', 'save_plugin', (select id from action_type where code = 'save'), (select id from entity_type where code = 'plugin'), false)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id, is_interface)
+values('Refresh QP Plugins', 'refresh_plugins', (select id from action_type where code = 'refresh'), (select id from entity_type where code = 'plugin'), true)
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, code, controller_action_url, is_interface)
+VALUES((select id from action_type where code = 'read'), (select id from entity_type where code = 'db'), 'Scheduled Tasks', 'scheduled_tasks', '~/Home/ScheduledTasks/', true)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id)
+values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', (select id from action_type where code = 'refresh'), (select id from entity_type where code = 'db'))
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+select (select id from backend_action where code = 'view_live_article'), (select id from backend_action where code = 'refresh_article'),
+       'Refresh', 'refresh.gif', 10
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+select (select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'),
+       'Refresh', 'refresh.gif', 10
+on conflict do nothing;
+
+insert into action_toolbar_button (parent_action_id, action_id, name, "order", icon)
+values ((select id from backend_action where code = 'list_archive_article'), (select id from backend_action where code = 'multiple_export_archive_article'),
+        'Export', 15, 'other/export.gif')
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+values ((select id from backend_action where code = 'view_live_article'), (select id from backend_action where code = 'refresh_article'),
+        'Refresh', 'refresh.gif', 10)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
+values ((select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'),
+        'Refresh', 'refresh.gif', 10)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'edit_plugin'), (select id from backend_action where code = 'update_plugin'),
+        'Save', 'save.gif', NULL, 1, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'edit_plugin'), (select id from backend_action where code = 'remove_plugin'),
+        'Remove', 'delete.gif', NULL, 2, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'edit_plugin'), (select id from backend_action where code = 'refresh_plugin'),
+        'Refresh', 'refresh.gif', NULL, 3, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'new_plugin'), (select id from backend_action where code = 'save_plugin'),
+        'Save', 'save.gif', NULL, 1, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'new_plugin'), (select id from backend_action where code = 'refresh_plugin'),
+        'Refresh', 'refresh.gif', NULL, 2, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'list_plugin'), (select id from backend_action where code = 'edit_plugin'),
+        'Properties', 'properties.gif', NULL, 1, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'list_plugin'), (select id from backend_action where code = 'remove_plugin'),
+        'Remove', 'delete.gif', NULL, 2, true)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order", is_command)
+values ((select id from backend_action where code = 'list_plugin'), (select id from backend_action where code = 'refresh_plugin'),
+        'Refresh', 'refresh.gif', NULL, 3, false)
+on conflict do nothing;
+
+insert into action_toolbar_button (parent_action_id, action_id, icon, "order", name)
+values ((select id from backend_action where code = 'scheduled_tasks'), (select id from backend_action where code = 'refresh_scheduled_tasks'),
+        'refresh.gif', 100, 'Refresh')
+on conflict do nothing;
+
+
+
+
+insert into context_menu (CODE) values ('plugins')
+on conflict do nothing;
+
+insert into context_menu (CODE) values ('plugin')
+on conflict do nothing;
+
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+select (select id from context_menu where code = 'article'), (select id from backend_action where code = 'view_live_article'),
+       'Live Properties', 52, 'properties.gif'
+on conflict do nothing;
 
 insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
 select (select id from context_menu where code = 'article'), (select id from backend_action where code = 'compare_article_live_with_current'),
        'Compare Live version with Current', 53, 'compare.gif'
-where not exists(select * from context_menu_item where context_menu_id = any(select id from context_menu where code = 'article') and name = 'Compare Live version with Current');
+on conflict do nothing;
 
-insert into action_toolbar_button(parent_action_id, action_id, name, icon, "order")
-select (select id from backend_action where code = 'compare_article_live_with_current'), (select id from backend_action where code = 'refresh_article'), 'Refresh', 'refresh.gif', 10
-where not exists(select * from action_toolbar_button where parent_action_id = any(select id from backend_action where code = 'compare_article_live_with_current'));
+insert into context_menu_item(context_menu_id, action_id, name, "order",  icon)
+values ((select id from context_menu where code = 'virtual_article'), (select id from backend_action where code = 'unselect_child_articles'),
+        'Unselect Child Articles', 90, 'deselect_all.gif')
+on conflict do nothing;        
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+values ((select id from context_menu where code = 'virtual_article'), (select id from backend_action where code = 'select_child_articles'),
+        'Select Child Articles', 80, 'select_all.gif')
+on conflict do nothing;        
+
+insert into context_menu_item (context_menu_id, action_id, name, "order", icon, bottom_separator)
+values ((select id from context_menu where code = 'custom_action'), (select id from backend_action where code = 'copy_custom_action'),
+        'Create Like', 5, 'create_like.gif', true)
+on conflict do nothing;
+
+insert into context_menu_item (context_menu_id, action_id, name, "order", icon, bottom_separator)
+values ((select id from context_menu where code = 'article'), (select id from backend_action where code = 'select_child_articles'),
+        'Select child articles', 80, 'select_all.gif', false)
+on conflict do nothing;
+
+insert into context_menu_item (context_menu_id, action_id, name, "order", icon, bottom_separator)
+values ((select id from context_menu where code = 'article'), (select id from backend_action where code = 'unselect_child_articles'),
+        'Unselect child articles', 90, 'deselect_all.gif', false)
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon, bottom_separator)
+values((select id from context_menu where code = 'plugins'), (select id from backend_action where code = 'refresh_plugins'),
+       'Refresh', 1, 'refresh.gif', true)
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+values((select id from context_menu where code = 'plugins'), (select id from backend_action where code = 'new_plugin'),
+       'New QP Plugin', 2, 'add.gif')
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon, bottom_separator)
+values((select id from context_menu where code = 'plugin'), (select id from backend_action where code = 'remove_plugin'),
+       'Remove', 2, 'delete.gif', true)
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+values((select id from context_menu where code = 'plugin'), (select id from backend_action where code = 'edit_plugin'),
+       'Properties', 3, 'properties.gif')
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order")
+values((select id from context_menu where code = 'db'), (select id from backend_action where code = 'scheduled_tasks'),
+       'Scheduled Tasks', 90)
+on conflict do nothing;
+
+update entity_type
+set
+    folder_default_action_id = (select id from backend_action where code = 'list_plugin'),
+    default_action_id = (select id from backend_action where code = 'edit_plugin'),
+    context_menu_id = (select id from context_menu where code = 'plugin'),
+    folder_context_menu_id = (select id from context_menu where code = 'plugins')
+where code = 'plugin';
 
 INSERT INTO content_item_ft (content_item_id, ft_data)
 SELECT ci.content_item_id, qp_get_article_tsvector(ci.content_item_id::int) from content_item ci
@@ -4626,15 +5191,3 @@ where h.version_id is not null and v.content_item_version_id = h.version_id
 
 update workflow set is_default = true where workflow_name = 'general' and not exists (select * from workflow where is_default);
 
-ALTER TABLE public.user_group ADD COLUMN IF NOT EXISTS can_manage_scheduled_tasks boolean NOT NULL DEFAULT false;
-insert into backend_action (type_id, entity_type_id, name, code, controller_action_url, is_interface)
-VALUES(public.qp_action_type_id('read'), public.qp_entity_type_id('db'), 'Scheduled Tasks', 'scheduled_tasks', '~/Home/ScheduledTasks/', true) ON CONFLICT DO NOTHING;
-
-INSERT INTO context_menu_item(context_menu_id, action_id, name, "order")
-VALUES(public.qp_context_menu_id('db'), public.qp_action_id('scheduled_tasks'), 'Scheduled Tasks', 90) ON CONFLICT DO NOTHING;
-
-insert into backend_action(name, code, type_id, entity_type_id)
-values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', public.qp_action_type_id('refresh'), public.qp_entity_type_id('db')) ON CONFLICT DO NOTHING;
-
-insert into action_toolbar_button (parent_action_id, action_id, icon, "order", name)
-values (public.qp_action_id('scheduled_tasks'), public.qp_action_id('refresh_scheduled_tasks'), 'refresh.gif', 100, 'Refresh') ON CONFLICT DO NOTHING;

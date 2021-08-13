@@ -9,6 +9,111 @@ begin
 end
 GO
 
+IF NOT EXISTS(select * from sys.tables where name = 'PLUGIN')
+BEGIN
+	CREATE TABLE dbo.PLUGIN(
+		ID numeric(18,0) IDENTITY(1,1) PRIMARY KEY,
+		NAME nvarchar(255) NOT NULL,
+		DESCRIPTION nvarchar(max) NULL,
+		CODE nvarchar(50) NULL,
+        CONTRACT nvarchar(max) NULL,
+		VERSION char(10) NULL,
+	    [ORDER] int NOT NULL DEFAULT (0),
+		SERVICE_URL nvarchar(512) NULL,
+		INSTANCE_KEY nvarchar(50) NULL,
+	    CREATED datetime NOT NULL  DEFAULT (getdate()),
+	    MODIFIED datetime NOT NULL DEFAULT (getdate()),
+	    LAST_MODIFIED_BY numeric(18, 0) NOT NULL
+	        CONSTRAINT FK_PLUGIN_LAST_MODIFIED_BY FOREIGN KEY REFERENCES dbo.USERS (USER_ID)
+	) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS(select * from sys.indexes where name = 'IX_PLUGIN_NAME' and [object_id] = object_id('PLUGIN'))
+BEGIN
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_NAME ON PLUGIN(NAME)
+    drop index plugin.IX_PLUGIN_FIELD_NAME
+END
+GO
+
+--drop table plugin
+
+
+
+
+if not exists(select * from sys.tables where name = 'PLUGIN_VERSION')
+BEGIN
+	CREATE TABLE dbo.PLUGIN_VERSION(
+		ID numeric(18,0) IDENTITY(1,1) PRIMARY KEY,
+		PLUGIN_ID numeric(18,0) NOT NULL
+		    CONSTRAINT FK_PLUGIN_VERSION_PLUGIN_ID FOREIGN KEY REFERENCES dbo.PLUGIN (ID) ON DELETE CASCADE,
+        CONTRACT nvarchar(max) NOT NULL,
+	    CREATED datetime NOT NULL,
+	    MODIFIED datetime NOT NULL,
+	    LAST_MODIFIED_BY numeric(18, 0) NOT NULL
+	        CONSTRAINT FK_PLUGIN_VERSION_LAST_MODIFIED_BY FOREIGN KEY REFERENCES dbo.USERS (USER_ID)
+	) ON [PRIMARY]
+
+END
+GO
+--drop table plugin_version
+if not exists(select * from sys.tables where name = 'PLUGIN_FIELD')
+BEGIN
+	CREATE TABLE dbo.PLUGIN_FIELD(
+		ID numeric(18,0) IDENTITY(1,1) PRIMARY KEY,
+		PLUGIN_ID numeric(18,0) NOT NULL
+		    CONSTRAINT FK_PLUGIN_FIELD_PLUGIN_ID FOREIGN KEY REFERENCES dbo.PLUGIN (ID) ON DELETE CASCADE,
+        NAME nvarchar(255) NOT NULL,
+        DESCRIPTION nvarchar(max) NULL,
+	    VALUE_TYPE nvarchar(50) NOT NULL,
+	    RELATION_TYPE nvarchar(50) NOT NULL,
+	    [ORDER] int NOT NULL DEFAULT (0),
+	) ON [PRIMARY]
+
+END
+GO
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_NAME' and [object_id] = object_id('PLUGIN_FIELD'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_NAME ON PLUGIN_FIELD(PLUGIN_ID, NAME)
+end
+GO
+--drop table plugin_field
+if not exists(select * from sys.tables where name = 'PLUGIN_FIELD_VALUE')
+BEGIN
+	CREATE TABLE dbo.PLUGIN_FIELD_VALUE(
+		ID numeric(18,0) IDENTITY(1,1) PRIMARY KEY,
+		PLUGIN_FIELD_ID numeric(18,0) NOT NULL
+		    CONSTRAINT FK_PLUGIN_FIELD_VALUE_PLUGIN_FIELD_ID FOREIGN KEY REFERENCES dbo.PLUGIN_FIELD (ID) ON DELETE CASCADE,
+		CONTENT_ID numeric(18,0) NULL
+		    CONSTRAINT FK_PLUGIN_FIELD_VALUE_CONTENT_ID FOREIGN KEY REFERENCES dbo.CONTENT (CONTENT_ID),
+		SITE_ID numeric(18,0) NULL
+		    CONSTRAINT FK_PLUGIN_FIELD_VALUE_SITE_ID FOREIGN KEY REFERENCES dbo.SITE (SITE_ID),
+		CONTENT_ATTRIBUTE_ID numeric(18,0) NULL
+		    CONSTRAINT FK_PLUGIN_FIELD_VALUE_CONTENT_ATTRIBUTE_ID FOREIGN KEY REFERENCES dbo.CONTENT_ATTRIBUTE (ATTRIBUTE_ID) ON DELETE CASCADE,
+        VALUE nvarchar(max) NULL
+	) ON [PRIMARY]
+
+END
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_VALUE_CONTENT_ID' and [object_id] = object_id('PLUGIN_FIELD_VALUE'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_VALUE_CONTENT_ID ON PLUGIN_FIELD_VALUE(PLUGIN_FIELD_ID, CONTENT_ID)
+        WHERE CONTENT_ID IS NOT NULL;
+end
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_VALUE_SITE_ID' and [object_id] = object_id('PLUGIN_FIELD_VALUE'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_VALUE_SITE_ID ON PLUGIN_FIELD_VALUE(PLUGIN_FIELD_ID, SITE_ID)
+        WHERE SITE_ID IS NOT NULL;
+end
+
+if not exists(select * from sys.indexes where name = 'IX_PLUGIN_FIELD_VALUE_CONTENT_ATTRIBUTE_ID' and [object_id] = object_id('PLUGIN_FIELD_VALUE'))
+begin
+    CREATE UNIQUE INDEX IX_PLUGIN_FIELD_VALUE_CONTENT_ATTRIBUTE_ID ON PLUGIN_FIELD_VALUE(PLUGIN_FIELD_ID, CONTENT_ATTRIBUTE_ID)
+        WHERE CONTENT_ATTRIBUTE_ID IS NOT NULL;
+end
+--drop table plugin_field_value
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 BEGIN
   CREATE TABLE dbo.XML_DB_UPDATE (
@@ -358,6 +463,11 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[USERS]') AND name = 'MUST_CHANGE_PASSWORD')
   ALTER TABLE [dbo].[USERS] ADD [MUST_CHANGE_PASSWORD] [bit] NOT NULL CONSTRAINT DF_MUST_CHANGE_PASSWORD DEFAULT 0 
 
+if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'CAN_MANAGE_SCHEDULED_TASKS' and TABLE_NAME = 'USER_GROUP')
+    alter table [USER_GROUP]
+    add [CAN_MANAGE_SCHEDULED_TASKS] bit NOT NULL CONSTRAINT [DF_USER_GROUP_CAN_MANAGE_SCHEDULED_TASKS] DEFAULT ((0))
+GO
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VERSION_CONTENT_DATA' AND COLUMN_NAME = 'O2M_DATA')
 BEGIN
     ALTER TABLE VERSION_CONTENT_DATA ADD O2M_DATA NUMERIC(18, 0) NULL
@@ -434,6 +544,30 @@ CREATE VIEW dbo.USER_GROUP_BIND_RECURSIVE AS
 	FROM UserGroupBind
 GO  
 
+ALTER VIEW [dbo].[USER_GROUP_TREE]
+WITH SCHEMABINDING
+AS
+select ug.[GROUP_ID]
+      ,ug.[GROUP_NAME]
+      ,ug.[DESCRIPTION]
+      ,ug.[CREATED]
+      ,ug.[MODIFIED]
+      ,ug.[LAST_MODIFIED_BY]
+      ,U.[LOGIN] as LAST_MODIFIED_BY_LOGIN
+      ,ug.[shared_content_items]
+      ,ug.[nt_group]
+      ,ug.[ad_sid]
+      ,ug.[BUILT_IN]
+      ,ug.[READONLY]
+      ,ug.[use_parallel_workflow]
+      ,ug.[CAN_UNLOCK_ITEMS]
+      ,ug.[CAN_MANAGE_SCHEDULED_TASKS]
+      ,gtg.Parent_Group_Id AS PARENT_GROUP_ID
+from dbo.USER_GROUP ug
+left join dbo.Group_To_Group gtg on ug.GROUP_ID = gtg.Child_Group_Id
+join dbo.USERS U ON U.[USER_ID] = ug.LAST_MODIFIED_BY
+
+GO
 exec qp_drop_existing 'get_schedule_date', 'IsScalarFunction'
 GO
 
@@ -3456,6 +3590,134 @@ BEGIN
 END
 GO
 
+EXEC qp_drop_existing '[dbo].[td_plugin_field_value]', 'IsTrigger'
+GO
+
+CREATE TRIGGER [dbo].[td_plugin_field_value] ON [dbo].[PLUGIN_FIELD_VALUE] AFTER DELETE
+AS
+BEGIN
+
+		declare @i int, @count int
+		declare @plugin_id numeric
+		declare @sql nvarchar(max)
+		declare @field_id numeric, @field_name nvarchar(255)
+		declare @relation_type nvarchar(50), @value_type nvarchar(50)
+		declare @table_name nvarchar(255), @plugin_table_name nvarchar(255)
+
+		declare @plugins table(
+			id numeric identity(1,1) primary key,
+		    plugin_id numeric
+        )
+
+        declare @fields table (
+			id numeric identity(1,1) primary key,
+			field_id numeric
+        )
+
+		declare @site_ids [Ids], @content_ids [Ids], @content_attribute_ids [Ids], @ids [Ids]
+		declare @field_ids [Ids], @processed [Ids]
+
+        insert into @plugins(plugin_id)
+        select distinct plugin_id from deleted i inner join PLUGIN_FIELD p on i.PLUGIN_FIELD_ID = p.ID
+
+		select @count = count(*) from @plugins
+		set @i = 1
+		while @i <= @count
+		begin
+            select @plugin_id = plugin_id from @plugins where id = @i
+            insert into @field_ids select id from PLUGIN_FIELD where plugin_id = @plugin_id
+
+            insert into @site_ids
+            select distinct site_id from deleted d
+            where d.PLUGIN_FIELD_ID in (select id from @field_ids) and d.site_id is not null
+            and not exists(
+                select * from plugin_field_value v where d.site_id = v.site_id
+                    and v.PLUGIN_FIELD_ID in (select id from @field_ids)
+            )
+
+            insert into @content_ids
+            select distinct content_id from deleted d
+            where d.PLUGIN_FIELD_ID in (select id from @field_ids) and d.content_id is not null
+            and not exists(
+                select * from plugin_field_value v where d.content_id = v.content_id
+                    and v.PLUGIN_FIELD_ID in (select id from @field_ids)
+            )
+
+            insert into @content_attribute_ids
+            select distinct content_attribute_id from deleted d
+            where d.PLUGIN_FIELD_ID in (select id from @field_ids) and d.content_attribute_id is not null
+            and not exists(
+                select * from plugin_field_value v where d.content_attribute_id = v.content_attribute_id
+                    and v.PLUGIN_FIELD_ID in (select id from @field_ids)
+            )
+
+            if exists (select * from @site_ids)
+            begin
+                set @sql = 'delete from plugin_site_' + cast(@plugin_id as nvarchar) +
+                           ' where id in (select id from @site_ids)'
+                exec sp_executesql @sql, N'@site_ids [Ids] READONLY', @site_ids = @site_ids
+            end
+
+            if exists (select * from @content_ids)
+            begin
+                set @sql = 'delete from plugin_content_' + cast(@plugin_id as nvarchar) +
+                           ' where id in (select id from @content_ids)'
+                exec sp_executesql @sql, N'@content_ids [Ids] READONLY', @content_ids = @content_ids
+            end
+
+            if exists (select * from @content_attribute_ids)
+            begin
+                set @sql = 'delete from plugin_content_attribute_' + cast(@plugin_id as nvarchar) +
+                           ' where id in (select id from @content_attribute_ids)'
+                exec sp_executesql @sql, N'@content_attribute_ids [Ids] READONLY', @content_attribute_ids = @content_attribute_ids
+            end
+
+            insert into @processed
+            select id from deleted
+            where plugin_field_id in (select id from @field_ids)
+              and (
+                     site_id in (select id from @site_ids) or
+                     content_id in (select id from @content_ids) or
+                     content_attribute_id in (select id from @content_attribute_ids)
+              )
+
+            delete from @field_ids
+            delete from @site_ids
+            delete from @content_ids
+            delete from @content_attribute_ids
+
+            set @i = @i + 1
+		end
+
+
+        insert into @fields (field_id) select distinct PLUGIN_FIELD_ID from deleted
+		where id not in (select id from @processed)
+
+		select @count = count(*) from @fields
+		set @i = 1
+		while @i <= @count
+		begin
+            select @field_id = field_id, @field_name = name,
+                   @relation_type = RELATION_TYPE, @value_type = VALUE_TYPE, @plugin_id = PLUGIN_ID
+            from @fields f inner join PLUGIN_FIELD p on p.ID = f.field_id where f.id = @i
+			set @table_name = IIF(@relation_type = 'ContentAttribute', 'CONTENT_ATTRIBUTE', UPPER(@relation_type))
+			set @plugin_table_name = 'PLUGIN_' + @table_name + '_' + cast(@plugin_id as nvarchar)
+
+            insert into @ids
+            select coalesce(site_id, content_id, content_attribute_id) from deleted
+            where PLUGIN_FIELD_ID = @field_id
+
+        set @sql = 'update ' + @plugin_table_name + ' set [' + @field_name + '] = NULL from ' + @plugin_table_name + ' p ' +
+                'where id in (select id from @ids)'
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY', @ids = @ids
+
+            delete from @ids
+            set @i = @i + 1
+        end
+end
+GO
+
 ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
 AS BEGIN
 	if object_id('tempdb..#disable_tiud_remove_empty_content_groups') is null
@@ -3553,6 +3815,111 @@ BEGIN
 END
 go
 
+
+EXEC qp_drop_existing '[dbo].[tiu_plugin_field_value]', 'IsTrigger'
+GO
+
+CREATE TRIGGER [dbo].[tiu_plugin_field_value] ON [dbo].[PLUGIN_FIELD_VALUE] AFTER INSERT, UPDATE
+AS
+BEGIN
+
+		declare @i int, @count int
+		declare @plugin_id numeric
+		declare @sql nvarchar(max)
+		declare @field_id numeric, @field_name nvarchar(255)
+		declare @relation_type nvarchar(50), @value_type nvarchar(50)
+		declare @table_name nvarchar(255), @plugin_table_name nvarchar(255)
+
+		declare @plugins table(
+			id numeric identity(1,1) primary key,
+		    plugin_id numeric
+        )
+
+        declare @fields table (
+			id numeric identity(1,1) primary key,
+			field_id numeric
+        )
+
+		declare @site_ids [Ids], @content_ids [Ids], @content_attribute_ids [Ids], @ids [Ids]
+
+        insert into @plugins(plugin_id)
+        select distinct plugin_id from inserted i inner join PLUGIN_FIELD p on i.PLUGIN_FIELD_ID = p.ID
+		where not exists (select * from deleted d where d.ID = i.ID)
+
+		select @count = count(*) from @plugins
+		set @i = 1
+		while @i <= @count
+		begin
+            select @plugin_id = plugin_id from @plugins where id = @i
+
+            insert into @site_ids
+            select distinct site_id from inserted i inner join PLUGIN_FIELD p on i.PLUGIN_FIELD_ID = p.ID
+            where p.PLUGIN_ID = @plugin_id and site_id is not null
+
+            insert into @content_ids
+            select distinct content_id from inserted i inner join PLUGIN_FIELD p on i.PLUGIN_FIELD_ID = p.ID
+            where p.PLUGIN_ID = @plugin_id and content_id is not null
+
+            insert into @content_attribute_ids
+            select distinct content_attribute_id from inserted i inner join PLUGIN_FIELD p on i.PLUGIN_FIELD_ID = p.ID
+            where p.PLUGIN_ID = @plugin_id and content_attribute_id is not null
+
+            if exists (select * from @site_ids)
+            begin
+                set @sql = 'insert into plugin_site_' + cast(@plugin_id as nvarchar) + '(id) select id from @site_ids' +
+                           ' where id not in (select id from plugin_site_' + cast(@plugin_id as nvarchar) + ')'
+                exec sp_executesql @sql, N'@site_ids [Ids] READONLY', @site_ids = @site_ids
+            end
+
+            if exists (select * from @content_ids)
+            begin
+                set @sql = 'insert into plugin_content_' + cast(@plugin_id as nvarchar) + '(id) select id from @content_ids' +
+                           ' where id not in (select id from plugin_content_' + cast(@plugin_id as nvarchar)  + ')'
+                exec sp_executesql @sql, N'@content_ids [Ids] READONLY', @content_ids = @content_ids
+            end
+
+            if exists (select * from @content_attribute_ids)
+            begin
+                set @sql = 'insert into plugin_content_attribute_' + cast(@plugin_id as nvarchar) + '(id) select id from @content_attribute_ids' +
+                           ' where id not in (select id from plugin_content_attribute_' + cast(@plugin_id as nvarchar) + ')'
+                exec sp_executesql @sql, N'@content_attribute_ids [Ids] READONLY', @content_attribute_ids = @content_attribute_ids
+            end
+
+            delete from @site_ids
+            delete from @content_ids
+            delete from @content_attribute_ids
+
+            set @i = @i + 1
+		end
+
+
+        insert into @fields (field_id) select distinct PLUGIN_FIELD_ID from inserted
+
+		select @count = count(*) from @fields
+		set @i = 1
+		while @i <= @count
+		begin
+            select @field_id = field_id, @field_name = name,
+                   @relation_type = RELATION_TYPE, @value_type = VALUE_TYPE, @plugin_id = PLUGIN_ID
+            from @fields f inner join PLUGIN_FIELD p on p.ID = f.field_id where f.id = @i
+			set @table_name = IIF(@relation_type = 'ContentAttribute', 'CONTENT_ATTRIBUTE', UPPER(@relation_type))
+			set @plugin_table_name = 'PLUGIN_' + @table_name + '_' + cast(@plugin_id as nvarchar)
+
+            insert into @ids
+            select id from inserted
+            where PLUGIN_FIELD_ID = @field_id
+
+            set @sql = 'update ' + @plugin_table_name + ' set [' + @field_name + '] = v.value from ' + @plugin_table_name + ' p ' +
+                'inner join plugin_field_value v on p.id = v.' + @table_name + '_ID ' +
+                'where v.id in (select id from @ids)'
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY', @ids = @ids
+
+            delete from @ids
+            set @i = @i + 1
+        end
+end
+GO
 
 ALTER TRIGGER [dbo].[ti_access_content] ON [dbo].[CONTENT] FOR INSERT
 AS
@@ -4566,83 +4933,207 @@ begin
 end
 GO
 
-if not exists (select * from BACKEND_ACTION where code = 'scheduled_tasks')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_INTERFACE)
-VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('db'), 'Scheduled Tasks', 'scheduled_tasks', '~/Home/ScheduledTasks/', 1)
-
-IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Scheduled Tasks' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('db'))
-INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER])
-VALUES(dbo.qp_context_menu_id('db'), dbo.qp_action_id('scheduled_tasks'), 'Scheduled Tasks', 90)
-
-if not exists (select * from BACKEND_ACTION where code = 'refresh_scheduled_tasks')
-insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
-values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('db'))
-
-if not exists (select * from ACTION_TOOLBAR_BUTTON where name = 'Refresh' and PARENT_ACTION_ID = dbo.qp_action_id('scheduled_tasks'))
-insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, ICON, [ORDER], NAME)
-values (dbo.qp_action_id('scheduled_tasks'), dbo.qp_action_id('refresh_scheduled_tasks'), 'refresh.gif', 100, 'Refresh')
-
-if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'CAN_MANAGE_SCHEDULED_TASKS' and TABLE_NAME = 'USER_GROUP')
-    alter table [USER_GROUP]
-    add [CAN_MANAGE_SCHEDULED_TASKS] bit NOT NULL CONSTRAINT [DF_USER_GROUP_CAN_MANAGE_SCHEDULED_TASKS] DEFAULT ((0))
+if not exists(select * from ENTITY_TYPE where CODE = 'plugin')
+    insert into ENTITY_TYPE(NAME, CODE, PARENT_ID, [ORDER], SOURCE, ID_FIELD, TITLE_FIELD, ORDER_FIELD)
+    values ('QP Plugin', 'plugin', dbo.qp_entity_type_id('db'), 7, 'PLUGIN', 'ID', 'NAME', '[ORDER]')
 GO
 
-ALTER VIEW [dbo].[USER_GROUP_TREE]
-WITH SCHEMABINDING
-AS
-select ug.[GROUP_ID]
-      ,ug.[GROUP_NAME]
-      ,ug.[DESCRIPTION]
-      ,ug.[CREATED]
-      ,ug.[MODIFIED]
-      ,ug.[LAST_MODIFIED_BY]
-      ,U.[LOGIN] as LAST_MODIFIED_BY_LOGIN
-      ,ug.[shared_content_items]
-      ,ug.[nt_group]
-      ,ug.[ad_sid]
-      ,ug.[BUILT_IN]
-      ,ug.[READONLY]
-      ,ug.[use_parallel_workflow]
-      ,ug.[CAN_UNLOCK_ITEMS]
-      ,ug.[CAN_MANAGE_SCHEDULED_TASKS]
-      ,gtg.Parent_Group_Id AS PARENT_GROUP_ID
-from dbo.USER_GROUP ug
-left join dbo.Group_To_Group gtg on ug.GROUP_ID = gtg.Child_Group_Id
-join dbo.USERS U ON U.[USER_ID] = ug.LAST_MODIFIED_BY
+--delete from ENTITY_TYPE where code = 'plugin'
 
+if not exists(select * from ENTITY_TYPE where CODE = 'plugin_version')
+    insert into ENTITY_TYPE(NAME, CODE, PARENT_ID, SOURCE, ID_FIELD, PARENT_ID_FIELD, DISABLED)
+    values ('QP Plugin Version', 'plugin_version', dbo.qp_entity_type_id('plugin'), 'PLUGIN_VERSION', 'ID', 'PARENT_ID', 1)
 GO
+
+--select * from ENTITY_TYPE
+if not exists (select * From BACKEND_ACTION where code = 'copy_custom_action')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
+    VALUES (dbo.qp_action_type_id('copy'), dbo.qp_entity_type_id('custom_action'), N'Create Like Custom Action', 'Create Like', N'copy_custom_action', '~/CustomAction/Copy/', 0)
+
 if not exists (select * from BACKEND_ACTION where code = 'export_archive_article')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
-VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
+    VALUES(dbo.qp_action_type_id('export'), dbo.qp_entity_type_id('archive_article'), 'Export Archive Articles', 'export_archive_article', '~/ExportArchiveArticles/', 1, 600, 400, 1, 1)
 
 if not exists (select * from BACKEND_ACTION where code = 'multiple_export_archive_article')
-insert into BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, code, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
-VALUES(dbo.qp_action_type_id('multiple_export'), dbo.qp_entity_type_id('archive_article'), 'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', 1, 600, 400, 1, 1)
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, CONTROLLER_ACTION_URL, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT, IS_MULTISTEP, HAS_SETTINGS)
+    VALUES(dbo.qp_action_type_id('multiple_export'), dbo.qp_entity_type_id('archive_article'), 'Multiple Export Archive Articles', 'multiple_export_archive_article', '~/ExportSelectedArchiveArticles/', 1, 600, 400, 1, 1)
 
+if not exists (select * from BACKEND_ACTION where code = 'view_live_article')
+	INSERT INTO BACKEND_ACTION(TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('article'), 'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'compare_article_live_with_current')
+	INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('article'), 'Compare Article Live version with Current', 'Compare Live version with Current', 'compare_article_live_with_current', '~/ArticleVersion/CompareLiveWithCurrent/', 1)
+
+if not exists (select * From BACKEND_ACTION where code = 'select_child_articles')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, IS_INTERFACE)
+    VALUES (dbo.qp_action_type_id('select'), dbo.qp_entity_type_id('article'), N'Select Child Articles', 'Select Child Articles', N'select_child_articles', 0)
+
+if not exists (select * From BACKEND_ACTION where code = 'unselect_child_articles')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, IS_INTERFACE)
+    VALUES (dbo.qp_action_type_id('select'), dbo.qp_entity_type_id('article'), N'Unselect Child Articles', 'Unselect Child Articles', N'unselect_child_articles', 0)
+
+if not exists (select * From BACKEND_ACTION where code = 'list_plugin')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE, DEFAULT_VIEW_TYPE_ID)
+    values('QP Plugins', 'list_plugin', dbo.qp_action_type_id('list'), dbo.qp_entity_type_id('plugin'), '~/QpPlugin/Index/',  1, dbo.qp_view_id('list'))
+
+if not exists (select * From BACKEND_ACTION where code = 'new_plugin')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
+    values('New QP Plugin', 'new_plugin', dbo.qp_action_type_id('new'), dbo.qp_entity_type_id('plugin'), '~/QpPlugin/New/', 1)
+
+if not exists (select * From BACKEND_ACTION where code = 'edit_plugin')
+    insert into BACKEND_ACTION(NAME, SHORT_NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
+    values('QP Plugin Properties', 'Properties', 'edit_plugin', dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('plugin'), '~/QpPlugin/Properties/', 1)
+
+if not exists (select * From BACKEND_ACTION where code = 'update_plugin')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
+    values('Update QP Plugin', 'update_plugin', dbo.qp_action_type_id('update'), dbo.qp_entity_type_id('plugin'),0)
+
+if not exists (select * From BACKEND_ACTION where code = 'refresh_plugin')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
+    values('Refresh QP Plugin', 'refresh_plugin', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('plugin'))
+
+if not exists (select * From BACKEND_ACTION where code = 'remove_plugin')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONFIRM_PHRASE, CONTROLLER_ACTION_URL, HAS_PRE_ACTION)
+    values('Remove QP Plugin', 'remove_plugin', dbo.qp_action_type_id('remove'), dbo.qp_entity_type_id('plugin'), 'Do you really want to remove this QP plugin?', '~/QpPlugin/Remove/', 0)
+
+if not exists (select * From BACKEND_ACTION where code = 'save_plugin')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
+    values('Save QP Plugin', 'save_plugin', dbo.qp_action_type_id('save'), dbo.qp_entity_type_id('plugin'), 0)
+
+if not exists (select * From BACKEND_ACTION where code = 'refresh_plugins')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
+    values('Refresh QP Plugins', 'refresh_plugins', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('plugin'), 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'scheduled_tasks')
+    insert into BACKEND_ACTION (NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
+    values('Scheduled Tasks', 'scheduled_tasks', dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('db'),  '~/Home/ScheduledTasks/', 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'refresh_scheduled_tasks')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
+    values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('db'))
+GO
 if not exists (select * from ACTION_TOOLBAR_BUTTON where parent_action_id = dbo.qp_action_id('list_archive_article') and name = 'Export')
-insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], icon)
-values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
+    insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, [ORDER], icon)
+    values (dbo.qp_action_id('list_archive_article'), dbo.qp_action_id('multiple_export_archive_article'), 'Export', 15, 'other/export.gif')
 
-IF NOT EXISTS(SELECT * FROM CONTEXT_MENU_ITEM WHERE NAME = 'Unselect Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
-INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER],  ICON)
-VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('unselect_child_articles'), 'Unselect Child Articles', 90, 'deselect_all.gif')
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('view_live_article'))
+	insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
+	values (dbo.qp_action_id('view_live_article'), dbo.qp_action_id('refresh_article'), 'Refresh', 'refresh.gif', 10)
 
-IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Select Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
-INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
-VALUES(dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('select_child_articles'), 'Select Child Articles', 80, 'select_all.gif')
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('compare_article_live_with_current'))
+	insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
+	values (dbo.qp_action_id('compare_article_live_with_current'), dbo.qp_action_id('refresh_article'), 'Refresh', 'refresh.gif', 10)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('edit_plugin') and NAME = 'Save')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('edit_plugin'), dbo.qp_action_id('update_plugin'), 'Save', 'save.gif', NULL, 1, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('edit_plugin') and NAME = 'Remove')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('edit_plugin'), dbo.qp_action_id('remove_plugin'), 'Remove', 'delete.gif', NULL, 2, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('edit_plugin') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('edit_plugin'), dbo.qp_action_id('refresh_plugin'), 'Refresh', 'refresh.gif', NULL, 3, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('new_plugin') and NAME = 'Save')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('new_plugin'), dbo.qp_action_id('save_plugin'), 'Save', 'save.gif', NULL, 1, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('new_plugin') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('new_plugin'), dbo.qp_action_id('refresh_plugin'), 'Refresh', 'refresh.gif', NULL, 2, 1)
+
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin') and NAME = 'Properties')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('list_plugin'), dbo.qp_action_id('edit_plugin'), 'Properties', 'properties.gif', NULL, 1, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin') and NAME = 'Remove')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('list_plugin'), dbo.qp_action_id('remove_plugin'), 'Remove', 'delete.gif', NULL, 2, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
+    values (dbo.qp_action_id('list_plugin'), dbo.qp_action_id('refresh_plugin'), 'Refresh', 'refresh.gif', NULL, 3, 0)
+
+if not exists (select * from ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('scheduled_tasks') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON (PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
+    values (dbo.qp_action_id('scheduled_tasks'), dbo.qp_action_id('refresh_scheduled_tasks'), 'Refresh', 'refresh.gif', 100)
+GO
+
+
+if not exists (select * from context_menu where code = 'plugins')
+    insert into context_menu (CODE)
+    values ('plugins')
+
+if not exists (select * from context_menu where code = 'plugin')
+    insert into context_menu (CODE)
+    values ('plugin')
 
 GO
-if not exists (select * From BACKEND_ACTION where code = 'copy_custom_action')
-begin
 
-  INSERT INTO [dbo].[BACKEND_ACTION] ([TYPE_ID], [ENTITY_TYPE_ID], [NAME], [SHORT_NAME], [CODE], [CONTROLLER_ACTION_URL],[IS_INTERFACE])
-  VALUES (dbo.qp_action_type_id('copy'), dbo.qp_entity_type_id('custom_action'), N'Create Like Custom Action', 'Create Like', N'copy_custom_action', '~/CustomAction/Copy/', 0)
 
-  INSERT INTO [dbo].[CONTEXT_MENU_ITEM] ([CONTEXT_MENU_ID], [ACTION_ID], [Name], [ORDER], [ICON],  [BOTTOM_SEPARATOR])
-  VALUES (dbo.qp_context_menu_id('custom_action'), dbo.qp_action_id('copy_custom_action'), N'Create Like', 5, 'create_like.gif', 1)
+if not exists (SELECT * FROM CONTEXT_MENU_ITEM WHERE NAME = 'Unselect Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
+    insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER],  ICON)
+    values (dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('unselect_child_articles'), 'Unselect Child Articles', 90, 'deselect_all.gif')
 
-end
+if not exists (SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Select Child Articles' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('virtual_article'))
+    insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+    values (dbo.qp_context_menu_id('virtual_article'), dbo.qp_action_id('select_child_articles'), 'Select Child Articles', 80, 'select_all.gif')
 
+if not exists (SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Create Like' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('custom_action'))
+    insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON, BOTTOM_SEPARATOR)
+    values (dbo.qp_context_menu_id('custom_action'), dbo.qp_action_id('copy_custom_action'), 'Create Like', 5, 'create_like.gif', 1)
+
+if not exists (select * from CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Live Properties')
+	insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+	values (dbo.qp_context_menu_id('article'), dbo.qp_action_id('view_live_article'), 'Live Properties', 52, 'properties.gif')
+
+if not exists (select * from CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Compare Live version with Current')
+	insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+	values (dbo.qp_context_menu_id('article'), dbo.qp_action_id('compare_article_live_with_current'), 'Compare Live version with Current', 53, 'compare.gif')
+
+if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Select Child Articles')
+    insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON, BOTTOM_SEPARATOR)
+    values (dbo.qp_context_menu_id('article'), dbo.qp_action_id('select_child_articles'), 'Select Child Articles', 80, 'select_all.gif', 0)
+
+if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Unselect Child Articles')
+    insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON, BOTTOM_SEPARATOR)
+    values (dbo.qp_context_menu_id('article'), dbo.qp_action_id('unselect_child_articles'), 'Unselect Child Articles', 90, 'deselect_all.gif', 0)
+
+if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugins') and name = 'Refresh')
+    insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON, BOTTOM_SEPARATOR)
+    values(dbo.qp_context_menu_id('plugins'), dbo.qp_action_id('refresh_plugins'), 'Refresh', 1, 'refresh.gif', 1)
+
+if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugins') and name = 'New QP Plugin')
+    insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+    values(dbo.qp_context_menu_id('plugins'), dbo.qp_action_id('new_plugin'), 'New QP Plugin', 2, 'add.gif')
+
+if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugin') and name = 'Remove')
+    insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON, BOTTOM_SEPARATOR)
+    values(dbo.qp_context_menu_id('plugin'), dbo.qp_action_id('remove_plugin'), 'Remove', 2, 'delete.gif', 1)
+
+if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugin') and name = 'Properties')
+    insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+    values(dbo.qp_context_menu_id('plugin'), dbo.qp_action_id('edit_plugin'), 'Properties', 3, 'properties.gif')
+
+IF NOT EXISTS(SELECT * FROM  CONTEXT_MENU_ITEM WHERE NAME = 'Scheduled Tasks' AND CONTEXT_MENU_ID = dbo.qp_context_menu_id('db'))
+    INSERT INTO CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER])
+    VALUES(dbo.qp_context_menu_id('db'), dbo.qp_action_id('scheduled_tasks'), 'Scheduled Tasks', 90)
+
+update ENTITY_TYPE
+set
+    FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_plugin'),
+    DEFAULT_ACTION_ID = dbo.qp_action_id('edit_plugin'),
+    CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugin'),
+    FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugins')
+where CODE = 'plugin'
+GO
+update workflow set is_default = 1 where workflow_name = 'general' and not exists (select * from workflow where is_default = 1)
+GO
 declare @cnt numeric
 
 ;with numbers(num)  as
@@ -4671,182 +5162,6 @@ update CONTENT_DATA set SPLITTED = i.splitted
 from content_data cd inner join CONTENT_ITEM i on i.content_item_id = cd.CONTENT_ITEM_ID
 WHERE i.SPLITTED = 1
 GO
-declare @hist1 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
-declare @hist2 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
-
-create table #status_history (num int, item_id decimal, version_id decimal, status_type_id int, visible bit, archive bit)
-create clustered index ix_temp_status_history ON #status_history (item_id, num)
-create nonclustered index ix_temp_version ON #status_history (version_id)
-
-insert into #status_history
-select row_number() over(partition by CONTENT_ITEM_ID order by status_history_id desc) as num,
-content_item_id,  content_item_version_id, status_type_id, visible, archive
-from content_item_status_history with(nolock) where datediff(month, CREATED, getdate()) <= 12
-
-insert into @hist1
-select h.version_id, h1.status_type_id, h1.archive, h1.visible
-from #status_history h
-inner join #status_history h1 on h.item_id = h1.item_id and h.num = h1.num - 1
-inner join content_item_version v with(nolock) on h.version_id = v.content_item_version_id
-where h1.status_type_id is not null
-
-while exists(select * from @hist1)
-begin
-    delete top(100) from @hist1
-    output deleted.* into @hist2
-
-    update CONTENT_ITEM_VERSION with(rowlock)
-    set STATUS_TYPE_ID = h.status_type_id, VISIBLE = h.visible, ARCHIVE = h.archive
-    FROM CONTENT_ITEM_VERSION v INNER JOIN @hist2 h ON v.content_item_version_id = h.version_id
-end
-
-drop table #status_history
-GO
-
-if not exists (select * from APP_SETTINGS where [key] = 'CONTENT_MODIFICATION_UPDATE_INTERVAL')
-  insert into APP_SETTINGS
-  values ('CONTENT_MODIFICATION_UPDATE_INTERVAL', '30')
-GO
-
-update CONTENT_ITEM_SCHEDULE
-SET
-    START_DATE = dbo.get_schedule_date(isnull(active_start_date, 17530101), active_start_time),
-    END_DATE = dbo.get_schedule_date(active_end_date, active_end_time)
-
-GO
-
-
-declare @cnt numeric
-select @cnt = count(*) from item_link where is_rev = 1
-if @cnt < 1000
-begin
-	update item_link set is_rev = 1
-	from item_link il
-	inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
-	inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
-	and is_rev = 0
-end
-GO
-
-update item_link_async set is_rev = 1
-from item_link_async il
-inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
-inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
-and is_rev = 0
-GO
-
-update item_link set is_self = 1
-from item_link il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
-GO
-
-
-update item_link_async set is_self = 1
-from item_link_async il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
-GO
-
-
-if not exists (select * from BACKEND_ACTION where ENTITY_TYPE_ID = dbo.qp_entity_type_id('article') and code = 'view_live_article')
-begin
-	insert into BACKEND_ACTION(TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
-	VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('article'), 'Article Live Properties', 'Live Properties', 'view_live_article', '~/Article/LiveProperties/', 1)
-end
-GO
-
-if not exists(select * from CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Live Properties')
-begin
-	insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
-	VALUES(dbo.qp_context_menu_id('article'), dbo.qp_action_id('view_live_article'), 'Live Properties', 52, 'properties.gif')
-end
-GO
-
-if not exists(select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('view_live_article'))
-begin
-	insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
-	values(dbo.qp_action_id('view_live_article'), dbo.qp_action_id('refresh_article'), 'Refresh', 'refresh.gif', 10)
-
-end
-GO
-
-if not exists (select * from BACKEND_ACTION where ENTITY_TYPE_ID = dbo.qp_entity_type_id('article') and code = 'compare_article_live_with_current')
-begin
-	insert into BACKEND_ACTION(TYPE_ID, ENTITY_TYPE_ID, NAME, SHORT_NAME, CODE, CONTROLLER_ACTION_URL, IS_INTERFACE)
-	VALUES(dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('article'), 'Compare Article Live version with Current', 'Compare Live version with Current', 'compare_article_live_with_current', '~/ArticleVersion/CompareLiveWithCurrent/', 1)
-end
-GO
-
-if not exists(select * from CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('article') and name = 'Compare Live version with Current')
-begin
-	insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
-	VALUES(dbo.qp_context_menu_id('article'), dbo.qp_action_id('compare_article_live_with_current'), 'Compare Live version with Current', 53, 'compare.gif')
-end
-GO
-
-if not exists(select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('compare_article_live_with_current'))
-begin
-	insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, [ORDER])
-	values(dbo.qp_action_id('compare_article_live_with_current'), dbo.qp_action_id('refresh_article'), 'Refresh', 'refresh.gif', 10)
-
-end
-GO
-
-exec qp_update_translations 'Live Properties', 'Свойства Live'
-GO
-
-exec qp_update_translations 'Compare Live version with Current', 'Сравнить live-версию с текущей'
-GO
-
-if not exists (select * From BACKEND_ACTION where code = 'select_child_articles')
-begin
-
-  INSERT INTO [dbo].[BACKEND_ACTION] ([TYPE_ID], [ENTITY_TYPE_ID], [NAME], [SHORT_NAME], [CODE], [IS_INTERFACE])
-  VALUES (dbo.qp_action_type_id('select'), dbo.qp_entity_type_id('article'), N'Select Child Articles', 'Select Child Articles', N'select_child_articles', 0)
-
-  INSERT INTO [dbo].[CONTEXT_MENU_ITEM] ([CONTEXT_MENU_ID], [ACTION_ID], [Name], [ORDER], [BOTTOM_SEPARATOR])
-  VALUES (dbo.qp_context_menu_id('article'), dbo.qp_action_id('select_child_articles'), N'Select Child Articles', 80, 0)
-
-end
-
-if not exists (select * From BACKEND_ACTION where code = 'unselect_child_articles')
-begin
-
-  INSERT INTO [dbo].[BACKEND_ACTION] ([TYPE_ID], [ENTITY_TYPE_ID], [NAME], [SHORT_NAME], [CODE], [IS_INTERFACE])
-  VALUES (dbo.qp_action_type_id('select'), dbo.qp_entity_type_id('article'), N'Unselect Child Articles', 'Unselect Child Articles', N'unselect_child_articles', 0)
-
-  INSERT INTO [dbo].[CONTEXT_MENU_ITEM] ([CONTEXT_MENU_ID], [ACTION_ID], [Name], [ORDER], [BOTTOM_SEPARATOR])
-  VALUES (dbo.qp_context_menu_id('article'), dbo.qp_action_id('unselect_child_articles'), N'Unselect Child Articles', 90, 0)
-
-end
-
-update CONTEXT_MENU_ITEM set icon = 'deselect_all.gif' where ACTION_ID = dbo.qp_action_id('unselect_child_articles')
-update CONTEXT_MENU_ITEM set icon = 'select_all.gif' where ACTION_ID = dbo.qp_action_id('select_child_articles')
-
-exec qp_update_translations 'Select Child Articles', 'Выбрать дочерние статьи'
-exec qp_update_translations 'Unselect Child Articles', 'Отменить выбор дочерних статей'
-
-if not exists(
-	select * From INFORMATION_SCHEMA.VIEWS where table_name like 'content%' and TABLE_NAME like '%new'
-) or object_id('tempdb..#qp_rebuild_all_new_views') is not null
-begin
-	exec qp_rebuild_all_new_views
-end
-GO
-
-if not exists(
-	select * From INFORMATION_SCHEMA.VIEWS where table_name like 'item_link%' and TABLE_NAME like '%rev'
-) or object_id('tempdb..#qp_rebuild_all_link_views') is not null
-begin
-	exec qp_rebuild_all_link_views
-end
-GO
-
-if not exists(
-	select * From INFORMATION_SCHEMA.TABLES where table_name like 'item_link%' and TABLE_NAME like '%rev' and TABLE_TYPE = 'BASE TABLE'
-) or object_id('tempdb..#qp_recreate_link_tables') is not null
-begin
-	exec qp_recreate_link_tables
-end
-GO
-
 DECLARE @articles_with_wrong_statuses TABLE (
 Site_ID int,
 CONTENT_ID int,
@@ -4918,6 +5233,80 @@ SET SUCCESSOR_STATUS_ID = (
 WHERE WORKFLOW_RULE_ID IN (SELECT WORKFLOW_RULE_ID FROM @workflow_rules_ids)
 END
 
+
+declare @cnt numeric
+select @cnt = count(*) from item_link where is_rev = 1
+if @cnt < 1000
+begin
+	update item_link set is_rev = 1
+	from item_link il
+	inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
+	inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
+	and is_rev = 0
+end
+GO
+
+update item_link_async set is_rev = 1
+from item_link_async il
+inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID
+inner join content_to_content cc on il.link_id = cc.link_id and ci.CONTENT_ID <> cc.l_content_id
+and is_rev = 0
+GO
+
+update item_link set is_self = 1
+from item_link il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
+GO
+
+
+update item_link_async set is_self = 1
+from item_link_async il inner join content_to_content cc on il.link_id = cc.link_id where cc.l_content_id = cc.r_content_id
+GO
+
+
+declare @hist1 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
+declare @hist2 table(version_id numeric primary key, status_type_id numeric, archive bit, visible bit)
+
+create table #status_history (num int, item_id decimal, version_id decimal, status_type_id int, visible bit, archive bit)
+create clustered index ix_temp_status_history ON #status_history (item_id, num)
+create nonclustered index ix_temp_version ON #status_history (version_id)
+
+insert into #status_history
+select row_number() over(partition by CONTENT_ITEM_ID order by status_history_id desc) as num,
+content_item_id,  content_item_version_id, status_type_id, visible, archive
+from content_item_status_history with(nolock) where datediff(month, CREATED, getdate()) <= 12
+
+insert into @hist1
+select h.version_id, h1.status_type_id, h1.archive, h1.visible
+from #status_history h
+inner join #status_history h1 on h.item_id = h1.item_id and h.num = h1.num - 1
+inner join content_item_version v with(nolock) on h.version_id = v.content_item_version_id
+where h1.status_type_id is not null
+
+while exists(select * from @hist1)
+begin
+    delete top(100) from @hist1
+    output deleted.* into @hist2
+
+    update CONTENT_ITEM_VERSION with(rowlock)
+    set STATUS_TYPE_ID = h.status_type_id, VISIBLE = h.visible, ARCHIVE = h.archive
+    FROM CONTENT_ITEM_VERSION v INNER JOIN @hist2 h ON v.content_item_version_id = h.version_id
+end
+
+drop table #status_history
+GO
+
+update CONTENT_ITEM_SCHEDULE
+SET
+    START_DATE = dbo.get_schedule_date(isnull(active_start_date, 17530101), active_start_time),
+    END_DATE = dbo.get_schedule_date(active_end_date, active_end_time)
+
+GO
+
+if not exists (select * from APP_SETTINGS where [key] = 'CONTENT_MODIFICATION_UPDATE_INTERVAL')
+  insert into APP_SETTINGS
+  values ('CONTENT_MODIFICATION_UPDATE_INTERVAL', '30')
+GO
+
 update VE_COMMAND set NAME = 'Spellchecker' where NAME = 'SpellCheck'
 update VE_COMMAND set NAME = 'SpecialChar' where NAME = 'QSpecChar'
 update VE_COMMAND set NAME = 'ShowBlocks', COMMAND_IN_GROUP_ORDER = 5 where NAME = 'LineBreak'
@@ -4944,20 +5333,44 @@ if not exists (select * From VE_COMMAND where name = 'AutoComplete')
 
 GO
 
+
+exec qp_update_translations 'Select Child Articles', 'Выбрать дочерние статьи'
+exec qp_update_translations 'Unselect Child Articles', 'Отменить выбор дочерних статей'
+exec qp_update_translations 'Live Properties', 'Свойства Live'
+exec qp_update_translations 'Compare Live version with Current', 'Сравнить live-версию с текущей'
+
 exec qp_update_translations 'Show Blocks', 'Отображать блоки'
 exec qp_update_translations 'Format Selection', 'Форматировать выбранное'
 exec qp_update_translations 'Comment Selection', 'Комментировать выбранное'
 exec qp_update_translations 'Uncomment Selection', 'Раскомментировать выбранное'
 exec qp_update_translations 'Enable\Disable HTML Tag Autocomplete', 'Включить/Выключить автозавершение HTML-тегов'
 
+exec qp_update_translations 'Disable list auto wrapping (ul, ol, dl)', 'Отключить автоматическое оборачивание списков (ul, ol, dl)'
+
+if not exists(
+	select * From INFORMATION_SCHEMA.VIEWS where table_name like 'content%' and TABLE_NAME like '%new'
+) or object_id('tempdb..#qp_rebuild_all_new_views') is not null
+begin
+	exec qp_rebuild_all_new_views
+end
 GO
 
-EXEC qp_update_translations 'Disable list auto wrapping (ul, ol, dl)', 'Отключить автоматическое оборачивание списков (ul, ol, dl)'
+if not exists(
+	select * From INFORMATION_SCHEMA.VIEWS where table_name like 'item_link%' and TABLE_NAME like '%rev'
+) or object_id('tempdb..#qp_rebuild_all_link_views') is not null
+begin
+	exec qp_rebuild_all_link_views
+end
 GO
 
-
-update workflow set is_default = 1 where workflow_name = 'general' and not exists (select * from workflow where is_default = 1)
+if not exists(
+	select * From INFORMATION_SCHEMA.TABLES where table_name like 'item_link%' and TABLE_NAME like '%rev' and TABLE_TYPE = 'BASE TABLE'
+) or object_id('tempdb..#qp_recreate_link_tables') is not null
+begin
+	exec qp_recreate_link_tables
+end
 GO
+
 if not exists(select * from sys.indexes where name = 'IX_O2M_DATA' and [object_id] = object_id('CONTENT_DATA'))
 begin
     create index IX_O2M_DATA on CONTENT_DATA(O2M_DATA) WHERE O2M_DATA IS NOT NULL

@@ -123,4 +123,5 @@ BEGIN
             delete from @ids
             set @i = @i + 1
         end
-	end
+end
+GO
