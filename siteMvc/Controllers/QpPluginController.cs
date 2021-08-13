@@ -1,8 +1,7 @@
-using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -10,17 +9,18 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.QpPlugin;
-using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class QpPluginController : AuthQpController
     {
         private readonly IQpPluginService _pluginService;
+        private readonly IHttpClientFactory _factory;
 
-        public QpPluginController(IQpPluginService pluginService)
+        public QpPluginController(IQpPluginService pluginService, IHttpClientFactory factory)
         {
             _pluginService = pluginService;
+            _factory = factory;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
             var plugin = _pluginService.Read(id);
-            var model = QpPluginViewModel.Create(plugin, tabId, parentId);
+            var model = QpPluginViewModel.Create(plugin, tabId, parentId, _factory);
             model.SuccesfulActionCode = successfulActionCode;
 
             return await JsonHtml("Properties", model);
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             var plugin = _pluginService.ReadForUpdate(id);
-            var model = QpPluginViewModel.Create(plugin, tabId, parentId);
+            var model = QpPluginViewModel.Create(plugin, tabId, parentId, _factory);
 
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
@@ -94,7 +94,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> New(string tabId, int parentId)
         {
             var plugin = _pluginService.New(parentId);
-            var model = QpPluginViewModel.Create(plugin, tabId, parentId);
+            var model = QpPluginViewModel.Create(plugin, tabId, parentId, _factory);
             return await JsonHtml("Properties", model);
         }
 
@@ -107,7 +107,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             var plugin = _pluginService.NewForSave(parentId);
-            var model = QpPluginViewModel.Create(plugin, tabId, parentId);
+            var model = QpPluginViewModel.Create(plugin, tabId, parentId, _factory);
 
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)

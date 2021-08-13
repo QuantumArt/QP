@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
@@ -8,10 +11,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
 {
     public class QpPluginViewModel : EntityViewModel
     {
-        public static QpPluginViewModel Create(BLL.QpPlugin plugin, string tabId, int parentId)
+        private IHttpClientFactory _factory;
+        public static QpPluginViewModel Create(BLL.QpPlugin plugin, string tabId, int parentId, IHttpClientFactory factory)
         {
             var model = Create<QpPluginViewModel>(plugin, tabId, parentId);
             model.CreationMode = QpPluginCreationMode.ByServiceUrl;
+            model._factory = factory;
             return model;
         }
 
@@ -32,6 +37,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
             new ListItem(QpPluginCreationMode.ByServiceUrl.ToString(), QpPluginStrings.ByServiceUrl, "ByServiceUrlPanel"),
             new ListItem(QpPluginCreationMode.ByContract.ToString(), QpPluginStrings.ByContract, "ByContractPanel")
         };
+
+        public override void DoCustomBinding()
+        {
+            if (CreationMode == QpPluginCreationMode.ByServiceUrl && !String.IsNullOrEmpty(Data.ServiceUrl))
+            {
+                try
+                {
+                    var client = _factory.CreateClient();
+                    var task = Task.Run(() => client.GetAsync(Data.ServiceUrl));
+                    task.Wait();
+                    Data.Contract = task.Result.ToString();
+                }
+                catch (Exception ex)
+                {
+                    Data.LoadedContractInvalidMessage = ex.Message;
+                }
+            }
+
+            base.DoCustomBinding();
+        }
 
     }
 }

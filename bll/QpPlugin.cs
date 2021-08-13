@@ -17,6 +17,7 @@ namespace Quantumart.QP8.BLL
     {
         internal const int BaseCommandOrder = 10;
 
+
         internal QpPlugin()
         {
             Fields = new List<QpPluginField>();
@@ -47,10 +48,14 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Version", ResourceType = typeof(QpPluginStrings))]
         public string Version { get; set; }
 
+        public string OldVersion { get; set; }
+
         [Display(Name = "InstanceKey", ResourceType = typeof(QpPluginStrings))]
         public string InstanceKey { get; set; }
 
         public List<QpPluginField> Fields { get; set; }
+
+        public Dictionary<string, QpPluginField> OldFields { get; set; }
 
         public int[] ForceFieldIds { get; set; }
 
@@ -58,25 +63,31 @@ namespace Quantumart.QP8.BLL
 
         public string ParsedContractInvalidMessage { get; set; }
 
+        public string LoadedContractInvalidMessage { get; set; }
+
         public override void DoCustomBinding()
         {
-            try
+            if (!String.IsNullOrEmpty(Contract) && Contract != "{}")
             {
-                ParsedContract = JsonConvert.DeserializeObject<QpPluginContract>(Contract);
-            }
-            catch (Exception ex)
-            {
-                ParsedContractInvalidMessage = ex.Message;
+                try
+                {
+                    ParsedContract = JsonConvert.DeserializeObject<QpPluginContract>(Contract);
+                }
+                catch (Exception ex)
+                {
+                    ParsedContractInvalidMessage = ex.Message;
+                }
             }
 
             if (ParsedContract != null)
             {
                 Code = ParsedContract.Code;
+                OldVersion = Version;
                 Version = ParsedContract.Version;
                 InstanceKey = ParsedContract.InstanceKey;
                 Description = ParsedContract.Description;
-                var fieldNames = new HashSet<string>(Fields.Select(n => n.Name.ToLower()));
-                Fields.AddRange(ParsedContract.Fields.Where(n => !fieldNames.Contains(n.Name.ToLower())));
+                OldFields = Fields.ToDictionary(n => n.Name.ToLower(), m => m);
+                Fields.AddRange(ParsedContract.Fields.Where(n => !OldFields.ContainsKey(n.Name.ToLower())));
             }
         }
 
@@ -85,76 +96,71 @@ namespace Quantumart.QP8.BLL
             var errors = new RulesException<QpPlugin>();
             base.Validate(errors);
 
+            if (!string.IsNullOrEmpty(LoadedContractInvalidMessage))
+            {
+                errors.ErrorFor(n => ServiceUrl, $"{QpPluginStrings.LoadedContractInvalidMessage}: {LoadedContractInvalidMessage}");
+            }
+
             if (!string.IsNullOrEmpty(ParsedContractInvalidMessage))
             {
-                errors.ErrorFor(n => Contract, ParsedContractInvalidMessage);
+                errors.ErrorFor(n => Contract, $"{QpPluginStrings.ParsedContractInvalidMessage}: {ParsedContractInvalidMessage}");
             }
 
             if (!string.IsNullOrEmpty(ServiceUrl) && !UrlHelpers.IsValidWebFolderUrl(ServiceUrl))
             {
                 errors.ErrorFor(n => ServiceUrl, QpPluginStrings.ServiceUrlInvalidFormat);
             }
+            if (string.IsNullOrEmpty(Contract))
+            {
+                errors.ErrorFor(n => ServiceUrl, QpPluginStrings.ContractNotEntered);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(Code))
+                {
+                    errors.ErrorFor(n => ServiceUrl, QpPluginStrings.CodeNotEntered);
+                }
+                else
+                {
+                    if (QpPluginRepository.CodeExists(this))
+                    {
+                        errors.ErrorFor(n => Code, QpPluginStrings.CodeExists);
+                    }
+                }
+                if (string.IsNullOrEmpty(Version))
+                {
+                    errors.ErrorFor(n => ServiceUrl, QpPluginStrings.VersionNotEntered);
+                }
+                else
+                {
+                    if (OldVersion == Version)
+                    {
+                        errors.ErrorFor(n => Version, QpPluginStrings.VersionEqual);
+                    }
+                }
+
+                if (Fields.Any(n => String.IsNullOrEmpty(n.Name)))
+                {
+                    errors.ErrorForModel(QpPluginStrings.FieldNameNotEntered);
+                }
+
+                if (Fields.Any(n => n.Name.Length > 255))
+                {
+                    errors.ErrorForModel(QpPluginStrings.FieldNameMaxLengthExceeded);
+                }
+
+                if (Fields.GroupBy(n => n.Name.ToLower() + n.RelationType).Any(g => g.Count() > 1))
+                {
+                    errors.ErrorForModel(QpPluginStrings.FieldNameDuplicate);
+                }
+            }
+
+
+
 
             if (!errors.IsEmpty)
             {
                 throw errors;
-            }
-        }
-
-        private void ValidateVeCommand(VisualEditorCommand command, RulesException errors, int index, IEnumerable<string> dupNames, IEnumerable<string> dupAliases)
-        {
-            if (!string.IsNullOrWhiteSpace(command.Name) && dupNames.Contains(command.Name))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameDuplicate, index));
-                command.IsInvalid = true;
-            }
-
-            if (!string.IsNullOrWhiteSpace(command.Alias) && dupAliases.Contains(command.Alias))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasDuplicate, index));
-                command.IsInvalid = true;
-            }
-
-            if (string.IsNullOrWhiteSpace(command.Name))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameRequired, index));
-                command.IsInvalid = true;
-            }
-
-            if (!string.IsNullOrWhiteSpace(command.Name) && !Regex.IsMatch(command.Name, RegularExpressions.EntityName))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameInvalidFormat, index));
-                command.IsInvalid = true;
-            }
-
-            if (string.IsNullOrWhiteSpace(command.Alias))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasRequired, index));
-                command.IsInvalid = true;
-            }
-
-            if (command.Name.Length > 255)
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameMaxLengthExceeded, index));
-                command.IsInvalid = true;
-            }
-
-            if (command.Alias.Length > 255)
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasMaxLengthExceeded, index));
-                command.IsInvalid = true;
-            }
-
-            if (!VisualEditorRepository.IsCommandNameFree(command.Name, Id))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandNameNonUnique, index));
-                command.IsInvalid = true;
-            }
-
-            if (!VisualEditorRepository.IsCommandAliasFree(command.Alias, Id))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.CommandAliasNonUnique, index));
-                command.IsInvalid = true;
             }
         }
     }

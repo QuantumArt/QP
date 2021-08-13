@@ -120,36 +120,6 @@
   <data name="AddNewPlugin" xml:space="preserve">
     <value>Добавить новый плагин QP</value>
   </data>
-  <data name="CommandAliasDuplicate" xml:space="preserve">
-    <value>Алиас команды №{0} должен быть уникален в пределах плагина</value>
-  </data>
-  <data name="CommandAliasMaxLengthExceeded" xml:space="preserve">
-    <value>Длина алиаса команды №{0} не должна превышать 255 символов</value>
-  </data>
-  <data name="CommandAliasNonUnique" xml:space="preserve">
-    <value>Алиас команды №{0} должен быть уникальным между плагинами</value>
-  </data>
-  <data name="CommandAliasRequired" xml:space="preserve">
-    <value>Пожалуйста, введите алиас для команды №{0}</value>
-  </data>
-  <data name="CommandNameDuplicate" xml:space="preserve">
-    <value>Имя команды №{0} должно быть уникальным в пределах плагина</value>
-  </data>
-  <data name="CommandNameInvalidFormat" xml:space="preserve">
-    <value>У команды №{0} некорректное имя</value>
-  </data>
-  <data name="CommandNameMaxLengthExceeded" xml:space="preserve">
-    <value>Длина имени команды №{0} не должна превышать 255 символов</value>
-  </data>
-  <data name="CommandNameNonUnique" xml:space="preserve">
-    <value>Имя команды №{0} должно быть уникальным между плагинами</value>
-  </data>
-  <data name="CommandNameRequired" xml:space="preserve">
-    <value>Пожалуйста, введите имя для команды №{0}</value>
-  </data>
-  <data name="CommandNotValid" xml:space="preserve">
-    <value>Некоторые команды невалидны</value>
-  </data>
   <data name="ServiceUrl" xml:space="preserve">
     <value>URL сервиса</value>
   </data>
@@ -185,5 +155,35 @@
   </data>
   <data name="InstanceKey" xml:space="preserve">
     <value>Ключ экземпляра</value>
+  </data>
+  <data name="ParsedContractInvalidMessage" xml:space="preserve">
+    <value>Ошибка при синтаксическом разборе контракта</value>
+  </data>
+  <data name="CodeExists" xml:space="preserve">
+    <value>Сочетание кода сервиса и ключа экземпляра уже используется</value>
+  </data>
+  <data name="VersionEqual" xml:space="preserve">
+    <value>Версия контракта не изменилась</value>
+  </data>
+  <data name="VersionNotEntered" xml:space="preserve">
+    <value>Версия не задана</value>
+  </data>
+  <data name="CodeNotEntered" xml:space="preserve">
+    <value>Код сервиса не задан</value>
+  </data>
+  <data name="FieldNameNotEntered" xml:space="preserve">
+    <value>В контракте есть поля с пустыми именами</value>
+  </data>
+  <data name="FieldNameDuplicate" xml:space="preserve">
+    <value>В контракте есть поля с одинаковыми именами</value>
+  </data>
+  <data name="FieldNameMaxLengthExceeded" xml:space="preserve">
+    <value>В контракте есть поля c именем длиннее, чем 255 символов</value>
+  </data>
+  <data name="LoadedContractInvalidMessage" xml:space="preserve">
+    <value>Ошибка загрузки контракта по Url сервиса</value>
+  </data>
+  <data name="ContractNotEntered" xml:space="preserve">
+    <value>Контракт не задан</value>
   </data>
 </root>

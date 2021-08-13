@@ -98,6 +98,11 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
+        internal static bool CodeExists(QpPlugin plugin)
+        {
+            return QPContext.EFContext.PluginSet.Any(n => n.Code == plugin.Code && n.InstanceKey == plugin.InstanceKey && n.Id != plugin.Id);
+        }
+
         internal static QpPlugin SavePluginProperties(QpPlugin plugin)
         {
             var entities = QPContext.EFContext;

@@ -120,35 +120,8 @@
   <data name="AddNewPlugin" xml:space="preserve">
     <value>Add New QP Plugin</value>
   </data>
-  <data name="CommandAliasDuplicate" xml:space="preserve">
-    <value>Command`s #{0} alias should be unique within its VE Plugin`s сommands</value>
-  </data>
-  <data name="CommandAliasMaxLengthExceeded" xml:space="preserve">
-    <value>The length of command`s #{0} Alias should not exceed 255 characters!</value>
-  </data>
-  <data name="CommandAliasNonUnique" xml:space="preserve">
-    <value>Command`s #{0} Alias should be unique within all VE сommands!</value>
-  </data>
-  <data name="CommandAliasRequired" xml:space="preserve">
-    <value>Please enter alias for command #{0}!</value>
-  </data>
-  <data name="CommandNameDuplicate" xml:space="preserve">
-    <value>Command`s #{0} name should be unique within its VE Plugin`s сommands!</value>
-  </data>
-  <data name="CommandNameInvalidFormat" xml:space="preserve">
-    <value>Command #{0} has invalid name format!</value>
-  </data>
-  <data name="CommandNameMaxLengthExceeded" xml:space="preserve">
-    <value>The Length of command`s #{0} name should not exceed 255 сharacters!</value>
-  </data>
-  <data name="CommandNameNonUnique" xml:space="preserve">
-    <value>Command`s #{0} name should be unique within all VE сommands</value>
-  </data>
-  <data name="CommandNameRequired" xml:space="preserve">
-    <value>Please enter name for command #{0}!</value>
-  </data>
-  <data name="CommandNotValid" xml:space="preserve">
-    <value>Some commands are not valid</value>
+  <data name="FieldNameMaxLengthExceeded" xml:space="preserve">
+    <value>There are fields names with length more than 255 characters in contract</value>
   </data>
   <data name="ServiceUrl" xml:space="preserve">
     <value>Service URL</value>
@@ -184,6 +157,33 @@
     <value>Order</value>
   </data>
   <data name="InstanceKey" xml:space="preserve">
-    <value>InstanceKey</value>
+    <value>Instance Key</value>
+  </data>
+  <data name="ParsedContractInvalidMessage" xml:space="preserve">
+    <value>Syntax error while parsing contract</value>
+  </data>
+  <data name="CodeExists" xml:space="preserve">
+    <value>Service Code + Instance Key already exists</value>
+  </data>
+  <data name="VersionEqual" xml:space="preserve">
+    <value>Contract version hasn't changed</value>
+  </data>
+  <data name="CodeNotEntered" xml:space="preserve">
+    <value>Service Code is empty</value>
+  </data>
+  <data name="ContractNotEntered" xml:space="preserve">
+    <value>Contract is empty</value>
+  </data>
+  <data name="VersionNotEntered" xml:space="preserve">
+    <value>Version is empty</value>
+  </data>
+  <data name="FieldNameNotEntered" xml:space="preserve">
+    <value>There are fields with empty names in contract</value>
+  </data>
+  <data name="FieldNameDuplicate" xml:space="preserve">
+    <value>There are fields with equal names in contract</value>
+  </data>
+  <data name="LoadedContractInvalidMessage" xml:space="preserve">
+    <value>Error while loading contract from Service URL</value>
   </data>
 </root>

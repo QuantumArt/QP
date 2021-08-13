@@ -97,92 +97,20 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command`s #{0} alias should be unique within its VE Plugin`s сommands.
+        ///   Looks up a localized string similar to Service Code + Instance Key already exists.
         /// </summary>
-        public static string CommandAliasDuplicate {
+        public static string CodeExists {
             get {
-                return ResourceManager.GetString("CommandAliasDuplicate", resourceCulture);
+                return ResourceManager.GetString("CodeExists", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of command`s #{0} Alias should not exceed 255 characters!.
+        ///   Looks up a localized string similar to Service Code is empty.
         /// </summary>
-        public static string CommandAliasMaxLengthExceeded {
+        public static string CodeNotEntered {
             get {
-                return ResourceManager.GetString("CommandAliasMaxLengthExceeded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command`s #{0} Alias should be unique within all VE сommands!.
-        /// </summary>
-        public static string CommandAliasNonUnique {
-            get {
-                return ResourceManager.GetString("CommandAliasNonUnique", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please enter alias for command #{0}!.
-        /// </summary>
-        public static string CommandAliasRequired {
-            get {
-                return ResourceManager.GetString("CommandAliasRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command`s #{0} name should be unique within its VE Plugin`s сommands!.
-        /// </summary>
-        public static string CommandNameDuplicate {
-            get {
-                return ResourceManager.GetString("CommandNameDuplicate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command #{0} has invalid name format!.
-        /// </summary>
-        public static string CommandNameInvalidFormat {
-            get {
-                return ResourceManager.GetString("CommandNameInvalidFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Length of command`s #{0} name should not exceed 255 сharacters!.
-        /// </summary>
-        public static string CommandNameMaxLengthExceeded {
-            get {
-                return ResourceManager.GetString("CommandNameMaxLengthExceeded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command`s #{0} name should be unique within all VE сommands.
-        /// </summary>
-        public static string CommandNameNonUnique {
-            get {
-                return ResourceManager.GetString("CommandNameNonUnique", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please enter name for command #{0}!.
-        /// </summary>
-        public static string CommandNameRequired {
-            get {
-                return ResourceManager.GetString("CommandNameRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Some commands are not valid.
-        /// </summary>
-        public static string CommandNotValid {
-            get {
-                return ResourceManager.GetString("CommandNotValid", resourceCulture);
+                return ResourceManager.GetString("CodeNotEntered", resourceCulture);
             }
         }
         
@@ -196,11 +124,56 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InstanceKey.
+        ///   Looks up a localized string similar to Contract is empty.
+        /// </summary>
+        public static string ContractNotEntered {
+            get {
+                return ResourceManager.GetString("ContractNotEntered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are fields with equal names in contract.
+        /// </summary>
+        public static string FieldNameDuplicate {
+            get {
+                return ResourceManager.GetString("FieldNameDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are fields names with length more than 255 characters in contract.
+        /// </summary>
+        public static string FieldNameMaxLengthExceeded {
+            get {
+                return ResourceManager.GetString("FieldNameMaxLengthExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are fields with empty names in contract.
+        /// </summary>
+        public static string FieldNameNotEntered {
+            get {
+                return ResourceManager.GetString("FieldNameNotEntered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instance Key.
         /// </summary>
         public static string InstanceKey {
             get {
                 return ResourceManager.GetString("InstanceKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while loading contract from Service URL.
+        /// </summary>
+        public static string LoadedContractInvalidMessage {
+            get {
+                return ResourceManager.GetString("LoadedContractInvalidMessage", resourceCulture);
             }
         }
         
@@ -210,6 +183,15 @@ namespace Quantumart.QP8.Resources {
         public static string Order {
             get {
                 return ResourceManager.GetString("Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntax error while parsing contract.
+        /// </summary>
+        public static string ParsedContractInvalidMessage {
+            get {
+                return ResourceManager.GetString("ParsedContractInvalidMessage", resourceCulture);
             }
         }
         
@@ -264,6 +246,24 @@ namespace Quantumart.QP8.Resources {
         public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contract version hasn&apos;t changed.
+        /// </summary>
+        public static string VersionEqual {
+            get {
+                return ResourceManager.GetString("VersionEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version is empty.
+        /// </summary>
+        public static string VersionNotEntered {
+            get {
+                return ResourceManager.GetString("VersionNotEntered", resourceCulture);
             }
         }
     }
