@@ -1,6 +1,4 @@
-using System.Runtime.Serialization;
-
-namespace Quantumart.QP8.BLL.Enums
+namespace QP8.Plugins.Contract
 {
     public enum QpPluginValueType
     {

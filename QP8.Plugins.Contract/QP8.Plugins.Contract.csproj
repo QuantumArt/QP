@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.0</Version>
+    <Authors>Pavel Celut</Authors>
+    <Company>Quantum Art</Company>
+    <Product>QP8.Framework</Product>
+    <Description>QP8 Plugins contract</Description>
+    <Copyright>Copyright © 2007-2021 Quantum Art</Copyright>
+    <PackageReleaseNotes>Initial version</PackageReleaseNotes>
+    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>QP</PackageTags>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Configurations>Debug;Release</Configurations>
+    <RootNamespace>QP8.Plugins.Contract</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+
+</Project>

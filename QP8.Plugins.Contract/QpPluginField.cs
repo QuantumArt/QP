@@ -1,7 +1,4 @@
-using Quantumart.QP8.BLL.Enums;
-using Quantumart.QP8.Resources;
-
-namespace Quantumart.QP8.BLL
+namespace QP8.Plugins.Contract
 {
     public class QpPluginField
     {

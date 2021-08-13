@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using QP8.Infrastructure.Web.Helpers;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;

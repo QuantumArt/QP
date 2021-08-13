@@ -2,6 +2,7 @@
 using AutoMapper;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Enums;
 using Quantumart.QP8.DAL.Entities;
 

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
-namespace Quantumart.QP8.BLL
+namespace QP8.Plugins.Contract
 {
     public class QpPluginContract
     {
