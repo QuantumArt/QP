@@ -17,11 +17,7 @@
       }
       using(Html.BeginPanel("ByContractPanel"))
       {
-        @Html.TextAreaFieldFor(s => s.Data.Contract, new Dictionary<string, object>
-        {
-          { "class", "textbox hta-JsonTextArea highlightedTextarea" },
-          { "style", "height: 300px"}
-        })
+        @Html.TextAreaFieldFor(s => s.Data.Contract, Model.AreaAttributes)
       }
     }
     else
@@ -35,11 +31,14 @@
       @Html.TextBoxFieldFor(s => s.Data.Code, new Dictionary<string, object> { { "disabled", "disabled" } })
       @Html.TextBoxFieldFor(s => s.Data.Version, new Dictionary<string, object> { { "disabled", "disabled" } })
       @Html.TextBoxFieldFor(s => s.Data.InstanceKey, new Dictionary<string, object> { { "disabled", "disabled" } })
-      @Html.TextAreaFieldFor(s => s.Data.Contract, new Dictionary<string, object>
+      if (!String.IsNullOrEmpty(Model.Data.ServiceUrl))
       {
-        { "class", "textbox hta-JsonTextArea highlightedTextarea" },
-        { "style", "height: 300px"}
-      })
+        @Html.TextAreaFieldFor(s => s.Data.Contract, Model.DisabledAreaAttributes)
+      }
+      else
+      {
+        @Html.TextAreaFieldFor(s => s.Data.Contract, Model.AreaAttributes)
+      }
 
     }
 

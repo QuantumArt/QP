@@ -64,5 +64,22 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
             base.DoCustomBinding();
         }
 
+        public Dictionary<string, object> AreaAttributes =>
+            new Dictionary<string, object>
+            {
+                { "class", "textbox hta-JsonTextArea highlightedTextarea" },
+                { "style", "height: 300px" }
+            };
+
+        public Dictionary<string, object> DisabledAreaAttributes
+        {
+            get
+            {
+                var attrs = AreaAttributes;
+                attrs.Add("disabled", "disabled");
+                return attrs;
+            }
+
+        }
     }
 }
