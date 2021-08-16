@@ -3733,26 +3733,25 @@ create sequence if not exists public.plugin_field_value_seq;
 ALTER TABLE public.site ADD COLUMN IF NOT EXISTS replace_urls_in_db boolean NOT NULL DEFAULT false;
 CREATE TABLE IF NOT EXISTS public.plugin
 (
-    id               numeric(18)              NOT NULL default nextval('plugin_seq')
-       constraint pk_plugin primary key,
-    name             varchar(255)             NOT NULL,
-    description      text                     NULL,
-    code             varchar(50)              NULL,
-    contract         text                     NULL,
-    version          varchar(10)              NULL,
-    "order"          int                      NOT NULL DEFAULT (0),
-    service_url      varchar(512)             NULL,
-    instance_key     varchar(50)              NULL,
-    created          timestamp with time zone NOT NULL DEFAULT (now()),
-    modified         timestamp with time zone NOT NULL DEFAULT (now()),
-    last_modified_by numeric(18)              NOT NULL
+    id                       numeric(18)              NOT NULL default nextval('plugin_seq')
+        constraint pk_plugin primary key,
+    name                     varchar(255)             NOT NULL,
+    description              text                     NULL,
+    code                     varchar(50)              NULL,
+    contract                 text                     NULL,
+    version                  varchar(10)              NULL,
+    "order"                  int                      NOT NULL DEFAULT (0),
+    service_url              varchar(512)             NULL,
+    allow_multiple_instances boolean                  NOT NULL DEFAULT true,
+    instance_key             varchar(50)              NULL,
+    created                  timestamp with time zone NOT NULL DEFAULT (now()),
+    modified                 timestamp with time zone NOT NULL DEFAULT (now()),
+    last_modified_by         numeric(18)              NOT NULL
         constraint fk_plugin_last_modified_by references public.users (user_id)
-)
+);
 
 
 CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_name ON plugin(name);
-
-ALTER TABLE public.plugin ADD COLUMN IF NOT EXISTS allow_multiple_instances boolean NOT NULL DEFAULT true;
 
 -- drop table public.plugin
 
@@ -3771,6 +3770,7 @@ CREATE TABLE IF NOT EXISTS public.plugin_field
 
 CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_field_name ON plugin_field(plugin_id, name);
 --drop index ix_plugin_field_name
+-- drop table public.plugin_field
 CREATE TABLE IF NOT EXISTS public.plugin_field_value
 (
     id                   numeric(18) NOT NULL default nextval('plugin_field_value_seq')

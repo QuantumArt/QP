@@ -178,12 +178,15 @@
     <value>В контракте есть поля с одинаковыми именами</value>
   </data>
   <data name="FieldNameMaxLengthExceeded" xml:space="preserve">
-    <value>В контракте есть поля c именем длиннее, чем 255 символов</value>
+    <value>В контракте есть поля c именем длиннее, чем {1} символов</value>
   </data>
   <data name="LoadedContractInvalidMessage" xml:space="preserve">
     <value>Ошибка загрузки контракта по Url сервиса</value>
   </data>
   <data name="ContractNotEntered" xml:space="preserve">
     <value>Контракт не задан</value>
+  </data>
+  <data name="VersionMaxLengthExceeded" xml:space="preserve">
+    <value>Длина поля Версия не должна превышать {1} символов</value>
   </data>
 </root>

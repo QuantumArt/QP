@@ -142,7 +142,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are fields names with length more than 255 characters in contract.
+        ///   Looks up a localized string similar to There are fields names with length more than {1} characters in contract.
         /// </summary>
         public static string FieldNameMaxLengthExceeded {
             get {
@@ -255,6 +255,15 @@ namespace Quantumart.QP8.Resources {
         public static string VersionEqual {
             get {
                 return ResourceManager.GetString("VersionEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The length of Version field should not exceed {1} characters.
+        /// </summary>
+        public static string VersionMaxLengthExceeded {
+            get {
+                return ResourceManager.GetString("VersionMaxLengthExceeded", resourceCulture);
             }
         }
         

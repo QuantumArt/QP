@@ -13,3 +13,4 @@ CREATE TABLE IF NOT EXISTS public.plugin_field
 
 CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_field_name ON plugin_field(plugin_id, name);
 --drop index ix_plugin_field_name
+-- drop table public.plugin_field

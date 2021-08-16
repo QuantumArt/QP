@@ -121,7 +121,7 @@
     <value>Add New QP Plugin</value>
   </data>
   <data name="FieldNameMaxLengthExceeded" xml:space="preserve">
-    <value>There are fields names with length more than 255 characters in contract</value>
+    <value>There are fields names with length more than {1} characters in contract</value>
   </data>
   <data name="ServiceUrl" xml:space="preserve">
     <value>Service URL</value>
@@ -185,5 +185,8 @@
   </data>
   <data name="LoadedContractInvalidMessage" xml:space="preserve">
     <value>Error while loading contract from Service URL</value>
+  </data>
+  <data name="VersionMaxLengthExceeded" xml:space="preserve">
+    <value>The length of Version field should not exceed {1} characters</value>
   </data>
 </root>

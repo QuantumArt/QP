@@ -16,7 +16,8 @@ namespace Quantumart.QP8.BLL
     public class QpPlugin : EntityObject
     {
         internal const int BaseCommandOrder = 10;
-
+        private const int MaxVersionLength = 10;
+        private const int MaxFieldNameLength = 255;
 
         internal QpPlugin()
         {
@@ -136,7 +137,11 @@ namespace Quantumart.QP8.BLL
                 }
                 else
                 {
-                    if (OldVersion == Version)
+                    if (Version.Length > MaxVersionLength)
+                    {
+                        errors.ErrorFor(n => Version, String.Format(QpPluginStrings.VersionMaxLengthExceeded, null, MaxVersionLength));
+                    }
+                    else if (OldVersion == Version)
                     {
                         errors.ErrorFor(n => Version, QpPluginStrings.VersionEqual);
                     }
@@ -147,9 +152,9 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorForModel(QpPluginStrings.FieldNameNotEntered);
                 }
 
-                if (Fields.Any(n => n.Name.Length > 255))
+                if (Fields.Any(n => n.Name.Length > MaxFieldNameLength))
                 {
-                    errors.ErrorForModel(QpPluginStrings.FieldNameMaxLengthExceeded);
+                    errors.ErrorForModel(String.Format(QpPluginStrings.FieldNameMaxLengthExceeded, null, MaxFieldNameLength));
                 }
 
                 if (Fields.GroupBy(n => n.Name.ToLower() + n.RelationType).Any(g => g.Count() > 1))
@@ -157,9 +162,6 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorForModel(QpPluginStrings.FieldNameDuplicate);
                 }
             }
-
-
-
 
             if (!errors.IsEmpty)
             {
