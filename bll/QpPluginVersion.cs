@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
@@ -10,9 +8,6 @@ namespace Quantumart.QP8.BLL
     {
         [Display(Name = "Contract", ResourceType = typeof(QpPluginStrings))]
         public string Contract { get; set; }
-
-        [Display(Name = "Version", ResourceType = typeof(QpPluginStrings))]
-        public string Version { get; set; }
 
         [Display(Name = "Contract", ResourceType = typeof(QpPluginStrings))]
         public string ContractToMerge { get; set; }

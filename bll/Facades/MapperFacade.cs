@@ -128,6 +128,7 @@ namespace Quantumart.QP8.BLL.Facades
             VisualEditorCommandMapper = Create<VisualEditorCommandMapper>(cfg, true);
             QpPluginMapper = Create<QpPluginMapper>(cfg, true);
             QpPluginFieldMapper = Create<QpPluginFieldMapper>(cfg, true);
+            QpPluginVersionMapper = Create<QpPluginVersionMapper>(cfg, true);
             EntityPermissionLevelMapper = Create<EntityPermissionLevelMapper>(cfg);
             PermissionListItemRowMapper = Create<PermissionListItemRowMapper>(cfg);
             SitePermissionMapper = Create<SitePermissionMapper>(cfg, true);
@@ -230,6 +231,7 @@ namespace Quantumart.QP8.BLL.Facades
         internal static VisualEditorCommandMapper VisualEditorCommandMapper;
         internal static QpPluginMapper QpPluginMapper;
         internal static QpPluginFieldMapper QpPluginFieldMapper;
+        internal static QpPluginVersionMapper QpPluginVersionMapper;
         internal static EntityPermissionLevelMapper EntityPermissionLevelMapper;
         internal static PermissionListItemRowMapper PermissionListItemRowMapper;
         internal static SitePermissionMapper SitePermissionMapper;

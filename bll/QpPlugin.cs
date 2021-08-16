@@ -2,13 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using QP8.Infrastructure.Web.Helpers;
 using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services.VisualEditor;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
@@ -44,6 +41,10 @@ namespace Quantumart.QP8.BLL
         public string Contract { get; set; }
 
         public string OldContract { get; set; }
+
+        public DateTime OldModified { get; set; }
+
+        public int OldLastModifiedBy { get; set; }
 
         public bool ContractLoaded { get; set; }
 

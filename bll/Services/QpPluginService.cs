@@ -39,7 +39,14 @@ namespace Quantumart.QP8.BLL.Services
 
         public QpPlugin ReadForUpdate(int id) => Read(id);
 
-        public QpPlugin Update(QpPlugin plugin) => QpPluginRepository.UpdatePluginProperties(plugin);
+        public QpPlugin Update(QpPlugin plugin)
+        {
+            if (plugin.OldContract != plugin.Contract)
+            {
+                QpPluginRepository.CreateVersion(plugin);
+            }
+            return QpPluginRepository.UpdateProperties(plugin);
+        }
 
         public MessageResult Remove(int id)
         {
@@ -52,6 +59,6 @@ namespace Quantumart.QP8.BLL.Services
 
         public QpPlugin NewForSave(int parentId) => New(parentId);
 
-        public QpPlugin Save(QpPlugin plugin) => QpPluginRepository.SavePluginProperties(plugin);
+        public QpPlugin Save(QpPlugin plugin) => QpPluginRepository.SaveProperties(plugin);
     }
 }

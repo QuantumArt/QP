@@ -23,19 +23,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Возвращает список Plugin по ids
-        /// </summary>
-        /// <returns></returns>
-        internal static IEnumerable<QpPlugin> GetPluginList(IEnumerable<int> ids)
-        {
-            IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MapperFacade.QpPluginMapper
-                .GetBizList(QPContext.EFContext.PluginSet
-                    .Where(f => decIDs.Contains(f.Id))
-                    .ToList()
-                );
-        }
         internal static QpPlugin GetById(int id)
         {
             return MapperFacade.QpPluginMapper.GetBizObject(QPContext.EFContext.PluginSet
@@ -45,7 +32,7 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-        internal static QpPlugin UpdatePluginProperties(QpPlugin plugin)
+        internal static QpPlugin UpdateProperties(QpPlugin plugin)
         {
             var entities = QPContext.EFContext;
             DateTime timeStamp;
@@ -106,7 +93,7 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-        internal static QpPlugin SavePluginProperties(QpPlugin plugin)
+        internal static QpPlugin SaveProperties(QpPlugin plugin)
         {
             var entities = QPContext.EFContext;
             DateTime timeStamp;
@@ -164,6 +151,23 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var plugins = QPContext.EFContext.PluginSet;
             return plugins.Any() ? plugins.Max(n => n.Order) : 0;
+        }
+
+        public static void CreateVersion(QpPlugin plugin)
+        {
+            var entities = QPContext.EFContext;
+            var version = new QpPluginVersion
+            {
+                Contract = plugin.OldContract,
+                Modified = plugin.OldModified,
+                LastModifiedBy = plugin.OldLastModifiedBy,
+                Created = DateTime.Now,
+                Plugin = plugin,
+                PluginId = plugin.Id
+            };
+            var dal = MapperFacade.QpPluginVersionMapper.GetDalObject(version);
+            entities.Entry(dal).State = EntityState.Added;
+            entities.SaveChanges();
         }
     }
 }
