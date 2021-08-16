@@ -47,7 +47,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
                     var client = _factory.CreateClient();
                     var task = Task.Run(() => client.GetAsync(Data.ServiceUrl));
                     task.Wait();
-                    Data.Contract = task.Result.ToString();
+                    var response = task.Result;
+                    Data.Contract = response.IsSuccessStatusCode ? response.Content.ReadAsStringAsync().Result : null;
                 }
                 catch (Exception ex)
                 {
