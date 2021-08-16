@@ -101,7 +101,7 @@ namespace Quantumart.QP8.BLL
                 AllowMultipleInstances = ParsedContract.AllowMultipleInstances;
                 Description = ParsedContract.Description;
                 OldFields = Fields.ToDictionary(n => n.Name.ToLower(), m => m);
-                Fields.AddRange(ParsedContract.Fields.Where(n => !OldFields.ContainsKey(n.Name.ToLower())));
+                Fields.AddRange(ParsedContract.Fields.Where(n => n.Name != null && !OldFields.ContainsKey(n.Name.ToLower())));
             }
         }
 
