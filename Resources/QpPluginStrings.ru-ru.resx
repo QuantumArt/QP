@@ -189,4 +189,7 @@
   <data name="VersionMaxLengthExceeded" xml:space="preserve">
     <value>Длина поля Версия не должна превышать {1} символов</value>
   </data>
+  <data name="ReloadContract" xml:space="preserve">
+    <value>Перезагрузить контракт</value>
+  </data>
 </root>

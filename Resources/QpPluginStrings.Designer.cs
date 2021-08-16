@@ -214,6 +214,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reload contract.
+        /// </summary>
+        public static string ReloadContract {
+            get {
+                return ResourceManager.GetString("ReloadContract", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Service URL.
         /// </summary>
         public static string ServiceUrl {

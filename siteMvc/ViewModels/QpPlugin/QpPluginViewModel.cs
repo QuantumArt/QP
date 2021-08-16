@@ -32,6 +32,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
         [Display(Name = "PluginCreationMode", ResourceType = typeof(QpPluginStrings))]
         public QpPluginCreationMode CreationMode { get; set; }
 
+
+        [Display(Name = "ReloadContract", ResourceType = typeof(QpPluginStrings))]
+        public bool ReloadContract { get; set; }
+
         public IEnumerable<ListItem> GetCreationModes() => new[]
         {
             new ListItem(QpPluginCreationMode.ByServiceUrl.ToString(), QpPluginStrings.ByServiceUrl, "ByServiceUrlPanel"),
@@ -40,7 +44,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
 
         public override void DoCustomBinding()
         {
-            if (CreationMode == QpPluginCreationMode.ByServiceUrl && !String.IsNullOrEmpty(Data.ServiceUrl))
+            if (CreationMode == QpPluginCreationMode.ByServiceUrl && !String.IsNullOrEmpty(Data.ServiceUrl) && ReloadContract)
             {
                 try
                 {
@@ -49,6 +53,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
                     task.Wait();
                     var response = task.Result;
                     Data.Contract = response.IsSuccessStatusCode ? response.Content.ReadAsStringAsync().Result : null;
+                    Data.ContractLoaded = true;
                 }
                 catch (Exception ex)
                 {

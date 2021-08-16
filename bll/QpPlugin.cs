@@ -43,6 +43,10 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Contract", ResourceType = typeof(QpPluginStrings))]
         public string Contract { get; set; }
 
+        public string OldContract { get; set; }
+
+        public bool ContractLoaded { get; set; }
+
         [Display(Name = "Code", ResourceType = typeof(QpPluginStrings))]
         public string Code { get; set; }
 
@@ -64,25 +68,30 @@ namespace Quantumart.QP8.BLL
 
         public QpPluginContract ParsedContract { get; set; }
 
+        public bool ContractParsed => ParsedContract != null;
+
         public string ParsedContractInvalidMessage { get; set; }
 
         public string LoadedContractInvalidMessage { get; set; }
 
         public override void DoCustomBinding()
         {
-            if (!String.IsNullOrEmpty(Contract) && Contract != "{}")
+            if (Contract != OldContract || ContractLoaded)
             {
-                try
+                if (!String.IsNullOrEmpty(Contract) && Contract != "{}")
                 {
-                    ParsedContract = JsonConvert.DeserializeObject<QpPluginContract>(Contract);
-                }
-                catch (Exception ex)
-                {
-                    ParsedContractInvalidMessage = ex.Message;
+                    try
+                    {
+                        ParsedContract = JsonConvert.DeserializeObject<QpPluginContract>(Contract);
+                    }
+                    catch (Exception ex)
+                    {
+                        ParsedContractInvalidMessage = ex.Message;
+                    }
                 }
             }
 
-            if (ParsedContract != null)
+            if (ContractParsed)
             {
                 Code = ParsedContract.Code;
                 OldVersion = Version;
@@ -114,52 +123,56 @@ namespace Quantumart.QP8.BLL
             {
                 errors.ErrorFor(n => ServiceUrl, QpPluginStrings.ServiceUrlInvalidFormat);
             }
-            if (string.IsNullOrEmpty(Contract))
+
+            if (ContractParsed)
             {
-                errors.ErrorFor(n => ServiceUrl, QpPluginStrings.ContractNotEntered);
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(Code))
+                if (string.IsNullOrEmpty(Contract))
                 {
-                    errors.ErrorFor(n => ServiceUrl, QpPluginStrings.CodeNotEntered);
+                    errors.ErrorFor(n => ServiceUrl, QpPluginStrings.ContractNotEntered);
                 }
                 else
                 {
-                    if (QpPluginRepository.CodeExists(this))
+                    if (string.IsNullOrEmpty(Code))
                     {
-                        errors.ErrorFor(n => Code, QpPluginStrings.CodeExists);
+                        errors.ErrorFor(n => ServiceUrl, QpPluginStrings.CodeNotEntered);
                     }
-                }
-                if (string.IsNullOrEmpty(Version))
-                {
-                    errors.ErrorFor(n => ServiceUrl, QpPluginStrings.VersionNotEntered);
-                }
-                else
-                {
-                    if (Version.Length > MaxVersionLength)
+                    else
                     {
-                        errors.ErrorFor(n => Version, String.Format(QpPluginStrings.VersionMaxLengthExceeded, null, MaxVersionLength));
+                        if (QpPluginRepository.CodeExists(this))
+                        {
+                            errors.ErrorFor(n => Code, QpPluginStrings.CodeExists);
+                        }
                     }
-                    else if (OldVersion == Version)
+                    if (string.IsNullOrEmpty(Version))
                     {
-                        errors.ErrorFor(n => Version, QpPluginStrings.VersionEqual);
+                        errors.ErrorFor(n => ServiceUrl, QpPluginStrings.VersionNotEntered);
                     }
-                }
+                    else
+                    {
+                        if (Version.Length > MaxVersionLength)
+                        {
+                            errors.ErrorFor(n => Version, String.Format(QpPluginStrings.VersionMaxLengthExceeded, null, MaxVersionLength));
+                        }
+                        else if (OldVersion == Version)
+                        {
+                            errors.ErrorFor(n => Version, QpPluginStrings.VersionEqual);
+                        }
+                    }
 
-                if (Fields.Any(n => String.IsNullOrEmpty(n.Name)))
-                {
-                    errors.ErrorForModel(QpPluginStrings.FieldNameNotEntered);
-                }
+                    if (Fields.Any(n => String.IsNullOrEmpty(n.Name)))
+                    {
+                        errors.ErrorForModel(QpPluginStrings.FieldNameNotEntered);
+                    }
 
-                if (Fields.Any(n => n.Name.Length > MaxFieldNameLength))
-                {
-                    errors.ErrorForModel(String.Format(QpPluginStrings.FieldNameMaxLengthExceeded, null, MaxFieldNameLength));
-                }
+                    if (Fields.Any(n => n.Name.Length > MaxFieldNameLength))
+                    {
+                        errors.ErrorForModel(String.Format(QpPluginStrings.FieldNameMaxLengthExceeded, null, MaxFieldNameLength));
+                    }
 
-                if (Fields.GroupBy(n => n.Name.ToLower() + n.RelationType).Any(g => g.Count() > 1))
-                {
-                    errors.ErrorForModel(QpPluginStrings.FieldNameDuplicate);
+                    if (Fields.GroupBy(n => n.Name.ToLower() + n.RelationType).Any(g => g.Count() > 1))
+                    {
+                        errors.ErrorForModel(QpPluginStrings.FieldNameDuplicate);
+                    }
                 }
             }
 

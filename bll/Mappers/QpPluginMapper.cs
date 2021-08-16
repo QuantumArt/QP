@@ -16,7 +16,9 @@ namespace Quantumart.QP8.BLL.Mappers.VisualEditor
 
         public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<PluginDAL, QpPlugin>();
+            cfg.CreateMap<PluginDAL, QpPlugin>()
+                .ForMember(biz => biz.OldContract, opt => opt.MapFrom(n => n.Contract))
+                ;
         }
     }
 }

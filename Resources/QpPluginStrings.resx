@@ -189,4 +189,7 @@
   <data name="VersionMaxLengthExceeded" xml:space="preserve">
     <value>The length of Version field should not exceed {1} characters</value>
   </data>
+  <data name="ReloadContract" xml:space="preserve">
+    <value>Reload contract</value>
+  </data>
 </root>

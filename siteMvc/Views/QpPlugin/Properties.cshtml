@@ -27,6 +27,10 @@
     else
     {
       @Html.TextBoxFieldFor(s => s.Data.ServiceUrl, new Dictionary<string, object> { { "disabled", "disabled" } })
+      if (!String.IsNullOrEmpty(Model.Data.ServiceUrl))
+      {
+        @Html.CheckBoxFieldFor(s => s.ReloadContract)
+      }
       @Html.TextAreaFieldFor(s => s.Data.Description, new Dictionary<string, object> { { "disabled", "disabled" } })
       @Html.TextBoxFieldFor(s => s.Data.Code, new Dictionary<string, object> { { "disabled", "disabled" } })
       @Html.TextBoxFieldFor(s => s.Data.Version, new Dictionary<string, object> { { "disabled", "disabled" } })
