@@ -30,6 +30,7 @@ namespace Quantumart.QP8.DAL.Entities
         public string Code { get; set; }
         public string Version { get; set; }
         public string InstanceKey { get; set; }
+        public bool AllowMultipleInstances { get; set; }
 
         public int Order { get; set; }
         public System.DateTime Created { get; set; }
@@ -55,6 +56,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.ServiceUrl).HasColumnName("SERVICE_URL");
                 builder.Property(x => x.Code).HasColumnName("CODE");
                 builder.Property(x => x.Contract).HasColumnName("CONTRACT");
+                builder.Property(x => x.AllowMultipleInstances).HasColumnName("ALLOW_MULTIPLE_INSTANCES");
                 builder.Property(x => x.InstanceKey).HasColumnName("INSTANCE_KEY");
                 builder.Property(x => x.Version).HasColumnName("VERSION");
 				builder.Property(x => x.Description).HasColumnName("DESCRIPTION");

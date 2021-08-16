@@ -100,7 +100,10 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static bool CodeExists(QpPlugin plugin)
         {
-            return QPContext.EFContext.PluginSet.Any(n => n.Code == plugin.Code && n.InstanceKey == plugin.InstanceKey && n.Id != plugin.Id);
+            return QPContext.EFContext.PluginSet.Any(
+                n => n.Code == plugin.Code && n.Id != plugin.Id
+                && (!plugin.AllowMultipleInstances || !n.AllowMultipleInstances || n.InstanceKey == plugin.InstanceKey)
+            );
         }
 
         internal static QpPlugin SavePluginProperties(QpPlugin plugin)

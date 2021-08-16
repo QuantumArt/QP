@@ -53,6 +53,8 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "InstanceKey", ResourceType = typeof(QpPluginStrings))]
         public string InstanceKey { get; set; }
 
+        public bool AllowMultipleInstances { get; set; }
+
         public List<QpPluginField> Fields { get; set; }
 
         public Dictionary<string, QpPluginField> OldFields { get; set; }
@@ -85,6 +87,7 @@ namespace Quantumart.QP8.BLL
                 OldVersion = Version;
                 Version = ParsedContract.Version;
                 InstanceKey = ParsedContract.InstanceKey;
+                AllowMultipleInstances = ParsedContract.AllowMultipleInstances;
                 Description = ParsedContract.Description;
                 OldFields = Fields.ToDictionary(n => n.Name.ToLower(), m => m);
                 Fields.AddRange(ParsedContract.Fields.Where(n => !OldFields.ContainsKey(n.Name.ToLower())));

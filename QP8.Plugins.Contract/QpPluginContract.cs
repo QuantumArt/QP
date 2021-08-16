@@ -12,6 +12,9 @@ namespace QP8.Plugins.Contract
 
         public string InstanceKey { get; set; }
 
+
+        public bool AllowMultipleInstances { get; set; }
+
         public List<QpPluginField> Fields { get; set; }
     }
 }

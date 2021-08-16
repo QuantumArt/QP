@@ -3752,6 +3752,8 @@ CREATE TABLE IF NOT EXISTS public.plugin
 
 CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_name ON plugin(name);
 
+ALTER TABLE public.plugin ADD COLUMN IF NOT EXISTS allow_multiple_instances boolean NOT NULL DEFAULT true;
+
 -- drop table public.plugin
 
 CREATE TABLE IF NOT EXISTS public.plugin_field
