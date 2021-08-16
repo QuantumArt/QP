@@ -44,7 +44,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
 
         public override void DoCustomBinding()
         {
-            if (CreationMode == QpPluginCreationMode.ByServiceUrl && !String.IsNullOrEmpty(Data.ServiceUrl) && ReloadContract)
+            if (CreationMode == QpPluginCreationMode.ByServiceUrl && !String.IsNullOrEmpty(Data.ServiceUrl) && (IsNew || ReloadContract))
             {
                 try
                 {
