@@ -137,10 +137,10 @@ namespace Quantumart.QP8.BLL.Services
                 }
             }
 
-            version1.MergeToVersion(version2);
-            version1.Article.ViewType = ArticleViewType.CompareVersions;
-            version1.AggregatedArticles.ForEach(x => { x.ViewType = ArticleViewType.CompareVersions; });
-            return version1;
+            version2.MergeToVersion(version1);
+            version2.Article.ViewType = ArticleViewType.CompareVersions;
+            version2.AggregatedArticles.ForEach(x => { x.ViewType = ArticleViewType.CompareVersions; });
+            return version2;
         }
 
         public static MessageResult Remove(int id, bool? boundToExternal)
