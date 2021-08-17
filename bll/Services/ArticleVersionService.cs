@@ -94,17 +94,9 @@ namespace Quantumart.QP8.BLL.Services
 
             if (item1 == ArticleVersion.LiveVersionId)
             {
-                var liveVersion = ArticleService.ReadLive(parentId, parent.ContentId);
-                version1 = new ArticleVersion
-                {
-                    Id = ArticleVersion.LiveVersionId,
-                    Article = liveVersion,
-                    ArticleId = liveVersion.Id,
-                    Modified = liveVersion.Modified,
-                    LastModifiedBy = liveVersion.LastModifiedBy,
-                    LastModifiedByUser = liveVersion.LastModifiedByUser,
-                    StatusTypeId = liveVersion.StatusTypeId
-                };
+                var liveArticle = ArticleService.ReadLive(parentId, parent.ContentId);
+                version1 = CreateVersionFromArticle(liveArticle);
+                version1.Id = ArticleVersion.LiveVersionId;
             }
             else
             {
@@ -117,16 +109,8 @@ namespace Quantumart.QP8.BLL.Services
 
             if (item2 == ArticleVersion.CurrentVersionId)
             {
-                version2 = new ArticleVersion
-                {
-                    Id = ArticleVersion.CurrentVersionId,
-                    Article = parent,
-                    ArticleId = parent.Id,
-                    Modified = parent.Modified,
-                    LastModifiedBy = parent.LastModifiedBy,
-                    LastModifiedByUser = parent.LastModifiedByUser,
-                    StatusTypeId = parent.StatusTypeId
-                };
+                version2 = CreateVersionFromArticle(parent);
+                version2.Id = ArticleVersion.CurrentVersionId;
             }
             else
             {
@@ -142,6 +126,17 @@ namespace Quantumart.QP8.BLL.Services
             version2.AggregatedArticles.ForEach(x => { x.ViewType = ArticleViewType.CompareVersions; });
             return version2;
         }
+
+        public static ArticleVersion CreateVersionFromArticle(Article parent) =>
+            new ArticleVersion
+            {
+                Article = parent,
+                ArticleId = parent.Id,
+                Modified = parent.Modified,
+                LastModifiedBy = parent.LastModifiedBy,
+                LastModifiedByUser = parent.LastModifiedByUser,
+                StatusTypeId = parent.StatusTypeId
+            };
 
         public static MessageResult Remove(int id, bool? boundToExternal)
         {
