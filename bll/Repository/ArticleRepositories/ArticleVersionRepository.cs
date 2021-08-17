@@ -125,7 +125,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="ids">массив ID версий</param>
         internal static void MultipleDelete(int[] ids)
         {
-            DefaultRepository.Delete<ArticleVersionDAL>(ids);
+            DefaultRepository.Delete<ArticleVersionDAL>(ids.ToArray());
         }
 
         /// <summary>
