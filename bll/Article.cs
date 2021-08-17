@@ -383,16 +383,18 @@ namespace Quantumart.QP8.BLL
             if (_liveFieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
-                if (_liveFieldValues == null)
+
+                var oldIsLive = QPContext.IsLive;
+                QPContext.IsLive = true;
+                var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
+                _liveFieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
+                QPContext.IsLive = oldIsLive;
+
+                if (data != null)
                 {
-                    var data = ArticleRepository.GetData(Id, DisplayContentId, true, excludeArchive);
-                    _liveFieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
-                    if (data != null)
-                    {
-                        _liveModified = (DateTime)data["MODIFIED"];
-                        _liveLastModifiedBy = UserRepository.GetById((int)(decimal)data["LAST_MODIFIED_BY"]);
-                        _liveStatusTypeId = (int)(decimal)data["STATUS_TYPE_ID"];
-                    }
+                    _liveModified = (DateTime)data["MODIFIED"];
+                    _liveLastModifiedBy = UserRepository.GetById((int)(decimal)data["LAST_MODIFIED_BY"]);
+                    _liveStatusTypeId = (int)(decimal)data["STATUS_TYPE_ID"];
                 }
             }
             return _liveFieldValues;
@@ -403,12 +405,8 @@ namespace Quantumart.QP8.BLL
             if (_fieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
-                if (_fieldValues == null)
-                {
-                    var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
-                    _fieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
-
-                }
+                var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
+                _fieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
             }
             return _fieldValues;
         }
