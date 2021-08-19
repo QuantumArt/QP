@@ -14,6 +14,7 @@ namespace Quantumart.QP8.BLL
 {
     public class FieldValue
     {
+
         public Field Field { get; set; }
 
         public string Value
@@ -32,9 +33,9 @@ namespace Quantumart.QP8.BLL
 
         public int[] RelatedItems => Converter.ToIdArray(Value);
 
-        public int[] NewUnrelatedItems { get; set; }
+        public int[] NewUnrelatedItems { get; set; } = { };
 
-        public int[] NewRelatedItems { get; set; }
+        public int[] NewRelatedItems { get; set; } = { };
 
         public void Validate(RulesException<Article> errors)
         {

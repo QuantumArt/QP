@@ -160,7 +160,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.HasMany(x => x.VE_STYLE).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.STATUS_TYPE).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.workflow).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
-            builder.HasMany(x => x.CONTENT_ITEM_VERSION1).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.ModifiedBy);
+            builder.HasMany(x => x.CONTENT_ITEM_VERSION1).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.DefaultFilter).WithOne(y => y.User).HasForeignKey(y => y.UserId);
             builder.HasMany(x => x.OBJECT).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.OBJECT_FORMAT).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);

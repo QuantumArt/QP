@@ -18,7 +18,7 @@ namespace Quantumart.QP8.DAL.Entities
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
-    public partial class ObjectFormatVersionDAL
+    public partial class ObjectFormatVersionDAL : IQpEntityObject
     {
 
         public decimal Id { get; set; }
