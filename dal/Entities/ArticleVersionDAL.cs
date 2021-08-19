@@ -51,7 +51,7 @@ namespace Quantumart.QP8.DAL.Entities
 
                 builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
-				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_VERSION_ID").ValueGeneratedOnAdd();;
+				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_VERSION_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.Version).HasColumnName("VERSION");
 				builder.Property(x => x.VersionLabel).HasColumnName("VERSION_LABEL");
 				builder.Property(x => x.ContentVersionId).HasColumnName("CONTENT_VERSION_ID");
