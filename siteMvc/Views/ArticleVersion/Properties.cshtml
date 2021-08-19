@@ -9,6 +9,7 @@
         {
             @Html.Field(pair, forceReadonly: Model.IsChangingActionsProhibited)
         }
+        @Html.HiddenFor(e => e.Data.StatusTypeId) // to invoke QpModelBinder
     }
 
     using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))

@@ -19,10 +19,11 @@ namespace Quantumart.QP8.DAL.Entities
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
-    public partial class ArticleVersionDAL
+    public partial class ArticleVersionDAL: IQpEntityObject
     {
 
         public decimal Id { get; set; }
+        public decimal LastModifiedBy { get; set; }
         public string Version { get; set; }
         public string VersionLabel { get; set; }
         public Nullable<decimal> ContentVersionId { get; set; }
@@ -31,7 +32,6 @@ namespace Quantumart.QP8.DAL.Entities
         public System.DateTime Created { get; set; }
         public decimal CreatedBy { get; set; }
         public System.DateTime Modified { get; set; }
-        public decimal ModifiedBy { get; set; }
         public Nullable<decimal> StatusTypeId { get; set; }
 
         public Nullable<bool> Visible { get; set; }
@@ -49,9 +49,9 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("CONTENT_ITEM_VERSION");
 
-                builder.Property(x => x.ModifiedBy).HasColumnName("LAST_MODIFIED_BY");
+                builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
 				builder.Property(x => x.Modified).HasColumnName("MODIFIED");
-				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_VERSION_ID");
+				builder.Property(x => x.Id).HasColumnName("CONTENT_ITEM_VERSION_ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.Version).HasColumnName("VERSION");
 				builder.Property(x => x.VersionLabel).HasColumnName("VERSION_LABEL");
 				builder.Property(x => x.ContentVersionId).HasColumnName("CONTENT_VERSION_ID");
@@ -69,7 +69,7 @@ namespace Quantumart.QP8.DAL.Entities
                 builder.HasOne(x => x.Article).WithMany(y => y.Versions).HasForeignKey(x => x.ArticleId);
     			builder.HasOne(x => x.CreatedByUser).WithMany().HasForeignKey(x => x.CreatedBy);
     			builder.HasMany(x => x.ItemToItemVersion).WithOne(y => y.ArticleVersion).HasForeignKey(y => y.ArticleVersionId);
-    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.CONTENT_ITEM_VERSION1).HasForeignKey(x => x.ModifiedBy);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.CONTENT_ITEM_VERSION1).HasForeignKey(x => x.LastModifiedBy);
 
             }
         }

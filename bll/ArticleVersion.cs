@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -28,6 +30,8 @@ namespace Quantumart.QP8.BLL
         private List<FieldValue> _fieldValues;
         private PathInfo _pathInfo;
 
+        [BindNever]
+        [ValidateNever]
         public List<Article> AggregatedArticles { get; private set; } = new List<Article>();
 
         public List<FieldValue> LoadFieldValues(bool forArticle = false)
@@ -125,6 +129,8 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Вспомогательная структура для слияния
         /// </summary>
+        [BindNever]
+        [ValidateNever]
         [JsonIgnore]
         internal Dictionary<string, FieldValue> FieldHash => _fieldHash ?? (_fieldHash = GetFieldHash());
 
@@ -132,6 +138,8 @@ namespace Quantumart.QP8.BLL
         /// Вспомогательная структура для слияния
         /// </summary>
         [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
         internal Dictionary<int, Dictionary<string, FieldValue>> AggregatedArticlesHash => _aggregatedArticleHash ?? (_aggregatedArticleHash = GetAggregatedArticleHash());
 
         /// <summary>
@@ -208,15 +216,21 @@ namespace Quantumart.QP8.BLL
 
         public int? StatusTypeId { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public Article Article { get; set; }
 
         /// <summary>
         /// Версия, с которой происходит сравнение
         /// </summary>
+        [BindNever]
+        [ValidateNever]
         public ArticleVersion VersionToMerge { get; set; }
 
         public int CreatedBy { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public virtual User CreatedByUser { get; set; }
 
         /// <summary>
@@ -270,6 +284,7 @@ namespace Quantumart.QP8.BLL
         /// Поля данных версии
         /// </summary>
         [JsonIgnore]
+        [ValidateNever]
         public List<FieldValue> FieldValues
         {
             get => _fieldValues ?? LoadFieldValues();
@@ -309,9 +324,9 @@ namespace Quantumart.QP8.BLL
 
             var titlesArr1 = titles1?.ToArray() ?? new ListItem[0];
             var titlesArr2 = titles2?.ToArray() ?? new ListItem[0];
-            var same = titlesArr2.Intersect(titlesArr1, comparer).Select(i => new { id = i.Value, title = $"(#{i.Value}) - {i.Text}" });
-            var removed = titlesArr2.Except(titlesArr1, comparer).Select(i => new { id = i.Value, title = $"<span style='text-decoration: line-through; color: red'>(#{i.Value}) - {i.Text}</span>" });
-            var added = titlesArr1.Except(titlesArr2, comparer).Select(i => new { id = i.Value, title = $"<span style='background: #FFFF4D'>(#{i.Value}) - {i.Text}</span>" });
+            var same = titlesArr1.Intersect(titlesArr2, comparer).Select(i => new { id = i.Value, title = $"(#{i.Value}) - {i.Text}" });
+            var removed = titlesArr1.Except(titlesArr2, comparer).Select(i => new { id = i.Value, title = $"<span style='text-decoration: line-through; color: red'>(#{i.Value}) - {i.Text}</span>" });
+            var added = titlesArr2.Except(titlesArr1, comparer).Select(i => new { id = i.Value, title = $"<span style='background: #FFFF4D'>(#{i.Value}) - {i.Text}</span>" });
             var result = same.Concat(removed).Concat(added).OrderBy(i => i.id).Select(i => i.title);
 
             return string.Join("<br />", result);

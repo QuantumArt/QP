@@ -104,11 +104,11 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         internal static void Delete<TDal>(int[] id)
-            where TDal : class
+            where TDal : class, IQpEntityObject
         {
             var entities = QPContext.EFContext;
 
-            var list = FindAll<TDal>(entities, id);
+            var list = FindAll<TDal>(entities, id.Select(n => (decimal)n).ToArray());
             foreach (var item in list)
             {
                 entities.Entry(item).State = EntityState.Deleted;
@@ -118,36 +118,10 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
 
-
-
-
-        private static List<TDal> FindAll<TDal>(DbContext dbContext, int[] keyValues)
-            where TDal : class
+        private static List<TDal> FindAll<TDal>(DbContext dbContext, decimal[] keyValues)
+            where TDal : class, IQpEntityObject
         {
-            var entityType = dbContext.Model.FindEntityType(typeof(TDal));
-            var primaryKey = entityType.FindPrimaryKey();
-            if (primaryKey.Properties.Count != 1)
-                throw new NotSupportedException("Only a single primary key is supported");
-
-            var pkProperty = primaryKey.Properties[0];
-            var pkPropertyType = pkProperty.ClrType;
-
-            var castedKeyValues = pkPropertyType != typeof(int) ? keyValues.Select(x => Convert.ChangeType(x, pkPropertyType)).ToArray() : new[] { keyValues };
-
-            // retrieve member info for primary key
-            var pkMemberInfo = typeof(TDal).GetProperty(pkProperty.Name);
-            if (pkMemberInfo == null)
-                throw new ArgumentException("Type does not contain the primary key as an accessible property");
-
-            // build lambda expression
-            var parameter = Expression.Parameter(typeof(TDal), "e");
-            var body = Expression.Call(null, ContainsMethod,
-                Expression.Constant(castedKeyValues),
-                Expression.Convert(Expression.MakeMemberAccess(parameter, pkMemberInfo), typeof(object)));
-            var predicateExpression = Expression.Lambda<Func<TDal, bool>>(body, parameter);
-
-            // run query
-            return dbContext.Set<TDal>().Where(predicateExpression).ToList();
+            return dbContext.Set<TDal>().Where(x => keyValues.Contains(x.Id)).ToList();
         }
 
 
