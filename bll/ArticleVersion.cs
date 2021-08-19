@@ -324,9 +324,9 @@ namespace Quantumart.QP8.BLL
 
             var titlesArr1 = titles1?.ToArray() ?? new ListItem[0];
             var titlesArr2 = titles2?.ToArray() ?? new ListItem[0];
-            var same = titlesArr2.Intersect(titlesArr1, comparer).Select(i => new { id = i.Value, title = $"(#{i.Value}) - {i.Text}" });
-            var removed = titlesArr2.Except(titlesArr1, comparer).Select(i => new { id = i.Value, title = $"<span style='text-decoration: line-through; color: red'>(#{i.Value}) - {i.Text}</span>" });
-            var added = titlesArr1.Except(titlesArr2, comparer).Select(i => new { id = i.Value, title = $"<span style='background: #FFFF4D'>(#{i.Value}) - {i.Text}</span>" });
+            var same = titlesArr1.Intersect(titlesArr2, comparer).Select(i => new { id = i.Value, title = $"(#{i.Value}) - {i.Text}" });
+            var removed = titlesArr1.Except(titlesArr2, comparer).Select(i => new { id = i.Value, title = $"<span style='text-decoration: line-through; color: red'>(#{i.Value}) - {i.Text}</span>" });
+            var added = titlesArr2.Except(titlesArr1, comparer).Select(i => new { id = i.Value, title = $"<span style='background: #FFFF4D'>(#{i.Value}) - {i.Text}</span>" });
             var result = same.Concat(removed).Concat(added).OrderBy(i => i.id).Select(i => i.title);
 
             return string.Join("<br />", result);
