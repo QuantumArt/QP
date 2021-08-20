@@ -18,7 +18,7 @@ namespace Quantumart.QP8.DAL.Entities
     // ReSharper disable InconsistentNaming
     // ReSharper disable UnusedMember.Global
     // ReSharper disable UnusedAutoPropertyAccessor.Global
-    public partial class PluginVersionDAL
+    public partial class PluginVersionDAL : IQpEntityObject
     {
         public decimal Id { get; set; }
         public decimal PluginId { get; set; }
@@ -41,7 +41,6 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.LastModifiedBy).HasColumnName("LAST_MODIFIED_BY");
 				builder.Property(x => x.Contract).HasColumnName("CONTRACT");
 				builder.Property(x => x.PluginId).HasColumnName("PLUGIN_ID");
-
 
                 builder.HasKey(x => x.Id);
 

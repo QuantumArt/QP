@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -68,6 +69,22 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             {
                 Common.ChangeRelationIdToNewOne(QPConnectionScope.Current.DbConnection, currentRelationFieldId, newRelationFieldId);
             }
+        }
+
+        public List<QpPluginFieldValue> GetPluginValues(int contentId)
+        {
+            var actualValues = QPContext.EFContext.PluginFieldValueSet
+                .Where(n => n.ContentId == contentId)
+                .ToDictionary(k => (int)k.PluginFieldId, n => n.Value);
+
+            var pluginFieldValues = QpPluginRepository.GetPluginFields(QpPluginRelationType.Content)
+                .Select(n => new QpPluginFieldValue()
+                {
+                    Field = n,
+                    Value = actualValues.TryGetValue(n.Id, out var result) ? result : String.Empty
+                }).ToList();
+
+            return pluginFieldValues;
         }
 
         private ContentToContentDAL GetDal(ContentLink bll)

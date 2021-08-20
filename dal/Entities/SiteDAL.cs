@@ -81,6 +81,8 @@ namespace Quantumart.QP8.DAL.Entities
 
         public ICollection<SiteCustomActionBindDAL> SiteCustomActionBinds { get; set; }
 
+        public ICollection<PluginFieldValueDAL> PluginFieldValues { get; set; }
+
         [NotMapped]
         public IEnumerable<CustomActionDAL> CustomActions => SiteCustomActionBinds?.Select(x => x.CustomAction);
     }

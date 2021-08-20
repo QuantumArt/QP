@@ -8,6 +8,8 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -28,6 +30,8 @@ namespace Quantumart.QP8.DAL.Entities
         public string RelationType { get; set; }
         public int SortOrder { get; set; }
         public PluginDAL Plugin { get; set; }
+
+        public ICollection<PluginFieldValueDAL> Values { get; set; }
     }
         public class PluginFieldDALConfiguration : IEntityTypeConfiguration<PluginFieldDAL>
         {

@@ -127,6 +127,8 @@ namespace Quantumart.QP8.DAL.Entities
         public ICollection<FieldDAL> ChildFields { get; set; }
         public ICollection<FieldDAL> OrderField { get; set; }
         public FieldDAL OrderFieldChildren { get; set; }
+
+        public ICollection<PluginFieldValueDAL> PluginFieldValues { get; set; }
     }
         public class FieldDALConfiguration : IEntityTypeConfiguration<FieldDAL>
         {

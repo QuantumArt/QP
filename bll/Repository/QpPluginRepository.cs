@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
@@ -168,6 +169,13 @@ namespace Quantumart.QP8.BLL.Repository
             var dal = MapperFacade.QpPluginVersionMapper.GetDalObject(version);
             entities.Entry(dal).State = EntityState.Added;
             entities.SaveChanges();
+        }
+
+        internal static IEnumerable<QpPluginField> GetPluginFields(QpPluginRelationType relationType)
+        {
+            var relationTypeDal = MapperFacade.QpPluginFieldMapper.Write(relationType);
+            var pluginFields = QPContext.EFContext.PluginFieldSet.Where(n => n.RelationType == relationTypeDal).ToList();
+            return MapperFacade.QpPluginFieldMapper.GetBizList(pluginFields).ToList();
         }
     }
 }
