@@ -36,7 +36,7 @@ namespace Quantumart.QP8.DAL.Entities
         {
             public void Configure(EntityTypeBuilder<PluginFieldValueDAL> builder)
             {
-                builder.ToTable("PLUGIN_FIELD");
+                builder.ToTable("PLUGIN_FIELD_VALUE");
 
                 builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.PluginFieldId).HasColumnName("PLUGIN_FIELD_ID");
