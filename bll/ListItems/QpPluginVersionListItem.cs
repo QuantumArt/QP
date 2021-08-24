@@ -8,11 +8,10 @@ namespace Quantumart.QP8.BLL.ListItems
     {
         public int Id { get; set; }
 
-        [JsonConverter(typeof(DateTimeConverter))]
-        public DateTime Modified { get; set; }
+        public string Created { get; set; }
 
-        public string Version { get; set; }
+        public string Modified { get; set; }
 
-        public string ModifiedByLogin { get; set; }
+        public string LastModifiedByUser { get; set; }
     }
 }

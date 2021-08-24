@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.Merger;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
@@ -37,6 +38,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="versionToMerge">версия для слияния</param>
         internal void MergeToVersion(QpPluginVersion versionToMerge)
         {
+            ContractToMerge = Merge(Formatter.ProtectHtml(Contract), Formatter.ProtectHtml(versionToMerge.Contract));
             VersionToMerge = versionToMerge;
         }
 

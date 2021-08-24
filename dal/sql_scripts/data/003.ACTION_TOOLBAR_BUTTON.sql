@@ -48,3 +48,34 @@ if not exists (select * from ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.
     values (dbo.qp_action_id('scheduled_tasks'), dbo.qp_action_id('refresh_scheduled_tasks'), 'Refresh', 'refresh.gif', 100)
 GO
 
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin') and NAME = 'Versions')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_plugin'), dbo.qp_action_id('list_plugin_version'), 'Versions', 'version.gif', NULL, 2)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin_version') and NAME = 'Preview')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_plugin_version'), dbo.qp_action_id('preview_plugin_version'), 'Preview', 'properties.gif', NULL, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin_version') and NAME = 'Compare Versions')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_plugin_version'), dbo.qp_action_id('compare_plugin_versions'), 'Compare Versions', 'compare.gif', NULL, 2)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin_version') and NAME = 'Compare with current')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_plugin_version'), dbo.qp_action_id('compare_plugin_version_with_current'), 'Compare with current', 'compare.gif', NULL, 3)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_plugin_version') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_plugin_version'), dbo.qp_action_id('refresh_plugin_versions'), 'Refresh', 'refresh.gif', NULL, 4)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('preview_plugin_version') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('preview_plugin_version'), dbo.qp_action_id('refresh_plugin_version'), 'Refresh', 'refresh.gif', NULL, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('compare_plugin_versions') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('compare_plugin_versions'), dbo.qp_action_id('refresh_plugin_versions'), 'Refresh', 'refresh.gif', NULL, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('compare_plugin_version_with_current') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('compare_plugin_version_with_current'), dbo.qp_action_id('refresh_plugin_version'), 'Refresh', 'refresh.gif', NULL, 1)

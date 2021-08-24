@@ -192,4 +192,7 @@
   <data name="ReloadContract" xml:space="preserve">
     <value>Перезагрузить контракт</value>
   </data>
+  <data name="PluginVersionNotFound" xml:space="preserve">
+    <value>Версия плагина QP не найдена (Id ={0})</value>
+  </data>
 </root>

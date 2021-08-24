@@ -192,4 +192,7 @@
   <data name="ReloadContract" xml:space="preserve">
     <value>Reload contract</value>
   </data>
+  <data name="PluginVersionNotFound" xml:space="preserve">
+    <value>QP Plugin version is not found (Id ={0})</value>
+  </data>
 </root>

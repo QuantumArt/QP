@@ -214,6 +214,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to QP Plugin version is not found (Id ={0}).
+        /// </summary>
+        public static string PluginVersionNotFound {
+            get {
+                return ResourceManager.GetString("PluginVersionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reload contract.
         /// </summary>
         public static string ReloadContract {

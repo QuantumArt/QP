@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.BLL.Repository.ArticleRepositories;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -27,7 +23,7 @@ namespace Quantumart.QP8.BLL.Repository
                 result = result.OrderBy(command.SortExpression);
             }
 
-            return DefaultMapper.GetBizList<QpPluginVersion, PluginVersionDAL>(result.ToList());
+            return MapperFacade.QpPluginVersionMapper.GetBizList(result.ToList());
         }
 
         internal static QpPluginVersion GetById(int id, int pluginId = 0)
@@ -38,7 +34,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 if (pluginId == 0)
                 {
-                    throw new Exception("Article id is not specified!");
+                    throw new Exception("Plugin id is not specified!");
                 }
 
                 var plugin = QpPluginRepository.GetById(pluginId);
@@ -55,7 +51,7 @@ namespace Quantumart.QP8.BLL.Repository
             else
             {
                 var dal = QPContext.EFContext.PluginVersionSet.Include(n => n.LastModifiedByUser).SingleOrDefault(n => n.Id == id);
-                qpPluginVersion = DefaultMapper.GetBizObject<QpPluginVersion, PluginVersionDAL>(dal);
+                qpPluginVersion = MapperFacade.QpPluginVersionMapper.GetBizObject(dal);
                 if (qpPluginVersion != null)
                 {
                     qpPluginVersion.Plugin = QpPluginRepository.GetById(qpPluginVersion.PluginId);

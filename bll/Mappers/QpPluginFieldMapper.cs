@@ -1,12 +1,10 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using QP8.Plugins.Contract;
-using Quantumart.QP8.BLL.Enums;
 using Quantumart.QP8.DAL.Entities;
 
-namespace Quantumart.QP8.BLL.Mappers.VisualEditor
+namespace Quantumart.QP8.BLL.Mappers
 {
     internal class QpPluginFieldMapper : GenericMapper<QpPluginField, PluginFieldDAL>
     {

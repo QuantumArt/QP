@@ -8,7 +8,6 @@ using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
-using Quantumart.QP8.Utils;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository

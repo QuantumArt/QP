@@ -65,4 +65,30 @@ if not exists (select * from BACKEND_ACTION where code = 'scheduled_tasks')
 if not exists (select * from BACKEND_ACTION where code = 'refresh_scheduled_tasks')
     insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
     values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('db'))
+
+if not exists (select * From BACKEND_ACTION where code = 'list_plugin_version')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE, DEFAULT_VIEW_TYPE_ID)
+    values('QP Plugin versions', 'list_plugin_version', dbo.qp_action_type_id('list'), dbo.qp_entity_type_id('plugin_version'), '~/QpPluginVersion/Index/',  1, dbo.qp_view_id('list'))
+
+if not exists (select * from BACKEND_ACTION where code = 'preview_plugin_version')
+	INSERT INTO BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES('Preview QP Plugin version', 'preview_plugin_version', dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('plugin_version'), '~/QpPluginVersion/Properties/', 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'compare_plugin_version_with_current')
+	INSERT INTO BACKEND_ACTION (NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES('Compare QP Plugin version with Current', 'compare_plugin_version_with_current', dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('plugin_version'), '~/QpPluginVersion/CompareWithCurrent/', 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'compare_plugin_versions')
+	INSERT INTO BACKEND_ACTION (NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
+	VALUES('Compare QP Plugin versions', 'compare_plugin_versions', dbo.qp_action_type_id('compare'), dbo.qp_entity_type_id('plugin_version'), '~/QpPluginVersion/Compare/', 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'refresh_plugin_version')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
+    values('Refresh Plugin Version', 'refresh_plugin_version', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('plugin_version'))
+
+if not exists (select * from BACKEND_ACTION where code = 'refresh_plugin_versions')
+    insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
+    values('Refresh Plugin Versions', 'refresh_plugin_versions', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('plugin_version'))
+
+
 GO
