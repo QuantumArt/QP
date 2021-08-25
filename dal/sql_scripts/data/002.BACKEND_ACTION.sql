@@ -90,5 +90,9 @@ if not exists (select * from BACKEND_ACTION where code = 'refresh_plugin_version
     insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID)
     values('Refresh Plugin Versions', 'refresh_plugin_versions', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('plugin_version'))
 
+update BACKEND_ACTION set SHORT_NAME = 'Compare versions' where NAME = 'Compare QP Plugin versions'
+update BACKEND_ACTION set SHORT_NAME = 'Compare with Current' where NAME = 'Compare QP Plugin version with Current'
+update BACKEND_ACTION set SHORT_NAME = 'Preview' where NAME = 'Preview QP Plugin version'
+update BACKEND_ACTION set SHORT_NAME = 'Versions' where NAME = 'QP Plugin versions'
 
 GO

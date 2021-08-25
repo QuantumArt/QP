@@ -17,6 +17,8 @@ namespace Quantumart.QP8.BLL
 
         public QpPlugin Plugin { get; set; }
 
+        public override string Name => Id.ToString();
+
         /// <summary>
         /// Фальшивый идентификатор для текущей версии
         /// </summary>

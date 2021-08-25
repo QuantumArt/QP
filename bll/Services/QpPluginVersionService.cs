@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -44,10 +46,15 @@ namespace Quantumart.QP8.BLL.Services
         }
 
 
-        public static List<QpPluginVersion> List(int articleId, ListCommand command)
+        public static ListResult<QpPluginVersionListItem> List(ListCommand command, int pluginId)
         {
             command.SortExpression = EntityObject.TranslateSortExpression(command.SortExpression);
-            return QpPluginVersionRepository.GetList(articleId, command);
+            var list = QpPluginVersionRepository.List(pluginId, command, out var totalRecords);
+            return new ListResult<QpPluginVersionListItem>
+            {
+                Data = list.ToList(),
+                TotalRecords = totalRecords
+            };
         }
 
         public static QpPluginVersion GetMergedVersion(int[] ids, int parentId)

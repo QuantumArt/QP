@@ -6675,4 +6675,16 @@
   <phrase key="compare live version with current">
     <translation languageId="2">Сравнить Live-версию с текущей</translation>
   </phrase>
+  <phrase key="qp plugin">
+    <translation languageId="2">Плагин QP</translation>
+  </phrase>
+  <phrase key="qp plugins">
+    <translation languageId="2">Плагины QP</translation>
+  </phrase>
+  <phrase key="qp plugin version">
+    <translation languageId="2">Версия плагина QP</translation>
+  </phrase>
+  <phrase key="qp plugin versions">
+    <translation languageId="2">Версии плагина QP</translation>
+  </phrase>
 </translations>

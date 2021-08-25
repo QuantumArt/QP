@@ -14,11 +14,11 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class QpPluginRepository
     {
-        internal static IEnumerable<QpPluginListItem> List(ListCommand cmd, int contentId, out int totalRecords)
+        internal static IEnumerable<QpPluginListItem> List(ListCommand cmd, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
-                var rows = Common.GetQpPluginsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+                var rows = Common.GetQpPluginsPage(scope.DbConnection, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
                 return MapperFacade.QpPluginListItemRowMapper.GetBizList(rows.ToList());
             }
         }

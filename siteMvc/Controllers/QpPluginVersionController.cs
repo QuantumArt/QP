@@ -38,9 +38,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = QpPluginVersionService.List(parentId, listCommand);
-            var result = Mapper.Map<List<QpPluginVersion>, List<QpPluginVersionListItem>>(serviceResult);
-            return new TelerikResult(result, result.Count);
+            var serviceResult = QpPluginVersionService.List(listCommand, parentId);
+            return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

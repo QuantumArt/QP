@@ -4,26 +4,21 @@ using System.Linq;
 using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class QpPluginVersionRepository
     {
-        internal static List<QpPluginVersion> GetList(int pluginId, ListCommand command)
+        internal static List<QpPluginVersionListItem> List(int pluginId, ListCommand cmd, out int totalRecords)
         {
-            var result = QPContext.EFContext
-                .PluginVersionSet
-                .Where(x => x.PluginId == pluginId)
-                .Include(x => x.LastModifiedByUser)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(command.SortExpression))
+            using (var scope = new QPConnectionScope())
             {
-                result = result.OrderBy(command.SortExpression);
+                var rows = Common.GetQpPluginVersionsPage(scope.DbConnection, pluginId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+                return MapperFacade.QpPluginVersionListItemRowMapper.GetBizList(rows.ToList());
             }
-
-            return MapperFacade.QpPluginVersionMapper.GetBizList(result.ToList());
         }
 
         internal static QpPluginVersion GetById(int id, int pluginId = 0)
