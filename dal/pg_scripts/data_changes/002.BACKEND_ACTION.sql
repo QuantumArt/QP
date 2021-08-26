@@ -89,3 +89,34 @@ on conflict do nothing;
 insert into backend_action(name, code, type_id, entity_type_id)
 values('Refresh Scheduled Tasks', 'refresh_scheduled_tasks', (select id from action_type where code = 'refresh'), (select id from entity_type where code = 'db'))
 on conflict do nothing;
+
+insert into backend_action(name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface, default_view_type_id)
+values('QP Plugin versions', 'Versions', 'list_plugin_version', (select id from action_type where code = 'list'),
+       (select id from entity_type where code = 'plugin_version'), '~/QpPluginVersion/Index/',  true, (select id from view_type where code = 'list'))
+on conflict do nothing;
+
+insert into backend_action(name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface)
+values('Preview QP Plugin version', 'Preview', 'preview_plugin_version', (select id from action_type where code = 'read'),
+       (select id from entity_type where code = 'plugin_version'), '~/QpPluginVersion/Properties/', true)
+on conflict do nothing;
+
+insert into backend_action (name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface)
+values('Compare QP Plugin version with Current', 'Compare with Current', 'compare_plugin_version_with_current', (select id from action_type where code = 'read'),
+       (select id from entity_type where code = 'plugin_version'), '~/QpPluginVersion/CompareWithCurrent/', true)
+on conflict do nothing;
+
+insert into backend_action (name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface)
+values('Compare QP Plugin versions', 'Compare versions', 'compare_plugin_versions', (select id from action_type where code = 'compare'),
+       (select id from entity_type where code = 'plugin_version'), '~/QpPluginVersion/Compare/', true)
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id)
+values('Refresh Plugin Version', 'refresh_plugin_version', (select id from action_type where code = 'refresh'),
+       (select id from entity_type where code = 'plugin_version'))
+on conflict do nothing;
+
+insert into backend_action(name, code, type_id, entity_type_id)
+values('Refresh Plugin Versions', 'refresh_plugin_versions', (select id from action_type where code = 'refresh'),
+       (select id from entity_type where code = 'plugin_version'))
+on conflict do nothing;
+

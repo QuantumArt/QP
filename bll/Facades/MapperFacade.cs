@@ -123,6 +123,7 @@ namespace Quantumart.QP8.BLL.Facades
             NotificationListItemRowMapper = Create<NotificationListItemRowMapper>(cfg);
             VisualEditorPluginListItemRowMapper = Create<VisualEditorPluginListItemRowMapper>(cfg);
             QpPluginListItemRowMapper = Create<QpPluginListItemRowMapper>(cfg);
+            QpPluginVersionListItemRowMapper = Create<QpPluginVersionListItemRowMapper>(cfg);
             WorkflowListItemRowMapper = Create<WorkflowListItemRowMapper>(cfg);
             VisualEditorPluginMapper = Create<VisualEditorPluginMapper>(cfg, true);
             VisualEditorCommandMapper = Create<VisualEditorCommandMapper>(cfg, true);
@@ -226,6 +227,7 @@ namespace Quantumart.QP8.BLL.Facades
         internal static NotificationListItemRowMapper NotificationListItemRowMapper;
         internal static VisualEditorPluginListItemRowMapper VisualEditorPluginListItemRowMapper;
         internal static QpPluginListItemRowMapper QpPluginListItemRowMapper;
+        internal static QpPluginVersionListItemRowMapper QpPluginVersionListItemRowMapper;
         internal static WorkflowListItemRowMapper WorkflowListItemRowMapper;
         internal static VisualEditorPluginMapper VisualEditorPluginMapper;
         internal static VisualEditorCommandMapper VisualEditorCommandMapper;

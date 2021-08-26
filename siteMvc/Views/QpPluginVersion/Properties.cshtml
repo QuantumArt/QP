@@ -1,0 +1,20 @@
+﻿@using Quantumart.QP8.Resources
+@model  Quantumart.QP8.WebMvc.ViewModels.QpPlugin.QpPluginVersionViewModel
+
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+        @Html.TextAreaFieldFor(s => s.Data.Contract,new Dictionary<string, object>
+        {
+          { "class", "textbox hta-JsonTextArea highlightedTextarea" },
+          { "style", "height: 300px" }
+        })
+	}
+
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
+}
+
+@Html.PrepareAndRunInitScript(Model)

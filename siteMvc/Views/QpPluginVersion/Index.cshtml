@@ -1,0 +1,47 @@
+﻿@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.QpPlugin.QpPluginVersionListViewModel
+
+@using (Html.BeginDocumentPadding())
+{
+  if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+  {
+    using (Html.BeginLinkButtonsList())
+    {
+      @Html.AddNewItemLink(Model)
+    }
+  }
+
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          {
+            field: '',
+            headerTemplate: '<input type="checkbox" name="SelectHeader" value="" />',
+            headerAttributes: { 'class': 't-select-header' },
+            template: '<input type="checkbox" name="SelectedQpPluginVersionsIDs" value="#= Id #" />',
+            sortable: false,
+            attributes: { 'class': 't-select-cell' },
+            width: 35,
+          },
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+          { field: 'Created', title: '@EntityObjectStrings.Created' },
+          { field: 'Modified', title: '@EntityObjectStrings.Modified' },
+          { field: 'LastModifiedByLogin', title: '@EntityObjectStrings.LastModifiedBy' },
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.GettingDataActionName, "QpPluginVersion", new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
+}
+
+@Html.PrepareAndRunInitScript(Model)

@@ -1,0 +1,30 @@
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.QpPlugin.QpPluginVersionViewModel
+
+
+@using (Html.BeginTabForm(Model))
+{
+    using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	  {
+        @Html.VersionAreaFieldFor(s => s.Data.ContractToMerge, Model.Data.ContractToMerge)
+	  }
+
+    using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))
+    {
+        @Html.DisplayFieldFor(e => e.Data.ExpandedName)
+        @Html.DisplayFieldFor(e => e.Data.ModifiedToDisplay)
+        @Html.DisplayFieldFor(e => e.Data.LastModifiedByUserToDisplay)
+    }
+
+    if (Model.IsComparison)
+    {
+        using (Html.BeginFieldGroup(EntityObjectStrings.ComparedVersionTitle))
+        {
+	          @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ExpandedName)
+	          @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ModifiedToDisplay)
+            @Html.DisplayFieldFor(e => e.Data.VersionToMerge.LastModifiedByUserToDisplay)
+        }
+    }
+}
+
+@Html.PrepareAndRunInitScript(Model)

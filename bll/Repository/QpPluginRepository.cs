@@ -8,18 +8,17 @@ using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
-using Quantumart.QP8.Utils;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class QpPluginRepository
     {
-        internal static IEnumerable<QpPluginListItem> List(ListCommand cmd, int contentId, out int totalRecords)
+        internal static IEnumerable<QpPluginListItem> List(ListCommand cmd, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
-                var rows = Common.GetQpPluginsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+                var rows = Common.GetQpPluginsPage(scope.DbConnection, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
                 return MapperFacade.QpPluginListItemRowMapper.GetBizList(rows.ToList());
             }
         }

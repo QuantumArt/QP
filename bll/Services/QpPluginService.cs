@@ -19,7 +19,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ListResult<QpPluginListItem> List(ListCommand cmd, int parentId)
         {
-            var list = QpPluginRepository.List(cmd, parentId, out var totalRecords);
+            var list = QpPluginRepository.List(cmd, out var totalRecords);
             return new ListResult<QpPluginListItem>
             {
                 Data = list.ToList(),

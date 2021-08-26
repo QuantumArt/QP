@@ -2414,7 +2414,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             );
         }
 
-        public static IEnumerable<DataRow> GetQpPluginsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        public static IEnumerable<DataRow> GetQpPluginsPage(DbConnection sqlConnection, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = GetDbType(sqlConnection);
             var escapedOrderColumnName = Escape(dbType, "ORDER");
@@ -2426,6 +2426,23 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 "PLUGIN p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : escapedOrderColumnName,
                 "",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetQpPluginVersionsPage(DbConnection sqlConnection, int pluginId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.QpPluginVersion,
+                $"p.ID as Id, cast(p.Id as NVARCHAR) as Name, p.CREATED as Created, " +
+                "p.MODIFIED as Modified, p.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "PLUGIN_VERSION p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "ID",
+                $"p.PLUGIN_ID = {pluginId}",
                 startRow,
                 pageSize,
                 out totalRecords

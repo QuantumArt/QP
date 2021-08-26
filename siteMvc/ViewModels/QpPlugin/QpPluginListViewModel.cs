@@ -17,6 +17,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.QpPlugin
         {
             var model = Create<QpPluginListViewModel>(tabId, parentId);
             model.SelectedIDs = ids;
+            model.AllowMultipleEntitySelection = false;
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
             return model;
         }

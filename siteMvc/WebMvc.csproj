@@ -55,8 +55,6 @@
     <None Include="..\QP.Custom\plugins\**\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="plugins\" />
     <None Include="*.config" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
     <None Include="appsettings*.json" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
-    <None Include="..\dal\sql_scripts\current.sql" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" LinkBase="sql_scripts\" />
-    <None Include="..\dal\pg_scripts\current.sql" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" LinkBase="pg_scripts\" />
     <None Update="Static\QP8\icons\16x16\plugin.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>

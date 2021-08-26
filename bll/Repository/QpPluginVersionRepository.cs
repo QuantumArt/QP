@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 
@@ -14,20 +12,13 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class QpPluginVersionRepository
     {
-        internal static List<QpPluginVersion> GetList(int pluginId, ListCommand command)
+        internal static List<QpPluginVersionListItem> List(int pluginId, ListCommand cmd, out int totalRecords)
         {
-            var result = QPContext.EFContext
-                .PluginVersionSet
-                .Where(x => x.PluginId == pluginId)
-                .Include(x => x.LastModifiedByUser)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(command.SortExpression))
+            using (var scope = new QPConnectionScope())
             {
-                result = result.OrderBy(command.SortExpression);
+                var rows = Common.GetQpPluginVersionsPage(scope.DbConnection, pluginId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+                return MapperFacade.QpPluginVersionListItemRowMapper.GetBizList(rows.ToList());
             }
-
-            return DefaultMapper.GetBizList<QpPluginVersion, PluginVersionDAL>(result.ToList());
         }
 
         internal static QpPluginVersion GetById(int id, int pluginId = 0)
@@ -38,7 +29,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 if (pluginId == 0)
                 {
-                    throw new Exception("Article id is not specified!");
+                    throw new Exception("Plugin id is not specified!");
                 }
 
                 var plugin = QpPluginRepository.GetById(pluginId);
@@ -55,7 +46,7 @@ namespace Quantumart.QP8.BLL.Repository
             else
             {
                 var dal = QPContext.EFContext.PluginVersionSet.Include(n => n.LastModifiedByUser).SingleOrDefault(n => n.Id == id);
-                qpPluginVersion = DefaultMapper.GetBizObject<QpPluginVersion, PluginVersionDAL>(dal);
+                qpPluginVersion = MapperFacade.QpPluginVersionMapper.GetBizObject(dal);
                 if (qpPluginVersion != null)
                 {
                     qpPluginVersion.Plugin = QpPluginRepository.GetById(qpPluginVersion.PluginId);

@@ -4,7 +4,7 @@ using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.BLL.Mappers.VisualEditor
+namespace Quantumart.QP8.BLL.Mappers
 {
     internal class QpPluginListItemRowMapper : GenericMapper<QpPluginListItem, DataRow>
     {
