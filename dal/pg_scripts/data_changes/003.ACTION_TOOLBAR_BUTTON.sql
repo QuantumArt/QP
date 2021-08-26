@@ -69,4 +69,42 @@ values ((select id from backend_action where code = 'scheduled_tasks'), (select 
 on conflict do nothing;
 
 
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'list_plugin'), (select id from backend_action where code = 'list_plugin_version'),
+        'Versions', 'version.gif', NULL, 2)
+on conflict do nothing;
 
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'list_plugin_version'), (select id from backend_action where code = 'preview_plugin_version'),
+        'Preview', 'properties.gif', NULL, 1)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'list_plugin_version'), (select id from backend_action where code = 'compare_plugin_versions'),
+        'Compare Versions', 'compare.gif', NULL, 2)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'list_plugin_version'), (select id from backend_action where code = 'compare_plugin_version_with_current'),
+        'Compare with current', 'compare.gif', NULL, 3)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'list_plugin_version'), (select id from backend_action where code = 'refresh_plugin_versions'),
+        'Refresh', 'refresh.gif', NULL, 4)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'preview_plugin_version'), (select id from backend_action where code = 'refresh_plugin_version'),
+        'Refresh', 'refresh.gif', NULL, 1)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'compare_plugin_versions'), (select id from backend_action where code = 'refresh_plugin_versions'),
+        'Refresh', 'refresh.gif', NULL, 1)
+on conflict do nothing;
+
+insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
+values ((select id from backend_action where code = 'compare_plugin_version_with_current'), (select id from backend_action where code = 'refresh_plugin_version'),
+        'Refresh', 'refresh.gif', NULL, 1)
+on conflict do nothing;
