@@ -175,14 +175,17 @@ export class BackendCustomActionHost extends Observable {
     selectPopupWindowComponent.selectWindowUID = message.data.selectWindowUID;
     selectPopupWindowComponent.attachObserver(
       window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, (_eventType, sender, args) => {
+        const sep = window.DIRECTORY_SEPARATOR_CHAR;
         if (args) {
           const { entities } = args;
           if (entities.length > 0) {
             let url = args.context;
-            if (url === '\\') {
+            if (url === sep) {
               url = '';
             }
-            url = url.replace(`${message.data.subFolder || ''}\\`, '').replace(/\\/g, '/');
+            const re = new RegExp(`${sep}`, 'g');
+            url = url.replace(`${message.data.subFolder || ''}${sep}`, '')
+              .replace(re, '/');
             this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.FileSelected, {
               filePath: url + entities[0].Name,
               callerCallback: sender.callerCallback
