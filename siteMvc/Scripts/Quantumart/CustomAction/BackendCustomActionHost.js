@@ -183,7 +183,7 @@ export class BackendCustomActionHost extends Observable {
             if (url === sep) {
               url = '';
             }
-            const re = new RegExp(sep, 'g');
+            const re = new RegExp("\\" + sep, 'g');
             const subfolder = (message.data.subFolder || '') + sep;
             url = url.replace(subfolder, '').replace(re, '/');
             this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.FileSelected, {

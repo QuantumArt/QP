@@ -1063,7 +1063,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 var useSiteLibrary = !isVersion && field.UseSiteLibrary;
                 var repository = FolderFactory.Create(useSiteLibrary ? EntityTypeCode.SiteFolder : EntityTypeCode.ContentFolder).CreateRepository();
                 var folder = repository.GetRoot(useSiteLibrary ? field.Content.SiteId : field.Content.Id);
-                var subFolder = isVersion ? string.Empty : field.SubFolder?.Replace('\\', System.IO.Path.DirectorySeparatorChar);
+                var subFolder = isVersion || String.IsNullOrEmpty(field.SubFolder) ? string.Empty :
+                    field.SubFolder.Replace('\\', System.IO.Path.DirectorySeparatorChar);
                 var libraryEntityId = isVersion ? string.Empty : field.LibraryEntityId.ToString();
                 var libraryParentEntityId = isVersion ? string.Empty : field.LibraryParentEntityId.ToString();
                 var libraryPath = isVersion ? version.PathInfo.Path : field.PathInfo.Path;

@@ -58,7 +58,7 @@ export class LibraryPopupWindow {
           const libraryUrl = this._options.libraryUrl.replace('images/', '');
           imgUrl = `${libraryUrl}contents/${this._options.contentId}/${folderUrl}${entities[0].Name}`;
         }
-        const re = new RegExp(sep + sep, 'g');
+        const re = new RegExp("\\" + sep + "\\" + sep, 'g');
         imgUrl = imgUrl.replace(re, '/');
         if (this._options.selectCallback) {
           this._options.selectCallback(imgUrl);
