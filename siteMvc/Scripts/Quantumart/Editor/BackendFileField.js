@@ -162,7 +162,8 @@ export class BackendFileField {
 
   updateUploader(value, updateSubFolder = false, resetSubFolder = false) {
     if (updateSubFolder) {
-      let newValue = value ? `\\${value}` : '';
+      const sep = window.DIRECTORY_SEPARATOR_CHAR;
+      let newValue = value ? `${sep}${value}` : '';
       newValue = resetSubFolder ? '' : newValue;
       const newSubFolder = this._initSubFolder + newValue;
       if (newSubFolder !== this._subFolder) {
@@ -184,7 +185,8 @@ export class BackendFileField {
     let path = this._libraryPath;
 
     if (this._uploaderSubFolder) {
-      path += `\\${this._uploaderSubFolder}`;
+      const sep = window.DIRECTORY_SEPARATOR_CHAR;
+      path += `${sep}${this._uploaderSubFolder}`;
     }
 
     if (this._uploaderComponent) {
@@ -204,15 +206,17 @@ export class BackendFileField {
 
   _librarySelectedHandler(eventType, sender, args) {
     this._closeLibrary();
+    const sep = window.DIRECTORY_SEPARATOR_CHAR;
     if (args) {
       const { entities } = args;
       if (entities.length > 0) {
         let url = args.context;
-        if (url === '\\') {
+        if (url === sep) {
           url = '';
         }
-
-        url = url.replace(`${this._initSubFolder}\\`, '').replace(/\\/g, '/');
+        const re = new RegExp(`${sep}`, 'g');
+        url = url.replace(`${this._initSubFolder}${sep}`, '')
+          .replace(re, '/');
         $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
     }

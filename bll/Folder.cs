@@ -242,7 +242,7 @@ namespace Quantumart.QP8.BLL
             var currentFolder = this;
             if (!string.IsNullOrEmpty(subFolder))
             {
-                var names = subFolder.Split(I.Path.DirectorySeparatorChar);
+                var names = subFolder.Replace('\\', I.Path.DirectorySeparatorChar).Split(I.Path.DirectorySeparatorChar);
                 var id = Id;
                 foreach (var name in names)
                 {

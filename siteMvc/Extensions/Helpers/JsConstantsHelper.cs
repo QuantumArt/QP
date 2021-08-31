@@ -237,6 +237,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             // Константы серверного окружения
             constants.AppendLine("// Константы серверного окружения");
             constants.AppendLine($"window.MAX_UPLOAD_SIZE_BYTES = {QPConfiguration.Options.UploadMaxSize * 1024 * 1024}");
+            constants.AppendLine($"window.DIRECTORY_SEPARATOR_CHAR = \"{System.IO.Path.DirectorySeparatorChar}\"");
+
 
             // Типы вхождения в диапазон
             constants.AppendLine("// Типы вхождения в диапазон");

@@ -43,11 +43,12 @@ export class LibraryPopupWindow {
 
   _librarySelectedHandler(eventType, sender, args) {
     this.closeWindow();
+    const sep = window.DIRECTORY_SEPARATOR_CHAR;
     if (args) {
       const { entities } = args;
       if (entities.length > 0) {
         let folderUrl = args.context;
-        if (folderUrl.charAt(0) === '\\') {
+        if (folderUrl.charAt(0) === sep) {
           folderUrl = folderUrl.substring(1, folderUrl.length);
         }
         let imgUrl = '';
@@ -57,8 +58,8 @@ export class LibraryPopupWindow {
           const libraryUrl = this._options.libraryUrl.replace('images/', '');
           imgUrl = `${libraryUrl}contents/${this._options.contentId}/${folderUrl}${entities[0].Name}`;
         }
-
-        imgUrl = imgUrl.replace(new RegExp('\\\\', 'g'), '/');
+        const re = new RegExp(`${sep}${sep}`, 'g');
+        imgUrl = imgUrl.replace(re, '/');
         if (this._options.selectCallback) {
           this._options.selectCallback(imgUrl);
         }
