@@ -214,7 +214,7 @@ export class BackendFileField {
         if (url === sep) {
           url = '';
         }
-        const re = new RegExp("\\" + sep, 'g');
+        const re = new RegExp(`\\${sep}`, 'g');
         url = url.replace(this._initSubFolder + sep, '')
           .replace(re, '/');
         $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
