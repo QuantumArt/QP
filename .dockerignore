@@ -24,8 +24,15 @@ packages
 .git
 .vs
 .vscode
+.idea
+.eslint
+.dockerignore
+node_modules
+deploy
+deploy_cmd
 *.ps1
 LICENSE
 README.md
 global.json
-k8s-deployment.yaml
+k8s*.yaml
+docker-compose.yml
