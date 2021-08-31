@@ -43,7 +43,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                 HttpContextSession.AssembleTemplatesCommandProcessingContext,
                 new AssembleTemplatesCommandContext
                 {
-                    TemplateIds = templateIds.ToArray()
+                    TemplateIds = templateIds.ToList()
                 });
         }
 
@@ -90,6 +90,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
     [Serializable]
     public class AssembleTemplatesCommandContext
     {
-        public int[] TemplateIds { get; set; }
+        public List<int> TemplateIds { get; set; }
     }
 }
