@@ -163,7 +163,7 @@ export class BackendFileField {
   updateUploader(value, updateSubFolder = false, resetSubFolder = false) {
     if (updateSubFolder) {
       const sep = window.DIRECTORY_SEPARATOR_CHAR;
-      let newValue = value ? `${sep}${value}` : '';
+      let newValue = value ? sep + value : '';
       newValue = resetSubFolder ? '' : newValue;
       const newSubFolder = this._initSubFolder + newValue;
       if (newSubFolder !== this._subFolder) {
@@ -186,7 +186,7 @@ export class BackendFileField {
 
     if (this._uploaderSubFolder) {
       const sep = window.DIRECTORY_SEPARATOR_CHAR;
-      path += `${sep}${this._uploaderSubFolder}`;
+      path += sep + this._uploaderSubFolder;
     }
 
     if (this._uploaderComponent) {
@@ -214,8 +214,8 @@ export class BackendFileField {
         if (url === sep) {
           url = '';
         }
-        const re = new RegExp(`${sep}`, 'g');
-        url = url.replace(`${this._initSubFolder}${sep}`, '')
+        const re = new RegExp(sep, 'g');
+        url = url.replace(this._initSubFolder + sep, '')
           .replace(re, '/');
         $(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
