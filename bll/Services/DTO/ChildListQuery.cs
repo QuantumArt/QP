@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
         public string HostFilter { get; set; }
 
         [BindProperty(Name="selectItemIDs")]
-        public string SelectedIdsStr { get; set; }
+        public string SelectItemIDs { get; set; }
 
         [BindProperty(Name="searchQuery")]
         public string SearchQuery { get; set; }

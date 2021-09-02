@@ -44,7 +44,7 @@ namespace Quantumart.QP8.BLL.Factories
 
                     return hasFtsSearchParams || hasFilterSearchParams
                         ? new ArticleFtsProcessor(contentId, query.Filter, combinedFilter, linkedFilters, articleContextQueryParams, filterSqlParams, extensionContentIds, ftsOptions)
-                        : new ArticleSimpleProcessor(contentId, query.EntityId, filterForSmpl, query.EntityTypeCode, query.SelectedIdsStr) as ITreeProcessor;
+                        : new ArticleSimpleProcessor(contentId, query.EntityId, filterForSmpl, query.EntityTypeCode, query.SelectItemIDs) as ITreeProcessor;
                 }
 
                 if (query.EntityTypeCode == EntityTypeCode.SiteFolder || query.EntityTypeCode == EntityTypeCode.ContentFolder)
