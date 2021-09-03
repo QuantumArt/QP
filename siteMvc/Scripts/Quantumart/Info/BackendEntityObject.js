@@ -38,7 +38,7 @@ BackendEntityObject.getEntityByTypeAndIdForTree = function (
 BackendEntityObject.getEntityChildList = function (ajaxParams, successHandler, errorHandler) {
   const actionUrl = `${window.CONTROLLER_URL_ENTITY_OBJECT}GetChildList`;
   const params = ajaxParams;
-  if (!$q.isNullOrEmpty(params.selectItemIDs)) {
+  if (!$q.isNull(params.selectItemIDs)) {
     params.selectItemIDs = params.selectItemIDs.join(',');
   }
 
