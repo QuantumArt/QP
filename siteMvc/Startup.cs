@@ -37,6 +37,7 @@ using System.IO;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
@@ -105,6 +106,17 @@ namespace Quantumart.QP8.WebMvc
 
             // used by Session middleware
             services.AddDistributedMemoryCache();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedProtoHeaderName = "X-FORWARDED-PROTO";
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                // Only loopback proxies are allowed by default.
+                // Clear that restriction because forwarders are enabled by explicit
+                // configuration.
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -306,6 +318,7 @@ namespace Quantumart.QP8.WebMvc
                 RequestPath =  "/plugins"
             });
 
+            app.UseForwardedHeaders();
             app.UseAuthentication();
             QPContext.SetServiceProvider(provider);
             RegisterMappings();
