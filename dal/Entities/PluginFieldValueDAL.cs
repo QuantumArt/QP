@@ -23,9 +23,9 @@ namespace Quantumart.QP8.DAL.Entities
         public decimal Id { get; set; }
         public decimal PluginFieldId { get; set; }
         public string Value { get; set; }
-        public decimal SiteId { get; set; }
-        public decimal ContentAttributeId { get; set; }
-        public decimal ContentId { get; set; }
+        public decimal? SiteId { get; set; }
+        public decimal? ContentAttributeId { get; set; }
+        public decimal? ContentId { get; set; }
         public PluginFieldDAL PluginField { get; set; }
         public ContentDAL Content { get; set; }
         public SiteDAL Site { get; set; }
@@ -41,9 +41,9 @@ namespace Quantumart.QP8.DAL.Entities
                 builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 				builder.Property(x => x.PluginFieldId).HasColumnName("PLUGIN_FIELD_ID");
                 builder.Property(x => x.Value).HasColumnName("VALUE");
-                builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");
-                builder.Property(x => x.ContentAttributeId).HasColumnName("CONTENT_ATTRIBUTE_ID");
-                builder.Property(x => x.SiteId).HasColumnName("SITE_ID");
+                builder.Property(x => x.ContentId).HasColumnName("CONTENT_ID");//.IsRequired(false);
+                builder.Property(x => x.ContentAttributeId).HasColumnName("CONTENT_ATTRIBUTE_ID");//.IsRequired(false);
+                builder.Property(x => x.SiteId).HasColumnName("SITE_ID");//.IsRequired(false);
 
 
                 builder.HasKey(x => x.Id);

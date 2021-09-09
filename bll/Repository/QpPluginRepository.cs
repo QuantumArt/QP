@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using QP8.Infrastructure.Extensions;
 using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
@@ -22,6 +23,20 @@ namespace Quantumart.QP8.BLL.Repository
                 return MapperFacade.QpPluginListItemRowMapper.GetBizList(rows.ToList());
             }
         }
+
+        internal static Dictionary<int, QpPlugin> GetQpFieldPluginDict()
+        {
+            var pluginDict = new Dictionary<int, QpPlugin>();
+            var dataList = QPContext.EFContext.PluginSet.Include(n => n.Fields).ToList();
+            var qpPlugins = MapperFacade.QpPluginMapper.GetBizList(dataList);
+            foreach (var plugin in qpPlugins)
+            {
+                pluginDict.AddRange(plugin.Fields.ToDictionary(n => n.Id, m => plugin));
+            }
+            return pluginDict;
+        }
+
+
 
         internal static QpPlugin GetById(int id)
         {

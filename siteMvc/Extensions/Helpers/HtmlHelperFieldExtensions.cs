@@ -14,6 +14,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using QP8.Plugins.Contract;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -186,6 +187,31 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     return html.StringEnumEditor(id, value, field, readOnly, pair.Article.IsNew);
                 default:
                     return html.QpTextBox(id, value, htmlAttributes);
+            }
+        }
+
+        private static IHtmlContent Editor(this IHtmlHelper html, QpPluginFieldValue pair, bool forceReadOnly)
+        {
+            var field = pair.Field;
+            var id = pair.FormName;
+            var value = pair.Value;
+            Dictionary<string, object> htmlAttributes;
+            switch (field.ValueType)
+            {
+                case QpPluginValueType.String:
+                     htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Textbox);
+                    return html.QpTextBox(id, value, htmlAttributes);
+                case QpPluginValueType.DateTime:
+                    htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Textbox);
+                    return html.DateTime(id, value, htmlAttributes, true);
+                case QpPluginValueType.Bool:
+                    htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Checkbox);
+                    return html.QpCheckBox(id, null, Converter.ToBoolean(value), htmlAttributes);
+                case QpPluginValueType.Numeric:
+                    htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Numeric);
+                    return html.NumericTextBox(id, value, htmlAttributes);
+                default:
+                    throw new ArgumentException("Unsupported Field Type");
             }
         }
 
@@ -366,6 +392,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 result.AppendHtml(GetExtensionArticleFields(html, pair));
                 return result;
             }
+
+            return fieldHtmlString;
+        }
+
+        public static IHtmlContent Field(this IHtmlHelper html, QpPluginFieldValue pair, bool forceReadonly = false)
+        {
+            var fieldDescription = string.IsNullOrWhiteSpace(WebUtility.HtmlDecode(pair.Field.Description ?? string.Empty).Replace("\u00A0", string.Empty)) ? null : pair.Field.Description;
+            if (!string.IsNullOrEmpty(fieldDescription))
+            {
+                fieldDescription = fieldDescription.Replace("{", "{{").Replace("}", "}}");
+            }
+
+            var htmlContent = html.Editor(pair, forceReadonly);
+            var fieldHtmlString = html.FieldTemplate(htmlContent, pair.FormName, pair.Field.Name, required: false, fieldName: pair.Field.Name);
 
             return fieldHtmlString;
         }

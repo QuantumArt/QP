@@ -193,6 +193,8 @@ namespace Quantumart.QP8.BLL
 
         private InitPropertyValue<int[]> _defaultArticleIds;
 
+        private IEnumerable<QpPluginFieldValue> _qpPluginFieldValues;
+
         [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
         [StringLength(255, ErrorMessageResourceName = "NameMaxLengthExceeded", ErrorMessageResourceType = typeof(EntityObjectStrings))]
         [Required(ErrorMessageResourceName = "NameNotEntered", ErrorMessageResourceType = typeof(EntityObjectStrings))]
@@ -442,6 +444,13 @@ namespace Quantumart.QP8.BLL
             get => _backRelation.Value;
             set => _backRelation.Value = value;
         }
+        public IEnumerable<QpPluginFieldValue> QpPluginFieldValues
+        {
+            get => _qpPluginFieldValues = _qpPluginFieldValues ?? FieldRepository.GetPluginValues(Id);
+            set => _qpPluginFieldValues = value;
+        }
+
+        public IEnumerable<QpPluginFieldValueGroup> QpPluginFieldValueGroups => QpPluginFieldValues.ToFieldGroups();
 
         public string DisplayName => !string.IsNullOrEmpty(FriendlyName) ? FriendlyName : Name;
 

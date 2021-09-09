@@ -472,7 +472,7 @@
                 @Html.AggregationListFieldFor(s => s.Data.StringEnumItems, Model.Data.StringEnumItems, "Value,Alias,IsDefault")
             }
         }
-
+        <partial name="QpPluginFields" model="@Model.Data.QpPluginFieldValueGroups" />
         <partial name="Version" model="@Model.Data" />
         <partial name="EntityDirectLink" model="@Model" />
     }
