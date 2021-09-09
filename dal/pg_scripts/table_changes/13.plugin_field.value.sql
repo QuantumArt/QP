@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public.plugin_field_value
     content_attribute_id numeric(18) NULL
         constraint fk_plugin_field_value_content_attribute_id references public.content_attribute (attribute_id) ON DELETE CASCADE,
     value                text        NULL
-)
+);
 
 CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_field_value_content_id ON plugin_field_value(plugin_field_id, content_id)
     WHERE content_id is not null;
