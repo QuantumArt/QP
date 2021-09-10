@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string AddNewItemText => TemplateStrings.AddNewFormat;
 
-        public static ObjectFormatListViewModel Create(FormatInitListResult result, string tabId, int parentId, bool isTemplateObjectFormats)
+        public static ObjectFormatListViewModel Create(InitListResult result, string tabId, int parentId, bool isTemplateObjectFormats)
         {
             var model = Create<ObjectFormatListViewModel>(tabId, parentId);
             model.IsTemplateObjectFormats = isTemplateObjectFormats;

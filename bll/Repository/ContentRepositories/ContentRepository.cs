@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -68,6 +68,25 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             {
                 Common.ChangeRelationIdToNewOne(QPConnectionScope.Current.DbConnection, currentRelationFieldId, newRelationFieldId);
             }
+        }
+
+        public static List<QpPluginFieldValue> GetPluginValues(int contentId)
+        {
+            var actualValues = QPContext.EFContext.PluginFieldValueSet
+                .Where(n => n.ContentId == contentId)
+                .ToDictionary(k => (int)k.PluginFieldId, n => n.Value);
+
+            var pluginDict = QpPluginRepository.GetQpFieldPluginDict();
+
+            var pluginFieldValues = QpPluginRepository.GetPluginFields(QpPluginRelationType.Content)
+                .Select(n => new QpPluginFieldValue()
+                {
+                    Field = n,
+                    Plugin = pluginDict[n.Id],
+                    Value = actualValues.TryGetValue(n.Id, out var result) ? result : String.Empty
+                }).ToList();
+
+            return pluginFieldValues;
         }
 
         private ContentToContentDAL GetDal(ContentLink bll)
@@ -269,6 +288,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                         DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
                     }
                     var binding = content.WorkflowBinding;
+                    var fieldValues = content.QpPluginFieldValues;
                     var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
 
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
@@ -286,6 +306,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
                     binding.SetContent(newContent);
                     WorkflowRepository.UpdateContentWorkflowBind(binding);
+                    UpdatePluginValues(fieldValues, newContent.Id);
                     return GetById(newContent.Id);
                 }
                 finally
@@ -347,6 +368,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     }
 
                     var binding = content.WorkflowBinding;
+                    var fieldValues = content.QpPluginFieldValues;
                     var newContent = DefaultRepository.Update<Content, ContentDAL>(content);
                     var isAggregated = IsAnyAggregatedFields(content.Id);
                     if (!isAggregated)
@@ -368,6 +390,8 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                             WorkflowRepository.UpdateContentWorkflowBind(binding);
                         }
                     }
+
+                    UpdatePluginValues(fieldValues, newContent.Id);
 
                     DeleteEmptyContentGroups();
 
@@ -1197,6 +1221,29 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             {
                 return Common.GetAggregatedArticleIdsMap(QPContext.EFContext, scope.DbConnection, contentId, articleIds);
             }
+        }
+
+        private static void UpdatePluginValues(IEnumerable<QpPluginFieldValue> fieldValues, int contentId)
+        {
+
+            var actualFieldIds =
+                QPContext.EFContext.PluginFieldValueSet.Where(n => n.ContentId == contentId)
+                    .ToDictionary(n => (int)n.PluginFieldId, m => (int)m.Id);
+
+            var entities = QPContext.EFContext;
+            foreach (var fieldValue in fieldValues)
+            {
+                var dalValue = new PluginFieldValueDAL()
+                {
+                    ContentId = contentId,
+                    Value = fieldValue.Value,
+                    PluginFieldId = fieldValue.Field.Id,
+                    Id = actualFieldIds.TryGetValue(fieldValue.Field.Id, out var result) ? result : 0
+                };
+                entities.Entry(dalValue).State = dalValue.Id == 0 ? EntityState.Added : EntityState.Modified;
+            }
+
+            entities.SaveChanges();
         }
 
     }

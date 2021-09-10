@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
 
         public string GettingDataActionName => "_Index";
 
-        public static NotificationListViewModel Create(NotificationInitListResult result, string tabId, int parentId)
+        public static NotificationListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<NotificationListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

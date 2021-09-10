@@ -86,10 +86,9 @@
     }
     @Html.CheckBoxFieldFor(s => s.Data.DisableXamlValidation)
   }
-
+  <partial name="QpPluginFields" model="@Model.Data.QpPluginFieldValueGroups" />
   <partial name="Version" model="@Model.Data" />
   <partial name="EntityDirectLink" model="@Model" />
-
 }
 
 @Html.PrepareAndRunInitScript(Model)

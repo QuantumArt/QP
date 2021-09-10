@@ -300,6 +300,18 @@ namespace Quantumart.QP8.Constants
         public const string RemoveVisualEditorPlugin = "remove_visual_editor_plugin";
         public const string SaveVisualEditorPlugin = "save_visual_editor_plugin";
 
+        public const string QpPlugins = "list_plugin";
+        public const string AddNewQpPlugin = "new_plugin";
+        public const string QpPluginProperties = "edit_plugin";
+        public const string UpdateQpPlugin = "update_plugin";
+        public const string RemoveQpPlugin = "remove_plugin";
+        public const string SaveQpPlugin = "save_plugin";
+
+        public const string QpPluginVersions = "list_plugin_version";
+        public const string CompareQpPluginVersionWithCurrent = "compare_plugin_version_with_current";
+        public const string CompareQpPluginVersions = "compare_plugin_versions";
+        public const string PreviewQpPluginVersion = "preview_plugin_version";
+
         public const string Notifications = "list_notification";
         public const string AddNewNotification = "new_notification";
         public const string NotificationProperties = "edit_notification";
@@ -459,5 +471,7 @@ namespace Quantumart.QP8.Constants
             CompareArticleVersions,
             CancelArticleVersion
         };
+
+
     }
 }

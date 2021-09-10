@@ -50,7 +50,7 @@ namespace Quantumart.QP8.BLL.Services
 
         Notification NewNotificationPropertiesForUpdate(int parentId);
 
-        NotificationInitListResult InitList(int parentId);
+        InitListResult InitList(int parentId);
 
         MessageResult MultipleRemove(int[] ids);
 
@@ -131,7 +131,7 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public NotificationInitListResult InitList(int contentId) => new NotificationInitListResult
+        public InitListResult InitList(int contentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewNotification) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update)
         };

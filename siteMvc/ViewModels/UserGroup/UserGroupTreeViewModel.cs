@@ -6,7 +6,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
 {
     public class UserGroupTreeViewModel : ListViewModel
     {
-        public static UserGroupTreeViewModel Create(UserGroupInitTreeResult result, string tabId, int parentId)
+        public static UserGroupTreeViewModel Create(InitTreeResult result, string tabId, int parentId)
         {
             var model = Create<UserGroupTreeViewModel>(tabId, parentId);
             model.IsTree = true;

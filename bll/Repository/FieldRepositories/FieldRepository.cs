@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -335,6 +336,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     var constraint = item.Constraint;
                     var dynamicImage = item.DynamicImage;
+                    var fieldValues = item.QpPluginFieldValues;
 
                     DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Field, item);
                     var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
@@ -345,6 +347,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     SaveConstraint(constraint, newItem);
                     SaveDynamicImage(dynamicImage, newItem);
+                    UpdatePluginValues(fieldValues, newItem.Id);
 
                     return GetById(newItem.Id);
                 }
@@ -398,6 +401,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     var preUpdateField = GetById(item.Id);
                     var constraint = item.Constraint;
                     var dynamicImage = item.DynamicImage;
+                    var fieldValues = item.QpPluginFieldValues;
 
                     item.ReorderContentFields();
 
@@ -419,6 +423,8 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     UpdateConstraint(constraint, newItem);
 
                     UpdateDynamicImage(dynamicImage, newItem);
+
+                    UpdatePluginValues(fieldValues, newItem.Id);
 
                     if (newDal.LinkId != oldDal.LinkId)
                     {
@@ -1108,6 +1114,47 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             }
 
             return result;
+        }
+
+        public static List<QpPluginFieldValue> GetPluginValues(int fieldId)
+        {
+            var actualValues = QPContext.EFContext.PluginFieldValueSet
+                .Where(n => n.ContentAttributeId == fieldId)
+                .ToDictionary(k => (int)k.PluginFieldId, n => n.Value);
+
+            var pluginDict = QpPluginRepository.GetQpFieldPluginDict();
+
+            var pluginFieldValues = QpPluginRepository.GetPluginFields(QpPluginRelationType.ContentAttribute)
+                .Select(n => new QpPluginFieldValue()
+                {
+                    Field = n,
+                    Plugin = pluginDict[n.Id],
+                    Value = actualValues.TryGetValue(n.Id, out var result) ? result : String.Empty
+                }).ToList();
+
+            return pluginFieldValues;
+        }
+
+        private static void UpdatePluginValues(IEnumerable<QpPluginFieldValue> fieldValues, int fieldId)
+        {
+
+            var actualFieldIds =
+                QPContext.EFContext.PluginFieldValueSet.Where(n => n.ContentAttributeId == fieldId)
+                    .ToDictionary(n => (int)n.PluginFieldId, m => (int)m.Id);
+
+            var entities = QPContext.EFContext;
+            foreach (var fieldValue in fieldValues)
+            {
+                var dalValue = new PluginFieldValueDAL()
+                {
+                    ContentAttributeId = fieldId,
+                    Value = fieldValue.Value,
+                    PluginFieldId = fieldValue.Field.Id,
+                    Id = actualFieldIds.TryGetValue(fieldValue.Field.Id, out var result) ? result : 0
+                };
+                entities.Entry(dalValue).State = dalValue.Id == 0 ? EntityState.Added : EntityState.Modified;
+            }
+            entities.SaveChanges();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services
 
         IEnumerable<Content> GetContents(CustomAction action);
 
-        CustomActionInitListResult InitList(int parentId);
+        InitListResult InitList(int parentId);
 
         CopyResult Copy(int id, int[] selectedActionsIds);
     }

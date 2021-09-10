@@ -70,6 +70,8 @@ namespace Quantumart.QP8.DAL.Entities
         public ICollection<EntityTypePermissionDAL> ENTITY_TYPE_ACCESS { get; set; }
         public ICollection<EntityTypePermissionDAL> ENTITY_TYPE_ACCESS1 { get; set; }
         public ICollection<VePluginDAL> VE_PLUGIN { get; set; }
+        public ICollection<PluginDAL> PLUGIN { get; set; }
+        public ICollection<PluginVersionDAL> PLUGIN_VERSION { get; set; }
         public ICollection<VeCommandDAL> VE_COMMAND { get; set; }
         public ICollection<VeStyleDAL> VE_STYLE { get; set; }
         public ICollection<StatusTypeDAL> STATUS_TYPE { get; set; }

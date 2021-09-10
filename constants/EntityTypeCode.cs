@@ -21,6 +21,9 @@
         public const string VisualEditorPlugin = "visual_editor_plugin";
         public const string VisualEditorStyle = "visual_editor_style";
         public const string VisualEditorCommand = "visual_editor_command";
+        public const string QpPlugin = "plugin";
+        public const string QpPluginVersion = "plugin_version";
+        public const string QpPluginField = "plugin_field";
         public const string ContentFolder = "content_folder";
         public const string SiteFolder = "site_folder";
         public const string OldSiteFolder = "folder";

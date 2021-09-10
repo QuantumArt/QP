@@ -15,6 +15,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -242,6 +243,7 @@ namespace Quantumart.QP8.BLL
         private Site _site;
         private IEnumerable<Field> _fields;
         private ContentWorkflowBind _workflowBinding;
+        private IEnumerable<QpPluginFieldValue> _qpPluginFieldValues;
         private IEnumerable<ContentConstraint> _constraints;
         private readonly Lazy<IEnumerable<Content>> _aggregatedContents;
         private readonly InitPropertyValue<Content> _baseAggregationContent;
@@ -570,6 +572,13 @@ namespace Quantumart.QP8.BLL
             }
             set => _workflowBinding = value;
         }
+        public IEnumerable<QpPluginFieldValue> QpPluginFieldValues
+        {
+            get => _qpPluginFieldValues = _qpPluginFieldValues ?? ContentRepository.GetPluginValues(Id);
+            set => _qpPluginFieldValues = value;
+        }
+
+        public IEnumerable<QpPluginFieldValueGroup> QpPluginFieldValueGroups => QpPluginFieldValues.ToFieldGroups();
 
         [BindNever]
         [ValidateNever]

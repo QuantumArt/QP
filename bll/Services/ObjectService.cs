@@ -49,7 +49,7 @@ namespace Quantumart.QP8.BLL.Services
 
         /// <param name="isTemplateObject"></param>
         /// else it`s page object
-        public ObjectInitListResult InitObjectList(int parentId, bool isTemplateObject) => new ObjectInitListResult
+        public InitListResult InitObjectList(int parentId, bool isTemplateObject) => new InitListResult
         {
             IsAddNewAccessable = isTemplateObject ? SecurityRepository.IsActionAccessible(ActionCode.AddNewTemplateObject) && SecurityRepository.IsEntityAccessible(EntityTypeCode.TemplateObject, parentId, ActionTypeCode.Update) : SecurityRepository.IsActionAccessible(ActionCode.AddNewPageObject) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageObject, parentId, ActionTypeCode.Update)
         };

@@ -13,7 +13,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.UserGroup
 
         public string GettingDataActionName => "_Index";
 
-        public static UserGroupListViewModel Create(UserGroupInitListResult result, string tabId, int parentId)
+        public static UserGroupListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<UserGroupListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

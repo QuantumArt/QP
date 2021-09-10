@@ -6,7 +6,7 @@ namespace Quantumart.QP8.BLL.Services
 {
     public interface IObjectService
     {
-        ObjectInitListResult InitObjectList(int parentId, bool isTemplateObject);
+        InitListResult InitObjectList(int parentId, bool isTemplateObject);
 
         ListResult<ObjectListItem> GetTemplateObjectsByTemplateId(ListCommand listCommand, int parentId);
 

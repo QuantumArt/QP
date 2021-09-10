@@ -11,9 +11,9 @@ namespace Quantumart.QP8.BLL.Services
 {
     public interface IFormatService
     {
-        FormatInitListResult InitFormatList(int parentId, bool isTemplateObject);
+        InitListResult InitFormatList(int parentId, bool isTemplateObject);
 
-        FormatVersionInitListResult InitFormatVersionList();
+        InitListResult InitFormatVersionList();
 
         IEnumerable<ListItem> GetNetLanguagesAsListItems();
 
@@ -72,12 +72,12 @@ namespace Quantumart.QP8.BLL.Services
 
     public class FormatService : IFormatService
     {
-        public FormatInitListResult InitFormatList(int parentId, bool isTemplateFormat) => new FormatInitListResult
+        public InitListResult InitFormatList(int parentId, bool isTemplateFormat) => new InitListResult
         {
             IsAddNewAccessable = isTemplateFormat ? SecurityRepository.IsActionAccessible(ActionCode.AddNewTemplateObjectFormat) && SecurityRepository.IsEntityAccessible(EntityTypeCode.TemplateObjectFormat, parentId, ActionTypeCode.Update) : SecurityRepository.IsActionAccessible(ActionCode.AddNewPageObjectFormat) && SecurityRepository.IsEntityAccessible(EntityTypeCode.PageObjectFormat, parentId, ActionTypeCode.Update)
         };
 
-        public FormatVersionInitListResult InitFormatVersionList() => new FormatVersionInitListResult
+        public InitListResult InitFormatVersionList() => new InitListResult
         {
             IsAddNewAccessable = false
         };
@@ -189,7 +189,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public ObjectFormat SaveObjectFormatProperties(ObjectFormat objectFormat)
         {
-            
+
             objectFormat.ReplaceUrlsToPlaceHolders();
             var format = FormatRepository.SaveObjectFormatProperties(objectFormat);
             ManagePageAndObjectModified(format);

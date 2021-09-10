@@ -6,7 +6,7 @@ namespace Quantumart.QP8.BLL.Services
 {
     public interface IVisualEditorService
     {
-        VisualEditorInitListResult InitList(int contentId);
+        InitListResult InitList(int contentId);
 
         ListResult<VisualEditorPluginListItem> GetVisualEditorPlugins(ListCommand cmd, int contentId);
 
@@ -24,7 +24,7 @@ namespace Quantumart.QP8.BLL.Services
 
         VisualEditorPlugin SaveVisualEditorPluginProperties(VisualEditorPlugin visualEditorPlugin);
 
-        VisualEditorStyleInitListResult InitVisualEditorStyleList(int parentId);
+        InitListResult InitVisualEditorStyleList(int parentId);
 
         ListResult<VisualEditorStyleListItem> GetVisualEditorStyles(ListCommand cmd, int contentId);
 

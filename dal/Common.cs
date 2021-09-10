@@ -2414,6 +2414,42 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             );
         }
 
+        public static IEnumerable<DataRow> GetQpPluginsPage(DbConnection sqlConnection, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var escapedOrderColumnName = Escape(dbType, "ORDER");
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.QpPlugin,
+                $"p.ID as Id, p.NAME as Name, p.DESCRIPTION as Description, p.SERVICE_URL as ServiceUrl, p.{escapedOrderColumnName} as {escapedOrderColumnName}, p.CREATED as Created," +
+                "p.MODIFIED as Modified, p.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "PLUGIN p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : escapedOrderColumnName,
+                "",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
+        public static IEnumerable<DataRow> GetQpPluginVersionsPage(DbConnection sqlConnection, int pluginId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
+        {
+            var dbType = GetDbType(sqlConnection);
+            var textType = dbType == DatabaseType.SqlServer ? "NVARCHAR" : "TEXT";
+            return GetSimplePagedList(
+                sqlConnection,
+                EntityTypeCode.QpPluginVersion,
+                $"p.ID as Id, cast(p.Id as {textType}) as Name, p.CREATED as Created, " +
+                "p.MODIFIED as Modified, p.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
+                "PLUGIN_VERSION p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
+                !string.IsNullOrEmpty(orderBy) ? orderBy : "ID",
+                $"p.PLUGIN_ID = {pluginId}",
+                startRow,
+                pageSize,
+                out totalRecords
+            );
+        }
+
         public static int GetVisualEditorPluginMaxOrder(DbConnection sqlConnection)
         {
             using (var cmd = DbCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]", sqlConnection))

@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
 
         public override string AddNewItemText => WorkflowStrings.AddNewWorkflow;
 
-        public static WorkflowListViewModel Create(WorkflowInitListResult result, string tabId, int parentId)
+        public static WorkflowListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<WorkflowListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

@@ -5,8 +5,9 @@ timezone
 views
 base
 main
+sequences
+table_changes
 trigger_functions
 triggers
 content_views
-table_changes
 data_changes

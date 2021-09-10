@@ -13,7 +13,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         ListResult<StatusTypeListItem> GetStatusesBySiteId(ListCommand cmd, int siteId);
 
-        StatusTypeInitListResult InitList(int parentId);
+        InitListResult InitList(int parentId);
 
         StatusType ReadProperties(int id);
 
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public StatusTypeInitListResult InitList(int parentId) => new StatusTypeInitListResult
+        public InitListResult InitList(int parentId) => new InitListResult
         {
             IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewStatusType) && SecurityRepository.IsEntityAccessible(EntityTypeCode.StatusType, parentId, ActionTypeCode.Update)
         };

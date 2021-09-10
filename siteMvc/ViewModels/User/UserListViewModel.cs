@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
 
         public string GettingDataActionName => "_Index";
 
-        public static UserListViewModel Create(UserInitListResult result, string tabId, int parentId)
+        public static UserListViewModel Create(InitListResult result, string tabId, int parentId)
         {
             var model = Create<UserListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;

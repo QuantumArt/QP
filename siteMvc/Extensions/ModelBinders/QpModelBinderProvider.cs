@@ -22,6 +22,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                  return new FieldValuesModelBinder();
             }
 
+            if (context.Metadata.ModelType == typeof(IEnumerable<QpPluginFieldValue>))
+            {
+                return new PluginFieldValuesModelBinder();
+            }
+
             if (context.Metadata.ModelType == typeof(Guid?))
             {
                 return new GuidModelBinder();

@@ -1,0 +1,16 @@
+﻿@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Resources
+@using QP8.Plugins.Contract
+@model IEnumerable<Quantumart.QP8.BLL.QpPluginFieldValueGroup>
+
+
+  @foreach (var group in Model)
+  {
+    @using (Html.BeginFieldGroup(group.Name))
+    {
+      foreach (var field in group.Fields)
+      {
+        @Html.Field(field)
+      }
+    }
+  }

@@ -77,6 +77,8 @@ namespace Quantumart.QP8.DAL.Entities
         public ICollection<ContentDAL> ChildContents { get; set; }
         public ICollection<ContentCustomActionBindDAL> ContentCustomActionBinds { get; set; }
 
+        public ICollection<PluginFieldValueDAL> PluginFieldValues { get; set; }
+
         [NotMapped]
         public IEnumerable<CustomActionDAL> CustomActions => ContentCustomActionBinds?.Select(x => x.CustomAction);
     }

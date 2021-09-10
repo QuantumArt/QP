@@ -125,6 +125,46 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static string PluginTableName(string relationType, decimal pluginId)
+        {
+            switch (relationType.ToLower())
+            {
+                case "content_attribute":
+                    return "plugin_content_attribute_" + pluginId;
+                case "content":
+                    return "plugin_content_" + pluginId;
+                case "site":
+                    return "plugin_site_" + pluginId;
+                default:
+                    throw new ApplicationException($"Relation type {relationType} is not supported.");
+            }
+        }
+
+        public static string PluginColumnType(string typeName, DatabaseType dbType)
+        {
+            var isSql = dbType == DatabaseType.SqlServer;
+            switch (typeName.ToLower())
+            {
+                case "bool":
+                    return isSql ? "bit" : "boolean";
+                case "string":
+                    return isSql ? "nvarchar(255)" : "varchar(255)";
+                case "datetime":
+                    return isSql ? "datetime" : "timestamp with time zone";
+                default:
+                    return typeName;
+            }
+        }
+
+        public static void AddPluginColumn(DbConnection cnn, PluginFieldDAL field)
+        {
+            var dbType = GetDbType(cnn);
+            var tableName = PluginTableName(field.RelationType, field.PluginId);
+            var columnType = PluginColumnType(field.ValueType, dbType);
+            var fieldDef = $@"{Escape(dbType, field.Name)} {columnType}";
+            var sql = $"alter table {tableName} add {fieldDef}";
+            ExecuteSql(cnn, sql);
+        }
 
         public static void CreateContentTables(DbConnection cnn, int id)
         {
@@ -145,6 +185,23 @@ namespace Quantumart.QP8.DAL
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
+        }
+
+        public static void CreatePluginTables(DbConnection cnn, int id)
+        {
+            var dbType = GetDbType(cnn);
+            var siteTableName = "plugin_site_" + id;
+            var contentTableName = "plugin_content_" + id;
+            var fieldTableName = "plugin_content_attribute_" + id;
+
+            var sql = $@"
+            create table {DbSchemaName(dbType)}.{{0}} (
+                {Escape(dbType, "ID")} numeric(18,0) NOT NULL PRIMARY KEY
+             )";
+
+            ExecuteSql(cnn, String.Format(sql, siteTableName));
+            ExecuteSql(cnn, String.Format(sql, contentTableName));
+            ExecuteSql(cnn, String.Format(sql, fieldTableName));
         }
 
         public static void CreateContentViews(DbConnection cnn, int id, bool withUnited = true)
@@ -209,6 +266,21 @@ namespace Quantumart.QP8.DAL
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
+        }
+
+        public static void DropPluginTables(DbConnection cnn, int id)
+        {
+            var dbType = GetDbType(cnn);
+            var siteTableName = "plugin_site_" + id;
+            var contentTableName = "plugin_content_" + id;
+            var fieldTableName = "plugin_content_attribute_" + id;
+
+            var sql = (dbType == DatabaseType.Postgres) ? $@"drop table if exists {DbSchemaName(dbType)}.{{0}}" :
+                $@"exec qp_drop_existing '{DbSchemaName(dbType)}.{{0}}', 'IsUserTable'";
+
+            ExecuteSql(cnn, String.Format(sql, siteTableName));
+            ExecuteSql(cnn, String.Format(sql, contentTableName));
+            ExecuteSql(cnn, String.Format(sql, fieldTableName));
         }
 
         public static void DropContentViews(DbConnection cnn, int id)

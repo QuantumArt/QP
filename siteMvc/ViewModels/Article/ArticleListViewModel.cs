@@ -62,7 +62,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             AutoCheckChildren = false;
         }
 
-        public static ArticleListViewModel Create(ArticleResultBase result, int parentEntityId, string tabId)
+        public static ArticleListViewModel Create(ArticleResult result, int parentEntityId, string tabId)
         {
             var model = Create<ArticleListViewModel>(tabId, parentEntityId);
             model.ContentId = parentEntityId;
@@ -70,7 +70,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return model;
         }
 
-        public static ArticleListViewModel Create(ArticleResultBase result, int parentEntityId, string tabId, bool allowMultipleEntitySelection, bool isSelect, int id)
+        public static ArticleListViewModel Create(ArticleResult result, int parentEntityId, string tabId, bool allowMultipleEntitySelection, bool isSelect, int id)
         {
             var selectedIds = new int[] { };
             if (id > 0)
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return Create(result, parentEntityId, tabId, allowMultipleEntitySelection, isSelect, selectedIds);
         }
 
-        public static ArticleListViewModel Create(ArticleResultBase result, int parentEntityId, string tabId, bool allowMultipleEntitySelection, bool isSelect, int[] ids)
+        public static ArticleListViewModel Create(ArticleResult result, int parentEntityId, string tabId, bool allowMultipleEntitySelection, bool isSelect, int[] ids)
         {
             var model = Create(result, parentEntityId, tabId);
             model.AllowMultipleEntitySelection = allowMultipleEntitySelection;
@@ -90,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return model;
         }
 
-        public void Init(ArticleResultBase result)
+        public void Init(ArticleResult result)
         {
             ContentName = result.ContentName;
             IsVirtual = result.IsVirtual;

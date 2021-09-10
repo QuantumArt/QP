@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
 
         public string GettingDataActionName => "_Index";
 
-        public static CustomActionListViewModel Create(CustomActionInitListResult initList, string tabId, int parentId)
+        public static CustomActionListViewModel Create(InitListResult initList, string tabId, int parentId)
         {
             var model = Create<CustomActionListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = initList.IsAddNewAccessable && !model.IsWindow;

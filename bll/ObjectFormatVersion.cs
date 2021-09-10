@@ -90,6 +90,6 @@ namespace Quantumart.QP8.BLL
         }
 
         [Display(Name = "Name", ResourceType = typeof(EntityObjectStrings))]
-        public string ExpandedName => Id == CurrentVersionId || Id == 0 ? ArticleStrings.CurrentVersion : string.Format(ArticleStrings.VersionN, Id);
+        public string ExpandedName => Id == CurrentVersionId || Id == 0 ? EntityObjectStrings.CurrentVersion : string.Format(EntityObjectStrings.VersionN, Id);
     }
 }

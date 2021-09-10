@@ -1,0 +1,52 @@
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.QpPlugin.QpPluginViewModel
+
+
+@using (Html.BeginTabForm(Model))
+{
+  using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+  {
+    @Html.TextBoxFieldFor(s => s.Data.Name)
+    @Html.NumericFieldFor(s => s.Data.Order, 0)
+    if (Model.IsNew)
+    {
+      @Html.RadioFieldFor(s => s.CreationMode, Html.List(Model.GetCreationModes()))
+      using(Html.BeginPanel("ByServiceUrlPanel"))
+      {
+        @Html.TextBoxFieldFor(s => s.Data.ServiceUrl)
+      }
+      using(Html.BeginPanel("ByContractPanel"))
+      {
+        @Html.TextAreaFieldFor(s => s.Data.Contract, Model.AreaAttributes)
+      }
+    }
+    else
+    {
+      @Html.TextBoxFieldFor(s => s.Data.ServiceUrl, new Dictionary<string, object> { { "disabled", "disabled" } })
+      if (!String.IsNullOrEmpty(Model.Data.ServiceUrl))
+      {
+        @Html.CheckBoxFieldFor(s => s.ReloadContract)
+      }
+      @Html.TextAreaFieldFor(s => s.Data.Description, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextBoxFieldFor(s => s.Data.Code, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextBoxFieldFor(s => s.Data.Version, new Dictionary<string, object> { { "disabled", "disabled" } })
+      @Html.TextBoxFieldFor(s => s.Data.InstanceKey, new Dictionary<string, object> { { "disabled", "disabled" } })
+      if (!String.IsNullOrEmpty(Model.Data.ServiceUrl))
+      {
+        @Html.TextAreaFieldFor(s => s.Data.Contract, Model.DisabledAreaAttributes)
+      }
+      else
+      {
+        @Html.TextAreaFieldFor(s => s.Data.Contract, Model.AreaAttributes)
+      }
+
+    }
+
+
+  }
+
+  <partial name="Version" model="@Model.Data" />
+  <partial name="EntityDirectLink" model="@Model" />
+}
+
+@Html.PrepareAndRunInitScript(Model)

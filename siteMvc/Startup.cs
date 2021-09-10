@@ -203,6 +203,7 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<IActionPermissionTreeService, ActionPermissionTreeService>()
                     .AddTransient<ISecurityService, SecurityService>()
                     .AddTransient<IVisualEditorService, VisualEditorService>()
+                    .AddTransient<IQpPluginService, QpPluginService>()
                     .AddTransient<IWorkflowService, WorkflowService>()
                     .AddTransient<IStatusTypeService, StatusTypeService>()
                     .AddTransient<IPageTemplateService, PageTemplateService>()

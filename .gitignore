@@ -275,6 +275,7 @@ package/pack/qp8release
 !bll/Services/MultistepActions/Publish/
 
 **/appsettings.*.json
+**/current.sql
 
 /projectfiles.tar
 /.env

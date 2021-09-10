@@ -117,6 +117,13 @@ namespace Quantumart.QP8.DAL
         public DbSet<VeCommandDAL> VeCommandSet { get; set; }
         public DbSet<VePluginDAL> VePluginSet { get; set; }
         public DbSet<VeStyleDAL> VeStyleSet { get; set; }
+        public DbSet<PluginDAL> PluginSet { get; set; }
+
+        public DbSet<PluginFieldDAL> PluginFieldSet { get; set; }
+
+        public DbSet<PluginFieldValueDAL> PluginFieldValueSet { get; set; }
+        public DbSet<PluginVersionDAL> PluginVersionSet { get; set; }
+
         public DbSet<UserDefaultFilterItemDAL> UserDefaultFilterSet { get; set; }
         public DbSet<DbDAL> DbSet { get; set; }
         public DbSet<AppSettingsDAL> AppSettingsSet { get; set; }

@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.XPath;
 using Microsoft.EntityFrameworkCore;
+using QP8.Plugins.Contract;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
@@ -105,13 +108,14 @@ namespace Quantumart.QP8.BLL.Repository
                     DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Site, site);
                 }
 
+                var fieldValues = site.QpPluginFieldValues;
                 var result = DefaultRepository.Save<Site, SiteDAL>(site);
 
                 CommonSecurity.CreateSiteAccess(scope.DbConnection, result.Id);
                 CreateDefaultStatuses(result);
                 CreateDefaultNotificationTemplate(result);
                 CreateDefaultGroup(result);
-                QPContext.EFContext.SaveChanges();
+                UpdatePluginValues(fieldValues, result.Id);
 
                 if (QPContext.DatabaseType == DatabaseType.SqlServer)
                 {
@@ -186,7 +190,13 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         /// <param name="site">информация о сайте</param>
         /// <returns>информация о сайте</returns>
-        internal static Site Update(Site site) => DefaultRepository.Update<Site, SiteDAL>(site);
+        internal static Site Update(Site site)
+        {
+            var fieldValues = site.QpPluginFieldValues;
+            var result = DefaultRepository.Update<Site, SiteDAL>(site);
+            UpdatePluginValues(fieldValues, result.Id);
+            return result;
+        }
 
         /// <summary>
         /// Удаляет сайт по его идентификатору
@@ -312,5 +322,46 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyStyleSiteBind(sourceSiteId, destinationSiteId, scope.DbConnection);
             }
         }
+
+        public static List<QpPluginFieldValue> GetPluginValues(int siteId)
+        {
+            var actualValues = QPContext.EFContext.PluginFieldValueSet
+                .Where(n => n.SiteId == siteId)
+                .ToDictionary(k => (int)k.PluginFieldId, n => n.Value);
+
+            var pluginDict = QpPluginRepository.GetQpFieldPluginDict();
+
+            var pluginFieldValues = QpPluginRepository.GetPluginFields(QpPluginRelationType.Site)
+                .Select(n => new QpPluginFieldValue()
+                {
+                    Field = n,
+                    Plugin = pluginDict[n.Id],
+                    Value = actualValues.TryGetValue(n.Id, out var result) ? result : String.Empty
+                }).ToList();
+
+            return pluginFieldValues;
+        }
+
+        private static void UpdatePluginValues(IEnumerable<QpPluginFieldValue> fieldValues, int siteId)
+        {
+            var actualFieldIds = QPContext.EFContext
+                .PluginFieldValueSet.Where(n => n.SiteId == siteId)
+                    .ToDictionary(n => (int)n.PluginFieldId, m => (int)m.Id);
+
+            var entities = QPContext.EFContext;
+            foreach (var fieldValue in fieldValues)
+            {
+                var dalValue = new PluginFieldValueDAL()
+                {
+                    SiteId = siteId,
+                    Value = fieldValue.Value,
+                    PluginFieldId = fieldValue.Field.Id,
+                    Id = actualFieldIds.TryGetValue(fieldValue.Field.Id, out var result) ? result : 0
+                };
+                entities.Entry(dalValue).State = dalValue.Id == 0 ? EntityState.Added : EntityState.Modified;
+            }
+            entities.SaveChanges();
+        }
+
     }
 }

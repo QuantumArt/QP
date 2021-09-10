@@ -14,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public string GettingDataActionName => IsTemplateObject ? "_IndexTemplateObjects" : "_IndexPageObjects";
 
-        public static ObjectListViewModel Create(ObjectInitListResult result, string tabId, int parentId, bool isTemplateObject)
+        public static ObjectListViewModel Create(InitListResult result, string tabId, int parentId, bool isTemplateObject)
         {
             var model = Create<ObjectListViewModel>(tabId, parentId);
             model.IsTemplateObject = isTemplateObject;

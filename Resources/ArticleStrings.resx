@@ -216,17 +216,11 @@
   <data name="Link_AddNewArticle" xml:space="preserve">
     <value>Add new article</value>
   </data>
-  <data name="CurrentVersion" xml:space="preserve">
-    <value>Current version</value>
-  </data>
   <data name="LiveVersion" xml:space="preserve">
     <value>Live-version</value>
   </data>
   <data name="StatusUnknown" xml:space="preserve">
     <value>Unknown</value>
-  </data>
-  <data name="VersionN" xml:space="preserve">
-    <value>Version № {0}</value>
   </data>
   <data name="ArticleVersionNotFoundForArticle" xml:space="preserve">
     <value>Article version (Id = {0}) is not found for the article (Id = {1})</value>

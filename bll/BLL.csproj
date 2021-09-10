@@ -70,6 +70,7 @@
   <ItemGroup>
     <ProjectReference Include="..\dal\DAL.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\Merger\Merger.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\QP8.Plugins.Contract\QP8.Plugins.Contract.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\security\Security.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj" PrivateAssets="None" />

@@ -11,6 +11,7 @@ using QA.Validation.Xaml;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -318,6 +319,15 @@ namespace Quantumart.QP8.BLL
 
         [Display(Name = "ExternalDevelopment", ResourceType = typeof(SiteStrings))]
         public bool ExternalDevelopment { get; set; }
+
+        private IEnumerable<QpPluginFieldValue> _qpPluginFieldValues;
+        public IEnumerable<QpPluginFieldValue> QpPluginFieldValues
+        {
+            get => _qpPluginFieldValues = _qpPluginFieldValues ?? SiteRepository.GetPluginValues(Id);
+            set => _qpPluginFieldValues = value;
+        }
+
+        public IEnumerable<QpPluginFieldValueGroup> QpPluginFieldValueGroups => QpPluginFieldValues.ToFieldGroups();
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 
