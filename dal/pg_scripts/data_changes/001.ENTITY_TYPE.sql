@@ -1,3 +1,6 @@
+SELECT setval('entity_type_seq', cast(COALESCE((SELECT MAX(id)+1 FROM entity_type), 1) as int), false) into tmp_val_tbl;
+drop table tmp_val_tbl;
+
 insert into entity_type(name, code, parent_id, "order", source, id_field, title_field, order_field)
 values ('QP Plugin', 'plugin', (select id from entity_type where code = 'db'), 7, 'PLUGIN', 'ID', 'NAME', '[ORDER]')
 on conflict do nothing;
