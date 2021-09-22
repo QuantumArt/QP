@@ -12,11 +12,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportSettings : IMultistepActionParams
     {
-        private DateTime _dateForFileName;
-
         public ExportSettings()
         {
-            _dateForFileName = DateTime.Now;
             _fieldsToExpand = new Lazy<Field[]>(GetFieldsToExpand);
             _fieldsToExpandSettings = new Lazy<IEnumerable<FieldSetting>>(GetFieldsToExpandSettings);
             CustomFieldIds = new List<int>();
@@ -25,6 +22,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             HeaderNames = new List<string>();
             Extensions = new List<Extension>();
         }
+
+        public DateTime DateTimeForFileName { get; set; }
 
         public int ContentId { get; set; }
 
@@ -70,7 +69,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         {
             get
             {
-                var fileName = $"content_{ContentId}_{_dateForFileName.Year}_{_dateForFileName.Month}_{_dateForFileName.Day}_{_dateForFileName.Hour}_{_dateForFileName.Minute}_{_dateForFileName.Second}.csv";
+                var fileName = $"content_{ContentId}_{DateTimeForFileName.Year}_{DateTimeForFileName.Month}_{DateTimeForFileName.Day}_{DateTimeForFileName.Hour}_{DateTimeForFileName.Minute}_{DateTimeForFileName.Second}.csv";
                 return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileName}";
             }
         }

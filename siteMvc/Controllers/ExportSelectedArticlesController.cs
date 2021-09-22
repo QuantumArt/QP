@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var settings = new ExportSettings
             {
+                DateTimeForFileName = DateTime.Now,
                 Culture = ((CsvCulture)int.Parse(model.Culture)).Description(),
                 Delimiter = char.Parse(((CsvDelimiter)int.Parse(model.Delimiter)).Description()),
                 Encoding = ((CsvEncoding)int.Parse(model.Encoding)).Description(),
