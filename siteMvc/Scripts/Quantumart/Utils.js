@@ -116,7 +116,7 @@ $q.warnIfEqDiff = (left, right) => {
 /**
  * Basic implementation of jQuery ajax request with JSend response support
  * @param  {Object} opts jQuery options for ajax request
- * @return {JQueryPromise<any>} jQuery XHR deffered
+ * @return {Object}      jQuery XHR deffered
  */
 $q.sendAjax = opts => {
   const defaultOptions = {
@@ -164,7 +164,9 @@ $q.sendAjax = opts => {
       $q.alertError(response.message || 'Unknown server error');
     }
   }).done(() => {
-    $q.hideLoader();
+    if (!options.preserveLoader) {
+      $q.hideLoader();
+    }
   });
 };
 
