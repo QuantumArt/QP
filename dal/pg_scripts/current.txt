@@ -2,11 +2,11 @@ extensions
 o2m_ft
 types
 timezone
+sequences
 table_changes
 views
 base
 main
-sequences
 trigger_functions
 triggers
 content_views
