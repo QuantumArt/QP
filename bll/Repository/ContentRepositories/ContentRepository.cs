@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -248,29 +249,29 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             return (int)QPContext.EFContext.ContentSet.Where(n => n.Id == (decimal)id).Select(n => n.SiteId).Single();
         }
 
-        private static void ChangeCreateFieldsTriggerState(bool enable)
+        private static void ChangeCreateFieldsTriggerState(DbConnection cnn, bool enable)
         {
-            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_create_fields", enable);
+            Common.ChangeTriggerState(cnn, "ti_create_fields", enable);
         }
 
-        private static void ChangeInsertAccessContentTriggerState(bool enable)
+        private static void ChangeInsertAccessContentTriggerState(DbConnection cnn, bool enable)
         {
-            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_access_content", enable);
+            Common.ChangeTriggerState(cnn, "ti_access_content", enable);
         }
 
-        private static void ChangeInsertModificationTriggerState(bool enable)
+        private static void ChangeInsertModificationTriggerState(DbConnection cnn, bool enable)
         {
-            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "ti_insert_modify_row", enable);
+            Common.ChangeTriggerState(cnn, "ti_insert_modify_row", enable);
         }
 
-        private static void ChangeDropTableTriggerState(bool enable)
+        private static void ChangeDropTableTriggerState(DbConnection cnn, bool enable)
         {
-            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "td_drop_table", enable);
+            Common.ChangeTriggerState(cnn, "td_drop_table", enable);
         }
 
-        private static void ChangeCleanEmptyGropusTriggerState(bool enable)
+        private static void ChangeCleanEmptyGropusTriggerState(DbConnection cnn, bool enable)
         {
-            Common.ChangeTriggerState(QPContext.CurrentConnectionScope.DbConnection, "tiud_remove_empty_content_groups", enable);
+            Common.ChangeTriggerState(cnn, "tiud_remove_empty_content_groups", enable);
         }
 
         internal static Content Save(Content content, bool createDefaultField)
@@ -281,12 +282,13 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 {
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
                     {
-                        ChangeCreateFieldsTriggerState(false);
-                        ChangeInsertAccessContentTriggerState(false);
-                        ChangeInsertModificationTriggerState(false);
-                        ChangeCleanEmptyGropusTriggerState(false);
+                        ChangeCreateFieldsTriggerState(scope.DbConnection, false);
+                        ChangeInsertAccessContentTriggerState(scope.DbConnection, false);
+                        ChangeInsertModificationTriggerState(scope.DbConnection, false);
+                        ChangeCleanEmptyGropusTriggerState(scope.DbConnection, false);
                         DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
                     }
+
                     var binding = content.WorkflowBinding;
                     var fieldValues = content.QpPluginFieldValues;
                     var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
@@ -314,10 +316,10 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
                     {
                         DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
-                        ChangeCreateFieldsTriggerState(true);
-                        ChangeInsertAccessContentTriggerState(true);
-                        ChangeInsertModificationTriggerState(true);
-                        ChangeCleanEmptyGropusTriggerState(true);
+                        ChangeCreateFieldsTriggerState(scope.DbConnection, true);
+                        ChangeInsertAccessContentTriggerState(scope.DbConnection, true);
+                        ChangeInsertModificationTriggerState(scope.DbConnection, true);
+                        ChangeCleanEmptyGropusTriggerState(scope.DbConnection, true);
                     }
                 }
             }
@@ -364,7 +366,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 {
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
                     {
-                        ChangeCleanEmptyGropusTriggerState(false);
+                        ChangeCleanEmptyGropusTriggerState(scope.DbConnection, false);
                     }
 
                     var binding = content.WorkflowBinding;
@@ -402,7 +404,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 {
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
                     {
-                        ChangeCleanEmptyGropusTriggerState(true);
+                        ChangeCleanEmptyGropusTriggerState(scope.DbConnection, true);
                     }
                 }
             }
@@ -416,8 +418,8 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 {
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
                     {
-                        ChangeDropTableTriggerState(false);
-                        ChangeCleanEmptyGropusTriggerState(false);
+                        ChangeDropTableTriggerState(scope.DbConnection, false);
+                        ChangeCleanEmptyGropusTriggerState(scope.DbConnection, false);
                         FieldRepository.ChangeDeleteContentLinkTriggerState(scope.DbConnection, false);
                         FieldRepository.ChangeCleanEmptyLinksTriggerState(scope.DbConnection, false);
                         FieldRepository.ChangeRemoveFieldTriggerState(scope.DbConnection, false);
@@ -437,8 +439,8 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                 {
                     if (QPContext.DatabaseType == DatabaseType.SqlServer)
                     {
-                        ChangeDropTableTriggerState(true);
-                        ChangeCleanEmptyGropusTriggerState(true);
+                        ChangeDropTableTriggerState(scope.DbConnection, true);
+                        ChangeCleanEmptyGropusTriggerState(scope.DbConnection, true);
                         FieldRepository.ChangeDeleteContentLinkTriggerState(scope.DbConnection, true);
                         FieldRepository.ChangeCleanEmptyLinksTriggerState(scope.DbConnection, true);
                         FieldRepository.ChangeRemoveFieldTriggerState(scope.DbConnection, true);

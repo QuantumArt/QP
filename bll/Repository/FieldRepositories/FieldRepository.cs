@@ -233,7 +233,6 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                         ChangeRemoveFieldTriggerState(scope.DbConnection, false);
                         ChangeReorderFieldsTriggerState(scope.DbConnection, false);
                         ChangeDeleteContentLinkTriggerState(scope.DbConnection, false);
-
                     }
 
                     var field = GetById(id);
@@ -258,7 +257,6 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                         ChangeReorderFieldsTriggerState(scope.DbConnection, true);
                         ChangeDeleteContentLinkTriggerState(scope.DbConnection, true);
                     }
-
                 }
             }
         }
@@ -359,7 +357,6 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                         ChangeInsertFieldTriggerState(scope.DbConnection, true);
                         ChangeM2MDefaultTriggerState(scope.DbConnection, true);
                     }
-
                 }
             }
         }

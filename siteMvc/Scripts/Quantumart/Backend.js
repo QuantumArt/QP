@@ -280,7 +280,12 @@ export class Backend {
   }
 
   _onCheckSingleUserModeDB() {
-    $q.getAjax(`${window.CONTROLLER_URL_DB}CheckDbMode`, {}).success(response => {
+    const request = {
+      url: `${window.CONTROLLER_URL_DB}CheckDbMode`,
+      data: {},
+      preserveLoader: true
+    };
+    $q.sendAjax(request).success(response => {
       this._updateSingleUserMode(response.data);
     });
   }
