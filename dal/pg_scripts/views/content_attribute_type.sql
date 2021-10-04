@@ -1,4 +1,6 @@
-create or replace view content_attribute_type(database_type, input_type, icon, type_name, attribute_id, content_id, attribute_name,
+DO $$ BEGIN
+
+create view content_attribute_type(database_type, input_type, icon, type_name, attribute_id, content_id, attribute_name,
                                    format_mask, input_mask, attribute_size, default_value, attribute_type_id,
                                    related_attribute_id, index_flag, description, modified, created, last_modified_by,
                                    attribute_order, required, permanent_flag, primary_flag, relation_condition,
@@ -102,4 +104,9 @@ FROM (content_attribute ca
 
 alter table content_attribute_type
     owner to postgres;
+
+EXCEPTION
+    WHEN duplicate_table THEN null;
+END $$;
+
 
