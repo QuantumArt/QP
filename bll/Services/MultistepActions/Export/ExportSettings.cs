@@ -182,14 +182,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         {
             public int ContentId { get; set; }
 
-            public string RelationFieldName => Fields.Any() ? Fields.Single(s=>s.Aggregated).Name : string.Empty;
+            public string RelationFieldName { get; set; }
 
-           public List<Field> Fields { get; set; }
-
-            public Extension()
-            {
-                Fields = new List<Field>();
-            }
         }
     }
 }

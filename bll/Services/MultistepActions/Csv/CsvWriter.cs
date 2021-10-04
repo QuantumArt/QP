@@ -467,7 +467,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _settings.FieldNames = GetFieldNames(_extensionContents).ToList();
             _settings.HeaderNames = GetHeaderNames(_extensionContents).ToList();
             _settings.ExtensionsStr = GetExtensions(_extensionContents);
-            _settings.Extensions = _extensionContents.Select(s => new ExportSettings.Extension { ContentId = s.Id, Fields = s.Fields.ToList()}).ToList();
+            _settings.Extensions = _extensionContents.Select(s => new ExportSettings.Extension
+            {
+                ContentId = s.Id,
+                RelationFieldName = s.Fields.SingleOrDefault(n => n.Aggregated)?.Name ?? String.Empty
+            }).ToList();
 
         }
     }
