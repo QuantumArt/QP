@@ -7,7 +7,7 @@ resources:
     - repository: QP_Custom
       name: QP.Custom
       type: git
-      ref: master
+      ref: added_docker_config 
 
 trigger:
 - azure-pipelines-attempt
@@ -44,8 +44,8 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: 'QP_Custom'
-    Contents: 'appsettings.DevExtra.json'
+    SourceFolder: 'QP.Custom'
+    Contents: 'appsettings.Docker.json'
     TargetFolder: 'QP/siteMvc'
 
 - task: Shell++@0
