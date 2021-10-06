@@ -31,17 +31,18 @@ steps:
 - task: Shell++@0
   displayName: 'Set git variables'
   inputs:
-    type: InlineScript
-    script: 
-     cd QP
-     sha=$(git rev-parse --verify HEAD --short | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-     echo '##vso[task.setvariable variable=GitVersion.Sha;]'$sha
-     
-     tag=$(git describe --abbrev=0 --tags | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-     echo '##vso[task.setvariable variable=GitVersion.Tag;]'$tag
-     
-     cnt=$(git rev-list HEAD --count $tag..HEAD)
-     echo '##vso[task.setvariable variable=GitVersion.CommitsSinceTag;]'$cnt
+    type: 'InlineScript'
+    cwd: '$(Build.SourcesDirectory)/QP'
+    failOnStandardError: true
+    script: |
+      sha=$(git rev-parse --verify HEAD --short | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+           echo '##vso[task.setvariable variable=GitVersion.Sha;]'$sha
+           
+           tag=$(git describe --abbrev=0 --tags | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+           echo '##vso[task.setvariable variable=GitVersion.Tag;]'$tag
+           
+           cnt=$(git rev-list HEAD --count $tag..HEAD)
+           echo '##vso[task.setvariable variable=GitVersion.CommitsSinceTag;]'$cnt
 
 - task: CopyFiles@2
   inputs:
@@ -53,7 +54,7 @@ steps:
   displayName: 'Create projectfiles.tar'
   inputs:
     type: InlineScript
-    script: |
+    script: 
      find . -name "*.csproj" -print0 | tar -cvf projectfiles.tar --mtime='1970-01-01' --null -T -
 
 - task: Docker@0
