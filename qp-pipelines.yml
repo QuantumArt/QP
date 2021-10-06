@@ -79,6 +79,7 @@ steps:
   displayName: 'Set version in k8s manifest'
   inputs:
     type: InlineScript
+    cwd: $(Build.SourcesDirectory)/QP
     script: 'sed -i -e ''s/||version||/$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)/g'' -e ''s/||registry||/$(Registry)/g'' *.yaml'
 
 - task: Shell++@0
