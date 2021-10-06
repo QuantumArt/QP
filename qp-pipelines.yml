@@ -5,7 +5,7 @@
 resources:
   repositories:
     - repository: QP_Custom
-      endpoint: QP/QP.Custom
+      endpoint: QP.Custom
       type: git
       ref: master
 
