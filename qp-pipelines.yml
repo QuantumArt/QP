@@ -4,12 +4,8 @@
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 resources:
   repositories:
-    - repository: QP
-      endpoint: Repos - QP
-      type: git
-      ref: master
     - repository: QP_Custom
-      endpoint: Repos - QP.Custom
+      endpoint: QP/QP.Custom
       type: git
       ref: master
 
@@ -24,7 +20,7 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- checkout: QP
+- checkout: self
 - checkout: QP_Custom
 
 - task: DeleteFiles@1
