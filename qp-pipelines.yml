@@ -32,7 +32,7 @@ steps:
   displayName: 'Set git variables'
   inputs:
     type: 'InlineScript'
-    cwd: '$(Build.SourcesDirectory)/QP'
+    cwd: 'QP'
     failOnStandardError: true
     script: |
       sha=$(git rev-parse --verify HEAD --short | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
@@ -54,7 +54,7 @@ steps:
   displayName: 'Create projectfiles.tar'
   inputs:
     type: InlineScript
-    cwd: $(Build.SourcesDirectory)/QP
+    cwd: QP
     script: 
      find . -name "*.csproj" -print0 | tar -cvf projectfiles.tar --mtime='1970-01-01' --null -T -
 
@@ -79,7 +79,7 @@ steps:
   displayName: 'Set version in k8s manifest'
   inputs:
     type: InlineScript
-    cwd: $(Build.SourcesDirectory)/QP
+    cwd: QP
     script: 'sed -i -e ''s/||version||/$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)/g'' -e ''s/||registry||/$(Registry)/g'' *.yaml'
 
 - task: Shell++@0
@@ -99,13 +99,13 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish k8s manifest'
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/$(service.k8s.yaml)'
+    PathtoPublish: 'QP/$(service.k8s.yaml)'
     ArtifactName: manifest
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish k8s demo manifest'
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/$(service.k8s.demo.yaml)'
+    PathtoPublish: 'QP/$(service.k8s.demo.yaml)'
     ArtifactName: 'manifest-demo'
 
 - task: PublishBuildArtifacts@1
