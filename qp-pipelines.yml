@@ -14,7 +14,7 @@ resources:
       ref: master
 
 trigger:
-- master
+- azure-pipelines-attempt
 
 pool:
   name: 'MSCBUILD03'
