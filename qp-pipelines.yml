@@ -111,11 +111,11 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: sql_server'
   inputs:
-    PathtoPublish: 'dal/sql_scripts/current.sql'
+    PathtoPublish: 'QP/dal/sql_scripts/current.sql'
     ArtifactName: 'sql_server'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: postgres'
   inputs:
-    PathtoPublish: 'dal/pg_scripts/current.sql'
+    PathtoPublish: 'QP/dal/pg_scripts/current.sql'
     ArtifactName: postgres    
