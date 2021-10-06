@@ -32,7 +32,8 @@ steps:
   displayName: 'Set git variables'
   inputs:
     type: InlineScript
-    script: |
+    script: 
+     cd QP
      sha=$(git rev-parse --verify HEAD --short | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
      echo '##vso[task.setvariable variable=GitVersion.Sha;]'$sha
      
@@ -45,7 +46,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: 'QP.Custom'
-    Contents: 'appsettings.Docker.json'
+    Contents: 'Transformations/siteMvc/appsettings.Docker.json'
     TargetFolder: 'QP/siteMvc'
 
 - task: Shell++@0
