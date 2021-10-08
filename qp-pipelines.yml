@@ -122,15 +122,6 @@ jobs:
         PathtoPublish: 'QP/dal/pg_scripts/current.sql'
         ArtifactName: postgres    
 
-    - task: PowerShell@2
-      displayName: 'Execute current.sql (PostgreSQL)'
-      inputs:
-        targetType: filePath
-        filePath: './c:\DeployUtils\ExecuteSqlQP8.ps1'
-        arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "$(Agent.ReleaseDirectory)/$(Build.DefinitionName)/postgres/current.sql" -allowedServers MSCPGSQL01, MSCPGSQL02 -dbType 1  -ErrorAction Continue'
-        failOnStderr: true
-      continueOnError: true   
-
 - deployment: QP_Docker_Yaml_Deploy
   displayName: QP.Docker.Yaml
   pool:
@@ -144,8 +135,7 @@ jobs:
           - task: PowerShell@2
             displayName: 'Execute current.sql (PostgreSQL)'
             inputs:
-              targetType: filePath
-              filePath: './c:\DeployUtils\ExecuteSqlQP8.ps1'
+              filePath: 'c:\DeployUtils\ExecuteSqlQP8.ps1'
               arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "$(Agent.ReleaseDirectory)/$(Build.DefinitionName)/postgres/current.sql" -allowedServers MSCPGSQL01, MSCPGSQL02 -dbType 1  -ErrorAction Continue'
               failOnStderr: true
             continueOnError: true
@@ -154,7 +144,7 @@ jobs:
             displayName: 'Execute current.sql (SQL Server)'
             inputs:
               targetType: filePath
-              filePath: './c:\DeployUtils\ExecuteSqlQP8.ps1'
+              filePath: 'c:\DeployUtils\ExecuteSqlQP8.ps1'
               arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "$(Agent.ReleaseDirectory)/$(Build.DefinitionName)/sql_server/current.sql" -allowedServers MSCSQL01, SPBDEVSQL05 -ErrorAction Continue'
 
           - task: Kubernetes@1
