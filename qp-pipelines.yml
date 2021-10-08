@@ -136,7 +136,7 @@ jobs:
             displayName: 'Execute current.sql (PostgreSQL)'
             inputs:
               filePath: 'c:\DeployUtils\ExecuteSqlQP8.ps1'
-              arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "./postgres/current.sql" -allowedServers MSCPGSQL01, MSCPGSQL02 -dbType 1  -ErrorAction Continue'
+              arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath ".\postgres\current.sql" -allowedServers MSCPGSQL01, MSCPGSQL02 -dbType 1  -ErrorAction Continue'
               failOnStderr: true
             continueOnError: true
 
@@ -145,7 +145,7 @@ jobs:
             inputs:
               targetType: filePath
               filePath: 'c:\DeployUtils\ExecuteSqlQP8.ps1'
-              arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "./sql_server/current.sql" -allowedServers MSCSQL01, SPBDEVSQL05 -ErrorAction Continue'
+              arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath ".\sql_server\current.sql" -allowedServers MSCSQL01, SPBDEVSQL05 -ErrorAction Continue'
 
           - task: Kubernetes@1
             displayName: 'kubectl apply'
