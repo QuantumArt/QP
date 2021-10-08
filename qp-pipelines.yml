@@ -66,7 +66,7 @@ jobs:
         containerregistrytype: 'Container Registry'
         dockerRegistryConnection: spbdocker03
         dockerFile: QP/Dockerfile
-        buildArguments: 'SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha) PUBLISH_ARG=Docker'
+        buildArguments: 'SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha) PUBLISH_ARG=/p:EnvironmentName=Docker'
         imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
 
     - task: Docker@0
