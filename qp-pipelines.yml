@@ -12,110 +12,167 @@ resources:
 trigger:
 - azure-pipelines-attempt
 
-pool:
-  name: 'MSCBUILD03'
-
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- checkout: self
-- checkout: QP_Custom
+jobs:
+- job: Build
+  displayName: Build app
+  pool: 
+    name: 'MSCBUILD03'
+  steps:
+    - checkout: self
+    - checkout: QP_Custom
 
-- task: DeleteFiles@1
-  displayName: 'Delete files from '
-  inputs:
-    Contents: QP/global.json
+    - task: DeleteFiles@1
+      displayName: 'Delete files from '
+      inputs:
+        Contents: QP/global.json
 
-- task: Shell++@0
-  displayName: 'Set git variables'
-  inputs:
-    type: 'InlineScript'
-    cwd: 'QP'
-    failOnStandardError: true
-    script: |
-      sha=$(git rev-parse --verify HEAD --short | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-           echo '##vso[task.setvariable variable=GitVersion.Sha;]'$sha
-           
-           tag=$(git describe --abbrev=0 --tags | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-           echo '##vso[task.setvariable variable=GitVersion.Tag;]'$tag
-           
-           cnt=$(git rev-list HEAD --count $tag..HEAD)
-           echo '##vso[task.setvariable variable=GitVersion.CommitsSinceTag;]'$cnt
+    - task: Shell++@0
+      displayName: 'Set git variables'
+      inputs:
+        type: 'InlineScript'
+        cwd: 'QP'
+        failOnStandardError: true
+        script: |
+          sha=$(git rev-parse --verify HEAD --short | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+          echo '##vso[task.setvariable variable=GitVersion.Sha;]'$sha
+                
+          tag=$(git describe --abbrev=0 --tags | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+          echo '##vso[task.setvariable variable=GitVersion.Tag;]'$tag
+                
+          cnt=$(git rev-list HEAD --count $tag..HEAD)
+          echo '##vso[task.setvariable variable=GitVersion.CommitsSinceTag;]'$cnt
 
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: 'QP.Custom/Transformations/siteMvc'
-    Contents: 'appsettings.Docker.json'
-    TargetFolder: 'QP/siteMvc'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'QP.Custom/Transformations/siteMvc'
+        Contents: 'appsettings.Docker.json'
+        TargetFolder: 'QP/siteMvc'
 
-- task: Shell++@0
-  displayName: 'Create projectfiles.tar'
-  inputs:
-    type: InlineScript
-    cwd: QP
-    script: 
-     find . -name "*.csproj" -print0 | tar -cvf projectfiles.tar --mtime='1970-01-01' --null -T -
+    - task: Shell++@0
+      displayName: 'Create projectfiles.tar'
+      inputs:
+        type: InlineScript
+        cwd: QP
+        script: 
+          find . -name "*.csproj" -print0 | tar -cvf projectfiles.tar --mtime='1970-01-01' --null -T -
 
-- task: Docker@0
-  displayName: 'Build an image'
-  inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryConnection: spbdocker03
-    dockerFile: QP/Dockerfile
-    buildArguments: 'SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha)'
-    imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
+    - task: Docker@0
+      displayName: 'Build an image'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryConnection: spbdocker03
+        dockerFile: QP/Dockerfile
+        buildArguments: 'SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha) PUBLISH_ARG=Docker'
+        imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
 
-- task: Docker@0
-  displayName: 'Push an image'
-  inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryConnection: spbdocker03
-    action: 'Push an image'
-    imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
+    - task: Docker@0
+      displayName: 'Push an image'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryConnection: spbdocker03
+        action: 'Push an image'
+        imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
 
-- task: Shell++@0
-  displayName: 'Set version in k8s manifest'
-  inputs:
-    type: InlineScript
-    cwd: QP
-    script: 'sed -i -e ''s/||version||/$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)/g'' -e ''s/||registry||/$(Registry)/g'' *.yaml'
+    - task: Shell++@0
+      displayName: 'Set version in k8s manifest'
+      inputs:
+        type: InlineScript
+        cwd: QP
+        script: 'sed -i -e ''s/||version||/$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)/g'' -e ''s/||registry||/$(Registry)/g'' *.yaml'
 
-- task: Shell++@0
-  displayName: 'Create current.sql'
-  inputs:
-    type: InlineScript
-    cwd: 'QP/dal/pg_scripts'
-    script: 'sh create_current.sh'
+    - task: Shell++@0
+      displayName: 'Create current.sql'
+      inputs:
+        type: InlineScript
+        cwd: 'QP/dal/pg_scripts'
+        script: 'sh create_current.sh'
 
-- task: Shell++@0
-  displayName: 'Create current.sql pg'
-  inputs:
-    type: InlineScript
-    cwd: 'QP/dal/sql_scripts'
-    script: 'sh create_current.sh'
+    - task: Shell++@0
+      displayName: 'Create current.sql pg'
+      inputs:
+        type: InlineScript
+        cwd: 'QP/dal/sql_scripts'
+        script: 'sh create_current.sh'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish k8s manifest'
-  inputs:
-    PathtoPublish: 'QP/$(service.k8s.yaml)'
-    ArtifactName: manifest
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish k8s manifest'
+      inputs:
+        PathtoPublish: 'QP/$(service.k8s.yaml)'
+        ArtifactName: manifest
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish k8s demo manifest'
-  inputs:
-    PathtoPublish: 'QP/$(service.k8s.demo.yaml)'
-    ArtifactName: 'manifest-demo'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish k8s demo manifest'
+      inputs:
+        PathtoPublish: 'QP/$(service.k8s.demo.yaml)'
+        ArtifactName: 'manifest-demo'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: sql_server'
-  inputs:
-    PathtoPublish: 'QP/dal/sql_scripts/current.sql'
-    ArtifactName: 'sql_server'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: sql_server'
+      inputs:
+        PathtoPublish: 'QP/dal/sql_scripts/current.sql'
+        ArtifactName: 'sql_server'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: postgres'
-  inputs:
-    PathtoPublish: 'QP/dal/pg_scripts/current.sql'
-    ArtifactName: postgres    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: postgres'
+      inputs:
+        PathtoPublish: 'QP/dal/pg_scripts/current.sql'
+        ArtifactName: postgres    
+
+    - task: PowerShell@2
+      displayName: 'Execute current.sql (PostgreSQL)'
+      inputs:
+        targetType: filePath
+        filePath: './c:\DeployUtils\ExecuteSqlQP8.ps1'
+        arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "$(Agent.ReleaseDirectory)/$(Build.DefinitionName)/postgres/current.sql" -allowedServers MSCPGSQL01, MSCPGSQL02 -dbType 1  -ErrorAction Continue'
+        failOnStderr: true
+      continueOnError: true   
+
+- deployment: QP_Docker_Yaml_Deploy
+  displayName: QP.Docker.Yaml
+  pool:
+    name: "MSCBUILD01"
+  environment: "msckuber_yaml"
+  dependsOn: Build
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - task: PowerShell@2
+            displayName: 'Execute current.sql (PostgreSQL)'
+            inputs:
+              targetType: filePath
+              filePath: './c:\DeployUtils\ExecuteSqlQP8.ps1'
+              arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "$(Agent.ReleaseDirectory)/$(Build.DefinitionName)/postgres/current.sql" -allowedServers MSCPGSQL01, MSCPGSQL02 -dbType 1  -ErrorAction Continue'
+              failOnStderr: true
+            continueOnError: true
+
+          - task: PowerShell@2
+            displayName: 'Execute current.sql (SQL Server)'
+            inputs:
+              targetType: filePath
+              filePath: './c:\DeployUtils\ExecuteSqlQP8.ps1'
+              arguments: '-configPath "\\storage\msckubepv\qp_config\config.xml" -sqlPath "$(Agent.ReleaseDirectory)/$(Build.DefinitionName)/sql_server/current.sql" -allowedServers MSCSQL01, SPBDEVSQL05 -ErrorAction Continue'
+
+          - task: Kubernetes@1
+            displayName: 'kubectl apply'
+            inputs:
+              kubernetesServiceEndpoint: MSCKUBE
+              command: apply
+              arguments: '-f $(System.ArtifactsDirectory)\$(Build.DefinitionName)\manifest\.'
+              containerRegistryType: 'Container Registry'
+              dockerRegistryEndpoint: spbdocker03
+              versionSpec: 1.16.3
+
+          - task: Kubernetes@1
+            displayName: 'kubectl apply media'
+            inputs:
+              kubernetesServiceEndpoint: MSCKUBE
+              command: apply
+              arguments: '-f $(System.ArtifactsDirectory)\$(Build.DefinitionName)\manifest-demo\.'
+              containerRegistryType: 'Container Registry'
+              dockerRegistryEndpoint: spbdocker03
+              versionSpec: 1.16.3  
