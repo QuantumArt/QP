@@ -50,7 +50,8 @@ jobs:
       inputs:
         SourceFolder: 'QP.Custom/Transformations/siteMvc'
         Contents: 'appsettings.Docker.json'
-        TargetFolder: 'QP/siteMvc'
+        TargetFolder: 'QP/siteMvc/appsettings.json'
+        OverWrite: true
 
     - task: Shell++@0
       displayName: 'Create projectfiles.tar'
@@ -130,6 +131,7 @@ jobs:
   pool:
     name: "MSCBUILD01"
   environment: "msckuber_yaml"
+  condition: false
   dependsOn: Build
   strategy:
     runOnce:
