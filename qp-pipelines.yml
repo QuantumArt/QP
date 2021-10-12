@@ -128,7 +128,6 @@ jobs:
   pool:
     name: "MSCBUILD01"
   environment: "msckuber_yaml"
-  condition: false
   dependsOn: Build
   strategy:
     runOnce:
