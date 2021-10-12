@@ -46,12 +46,10 @@ jobs:
           cnt=$(git rev-list HEAD --count $tag..HEAD)
           echo '##vso[task.setvariable variable=GitVersion.CommitsSinceTag;]'$cnt
 
-    - task: CopyFiles@2
+    - task: Shell++@0 
       inputs:
-        SourceFolder: 'QP.Custom/Transformations/siteMvc'
-        Contents: 'appsettings.Docker.json'
-        TargetFolder: 'QP/siteMvc/appsettings.json'
-        OverWrite: true
+        type: 'InlineScript'
+        script: 'cp QP.Custom/Transformations/siteMvc/appsettings.Docker.json  QP/siteMvc/appsettings.json'
 
     - task: Shell++@0
       displayName: 'Create projectfiles.tar'
@@ -70,7 +68,6 @@ jobs:
         dockerFile: 'QP/Dockerfile'
         buildArguments: |
           SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha)
-          PUBLISH_ARG=/p:EnvironmentName=Docker
         imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
 
     - task: Docker@0
