@@ -1145,7 +1145,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 var dalValue = new PluginFieldValueDAL()
                 {
                     ContentAttributeId = fieldId,
-                    Value = fieldValue.Value,
+                    Value = string.IsNullOrEmpty(fieldValue.Value) ? null : fieldValue.Value,
                     PluginFieldId = fieldValue.Field.Id,
                     Id = actualFieldIds.TryGetValue(fieldValue.Field.Id, out var result) ? result : 0
                 };
