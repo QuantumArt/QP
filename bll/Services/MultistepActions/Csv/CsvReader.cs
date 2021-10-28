@@ -89,7 +89,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _titleHeaders = MultistepActionHelper.GetFileFields(_importSettings, _reader);
             var fields = FieldRepository.GetList(_importSettings.FieldsList.Select(n => n.Value))
                 .ToDictionary(n => n.Id.ToString(), m => m);
-            InitFields(fields);
+            InitFields(_importSettings, fields);
             ConvertCsvLinesToArticles(fields);
             WriteArticlesToDb();
             processedItemsCount = _csvLines.Count();
@@ -1107,14 +1107,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return columnIndexes.Select(k => k.ToString()).ToList();
         }
 
-        private void InitFields(Dictionary<string, Field> fields)
+        private void InitFields(ImportSettings importSettings, Dictionary<string, Field> fields)
         {
             _fieldsMap = fields.Select(f => f.Value)
                 .GroupBy(f => f.ContentId)
                 .Select(g => g)
                 .ToDictionary(g => g.Key, g => g.ToList());
-
-            _headersMap = fields.ToDictionary(f => f.Value, f => _titleHeaders.FindIndex(s => s == f.Value.Name));
+            _headersMap = importSettings.FieldsList.ToDictionary(
+                k => fields[k.Value.ToString()],
+                v => _titleHeaders.FindIndex(s => s == v.Key));
             _aggregatedContentsMap = ContentRepository.GetAggregatedContents(_contentId).ToDictionary(c => c.Id, c => c);
             _articlesListFromCsv = new ExtendedArticleList();
             _uniqueValuesList = new List<string>();
