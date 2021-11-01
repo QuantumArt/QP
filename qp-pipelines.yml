@@ -7,10 +7,10 @@ resources:
     - repository: QP_Custom
       name: QP.Custom
       type: git
-      ref: added_docker_config 
+      ref: master 
 
 trigger:
-- azure-pipelines-attempt
+- master
 
 variables:
   buildPlatform: 'Any CPU'
