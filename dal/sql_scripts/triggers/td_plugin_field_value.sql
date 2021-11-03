@@ -4,7 +4,7 @@ GO
 CREATE TRIGGER [dbo].[td_plugin_field_value] ON [dbo].[PLUGIN_FIELD_VALUE] AFTER DELETE
 AS
 BEGIN
-    if object_id('tempdb..#td_plugin_field_value') is null
+    if object_id('tempdb..#disable_td_plugin_field_value') is null
     begin
 
 		declare @i int, @count int
