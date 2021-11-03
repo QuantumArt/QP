@@ -4,6 +4,8 @@ GO
 CREATE TRIGGER [dbo].[td_plugin_field_value] ON [dbo].[PLUGIN_FIELD_VALUE] AFTER DELETE
 AS
 BEGIN
+    if object_id('tempdb..#td_plugin_field_value') is null
+    begin
 
 		declare @i int, @count int
 		declare @plugin_id numeric
@@ -123,5 +125,6 @@ BEGIN
             delete from @ids
             set @i = @i + 1
         end
+    end
 end
 GO

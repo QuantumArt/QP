@@ -95,8 +95,10 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
+                Common.DisableTrigger(scope.DbConnection, "td_plugin_field_value");
                 DefaultRepository.Delete<PluginDAL>(id);
                 Common.DropPluginTables(scope.DbConnection, id);
+                Common.EnableTrigger(scope.DbConnection, "td_plugin_field_value");
             }
         }
 

@@ -283,6 +283,24 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, String.Format(sql, fieldTableName));
         }
 
+        public static void DisableTrigger(DbConnection cnn, string triggerName)
+        {
+            var dbType = GetDbType(cnn);
+            string tableName = dbType == DatabaseType.SqlServer ? "#disable_" + triggerName : "disable_" + triggerName;
+            string sql = dbType == DatabaseType.SqlServer ?
+                $"select 1 as id into {tableName}" :
+                $"create temp table {tableName}(id numeric)";
+            ExecuteSql(cnn, sql);
+        }
+
+        public static void EnableTrigger(DbConnection cnn, string triggerName)
+        {
+            var dbType = GetDbType(cnn);
+            string tableName = dbType == DatabaseType.SqlServer ? "#disable_" + triggerName : "disable_" + triggerName;
+            string sql = $"drop table {tableName}";
+            ExecuteSql(cnn, sql);
+        }
+
         public static void DropContentViews(DbConnection cnn, int id)
         {
             var dbType = GetDbType(cnn);
