@@ -50,6 +50,9 @@ BEGIN
 	inner join CONTENT_ATTRIBUTE cad on ca.BACK_RELATED_ATTRIBUTE_ID = cad.ATTRIBUTE_ID
 	inner join deleted c on cad.CONTENT_ID = c.CONTENT_ID
 
+    delete plugin_field_value from plugin_field_value pv
+	inner join deleted d on d.content_id = pv.content_id
+
 	delete content from content c inner join deleted d on c.content_id = d.content_id
 
 	drop table #disable_td_delete_item
