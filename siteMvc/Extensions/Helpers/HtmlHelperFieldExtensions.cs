@@ -199,16 +199,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             switch (field.ValueType)
             {
                 case QpPluginValueType.String:
-                     htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Textbox);
+                     htmlAttributes = html.QpHtmlProperties(id, 0, EditorType.Textbox);
                     return html.QpTextBox(id, value, htmlAttributes);
                 case QpPluginValueType.DateTime:
-                    htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Textbox);
+                    htmlAttributes = html.QpHtmlProperties(id, 0, EditorType.Textbox);
                     return html.DateTime(id, value, htmlAttributes, true);
                 case QpPluginValueType.Bool:
-                    htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Checkbox);
+                    htmlAttributes = html.QpHtmlProperties(id, 0, EditorType.Checkbox);
                     return html.QpCheckBox(id, null, Converter.ToBoolean(value), htmlAttributes);
                 case QpPluginValueType.Numeric:
-                    htmlAttributes = html.QpHtmlProperties(field.Name, 0, EditorType.Numeric);
+                    htmlAttributes = html.QpHtmlProperties(id, 0, EditorType.Numeric);
                     return html.NumericTextBox(id, value, htmlAttributes);
                 default:
                     throw new ArgumentException("Unsupported Field Type");
