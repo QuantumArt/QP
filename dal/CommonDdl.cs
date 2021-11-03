@@ -283,21 +283,19 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, String.Format(sql, fieldTableName));
         }
 
-        public static void DisableTrigger(DbConnection cnn, string triggerName)
+        public static void ChangeTriggerState(DbConnection cnn, string triggerName, bool enable)
         {
             var dbType = GetDbType(cnn);
-            string tableName = dbType == DatabaseType.SqlServer ? "#disable_" + triggerName : "disable_" + triggerName;
-            string sql = dbType == DatabaseType.SqlServer ?
-                $"select 1 as id into {tableName}" :
-                $"create temp table {tableName}(id numeric)";
-            ExecuteSql(cnn, sql);
-        }
-
-        public static void EnableTrigger(DbConnection cnn, string triggerName)
-        {
-            var dbType = GetDbType(cnn);
-            string tableName = dbType == DatabaseType.SqlServer ? "#disable_" + triggerName : "disable_" + triggerName;
-            string sql = $"drop table {tableName}";
+            var isSqlServer = dbType == DatabaseType.SqlServer;
+            var tableName = isSqlServer ? "#disable_" + triggerName : "disable_" + triggerName;
+            var opString = isSqlServer ?
+                enable ? "drop table" : "create table" :
+                enable ? "drop table if exists" : "create table if not exists";
+            var signatureString = enable ? string.Empty : "(id numeric)";
+            var checkString = !isSqlServer ? "" : enable ?
+                $"if object_id('tempdb..{tableName}') is not null" :
+                $"if object_id('tempdb..{tableName}') is null";
+            var sql = string.Format("{3} {0} {1} {2}", opString, tableName, signatureString, checkString);
             ExecuteSql(cnn, sql);
         }
 
@@ -317,7 +315,6 @@ namespace Quantumart.QP8.DAL
                 var unitedSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_united_view_drop", idStr);
                 ExecuteSql(cnn, unitedSql);
             }
-
         }
 
         public static IEnumerable<DataRow> RemovingActions_GetContentsItemInfo(int? siteId, int? contentId, DbConnection connection)
