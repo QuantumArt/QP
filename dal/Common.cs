@@ -1152,22 +1152,6 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static void ChangeTriggerState(DbConnection connection, string triggerName, bool enable)
-        {
-            var tableName = "#disable_" + triggerName;
-            var opString = enable ? "drop" : "create";
-            var signatureString = enable ? string.Empty : "(id numeric)";
-            var checkString = enable
-                ? $"if object_id('tempdb..{tableName}') is not null"
-                : $"if object_id('tempdb..{tableName}') is null";
-
-            var sql = string.Format("{3} {0} table {1} {2}", opString, tableName, signatureString, checkString);
-            using (var cmd = DbCommandFactory.Create(sql, connection))
-            {
-                cmd.ExecuteNonQuery();
-            }
-        }
-
         public static void CopyContentAccess(DbConnection connection, int sourceId, int destinationId, int userId)
         {
             var dbType = GetDbType(connection);

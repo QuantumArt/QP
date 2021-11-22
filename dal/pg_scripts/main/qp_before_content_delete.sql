@@ -48,7 +48,7 @@ AS $BODY$
             delete from user_default_filter where content_id = ANY(ids);
             delete from content_tab_bind where content_id = ANY(ids);
             delete from action_content_bind where content_id = ANY(ids);
-
+            delete from plugin_field_value where content_id = ANY(ids);
         END IF;
 	END;
 $BODY$;

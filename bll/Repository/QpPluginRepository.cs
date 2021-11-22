@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using QP8.Infrastructure.Extensions;
@@ -95,9 +96,16 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
+                ChangeDeleteValuesTriggerState(scope.DbConnection, false);
                 DefaultRepository.Delete<PluginDAL>(id);
                 Common.DropPluginTables(scope.DbConnection, id);
+                ChangeDeleteValuesTriggerState(scope.DbConnection, true);
             }
+        }
+
+        internal static void ChangeDeleteValuesTriggerState(DbConnection cnn, bool enable)
+        {
+            Common.ChangeTriggerState(cnn, "td_plugin_field_value", enable);
         }
 
         internal static bool CodeExists(QpPlugin plugin)
