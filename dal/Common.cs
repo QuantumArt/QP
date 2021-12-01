@@ -2579,8 +2579,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                     }
                 }
 
-                string internalSql;
-                string inverseString;
+                string internalSql, inverseString;
+                var revString = linkFilter.IsBackward ? "_rev" : String.Empty;
                 if (!linkFilter.IsNull)
                 {
                     var paramName = "@link" + linkFilter.LinkId;
@@ -2589,14 +2589,14 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString} EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
+                        ? $"{inverseString} EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
                         : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
                 {
                     inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString}EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = id)"
+                        ? $"{inverseString}EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id)"
                         : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)}) ";
                 }
 
