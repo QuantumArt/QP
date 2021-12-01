@@ -104,6 +104,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             var result = new ArticleLinkSearchParameter
             {
                 LinkId = linkedId.Value,
+                IsBackward = field.LinkId.HasValue && field.ContentId == field.ContentLink.RContentId,
                 ExtensionContentId = extensionContentId,
                 ReferenceFieldId = referenceFieldId,
                 Ids = values.ToArray(),

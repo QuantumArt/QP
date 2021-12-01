@@ -21,5 +21,7 @@
         public int ReferenceFieldId { get; set; }
 
         public bool UnionAll { get; set; }
+
+        public bool IsBackward { get; set; }
     }
 }
