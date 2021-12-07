@@ -81,6 +81,10 @@ namespace Quantumart.QP8.CommonScheduler
         public async Task<List<JobInfo>> GetAllTasks()
         {
             var jobList = new List<JobInfo>();
+            if (string.IsNullOrEmpty(SchedulerName))
+            {
+                return jobList;
+            }
             Scheduler = await _factory.GetScheduler(SchedulerName);
             if (Scheduler != null)
             {
