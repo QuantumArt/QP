@@ -426,9 +426,16 @@ namespace Quantumart.QP8.BLL
                 var result = GetValueFromStorage(_canManageScheduledTasks, HttpContextItems.CanManageScheduledTasksKey);
                 if (result == null)
                 {
-                    using (new QPConnectionScope())
+                    if (IsAdmin)
                     {
-                        result = Common.CanManageScheduledTasks(QPConnectionScope.Current.DbConnection, CurrentUserId);
+                        result = true;
+                    }
+                    else
+                    {
+                        using (new QPConnectionScope())
+                        {
+                            result = Common.CanManageScheduledTasks(QPConnectionScope.Current.DbConnection, CurrentUserId);
+                        }
                     }
                     SetCanManageScheduledTasksValueToStorage(result);
                 }
