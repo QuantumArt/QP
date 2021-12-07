@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Xml.Linq;
 using NLog;
@@ -50,12 +51,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal void SendNotificationOneWay(string connectionString, int id, string code)
         {
-            QueueAsync(() => Notify(connectionString, id, code, IgnoreInternal));
+            Task.Run(() => Notify(connectionString, id, code, IgnoreInternal));
         }
 
         internal void SendNotification(string connectionString, int id, string code)
         {
-            Queue(() => Notify(connectionString, id, code, IgnoreInternal));
+            Task.Run(() => Notify(connectionString, id, code, IgnoreInternal)).Wait();
         }
 
         internal void PrepareNotifications(Article article, string[] codes, bool disableNotifications = false)
@@ -116,6 +117,12 @@ namespace Quantumart.QP8.BLL.Repository
         {
             if (!NonServiceNotifications.Any())
             {
+                return;
+            }
+
+            if (QPContext.DatabaseType == DatabaseType.Postgres)
+            {
+                Logger.Error("Non-service notifications is not supported in PostgreSQL");
                 return;
             }
 
@@ -206,23 +213,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        private static void QueueAsync(Action action)
-        {
-            ThreadPool.QueueUserWorkItem(o => action());
-        }
-
-        private static void Queue(Action action)
-        {
-            var @event = new ManualResetEvent(false);
-            ThreadPool.QueueUserWorkItem(o =>
-            {
-                action();
-                @event.Set();
-            });
-
-            @event.WaitOne();
-        }
-
         private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
             using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
@@ -235,10 +225,19 @@ namespace Quantumart.QP8.BLL.Repository
                     ExternalExceptionHandler = HandleException,
                     ThrowNotificationExceptions = false
                 };
+
                 QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
-                foreach (var simpleCode in code.Split(';'))
+
+                try
                 {
-                    cnn.SendNotification(id, simpleCode);
+                    foreach (var simpleCode in code.Split(';'))
+                    {
+                        cnn.SendNotification(id, simpleCode);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HandleException(ex);
                 }
             }
         }
