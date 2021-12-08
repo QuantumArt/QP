@@ -93,15 +93,15 @@ namespace Quantumart.QP8.WebMvc
 
                 services.AddHostedService<S.ArticleService>();
             }
+
+            var commonSchedulerProperties = new CommonSchedulerProperties();
             if (qpOptions.EnableCommonScheduler)
             {
-                var commonSchedulerProperties = new CommonSchedulerProperties();
                 Configuration.Bind("CommonScheduler", commonSchedulerProperties);
-                services.AddSingleton(commonSchedulerProperties);
-
                 services.AddTransient<IUserSynchronizationService, UserSynchronizationService>();
-                services.AddQuartzService(commonSchedulerProperties);
             }
+            services.AddSingleton(commonSchedulerProperties);
+            services.AddQuartzService(commonSchedulerProperties);
 
 
             // used by Session middleware

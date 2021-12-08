@@ -174,4 +174,7 @@
   <data name="NextStartTime" xml:space="preserve">
     <value>Время следующего запуска</value>
   </data>
+  <data name="NoScheduledTasks" xml:space="preserve">
+    <value>Нет задач по расписанию</value>
+  </data>
 </root>

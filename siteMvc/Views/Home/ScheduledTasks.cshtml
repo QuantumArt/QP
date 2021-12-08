@@ -3,6 +3,10 @@
 
 @using (Html.BeginTabForm(Model))
 {
+  if (Model.Tasks == null || Model.Tasks.Count == 0)
+  {
+    <p>@HomeStrings.NoScheduledTasks</p>
+  }
   foreach (var task in Model.Tasks)
   {
     using (Html.BeginFieldGroup(HomeStrings.Task))

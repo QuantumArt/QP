@@ -81,6 +81,10 @@ namespace Quantumart.QP8.CommonScheduler
         public async Task<List<JobInfo>> GetAllTasks()
         {
             var jobList = new List<JobInfo>();
+            if (string.IsNullOrEmpty(SchedulerName))
+            {
+                return jobList;
+            }
             Scheduler = await _factory.GetScheduler(SchedulerName);
             if (Scheduler != null)
             {
@@ -111,8 +115,8 @@ namespace Quantumart.QP8.CommonScheduler
                 list.Add(new TriggerInfo
                 {
                     Name = trigger.Key.Name,
-                    LastStartTime = trigger.GetPreviousFireTimeUtc()?.ToString(),
-                    NextStartTime = trigger.GetNextFireTimeUtc()?.ToString(),
+                    LastStartTime = trigger.GetPreviousFireTimeUtc()?.LocalDateTime.ToString(),
+                    NextStartTime = trigger.GetNextFireTimeUtc()?.LocalDateTime.ToString(),
                     Schedule = (trigger is ICronTrigger cronTrigger) ? cronTrigger.CronExpressionString : null
                 });
             }

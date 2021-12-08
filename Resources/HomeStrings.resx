@@ -174,4 +174,7 @@
   <data name="NextStartTime" xml:space="preserve">
     <value>Next start time</value>
   </data>
+  <data name="NoScheduledTasks" xml:space="preserve">
+    <value>No scheduled tasks</value>
+  </data>
 </root>
