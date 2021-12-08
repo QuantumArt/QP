@@ -20,7 +20,7 @@ namespace Quantumart.QP8.Constants.Mvc
         public const string CurrentUserIdKey = "CurrentUserId";
         public const string CurrentSessionIdKey = "CurrentSessionId";
         public const string CanUnlockItemsKey = "CanUnlockItems";
-        public const string CanManageScheduledTasksKey = "CanUnlockItems";
+        public const string CanManageScheduledTasksKey = "CanManageScheduledTasksKey";
         public const string CurrentGroupIdsKey = "CurrentGroupIds";
         public const string ContentFieldCache = "_ContentFieldCache";
         public const string CurrentCustomerCodeKey = "CurrentCustomerCode";
