@@ -62,7 +62,7 @@ namespace Quantumart.QP8.DAL
                     group by {entityIdField}
                 ";
 
-            var defaultSql = $" select {entityIdField}, 0 as permission_level, 0 as hide from {entityTypeName}";
+            var defaultSql = $" select {entityIdField}, 0 as permission_level, 0 as hide from {entityTypeName} where 1 = 1 {whereParentEntity}";
             var sbSql = new StringBuilder();
             var groupsToProcess = new List<decimal>();
             var usedGroups = new List<decimal>();
