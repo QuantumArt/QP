@@ -7,6 +7,7 @@
     <ProjectReference Include="..\..\configuration\Configuration.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Quartz" Version="3.3.2" />
     <PackageReference Include="Unity" Version="5.8.13" />
   </ItemGroup>
   <ItemGroup>

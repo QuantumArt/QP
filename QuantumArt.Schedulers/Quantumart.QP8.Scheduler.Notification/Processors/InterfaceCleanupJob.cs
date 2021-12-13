@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using NLog;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
 using Quartz;
@@ -27,6 +28,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         {
             Logger.Info("Start cleanup notification queue");
             var items = _schedulerCustomers.GetItems();
+            items = JobHelpers.FilterCustomers(items, context.MergedJobDataMap);
             foreach (var customer in items)
             {
                 try

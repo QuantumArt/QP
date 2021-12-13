@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using QA.Validation.Xaml.Extensions.Rules;
 using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.CommonScheduler;
@@ -72,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ScheduledTasks)]
         public async Task<ActionResult> RunJob([FromBody] ScheduledTaskViewModel model)
         {
-            var result = await _quartzService.RunJob(model.Name);
+            var result = await _quartzService.RunJob(model.Name, QPContext.CurrentCustomerCode);
 
             return JsonCamelCase(new JSendResponse
             {

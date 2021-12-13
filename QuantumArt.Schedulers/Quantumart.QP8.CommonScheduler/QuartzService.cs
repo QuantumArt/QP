@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using QP8.Infrastructure.Web.Enums;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.Scheduler.API.Models;
 using Quartz;
@@ -30,11 +32,13 @@ namespace Quantumart.QP8.CommonScheduler
             SchedulerName = quartzServiceSettings.Name;
         }
 
-        internal static CommonSchedulerTaskProperties GetJobProperties<T>(CommonSchedulerTaskProperties[] tasks) where T : IJob
+        internal static CommonSchedulerTaskProperties GetJobProperties<T>(IConfigurationSection rootSection) where T : IJob
         {
             var jobName = typeof(T).Name;
-            var jobProperties = tasks.FirstOrDefault(f => f.Name.Equals(jobName, StringComparison.InvariantCultureIgnoreCase));
-            return jobProperties;
+            var jobProperties = new CommonSchedulerTaskProperties();
+            var jobSection = rootSection.GetSection(jobName);
+            jobSection.Bind(jobProperties);
+            return string.IsNullOrEmpty(jobProperties.Schedule) ? null : jobProperties;
         }
 
         public async Task<JobStatus> InterruptJob(string key)
@@ -124,7 +128,7 @@ namespace Quantumart.QP8.CommonScheduler
             return list;
         }
 
-        public async Task<JobStatus> RunJob(string key)
+        public async Task<JobStatus> RunJob(string key, string customerCode)
         {
             var result = new JobStatus();
             string message;
@@ -143,7 +147,12 @@ namespace Quantumart.QP8.CommonScheduler
                     if (jobKey != null)
                     {
                         Logger.Log(LogLevel.Information, $"Job {key} was forced running");
-                        await Scheduler.TriggerJob(jobKey);
+                        var dm = new JobDataMap();
+                        if (!string.IsNullOrEmpty(customerCode))
+                        {
+                            dm.Add(JobHelpers.CustomerCodesKey, customerCode);
+                        }
+                        await Scheduler.TriggerJob(jobKey, dm);
 
                         result.Status = JSendStatus.Success;
                         result.Message = $"The job {key} was running successfully";

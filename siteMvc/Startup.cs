@@ -101,8 +101,7 @@ namespace Quantumart.QP8.WebMvc
                 services.AddTransient<IUserSynchronizationService, UserSynchronizationService>();
             }
             services.AddSingleton(commonSchedulerProperties);
-            services.AddQuartzService(commonSchedulerProperties);
-
+            services.AddQuartzService(commonSchedulerProperties.Name, Configuration.GetSection("CommonScheduler"));
 
             // used by Session middleware
             services.AddDistributedMemoryCache();

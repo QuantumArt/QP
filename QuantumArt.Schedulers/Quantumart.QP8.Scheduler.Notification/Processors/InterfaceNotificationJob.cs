@@ -8,6 +8,7 @@ using NLog;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.API.Extensions;
@@ -38,6 +39,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         {
             Logger.Info("Start sending notifications");
             var items = _schedulerCustomers.GetItems().ToArray();
+            items = JobHelpers.FilterCustomers(items, context.MergedJobDataMap);
             var token = context.CancellationToken;
             foreach (var customer in items)
             {
