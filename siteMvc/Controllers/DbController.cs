@@ -138,7 +138,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        [ActionAuthorize(ActionCode.DbSettings)]
         public ActionResult CheckDbMode()
         {
             var settings = DbService.ReadSettings();

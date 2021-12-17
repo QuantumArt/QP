@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
@@ -9,9 +10,6 @@ namespace Quantumart.QP8.DAL
 {
     public class PermissionHelper
     {
-        private const string GroupInListPlaceholder = "<@_group_in_list_@>";
-        private const string LevelIncrementPlaceholder = "<@_increment_level_@>";
-
         public static string GetPermittedItemsAsQuery(
             QPModelDataContext context,
             decimal userId = 0,
@@ -25,16 +23,13 @@ namespace Quantumart.QP8.DAL
 
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(context);
             var isPostgres = dbType == DatabaseType.Postgres;
-            var sql = string.Empty;
+            var level = 0;
 
-            const string minPlExpression = "cast(min(pl) as int)%10";
             var entityIdField = $"{entityTypeName}_id";
-
-            var groupBy = $" group by {entityIdField}";
-            var whereParentEntity = "";
-            var permissionTable = $"{entityTypeName}_access_permlevel";
-
             var parentEntityIdField = $"{parentEntityTypeName}_id";
+
+            var permissionTable = $"{entityTypeName}_access_permlevel";
+            var whereParentEntity = "";
 
             if (!string.IsNullOrWhiteSpace(parentEntityTypeName) && parentEntityId != 0)
             {
@@ -48,103 +43,69 @@ namespace Quantumart.QP8.DAL
             }
 
             var hide = entityTypeName.Equals("content", StringComparison.InvariantCultureIgnoreCase)
-                ? isPostgres ? ", MAX(hide::int) as hide " : ", MAX(CONVERT(int, hide)) as hide "
-                : ", 0 as hide ";
+                ? isPostgres ? "MIN(hide::int) as hide " : "MIN(CONVERT(int, hide)) as hide "
+                : "0 as hide ";
 
-            var noLock = isPostgres ? string.Empty : " with(nolock) ";
+            var hint = isPostgres ? string.Empty : " with(nolock) ";
 
             var selectUser =
-                $@" select
-                    {entityIdField},
-                    max(permission_level) as pl
-                    {hide}
-                    from {permissionTable} {noLock}
-                    where
-                    user_id = {userId}
-                    {whereParentEntity}";
+                $@" select {entityIdField} as id, max(permission_level) as pl, {hide}, 0 as level
+                    from {permissionTable} {hint}
+                    where user_id = {userId} {whereParentEntity}
+                    group by {entityIdField}
+                ";
 
             var selectGroup =
-                $@" select
-                    {entityIdField},
-                    max(permission_level) + {LevelIncrementPlaceholder} as pl
-                    {hide}
-                    from {permissionTable} {noLock}
-                    where
-                    group_id in ( {GroupInListPlaceholder} )
-                    {whereParentEntity}";
+                $@" select {entityIdField} as id, max(permission_level) as pl, {hide}, {{0}} as level
+                    from {permissionTable} {hint}
+                    where group_id in ({{1}}) {whereParentEntity}
+                    group by {entityIdField}
+                ";
 
-            var defaultSql = $" select 0 as {entityIdField}, 0 as permission_level {hide} from {permissionTable}";
-            var currentLevelAddition = 0;
-            const int intIncrement = 10;
-            var childGroups = new List<decimal>();
+            var defaultSql = $" select {entityIdField}, 0 as permission_level, 0 as hide from {entityTypeName} where 1 = 1 {whereParentEntity}";
+            var sbSql = new StringBuilder();
+            var groupsToProcess = new List<decimal>();
+            var usedGroups = new List<decimal>();
+
             if (userId > 0)
             {
-                sql = selectUser + groupBy;
+                sbSql.Append(selectUser);
                 var user = GetUserPropertiesById(context, userId);
-                childGroups = user?.Groups?.Select(x => x.Id).Distinct().ToList() ?? new List<decimal>();
-                currentLevelAddition += intIncrement;
+                groupsToProcess = user?.Groups?.Select(x => x.Id).Distinct().ToList() ?? new List<decimal>();
+            }
+            else if (groupId > 0)
+            {
+                groupsToProcess.Add(groupId);
             }
 
-            if (groupId > 0 && userId <= 0)
+            while (groupsToProcess.Any())
             {
-                childGroups.Add(groupId);
-            }
-
-            if (!childGroups.Any())
-            {
-                return !string.IsNullOrWhiteSpace(sql) ? sql : defaultSql;
-            }
-
-            var groupIds = string.Join(", ", childGroups);
-            var unionString = " UNION ALL ";
-            if (!string.IsNullOrWhiteSpace(sql))
-            {
-                sql += unionString;
-            }
-
-            sql += selectGroup
-                .Replace(LevelIncrementPlaceholder, currentLevelAddition.ToString())
-                .Replace(GroupInListPlaceholder, groupIds);
-
-            sql += groupBy;
-
-            var usedGroups = childGroups;
-            var parentGroupIds = GetParentGroupIds(context, childGroups);
-
-            while (true)
-            {
-                currentLevelAddition += intIncrement;
-                var newParentGroups = parentGroupIds
-                    .Where(x => !childGroups.Contains(x) && !usedGroups.Contains(x))
+                level += 1;
+                if (level > 1 || sbSql.Length > 0)
+                {
+                    sbSql.Append(" UNION ALL ");
+                }
+                sbSql.AppendFormat(selectGroup, level, string.Join(", ", groupsToProcess));
+                usedGroups.AddRange(groupsToProcess);
+                var parentGroupIds = GetParentGroupIds(context, groupsToProcess);
+                groupsToProcess = parentGroupIds
+                    .Where(x => !groupsToProcess.Contains(x) && !usedGroups.Contains(x))
                     .ToList();
+            }
 
-                if (!newParentGroups.Any())
-                {
-                    break;
-                }
-
-                if (!string.IsNullOrWhiteSpace(sql))
-                {
-                    sql += unionString;
-                }
-
-                groupIds = string.Join(", ", newParentGroups);
-                sql += selectGroup
-                    .Replace(LevelIncrementPlaceholder, currentLevelAddition.ToString())
-                    .Replace(GroupInListPlaceholder, groupIds);
-                sql += groupBy;
-                usedGroups.AddRange(newParentGroups);
-                parentGroupIds = GetParentGroupIds(context, newParentGroups);
+            if (sbSql.Length == 0)
+            {
+                return defaultSql;
             }
 
             return
-                $@"select
-                {entityIdField},
-                {minPlExpression} as permission_level,
-                max(hide) as hide
-                from ( {sql} ) as qp_zzz
-                group by qp_zzz.{entityIdField}
-                HAVING {minPlExpression} >= {startLevel} and {minPlExpression} <= {endLevel}";
+                $@"select id as {entityIdField}, pl as permission_level, hide
+                from (
+                    select id, pl, hide, ROW_NUMBER() OVER(PARTITION BY id ORDER BY level) as num from (
+                        {sbSql}
+                    ) as united_permissions
+                ) as priority_permissions where priority_permissions.num = 1
+                and pl between {startLevel} and {endLevel}";
         }
 
         private static UserDAL GetUserPropertiesById(QPModelDataContext context, decimal userId)
