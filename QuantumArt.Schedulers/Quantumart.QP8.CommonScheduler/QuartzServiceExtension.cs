@@ -1,3 +1,5 @@
+using AutoMapper.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.Scheduler.Notification.Processors;
@@ -11,15 +13,15 @@ namespace Quantumart.QP8.CommonScheduler
 {
     public static class QuartzServiceExtension
     {
-        public static IServiceCollection AddQuartzService(this IServiceCollection services, CommonSchedulerProperties schedulerSettings)
+        public static IServiceCollection AddQuartzService(this IServiceCollection services, string name, IConfigurationSection section)
         {
             services.AddQuartz(conf =>
             {
                 conf.UseMicrosoftDependencyInjectionScopedJobFactory();
                 conf.SchedulerId = "AUTO";
 
-                RegisterAllTasks(conf, schedulerSettings.Tasks);
-                conf.SchedulerName = schedulerSettings.Name;
+                RegisterAllTasks(conf, section);
+                conf.SchedulerName = name;
             });
 
             services.AddQuartzHostedService();
@@ -27,25 +29,25 @@ namespace Quantumart.QP8.CommonScheduler
             return services;
         }
 
-        public static void RegisterAllTasks(IServiceCollectionQuartzConfigurator configurator, CommonSchedulerTaskProperties[] tasks)
+        public static void RegisterAllTasks(IServiceCollectionQuartzConfigurator configurator, IConfigurationSection rootSection)
         {
-            AddTask<EnableUsersJob>(configurator, tasks);
-            AddTask<DisableUsersJob>(configurator, tasks);
-            AddTask<UsersSynchronizationJob>(configurator, tasks);
-            AddTask<InterfaceNotificationJob>(configurator, tasks);
-            AddTask<SystemNotificationJob>(configurator, tasks);
-            AddTask<InterfaceCleanupJob>(configurator, tasks);
-            AddTask<SystemCleanupJob>(configurator, tasks);
-            AddTask<T.CdcDataImportJob>(configurator, tasks);
-            AddTask<T.CheckNotificationQueueJob>(configurator, tasks);
-            AddTask<T.CdcDataImportJob>(configurator, tasks);
-            AddTask<T.CheckNotificationQueueJob>(configurator, tasks);
+            AddTask<EnableUsersJob>(configurator, rootSection);
+            AddTask<DisableUsersJob>(configurator, rootSection);
+            AddTask<UsersSynchronizationJob>(configurator, rootSection);
+            AddTask<InterfaceNotificationJob>(configurator, rootSection);
+            AddTask<SystemNotificationJob>(configurator, rootSection);
+            AddTask<InterfaceCleanupJob>(configurator, rootSection);
+            AddTask<SystemCleanupJob>(configurator, rootSection);
+            AddTask<T.CdcDataImportJob>(configurator, rootSection);
+            AddTask<T.CheckNotificationQueueJob>(configurator, rootSection);
+            AddTask<T.CdcDataImportJob>(configurator, rootSection);
+            AddTask<T.CheckNotificationQueueJob>(configurator, rootSection);
         }
 
-        public static void AddTask<TJob>(IServiceCollectionQuartzConfigurator configurator, CommonSchedulerTaskProperties[] tasks)
+        public static void AddTask<TJob>(IServiceCollectionQuartzConfigurator configurator, IConfigurationSection rootSection)
             where TJob : class, IJob
         {
-            var jobProperties = QuartzService.GetJobProperties<TJob>(tasks);
+            var jobProperties = QuartzService.GetJobProperties<TJob>(rootSection);
             if (jobProperties != null)
             {
                 configurator.RegisterJob<TJob>(jobProperties);

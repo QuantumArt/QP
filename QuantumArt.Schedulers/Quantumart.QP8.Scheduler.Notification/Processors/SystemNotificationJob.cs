@@ -15,6 +15,7 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
+using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants.Cdc.Enums;
 using Quantumart.QP8.Scheduler.API;
@@ -41,8 +42,9 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
          async Task IJob.Execute(IJobExecutionContext context)
         {
             Logger.Info("Start sending notifications");
-            var items = _schedulerCustomers.GetItems();
             var token = context.CancellationToken;
+            var items = _schedulerCustomers.GetItems();
+            items = JobHelpers.FilterCustomers(items, context.MergedJobDataMap);
             foreach (var customer in items)
             {
                 if (token.IsCancellationRequested)

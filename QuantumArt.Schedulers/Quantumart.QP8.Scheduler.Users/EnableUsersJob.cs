@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
+using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
 using Quartz;
@@ -15,6 +18,7 @@ namespace Quantumart.QP8.Scheduler.Users
     public class EnableUsersJob : IJob
     {
         private const string ExcludedUsersKey = "ExcludedUsers";
+        private const string CustomerCodesKey = "";
 
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISchedulerCustomerCollection _schedulerCustomers;
@@ -31,12 +35,12 @@ namespace Quantumart.QP8.Scheduler.Users
 
         public Task Execute(IJobExecutionContext context)
         {
-            Logger.Info($"Start enabling");
+            Logger.Info("Start enabling");
+
             var customers = _schedulerCustomers.GetItems();
-
             var dataMap = context.MergedJobDataMap;
+            customers = JobHelpers.FilterCustomers(customers, dataMap);
             var excludedUsers = dataMap.GetString(ExcludedUsersKey)?.Split(',');
-
             foreach (var customer in customers)
             {
                 try

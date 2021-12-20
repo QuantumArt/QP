@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using NLog;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
+using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
 using Quartz;
@@ -35,6 +36,7 @@ namespace Quantumart.QP8.Scheduler.Users
             var customers = _schedulerCustomers.GetItems();
 
             var dataMap = context.MergedJobDataMap;
+            customers = JobHelpers.FilterCustomers(customers, dataMap);
             var diff = dataMap.GetIntValue(InactivePeriodKey);
 
             if (diff <= 0)
