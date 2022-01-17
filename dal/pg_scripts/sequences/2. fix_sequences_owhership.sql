@@ -10,7 +10,7 @@ BEGIN
             n.nspname as schema_name,
             c.relname as table_name,
             a.attname as column_name,
-            substring(d.adsrc from E'^nextval\\(''([^'']*)''(?:::text|::regclass)?\\)') as seq_name
+            substring(pg_get_expr(d.adbin, d.adrelid) from E'^nextval\\(''([^'']*)''(?:::text|::regclass)?\\)') as seq_name
         FROM pg_class c
                  JOIN pg_attribute a on (c.oid=a.attrelid)
                  JOIN pg_attrdef d on (a.attrelid=d.adrelid and a.attnum=d.adnum)
@@ -19,7 +19,7 @@ BEGIN
           and n.nspname not like 'pg!_%' escape '!'
             and has_table_privilege(c.oid,'SELECT')
             and (not a.attisdropped)
-            and d.adsrc ~ '^nextval'
+            and pg_get_expr(d.adbin, d.adrelid) ~ '^nextval'
         LOOP
             rsql := 'ALTER SEQUENCE '|| rec.seq_name
                         ||' OWNED BY '|| quote_ident(min(rec.table_name)) ||'.'|| quote_ident(min(rec.column_name)) ||';';
@@ -30,4 +30,3 @@ BEGIN
         END LOOP;
 END;
 $$;
-
