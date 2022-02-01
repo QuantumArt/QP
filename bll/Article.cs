@@ -712,7 +712,7 @@ namespace Quantumart.QP8.BLL
             ArticleRepository.LockForUpdate(Id);
         }
 
-        public Article Persist(bool disableNotifications)
+        public Article Persist(bool disableNotifications, bool disableCopyFiles = false)
         {
             Article previousArticle = null;
             if (!IsNew && !IsAggregated && !IsVariation)
@@ -740,7 +740,12 @@ namespace Quantumart.QP8.BLL
 
             var repo = new NotificationPushRepository();
             repo.PrepareNotifications(articleToPrepare, codes.ToArray(), disableNotifications);
-            result.BackupFilesFromCurrentVersion();
+
+            if (!disableCopyFiles)
+            {
+                result.BackupFilesFromCurrentVersion();
+            }
+
             result.CreateDynamicImages();
 
             if (IsNew && !IsAggregated && !IsVariation)
@@ -1529,10 +1534,16 @@ namespace Quantumart.QP8.BLL
 
         private void CopyArticleFiles(CopyFilesMode mode, string currentVersionPath, string versionPath = "")
         {
+            var destinations = new HashSet<string>();
             if (Content.UseVersionControl)
             {
                 void CopyFile(string src, string dest)
                 {
+                    if (destinations.Contains(dest))
+                    {
+                        return;
+                    }
+
                     if (File.Exists(dest))
                     {
                         File.SetAttributes(dest, FileAttributes.Normal);
@@ -1542,6 +1553,7 @@ namespace Quantumart.QP8.BLL
                     {
                         File.Copy(src, dest, true);
                         File.SetAttributes(dest, FileAttributes.Normal);
+                        destinations.Add(dest);
                     }
                 }
 
