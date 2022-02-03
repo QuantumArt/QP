@@ -290,7 +290,7 @@ namespace Quantumart.QP8.DAL
             var tableName = isSqlServer ? "#disable_" + triggerName : "disable_" + triggerName;
             var opString = isSqlServer ?
                 enable ? "drop table" : "create table" :
-                enable ? "drop table if exists" : "create table if not exists";
+                enable ? "drop table if exists" : "create temp table if not exists";
             var signatureString = enable ? string.Empty : "(id numeric)";
             var checkString = !isSqlServer ? "" : enable ?
                 $"if object_id('tempdb..{tableName}') is not null" :

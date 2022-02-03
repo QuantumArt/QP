@@ -114,7 +114,10 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
                 }
 
                 var containsHide = row.Table.Columns.Contains("Hide");
-                return ChildEntityPermission.Create(null, parentId, userId, groupId, Convert.ToInt32(row.Field<decimal>("LevelId")), row.Field<bool>("PropagateToItems"), containsHide && row.Field<bool>("Hide"));
+                return ChildEntityPermission.Create(null, parentId, userId, groupId,
+                    Convert.ToInt32(row.Field<decimal>("LevelId")),
+                    Convert.ToBoolean(row.Field<decimal>("PropagateToItems")),
+                    containsHide && row.Field<bool>("Hide"));
             }
         }
 
