@@ -88,5 +88,5 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_content_new_views_create(numeric) owner to postgres;
+
 

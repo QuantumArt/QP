@@ -16,21 +16,18 @@ BEGIN
 			RETURN default_value;
 		ELSE
 			RETURN NULL;
-		END IF;			
+		END IF;
 	ELSEIF type_id in (4, 5, 6) THEN
 		IF qp_is_date(value) or value is null THEN
 			RETURN value;
 		ELSEIF qp_is_date(default_value) THEN
 			RETURN default_value;
-		ELSE 
+		ELSE
 			RETURN NULL;
-		END IF;			
-	ELSE	
+		END IF;
+	ELSE
 		RETURN value;
 	END IF;
 END;
 $$;
-
-
-alter function qp_correct_data(text, numeric, numeric, text) owner to postgres;
 

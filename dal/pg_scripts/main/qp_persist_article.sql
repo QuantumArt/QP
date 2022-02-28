@@ -144,7 +144,7 @@ $BODY$;
 
 
 
-alter function qp_persist_article(xml) owner to postgres;
+
 
 
 

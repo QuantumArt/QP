@@ -29,4 +29,3 @@ BEGIN
 END;
 $$;
 
-alter function qp_get_base_field(int, int) owner to postgres;

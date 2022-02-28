@@ -26,4 +26,4 @@ BEGIN
 END;
 $$;
 
-alter function qp_m2o_titles(int, int, int, int) owner to postgres;
+

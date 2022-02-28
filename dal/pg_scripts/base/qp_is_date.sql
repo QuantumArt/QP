@@ -10,5 +10,4 @@ exception when others then
 end;
 $$;
 
-alter function qp_is_date(varchar) owner to postgres;
 

@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.qp_get_display_fields(
     LANGUAGE 'plpgsql'
 
     COST 100
-    STABLE 
+    STABLE
 AS $BODY$
 DECLARE
     result content_attribute[];
@@ -35,5 +35,4 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public.qp_get_display_fields(numeric, boolean)
-    OWNER TO postgres;
+

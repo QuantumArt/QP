@@ -16,6 +16,5 @@ CREATE OR REPLACE VIEW public.site_access_permlevel AS
    FROM site_access c
      JOIN permission_level pl ON c.permission_level_id = pl.permission_level_id;
 
-ALTER TABLE public.site_access_permlevel
-    OWNER TO postgres;
+
 

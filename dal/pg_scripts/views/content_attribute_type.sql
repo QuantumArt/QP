@@ -102,8 +102,6 @@ SELECT at.database_type,
 FROM (content_attribute ca
          JOIN attribute_type at ON ((ca.attribute_type_id = at.attribute_type_id)));
 
-alter table content_attribute_type
-    owner to postgres;
 
 EXCEPTION
     WHEN duplicate_table THEN null;

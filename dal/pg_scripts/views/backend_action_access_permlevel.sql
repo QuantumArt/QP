@@ -8,6 +8,5 @@ FROM ((action_access c
     JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
          JOIN backend_action x ON ((c.action_id = x.id)));
 
-alter table backend_action_access_permlevel
-    owner to postgres;
+
 

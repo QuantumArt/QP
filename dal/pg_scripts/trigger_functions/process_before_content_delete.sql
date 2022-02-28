@@ -11,4 +11,3 @@ $$
 	END;
 $$;
 
-alter function process_before_content_delete() owner to postgres;

@@ -37,5 +37,3 @@ AS $BODY$
 
     END;
 $BODY$;
-
-ALTER PROCEDURE qp_create_content_item_access(numeric[]) owner to postgres;

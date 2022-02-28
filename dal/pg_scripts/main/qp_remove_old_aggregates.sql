@@ -6,5 +6,3 @@ $$
         delete from content_item where content_item_id = ANY(qp_aggregates_to_remove(ids));
 	END;
 $$;
-
-alter procedure qp_remove_old_aggregates(integer[]) owner to postgres;

@@ -26,5 +26,4 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_content_frontend_views_create(numeric, boolean) owner to postgres;
 

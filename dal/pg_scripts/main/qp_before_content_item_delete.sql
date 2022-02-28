@@ -22,5 +22,4 @@ AS $BODY$
 	END;
 $BODY$;
 
-ALTER PROCEDURE public.qp_before_content_item_delete(integer[])
-    OWNER TO postgres;
+

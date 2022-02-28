@@ -26,4 +26,3 @@ AS $BODY$
     END;
 $BODY$;
 
-alter procedure qp_content_user_query_view_recreate(integer) owner to postgres;

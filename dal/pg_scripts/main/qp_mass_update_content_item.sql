@@ -99,7 +99,7 @@ DECLARE
 
 $$;
 
-alter FUNCTION qp_mass_update_content_item(xml, int, int, int, bool, bool) owner to postgres;
+
 
 
 

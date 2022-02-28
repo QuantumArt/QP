@@ -46,4 +46,3 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_link_view_create(int) owner to postgres;

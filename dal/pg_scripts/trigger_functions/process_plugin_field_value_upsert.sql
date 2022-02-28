@@ -101,5 +101,3 @@ AS $BODY$
 	END
 $BODY$;
 
-ALTER FUNCTION public.process_plugin_field_value_upsert()
-    OWNER TO postgres;

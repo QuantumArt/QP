@@ -31,5 +31,3 @@ END;
 $$;
 
 
-ALTER FUNCTION public.qp_get_user_weight(int, int)
-    OWNER TO postgres;

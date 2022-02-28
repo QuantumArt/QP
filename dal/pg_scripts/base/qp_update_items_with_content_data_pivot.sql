@@ -77,5 +77,3 @@ AS $BODY$
 		END IF;
 	END;
 $BODY$;
-
-alter procedure qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[]) owner to postgres;

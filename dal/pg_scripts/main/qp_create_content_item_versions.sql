@@ -135,5 +135,3 @@ AS $BODY$
         drop table version_items;
     END;
 $BODY$;
-
-ALTER PROCEDURE qp_create_content_item_versions(numeric[], numeric) owner to postgres;

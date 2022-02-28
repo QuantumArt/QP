@@ -44,8 +44,6 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_publish(int[], int, boolean) owner to postgres;
-
 
 
 

@@ -9,10 +9,9 @@ CREATE OR REPLACE FUNCTION public.qp_get_hash(
     LANGUAGE 'sql'
 
     COST 100
-    IMMUTABLE STRICT 
+    IMMUTABLE STRICT
 AS $BODY$
     SELECT digest($1 || $2::text, 'sha1')
 $BODY$;
 
-ALTER FUNCTION public.qp_get_hash(text, bigint)
-    OWNER TO postgres;
+

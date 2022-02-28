@@ -26,6 +26,5 @@ AS $BODY$
     END;
 $BODY$;
 
-ALTER PROCEDURE public.qp_copy_schedule_to_child_delays(int)
-    OWNER TO postgres;
+
 

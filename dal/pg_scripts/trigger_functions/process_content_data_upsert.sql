@@ -140,5 +140,3 @@ AS $BODY$
 	END
 $BODY$;
 
-ALTER FUNCTION public.process_content_data_upsert()
-    OWNER TO postgres;

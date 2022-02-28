@@ -15,5 +15,4 @@ $$
 $$;
 
 
-alter function qp_get_m2o_ids_multiple(integer, text, integer[]) owner to postgres;
 

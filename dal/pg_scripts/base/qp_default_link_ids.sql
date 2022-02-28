@@ -16,4 +16,3 @@ BEGIN
 END;
 $$;
 
-alter function qp_default_link_ids(numeric) owner to postgres;

@@ -18,5 +18,3 @@ $$
 $$;
 
 
-alter function qp_get_m2o_ids(integer, text, integer) owner to postgres;
-
