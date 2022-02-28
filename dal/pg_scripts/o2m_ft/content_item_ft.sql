@@ -13,10 +13,6 @@ CREATE TABLE IF NOT EXISTS public.content_item_ft
         ON DELETE CASCADE
 );
 
-ALTER TABLE public.content_item_ft
-    OWNER to postgres;
-
-
 CREATE INDEX IF NOT EXISTS ix_content_item_ft_data
     ON public.content_item_ft USING gin
     (ft_data)

@@ -28,8 +28,6 @@ $BODY$;
 
 
 
-alter function qp_get_article_tsvector(int) owner to postgres;
-
 
 
 

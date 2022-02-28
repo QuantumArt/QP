@@ -24,6 +24,4 @@ create or replace view full_workflow_rules(workflow_rule_id, user_id, group_id, 
              JOIN status_type st ON ((w.site_id = st.site_id)))
     WHERE ((st.status_type_name)::text = 'None'::text);
 
-alter table full_workflow_rules
-    owner to postgres;
 

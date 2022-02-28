@@ -13,15 +13,10 @@ AS $BODY$
             ids := qp_aggregated_and_self(ids);
         end if;
 
-        
+
         update content_item set archive = $2::int, modified = now(), last_modified_by = $3 where content_item_id = ANY(ids);
         update content_item set locked_by = null, locked = null where content_item_id = ANY(ids);
 	END;
 $BODY$;
-
-alter procedure qp_archive(int[], boolean, int, boolean) owner to postgres;
-
-
-
 
 

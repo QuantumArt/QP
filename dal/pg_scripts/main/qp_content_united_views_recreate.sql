@@ -16,5 +16,5 @@ AS $BODY$
     END;
 $BODY$;
 
-alter procedure qp_content_united_views_recreate() owner to postgres;
+
 

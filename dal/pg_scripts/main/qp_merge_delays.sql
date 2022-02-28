@@ -21,5 +21,5 @@ DECLARE
 	END;
 $$;
 
-alter procedure qp_merge_delays(integer[], integer) owner to postgres;
+
 

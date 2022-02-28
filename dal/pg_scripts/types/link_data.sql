@@ -8,7 +8,7 @@ DO $$ BEGIN
         has_async boolean
     );
 
-    alter type link_data owner to postgres;
+
 
 EXCEPTION
     WHEN duplicate_object THEN null;

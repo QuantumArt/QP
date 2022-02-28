@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
-	DECLARE 
+	DECLARE
 		salt bigint;
 	 	old_hash bytea;
 	BEGIN
@@ -24,9 +24,9 @@ CREATE OR REPLACE FUNCTION update_hash() RETURNS TRIGGER AS $tiu_update_hash$
 			NEW.password_modified = NOW();
 		END IF;
 
-		RETURN NEW;	
+		RETURN NEW;
 	END
 $tiu_update_hash$ LANGUAGE plpgsql;
 
-alter function update_hash() owner to postgres;
+
 

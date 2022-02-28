@@ -39,5 +39,4 @@ end if;
 END;
 $BODY$;
 
-ALTER FUNCTION public.qp_get_display_field(numeric, boolean)
-    OWNER TO postgres;
+

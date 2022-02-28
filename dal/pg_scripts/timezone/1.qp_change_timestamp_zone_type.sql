@@ -17,4 +17,3 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_change_timestamp_zone_time(text, text, boolean) owner to postgres;

@@ -20,4 +20,4 @@ BEGIN
 END;
 $$;
 
-alter function qp_link_ids(int, int, boolean) owner to postgres;
+

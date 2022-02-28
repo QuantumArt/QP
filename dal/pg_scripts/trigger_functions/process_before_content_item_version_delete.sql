@@ -11,5 +11,5 @@ DECLARE
 	END;
 $$;
 
-alter function process_before_content_item_version_delete() owner to postgres;
+
 

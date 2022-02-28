@@ -7,7 +7,7 @@ DO $$ BEGIN
         splitted boolean
     );
 
-    alter type link_multiple_splitted owner to postgres;
+
 
 EXCEPTION
     WHEN duplicate_object THEN null;

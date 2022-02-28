@@ -13,5 +13,4 @@ EXCEPTION WHEN others THEN
 END;
 $$;
 
-alter function qp_is_numeric(text) owner to postgres;
 

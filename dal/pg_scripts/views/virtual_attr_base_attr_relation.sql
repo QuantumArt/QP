@@ -20,5 +20,4 @@ create or replace view VIRTUAL_ATTR_BASE_ATTR_RELATION AS
 	JOIN CONTENT BC ON BA.CONTENT_ID = BC.CONTENT_ID
 	JOIN CONTENT VC ON VA.CONTENT_ID = VC.CONTENT_ID;
 
-alter table v_user_query_attrs
-    owner to postgres;
+

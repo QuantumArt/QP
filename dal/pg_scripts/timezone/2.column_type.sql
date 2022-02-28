@@ -5,7 +5,6 @@ DO $$ BEGIN
         column_name text
     );
 
-    alter type column_to_process owner to postgres;
 
 EXCEPTION
     WHEN duplicate_object THEN null;

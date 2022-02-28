@@ -18,5 +18,4 @@ begin
 end;
 $BODY$;
 
-ALTER FUNCTION public.qp_get_version_data(numeric, numeric)
-    OWNER TO postgres;
+

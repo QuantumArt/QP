@@ -6,7 +6,7 @@ DO $$ BEGIN
         data text
     );
 
-    alter type value owner to postgres;
+
 
 EXCEPTION
     WHEN duplicate_object THEN null;

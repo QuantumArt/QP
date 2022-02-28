@@ -6,6 +6,5 @@ SELECT ii.link_id,
        ii.is_self
 FROM item_to_item ii;
 
-alter table item_link
-    owner to postgres;
+
 

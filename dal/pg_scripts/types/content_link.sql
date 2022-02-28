@@ -7,7 +7,7 @@ DO $$ BEGIN
         r_content_id numeric(18)
     );
 
-    alter type content_link owner to postgres;
+
 
 EXCEPTION
     WHEN duplicate_object THEN null;

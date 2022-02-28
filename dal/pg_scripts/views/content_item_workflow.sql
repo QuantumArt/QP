@@ -16,6 +16,5 @@ FROM content_item ci
     LEFT JOIN article_workflow_bind awb ON ci.content_item_id = awb.content_item_id
          LEFT JOIN content_workflow_bind cwb ON ci.content_id = cwb.content_id;
 
-alter table content_item_workflow
-    owner to postgres;
+
 

@@ -29,5 +29,3 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public.qp_get_article_title_func(numeric, numeric)
-    OWNER TO postgres;

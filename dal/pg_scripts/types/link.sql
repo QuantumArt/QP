@@ -5,7 +5,7 @@ DO $$ BEGIN
         linked_id numeric(18)
     );
 
-    alter type link owner to postgres;
+
 
 EXCEPTION
     WHEN duplicate_object THEN null;

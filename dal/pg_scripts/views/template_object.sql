@@ -28,6 +28,4 @@ FROM (object o
          JOIN object_type ot ON ((o.object_type_id = ot.object_type_id)))
 WHERE (o.page_id IS NULL);
 
-alter table template_object
-    owner to postgres;
 

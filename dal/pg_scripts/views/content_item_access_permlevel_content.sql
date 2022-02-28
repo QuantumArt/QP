@@ -15,6 +15,5 @@ FROM ((content_item_access c
     JOIN permission_level pl ON ((c.permission_level_id = pl.permission_level_id)))
          JOIN content_item x ON ((c.content_item_id = x.content_item_id)));
 
-alter table content_item_access_permlevel_content
-    owner to postgres;
+
 

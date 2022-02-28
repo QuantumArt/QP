@@ -16,6 +16,4 @@ create or replace view item_link_united(link_id, item_id, linked_item_id, is_rev
            ila.is_self
     FROM item_link_async ila;
 
-alter table item_link_united
-    owner to postgres;
 

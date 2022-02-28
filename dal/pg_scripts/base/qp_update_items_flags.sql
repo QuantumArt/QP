@@ -10,7 +10,7 @@ LANGUAGE 'plpgsql'
 
 AS $BODY$
 	DECLARE
-	  	table_name text;	  
+	  	table_name text;
 		sql text;
 	BEGIN
 
@@ -18,14 +18,13 @@ AS $BODY$
 		IF is_async THEN
 			table_name := table_name || '_async';
 		END IF;
-		
+
 	    sql := 'update %s base set visible = ci.visible, archive = ci.archive from content_item ci
 		 where base.content_item_id = ci.content_item_id and ci.content_item_id = ANY($1)';
-		
+
 		sql := FORMAT(sql, table_name);
 		RAISE NOTICE '%', sql;
 		execute sql using ids;
 	END;
 $BODY$;
 
-alter procedure qp_update_items_flags(integer, integer[], boolean) owner to postgres;

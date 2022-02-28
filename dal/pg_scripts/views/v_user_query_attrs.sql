@@ -5,5 +5,4 @@ create or replace view v_user_query_attrs AS
 	join CONTENT_ATTRIBUTE ca on uqa.user_query_attr_id = ca.ATTRIBUTE_ID
 	where vca.ATTRIBUTE_NAME = ca.ATTRIBUTE_NAME;
 
-alter table v_user_query_attrs
-    owner to postgres;
+

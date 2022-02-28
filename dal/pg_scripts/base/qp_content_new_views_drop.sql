@@ -33,5 +33,5 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_content_new_views_drop(numeric) owner to postgres;
+
 

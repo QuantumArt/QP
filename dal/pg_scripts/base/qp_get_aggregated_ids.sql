@@ -35,5 +35,3 @@ BEGIN
     return coalesce(result, ARRAY[]::int[]);
 END;
 $$;
-
-alter function qp_get_aggregated_ids(int, int[], int[], boolean) owner to postgres;

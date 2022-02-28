@@ -8,5 +8,4 @@ select workflow_id, STATUS_TYPE_ID as max_status_type_id from
 ) as v
 where v.order = 1;
 
-alter table workflow_max_statuses
-    owner to postgres;
+

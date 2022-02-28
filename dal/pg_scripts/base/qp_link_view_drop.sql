@@ -28,4 +28,3 @@ AS $BODY$
 	END;
 $BODY$;
 
-alter procedure qp_link_view_drop(int) owner to postgres;
