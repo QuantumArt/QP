@@ -69,7 +69,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         {
             string tempFile;
             var fileOk = false;
-            using (var sha1 = new SHA1CryptoServiceProvider())
+            using (var sha1 = SHA1.Create())
             {
                 var fileHash = BitConverter.ToString(sha1.ComputeHash(ba)).Replace("-", string.Empty);
                 tempFile = Path.GetTempPath() + fileName;
