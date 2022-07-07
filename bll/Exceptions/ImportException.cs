@@ -24,7 +24,6 @@ namespace Quantumart.QP8.BLL.Exceptions
             Settings = (ImportSettings)info.GetValue(SettingsKey, typeof(ImportSettings));
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(SettingsKey, Settings, typeof(ImportSettings));
