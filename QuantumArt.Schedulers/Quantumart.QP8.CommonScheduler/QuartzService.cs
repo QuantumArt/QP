@@ -36,8 +36,7 @@ namespace Quantumart.QP8.CommonScheduler
         {
             var jobName = typeof(T).Name;
             var jobProperties = new CommonSchedulerTaskProperties();
-            var jobSection = rootSection.GetSection(jobName);
-            jobSection.Bind(jobProperties);
+            rootSection.Bind(jobName, jobProperties);
             return string.IsNullOrEmpty(jobProperties.Schedule) ? null : jobProperties;
         }
 
