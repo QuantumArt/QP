@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build
 
 WORKDIR /src/siteMvc
-RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f netcoreapp3.1
+RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f net6.0
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
