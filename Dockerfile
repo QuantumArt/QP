@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 LABEL stage=intermediate
 
 RUN apt-get install -y \
@@ -20,7 +20,7 @@ RUN npm run build
 WORKDIR /src/siteMvc
 RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f netcoreapp3.1
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
 ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME:-QP}
