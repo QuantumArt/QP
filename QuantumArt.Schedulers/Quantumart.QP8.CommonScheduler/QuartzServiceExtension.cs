@@ -19,8 +19,10 @@ namespace Quantumart.QP8.CommonScheduler
             {
                 conf.UseMicrosoftDependencyInjectionScopedJobFactory();
                 conf.SchedulerId = "AUTO";
-
-                RegisterAllTasks(conf, section);
+                if (section != null)
+                {
+                    RegisterAllTasks(conf, section);
+                }
                 conf.SchedulerName = name;
             });
 
