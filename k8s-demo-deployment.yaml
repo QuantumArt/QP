@@ -16,8 +16,17 @@ spec:
     spec:
       containers:
       - env:
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: TZ
         - name: Properties__QpConfigPath
-          value: /app/config/config_media.xml
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: DEMO_CONFIG_PATH        
+          value: 
         - name: Properties__TempDirectory
           value: /qptemp
         - name: Properties__EnableSignalR
@@ -37,27 +46,36 @@ spec:
           requests:
             memory: 256Mi
         volumeMounts:
-        - mountPath: /qptemp
-          name: temp-volume
-        - mountPath: /qplibrary
-          name: library-volume
-        - mountPath: /etc/localtime
-          name: tz-config
-        - mountPath: /app/config
-          name: config-pv 
+        - name: temp-volume
+          mountPath: /qptemp        
+        - name: library-volume
+          mountPath: /qplibrary
+        - name: config-pv
+          mountPath: /app/config
+        - name: time-config
+          mountPath: /etc/localtime          
+          subPathExpr: $(TZ)          
+        - name: timezone-config
+          mountPath: /etc/timezone
+          subPath: TZ           
       volumes:
-      - emptyDir: {}
-        name: temp-volume
+      - name: temp-volume
+        emptyDir: {}
       - name: library-volume
         persistentVolumeClaim:
           claimName: qp-library
-      - hostPath:
-          path: /usr/share/zoneinfo/Europe/Moscow
-          type: ""
-        name: tz-config
       - name: config-pv
         persistentVolumeClaim:
-          claimName: qp-config  
+          claimName: qp-config          
+      - name: time-config
+        hostPath:
+          path: /usr/share/zoneinfo
+      - name: timezone-config
+        configMap: 
+          name: qp-config
+          items:
+          - key: TZ
+            path: TZ            
 ---
 apiVersion: v1
 kind: Service
