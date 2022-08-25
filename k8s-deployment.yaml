@@ -15,9 +15,14 @@ spec:
         logging: enabled
     spec:
       containers:
-      - image: ||registry||/qp:||version||
-        name: qp
+      - name: qp
+        image: "||registry||/qp:||version||"
         env:
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: TZ
         - name: Properties__QpConfigUrl
           valueFrom:
             configMapKeyRef:
@@ -39,12 +44,16 @@ spec:
         ports:
         - containerPort: 80
         volumeMounts:
-        - mountPath: /qptemp
-          name: temp-volume
-        - mountPath: /qplibrary
-          name: library-volume
-        - mountPath: /etc/localtime
-          name: tz-config
+        - name: temp-volume
+          mountPath: /qptemp
+        - name: library-volume
+          mountPath: /qplibrary
+        - name: time-config
+          mountPath: /etc/localtime
+          subPathExpr: $(TZ)
+        - name: timezone-config
+          mountPath: /etc/timezone
+          subPath: TZ
         resources:
           limits:
             memory: "1Gi"
@@ -56,9 +65,19 @@ spec:
       - name: library-volume
         persistentVolumeClaim:
           claimName: qp-library
-      - name: tz-config
+      - name: time-config
         hostPath:
-          path: /usr/share/zoneinfo/Europe/Moscow
+          path: /usr/share/zoneinfo
+      - name: timezone-config
+        configMap: 
+          name: qp-config
+          items:
+          - key: TZ
+            path: TZ
+          
+
+        
+
 ---
 apiVersion: v1
 kind: Service
