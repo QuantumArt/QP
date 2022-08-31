@@ -33,6 +33,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Data
                     list.Add(new KeyValuePair<string, string>("siteId", SiteId.Value.ToString()));
                 }
 
+                list.Add(new KeyValuePair<string, string>("customerCode", CustomerCode));
+
                 return list;
             }
         }
@@ -44,6 +46,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Data
         public int? SiteId { get; set; }
 
         public string EventName { get; set; }
+
+        public string CustomerCode { get; set; }
 
         public static string CombineNodes(IEnumerable<string> nodes) => $"<?xml version=\"1.0\" encoding=\"utf-8\"?><articles>{string.Join(string.Empty, nodes)}</articles>";
     }

@@ -67,7 +67,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             {
                 var sentNotificationIds = new List<int>();
                 var unsentNotificationIds = new List<int>();
-                var notificationsViewModels = GetPendingNotificationsViewModels();
+                var notificationsViewModels = GetPendingNotificationsViewModels(customer.CustomerName);
                 foreach (var notificationVm in notificationsViewModels)
                 {
                     if (token.IsCancellationRequested)
@@ -97,7 +97,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             }
         }
 
-        private IEnumerable<InterfaceNotificationViewModel> GetPendingNotificationsViewModels()
+        private IEnumerable<InterfaceNotificationViewModel> GetPendingNotificationsViewModels(string customerCode)
         {
             IEnumerable<ExternalNotificationModel> notifications;
             using (new QPConnectionScope())
@@ -117,7 +117,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                         EventName = group.Key.EventName,
                         Ids = group.Select(n => n.ArticleId),
                         NewXmlNodes = group.Select(n => n.NewXml),
-                        OldXmlNodes = group.Select(n => n.OldXml)
+                        OldXmlNodes = group.Select(n => n.OldXml),
+                        CustomerCode = customerCode
                     },
                     NotificationsIds = group.Select(n => n.Id).ToList()
                 });
