@@ -78,9 +78,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
             Data.Article.Validate();
         }
 
-        public void CopyFieldValuesToArticle()
+        public override void DoCustomBinding()
+        {
+            base.DoCustomBinding();
+            CopyFromVersionToArticle();
+        }
+
+        public void CopyFromVersionToArticle()
         {
             Data.Article.FieldValues = Data.FieldValues;
+            Data.Article.AggregatedArticles = Data.AggregatedArticles;
         }
     }
 }
