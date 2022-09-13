@@ -1,0 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Quantumart.QP8.Security.Ldap;
+
+public class LdapSettings
+{
+    [Required]
+    public string Server { get; init; } = default!;
+
+    public bool UseSsl { get; init; }
+
+    public int Port { get; init; }
+
+    [Required]
+    public string BaseSearchDistinguishedName { get; init; } = default!;
+
+    [Required]
+    public string Domain { get; init; } = default!;
+
+    [Required]
+    public string AdminLogin { get; init; } = default!;
+
+    [Required]
+    public string AdminPassword { get; init; } = default!;
+}

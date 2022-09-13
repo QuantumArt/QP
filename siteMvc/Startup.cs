@@ -62,6 +62,7 @@ using S = Quantumart.QP8.ArticleScheduler;
 using ContentService = Quantumart.QP8.BLL.Services.ContentServices.ContentService;
 using CustomActionService = Quantumart.QP8.BLL.Services.CustomActionService;
 using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
+using Quantumart.QP8.Security.Ldap;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -102,7 +103,7 @@ namespace Quantumart.QP8.WebMvc
             }
             services.AddSingleton(commonSchedulerProperties);
             services.AddQuartzService(commonSchedulerProperties.Name, qpOptions.EnableCommonScheduler ? Configuration.GetSection("CommonScheduler") : null);
-
+            
             // used by Session middleware
             services.AddDistributedMemoryCache();
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -212,7 +213,8 @@ namespace Quantumart.QP8.WebMvc
                     .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
                     .AddTransient<ResourceDictionary>() // preload QA.Configuration
                     .AddTransient<QuartzService>()
-                ;
+                    .AddScoped<LogOnCredentials>()
+                    ;
 
             services
                 .AddTransient<WorkflowPermissionService>()
@@ -244,10 +246,22 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IDbService, DbService>()
                 ;
 
+            if (qpOptions.EnableLdapAuthentication)
+            {
+                services.AddOptions<LdapSettings>()
+                .Bind(Configuration.GetSection("Ldap"))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+                services.AddSingleton<LdapConnectionFactory>();
+                services.AddSingleton<LdapHelper>();
+                services.AddScoped<LdapIdentityManager>();
+            }
+
             RegisterMultistepActionServices(services);
 
         }
-
+            
         private static void RegisterMultistepActionServices(IServiceCollection services)
         {
             Type[] allTypes = typeof(IMultistepActionService).Assembly

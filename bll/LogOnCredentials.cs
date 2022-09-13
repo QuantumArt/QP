@@ -1,14 +1,18 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
+using Quantumart.QP8.Security.Ldap;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Quantumart.QP8.BLL
 {
     public class LogOnCredentials
-    {
+    {       
         private string _userName;
 
         [Display(Name = "UserName", ResourceType = typeof(LogOnStrings))]
@@ -31,8 +35,8 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         public QpUser User { get; set; }
-
-        public void Validate()
+        
+        public async Task Validate(LdapIdentityManager ldapIdentityManagers, CancellationToken cancellationToken)
         {
             var errors = new RulesException<LogOnCredentials>();
             if (!UseAutoLogin)
@@ -62,7 +66,53 @@ namespace Quantumart.QP8.BLL
             }
 
             if (errors.IsEmpty)
-            {
+            {                
+                if (QPConfiguration.Options.EnableLdapAuthentication)
+                {
+                    var parts = UserName.Split('\\');                    
+                    if (parts.Length == 2 && String.IsNullOrEmpty(NtUserName))
+                    {
+                        var domain = parts[0];
+                        if (!string.Equals(ldapIdentityManagers.CurrentDomain, domain, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_DomainNotFound);
+                            throw errors;
+                        }
+                        var userName = parts[1];
+                        var signInResult = await ldapIdentityManagers.PasswordSignIn(userName, Password, cancellationToken);
+                        if (signInResult.Succeeded)
+                        {
+                            NtUserName = UserName;
+                            UserName = userName;
+                            UseAutoLogin = true;
+                        }
+                        else
+                        {
+                            switch (signInResult.Status)
+                            {
+                                case SignInStatus.NotFound:
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_NotFound);
+                                    break;
+                                case SignInStatus.PasswordExpired:
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_PasswordExpired);                                    
+                                    break;
+                                case SignInStatus.AccountExpired:
+                                case SignInStatus.IsLockedOut:
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_IsLockedOut);                                    
+                                    break;
+                                case SignInStatus.OperationError:
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_OperationError);                                    
+                                    break;
+                                case SignInStatus.NotInitialized:
+                                case SignInStatus.Succeeded:
+                                default:
+                                    break;
+                            }
+                            throw errors;
+                        }                        
+                    }
+                }
+                
                 var errorCode = QpAuthenticationErrorNumber.NoErrors;
                 User = QPContext.Authenticate(this, ref errorCode, out var message);
 

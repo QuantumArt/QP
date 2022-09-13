@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -8,6 +9,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
+using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -20,11 +22,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private AuthenticationHelper _helper;
         private ModelExpressionProvider _provider;
+        private readonly LdapIdentityManager _ldapIdentityManager;
 
-        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider)
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, LdapIdentityManager ldaplIdentityManager)
         {
             _helper = helper;
             _provider = provider;
+            _ldapIdentityManager = ldaplIdentityManager;
         }
 
         [DisableBrowserCache]
@@ -45,24 +49,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [DisableBrowserCache]
         public async Task<ActionResult> Index(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
-            return await PostIndex(useAutoLogin, data, returnUrl);
+            return await PostIndex(useAutoLogin, data, returnUrl, HttpContext.RequestAborted);
         }
 
         [HttpPost]
         [DisableBrowserCache]
         public async Task<ActionResult> JsonIndex(bool? useAutoLogin, [FromBody] LogOnCredentials data, string returnUrl)
         {
-            return await PostIndex(useAutoLogin, data, returnUrl);
+            return await PostIndex(useAutoLogin, data, returnUrl, HttpContext.RequestAborted);
         }
 
-        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl, CancellationToken cancellationToken)
         {
             data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
             data.NtUserName = GetCurrentUser();
 
             try
             {
-                data.Validate();
+                await data.Validate(_ldapIdentityManager, cancellationToken);
             }
             catch (RulesException ex)
             {
