@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +16,7 @@ namespace QP8.Integration.Tests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             builder.UseContentRoot(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
         }
     }
