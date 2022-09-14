@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL
         [BindNever]
         public QpUser User { get; set; }
         
-        public async Task Validate(ILdapIdentityManager ldapIdentityManagers, CancellationToken cancellationToken)
+        public void Validate(ILdapIdentityManager ldapIdentityManagers)
         {
             var errors = new RulesException<LogOnCredentials>();
             if (!UseAutoLogin)
@@ -79,7 +79,7 @@ namespace Quantumart.QP8.BLL
                             throw errors;
                         }
                         var userName = parts[1];
-                        var signInResult = await ldapIdentityManagers.PasswordSignIn(userName, Password, cancellationToken);
+                        var signInResult = ldapIdentityManagers.PasswordSignIn(userName, Password);
                         if (signInResult.Succeeded)
                         {
                             NtUserName = UserName;

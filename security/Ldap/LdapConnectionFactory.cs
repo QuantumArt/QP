@@ -17,31 +17,31 @@ public class LdapConnectionFactory
         _setting = setting.Value;
     }
 
-    public async Task<T> WithConnection<T>(
-        Func<ILdapConnection, Task<T>> actionOnAuthenticatedLdapConnection)
+    public T WithConnection<T>(
+        Func<ILdapConnection, T> actionOnAuthenticatedLdapConnection)
     {
-        using var connection = await CreateConnection();
-        return await actionOnAuthenticatedLdapConnection(connection);
+        using var connection = CreateConnection();
+        return actionOnAuthenticatedLdapConnection(connection);
     }
 
-    public async Task WithAdminAuthConnection(Func<ILdapConnection, Task> actionOnAuthenticatedLdapConnection)
+    public void WithAdminAuthConnection(Func<ILdapConnection, Task> actionOnAuthenticatedLdapConnection)
     {
-        using var connection = await CreateAdminAuthConnection();
-        await actionOnAuthenticatedLdapConnection(connection);
+        using var connection = CreateAdminAuthConnection();
+        actionOnAuthenticatedLdapConnection(connection);
     }
 
-    public async Task<T> WithAdminAuthConnection<T>(
-        Func<ILdapConnection, Task<T>> actionOnAuthenticatedLdapConnection)
+    public T WithAdminAuthConnection<T>(
+        Func<ILdapConnection, T> actionOnAuthenticatedLdapConnection)
     {
-        using var connection = await CreateAdminAuthConnection();
-        return await actionOnAuthenticatedLdapConnection(connection);
+        using var connection = CreateAdminAuthConnection();
+        return actionOnAuthenticatedLdapConnection(connection);
     }
 
     /// <summary>
     /// Создание соединения к AD
     /// </summary>
     /// <returns></returns>
-    private async Task<LdapConnection> CreateConnection()
+    private LdapConnection CreateConnection()
     {
         var ldapConnectionOptions = new LdapConnectionOptions()
             // TODO: Validate certificate properly.
@@ -51,7 +51,7 @@ public class LdapConnectionFactory
             SecureSocketLayer = _setting.UseSsl,
             ConnectionTimeout = _setting.ConnectionTimeout
         };
-        await connection.ConnectAsync(_setting.Server, GetServerPort());
+        connection.Connect(_setting.Server, GetServerPort());
         return connection;
     }
 
@@ -71,12 +71,12 @@ public class LdapConnectionFactory
     /// Создание коннекции под админской УЗ
     /// </summary>
     /// <returns></returns>
-    private async Task<LdapConnection> CreateAdminAuthConnection()
+    private LdapConnection CreateAdminAuthConnection()
     {
-        var connection = await CreateConnection();
+        var connection = CreateConnection();
         var login = _identityHelper.BuildDomainName(_setting.AdminLogin);
 
-        await connection.BindAsync(login, _setting.AdminPassword);
+        connection.Bind(login, _setting.AdminPassword);
         return connection;
     }
 }

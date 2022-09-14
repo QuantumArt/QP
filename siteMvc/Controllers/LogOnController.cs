@@ -49,24 +49,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [DisableBrowserCache]
         public async Task<ActionResult> Index(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
-            return await PostIndex(useAutoLogin, data, returnUrl, HttpContext.RequestAborted);
+            return await PostIndex(useAutoLogin, data, returnUrl);
         }
 
         [HttpPost]
         [DisableBrowserCache]
         public async Task<ActionResult> JsonIndex(bool? useAutoLogin, [FromBody] LogOnCredentials data, string returnUrl)
         {
-            return await PostIndex(useAutoLogin, data, returnUrl, HttpContext.RequestAborted);
+            return await PostIndex(useAutoLogin, data, returnUrl);
         }
 
-        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl, CancellationToken cancellationToken)
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
             data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
             data.NtUserName = GetCurrentUser();
 
             try
             {
-                await data.Validate(_ldapIdentityManager, cancellationToken);
+                data.Validate(_ldapIdentityManager);
             }
             catch (RulesException ex)
             {

@@ -17,5 +17,5 @@ public interface ILdapIdentityManager
     /// <param name="password"></param>	
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<SignInResult> PasswordSignIn(string login, string password, CancellationToken cancellationToken);
+    SignInResult PasswordSignIn(string login, string password);
 }

@@ -35,10 +35,7 @@ public class LdapIdentityManager : ILdapIdentityManager
         get { return _ldapSetting.Value.Domain; }
     }
     
-    public async Task<SignInResult> PasswordSignIn(
-        string login,
-        string password,       
-        CancellationToken cancellationToken)
+    public SignInResult PasswordSignIn(string login, string password)
     {
         if (string.IsNullOrEmpty(login))
         {
@@ -50,20 +47,20 @@ public class LdapIdentityManager : ILdapIdentityManager
             throw new ArgumentNullException(nameof(password));
         }
 
-        LdapEntry entry = await _ldapConnectionFactory.WithConnection(connection => VerifyCredentialsAndGetUserEntry(connection));
+        LdapEntry entry = _ldapConnectionFactory.WithConnection(connection => VerifyCredentialsAndGetUserEntry(connection));
 
         if (entry is not null)
         {            
             return new SignInResult(SignInStatus.Succeeded);            
         }
 
-        return await DetermineLoginProblemAsync(login, cancellationToken);
+        return DetermineLoginProblem(login);
 
-        async Task<LdapEntry> VerifyCredentialsAndGetUserEntry(ILdapConnection connection)
+        LdapEntry VerifyCredentialsAndGetUserEntry(ILdapConnection connection)
         {
             try
             {
-                await connection.BindAsync(_ldapHelper.BuildDomainName(login), password);
+                connection.Bind(_ldapHelper.BuildDomainName(login), password);
                 if (!connection.Bound)
                 {
                     return null;
@@ -74,13 +71,13 @@ public class LdapIdentityManager : ILdapIdentityManager
                 return null;
             }
 
-            return await GetLdapEntryByLoginAsync(connection, login, cancellationToken);
+            return GetLdapEntryByLogin(connection, login);
         }
     }
        
-    private async Task<SignInResult> DetermineLoginProblemAsync(string login, CancellationToken cancellationToken)
+    private SignInResult DetermineLoginProblem(string login)
     {
-        var (isEntryFound, entry) = await TryGetLdapEntryAsync(login, cancellationToken);
+        var (isEntryFound, entry) = TryGetLdapEntry(login);
 
         if (!isEntryFound)
         {
@@ -155,29 +152,28 @@ public class LdapIdentityManager : ILdapIdentityManager
     }
         
 
-    private async Task<LdapEntry> GetLdapEntryByLoginAsync(ILdapConnection connection, string login, CancellationToken cancellationToken)
+    private LdapEntry GetLdapEntryByLogin(ILdapConnection connection, string login)
     {
-        var search = await connection.SearchAsync(
+        var search = connection.Search(
                 _ldapSetting.Value.BaseSearchDistinguishedName,
                 LdapConnection.ScopeSub,
                 $"(samaccountname={login})",
                 null,
                 false);
 
-        return await search.FirstOrDefaultAsync(cancellationToken);
+        return search.FirstOrDefault();
     }
 
     /// <summary>
     /// Получение AD пользователя
     /// </summary>
-    /// <param name="login"></param>
-    /// <param name="cancellationToken"></param>
+    /// <param name="login"></param>   
     /// <returns></returns>
-    private async Task<(bool, LdapEntry)> TryGetLdapEntryAsync(string login, CancellationToken cancellationToken)
+    private (bool, LdapEntry) TryGetLdapEntry(string login)
     {
-        return await _ldapConnectionFactory.WithAdminAuthConnection(async connection =>
+        return _ldapConnectionFactory.WithAdminAuthConnection(connection =>
         {
-            var entry = await GetLdapEntryByLoginAsync(connection, login, cancellationToken);
+            var entry = GetLdapEntryByLogin(connection, login);
             return entry == null ? (false, null) : (true, entry);
         });
     }   

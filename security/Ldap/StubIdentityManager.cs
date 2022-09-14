@@ -11,10 +11,7 @@ public class StubIdentityManager : ILdapIdentityManager
         get { throw new NotSupportedException("Stub method is used!"); }
     }
     
-    public async Task<SignInResult> PasswordSignIn(
-        string login,
-        string password,       
-        CancellationToken cancellationToken)
+    public SignInResult PasswordSignIn(string login, string password)
     {
         throw new NotSupportedException("Stub method is used!");
     }
