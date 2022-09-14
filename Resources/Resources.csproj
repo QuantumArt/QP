@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Quantumart.QP8.Resources</AssemblyName>
     <RootNamespace>Quantumart.QP8.Resources</RootNamespace>
   </PropertyGroup>
@@ -12,7 +12,7 @@
     <EmbeddedResource Include="translations.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,7 +66,7 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>EntityObjectStrings.resx</DependentUpon>
-    </Compile>    
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -105,7 +105,7 @@
     <EmbeddedResource Update="EntityObjectStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EntityObjectStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>    
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

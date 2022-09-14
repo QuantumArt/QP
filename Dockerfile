@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 LABEL stage=intermediate
 
 RUN apt-get install -y \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash \
+    && curl -sL https://deb.nodesource.com/setup_12.x | bash \
     && apt-get install -y nodejs
 
 RUN	npm install gulp cross-env -g
@@ -18,9 +18,9 @@ COPY . .
 RUN npm run build
 
 WORKDIR /src/siteMvc
-RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f netcoreapp3.1
+RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f net6.0
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
 ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME:-QP}

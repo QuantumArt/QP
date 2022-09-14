@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore;
@@ -14,6 +15,7 @@ namespace Quantumart.QP8.WebMvc
         public static void Main(string[] args)
         {
             NLog.LogManager.LoadConfiguration("NLog.config");
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             BuildWebHost(args).Run();
         }
 

@@ -63,8 +63,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
             if (filterContext.Exception is PostgresException pgex)
             {
-                logMessage += ". Query: {query}";
-                logBuilder.Message(logMessage, url, pgex.Statement.SQL);
+                logMessage += ", Detail: {detail}, Query: {query}";
+                logBuilder.Message(logMessage, url, pgex.Detail, pgex.InternalQuery);
             }
             else
             {
