@@ -17,12 +17,10 @@ spec:
       containers:
       - name: qp
         image: "||registry||/qp:||version||"
+        envFrom:
+        - configMapRef:
+            name: qp-config        
         env:
-        - name: TZ
-          valueFrom:
-            configMapKeyRef:
-              name: qp-config
-              key: TZ
         - name: Properties__QpConfigUrl
           valueFrom:
             configMapKeyRef:
