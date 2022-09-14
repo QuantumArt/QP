@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL
         [BindNever]
         public QpUser User { get; set; }
         
-        public async Task Validate(LdapIdentityManager ldapIdentityManagers, CancellationToken cancellationToken)
+        public async Task Validate(ILdapIdentityManager ldapIdentityManagers, CancellationToken cancellationToken)
         {
             var errors = new RulesException<LogOnCredentials>();
             if (!UseAutoLogin)

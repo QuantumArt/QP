@@ -255,8 +255,10 @@ namespace Quantumart.QP8.WebMvc
 
                 services.AddSingleton<LdapConnectionFactory>();
                 services.AddSingleton<LdapHelper>();
-                services.AddScoped<LdapIdentityManager>();
+                services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
             }
+            else
+                services.AddScoped<ILdapIdentityManager, StubIdentityManager>();
 
             RegisterMultistepActionServices(services);
 

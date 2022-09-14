@@ -22,13 +22,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private AuthenticationHelper _helper;
         private ModelExpressionProvider _provider;
-        private readonly LdapIdentityManager _ldapIdentityManager;
+        private readonly ILdapIdentityManager _ldapIdentityManager;
 
-        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, LdapIdentityManager ldaplIdentityManager)
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, ILdapIdentityManager ldapIdentityManager)
         {
             _helper = helper;
             _provider = provider;
-            _ldapIdentityManager = ldaplIdentityManager;
+            _ldapIdentityManager = ldapIdentityManager;
         }
 
         [DisableBrowserCache]

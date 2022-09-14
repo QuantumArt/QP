@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Quantumart.QP8.Security.Ldap;
 
-public class LdapIdentityManager
+public class LdapIdentityManager : ILdapIdentityManager
 {
     /// <summary>
     /// Indicates that the account never expires
