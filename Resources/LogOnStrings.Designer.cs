@@ -115,7 +115,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You domain name not found!.
+        ///   Looks up a localized string similar to Domain name not found!.
         /// </summary>
         public static string ErrorMessage_Ldap_DomainNotFound {
             get {
@@ -142,7 +142,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrong or invalid password. Try changing your password or contact your system administrator.
+        ///   Looks up a localized string similar to Wrong or invalid password. Try changing your password or contact your system administrator in Active Directory!.
         /// </summary>
         public static string ErrorMessage_Ldap_OperationError {
             get {
