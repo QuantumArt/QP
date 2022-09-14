@@ -184,7 +184,7 @@
     <value>Login not found in Active Directory!</value>
   </data>
   <data name="ErrorMessage_Ldap_OperationError" xml:space="preserve">
-    <value>Wrong or invalid password. Try changing your password or contact your system administrator in Active Directory!</value>
+    <value>Wrong or invalid password in Active Directory. Try changing your password or contact your system administrator!</value>
   </data>
   <data name="ErrorMessage_Ldap_PasswordExpired" xml:space="preserve">
     <value>Need to change password in Active Directory!</value>

@@ -142,7 +142,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrong or invalid password. Try changing your password or contact your system administrator in Active Directory!.
+        ///   Looks up a localized string similar to Wrong or invalid password in Active Directory. Try changing your password or contact your system administrator!.
         /// </summary>
         public static string ErrorMessage_Ldap_OperationError {
             get {

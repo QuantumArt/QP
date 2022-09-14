@@ -48,7 +48,8 @@ public class LdapConnectionFactory
             .ConfigureRemoteCertificateValidationCallback((sender, certificate, chain, errors) => true);
         var connection = new LdapConnection(ldapConnectionOptions)
         {
-            SecureSocketLayer = _setting.UseSsl
+            SecureSocketLayer = _setting.UseSsl,
+            ConnectionTimeout = _setting.ConnectionTimeout
         };
         await connection.ConnectAsync(_setting.Server, GetServerPort());
         return connection;
