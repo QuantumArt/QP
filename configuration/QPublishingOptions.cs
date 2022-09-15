@@ -63,6 +63,6 @@ namespace Quantumart.QP8.Configuration
 
         public bool EnableCommonScheduler { get; set; }
 
-
+        public bool EnableLdapAuthentication { get; set; }
     }
 }

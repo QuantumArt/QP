@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -8,6 +9,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
+using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -20,11 +22,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private AuthenticationHelper _helper;
         private ModelExpressionProvider _provider;
+        private readonly ILdapIdentityManager _ldapIdentityManager;
 
-        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider)
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, ILdapIdentityManager ldapIdentityManager)
         {
             _helper = helper;
             _provider = provider;
+            _ldapIdentityManager = ldapIdentityManager;
         }
 
         [DisableBrowserCache]
@@ -62,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             try
             {
-                data.Validate();
+                data.Validate(_ldapIdentityManager);
             }
             catch (RulesException ex)
             {
