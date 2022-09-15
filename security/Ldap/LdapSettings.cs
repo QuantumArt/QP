@@ -26,5 +26,5 @@ public class LdapSettings
     /// <summary>
     /// Connection timeout in milliseconds
     /// </summary>
-    public TimeSpan ConnectionTimeout { get; init; } // default is 0 which will use the platform default timeout for TCP connections
+    public TimeSpan ConnectionTimeout { get; init; }
 }
