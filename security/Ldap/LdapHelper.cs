@@ -17,7 +17,7 @@ public class LdapHelper
     {
         return $"{_options.Value.Domain}\\{login}";
     }
-    
+
     public static DateTime FromAccountExpiresToDateTime(long ticks)
         => new DateTime(1601, 01, 01, 0, 0, 0, DateTimeKind.Utc).AddTicks(ticks);
 

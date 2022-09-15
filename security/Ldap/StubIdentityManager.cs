@@ -10,10 +10,10 @@ public class StubIdentityManager : ILdapIdentityManager
     {
         get { throw new NotSupportedException("Stub method is used!"); }
     }
-    
+
     public SignInResult PasswordSignIn(string login, string password)
     {
         throw new NotSupportedException("Stub method is used!");
     }
-     
+
 }

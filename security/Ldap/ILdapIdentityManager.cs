@@ -5,7 +5,7 @@ namespace Quantumart.QP8.Security.Ldap;
 
 public interface ILdapIdentityManager
 {
-    string CurrentDomain    
+    string CurrentDomain
     {
         get;
     }

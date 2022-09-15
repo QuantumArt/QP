@@ -62,18 +62,16 @@ namespace Quantumart.QP8.BLL
                 if (!QPContext.CheckCustomerCode(CustomerCode))
                 {
                     errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_CustomerCodeNotExist);
+                    throw errors;
                 }
-            }
-
-            if (errors.IsEmpty)
-            {                
+                      
                 if (QPConfiguration.Options.EnableLdapAuthentication)
                 {
-                    var parts = UserName.Split('\\');                    
+                    var parts = UserName.Split('\\');
                     if (parts.Length == 2 && String.IsNullOrEmpty(NtUserName))
                     {
                         var domain = parts[0];
-                        if (!string.Equals(ldapIdentityManagers.CurrentDomain, domain, StringComparison.InvariantCultureIgnoreCase))
+                        if (!string.Equals(ldapIdentityManagers.CurrentDomain, domain, StringComparison.OrdinalIgnoreCase))
                         {
                             errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_DomainNotFound);
                             throw errors;
