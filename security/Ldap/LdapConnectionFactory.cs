@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Options;
 using Novell.Directory.Ldap;
-using Quantumart.QP8.Configuration;
 using System;
 using System.Threading.Tasks;
 
@@ -24,12 +23,6 @@ public class LdapConnectionFactory
         return actionOnAuthenticatedLdapConnection(connection);
     }
 
-    public void WithAdminAuthConnection(Func<ILdapConnection, Task> actionOnAuthenticatedLdapConnection)
-    {
-        using var connection = CreateAdminAuthConnection();
-        actionOnAuthenticatedLdapConnection(connection);
-    }
-
     public T WithAdminAuthConnection<T>(
         Func<ILdapConnection, T> actionOnAuthenticatedLdapConnection)
     {
@@ -49,7 +42,7 @@ public class LdapConnectionFactory
         var connection = new LdapConnection(ldapConnectionOptions)
         {
             SecureSocketLayer = _setting.UseSsl,
-            ConnectionTimeout = _setting.ConnectionTimeout
+            ConnectionTimeout = (int)_setting.ConnectionTimeout.TotalMilliseconds
         };
         connection.Connect(_setting.Server, GetServerPort());
         return connection;

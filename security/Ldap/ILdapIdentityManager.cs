@@ -1,6 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Quantumart.QP8.Security.Ldap;
 
 public interface ILdapIdentityManager

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Quantumart.QP8.Security.Ldap;
@@ -25,5 +26,5 @@ public class LdapSettings
     /// <summary>
     /// Connection timeout in milliseconds
     /// </summary>
-    public int ConnectionTimeout { get; init; } // default is 0 which will use the platform default timeout for TCP connections
+    public TimeSpan ConnectionTimeout { get; init; } // default is 0 which will use the platform default timeout for TCP connections
 }
