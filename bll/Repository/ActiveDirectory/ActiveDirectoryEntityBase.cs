@@ -1,3 +1,4 @@
+using System;
 using Novell.Directory.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
@@ -13,8 +14,31 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         protected ActiveDirectoryEntityBase(LdapEntry entry)
         {
             ReferencedPath = entry.Dn;
-            Name = entry.GetAttribute("cn").StringValue;
-            MemberOf = entry.GetAttribute("memberOf").StringValueArray;
+            LdapAttributeSet attributes = entry.GetAttributeSet();
+            Name = GetAttrbibuteValue<string>(attributes, "cn", true);
+            MemberOf = GetAttrbibuteValue<string[]>(attributes, "memberOf", false);
+        }
+
+        protected T GetAttrbibuteValue<T>(LdapAttributeSet attributes, string attributeName, bool throwIfNull)
+        {
+            bool result = attributes.TryGetValue(attributeName, out LdapAttribute attribute);
+
+            if (!result && throwIfNull)
+                throw new ArgumentException($"Can't find attribute in AD entry.", attributeName);
+
+            switch (typeof(T))
+            {
+                case Type stringType when stringType == typeof(string):
+                    return attribute is null ? ConvertType<T>(string.Empty) : ConvertType<T>(attribute.StringValue);
+                case Type stringArray when stringArray == typeof(string[]):
+                    return attribute is null ? ConvertType<T>(Array.Empty<string>()) : ConvertType<T>(attribute.StringValueArray);
+                default: throw new Exception("");
+            }
+        }
+
+        private T ConvertType<T>(object value)
+        {
+            return (T)Convert.ChangeType(value, typeof(T));
         }
     }
 }

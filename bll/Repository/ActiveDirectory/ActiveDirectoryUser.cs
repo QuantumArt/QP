@@ -18,11 +18,12 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         public ActiveDirectoryUser(LdapEntry user)
             : base(user)
         {
-            FirstName = user.GetAttribute("givenName").StringValue;
-            LastName = user.GetAttribute("sn").StringValue;
-            Mail = user.GetAttribute("mail").StringValue;
-            AccountName = GetDomain() + user.GetAttribute("sAMAccountName").StringValue;
-            AccountControl = (UserAccountControlDescription)int.Parse(user.GetAttribute("userAccountControl").StringValue);
+            LdapAttributeSet attributes = user.GetAttributeSet();
+            FirstName = GetAttrbibuteValue<string>(attributes, "givenName", false);
+            LastName = GetAttrbibuteValue<string>(attributes, "sn", false);
+            Mail = GetAttrbibuteValue<string>(attributes, "mail", false);
+            AccountName = GetDomain() + "\\" + GetAttrbibuteValue<string>(attributes, "sAMAccountName", true);
+            AccountControl = (UserAccountControlDescription)int.Parse(GetAttrbibuteValue<string>(attributes, "userAccountControl", true));
             IsDisabled = (AccountControl & UserAccountControlDescription.ACCOUNTDISABLE) == UserAccountControlDescription.ACCOUNTDISABLE;
         }
 
