@@ -32,7 +32,8 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
                     return attribute is null ? ConvertType<T>(string.Empty) : ConvertType<T>(attribute.StringValue);
                 case Type stringArray when stringArray == typeof(string[]):
                     return attribute is null ? ConvertType<T>(Array.Empty<string>()) : ConvertType<T>(attribute.StringValueArray);
-                default: throw new Exception("");
+                default:
+                    throw new ArgumentException("Can't match attribute to expected type.", attributeName);
             }
         }
 
