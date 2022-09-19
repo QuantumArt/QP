@@ -26,15 +26,18 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
             if (!result && throwIfNull)
                 throw new ArgumentException($"Can't find attribute in AD entry.", attributeName);
 
-            switch (typeof(T))
+            return typeof(T) switch
             {
-                case Type stringType when stringType == typeof(string):
-                    return attribute is null ? ConvertType<T>(string.Empty) : ConvertType<T>(attribute.StringValue);
-                case Type stringArray when stringArray == typeof(string[]):
-                    return attribute is null ? ConvertType<T>(Array.Empty<string>()) : ConvertType<T>(attribute.StringValueArray);
-                default:
-                    throw new ArgumentException("Can't match attribute to expected type.", attributeName);
-            }
+                Type stringType when stringType == typeof(string) =>
+                    attribute is null
+                        ? ConvertType<T>(string.Empty)
+                        : ConvertType<T>(attribute.StringValue),
+                Type stringArray when stringArray == typeof(string[]) =>
+                    attribute is null
+                        ? ConvertType<T>(Array.Empty<string>())
+                        : ConvertType<T>(attribute.StringValueArray),
+                _ => throw new ArgumentException("Can't match attribute to expected type.", attributeName),
+            };
         }
 
         private T ConvertType<T>(object value)

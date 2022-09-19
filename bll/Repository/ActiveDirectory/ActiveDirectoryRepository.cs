@@ -45,7 +45,7 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         {
             string userFilter = LdapQueryBuilder.UserOf(GetGroupReferences(membership));
             List<Novell.Directory.Ldap.LdapEntry> users = _ldapIdentityManager.GetEntriesWithAttributesByFilter(userFilter, _userProperties);
-            return users.Select(g => new ActiveDirectoryUser(g)).ToArray();
+            return users.Select(u => new ActiveDirectoryUser(u)).ToArray();
         }
 
         private static string[] GetGroupReferences(IEnumerable<ActiveDirectoryGroup> membership)
