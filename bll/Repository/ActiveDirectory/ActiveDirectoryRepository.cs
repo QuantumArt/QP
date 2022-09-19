@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Novell.Directory.Ldap;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security.Ldap;
 
@@ -32,7 +33,7 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         public ActiveDirectoryGroup[] GetGroups(string[] groups, params ActiveDirectoryGroup[] membership)
         {
             string groupFilter = LdapQueryBuilder.GroupOf(groups, GetGroupReferences(membership));
-            List<Novell.Directory.Ldap.LdapEntry> groupList = _ldapIdentityManager.GetEntriesWithAttributesByFilter(groupFilter, _groupProperties);
+            List<LdapEntry> groupList = _ldapIdentityManager.GetEntriesWithAttributesByFilter(groupFilter, _groupProperties);
             return groupList.Select(g => new ActiveDirectoryGroup(g)).ToArray();
         }
 
@@ -44,7 +45,7 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         public ActiveDirectoryUser[] GetUsers(params ActiveDirectoryGroup[] membership)
         {
             string userFilter = LdapQueryBuilder.UserOf(GetGroupReferences(membership));
-            List<Novell.Directory.Ldap.LdapEntry> users = _ldapIdentityManager.GetEntriesWithAttributesByFilter(userFilter, _userProperties);
+            List<LdapEntry> users = _ldapIdentityManager.GetEntriesWithAttributesByFilter(userFilter, _userProperties);
             return users.Select(u => new ActiveDirectoryUser(u)).ToArray();
         }
 
