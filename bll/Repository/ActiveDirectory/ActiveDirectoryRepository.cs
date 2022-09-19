@@ -1,31 +1,26 @@
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Linq;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Security.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
 
-    internal class ActiveDirectoryRepository
+    public class ActiveDirectoryRepository : IActiveDirectoryRepository
     {
         private readonly string[] _groupProperties = { "cn", "memberOf" };
         private readonly string[] _userProperties = { "cn", "memberOf", "sn", "givenName", "mail", "sAMAccountName", "userAccountControl" };
         private readonly string _path;
         private readonly string _userName;
         private readonly string _password;
+        private readonly ILdapIdentityManager _ldapIdentityManager;
 
-        public ActiveDirectoryRepository()
+        public ActiveDirectoryRepository(ILdapIdentityManager ldapIdentityManager)
         {
             _userName = QPConfiguration.ADsConnectionUsername;
             _password = QPConfiguration.ADsConnectionPassword;
             _path = QPConfiguration.ADsPath;
-        }
-
-        public ActiveDirectoryRepository(string path, string userName, string password)
-        {
-            _userName = userName;
-            _password = password;
-            _path = path;
+            _ldapIdentityManager = ldapIdentityManager;
         }
 
         /// <summary>
@@ -36,13 +31,9 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         /// <returns>группы</returns>
         public ActiveDirectoryGroup[] GetGroups(string[] groups, params ActiveDirectoryGroup[] membership)
         {
-            using (var cnn = GetConnection())
-            using (var search = new DirectorySearcher(cnn))
-            {
-                search.PropertiesToLoad.AddRange(_groupProperties);
-                search.Filter = LdapQueryBuilder.GroupOf(groups, GetGroupReferences(membership));
-                return search.FindAll().OfType<SearchResult>().Select(sr => new ActiveDirectoryGroup(sr)).ToArray();
-            }
+            string groupFilter = LdapQueryBuilder.GroupOf(groups, GetGroupReferences(membership));
+            List<Novell.Directory.Ldap.LdapEntry> groupList = _ldapIdentityManager.GetEntriesWithAttributesByFilter(groupFilter, _groupProperties);
+            return groupList.Select(g => new ActiveDirectoryGroup(g)).ToArray();
         }
 
         /// <summary>
@@ -52,22 +43,10 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         /// <returns>пользователи</returns>
         public ActiveDirectoryUser[] GetUsers(params ActiveDirectoryGroup[] membership)
         {
-            using (var cnn = GetConnection())
-            using (var search = new DirectorySearcher(cnn))
-            {
-                search.PropertiesToLoad.AddRange(_userProperties);
-                search.Filter = LdapQueryBuilder.UserOf(GetGroupReferences(membership));
-                return search.FindAll().OfType<SearchResult>().Select(sr => new ActiveDirectoryUser(sr)).ToArray();
-            }
+            string userFilter = LdapQueryBuilder.UserOf(GetGroupReferences(membership));
+            List<Novell.Directory.Ldap.LdapEntry> users = _ldapIdentityManager.GetEntriesWithAttributesByFilter(userFilter, _userProperties);
+            return users.Select(g => new ActiveDirectoryUser(g)).ToArray();
         }
-
-        protected DirectoryEntry GetConnection() => new DirectoryEntry
-        {
-            Path = _path,
-            AuthenticationType = AuthenticationTypes.Secure,
-            Username = _userName,
-            Password = _password
-        };
 
         private static string[] GetGroupReferences(IEnumerable<ActiveDirectoryGroup> membership)
         {

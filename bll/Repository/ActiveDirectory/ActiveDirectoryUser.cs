@@ -1,10 +1,10 @@
 using System;
-using System.DirectoryServices;
 using System.Linq;
+using Novell.Directory.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
-    internal class ActiveDirectoryUser : ActiveDirectoryEntityBase
+    public class ActiveDirectoryUser : ActiveDirectoryEntityBase
     {
         private readonly string AccountDescriptor = "DC=";
 
@@ -15,14 +15,14 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         public UserAccountControlDescription AccountControl { get; }
         public bool IsDisabled { get; }
 
-        public ActiveDirectoryUser(SearchResult user)
+        public ActiveDirectoryUser(LdapEntry user)
             : base(user)
         {
-            FirstName = GetValue<string>(user, "givenName");
-            LastName = GetValue<string>(user, "sn");
-            Mail = GetValue<string>(user, "mail");
-            AccountName = GetDomain() + "\\" + GetValue<string>(user, "sAMAccountName");
-            AccountControl = (UserAccountControlDescription)GetValue<int>(user, "userAccountControl");
+            FirstName = user.GetAttribute("givenName").StringValue;
+            LastName = user.GetAttribute("sn").StringValue;
+            Mail = user.GetAttribute("mail").StringValue;
+            AccountName = GetDomain() + user.GetAttribute("sAMAccountName").StringValue;
+            AccountControl = (UserAccountControlDescription)int.Parse(user.GetAttribute("userAccountControl").StringValue);
             IsDisabled = (AccountControl & UserAccountControlDescription.ACCOUNTDISABLE) == UserAccountControlDescription.ACCOUNTDISABLE;
         }
 

@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Novell.Directory.Ldap;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Quantumart.QP8.Security.Ldap;
@@ -17,7 +18,7 @@ public class LdapIdentityManager : ILdapIdentityManager
     private static readonly long[] AccountNeverExpiresTicks = { 0, 9223372036854775807 };
     private readonly LdapHelper _ldapHelper;
     private readonly IOptions<LdapSettings> _ldapSetting;
-    private readonly LdapConnectionFactory _ldapConnectionFactory;    
+    private readonly LdapConnectionFactory _ldapConnectionFactory;
 
     public LdapIdentityManager(LdapConnectionFactory ldapConnectionFactory, LdapHelper ldapHelper,
         IOptions<LdapSettings> ldapSetting,
@@ -25,14 +26,14 @@ public class LdapIdentityManager : ILdapIdentityManager
     {
         _ldapConnectionFactory = ldapConnectionFactory;
         _ldapHelper = ldapHelper;
-        _ldapSetting = ldapSetting;        
+        _ldapSetting = ldapSetting;
     }
 
     public string CurrentDomain
     {
         get { return _ldapSetting.Value.Domain; }
     }
-    
+
     public SignInResult PasswordSignIn(string login, string password)
     {
         if (string.IsNullOrEmpty(login))
@@ -48,8 +49,8 @@ public class LdapIdentityManager : ILdapIdentityManager
         LdapEntry entry = _ldapConnectionFactory.WithConnection(connection => VerifyCredentialsAndGetUserEntry(connection));
 
         if (entry is not null)
-        {            
-            return new SignInResult(SignInStatus.Succeeded);            
+        {
+            return new SignInResult(SignInStatus.Succeeded);
         }
 
         return DetermineLoginProblem(login);
@@ -72,7 +73,22 @@ public class LdapIdentityManager : ILdapIdentityManager
             return GetLdapEntryByLogin(connection, login);
         }
     }
-       
+
+    public List<LdapEntry> GetEntriesWithAttributesByFilter(string filter, string[] attrsToSelect)
+    {
+        return _ldapConnectionFactory.WithAdminAuthConnection(connection =>
+        {
+            return connection
+            .Search(
+                _ldapSetting.Value.BaseSearchDistinguishedName,
+                LdapConnection.ScopeSub,
+                filter,
+                attrsToSelect,
+                false)
+            .ToList();
+        });
+    }
+
     private SignInResult DetermineLoginProblem(string login)
     {
         var (isEntryFound, entry) = TryGetLdapEntry(login);
@@ -148,7 +164,7 @@ public class LdapIdentityManager : ILdapIdentityManager
                 LdapHelper.UserAccountControlCodes.PasswordExpired);
         }
     }
-        
+
 
     private LdapEntry GetLdapEntryByLogin(ILdapConnection connection, string login)
     {
@@ -174,5 +190,5 @@ public class LdapIdentityManager : ILdapIdentityManager
             var entry = GetLdapEntryByLogin(connection, login);
             return entry == null ? (false, null) : (true, entry);
         });
-    }   
+    }
 }

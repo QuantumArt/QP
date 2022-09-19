@@ -63,6 +63,7 @@ using ContentService = Quantumart.QP8.BLL.Services.ContentServices.ContentServic
 using CustomActionService = Quantumart.QP8.BLL.Services.CustomActionService;
 using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
+using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -99,11 +100,10 @@ namespace Quantumart.QP8.WebMvc
             if (qpOptions.EnableCommonScheduler)
             {
                 Configuration.Bind("CommonScheduler", commonSchedulerProperties);
-                services.AddTransient<IUserSynchronizationService, UserSynchronizationService>();
             }
             services.AddSingleton(commonSchedulerProperties);
             services.AddQuartzService(commonSchedulerProperties.Name, qpOptions.EnableCommonScheduler ? Configuration.GetSection("CommonScheduler") : null);
-            
+
             // used by Session middleware
             services.AddDistributedMemoryCache();
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -134,7 +134,8 @@ namespace Quantumart.QP8.WebMvc
             services.AddHttpClient();
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddScoped<IUrlHelper>(x => {
+            services.AddScoped<IUrlHelper>(x =>
+            {
                 var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
                 var factory = x.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(actionContext);
@@ -256,14 +257,19 @@ namespace Quantumart.QP8.WebMvc
                 services.AddSingleton<LdapConnectionFactory>();
                 services.AddSingleton<LdapHelper>();
                 services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
+                services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
+                services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
             }
             else
-                services.AddScoped<ILdapIdentityManager, StubIdentityManager>();
+            {
+                services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+            }
 
             RegisterMultistepActionServices(services);
 
         }
-            
+
         private static void RegisterMultistepActionServices(IServiceCollection services)
         {
             Type[] allTypes = typeof(IMultistepActionService).Assembly
@@ -316,14 +322,14 @@ namespace Quantumart.QP8.WebMvc
                 FileProvider = new PhysicalFileProvider(Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "Scripts")),
-                RequestPath =  "/Scripts"
+                RequestPath = "/Scripts"
             });
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "Static")),
-                RequestPath =  "/Static"
+                RequestPath = "/Static"
             });
 
             app.UseStaticFiles(new StaticFileOptions
@@ -331,7 +337,7 @@ namespace Quantumart.QP8.WebMvc
                 FileProvider = new PhysicalFileProvider(Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "plugins")),
-                RequestPath =  "/plugins"
+                RequestPath = "/plugins"
             });
 
             app.UseForwardedHeaders();

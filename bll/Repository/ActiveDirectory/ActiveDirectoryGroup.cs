@@ -1,10 +1,10 @@
-﻿using System.DirectoryServices;
+using Novell.Directory.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
-    internal class ActiveDirectoryGroup : ActiveDirectoryEntityBase
+    public class ActiveDirectoryGroup : ActiveDirectoryEntityBase
     {
-        public ActiveDirectoryGroup(SearchResult group)
+        public ActiveDirectoryGroup(LdapEntry group)
             : base(group)
         {
         }

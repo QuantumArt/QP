@@ -1,26 +1,20 @@
-using System.DirectoryServices;
-using System.Linq;
+using Novell.Directory.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
-    internal abstract class ActiveDirectoryEntityBase
+    public abstract class ActiveDirectoryEntityBase
     {
-        public string Path { get; }
-
         public string ReferencedPath { get; }
 
         public string Name { get; }
 
         public string[] MemberOf { get; }
 
-        protected ActiveDirectoryEntityBase(SearchResult entity)
+        protected ActiveDirectoryEntityBase(LdapEntry entry)
         {
-            Path = entity.Path;
-            ReferencedPath = Path.Replace("LDAP://", string.Empty);
-            Name = GetValue<string>(entity, "cn");
-            MemberOf = entity.Properties["memberOf"].OfType<string>().ToArray();
+            ReferencedPath = entry.Dn;
+            Name = entry.GetAttribute("cn").StringValue;
+            MemberOf = entry.GetAttribute("memberOf").StringValueArray;
         }
-
-        protected T GetValue<T>(SearchResult entity, string key) => entity.Properties[key].OfType<T>().FirstOrDefault();
     }
 }

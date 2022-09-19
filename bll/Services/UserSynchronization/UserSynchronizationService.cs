@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
@@ -16,21 +16,21 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly int _languageId;
-        private readonly ActiveDirectoryRepository _activeDirectory;
-        private readonly CommonSchedulerProperties settings;
+        private readonly IActiveDirectoryRepository _activeDirectory;
+        private readonly CommonSchedulerProperties _settings;
 
-        public UserSynchronizationService(IOptions<CommonSchedulerProperties> options)
+        public UserSynchronizationService(IOptions<CommonSchedulerProperties> options, IActiveDirectoryRepository activeDirectoryRepository)
         {
             _languageId = options.Value.DefaultLanguageId;
-            _activeDirectory = new ActiveDirectoryRepository();
-            settings = options.Value;
+            _activeDirectory = activeDirectoryRepository;
+            _settings = options.Value;
         }
 
         public bool NeedSynchronization() => DbRepository.Get().UseAdSyncService;
 
         public void Synchronize()
         {
-            QPContext.CurrentUserId = settings.DefaultUserId;
+            QPContext.CurrentUserId = _settings.DefaultUserId;
             var qpGroups = UserGroupRepository.GetNtGroups().ToList();
             var adGroups = GetAdGroupsToProcess(qpGroups);
             var adUsers = _activeDirectory.GetUsers(adGroups);
@@ -55,7 +55,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex,"There was an exception while adding user");
+                    Logger.Error(ex, "There was an exception while adding user");
                 }
             }
         }
@@ -63,8 +63,8 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         private void UpdateUsers(IEnumerable<User> qpUsers, IEnumerable<ActiveDirectoryUser> adUsers, ActiveDirectoryGroup[] adGroups, List<UserGroup> qpGroups)
         {
             var usersToBeUpdated = from qpu in qpUsers
-                join adu in adUsers on qpu.NtLogOn equals adu.AccountName
-                select new { QP = qpu, AD = adu };
+                                   join adu in adUsers on qpu.NtLogOn equals adu.AccountName
+                                   select new { QP = qpu, AD = adu };
 
             foreach (var user in usersToBeUpdated)
             {
@@ -78,7 +78,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex,"There was an exception while updating user");
+                    Logger.Error(ex, "There was an exception while updating user");
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn(ex,"There was an exception while disabling user");
+                    Logger.Warn(ex, "There was an exception while disabling user");
                 }
             }
         }
@@ -114,18 +114,18 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             }
 
             var adGroupRelations = from adg in adGroups
-                select new
-                {
-                    Group = adg,
-                    Members = from m in adg.MemberOf
-                    join g in adGroups on m equals g.ReferencedPath
-                    select g.Name
-                };
+                                   select new
+                                   {
+                                       Group = adg,
+                                       Members = from m in adg.MemberOf
+                                                 join g in adGroups on m equals g.ReferencedPath
+                                                 select g.Name
+                                   };
 
             var adGroupsToProcess = (from adRelation in adGroupRelations
-                    join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
-                    where qpg.ParentGroup == null || qpGroups.All(g => g.Id != qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
-                    select adRelation.Group)
+                                     join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
+                                     where qpg.ParentGroup == null || qpGroups.All(g => g.Id != qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
+                                     select adRelation.Group)
                 .ToArray();
 
             var wrongMembershipAdGroups = adGroupNames.Except(adGroupsToProcess.Select(g => g.Name)).ToArray();
@@ -158,9 +158,9 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         private static void MapGroups(ActiveDirectoryEntityBase adUser, ref User qpUser, IEnumerable<ActiveDirectoryGroup> adGroups, List<UserGroup> qpGroups)
         {
             var importedGroups = from qpg in qpGroups
-                join adg in adGroups on qpg.NtGroup equals adg.Name
-                where adUser.MemberOf.Contains(adg.ReferencedPath)
-                select qpg;
+                                 join adg in adGroups on qpg.NtGroup equals adg.Name
+                                 where adUser.MemberOf.Contains(adg.ReferencedPath)
+                                 select qpg;
 
             var nativeGroups = qpUser.Groups.Except(qpGroups);
             qpUser.Groups = importedGroups.Concat(nativeGroups);
