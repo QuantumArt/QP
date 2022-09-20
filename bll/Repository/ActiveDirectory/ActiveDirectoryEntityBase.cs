@@ -1,26 +1,48 @@
-using System.DirectoryServices;
-using System.Linq;
+using System;
+using Novell.Directory.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
-    internal abstract class ActiveDirectoryEntityBase
+    public abstract class ActiveDirectoryEntityBase
     {
-        public string Path { get; }
-
         public string ReferencedPath { get; }
 
         public string Name { get; }
 
         public string[] MemberOf { get; }
 
-        protected ActiveDirectoryEntityBase(SearchResult entity)
+        protected ActiveDirectoryEntityBase(LdapEntry entry)
         {
-            Path = entity.Path;
-            ReferencedPath = Path.Replace("LDAP://", string.Empty);
-            Name = GetValue<string>(entity, "cn");
-            MemberOf = entity.Properties["memberOf"].OfType<string>().ToArray();
+            ReferencedPath = entry.Dn;
+            LdapAttributeSet attributes = entry.GetAttributeSet();
+            Name = GetAttrbibuteValue<string>(attributes, "cn", true);
+            MemberOf = GetAttrbibuteValue<string[]>(attributes, "memberOf", false);
         }
 
-        protected T GetValue<T>(SearchResult entity, string key) => entity.Properties[key].OfType<T>().FirstOrDefault();
+        protected T GetAttrbibuteValue<T>(LdapAttributeSet attributes, string attributeName, bool throwIfNull)
+        {
+            bool result = attributes.TryGetValue(attributeName, out LdapAttribute attribute);
+
+            if (!result && throwIfNull)
+                throw new ArgumentException($"Can't find attribute in AD entry.", attributeName);
+
+            return typeof(T) switch
+            {
+                Type stringType when stringType == typeof(string) =>
+                    attribute is null
+                        ? ConvertType<T>(string.Empty)
+                        : ConvertType<T>(attribute.StringValue),
+                Type stringArray when stringArray == typeof(string[]) =>
+                    attribute is null
+                        ? ConvertType<T>(Array.Empty<string>())
+                        : ConvertType<T>(attribute.StringValueArray),
+                _ => throw new ArgumentException("Can't match attribute to expected type.", attributeName),
+            };
+        }
+
+        private T ConvertType<T>(object value)
+        {
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
     }
 }

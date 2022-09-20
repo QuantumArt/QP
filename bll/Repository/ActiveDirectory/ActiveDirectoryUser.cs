@@ -1,10 +1,10 @@
 using System;
-using System.DirectoryServices;
 using System.Linq;
+using Novell.Directory.Ldap;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
-    internal class ActiveDirectoryUser : ActiveDirectoryEntityBase
+    public class ActiveDirectoryUser : ActiveDirectoryEntityBase
     {
         private readonly string AccountDescriptor = "DC=";
 
@@ -15,14 +15,15 @@ namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
         public UserAccountControlDescription AccountControl { get; }
         public bool IsDisabled { get; }
 
-        public ActiveDirectoryUser(SearchResult user)
+        public ActiveDirectoryUser(LdapEntry user)
             : base(user)
         {
-            FirstName = GetValue<string>(user, "givenName");
-            LastName = GetValue<string>(user, "sn");
-            Mail = GetValue<string>(user, "mail");
-            AccountName = GetDomain() + "\\" + GetValue<string>(user, "sAMAccountName");
-            AccountControl = (UserAccountControlDescription)GetValue<int>(user, "userAccountControl");
+            LdapAttributeSet attributes = user.GetAttributeSet();
+            FirstName = GetAttrbibuteValue<string>(attributes, "givenName", false);
+            LastName = GetAttrbibuteValue<string>(attributes, "sn", false);
+            Mail = GetAttrbibuteValue<string>(attributes, "mail", false);
+            AccountName = GetDomain() + "\\" + GetAttrbibuteValue<string>(attributes, "sAMAccountName", true);
+            AccountControl = (UserAccountControlDescription)int.Parse(GetAttrbibuteValue<string>(attributes, "userAccountControl", true));
             IsDisabled = (AccountControl & UserAccountControlDescription.ACCOUNTDISABLE) == UserAccountControlDescription.ACCOUNTDISABLE;
         }
 

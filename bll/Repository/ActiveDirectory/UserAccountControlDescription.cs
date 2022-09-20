@@ -3,7 +3,7 @@ using System;
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
     [Flags]
-    internal enum UserAccountControlDescription
+    public enum UserAccountControlDescription
     {
         SCRIPT = 1, // 0x1
         ACCOUNTDISABLE = 2, // 0x2
