@@ -12,11 +12,11 @@ namespace Quantumart.QP8.Constants
         public const string Email = @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";
         public const string AbsoluteUrl = @"^http(s)?://(?:[\w\-]{1,63}|(?:(?!\d+\.|-)[\w\-]{1,63}(?<!-)\.)+(?:[\w\-]{1,}\w))(:[0-9]{1,5})?(/[\w\- ./?%&=]*)?$";
         public const string RelativeUrl = @"^/([\w\- ./?%&=]*$)";
-        public const string AbsoluteWebFolderUrl = @"^http(s)?://(?:[\w\-]{1,63}|(?:(?!\d+\.|-)[\w\-]{1,63}(?<!-)\.)+(?:[\w\-]{1,}\w))(:[0-9]{1,5})?(/[\w\-/\.]*)?$";
+        public const string AbsoluteWebFolderUrl = @"^http(s)?:\/\/(?:(?!-)[\w\-]{1,63}(?<!-)|(?:(?!-)[\w\-]{1,63}(?<!-)\.)+(?:(?!-)[\w\-]{1,}\w))(:[0-9]{1,5})?(\/[\w\-\/\.]*)?$$";
         public const string RelativeWebFolderUrl = @"^/([\w\-_\./]*$)";
         public const string AbsoluteWindowsFolderPath = @"^(([a-zA-Z]:\\)|(\\))([\w\-\\\.]*)$";
         public const string RelativeWindowsFolderPath = @"^([\w\-\\\.]*)$";
-        public const string DomainName = @"^(?:[\w\-]{1,63}|(?:(?!\d+\.|-)[\w\-]{1,63}(?<!-)\.)+(?:[\w\-]{1,}\w))(:[0-9]{1,5})?$";
+        public const string DomainName = @"^(?:(?!-)[\w\-]{1,63}(?<!-)|(?:(?!-)[\w\-]{1,63}(?<!-)\.)+(?:(?!-)[\w\-]{1,}\w))(:[0-9]{1,5})?$";
         public const string FileName = @"^[\w\- ]+[\w\-. ]*$";
         public const string RgbColor = @"^[a-fA-F0-9]{6}$";
     }
