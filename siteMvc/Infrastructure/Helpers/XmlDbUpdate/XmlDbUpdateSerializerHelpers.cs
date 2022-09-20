@@ -122,6 +122,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                     result.Add(XmlDbUpdateXDocumentConstants.ActionNewChildLinkIdsAttribute, action.NewChildLinkIds);
                     break;
                 case ActionCode.AddNewCustomAction:
+                case ActionCode.CreateLikeCustomAction:
                     result.Add(XmlDbUpdateXDocumentConstants.ActionActionId, action.ActionId);
                     result.Add(XmlDbUpdateXDocumentConstants.ActionActionCode, action.ActionCode);
                     break;
@@ -221,6 +222,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.CreateLikeContent:
                 case ActionCode.AddNewContent:
                     return action.Attribute(XmlDbUpdateXDocumentConstants.ActionFieldIdsAttribute).GetValueOrDefault<string>();
+                case ActionCode.CreateLikeCustomAction:
+                    return action.Attribute(XmlDbUpdateXDocumentConstants.ActionActionId).GetValueOrDefault<string>();
                 case ActionCode.FieldProperties:
                 case ActionCode.AddNewField:
                 case ActionCode.CreateLikeField:
@@ -274,6 +277,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         {
             switch (GetCode(action))
             {
+                case ActionCode.CreateLikeCustomAction:
                 case ActionCode.AddNewCustomAction:
                     return action.Attribute(XmlDbUpdateXDocumentConstants.ActionActionCode).GetValueOrDefault<string>();
                 default:

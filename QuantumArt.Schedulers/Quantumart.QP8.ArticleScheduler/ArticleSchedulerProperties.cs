@@ -7,7 +7,8 @@ namespace Quantumart.QP8.ArticleScheduler
     {
         public ArticleSchedulerProperties()
         {
-
+            RecurrentTimeout = TimeSpan.FromMinutes(1);
+            PrtgLoggerTasksQueueCheckShiftTime = TimeSpan.FromMinutes(3);
         }
 
         public ArticleSchedulerProperties(QPublishingOptions options)
@@ -26,8 +27,5 @@ namespace Quantumart.QP8.ArticleScheduler
         public string ConfigServiceToken { get; set; }
 
         public string XmlConfigPath { get; set; }
-
-        public string MailHost { get; set; }
-
     }
 }

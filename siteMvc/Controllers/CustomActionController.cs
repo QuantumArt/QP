@@ -250,11 +250,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CreateLikeCustomAction)]
         [BackendActionContext(ActionCode.CreateLikeCustomAction)]
         [BackendActionLog]
-        public ActionResult Copy(string tabId, int parentId, int id, IFormCollection collection)
+        public ActionResult Copy(int id, string tabId, int parentId, int? forceId, int? forceActionId, string forceActionCode, IFormCollection collection)
         {
             var action = _service.ReadForModify(id);
             var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
-            var result = _service.Copy(id, model.SelectedActionsIds);
+            var result = _service.Copy(id, model.SelectedActionsIds, forceId, forceActionId, forceActionCode);
+            PersistResultId(result.Data.Id);
+            PersistFromId(id);
+            PersistActionId(result.Data.ActionId);
+            PersistActionCode(result.Data.Action.Code);
             return JsonMessageResult(result.Message);
         }
     }
