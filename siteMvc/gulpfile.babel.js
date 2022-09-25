@@ -16,6 +16,7 @@ es6Promise.polyfill();
 const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
 
 const project = JSON.parse(fs.readFileSync('../package.json'));
+const sass = require('gulp-sass')(require('node-sass'));
 
 const custom = {
   project,
@@ -253,7 +254,7 @@ gulp.task('assets:css', () => gulp.src(custom.paths.styles)
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
-  .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
+  .pipe(sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
   .pipe($.replace(/url\('/g, 'url(\'images/'))
   .pipe($.autoprefixer())
   .pipe($.cssnano({ zindex: false }))
@@ -268,7 +269,7 @@ gulp.task('assets-logon:css', () => gulp.src(custom.paths.stylesLogon)
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
-  .pipe($.sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
+  .pipe(sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
   .pipe($.replace(/url\('/g, 'url(\'images/'))
   .pipe($.autoprefixer())
   .pipe($.cssnano({ zindex: false }))
