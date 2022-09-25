@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
@@ -117,7 +118,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
         }
 
-        private string GetCurrentUser() => HttpContext.User.Identity is WindowsIdentity wi ? wi.Name : null;
+        private string GetCurrentUser() => HttpContext.User.Identity is WindowsIdentity wi && RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? wi.Name : null;
 
         private bool IsWindowsAuthentication() => HttpContext.User.Identity is WindowsIdentity;
 
