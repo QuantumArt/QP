@@ -5,13 +5,16 @@ namespace Quantumart.QP8.ArticleScheduler
 {
     public class ArticleSchedulerProperties
     {
+        private const int DefaultRecurrentTimeout = 1;
+        private const int DefaultPrtgLoggerTasksQueueCheckShiftTime = 3;
+
         public ArticleSchedulerProperties()
         {
-            RecurrentTimeout = TimeSpan.FromMinutes(1);
-            PrtgLoggerTasksQueueCheckShiftTime = TimeSpan.FromMinutes(3);
+            RecurrentTimeout = TimeSpan.FromMinutes(DefaultRecurrentTimeout);
+            PrtgLoggerTasksQueueCheckShiftTime = TimeSpan.FromMinutes(DefaultPrtgLoggerTasksQueueCheckShiftTime);
         }
 
-        public ArticleSchedulerProperties(QPublishingOptions options)
+        public ArticleSchedulerProperties(QPublishingOptions options) : this()
         {
             XmlConfigPath = options.QpConfigPath;
             ConfigServiceUrl = options.QpConfigUrl;
