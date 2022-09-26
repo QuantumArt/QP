@@ -48,7 +48,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return string.Empty;
             }
 
-            var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
+            var hostingEnvironment = HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
 
             // TODO: review resolver directory path
             return hostingEnvironment.ContentRootFileProvider.GetFileInfo(rootUrl + RELATIVE_PATH_TO_COPY).PhysicalPath;

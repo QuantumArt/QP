@@ -48,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 NewCommandIds = GetContextData<string>(httpContext, HttpContextItems.NewCommandIds),
                 NewRulesIds = GetContextData<string>(httpContext, HttpContextItems.NewRulesIds),
                 NotificationFormatId = GetContextData<int>(httpContext, HttpContextItems.NotificationFormatId),
-                DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId)
+                DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId),
             };
 
             if (!ignoreForm && httpContext.Request.HasFormContentType)
@@ -211,12 +211,31 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                     break;
 
                 case ActionCode.AddNewCustomAction:
-                    action.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
-                    if (options.Contains(EntityTypeCode.BackendAction))
+                    if (options.Contains(EntityTypeCode.CustomAction))
                     {
-                        action.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildId.ToString());
+                        action.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
                     }
 
+                    action.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
+
+                    if (options.Contains(EntityTypeCode.BackendAction))
+                    {
+                        action.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildIds);
+                    }
+                    break;
+
+                case ActionCode.CreateLikeCustomAction:
+                    if (options.Contains(EntityTypeCode.CustomAction))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
+                    }
+
+                    action.Form.Add(HttpContextFormConstants.ForceActionCode, action.CustomActionCode);
+
+                    if (options.Contains(EntityTypeCode.BackendAction))
+                    {
+                        action.Form.Add(HttpContextFormConstants.ForceActionId, action.ChildIds);
+                    }
                     break;
 
                 case ActionCode.AddNewVisualEditorPlugin:

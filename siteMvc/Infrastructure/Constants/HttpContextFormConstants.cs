@@ -30,6 +30,8 @@
         public const string ForceLinkId = "forceLinkId";
         public const string ForceLinkIds = "forceLinkIds";
         public const string ForceFieldIds = "forceFieldIds";
+        public const string ForceActionId = "forceActionId";
+        public const string ForceActionCode = "forceActionCode";
         public const string BindedUserIds = "BindedUserIDs";
         public const string ParentGroupId = "ParentGroupId";
         public const string ForceChildLinkIds = "forceChildLinkIds";

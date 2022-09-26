@@ -58,6 +58,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
             // CustomActionController
             ActionCode.AddNewCustomAction,
+            ActionCode.CreateLikeCustomAction,
 
             // FieldController
             ActionCode.AddNewField,

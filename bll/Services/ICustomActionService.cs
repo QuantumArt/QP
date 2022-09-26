@@ -34,6 +34,6 @@ namespace Quantumart.QP8.BLL.Services
 
         InitListResult InitList(int parentId);
 
-        CopyResult Copy(int id, int[] selectedActionsIds);
+        CustomActionCopyResult Copy(int id, int[] selectedActionsIds, int? forceId, int? forceActionId, string forceActionCode);
     }
 }

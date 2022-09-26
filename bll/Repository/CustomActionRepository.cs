@@ -188,6 +188,11 @@ namespace Quantumart.QP8.BLL.Repository
                 actionDal.Id = customAction.ForceActionId;
             }
 
+            if (!string.IsNullOrEmpty(customAction.ForceActionCode))
+            {
+                actionDal.Code = customAction.ForceActionCode;
+            }
+
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.BackendAction);
             entities.SaveChanges();
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.BackendAction);
@@ -196,13 +201,16 @@ namespace Quantumart.QP8.BLL.Repository
             customActionDal.LastModifiedBy = QPContext.CurrentUserId;
             customActionDal.Action = actionDal;
 
-
             using (new QPConnectionScope())
             {
                 customActionDal.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
                 customActionDal.Modified = customActionDal.Created;
             }
 
+            if (customAction.ForceId != 0)
+            {
+                customActionDal.Id = customAction.ForceId;
+            }
             entities.Entry(customActionDal).State = EntityState.Added;
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.CustomAction, customAction);

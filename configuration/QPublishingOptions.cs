@@ -10,7 +10,6 @@ namespace Quantumart.QP8.Configuration
             UploadMaxSize = 100;
             RelationCountLimit = Default.RelationCountLimit;
             CommandTimeout = 120;
-            Authentication = new Authentication();
             Globalization = new Globalization();
             CookieTimeout = 1440;
             SessionTimeout = 60;
@@ -52,10 +51,6 @@ namespace Quantumart.QP8.Configuration
         public int SessionTimeout { get; set; }
 
         public bool Set500ForHandledExceptions { get; set; }
-
-        public int MaxJsonDeserializerMembers { get; set; }
-
-        public Authentication Authentication { get; set; }
 
         public Globalization Globalization { get; set; }
 

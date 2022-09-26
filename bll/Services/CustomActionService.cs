@@ -11,6 +11,11 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
+    public class CustomActionCopyResult : CopyResult
+    {
+        public CustomAction Data { get; set; }
+    }
+
     public class CustomActionService : ICustomActionService
     {
         private const string ControllerActionUrl = @"~/CustomAction/Execute/";
@@ -85,9 +90,9 @@ namespace Quantumart.QP8.BLL.Services
             return customAction;
         }
 
-        public CopyResult Copy(int id, int[] selectedActionsIds)
+        public CustomActionCopyResult Copy(int id, int[] selectedActionsIds, int? forceId, int? forceActionId, string forceActionCode)
         {
-            var result = new CopyResult();
+            var result = new CustomActionCopyResult();
             var action = ReadForModify(id);
             action.Id = 0;
             if (action.Action != null)
@@ -108,7 +113,10 @@ namespace Quantumart.QP8.BLL.Services
             if (result.Message == null)
             {
                 action = Normalize(action, selectedActionsIds);
-                action = CustomActionRepository.Copy(action);
+                action.ForceId = forceId ?? 0;
+                action.ForceActionCode = forceActionCode;
+                action.ForceActionId = forceActionId ?? 0;
+                result.Data = CustomActionRepository.Copy(action);
             }
 
             return result;
