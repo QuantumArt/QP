@@ -3,7 +3,6 @@
 import fs from 'fs';
 import del from 'del';
 import gulp from 'gulp';
-import gutil from 'gulp-util';
 import chalk from 'chalk';
 import bs from 'browser-sync';
 import { argv } from 'yargs';
@@ -14,6 +13,9 @@ import webpack from 'webpack';
 import imagemin from 'gulp-imagemin';
 import nodeSass from 'node-sass';
 import gulpSass from 'gulp-sass';
+import log from 'fancy-log';
+import PluginError from 'plugin-error';
+import through from 'through2';
 
 
 es6Promise.polyfill();
@@ -39,10 +41,6 @@ if (process.env.NODE_ENV
 }
 
 if (argv.env && (argv.env.toLowerCase() === 'production' || argv.env.toLowerCase() === 'release')) {
-  custom.config.environment = 'production';
-}
-
-if ($.util.env.production) {
   custom.config.environment = 'production';
 }
 
@@ -201,7 +199,7 @@ gulp.task('assets:vendorsjs', () => {
     compress: {
       sequences: false
     }
-  }) : $.util.noop())
+  }) : through.obj())
   .pipe($.concat('vendors.js'))
   .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
@@ -219,7 +217,7 @@ gulp.task('assets-logon:vendorsjs', () => {
     compress: {
       sequences: false
     }
-  }) : $.util.noop())
+  }) : through.obj())
   .pipe($.concat('vendors-logon.js'))
   .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
@@ -234,9 +232,9 @@ gulp.task('assets-logon:vendorsjs', () => {
 gulp.task('webpack:qpjs', (done) => {
   webpack(require('./webpack.config.js'), (err, stats) => {
     if (err) {
-      throw new gutil.PluginError('webpack:qpjs', err);
+      throw new PluginError('webpack:qpjs', err);
     }
-    gutil.log('[webpack:qpjs]', stats.toString({ colors: true }));
+    log('[webpack:qpjs]', stats.toString({ colors: true }));
     notifier.notify({ title: 'Part task was completed', message: 'webpack:qpjs task complete' });
   });
   done();
