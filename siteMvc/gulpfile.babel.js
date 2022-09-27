@@ -3,7 +3,6 @@
 import fs from 'fs';
 import del from 'del';
 import gulp from 'gulp';
-import gutil from 'gulp-util';
 import chalk from 'chalk';
 import bs from 'browser-sync';
 import { argv } from 'yargs';
@@ -11,13 +10,19 @@ import loadPlugins from 'gulp-load-plugins';
 import es6Promise from 'es6-promise';
 import notifier from 'node-notifier';
 import webpack from 'webpack';
+import imagemin from 'gulp-imagemin';
+import nodeSass from 'node-sass';
+import gulpSass from 'gulp-sass';
+import log from 'fancy-log';
+import PluginError from 'plugin-error';
+import through from 'through2';
+
 
 es6Promise.polyfill();
 const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
 
 const project = JSON.parse(fs.readFileSync('../package.json'));
-const sass = require('gulp-sass')(require('node-sass'));
-
+const sass = gulpSass(nodeSass);
 const custom = {
   project,
   config: {
@@ -36,10 +41,6 @@ if (process.env.NODE_ENV
 }
 
 if (argv.env && (argv.env.toLowerCase() === 'production' || argv.env.toLowerCase() === 'release')) {
-  custom.config.environment = 'production';
-}
-
-if ($.util.env.production) {
   custom.config.environment = 'production';
 }
 
@@ -154,15 +155,13 @@ custom.paths = {
     'Static/**/*.{jpg,jpeg,png,gif,svg}',
     '!Static/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
     '!Static/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
-    '!Static/build/**/*.{jpg,jpeg,png,gif,svg}',
     '!Static/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
     'Scripts/Quantumart/**/*.{min.js,map}',
     'Static/custom/**/*.{min.css,map}',
     custom.destPaths.scripts,
-    custom.destPaths.styles,
-    custom.destPaths.images
+    'Static/build/**/*.css'
   ]
 };
 
@@ -190,13 +189,8 @@ custom.reportError = function (error) {
   this.emit('end');
 };
 
-gulp.task('assets:js', ['assets:vendorsjs', 'webpack:qpjs'], () => gulp.src(custom.destPaths.scripts)
-  .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true })));
-
-gulp.task('assets-logon:js', ['assets-logon:vendorsjs', 'webpack:qpjs'], () => gulp.src(custom.destPaths.scripts)
-  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:js task complete', onLast: true })));
-
-gulp.task('assets:vendorsjs', () => gulp.src(custom.paths.vendorsjs, { base: './' })
+gulp.task('assets:vendorsjs', () => {
+  return gulp.src(custom.paths.vendorsjs, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -205,14 +199,16 @@ gulp.task('assets:vendorsjs', () => gulp.src(custom.paths.vendorsjs, { base: './
     compress: {
       sequences: false
     }
-  }) : $.util.noop())
+  }) : through.obj())
   .pipe($.concat('vendors.js'))
   .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
   .pipe($.size({ title: 'assets:vendorsjs', showFiles: true }))
-  .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true })));
+  .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true }));
+});
 
-gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, { base: './' })
+gulp.task('assets-logon:vendorsjs', () => {
+  return gulp.src(custom.paths.vendorsjsLogon, { base: './' })
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -221,7 +217,7 @@ gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, 
     compress: {
       sequences: false
     }
-  }) : $.util.noop())
+  }) : through.obj())
   .pipe($.concat('vendors-logon.js'))
   .pipe($.sourcemaps.write(''))
   .pipe(gulp.dest(custom.destPaths.scripts))
@@ -230,27 +226,47 @@ gulp.task('assets-logon:vendorsjs', () => gulp.src(custom.paths.vendorsjsLogon, 
     title: 'Part task was completed',
     message: 'assets-logon:vendorsjs task complete',
     onLast: true
-  })));
-
-gulp.task('webpack:qpjs', callback => {
-  webpack(require('./webpack.config.js'), (err, stats) => {
-    if (err) {
-      throw new gutil.PluginError('webpack:qpjs', err);
-    }
-    gutil.log('[webpack:qpjs]', stats.toString({ colors: true }));
-    notifier.notify({ title: 'Part task was completed', message: 'webpack:qpjs task complete' });
-    callback();
-  });
+  }));
 });
 
-gulp.task('assets:img', () => gulp.src(custom.paths.images)
-  .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.newer(custom.destPaths.images))
-  .pipe($.imagemin({ optimizationLevel: 3, progessive: true, interlaced: true }))
-  .pipe(gulp.dest(custom.destPaths.images))
-  .pipe($.notify({ title: 'Task was completed', message: 'assets:img task complete', onLast: true })));
+gulp.task('webpack:qpjs', (done) => {
+  webpack(require('./webpack.config.js'), (err, stats) => {
+    if (err) {
+      throw new PluginError('webpack:qpjs', err);
+    }
+    log('[webpack:qpjs]', stats.toString({ colors: true }));
+    notifier.notify({ title: 'Part task was completed', message: 'webpack:qpjs task complete' });
+  });
+  done();
+});
 
-gulp.task('assets:css', () => gulp.src(custom.paths.styles)
+gulp.task('assets:js', gulp.series('assets:vendorsjs', 'webpack:qpjs', () => {
+  return gulp.src(custom.destPaths.scripts)
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true }));
+}));
+
+gulp.task('assets-logon:js', gulp.series('assets-logon:vendorsjs', 'webpack:qpjs', () => 
+{
+  return gulp.src(custom.destPaths.scripts)
+  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:js task complete', onLast: true }));
+}));
+
+gulp.task('assets:img', () => {
+  return gulp.src(custom.paths.images)
+  .pipe($.plumber({ errorHandler: custom.reportError }))
+  .pipe(imagemin(
+    [
+      imagemin.gifsicle({interlaced: true}),
+      imagemin.mozjpeg({quality: 75, progressive: true}),
+      imagemin.optipng({optimizationLevel: 3})
+    ], {verbose: true})
+  )
+  .pipe(gulp.dest(custom.destPaths.images))
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:img task complete', onLast: true }))
+});
+
+gulp.task('assets:css', () => {
+  return gulp.src(custom.paths.styles)
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -263,9 +279,11 @@ gulp.task('assets:css', () => gulp.src(custom.paths.styles)
   .pipe(gulp.dest(custom.destPaths.styles))
   .pipe(bs.stream({ match: '**/*.css' }))
   .pipe($.size({ title: 'assets:css', showFiles: true }))
-  .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true })));
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true }))
+});
 
-gulp.task('assets-logon:css', () => gulp.src(custom.paths.stylesLogon)
+gulp.task('assets-logon:css', () => {
+  return gulp.src(custom.paths.stylesLogon)
   .pipe($.plumber({ errorHandler: custom.reportError }))
   .pipe($.sourcemaps.init({ loadMaps: false }))
   .pipe($.sourcemaps.identityMap())
@@ -278,12 +296,15 @@ gulp.task('assets-logon:css', () => gulp.src(custom.paths.stylesLogon)
   .pipe(gulp.dest(custom.destPaths.styles))
   .pipe(bs.stream({ match: '**/*.css' }))
   .pipe($.size({ title: 'assets-logon:css', showFiles: true }))
-  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:css task complete', onLast: true })));
+  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:css task complete', onLast: true }))
+});
 
-gulp.task('clean', () => del(custom.paths.clean));
+gulp.task('clean', () => { 
+  return del(custom.paths.clean)
+});
 
 gulp.task('browserSync', () => {
-  bs.init([custom.paths.styles], {
+  return bs.init([custom.paths.styles], {
     proxy: 'http://localhost:90/Backend'
   });
 });
@@ -294,19 +315,19 @@ gulp.task('watch', () => {
     ${chalk.underline.bgCyan('running tasks...')}`
   );
 
-  gulp.watch(custom.paths.styles, ['assets:css']).on('change', reportOnChange);
+  return gulp.watch(custom.paths.styles, ['assets:css']).on('change', reportOnChange);
 });
 
-gulp.task('serve', ['watch', 'browserSync']);
-gulp.task('default', ['clean'], () => {
+gulp.task('serve', gulp.series('watch', 'browserSync'));
+gulp.task('start', gulp.series('clean', (done) => {
   const welcomeMsg = `\nGulp tasks were started in ${chalk.blue.underline.yellow(custom.config.environment)} mode.\n`;
 
   global.console.log(welcomeMsg);
   notifier.notify({ title: welcomeMsg, message: 'gulp is running' });
-  gulp.start('assets:js', 'assets-logon:js', 'assets:css', 'assets-logon:css', 'assets:img');
-});
+  done();
+}));
 
-module.exports = gulp;
+module.exports.default = gulp.series('start', 'assets:js', 'assets-logon:js', 'assets:css', 'assets-logon:css', 'assets:img');
 
 // Install Steps:
 // 1. Install external node js and npm from official site
