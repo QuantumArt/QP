@@ -86,6 +86,11 @@
     "axios": "^0.21.4",
     "engine.io": "^6.2.0",
     "follow-redirects": "^1.15.2",
-    "yargs-parser": "^21.1.1"
+    "yargs-parser": "^21.1.1",
+    "glob-parent": "^5.1.2",
+    "kind-of": "^6.0.3",
+    "is-svg": "^4.3.0",
+    "semver-regex": "^3.1.4",
+    "js-yaml": "^3.13.1"
   }
 }
