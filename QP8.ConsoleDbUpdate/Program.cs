@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Mono.Options;
 using QP8.Infrastructure.Extensions;
@@ -7,6 +8,10 @@ using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationProvider;
 using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -40,6 +45,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         public static void Main(string[] args)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             // TODO: REMOVE AFTER RESHARPER FIX BUG https://youtrack.jetbrains.com/issue/RSRP-466882
             if (args.Contains("--disablePipedInput"))
             {
@@ -58,16 +66,20 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 ConsoleHelpers.PrintHelloMessage();
                 ConsoleHelpers.ReadFromStandardInput();
 
-                var selectedMode = ConsoleHelpers.GetUtilityMode(args);
+                ConsoleKey selectedMode = ConsoleHelpers.GetUtilityMode(args);
                 Logger.SetLogLevel(VerboseLevel);
 
-                var argsParser = ConsoleArgsProcessorFactory.Create(selectedMode);
-                var settings = argsParser.ParseConsoleArguments(args);
+                BaseConsoleArgsProcessor argsParser = ConsoleArgsProcessorFactory.Create(selectedMode);
+                BaseSettingsModel settings = argsParser.ParseConsoleArguments(args);
                 Logger.Debug($"Parsed settings: {settings.ToJsonLog()}");
 
-                var factory = new WebApplicationFactory<Startup>();
-                factory.CreateDefaultClient();
-                var dataProcessor = DataProcessorFactory.Create(
+                WebApplicationFactory<Startup> factory = new();
+                _ = factory.CreateDefaultClient();
+
+                IConfigurationProvider provider = ConfigurationProviderFactory.Create(settings, Logger);
+                provider.UpdateSettings();
+
+                IDataProcessor dataProcessor = DataProcessorFactory.Create(
                     settings, factory.Server.Host.Services, factory.CreateClient()
                     );
 

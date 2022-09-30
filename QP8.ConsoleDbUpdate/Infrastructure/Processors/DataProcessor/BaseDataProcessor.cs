@@ -1,4 +1,3 @@
-using Irony.Parsing;
 using QP8.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
@@ -11,15 +10,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
     {
         protected BaseDataProcessor(BaseSettingsModel dataSettings)
         {
-            SetupQpContext(dataSettings.CustomerCode, dataSettings.DbType);
+            SetupQpContext(dataSettings.CustomerCodeOrConnectionString, dataSettings.DbType);
         }
 
         private static void SetupQpContext(string connectionStringOrCustomerCode, DatabaseType dbType)
         {
-            if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, (QP.ConfigurationService.Models.DatabaseType)(int)dbType, out var cnsBuilder))
+            if (SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, (QP.ConfigurationService.Models.DatabaseType)(int)dbType, out System.Data.Common.DbConnectionStringBuilder cnsBuilder))
             {
                 QPContext.CurrentDbConnectionInfo = new QpConnectionInfo(
-                    QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString, dbType:dbType),
+                    QPConfiguration.TuneConnectionString(cnsBuilder.ConnectionString, dbType: dbType),
                     dbType
                 );
             }
@@ -35,8 +34,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         public abstract void Process(string inputData);
 
-        protected static string GetConnectionString(string connectionStringOrCustomerCode, DatabaseType dbType) => SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, (QP.ConfigurationService.Models.DatabaseType)(int)dbType,  out var cnsBuilder)
+        protected static string GetConnectionString(string connectionStringOrCustomerCode, DatabaseType dbType)
+        {
+            return SqlHelpers.TryParseConnectionString(connectionStringOrCustomerCode, (QP.ConfigurationService.Models.DatabaseType)(int)dbType, out System.Data.Common.DbConnectionStringBuilder cnsBuilder)
             ? cnsBuilder.ConnectionString
             : QPConfiguration.GetConnectionString(connectionStringOrCustomerCode);
+        }
     }
 }
