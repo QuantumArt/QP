@@ -102,7 +102,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
             _ = optionSet.Add("t|type=", "database type, 0 (default) - SqlServer, 1 - postgres", c => { DbType = Enum.TryParse<DatabaseType>(c, out DatabaseType dbtype) ? dbtype : DatabaseType.SqlServer; });
             _ = optionSet.Add("f|file=", "full path to qp xml config file", f => QpConfigPath = f);
-            _ = optionSet.Add("s|service=", "url to qp configuration service", u => QpConfigUrl = u);
+            _ = optionSet.Add("o|onlineStore=", "url to qp configuration service", u => QpConfigUrl = u);
             _ = optionSet.Add("j|jwt=", "jwt token for access qp configuration service", j => QpConfigToken = j);
             _ = optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             _ = optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
