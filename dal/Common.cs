@@ -2326,11 +2326,11 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
         public static IEnumerable<DataRow> GetSessionsPage(DbConnection sqlConnection, bool isFailed, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0) => GetSimplePagedList(
             sqlConnection,
             EntityTypeCode.CustomerCode,
-            "[SESSION_ID] AS SessionId, [LOGIN] as [Login], [USER_ID] as [UserId], [START_TIME] as [StartTime], [END_TIME] as [EndTime], [IP]" +
-            ", [BROWSER] as Browser, [SERVER_NAME] as ServerName, [AUTO_LOGGED] as AutoLogged, [SID] as [Sid], [IS_QP7] as IsQP7",
-            "dbo.[SESSIONS_LOG]",
-            !string.IsNullOrEmpty(orderBy) ? orderBy : "[SessionId] DESC",
-            isFailed ? "[USER_ID] IS NULL" : "[USER_ID] IS NOT NULL",
+            "SESSION_ID AS SessionId, LOGIN as Login, USER_ID as UserId, START_TIME as StartTime, END_TIME as EndTime, IP" +
+            ", BROWSER as Browser, SERVER_NAME as ServerName, AUTO_LOGGED as AutoLogged, SID as Sid, IS_QP7 as IsQP7",
+            "SESSIONS_LOG",
+            !string.IsNullOrEmpty(orderBy) ? orderBy : "SessionId DESC",
+            isFailed ? "USER_ID IS NULL" : "USER_ID IS NOT NULL",
             startRow,
             pageSize,
             out totalRecords
