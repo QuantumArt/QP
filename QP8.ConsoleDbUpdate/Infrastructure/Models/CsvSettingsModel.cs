@@ -7,7 +7,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
 {
     internal class CsvSettingsModel : BaseSettingsModel
     {
-        [JsonProperty]
+        [JsonIgnore]
         public CsvConfiguration CsvConfiguration { get; set; }
 
         [JsonProperty]
