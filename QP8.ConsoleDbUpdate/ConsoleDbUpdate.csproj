@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <AssemblyName>ConsoleDbUpdate</AssemblyName>
@@ -19,7 +19,10 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="2.16.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Mono.Options" Version="5.3.0.1" />
     <PackageReference Include="NLog" Version="4.7.4" />
+    <PackageReference Include="QP.ConfigurationService.Client" Version="0.2.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 </Project>

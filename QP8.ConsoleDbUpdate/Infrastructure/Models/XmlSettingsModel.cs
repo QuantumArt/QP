@@ -18,8 +18,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         internal readonly bool DisableDataIntegrity;
 
-        public XmlSettingsModel(IList<string> filePathes, string customerCode, DatabaseType dbType, string configPath, bool generateNewFieldIds, bool generateNewContentIds, bool useGuidSubstitution, bool disableDataIntegrity)
-            : base(filePathes, customerCode, dbType, configPath)
+        public XmlSettingsModel(
+            IList<string> filePathes,
+            string customerCode,
+            DatabaseType dbType,
+            bool generateNewFieldIds,
+            bool generateNewContentIds,
+            bool useGuidSubstitution,
+            bool disableDataIntegrity,
+            string connectionString)
+            : base(filePathes, customerCode, dbType, connectionString)
         {
             GenerateNewFieldIds = generateNewFieldIds;
             GenerateNewContentIds = generateNewContentIds;

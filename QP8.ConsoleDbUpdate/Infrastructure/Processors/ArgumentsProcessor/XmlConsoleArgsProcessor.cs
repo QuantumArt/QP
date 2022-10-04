@@ -21,8 +21,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             };
         }
 
-        protected internal override BaseSettingsModel CreateSettingsFromArguments() =>
-            new XmlSettingsModel(FilePathes, CustomerCode, DbType, ConfigPath, _generateNewFieldIds, _generateNewContentIds, _useGuidSubstitution, _disableDataIntegrity);
+        protected internal override BaseSettingsModel CreateSettingsFromArguments()
+        {
+            return new XmlSettingsModel(
+                Settings.FilePathes,
+                Settings.CustomerCode,
+                Settings.DbType,
+                _generateNewFieldIds,
+                _generateNewContentIds,
+                _useGuidSubstitution,
+                _disableDataIntegrity,
+                Settings.ConnectionString);
+        }
 
         protected internal override void PrintEnteredData()
         {
@@ -37,7 +47,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         {
             if (!string.IsNullOrWhiteSpace(disableOption))
             {
-                foreach (var option in disableOption.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (string option in disableOption.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     switch (option.ToLower())
                     {

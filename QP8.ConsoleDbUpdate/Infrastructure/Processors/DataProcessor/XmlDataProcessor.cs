@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
@@ -21,7 +20,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateActionCorrecterService actionCorrecterService,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
-            HttpClient client,
             IServiceProvider provider
             )
             : base(settings)
@@ -43,7 +41,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         public override void Process()
         {
-            var xmlActionsString = XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath, (XmlSettingsModel)_settings);
+            string xmlActionsString = XmlReaderProcessor.Process(_settings.FilePathes);
             _xmlDbUpdateReplayService.Process(xmlActionsString, _settings.FilePathes);
         }
 
