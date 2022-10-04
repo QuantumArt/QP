@@ -17,14 +17,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
             IList<string> filePathes,
             string customerCode,
             DatabaseType dbType,
-            string configPath,
             CsvConfiguration csvConfiguration,
             bool updateExisting,
-            string qpConfigUrl,
-            string qpConfigToken,
-            string qpConfigPath,
             string connectionString)
-            : base(filePathes, customerCode, dbType, configPath, qpConfigUrl, qpConfigToken, qpConfigPath, connectionString)
+            : base(filePathes, customerCode, dbType, connectionString)
         {
             CsvConfiguration = csvConfiguration;
             UpdateExisting = updateExisting;

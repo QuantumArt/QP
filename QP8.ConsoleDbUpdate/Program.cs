@@ -11,7 +11,6 @@ using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor;
-using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationProvider;
 using Quantumart.QP8.WebMvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -75,9 +74,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
                 WebApplicationFactory<Startup> factory = new();
                 _ = factory.CreateDefaultClient();
-
-                IConfigurationProvider provider = ConfigurationProviderFactory.Create(settings, Logger);
-                provider.UpdateSettings();
 
                 IDataProcessor dataProcessor = DataProcessorFactory.Create(
                     settings, factory.Server.Host.Services, factory.CreateClient()

@@ -1,7 +1,9 @@
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
+
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationProvider
 {
     internal interface IConfigurationProvider
     {
-        void UpdateSettings();
+        ApplicationSettings UpdateSettings(ApplicationSettings settings);
     }
 }

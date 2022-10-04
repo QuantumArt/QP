@@ -24,18 +24,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         protected internal override BaseSettingsModel CreateSettingsFromArguments()
         {
             return new XmlSettingsModel(
-                FilePathes,
-                CustomerCode,
-                DbType,
-                ConfigPath,
+                Settings.FilePathes,
+                Settings.CustomerCode,
+                Settings.DbType,
                 _generateNewFieldIds,
                 _generateNewContentIds,
                 _useGuidSubstitution,
                 _disableDataIntegrity,
-                QpConfigUrl,
-                QpConfigToken,
-                QpConfigPath,
-                ConnectionString);
+                Settings.ConnectionString);
         }
 
         protected internal override void PrintEnteredData()

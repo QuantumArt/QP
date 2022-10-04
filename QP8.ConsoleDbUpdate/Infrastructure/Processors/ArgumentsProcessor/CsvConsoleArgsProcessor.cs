@@ -34,10 +34,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         protected internal override BaseSettingsModel CreateSettingsFromArguments()
         {
             return new CsvSettingsModel(
-                FilePathes,
-                CustomerCode,
-                DbType,
-                ConfigPath,
+                Settings.FilePathes,
+                Settings.CustomerCode,
+                Settings.DbType,
                 new CsvConfiguration
                 {
                     HasHeaderRecord = true,
@@ -48,10 +47,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
                     HasExcelSeparator = true
                 },
                 _updateExisting,
-                QpConfigUrl,
-                QpConfigToken,
-                QpConfigPath,
-                ConnectionString);
+                Settings.ConnectionString);
         }
     }
 }

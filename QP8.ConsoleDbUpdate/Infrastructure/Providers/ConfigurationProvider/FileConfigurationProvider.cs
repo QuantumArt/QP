@@ -9,16 +9,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationP
 {
     internal class FileConfigurationProvider : IConfigurationProvider
     {
-        private readonly BaseSettingsModel _settings;
+        private readonly string _qpConfigurationFile;
 
-        public FileConfigurationProvider(BaseSettingsModel settings)
+        public FileConfigurationProvider(string qpConfigurationFile)
         {
-            _settings = settings;
+            _qpConfigurationFile = qpConfigurationFile;
         }
 
-        public void UpdateSettings()
+        public ApplicationSettings UpdateSettings(ApplicationSettings settings)
         {
-            XDocument xmlConfig = XDocument.Load(_settings.QpConfigPath);
+            XDocument xmlConfig = XDocument.Load(_qpConfigurationFile);
 
             XElement customers = xmlConfig.Root.Elements()
                 .Where(e => e.Name == "customers")
@@ -31,13 +31,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationP
 
             XElement customer = customers.Elements()
                 .Where(e => e.Attributes()
-                    .Any(a => a.Name == "customer_name" && a.Value == _settings.CustomerCode)
+                    .Any(a => a.Name == "customer_name" && a.Value == settings.CustomerCode)
                 )
                 .FirstOrDefault();
 
             if (customer is null)
             {
-                throw new OptionException("Can't find customer in qp configuration file", _settings.CustomerCode);
+                throw new OptionException("Can't find customer in qp configuration file", settings.CustomerCode);
             }
 
             string dbType = customer.Attributes()
@@ -60,8 +60,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationP
                 throw new OptionException("Can't find connection string in qp configuration file", nameof(connectionString));
             }
 
-            _settings.DbType = databaseType;
-            _settings.ConnectionString = connectionString;
+            settings.DbType = databaseType;
+            settings.ConnectionString = connectionString;
+
+            return settings;
         }
     }
 }

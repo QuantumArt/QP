@@ -1,4 +1,4 @@
-using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
+using System;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Providers.ConfigurationProvider;
 
@@ -6,24 +6,28 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
 {
     internal class ConfigurationProviderFactory
     {
-        internal static IConfigurationProvider Create(BaseSettingsModel settings, QpUpdateLoggingWrapper logger)
+        internal IConfigurationProvider Create(ConfigurationSettings settings, string connectionString)
         {
-            if (!string.IsNullOrWhiteSpace(settings.ConnectionString))
+            if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                return new DummyConfigurationProvider("Already have connection string, proceeding to playback.", logger);
+                Console.WriteLine("Already have connection string, proceeding to playback.");
+                return new DummyConfigurationProvider();
             }
 
-            if (!string.IsNullOrWhiteSpace(settings.QpConfigPath))
+            if (!string.IsNullOrWhiteSpace(settings.QpConfigurationPath))
             {
-                return new FileConfigurationProvider(settings);
+                Console.WriteLine("Parsing configuration file to find connection string.");
+                return new FileConfigurationProvider(settings.QpConfigurationPath);
             }
 
-            if (!string.IsNullOrWhiteSpace(settings.QpConfigUrl) && !string.IsNullOrWhiteSpace(settings.QpConfigToken))
+            if (!string.IsNullOrWhiteSpace(settings.QpConfigurationServiceUrl) && !string.IsNullOrWhiteSpace(settings.QpConfigurationServiceToken))
             {
-                return new ServiceConfigurationProvider(settings);
+                Console.WriteLine("Retrieving connection string from QP configuration service.");
+                return new ServiceConfigurationProvider(settings.QpConfigurationServiceUrl, settings.QpConfigurationServiceToken);
             }
 
-            return new DummyConfigurationProvider("Fallback to windows registry config retrieving. Works only on windows!", logger);
+            Console.WriteLine("Fallback to windows registry config retrieving. Works only on windows!");
+            return new DummyConfigurationProvider();
         }
     }
 }
