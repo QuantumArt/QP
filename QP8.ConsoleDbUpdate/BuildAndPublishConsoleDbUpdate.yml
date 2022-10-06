@@ -41,6 +41,7 @@ jobs:
           buildArguments: |
             SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha)
           imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
+          buildContext: "$(System.DefaultWorkingDirectory)"
 
       - task: Docker@0
         displayName: 'Push an image'
