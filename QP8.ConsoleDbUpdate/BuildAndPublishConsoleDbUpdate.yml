@@ -1,4 +1,5 @@
-trigger: none
+trigger:
+  - master
 
 jobs:
   - job: BuildConsoleDbUpdateAndPublish
