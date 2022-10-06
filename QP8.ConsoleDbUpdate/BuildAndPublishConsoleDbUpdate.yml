@@ -1,3 +1,5 @@
+trigger: none
+
 jobs:
   - job: BuildConsoleDbUpdateAndPublish
     displayName: "Build docker image"
