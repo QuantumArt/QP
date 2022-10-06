@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Quantumart.QP8.Constants;
 
@@ -13,21 +13,29 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         internal readonly string CustomerCode;
 
         [JsonProperty]
-        internal readonly DatabaseType DbType;
-
-        [JsonProperty]
-        internal readonly string ConfigPath;
+        internal DatabaseType DbType;
 
         [JsonProperty]
         internal readonly int UserId;
 
-        public BaseSettingsModel(IList<string> pathes, string customerCode, DatabaseType dbType, string configPath)
+        [JsonProperty]
+        internal string ConnectionString;
+
+        internal string CustomerCodeOrConnectionString => string.IsNullOrWhiteSpace(ConnectionString)
+                    ? CustomerCode
+                    : ConnectionString;
+
+        public BaseSettingsModel(
+            IList<string> pathes,
+            string customerCode,
+            DatabaseType dbType,
+            string connectionString)
         {
             FilePathes = pathes;
             CustomerCode = customerCode;
             DbType = dbType;
-            ConfigPath = configPath;
             UserId = 1;
+            ConnectionString = connectionString;
         }
     }
 }

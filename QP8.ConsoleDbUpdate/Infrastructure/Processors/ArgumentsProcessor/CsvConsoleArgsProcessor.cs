@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Text;
 using CsvHelper.Configuration;
 using Mono.Options;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor
@@ -32,14 +31,23 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             base.PrintEnteredData();
         }
 
-        protected internal override BaseSettingsModel CreateSettingsFromArguments() => new CsvSettingsModel(FilePathes, CustomerCode, DbType, ConfigPath, new CsvConfiguration
+        protected internal override BaseSettingsModel CreateSettingsFromArguments()
         {
-            HasHeaderRecord = true,
-            TrimFields = true,
-            TrimHeaders = true,
-            Encoding = Encoding.GetEncoding(_encoding),
-            CultureInfo = CultureInfo.GetCultureInfo(_cultureInfo),
-            HasExcelSeparator = true
-        }, _updateExisting);
+            return new CsvSettingsModel(
+                Settings.FilePathes,
+                Settings.CustomerCode,
+                Settings.DbType,
+                new CsvConfiguration
+                {
+                    HasHeaderRecord = true,
+                    TrimFields = true,
+                    TrimHeaders = true,
+                    Encoding = Encoding.GetEncoding(_encoding),
+                    CultureInfo = CultureInfo.GetCultureInfo(_cultureInfo),
+                    HasExcelSeparator = true
+                },
+                _updateExisting,
+                Settings.ConnectionString);
+        }
     }
 }

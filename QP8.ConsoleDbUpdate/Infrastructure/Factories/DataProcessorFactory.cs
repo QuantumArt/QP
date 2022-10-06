@@ -41,7 +41,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                             modelExpressionProvider
                         ),
                         new XmlDbUpdateHttpContextProcessor(),
-                        client,
                         provider
                     );
                 case CsvSettingsModel csvSettings:
