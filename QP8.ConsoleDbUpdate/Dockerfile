@@ -3,7 +3,7 @@ LABEL stage=intermediate
 ENV TZ=Russia/Moscow
 
 WORKDIR /src
-COPY ./*.sln ./NuGet.config ./
+COPY *.sln NuGet.config ./
 ADD projectfiles.tar .
 RUN dotnet restore
 
