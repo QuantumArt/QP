@@ -37,11 +37,10 @@ jobs:
           containerregistrytype: 'Container Registry'
           dockerRegistryConnection: 'spbdocker03'
           action: 'Build an image'
-          dockerFile: 'QP8.ConsoleDbUpdate/Dockerfile'
+          dockerFile: 'QP8.ConsoleDbUpdate/Dockerfile.ConsoleDbUpdate'
           buildArguments: |
             SERVICE_VERSION=$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)-$(GitVersion.Sha)
           imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
-          buildContext: "$(System.DefaultWorkingDirectory)"
 
       - task: Docker@0
         displayName: 'Push an image'
