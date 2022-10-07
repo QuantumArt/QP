@@ -98,7 +98,7 @@ metadata:
   namespace: qp
 spec:
   rules:
-  - host: qp.dev.qsupport.ru
+  - host: "||host||"
     http:
       paths:
       - backend:
