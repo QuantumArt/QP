@@ -52,3 +52,26 @@ jobs:
           dockerRegistryConnection: spbdocker03
           action: 'Push an image'
           imageName: '$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)'
+
+  - job: MakeAndPublishArtifact
+    displayName: "Replace version in kuber-job & push it as artifact"
+    dependsOn:
+      - BuildConsoleDbUpdateAndPublish
+    condition: and(succeeded('BuildConsoleDbUpdateAndPublish'))
+    pool:
+      name: "MSCBUILD03"
+      demands:
+        - agent.os -equals Linux
+    steps:
+      - checkout: self
+        clean: true
+      - task: Shell++@0
+        inputs:
+          type: "InlineScript"
+          cwd: "QP8.ConsoleDbUpdate"
+          script: "sed -i -- 's/||image||/$(service.imageName):$(GitVersion.Tag).$(GitVersion.CommitsSinceTag)/g' *.yaml"
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "."
+          ArtifactName: "Console-DB-Update.Yaml"
+          publishLocation: "Container"

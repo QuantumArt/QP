@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: qpdbupdate
+  namespace: __qpdb_namespace__
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: qpdbupdate
+        logging: enabled
+    spec:
+      containers:
+        - image: __docker_registry_url__/||image||
+          args: ["--config", __qpdb_config_path__, "--path", "/app/storage/"__qpdb_files_path__, "--mode", __qpdb_mode__, "--remoteConfig", __qpdb_remote_config__, "--jwt", __qpdb_jwt__, "--silent", "----disablePipedInput", __qpdb_customer_code__]
+          name: qpdbupdate
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: '1Gi'
+            requests:
+              memory: '256Mi'
+          volumeMounts:
+            - name: storage
+              mountPath: /app/storage
+      restartPolicy: Never
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: qp-config
