@@ -31,6 +31,7 @@ node_modules
 deploy
 deploy_cmd
 *.ps1
+**/*.sh
 LICENSE
 README.md
 global.json
