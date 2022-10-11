@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - image: __docker_registry_url__/||image||
-          args: ["--config", __qpdb_config_path__, "--path", "/app/storage/"__qpdb_files_path__, "--mode", __qpdb_mode__, "--remoteConfig", __qpdb_remote_config__, "--jwt", __qpdb_jwt__, "--silent", "----disablePipedInput", __qpdb_customer_code__]
+          args: ["--config", "__qpdb_config_path__", "--path", "/app/storage/__qpdb_files_path__", "--mode", "__qpdb_mode__", "--remoteConfig", "__qpdb_remote_config__", "--jwt", "__qpdb_jwt__", "--silent", "--disablePipedInput", "__qpdb_customer_code__"]
           name: qpdbupdate
           imagePullPolicy: Always
           resources:
