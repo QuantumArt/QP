@@ -42,8 +42,8 @@ namespace Quantumart.QP8.CommonScheduler
             AddTask<SystemCleanupJob>(configurator, rootSection);
             AddTask<T.CdcDataImportJob>(configurator, rootSection);
             AddTask<T.CheckNotificationQueueJob>(configurator, rootSection);
-            AddTask<T.CdcDataImportJob>(configurator, rootSection);
-            AddTask<T.CheckNotificationQueueJob>(configurator, rootSection);
+            AddTask<E.CdcDataImportJob>(configurator, rootSection);
+            AddTask<E.CheckNotificationQueueJob>(configurator, rootSection);
         }
 
         public static void AddTask<TJob>(IServiceCollectionQuartzConfigurator configurator, IConfigurationSection rootSection)
