@@ -6,7 +6,6 @@
     <RootNamespace>Quantumart.QP8.Security</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <PackageReference Include="NLog" Version="4.7.4" />
     <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="3.6.0" />
   </ItemGroup>
