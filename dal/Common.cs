@@ -9862,122 +9862,158 @@ order by ActionDate desc
             }
         }
 
-        private const string MatchContentsQuery = @"
-            DECLARE @fields TABLE
-            (
-                Id INT NOT NULL,
-                ParentId INT,
-                Name NVARCHAR(255) NOT NULL,
-                [Type] NVARCHAR(255),
-                ContentId INT,
-                UNIQUE (ParentId, Name, [Type], ContentId)
-            )
+        private static string GetMatchContentsQuery(DatabaseType dbType)
+        {
+            string xmlTable;
+            string xmlTableDeclaration;
 
-            INSERT INTO
-                @fields(Id, ParentId, Name, Type, ContentId)
-            SELECT
-                T.N.value('(Id/text())[1]', 'INT') Id,
-                T.N.value('(ParentId/text())[1]', 'INT') ParentId,
-                T.N.value('(Name/text())[1]', 'NVARCHAR(255)') Name,
-                T.N.value('(Type/text())[1]', 'NVARCHAR(255)') Type,
-                T.N.value('(ContentId/text())[1]', 'INT') ContentId
-            FROM
-                @fieldsXml.nodes('ArrayOfFieldInfo/FieldInfo') as T(N)
-            ;
-            WITH
-            Query(Id, ParentId, RootContentId, ContentId, RefContentId, LinkId, Field, BackwardField, AttributeTypeId, DataType) AS
-            (
-                SELECT
-                    f.Id,
-                    f.ParentId,
-                    s.CONTENT_ID,
-                    s.CONTENT_ID,
-                    CASE
-                        WHEN otm.CONTENT_ID IS NOT NULL THEN otm.CONTENT_ID
-                        WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
-                        WHEN mtm.r_content_id IS NOT NULL THEN mtm.r_content_id
-                        WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
-                        ELSE NULL
-                    END,
-                    s.link_id,
-                    f.Name,
-                    CASE
-                        WHEN mto.ATTRIBUTE_NAME IS NOT NULL THEN mto.ATTRIBUTE_NAME
-                        WHEN classifier.ATTRIBUTE_NAME IS NOT NULL THEN classifier.ATTRIBUTE_NAME
-                        ELSE NULL
-                    END,
-                    s.ATTRIBUTE_TYPE_ID,
-                    f.Type
-                FROM
-                    @fields f
-                    JOIN CONTENT_ATTRIBUTE s ON f.Name = s.ATTRIBUTE_NAME
-                    LEFT JOIN CONTENT_ATTRIBUTE otm ON s.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
-                    LEFT JOIN CONTENT_ATTRIBUTE mto ON s.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
-                    LEFT JOIN CONTENT_TO_CONTENT mtm ON s.LINK_ID = mtm.LINK_ID AND s.CONTENT_ID = mtm.l_content_id
-                    LEFT JOIN CONTENT_ATTRIBUTE classifier ON s.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND classifier.CONTENT_ID = f.ContentId
-                WHERE
-                    (
-                        s.IS_CLASSIFIER = 0 OR
-                        classifier.CONTENT_ID IS NOT NULL
-                    ) AND
-                    (
-                        otm.CONTENT_ID IS NOT NULL OR
-                        mto.CONTENT_ID IS NOT NULL OR
-                        mtm.r_content_id IS NOT NULL OR
-                        f.Type IS NULL OR
-                        f.Type = 'date' AND s.ATTRIBUTE_TYPE_ID IN (4, 5, 6) OR
-                        f.Type = 'string' AND s.ATTRIBUTE_TYPE_ID IN (1, 7, 8, 9, 10, 12) OR
-                        f.Type = 'numeric' AND s.ATTRIBUTE_TYPE_ID IN (2, 3)
-                    )
-            ),
-            FlatQuery(Id, RootContentId, ContentId, RefContentId, LinkId, Alias, ParentAlias, Field, BackwardField, AttributeTypeId, DataType) AS
-            (
-                SELECT
-                    Id,
-                    RootContentId,
-                    ContentId,
-                    RefContentId,
-                    LinkId,
-                    CAST('root_' + Field AS NVARCHAR(MAX)),
-                    CAST('root' AS NVARCHAR(MAX)),
-                    Field,
-                    BackwardField,
-                    AttributeTypeId,
-                    DataType
-                FROM Query
-                    WHERE ParentId IS NULL
+            switch (dbType)
+            {
+                case DatabaseType.SqlServer:
+                    xmlTable = "@fields";
+                    xmlTableDeclaration = @$"
+                        DECLARE {xmlTable} TABLE
+                        (
+                            Id INT NOT NULL,
+                            ParentId INT,
+                            Name NVARCHAR(255) NOT NULL,
+                            [Type] NVARCHAR(255),
+                            ContentId INT,
+                            UNIQUE (ParentId, Name, [Type], ContentId)
+                        )
 
-                UNION ALL
+                        INSERT INTO
+                            {xmlTable}(Id, ParentId, Name, Type, ContentId)
+                        SELECT
+                            T.N.value('(Id/text())[1]', 'INT') Id,
+                            T.N.value('(ParentId/text())[1]', 'INT') ParentId,
+                            T.N.value('(Name/text())[1]', 'NVARCHAR(255)') Name,
+                            T.N.value('(Type/text())[1]', 'NVARCHAR(255)') Type,
+                            T.N.value('(ContentId/text())[1]', 'INT') ContentId
+                        FROM
+                            @fieldsXml.nodes('ArrayOfFieldInfo/FieldInfo') as T(N);";
+                    break;
 
-                SELECT
-                    q.Id,
-                    fq.RootContentId,
-                    q.ContentId,
-                    q.RefContentId,
-                    q.LinkId,
-                    fq.Alias + '_' + q.Field,
-                    fq.Alias,
-                    q.Field,
-                    q.BackwardField,
-                    q.AttributeTypeId,
-                    q.DataType
-                FROM
-                    Query q
-                    JOIN FlatQuery fq ON q.ParentId = fq.Id
-                WHERE
-                    fq.RefContentId = q.ContentId
-            )
-            SELECT RootContentId, ContentId, RefContentId, LinkId, ParentAlias Alias, Field, BackwardField, AttributeTypeId, DataType
-            FROM FlatQuery
-            WHERE RootContentId IN (SELECT Id FROM @contentIds)";
+                case DatabaseType.Postgres:
+                    xmlTable = $@"
+                        XMLTABLE('ArrayOfFieldInfo/FieldInfo' passing @fieldsXml COLUMNS
+                            Id INT PATH 'Id/text()' NOT NULL,
+                            ParentId INT PATH 'ParentId/text()',
+                            Name VARCHAR(255) PATH 'Name/text()' NOT NULL,
+                            Type VARCHAR(255) PATH 'Type/text()',
+                            ContentId INT PATH 'ContentId/text()'
+                        )";
+                    xmlTableDeclaration = string.Empty;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dbType), dbType, "Type of db is not supported.");
+            }
+
+            return @$"
+                {xmlTableDeclaration}
+                WITH {SqlQuerySyntaxHelper.RecursiveCte(dbType)}
+                Query(Id, ParentId, RootContentId, ContentId, RefContentId, LinkId, Field, BackwardField, AttributeTypeId, DataType) AS
+                (
+                    SELECT
+                        f.Id,
+                        f.ParentId,
+                        s.CONTENT_ID,
+                        s.CONTENT_ID,
+                        CASE
+                            WHEN otm.CONTENT_ID IS NOT NULL THEN otm.CONTENT_ID
+                            WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
+                            WHEN mtm.r_content_id IS NOT NULL THEN mtm.r_content_id
+                            WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
+                            ELSE NULL
+                        END,
+                        s.link_id,
+                        f.Name,
+                        CASE
+                            WHEN mto.ATTRIBUTE_NAME IS NOT NULL THEN mto.ATTRIBUTE_NAME
+                            WHEN classifier.ATTRIBUTE_NAME IS NOT NULL THEN classifier.ATTRIBUTE_NAME
+                            ELSE NULL
+                        END,
+                        s.ATTRIBUTE_TYPE_ID,
+                        f.Type
+                    FROM
+                        {xmlTable} f
+                        JOIN CONTENT_ATTRIBUTE s ON f.Name = s.ATTRIBUTE_NAME
+                        LEFT JOIN CONTENT_ATTRIBUTE otm ON s.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
+                        LEFT JOIN CONTENT_ATTRIBUTE mto ON s.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
+                        LEFT JOIN CONTENT_TO_CONTENT mtm ON s.LINK_ID = mtm.LINK_ID AND s.CONTENT_ID = mtm.l_content_id
+                        LEFT JOIN CONTENT_ATTRIBUTE classifier ON s.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND classifier.CONTENT_ID = f.ContentId
+                    WHERE
+                        (
+                            s.IS_CLASSIFIER = {GetBoolValue(false, dbType)} OR
+                            classifier.CONTENT_ID IS NOT NULL
+                        ) AND
+                        (
+                            otm.CONTENT_ID IS NOT NULL OR
+                            mto.CONTENT_ID IS NOT NULL OR
+                            mtm.r_content_id IS NOT NULL OR
+                            f.Type IS NULL OR
+                            f.Type = 'date' AND s.ATTRIBUTE_TYPE_ID IN (4, 5, 6) OR
+                            f.Type = 'string' AND s.ATTRIBUTE_TYPE_ID IN (1, 7, 8, 9, 10, 12) OR
+                            f.Type = 'numeric' AND s.ATTRIBUTE_TYPE_ID IN (2, 3)
+                        )
+                ),
+                FlatQuery(Id, RootContentId, ContentId, RefContentId, LinkId, Alias, ParentAlias, Field, BackwardField, AttributeTypeId, DataType) AS
+                (
+                    SELECT
+                        Id,
+                        RootContentId,
+                        ContentId,
+                        RefContentId,
+                        LinkId,
+                        {SqlQuerySyntaxHelper.CastToVarchar(
+                            dbType,
+                            SqlQuerySyntaxHelper.ConcatStrValues(
+                                dbType,
+                                "'root_'", "Field"))},
+                        {SqlQuerySyntaxHelper.CastToVarchar(dbType, "'root'")},
+                        Field,
+                        BackwardField,
+                        AttributeTypeId,
+                        DataType
+                    FROM Query
+                        WHERE ParentId IS NULL
+
+                    UNION ALL
+
+                    SELECT
+                        q.Id,
+                        fq.RootContentId,
+                        q.ContentId,
+                        q.RefContentId,
+                        q.LinkId,
+                        {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "fq.Alias", "'_'", "q.Field")},
+                        fq.Alias,
+                        q.Field,
+                        q.BackwardField,
+                        q.AttributeTypeId,
+                        q.DataType
+                    FROM
+                        Query q
+                        JOIN FlatQuery fq ON q.ParentId = fq.Id
+                    WHERE
+                        fq.RefContentId = q.ContentId
+                )
+                SELECT RootContentId, ContentId, RefContentId, LinkId, ParentAlias Alias, Field, BackwardField, AttributeTypeId, DataType
+                FROM FlatQuery
+                WHERE RootContentId IN (SELECT Id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@contentIds", "ids")})";
+        }
 
         public static IEnumerable<DataRow> MatchContents(DbConnection sqlConnection, int[] contentIds, XDocument fields)
         {
-            using (var cmd = DbCommandFactory.Create(MatchContentsQuery, sqlConnection))
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+            var query = GetMatchContentsQuery(dbType);
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@contentIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(contentIds) });
-                cmd.Parameters.Add(new SqlParameter("@fieldsXml", SqlDbType.Xml) { Value = fields.ToString() });
+                _ = cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@contentIds", contentIds, dbType));
+                _ = cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@fieldsXml", fields.ToString(), dbType));
 
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
