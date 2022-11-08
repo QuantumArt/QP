@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -1121,7 +1121,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         public static bool IsCountOverflow(DbConnection connection, int contentId, bool includeArchive, int countLimit)
         {
             var databaseType = GetDbType(connection);
-            var archiveSql = (includeArchive) ?  "" : $" where archive = 0";
+            var archiveSql = (includeArchive) ? "" : $" where archive = 0";
             var sql = $@"select count(*) from (
                     select {Top(databaseType, countLimit + 1)} content_item_id from content_{contentId}
                     {WithNoLock(databaseType)}
@@ -3012,7 +3012,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var fromBuilder = new StringBuilder();
             var ns = DbSchemaName(dbType);
             fromBuilder.Append($"{ns}.CONTENT c INNER JOIN {ns}.SITE s ON c.SITE_ID = s.SITE_ID");
-            fromBuilder.Append($" INNER JOIN {ns}.{Escape(dbType,"USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
+            fromBuilder.Append($" INNER JOIN {ns}.{Escape(dbType, "USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
             fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
@@ -4759,6 +4759,7 @@ from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(d
             }
         }
 
+        // TODO: Remove duplicate of method SqlQuerySyntaxHelper.ToBoolSql
         private static string GetBoolValue(bool value, DatabaseType databaseType)
         {
             switch (databaseType)
@@ -10139,7 +10140,5 @@ order by ActionDate desc
                 cmd.ExecuteNonQuery();
             }
         }
-
-
     }
 }
