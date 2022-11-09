@@ -121,6 +121,7 @@ namespace Quantumart.QP8.BLL
         {
             ValidFieldColumnDbTypes.Numeric,
             ValidFieldColumnDbTypes.Int,
+            ValidFieldColumnDbTypes.Integer,
             ValidFieldColumnDbTypes.BigInt,
             ValidFieldColumnDbTypes.CharVarying,
             ValidFieldColumnDbTypes.TimeStampWithTimeZone,
