@@ -375,7 +375,11 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static void Delete(int id)
         {
-            DefaultRepository.Delete<UserDAL>(id);
+            using (var ctx = new QPConnectionScope())
+            {
+                Common.RemoveUserDependencies(ctx.DbConnection, new []{ id });
+                DefaultRepository.Delete<UserDAL>(id);
+            }
         }
 
         internal static IEnumerable<UserDefaultFilter> GetContentDefaultFilters(int userId)
