@@ -7,6 +7,7 @@
     {
         public const string Numeric = "numeric";
         public const string Int = "int";
+        public const string Integer = "integer";
         public const string BigInt = "bigint";
         public const string SmallInt = "smallint";
         public const string TinyInt = "tinyint";

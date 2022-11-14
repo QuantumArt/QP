@@ -948,17 +948,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 k++;
             }
 
-            try
+            using (Stream sw = File.Open(_importSettings.TempFileForRelFields, FileMode.Append))
             {
-                using (Stream sw = File.Open(_importSettings.TempFileForRelFields, FileMode.Append))
-                {
-                    var bin = new BinaryFormatter();
-                    bin.Serialize(sw, m2MValues);
-                }
-            }
-            catch
-            {
-                throw new ArgumentException();
+                var bin = new BinaryFormatter();
+                bin.Serialize(sw, m2MValues);
             }
         }
 

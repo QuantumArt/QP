@@ -22,7 +22,7 @@ BEGIN
             and pg_get_expr(d.adbin, d.adrelid) ~ '^nextval'
         LOOP
             rsql := 'ALTER SEQUENCE '|| rec.seq_name
-                        ||' OWNED BY '|| quote_ident(min(rec.table_name)) ||'.'|| quote_ident(min(rec.column_name)) ||';';
+                        ||' OWNED BY '|| quote_ident(min(rec.schema_name)) ||'.'|| quote_ident(min(rec.table_name)) ||'.'|| quote_ident(min(rec.column_name)) ||';';
 
             RAISE NOTICE 'sql: %', rsql;
             EXECUTE rsql;

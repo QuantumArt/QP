@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using NpgsqlTypes;
@@ -721,6 +722,61 @@ WHERE content_item_id = {contentItemId}
 
                  return GetDataTableForCommand(cmd).AsEnumerable()
                      .Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+             }
+         }
+
+         public static void RemoveUserDependencies(DbConnection connection, int[] userIds)
+         {
+             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+             var sb = new StringBuilder();
+             var ids = IdList(dbType, "@user_ids");
+
+             var deleteFormat = $"delete from {{0}} where user_id in (select id from {ids});";
+             var deleteTables = new[] { "user_group_bind", "user_default_filter" };
+             foreach (var table in deleteTables)
+             {
+                 sb.AppendFormatLine(deleteFormat, table);
+             }
+
+             var unlockFormat = $"update {{0}} set locked = null, locked_by = null where locked_by in (select id from {ids});";
+             var unlockTables = new[]
+             {
+                 "container", "content_form", "object", "object_format", "page", "page_template", "site", "content_item"
+             };
+             foreach (var table in unlockTables)
+             {
+                 sb.AppendFormatLine(unlockFormat, table);
+             }
+
+             var setToAdminFormat = $"update {{0}} set {{1}} = 1 where {{1}} in (select id from {ids});";
+             var setToAdminTablesWithFields = new Dictionary<string, string>()
+             {
+                 ["content_item_version"] = "created_by", ["page"] = "last_assembled_by", ["db"] = "single_user_id",
+                 ["content_item_status_history"] = "user_id", ["notifications"] = "from_backenduser_id"
+             };
+             foreach (var table in setToAdminTablesWithFields)
+             {
+                 sb.AppendFormatLine(setToAdminFormat, table.Key, table.Value);
+             }
+
+             var setLastModifiedByToAdminTables = new[]
+             {
+                 "site", "site_access", "folder", "folder_access", "status_type", "workflow", "workflow_access",
+                 "content", "content_access", "content_folder", "content_folder_access", "content_attribute",
+                 "content_item", "content_item_access", "content_item_version", "content_item_schedule",
+                 "users", "user_group", "style", "code_snippet", "notifications", "db",
+                 "page_template", "page", "object", "object_format", "object_format_version",
+                 "custom_action", "entity_type_access", "action_access", "ve_plugin", "ve_style", "ve_command"
+             };
+             foreach (var table in setLastModifiedByToAdminTables)
+             {
+                 sb.AppendFormatLine(setToAdminFormat, table, "last_modified_by");
+             }
+
+             using (var cmd = DbCommandFactory.Create(sb.ToString(), connection))
+             {
+                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@user_ids", userIds, dbType));
+                 cmd.ExecuteNonQuery();
              }
          }
     }

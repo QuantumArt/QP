@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL
 
         public int? CharMaxLength { get; set; }
 
-        public string NumericScaleString => NumericScale.HasValue ? NumericScale.Value.ToString() : "";
+        public string NumericScaleString => NumericScale.HasValue ? NumericScale.Value.ToString() : "0";
 
         public string CharMaxLengthString => CharMaxLength.HasValue ? CharMaxLength.Value.ToString() : "";
         public string TableDbType { get; set; }

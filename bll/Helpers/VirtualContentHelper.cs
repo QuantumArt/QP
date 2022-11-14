@@ -235,6 +235,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     {
                         case ValidFieldColumnDbTypes.Numeric:
                         case ValidFieldColumnDbTypes.Int:
+                        case ValidFieldColumnDbTypes.Integer:
                         case ValidFieldColumnDbTypes.BigInt:
                         case ValidFieldColumnDbTypes.SmallInt:
                         case ValidFieldColumnDbTypes.TinyInt:
