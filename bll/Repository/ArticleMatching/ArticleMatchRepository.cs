@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Conditions;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.ArticleMatching
@@ -231,8 +232,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
                     .GetCurrentExpression();
 
                 sb.AppendLine("SELECT");
-                sb.AppendLine("\troot.CONTENT_ITEM_ID [Id],");
-                sb.AppendFormat("\t{0} [ContentId]", contentId);
+                sb.AppendLine("\troot.CONTENT_ITEM_ID Id,");
+                sb.AppendFormat("\t{0} ContentId", contentId);
                 sb.AppendLine();
                 sb.AppendLine("FROM");
                 sb.AppendFormat("\tCONTENT_{0}_UNITED root", contentId);
@@ -260,7 +261,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleMatching
                     sb.AppendLine();
                 }
 
-                sb.AppendLine("WHERE root.ARCHIVE = 0 and");
+                sb.AppendLine($"WHERE root.ARCHIVE = 0 and");
                 sb.Append("\t");
                 sb.AppendLine(where);
 

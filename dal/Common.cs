@@ -10024,10 +10024,15 @@ order by ActionDate desc
 
         public static IEnumerable<DataRow> MatchArticles(DbConnection sqlConnection, Dictionary<string, object> args, string query)
         {
+            var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
+                var parameters = args
+                    .Select(param => SqlQuerySyntaxHelper.CreateDbParameter(dbType, param.Key, param.Value))
+                    .ToArray();
+                cmd.Parameters.AddRange(parameters);
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.AddRange(args.Select(param => new SqlParameter(param.Key, param.Value)).ToArray());
 
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
