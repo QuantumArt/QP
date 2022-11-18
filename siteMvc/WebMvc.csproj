@@ -4,7 +4,6 @@
     <AssemblyName>Quantumart.QP8.WebMvc</AssemblyName>
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <TargetFramework>net6.0</TargetFramework>
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <DefaultItemExcludes>$(DefaultItemExcludes);node_modules\**</DefaultItemExcludes>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
