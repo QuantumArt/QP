@@ -98,7 +98,7 @@ namespace Quantumart.QP8.DAL
                         ,doc.col.value('./@visible', 'int') VISIBLE
                         ,doc.col.value('./@userId', 'int') LAST_MODIFIED_BY
                         ,doc.col.value('./@guid', 'uniqueidentifier') UNIQUE_ID
-                        FROM @xml.nodes('ITEMS/ITEM') doc(col)
+                        FROM @xml.nodes('items/item') doc(col)
 
                     {baseInsert}
                     OUTPUT inserted.CONTENT_ITEM_ID INTO @NewIds
@@ -110,7 +110,7 @@ namespace Quantumart.QP8.DAL
                 (
                     {baseInsert}
                     {baseSelect}
-                    from XMLTABLE('ITEMS/ITEM' passing @xml COLUMNS
+                    from XMLTABLE('items/item' passing @xml COLUMNS
                         CONTENT_ID int PATH '@contentId',
                         STATUS_TYPE_ID int PATH '@statusId',
                         VISIBLE int PATH '@visible',
@@ -143,10 +143,10 @@ namespace Quantumart.QP8.DAL
             {
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
                 var doc = new XDocument();
-                doc.Add(new XElement("ITEMS"));
+                doc.Add(new XElement("items"));
                 foreach (var tuple in guidsByIdToUpdate)
                 {
-                    var elem = new XElement("ITEM");
+                    var elem = new XElement("item");
                     elem.Add(new XAttribute("id", tuple.Item1));
                     elem.Add(new XAttribute("guid", tuple.Item2));
                     doc.Root?.Add(elem);
@@ -159,14 +159,14 @@ namespace Quantumart.QP8.DAL
                     SELECT
                         doc.col.value('./@id', 'int') CONTENT_ITEM_ID
                         ,doc.col.value('./@guid', 'uniqueidentifier') UNIQUE_ID
-                        FROM @xml.nodes('ITEMS/ITEM') doc(col)
+                        FROM @xml.nodes('items/item') doc(col)
 
                     UPDATE CONTENT_ITEM SET UNIQUE_ID = i.UNIQUE_ID FROM CONTENT_ITEM ci INNER JOIN @NewIds i
                     on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
                 " : $@"
                 WITH new AS
                 (
-                    select x.* from XMLTABLE('ITEMS/ITEM' passing @xml COLUMNS
+                    select x.* from XMLTABLE('items/item' passing @xml COLUMNS
                         content_item_id int PATH '@id',
                         unique_id uuid PATH '@guid'
                     ) x
@@ -205,7 +205,7 @@ namespace Quantumart.QP8.DAL
             string sql = dbType == DatabaseType.SqlServer ? "qp_update_o2mfieldvalues" : $@"
                 WITH new AS
                 (
-                    select x.* from XMLTABLE('ITEMS/ITEM' passing @xmlParameter COLUMNS
+                    select x.* from XMLTABLE('items/item' passing @xmlParameter COLUMNS
                         content_item_id int PATH '@id',
                         linked_id int PATH '@linked_id',
                         attribute_id int PATH '@field_id'
@@ -229,7 +229,7 @@ namespace Quantumart.QP8.DAL
             string sql = dbType == DatabaseType.SqlServer ? "qp_update_acrticle_modification_date" : $@"
                 WITH new AS
                 (
-                    select x.* from XMLTABLE('ITEMS/ITEM' passing @xmlParameter COLUMNS
+                    select x.* from XMLTABLE('items/item' passing @xmlParameter COLUMNS
                         content_item_id int PATH '@id',
                         last_modified_by int PATH '@modifiedBy'
                     ) x

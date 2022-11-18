@@ -608,10 +608,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private static List<int> InsertArticlesIds(ICollection<Article> articleList, bool preserveGuids = false)
         {
             var doc = new XDocument();
-            doc.Add(new XElement("ITEMS"));
+            doc.Add(new XElement("items"));
             foreach (var article in articleList)
             {
-                var elem = new XElement("ITEM");
+                var elem = new XElement("item");
                 elem.Add(new XAttribute("visible", Convert.ToInt32(article.Visible)));
                 elem.Add(new XAttribute("contentId", article.ContentId));
                 elem.Add(new XAttribute("statusId", article.StatusTypeId));
@@ -1004,12 +1004,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private static void UpdateArticlesDateTime(int[] articlesIds)
         {
             var doc = new XDocument();
-            var items = new XElement("ITEMS");
+            var items = new XElement("items");
             doc.Add(items);
 
             foreach (var id in articlesIds)
             {
-                var itemXml = new XElement("ITEM");
+                var itemXml = new XElement("item");
                 itemXml.Add(new XAttribute("id", id));
                 itemXml.Add(new XAttribute("modifiedBy", QPContext.CurrentUserId));
                 doc.Root?.Add(itemXml);
