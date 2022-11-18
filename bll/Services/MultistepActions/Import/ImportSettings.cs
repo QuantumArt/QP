@@ -32,7 +32,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public string TempFileUploadPath => UploadFilePath + FileName;
 
-        public string TempFileForRelFields => UploadFilePath + Path.GetFileNameWithoutExtension(FileName) + "_rel" + ".dat";
+        public string TempFileForRelFields => UploadFilePath + Path.GetFileNameWithoutExtension(FileName) + "_rel" + ".csv";
 
         public bool ContainsO2MRelationOrM2MRelationFields
         {
