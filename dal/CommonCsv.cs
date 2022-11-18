@@ -205,7 +205,7 @@ namespace Quantumart.QP8.DAL
             string sql = dbType == DatabaseType.SqlServer ? "qp_update_o2mfieldvalues" : $@"
                 WITH new AS
                 (
-                    select x.* from XMLTABLE('ITEMS/ITEM' passing @xmlParameter COLUMNS
+                    select x.* from XMLTABLE('items/item' passing @xmlParameter COLUMNS
                         content_item_id int PATH '@id',
                         linked_id int PATH '@linked_id',
                         attribute_id int PATH '@field_id'

@@ -51,7 +51,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _ = sb.Append(';');
             _ = sb.Append(FieldId);
             _ = sb.Append(';');
-            _ = sb.Append(string.Join(',', NewRelatedItems));
+            _ = sb.Append(string.Join(',', NewRelatedItems ?? Array.Empty<int>()));
             _ = sb.Append(';');
             _ = sb.Append(IsM2M);
             return sb.ToString();
@@ -61,7 +61,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                return Array.Empty<int>();
+                return null;
             }
 
             string[] values = value.Split(",");
