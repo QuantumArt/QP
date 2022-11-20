@@ -70,11 +70,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         private string GetUploadFilePath()
         {
             var currentSite = SiteRepository.GetById(SiteId);
-            if (!Directory.Exists(currentSite.UploadDir))
-            {
-                throw new DirectoryNotFoundException();
-            }
-
             return WebUtility.UrlDecode(ImportArticlesParams.GetUploadPath(currentSite, ContentId));
         }
 
