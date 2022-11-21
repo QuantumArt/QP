@@ -20,13 +20,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class UploadController : AuthQpController
     {
         private readonly IBackendActionLogRepository _logger;
-        private readonly FormOptions _formOptions;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        public UploadController(IBackendActionLogRepository logger, FormOptions formOptions)
+        public UploadController(IBackendActionLogRepository logger)
         {
             _logger = logger;
-            _formOptions = formOptions;
         }
 
         private void LogError(string msg, string fileName, Exception ex = null)

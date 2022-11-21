@@ -83,9 +83,7 @@ namespace Quantumart.QP8.WebMvc
             services.AddSingleton(qpOptions);
             QPConfiguration.Options = qpOptions;
 
-            var formOptions = new FormOptions();
-            Configuration.Bind("Form", formOptions);
-            services.AddSingleton(formOptions);
+            services.Configure<FormOptions>(Configuration.GetSection("Form"));
 
             if (qpOptions.EnableArticleScheduler)
             {
