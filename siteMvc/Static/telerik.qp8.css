@@ -670,29 +670,37 @@ a.t-button.t-state-disabled:hover,
   color: #000;
 }
 
-.qpGrid .k-grid-header .k-link .k-icon.k-i-sort-asc-sm,
-.qpGrid .k-grid-header .k-link .k-icon.k-i-sort-desc-sm {
+.k-grid .k-grid-header .k-link .k-icon.k-i-sort-asc-sm,
+.k-grid .k-grid-header .k-link .k-icon.k-i-sort-desc-sm {
   vertical-align: top;
   margin-left: 0;
 }
 
-.qpGrid .k-grid-header th.k-header {
+.k-grid .k-grid-header th.k-header {
   white-space: normal;
   vertical-align: middle;
 }
 
-.qpGrid .k-grid-norecords {
+.k-grid .k-grid-norecords {
   padding: 8px 0;
 }
 
-.qpGrid .k-state-selected td .html,
-.qpGrid .k-state-selected td .js {
-  color: #fff;
-}
-
-.qpGrid .k-alt:not(.k-state-selected) {
+.k-grid .k-alt:not(.k-state-selected) {
   background-color: #ebeff3;
 }
+
+.k-grid .k-state-selected {
+  background-color: #ffe8a6;
+  color: black;
+  border-color: #ceced2;
+}
+
+.k-grid tr:hover, .k-grid tr.k-state-selected:hover,
+.k-grid tr.k-alt:hover, .k-grid tr.k-alt.k-state-selected:hover
+{
+  background-color: #fff3cf;
+}
+
 
 .isCentered {
   text-align: center !important;
