@@ -171,7 +171,7 @@ namespace Quantumart.QP8.BLL
                                 _Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
                             }
                         }
-                        catch (NotSupportedException)
+                        catch (UnknownImageFormatException)
                         {
                             _Dimensions = string.Empty;
                         }

@@ -248,6 +248,7 @@ worktree/
 
 # QP Web Assets
 siteMvc/Static/*.min.css
+siteMvc/Static/build
 siteMvc/Scripts/Quantumart/**/*.map
 siteMvc/Scripts/Quantumart/**/*.min.js
 

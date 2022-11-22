@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
@@ -56,7 +55,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
             _traceFields = GetTraceFields(contentId);
             _jObject = InitJObject(_traceFields);
-
         }
 
         public string GetTraceResult()
@@ -608,10 +606,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private static List<int> InsertArticlesIds(ICollection<Article> articleList, bool preserveGuids = false)
         {
             var doc = new XDocument();
-            doc.Add(new XElement("ITEMS"));
+            doc.Add(new XElement("items"));
             foreach (var article in articleList)
             {
-                var elem = new XElement("ITEM");
+                var elem = new XElement("item");
                 elem.Add(new XAttribute("visible", Convert.ToInt32(article.Visible)));
                 elem.Add(new XAttribute("contentId", article.ContentId));
                 elem.Add(new XAttribute("statusId", article.StatusTypeId));
@@ -948,11 +946,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 k++;
             }
 
-            using (Stream sw = File.Open(_importSettings.TempFileForRelFields, FileMode.Append))
+            using TextWriter textWriter = new StreamWriter(_importSettings.TempFileForRelFields, true, Encoding.UTF8);
+
+            foreach(var relation in m2MValues)
             {
-                var bin = new BinaryFormatter();
-                bin.Serialize(sw, m2MValues);
+                textWriter.WriteLine(relation.ToString());
             }
+
+            textWriter.Flush();
         }
 
         // Десериализация всех соответствий (после добавления статей)
@@ -963,15 +964,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             {
                 try
                 {
-                    using (Stream stream = File.Open(_importSettings.TempFileForRelFields, FileMode.Open))
-                    {
-                        var bin = new BinaryFormatter();
+                    using TextReader textReader = new StreamReader(_importSettings.TempFileForRelFields, Encoding.UTF8);
 
-                        while (stream.Position != stream.Length)
-                        {
-                            var vals = (List<RelSourceDestinationValue>)bin.Deserialize(stream);
-                            m2MValues.AddRange(vals);
-                        }
+                    string line;
+                    while (!string.IsNullOrWhiteSpace(line = textReader.ReadLine()))
+                    {
+                        m2MValues.Add(new RelSourceDestinationValue(line));
                     }
                 }
                 catch
@@ -1004,12 +1002,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private static void UpdateArticlesDateTime(int[] articlesIds)
         {
             var doc = new XDocument();
-            var items = new XElement("ITEMS");
+            var items = new XElement("items");
             doc.Add(items);
 
             foreach (var id in articlesIds)
             {
-                var itemXml = new XElement("ITEM");
+                var itemXml = new XElement("item");
                 itemXml.Add(new XAttribute("id", id));
                 itemXml.Add(new XAttribute("modifiedBy", QPContext.CurrentUserId));
                 doc.Root?.Add(itemXml);
@@ -1113,193 +1111,5 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _articlesListFromCsv = new ExtendedArticleList();
             _uniqueValuesList = new List<string>();
         }
-    }
-
-    public class FileReader
-    {
-        private readonly ImportSettings _settings;
-        private readonly Lazy<IEnumerable<Line>> _lines;
-
-        public FileReader(ImportSettings settings)
-        {
-            _settings = settings;
-            _lines = new Lazy<IEnumerable<Line>>(() => ReadFile(_settings));
-        }
-
-        public IEnumerable<Line> Lines => _lines.Value;
-
-        public static IEnumerable<Line> ReadFile(ImportSettings setts)
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            using (var sr = new StreamReader(setts.TempFileUploadPath))
-            {
-                string line;
-                var rdr = new CustomStreamReader(sr.BaseStream, Encoding.GetEncoding(setts.Encoding), setts.LineSeparator, setts.Delimiter);
-                var i = 0;
-                var headerNum = 1;
-                while (!string.IsNullOrEmpty(line = rdr.ReadLine()))
-                {
-                    i++;
-                    var value = line.Trim('\r', '\n');
-                    var isSep = value.StartsWith("sep=");
-                    if (isSep)
-                    {
-                        headerNum++;
-                    }
-
-                    var skip = !setts.NoHeaders && i == headerNum || string.IsNullOrEmpty(value) || isSep;
-                    yield return new Line { Value = value, Number = i, Skip = skip };
-                }
-            }
-        }
-
-        public int RowsCount()
-        {
-            return Lines.Count(s => !s.Skip);
-        }
-    }
-
-    public class CustomStreamReader : StreamReader
-    {
-        private readonly string _lineDelimiter;
-        private readonly char _fieldDelimiter;
-
-        public CustomStreamReader(Stream stream, Encoding encoding, string lineDelimiter, char fieldDelimiter)
-            : base(stream, encoding)
-        {
-            _lineDelimiter = lineDelimiter;
-            _fieldDelimiter = fieldDelimiter;
-        }
-
-        private bool IsEmpty(string line)
-        {
-            var res = line.Trim(_fieldDelimiter, '"', '\r', '\n');
-            return string.IsNullOrEmpty(res) || string.IsNullOrWhiteSpace(line);
-        }
-
-        public override string ReadLine()
-        {
-            var c = Read();
-            if (c == -1)
-            {
-                return null;
-            }
-
-            var sb = new StringBuilder();
-            var lastCh = char.MinValue;
-            var quoteOpen = false;
-            do
-            {
-                if ((char)c == '"' && !quoteOpen)
-                {
-                    quoteOpen = true;
-                }
-                else if ((char)c == '"' && quoteOpen)
-                {
-                    quoteOpen = false;
-                }
-
-                var lineSepArr = _lineDelimiter.ToCharArray();
-                var sep = lineSepArr[0];
-                if (lineSepArr.Length == 2)
-                {
-                    sep = lineSepArr[1];
-                }
-
-                var ch = (char)c;
-                if (ch == sep && !quoteOpen && (lineSepArr.Length == 1 || lineSepArr.Length == 2 && lastCh == lineSepArr[0]))
-                {
-                    if (!IsEmpty(sb.ToString()))
-                    {
-                        return sb.ToString();
-                    }
-
-                    sb.Remove(0, sb.Length);
-                }
-                else
-                {
-                    sb.Append(ch);
-                }
-
-                lastCh = (char)c;
-            } while ((c = Read()) != -1);
-
-            return sb.ToString();
-        }
-    }
-
-    [Serializable]
-    public class RelSourceDestinationValue
-    {
-        public int OldId { get; set; }
-
-        public int NewId { get; set; }
-
-        public int FieldId { get; set; }
-
-        public int[] NewRelatedItems { get; set; }
-
-        public bool IsM2M { get; set; }
-    }
-
-    public class ExtendedArticle
-    {
-        public Article BaseArticle { get; }
-
-        public Dictionary<Field, Article> Extensions { get; }
-
-        public ExtendedArticle(Article baseArticle)
-        {
-            BaseArticle = baseArticle;
-            Extensions = new Dictionary<Field, Article>();
-        }
-    }
-
-    public class ExtendedArticleList : List<ExtendedArticle>
-    {
-        public HashSet<Field> ExtensionFields { get; }
-
-        public ExtendedArticleList()
-        {
-            ExtensionFields = new HashSet<Field>();
-        }
-
-        public ExtendedArticleList(ExtendedArticleList articles)
-        {
-            ExtensionFields = new HashSet<Field>(articles.ExtensionFields);
-        }
-
-        public List<Article> GetBaseArticles()
-        {
-            return this.Select(a => a.BaseArticle).ToList();
-        }
-
-        public List<int> GetBaseArticleIds()
-        {
-            return this.Select(a => a.BaseArticle.Id).ToList();
-        }
-
-        public List<Article> GetAggregatedArticles(Field field)
-        {
-            return this.Select(a => a.Extensions[field]).ToList();
-        }
-
-        public IEnumerable<List<Article>> GetAllAggregatedArticles() => ExtensionFields.Select(GetAggregatedArticles);
-
-        public ExtendedArticleList Filter(Func<Article, bool> predicate)
-        {
-            var result = new ExtendedArticleList(this);
-            result.AddRange(this.Where(article => predicate(article.BaseArticle)));
-            return result;
-        }
-    }
-
-    public class Line
-    {
-        public int Number { get; set; }
-
-        public string Value { get; set; }
-
-        public bool Skip { get; set; }
     }
 }

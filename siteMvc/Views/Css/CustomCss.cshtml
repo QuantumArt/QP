@@ -2,14 +2,24 @@
 
 @foreach (var status in Model.Statuses)
 {
-@:.t-alt-@status.Id
+@:.k-grid tr.k-alt.t-@status.Id:not(.k-state-selected)
 @:{
 	@:background-color: #@status.AltColor;
 @:}
 
-@:.t-@status.Id
+@:.k-grid tr.k-alt.t-@status.Id:hover:not(.k-state-selected)
+@:{
+  @:background-color: #fff3cf;
+@:}
+
+@:.k-grid tr.t-@status.Id:not(.k-state-selected)
 @:{
 	@:background-color: #@status.Color;
+@:}
+
+@:.k-grid tr.t-@status.Id:hover:not(.k-state-selected)
+@:{
+  @:background-color: #fff3cf;
 @:}
 }
 

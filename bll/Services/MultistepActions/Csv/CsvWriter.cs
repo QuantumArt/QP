@@ -92,8 +92,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 _sb.Append(_settings.LineSeparator);
             }
 
-            _sb.Append(FieldName.ContentId);
-            _sb.Append(_settings.Delimiter);
             _sb.Append(FieldName.ContentItemId);
             if (_settings.HeaderNames.Any())
             {
@@ -112,6 +110,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     FieldName.Created,
                     FieldName.Modified,
                     FieldName.UniqueId,
+                    FieldName.ContentId,
                     FieldName.IsChanged
                 })
                 {
@@ -164,8 +163,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 foreach (var article in articles)
                 {
-                    _sb.Append(_contentId);
-                    _sb.Append(_settings.Delimiter);
                     _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
                     foreach (DataColumn column in article.Table.Columns)
                     {
@@ -198,6 +195,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                                 article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture
                                 ),
                             article[FieldName.UniqueId].ToString(),
+                            _contentId.ToString(),
                             "0"
                         })
                         {
