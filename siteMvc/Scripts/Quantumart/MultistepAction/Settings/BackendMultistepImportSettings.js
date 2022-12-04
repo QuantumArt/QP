@@ -266,7 +266,7 @@ export class MultistepActionImportSettings {
     this._$fields.each(function each() {
       if (that._fieldsPredicate($(this)) && +$(this).val() === -1) {
         errorMessage = that._addMessageLine(errorMessage);
-        errorMessage += $(this).nextAll('.select-block-container').html() + $l.MultistepAction.RequiredField;
+        errorMessage += $(this).nextAll('.select-description').html() + $l.MultistepAction.RequiredField;
       }
     });
 
