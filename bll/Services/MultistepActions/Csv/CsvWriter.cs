@@ -142,7 +142,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var dict = fields
                     .Where(n => n.ExactType == FieldExactTypes.M2MRelation && articles[0].Table.Columns.Contains(n.ContentId == _contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name)))
                     .Select(n => new { LinkId = n.LinkId.Value, n.ContentId })
-                    .ToDictionary(n => n.LinkId.ToString(), m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId], true));
+                    .ToDictionary(n => $"{n.LinkId}_{n.ContentId}", m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId], true));
 
                 var m2oFields = fields.Where(w => w.ExactType == FieldExactTypes.M2ORelation).ToArray();
                 foreach (var field in m2oFields)
@@ -223,42 +223,37 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var sb = new StringBuilder();
             if (_settings.FieldNames.Any())
             {
-                foreach (var s in _settings.FieldNames)
+                foreach (var setting in _settings.FieldNames)
                 {
-                    sb.AppendFormat(", {0}", s);
+                    sb.AppendFormat($", {setting}");
                 }
             }
 
             var ns = SqlQuerySyntaxHelper.DbSchemaName(dbType);
             foreach (var field in fieldsToExpand)
             {
+                var fieldAlias = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias);
+                var tableName = field.FromExtension ? $"ex_{field.ContentId}" : "base";
+                var conversion = dbType == DatabaseType.Postgres ? "::integer" : "";
+                var articleIdField = $"{tableName}.content_item_id{conversion}";
+
                 if (field.ExcludeFromSQLRequest)
                 {
-                    sb.AppendFormat(", NULL as {0}", field.Alias);
+                    sb.AppendFormat($", NULL as {fieldAlias}");
                 }
                 else if (field.ExactType == FieldExactTypes.O2MRelation)
                 {
-                    var fieldName = string.Join(" + '; ' + ", GetParts(field));
-                    sb.Append($", {fieldName} as {SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias)}");
+                    var partSeparator = dbType == DatabaseType.Postgres ? " || '; ' || " : " + '; ' + ";
+                    var fieldExpression = string.Join(partSeparator, GetParts(field));
+                    sb.Append($", {fieldExpression} as {fieldAlias}");
                 }
-                else if (field.ExactType == FieldExactTypes.M2ORelation && field.Related.Any())
+                else if (field.ExactType == FieldExactTypes.M2ORelation)
                 {
-                    var related = field.Related.First(f => !f.IsRelation).Id;
-                    var contentItemIdField = dbType == DatabaseType.Postgres ? "content_item_id::integer" : "content_item_id";
-
-                    sb.Append($", {ns}.qp_m2o_titles(base.{contentItemIdField}, {related}, {field.RelatedAttributeId}, 255) as {SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias)}");
+                    sb.Append($", {ns}.qp_m2o_titles({articleIdField}, {field.RelatedAttributeId}, {field.BackRelatedAttributeId}, 255) as {fieldAlias}");
                 }
                 else
                 {
-                    var contentCondition = field.FromExtension
-                        ? $"{SqlQuerySyntaxHelper.EscapeEntityName(dbType, $"ex{field.ContentName}")}.content_item_id"
-                        : "base.content_item_id";
-
-                    if (dbType == DatabaseType.Postgres)
-                    {
-                        contentCondition += "::integer";
-                    }
-                    sb.Append($", {ns}.qp_link_titles({field.LinkId}, {contentCondition}, {field.RelatedAttributeId}, 255) as {SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Alias)}");
+                    sb.Append($", {ns}.qp_link_titles({field.LinkId}, {articleIdField}, {field.RelatedAttributeId}, 255) as {fieldAlias}");
                 }
             }
 
@@ -274,45 +269,46 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static IEnumerable<string> GetParts(ExportSettings.FieldSetting field)
         {
-
             var parts = new List<string>();
-            var dbType = QPContext.DatabaseType;
-            var ns = SqlQuerySyntaxHelper.DbSchemaName(dbType);
-            var contentItemIdField = dbType == DatabaseType.Postgres ? "content_item_id::integer" : "content_item_id";
             if (field.Related == null || !field.Related.Any())
             {
-                parts.Add($"{SqlQuerySyntaxHelper.CastToString(dbType, field.TableAlias)}.content_item_id");
+                parts.Add($"{field.RelationTableAlias}.content_item_id");
             }
             else
             {
+                var dbType = QPContext.DatabaseType;
+                var ns = SqlQuerySyntaxHelper.DbSchemaName(dbType);
+                var contentItemIdField = dbType == DatabaseType.Postgres ? "content_item_id::integer" : "content_item_id";
                 foreach (var f in field.Related)
                 {
                     switch (f.ExactType)
                     {
                         case FieldExactTypes.M2MRelation:
-
-                            parts.Add($"{ns}.qp_link_titles({f.LinkId.Value}, {field.TableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
+                            parts.Add($"{ns}.qp_link_titles({f.LinkId.Value}, {field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
                             break;
                         case FieldExactTypes.O2MRelation:
-                           parts.Add($"{SqlQuerySyntaxHelper.CastToString(dbType, $"{f.TableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.RelatedAttributeName)}")}");
+                            var o2mName = $"{f.RelationTableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.RelatedAttributeName)}";
+                            parts.Add(SqlQuerySyntaxHelper.CastToString(dbType, o2mName));
                            break;
                         case FieldExactTypes.M2ORelation:
-
-                            parts.Add($"{ns}.qp_m2o_titles(base.{contentItemIdField}, {f.Id}, {field.RelatedAttributeId}, 255)");
+                            parts.Add($"{ns}.qp_m2o_titles({field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, {f.BackRelatedAttributeId}, 255)");
                             break;
                         default:
-                            parts.Add(new[]
+                            var fieldName = $"{field.RelationTableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}";
+                            if (new[]
+                                {
+                                    FieldExactTypes.Date,
+                                    FieldExactTypes.DateTime,
+                                    FieldExactTypes.Time,
+                                    FieldExactTypes.Textbox,
+                                    FieldExactTypes.VisualEdit,
+                                    FieldExactTypes.Numeric,
+                                    FieldExactTypes.Classifier
+                                }.Contains(f.ExactType))
                             {
-                                FieldExactTypes.Date,
-                                FieldExactTypes.DateTime,
-                                FieldExactTypes.Time,
-                                FieldExactTypes.Textbox,
-                                FieldExactTypes.VisualEdit,
-                                FieldExactTypes.Numeric,
-                                FieldExactTypes.Classifier
-                            }.Contains(f.ExactType)
-                                ? $"coalesce({SqlQuerySyntaxHelper.CastToString(dbType, $"{field.TableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}")}, '')"
-                                : $"coalesce( {field.TableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}, '')");
+                                fieldName = SqlQuerySyntaxHelper.CastToString(dbType, fieldName);
+                            }
+                            parts.Add($"coalesce({fieldName}, '')");
                             break;
                     }
                 }
@@ -375,7 +371,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             if (field != null && (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne))
             {
                 value = string.Empty;
-                var mapValue = field.RelationType == RelationType.ManyToMany ? field.LinkId.Value.ToString() : article["content_Item_id"] + "_" + field.Id;
+                var mapValue = field.RelationType == RelationType.ManyToMany ?
+                    $"{field.LinkId}_{field.ContentId}" :
+                    article["content_Item_id"] + "_" + field.Id;
                 if (valuesWithRelation.TryGetValue(mapValue, out var mappings) && mappings.Any())
                 {
                     var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
@@ -424,7 +422,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             foreach (var content in extensionContents)
             {
-                var template = $"{Escape(dbType, "ex{0}")}.{Escape(dbType, "{1}")} {Escape(dbType, "{0}.{1}")}";
+                var template = $"ex_{content.Id}.{Escape(dbType, "{1}")} {Escape(dbType, "{0}.{1}")}";
                 fields = GetExtensionFields(content, template, dbType);
                 result.AddRange(fields);
             }
@@ -453,8 +451,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             {
                 var name = content.Fields.Single(f => f.Aggregated).Name;
                 var dbType = QPContext.DatabaseType;
-                var tableName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, $"ex{content.Name}");
-                sb.Append($" LEFT JOIN CONTENT_{content.Id}_united {tableName} ON {tableName}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, name)} = base.CONTENT_ITEM_ID ");
+                var tableName = $"content_{content.Id}_united";
+                var tableAlias = $"ex_{content.Id}";
+                var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, name);
+                sb.AppendLine($" left join {tableName} {tableAlias} ON {tableAlias}.{fieldName} = base.content_item_id");
             }
 
             return sb.ToString();

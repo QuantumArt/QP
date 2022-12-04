@@ -644,19 +644,36 @@ cil.locked_by,
         {
             var dbType = QPContext.DatabaseType;
             var sb = new StringBuilder();
-            foreach (var field in displayFields.Where(n => n.ExactType == FieldExactTypes.O2MRelation && !n.FromExtension && !n.ExcludeFromSQLRequest))
+            foreach (var field in displayFields.Where(n => !n.ExcludeFromSQLRequest))
             {
-                var onExpr = $"on base.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name)} = {field.TableAlias}.content_item_id";
-                sb.AppendFormatLine(" left join content_{0}_united as {1} {2} ", field.RelatedContentId, field.TableAlias, onExpr);
-                sb.Append(GetO2MRelationExpression(field));
-            }
+                var escapedName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name);
+                var relTable = $"content_{field.RelatedContentId}_united";
+                var relTableAlias = $"c_{field.RelatedContentId}";
+                var table = $"content_{field.ContentId}_united";
+                var tableAlias = $"c_{field.ContentId}";
 
-            foreach (var field in displayFields.Where(w=>w.FromExtension && w.ExactType != FieldExactTypes.M2MRelation && !w.ExcludeFromSQLRequest))
-            {
-                sb.AppendFormatLine(" left join (select c_{0}.CONTENT_ITEM_ID, c_{1}.{4}, c_{0}.{5} from content_{0}_united c_{0} LEFT JOIN content_{1}_united c_{1} on c_{1}.{3} = c_{0}.CONTENT_ITEM_ID) as {2} on base.CONTENT_ITEM_ID =  {2}.{4}",
-                     field.RelatedContentId, field.ContentId, field.TableAlias, SqlQuerySyntaxHelper.EscapeEntityName(dbType, field.Name), field.RelationByField, field.RelatedAttributeName);
-            }
+                if (field.FromExtension)
+                {
+                    var innerSb = new StringBuilder();
+                    innerSb.Append($"select {relTableAlias}.content_item_id, {tableAlias}.{field.RelationByField}");
+                    innerSb.Append($", {relTableAlias}.{field.RelatedAttributeName}");
+                    innerSb.Append($" from {relTable} {relTableAlias} left join {table} {tableAlias}");
+                    innerSb.Append($" on {tableAlias}.{escapedName} = {relTableAlias}.content_item_id");
 
+                    sb.Append($" left join ({innerSb}) as {field.RelationTableAlias}");
+                    sb.AppendLine($" on base.content_item_id = {field.RelationTableAlias}.{field.RelationByField}");
+                }
+                else
+                {
+                    sb.Append($" left join {relTable} as {field.RelationTableAlias}");
+                    sb.AppendLine($" on base.{escapedName} = {field.RelationTableAlias}.content_item_id");
+                }
+
+                if (field.ExactType == FieldExactTypes.O2MRelation)
+                {
+                    sb.Append(GetO2MRelationExpression(field));
+                }
+            }
             return sb.ToString();
         }
 
@@ -667,7 +684,7 @@ cil.locked_by,
             var sb = new StringBuilder();
             foreach (var f in field.Related.Where(n => n.ExactType == FieldExactTypes.O2MRelation))
             {
-                sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.{2} = {1}.content_item_id ", f.RelatedContentId, f.TableAlias, SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name), field.TableAlias);
+                sb.AppendFormatLine(" left join content_{0}_united as {1} on {3}.{2} = {1}.content_item_id ", f.RelatedContentId, f.RelationTableAlias, SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name), field.RelationTableAlias);
             }
             return sb.ToString();
         }
