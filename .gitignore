@@ -279,3 +279,4 @@ package/pack/qp8release
 
 /projectfiles.tar
 /.env
+*.lutconfig
