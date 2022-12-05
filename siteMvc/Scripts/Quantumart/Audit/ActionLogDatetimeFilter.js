@@ -10,7 +10,7 @@ export class ActionLogDatetimeFilter extends ActionLogFilterBase {
   initialize() {
     this.$container.addClass('fieldSearchContainerContent');
     this.dtFieldSearch = new DateOrTimeRangeFieldSearch(
-      this.$container, 0, 0, '', '', $e.ArticleFieldSearchType.DateTimeRange
+      this.$container, 0, 0, '', '', '', '', '', $e.ArticleFieldSearchType.DateTimeRange
     );
     this.dtFieldSearch.initialize();
   }
