@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Npgsql" Version="6.0.6" />
     <PackageReference Include="Quantumart.AspNetCore" Version="4.0.8" />
     <PackageReference Include="Quantumart.QP8.Assembling" Version="1.0.7" />
