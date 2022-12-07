@@ -173,7 +173,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var fieldValues = SplitToValues(_titleHeaders.Count, line.Value);
                 var baseArticle = InitializeArticle(_contentId);
 
-                if (int.TryParse(fieldValues.First(), out var articleId))
+                var index = _titleHeaders.IndexOf(_importSettings.UniqueFieldToUpdate);
+                index = index == -1 ? 0 : index;
+
+                if (int.TryParse(fieldValues[index], out var articleId))
                 {
                     baseArticle.Id = articleId;
                 }
@@ -477,7 +480,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var baseArticles = articleList.GetBaseArticles();
             var idsList = InsertArticlesIds(baseArticles, baseArticles.All(a => a.UniqueId.HasValue)).ToArray();
             _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Create);
-            InsertArticleValues(idsList.ToArray(), baseArticles);
+            var defaultValues = Article.CreateNew(_contentId).FieldValues;
+            var notMappedDefaultValues = defaultValues
+                .Where(
+                    n => !String.IsNullOrEmpty(n.Field.DefaultValue)
+                    && _headersMap.ContainsKey(n.Field)
+                    && _headersMap[n.Field] == -1
+                ).ToList();
+            InsertArticleValues(idsList.ToArray(), baseArticles, notMappedDefaultValues);
 
             if (_importSettings.ContainsO2MRelationOrM2MRelationFields)
             {
@@ -526,7 +536,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 ArticleRepository.GetList(idsList, true).ToDictionary(n => n.Id, m => m) : new Dictionary<int, Article>();
 
 
-            InsertArticleValues(idsList, existingArticles.GetBaseArticles(), true);
+            InsertArticleValues(idsList, existingArticles.GetBaseArticles(), updateArticles: true);
 
             var articlesToInsert = new List<Article>();
             var idsToUpdate = new List<int>();
@@ -576,7 +586,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 articlesToUpdate.AddRange(articlesToInsert);
             }
 
-            InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, true);
+            InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, updateArticles: true);
             _notificationRepository.SendNotifications();
             return existingArticles;
         }
@@ -624,7 +634,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return ArticleRepository.InsertArticleIds(doc.ToString(), preserveGuids);
         }
 
-        private void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)
+        private void InsertArticleValues(int[] idsList, IList<Article> articleList, IList<FieldValue> defaultFieldValues = null, bool updateArticles = false)
         {
             var guidsByIdToUpdate = new List<Tuple<int, Guid>>();
             if (updateArticles)
@@ -633,6 +643,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 UpdateArticlesDateTime(idsList);
             }
 
+            var defaultFieldValuesList = updateArticles == false && defaultFieldValues != null ? defaultFieldValues : new List<FieldValue>();
             var doc = new XDocument();
             var o2MDoc = new XDocument();
             var parametersXml = new XElement("PARAMETERS");
@@ -647,7 +658,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var article = articleList[k++];
                 if (article != null)
                 {
-                    foreach (var fieldValue in article.FieldValues)
+                    var fieldValues = article.FieldValues.Concat(defaultFieldValuesList);
+                    foreach (var fieldValue in fieldValues)
                     {
                         var fieldValueXml = GetFieldValueElement(fieldValue, articleId);
                         doc.Root?.Add(fieldValueXml);

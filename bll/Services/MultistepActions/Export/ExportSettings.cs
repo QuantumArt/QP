@@ -7,6 +7,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
+using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
@@ -132,8 +133,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                 RelatedContentName = displayField?.Content.Name;
                 RelatedAttributeName = displayField?.Name;
                 RelatedAttributeId = displayField?.Id ?? 0;
-                FromExtension = field.Aggregated || extensionsList.Select(s => s.ContentId).Contains(field.ContentId);
-                RelationByField = FromExtension ? extensionsList.Where(w => w.ContentId == field.ContentId).Single().RelationFieldName : field.BackRelation != null ? field.BackRelation.Name : string.Empty;
+                BackRelatedAttributeId = field.BackRelation?.Id ?? 0;
+                var extensionContent = extensionsList.SingleOrDefault(w => w.ContentId == field.ContentId);
+                FromExtension = extensionContent != null;
+                RelationByField = extensionContent != null ? extensionContent.RelationFieldName : field.BackRelation?.Name ?? string.Empty;
                 ExcludeFromSQLRequest = field.ContentId != exportedContent && ! FromExtension;
             }
 
@@ -155,15 +158,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
             public int RelatedAttributeId { get; set; }
 
+            public int BackRelatedAttributeId { get; set; }
+
             public bool IsRelation { get; set; }
 
             public string Alias => $"rel_{Order}_{RelatedContentId}";
 
-            public string TableAlias => $"rel_{Order}";
+            public string RelationTableAlias => $"rel_{Order}";
 
             public bool IsM2M => ExactType == FieldExactTypes.M2MRelation;
 
-            public string CsvColumnName => $"{RelatedContentName}.{(Related.Count() > 1 ? "Title" : RelatedAttributeName)}";
+            public string CsvColumnName => $"{Name}.{(Related.Count() > 1 ? "Title" : RelatedAttributeName)}";
 
             public int? LinkId { get; set; }
 
