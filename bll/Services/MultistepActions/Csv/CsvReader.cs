@@ -482,8 +482,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Create);
             var defaultValues = Article.CreateNew(_contentId).FieldValues;
             var notMappedDefaultValues = defaultValues
-                .Where(n => !String.IsNullOrEmpty(n.Field.DefaultValue) && _headersMap.ContainsKey(n.Field) && _headersMap[n.Field] == -1)
-                .ToList();
+                .Where(
+                    n => !String.IsNullOrEmpty(n.Field.DefaultValue)
+                    && _headersMap.ContainsKey(n.Field)
+                    && _headersMap[n.Field] == -1
+                ).ToList();
             InsertArticleValues(idsList.ToArray(), baseArticles, notMappedDefaultValues);
 
             if (_importSettings.ContainsO2MRelationOrM2MRelationFields)
