@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -35,10 +35,6 @@
     <ProjectReference Include="..\..\..\constants\Constants.csproj" />
     <ProjectReference Include="..\..\..\QuantumArt.Infrastructure\QP8.Infrastructure.TestTools\QP8.Infrastructure.TestTools.csproj" />
     <ProjectReference Include="..\..\..\siteMvc\WebMvc.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-	  <Reference Include="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
 
   <ItemGroup>

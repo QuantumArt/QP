@@ -1,10 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Quantumart.QP8.Constants</AssemblyName>
     <RootNamespace>Quantumart.QP8.Constants</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-  </ItemGroup>
 </Project>
