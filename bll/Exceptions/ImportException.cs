@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 
 namespace Quantumart.QP8.BLL.Exceptions
