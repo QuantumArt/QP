@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Authors>Alex Kostyukov</Authors>
@@ -32,9 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\bll\BLL.csproj" />
-    <ProjectReference Include="..\..\constants\Constants.csproj" />
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj" />
     <ProjectReference Include="..\..\siteMvc\WebMvc.csproj" />
   </ItemGroup>
 
