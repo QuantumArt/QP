@@ -89,7 +89,7 @@ spec:
   selector:
     app: qp
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: qp
@@ -102,5 +102,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: qp
-          servicePort: 80
+          service:
+            name: qp
+            port:
+              number: 80
