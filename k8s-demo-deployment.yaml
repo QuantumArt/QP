@@ -99,7 +99,9 @@ spec:
   - host: qp-media.dev.qsupport.ru
     http:
       paths:
-      - backend:
+      - path: /
+        pathType: Prefix
+        backend:
           service:
             name: qp-media
             port:
