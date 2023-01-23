@@ -89,7 +89,7 @@ spec:
   selector:
     app: qp-media
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: qp-media
@@ -99,7 +99,10 @@ spec:
   - host: qp-media.dev.qsupport.ru
     http:
       paths:
-      - backend:
-          serviceName: qp-media
-          servicePort: 80
-
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: qp-media
+            port:
+              number: 80
