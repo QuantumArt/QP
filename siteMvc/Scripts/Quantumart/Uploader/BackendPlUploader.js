@@ -149,14 +149,14 @@ export class BackendPlUploader extends BackendBaseUploader {
 
       return this._validateFileExternal(file).then(() => {
         if (this._resolveName) {
-          file.name = this._resolveFileName(file.name);
+          file.name = this._resolveFileName(file.name); // eslint-disable-line no-param-reassign
         } else if (this._checkFileExistence(file.name)
           && !$q.confirmMessage(String.format(window.UPLOAD_OVERWRITE_MESSAGE, file.name))) {
           up.removeFile(file);
           cancelledFiles.push(file);
         }
         resolve();
-      }).catch((error) => {
+      }).catch(error => {
         up.removeFile(file);
         cancelledFiles.push(file);
         $q.alertWarn($.telerik.formatString(error, file.name));
@@ -166,9 +166,7 @@ export class BackendPlUploader extends BackendBaseUploader {
   }
 
   _validateFileExternal(file) {
-    return new Promise(function (resolve) {
-      resolve(file);
-    });
+    return new Promise(resolve => resolve(file));
   }
 
   initialize() {
