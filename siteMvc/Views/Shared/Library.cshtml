@@ -1,9 +1,6 @@
 ﻿@using Quantumart.QP8.Resources
 @model Quantumart.QP8.WebMvc.ViewModels.Library.LibraryViewModel
 
-@Html.PrepareInitScript(Model)
-@Html.CustomScript(Model.ContentFormScript, Model.ContextObjectName)
-
 <div class="library" id="@Model.MainComponentId">
   <div class="t-widget t-splitter-horizontal l-splitter" id="@Model.SplitterId">
     <div class="t-pane l-tree t-scrollable" id="@Model.TreeContainerElementId">
@@ -101,3 +98,4 @@
 </div>
 
 @Html.PrepareAndRunInitScript(Model)
+@Html.CustomScript(Model.ContentFormScript, Model.ContextObjectName)
