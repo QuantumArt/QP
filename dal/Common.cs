@@ -9967,11 +9967,9 @@ order by ActionDate desc
                         ContentId,
                         RefContentId,
                         LinkId,
-                        {SqlQuerySyntaxHelper.CastToVarchar(
-                            dbType,
-                            SqlQuerySyntaxHelper.ConcatStrValues(
-                                dbType,
-                                "'root_'", "Field"))},
+                        {SqlQuerySyntaxHelper.CastToVarchar(dbType,
+                            SqlQuerySyntaxHelper.ConcatStrValues(dbType, "'root_'", "Field")
+                        )},
                         {SqlQuerySyntaxHelper.CastToVarchar(dbType, "'root'")},
                         Field,
                         BackwardField,
@@ -9988,7 +9986,9 @@ order by ActionDate desc
                         q.ContentId,
                         q.RefContentId,
                         q.LinkId,
-                        {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "fq.Alias", "'_'", "q.Field")},
+                        {SqlQuerySyntaxHelper.CastToVarchar(dbType,
+                            SqlQuerySyntaxHelper.ConcatStrValues(dbType, "fq.Alias", "'_'", "q.Field")
+                        )},
                         fq.Alias,
                         q.Field,
                         q.BackwardField,

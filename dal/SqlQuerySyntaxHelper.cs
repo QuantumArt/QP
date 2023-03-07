@@ -51,12 +51,12 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static string CastToVarchar(DatabaseType databaseType, string expression)
+        public static string CastToVarchar(DatabaseType databaseType, string expression, int length = 255)
         {
             switch (databaseType)
             {
                 case DatabaseType.SqlServer:
-                    return $"cast({expression} as nvarchar)";
+                    return $"cast({expression} as nvarchar({length}))";
                 case DatabaseType.Postgres:
                     return $"cast({expression} as varchar)";
                 default:
