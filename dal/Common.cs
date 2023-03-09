@@ -2146,7 +2146,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
-            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
+            var forceCountQuery = entityTypeCode == "content_item";
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();
