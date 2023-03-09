@@ -2043,7 +2043,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             string parentEntityTypeCode = "", int parentEntityId = 0, IEnumerable<int> selectedIds = null,
             List<DbParameter> sqlParameters = null)
         {
-            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
+            var forceCountQuery = entityTypeCode == "content_item";
             using (var cmd = DbCommandFactory.Create("qp_get_paged_data", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
