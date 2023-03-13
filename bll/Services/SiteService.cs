@@ -206,12 +206,18 @@ namespace Quantumart.QP8.BLL.Services
             if (!SiteRepository.Exists(id))
             {
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, id));
-            }
+            }            
 
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
             var folder = repository.GetBySubFolder(id, subFolder);
-            return new LibraryResult { Folder = folder };
+            var contentFormScript = SiteRepository.GetById(id).ContentFormScript;
+
+            return new LibraryResult
+            {
+                Folder = folder,
+                ContentFormScript = contentFormScript
+            };
         }
 
         public static ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)

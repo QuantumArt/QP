@@ -125,30 +125,48 @@ export class BackendPlUploader extends BackendBaseUploader {
   }
 
   _filesAddedHandler(up, files) {
-    let i, file;
     const cancelledFiles = [];
-    for (i = 0; i < files.length; i++) {
-      file = files[i];
+
+    const tasks = files.map(file => this._validate(up, file, cancelledFiles));
+
+    Promise.all(tasks).then(() => {
+      if (cancelledFiles.length < files.length) {
+        up.start();
+        this._showProgress();
+        up.refresh();
+      }
+    });
+  }
+
+  _validate(up, file, cancelledFiles) {
+    return new Promise(resolve => {
       if (file.size === 0) {
         up.removeFile(file);
         cancelledFiles.push(file);
         $q.alertWarn($.telerik.formatString(window.PL_UPLOAD_ZERO_SIZE_WARN, file.name));
+        return resolve();
       }
 
-      if (this._resolveName) {
-        file.name = this._resolveFileName(file.name);
-      } else if (this._checkFileExistence(file.name)
-        && !$q.confirmMessage(String.format(window.UPLOAD_OVERWRITE_MESSAGE, file.name))) {
+      return this._validateFileExternal(file).then(() => {
+        if (this._resolveName) {
+          file.name = this._resolveFileName(file.name); // eslint-disable-line no-param-reassign
+        } else if (this._checkFileExistence(file.name)
+          && !$q.confirmMessage(String.format(window.UPLOAD_OVERWRITE_MESSAGE, file.name))) {
+          up.removeFile(file);
+          cancelledFiles.push(file);
+        }
+        resolve();
+      }).catch(error => {
         up.removeFile(file);
         cancelledFiles.push(file);
-      }
-    }
+        $q.alertWarn($.telerik.formatString(error, file.name));
+        resolve();
+      });
+    });
+  }
 
-    if (cancelledFiles.length < files.length) {
-      up.start();
-      this._showProgress();
-      up.refresh();
-    }
+  _validateFileExternal(file) {
+    return new Promise(resolve => resolve(file));
   }
 
   initialize() {
