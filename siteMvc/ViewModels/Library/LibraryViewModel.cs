@@ -47,6 +47,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
             model.RootFolder = result.Folder;
             model.FilterFileTypeId = filterFileTypeId;
             model.AllowUpload = allowUpload;
+            model.ContentFormScript = result.ContentFormScript;
+
             return model;
         }
 
@@ -66,6 +68,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
         public int? FilterFileTypeId { get; set; }
 
         public bool AllowUpload { get; set; }
+
+        public string ContentFormScript { get; set; }
 
         public string FolderEntityTypeCode => Mode == LibraryMode.Site ? Constants.EntityTypeCode.SiteFolder : Constants.EntityTypeCode.ContentFolder;
 
