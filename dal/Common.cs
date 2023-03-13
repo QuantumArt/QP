@@ -2043,7 +2043,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             string parentEntityTypeCode = "", int parentEntityId = 0, IEnumerable<int> selectedIds = null,
             List<DbParameter> sqlParameters = null)
         {
-            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
+            var forceCountQuery = entityTypeCode == "content_item";
             using (var cmd = DbCommandFactory.Create("qp_get_paged_data", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -2146,7 +2146,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
-            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
+            var forceCountQuery = entityTypeCode == "content_item";
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();
@@ -9967,11 +9967,9 @@ order by ActionDate desc
                         ContentId,
                         RefContentId,
                         LinkId,
-                        {SqlQuerySyntaxHelper.CastToVarchar(
-                            dbType,
-                            SqlQuerySyntaxHelper.ConcatStrValues(
-                                dbType,
-                                "'root_'", "Field"))},
+                        {SqlQuerySyntaxHelper.CastToVarchar(dbType,
+                            SqlQuerySyntaxHelper.ConcatStrValues(dbType, "'root_'", "Field")
+                        )},
                         {SqlQuerySyntaxHelper.CastToVarchar(dbType, "'root'")},
                         Field,
                         BackwardField,
@@ -9988,7 +9986,9 @@ order by ActionDate desc
                         q.ContentId,
                         q.RefContentId,
                         q.LinkId,
-                        {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "fq.Alias", "'_'", "q.Field")},
+                        {SqlQuerySyntaxHelper.CastToVarchar(dbType,
+                            SqlQuerySyntaxHelper.ConcatStrValues(dbType, "fq.Alias", "'_'", "q.Field")
+                        )},
                         fq.Alias,
                         q.Field,
                         q.BackwardField,
