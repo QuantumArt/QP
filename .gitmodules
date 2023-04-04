@@ -1,0 +1,4 @@
+[submodule "QA.Workflow"]
+	path = QA.Workflow
+	url = https://tfs.dev.qsupport.ru/tfs/QuantumartCollection/QA.Workflow/_git/QA.Workflow
+	branch = feature/change-deployment
