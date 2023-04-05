@@ -245,6 +245,10 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IDbService, DbService>()
                 ;
 
+            services
+               .AddCamundaWorkflow(Configuration)
+               .AddScoped<IExternalWorkflowService, ExternalWorkflowService>();
+
             if (qpOptions.EnableLdapAuthentication)
             {
                 services.AddOptions<LdapSettings>()

@@ -6,4 +6,9 @@ namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 public interface IExternalWorkflowService
 {
     Task<bool> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token);
+
+    Task<bool> StartProcess(string customerCode,
+        int contentItemId,
+        int contentId,
+        CancellationToken token);
 }
