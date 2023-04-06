@@ -11,4 +11,6 @@ public interface IExternalWorkflowService
         int contentItemId,
         int contentId,
         CancellationToken token);
+
+    Task<int> GetTaskCount();
 }

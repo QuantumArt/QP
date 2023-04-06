@@ -8,6 +8,7 @@
 		@Html.HtmlFieldFor(s => s.LoggedAs, @<div id="@Model.LoggedAsElementId">@Html.DisplayFor(s => s.LoggedAs)</div>)
 		@Html.HtmlFieldFor(s => s.LockedCount, @<div id="@Model.LockedElementId">@Html.DisplayFor(s => s.LockedCount)</div>)
 		@Html.HtmlFieldFor(s => s.ApprovalCount, @<div id="@Model.ApprovalElementId">@Html.DisplayFor(s => s.ApprovalCount)</div>)
+		@Html.HtmlFieldFor(s => s.ExternalUserTaskCount, @<div id="@Model.ExternalUserTaskElementId">@Html.DisplayFor(s => s.ExternalUserTaskCount)</div>)
 	}
 
 	using (Html.BeginFieldGroup(HomeStrings.SearchInArticles))
@@ -20,7 +21,7 @@
 @Html.PrepareInitScript(Model)
 <script>
 	@(Model.ContextObjectName).setInitializedCallback(function() {
-		this.mediatorComponent = new Quantumart.QP8.Home(this, "@Model.SiteElementId", "@Model.SearchElementId", "@Model.LockedElementId", "@Model.ApprovalElementId", "@Model.LoggedAsElementId", "@Model.CustomerCode");
+		this.mediatorComponent = new Quantumart.QP8.Home(this, "@Model.SiteElementId", "@Model.SearchElementId", "@Model.LockedElementId", "@Model.ApprovalElementId", "@Model.LoggedAsElementId", "@Model.CustomerCode", "@Model.ExternalUserTaskElementId");
 		this.mediatorComponent.initialize();
 	});
 

@@ -19,6 +19,7 @@ namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
 public class ExternalWorkflowService : IExternalWorkflowService
 {
+    private const string ExternalWorkflowSettingName = "EXTERNAL_WORKFLOW";
     private const string ContentIdSettingName = "EXTERNAL_WORKFLOW_CONTENT_ID";
     private const string WorkflowContentRelationFieldName = "ContentId";
     private const string AssignmentToWorkflowRelationFieldName = "Workflow";
@@ -30,14 +31,17 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
     private readonly IWorkflowProcessService _workflowProcessService;
+    private readonly IWorkflowUserTaskService _workflowUserTaskService;
 
     public ExternalWorkflowService(IWorkflowDeploymentService deploymentService,
         ILogger<ExternalWorkflowService> logger,
-        IWorkflowProcessService workflowProcessService)
+        IWorkflowProcessService workflowProcessService,
+        IWorkflowUserTaskService workflowUserTaskService)
     {
         _deploymentService = deploymentService;
         _logger = logger;
         _workflowProcessService = workflowProcessService;
+        _workflowUserTaskService = workflowUserTaskService;
     }
 
     public async Task<bool> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token)
@@ -134,6 +138,40 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
     }
 
+    public async Task<int> GetTaskCount()
+    {
+        try
+        {
+            if (!IsExternalWorkflowEnabled())
+            {
+                return 0;
+            }
+
+            UserService userService = new();
+            User user = userService.ReadProfile(QPContext.CurrentUserId);
+            List<string> groups = user.Groups.Select(x => x.Name).ToList();
+
+            foreach (UserGroup userGroup in user.Groups)
+            {
+                UserGroup parentGroup = userGroup.ParentGroup;
+
+                while (parentGroup != null)
+                {
+                    groups.Add(parentGroup.Name);
+                    parentGroup = parentGroup.ParentGroup;
+                }
+            }
+
+            return await _workflowUserTaskService.GetUserTasksCount(user.LogOn, groups, QPContext.CurrentCustomerCode);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while loading user tasks count.");
+
+            return 0;
+        }
+    }
+
     private static string GetWorkflowDefinitionToStart(string workflow)
     {
         if (!int.TryParse(workflow, out int workflowArticleId))
@@ -208,5 +246,12 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
         return (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, setting.Value);
+    }
+
+    private static bool IsExternalWorkflowEnabled()
+    {
+        AppSettingsDAL externalWorkflowSetting = QPContext.EFContext.AppSettingsSet.FirstOrDefault(x => x.Key == ExternalWorkflowSettingName);
+
+        return externalWorkflowSetting != null && bool.TryParse(externalWorkflowSetting.Value, out bool externalWorkflowEnabled) && externalWorkflowEnabled;
     }
 }
