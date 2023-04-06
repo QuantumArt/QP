@@ -12,8 +12,11 @@ using QA.Workflow.Models;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
+using UserTask = QA.Workflow.Models.UserTask;
+using UserTaskInfo = Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTasksInfo;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
@@ -27,6 +30,8 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string WorkflowIdentityFieldName = "WorkflowID";
     private const string MainSchemaFieldName = "IsMainSchema";
     private const string SchemaIdFieldName = "SchemaId";
+    private const string ContentItemIdName = "ContentItemId";
+    private const string ContentIdName = "ContentId";
 
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
@@ -96,7 +101,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
             if (workflowsToStart.Count == 0)
             {
-                _logger.LogWarning("Unable to find assigned workflow for content {content}.", workflowContentId);
+                _logger.LogWarning("Unable to find assigned workflow for content {Content}.", workflowContentId);
 
                 return true;
             }
@@ -147,22 +152,9 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 return 0;
             }
 
-            UserService userService = new();
-            User user = userService.ReadProfile(QPContext.CurrentUserId);
-            List<string> groups = user.Groups.Select(x => x.Name).ToList();
+            UserInfo userInfo = GetUserInfo();
 
-            foreach (UserGroup userGroup in user.Groups)
-            {
-                UserGroup parentGroup = userGroup.ParentGroup;
-
-                while (parentGroup != null)
-                {
-                    groups.Add(parentGroup.Name);
-                    parentGroup = parentGroup.ParentGroup;
-                }
-            }
-
-            return await _workflowUserTaskService.GetUserTasksCount(user.LogOn, groups, QPContext.CurrentCustomerCode);
+            return await _workflowUserTaskService.GetUserTasksCount(userInfo.Login, userInfo.Roles, QPContext.CurrentCustomerCode);
         }
         catch (Exception e)
         {
@@ -170,6 +162,88 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
             return 0;
         }
+    }
+
+    public async Task<UserTaskInfo> GetUserTasks(int page, int pageSize)
+    {
+        try
+        {
+            UserInfo userInfo = GetUserInfo();
+            List<UserTask> userTasks = await _workflowUserTaskService.GetUserTasks(userInfo.Login, userInfo.Roles, QPContext.CurrentCustomerCode);
+
+            UserTaskInfo taskInfo = new()
+            {
+                TotalCount = userTasks.Count
+            };
+            userTasks = userTasks.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            foreach (UserTask userTask in userTasks)
+            {
+                Dictionary<string, object> variables = await _workflowUserTaskService.GetTaskVariables(userTask.Id);
+                int contentItemId = GetVariable<int>(variables, ContentItemIdName);
+                int contentId = GetVariable<int>(variables, ContentIdName);
+
+                Content content = ContentRepository.GetById(contentId);
+                Article article = ArticleRepository.GetById(contentItemId);
+
+                UserTaskData data = new()
+                {
+                    TaskId = userTask.Id,
+                    ProcessId = userTask.ProcessId,
+                    TaskName = userTask.Name,
+                    Id = contentItemId,
+                    ContentName = content.Name,
+                    ItemName = article.Name,
+                    ParentId = article.Parent.Id,
+                    SiteName = content.Site.Name
+                };
+
+                taskInfo.Data.Add(data);
+            }
+
+            return taskInfo;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while loading user tasks list.");
+
+            throw;
+        }
+    }
+
+    private static T GetVariable<T>(Dictionary<string, object> variables, string name)
+    {
+        if (!variables.TryGetValue(name, out object variable))
+        {
+            throw new InvalidOperationException($"Unable to find variable {name} in task variables.");
+        }
+
+        return (T)Convert.ChangeType(variable, typeof(T));
+    }
+
+    private static UserInfo GetUserInfo()
+    {
+        UserService userService = new();
+        User user = userService.ReadProfile(QPContext.CurrentUserId);
+
+        UserInfo info = new()
+        {
+            Login = user.LogOn
+        };
+        info.Roles.AddRange(user.Groups.Select(x => x.Name).ToList());
+
+        foreach (UserGroup userGroup in user.Groups)
+        {
+            UserGroup parentGroup = userGroup.ParentGroup;
+
+            while (parentGroup != null)
+            {
+                info.Roles.Add(parentGroup.Name);
+                parentGroup = parentGroup.ParentGroup;
+            }
+        }
+
+        return info;
     }
 
     private static string GetWorkflowDefinitionToStart(string workflow)

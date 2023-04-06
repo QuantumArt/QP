@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using QA.Validation.Xaml.Extensions.Rules;
-using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -138,6 +138,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = ArticleService.ListLocked(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
+        }
+
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ExternalWorkflowUserTasks)]
+        [BackendActionContext(ActionCode.ExternalWorkflowUserTasks)]
+        public async Task<IActionResult> ExternalWorkflowUserTasks(string tabId, int parentId, int id)
+        {
+            UserTasksViewModel model = UserTasksViewModel.Create(id, tabId, parentId);
+            model.DataBindingActionName = "_ExternalWorkflowUserTasks";
+
+            return await JsonHtml("ExternalWorkflowTasks", model);
+        }
+
+        [HttpPost]
+        [ActionAuthorize(ActionCode.ExternalWorkflowUserTasks)]
+        [BackendActionContext(ActionCode.ExternalWorkflowUserTasks)]
+        public async Task<IActionResult> _ExternalWorkflowUserTasks(string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy)
+        {
+            IExternalWorkflowService workflowService = _serviceProvider.GetService<IExternalWorkflowService>();
+            UserTasksInfo tasks = await workflowService.GetUserTasks(page, pageSize);
+
+            return new TelerikResult(tasks.Data, tasks.TotalCount);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

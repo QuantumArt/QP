@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using UserTaskInfo =  Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTasksInfo;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
@@ -13,4 +14,5 @@ public interface IExternalWorkflowService
         CancellationToken token);
 
     Task<int> GetTaskCount();
+    Task<UserTaskInfo> GetUserTasks(int page, int pageSize);
 }
