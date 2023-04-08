@@ -22,7 +22,7 @@ namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
 public class ExternalWorkflowService : IExternalWorkflowService
 {
-    private const string ExternalWorkflowSettingName = "EXTERNAL_WORKFLOW";
+    public const string ExternalWorkflowSettingName = "EXTERNAL_WORKFLOW";
     private const string ContentIdSettingName = "EXTERNAL_WORKFLOW_CONTENT_ID";
     private const string WorkflowContentRelationFieldName = "ContentId";
     private const string AssignmentToWorkflowRelationFieldName = "Workflow";
@@ -322,7 +322,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         return (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, setting.Value);
     }
 
-    private static bool IsExternalWorkflowEnabled()
+    public static bool IsExternalWorkflowEnabled()
     {
         AppSettingsDAL externalWorkflowSetting = QPContext.EFContext.AppSettingsSet.FirstOrDefault(x => x.Key == ExternalWorkflowSettingName);
 
