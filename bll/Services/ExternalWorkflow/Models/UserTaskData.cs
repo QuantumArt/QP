@@ -10,4 +10,5 @@ public class UserTaskData
     public string TaskName { get; set; }
     public string ContentName { get; set; }
     public string SiteName { get; set; }
+    public string[] AdditionalQueryParameters { get; } = new string[1] { "TaskId" };
 }

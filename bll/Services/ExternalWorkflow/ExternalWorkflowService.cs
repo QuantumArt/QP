@@ -75,7 +75,6 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
                 deployment.Files.Add(new() { Name = schemaName, FileName = fileName, FileBytes = fileBytes});
             }
-
             bool result = await _deploymentService.CreateDeployment(deployment);
 
             return result;
@@ -299,6 +298,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
         Article article = ArticleRepository.GetById(contentItemId);
         string actualContentId = article.FieldValues.Single(f => f.Field.ExactType == FieldExactTypes.Classifier).Value;
+
 
         if (!int.TryParse(actualContentId, out int workflowContentId))
         {

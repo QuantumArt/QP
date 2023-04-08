@@ -50,6 +50,7 @@ export class BackendEntityGrid extends Observable {
     this._keyColumnName = 'Id';
     this._titleColumnName = 'Name';
     this._parentKeyColumnName = 'ParentId';
+    this._additionalQueryParameters = 'AdditionalQueryParameters';
     this._linkOpenNewTab = false;
     /** @type {number[]} */
     this._startingEntitiesIDs = [];
@@ -706,6 +707,11 @@ export class BackendEntityGrid extends Observable {
     return dataItem && dataItem[this._keyColumnName] ? dataItem[this._keyColumnName] : 0;
   }
 
+  getAdditionalQueryParameters(rowElem) {
+    const dataItem = this.getDataItem(this.getRow(rowElem));
+    return dataItem && dataItem[this._additionalQueryParameters] ? dataItem[this._additionalQueryParameters] : null;
+  }
+
   getEntityName(rowElem) {
     const dataItem = this.getDataItem(this.getRow(rowElem));
     return dataItem && dataItem[this._titleColumnName] ? dataItem[this._titleColumnName] : '';
@@ -722,6 +728,11 @@ export class BackendEntityGrid extends Observable {
       filter: this._filter,
       fieldId: this._treeFieldId
     });
+  }
+
+  getItemByName(rowElem, name) {
+    const dataItem = this.getDataItem(this.getRow(rowElem));
+    return dataItem && dataItem[name] ? dataItem[name] : null;
   }
 
   checkExistEntityInCurrentPage(entityId) {
@@ -852,6 +863,25 @@ export class BackendEntityGrid extends Observable {
     return $(this._gridElement).hasClass(this.GRID_BUSY_CLASS_NAME);
   }
 
+  addAdditionalParametersToQuery(row, context) {
+    const parameters = this.getAdditionalQueryParameters(row);
+    if (!parameters)
+      return context;
+
+    for (const parameter of parameters) {
+      const item = this.getItemByName(row, parameter);
+
+      if (item)
+      {
+        context.additionalUrlParameters = {
+          [parameter]: item
+        }
+      }
+    }
+
+    return context;
+  }
+
   executeAction(row, actionCode, followLink, ctrlKey) {
     const $row = this.getRow(row);
     if ($row) {
@@ -862,7 +892,10 @@ export class BackendEntityGrid extends Observable {
       }
 
       const entityId = this.getEntityId($row);
-      const context = { ctrlKey };
+      let context = { ctrlKey };
+
+      context = this.addAdditionalParametersToQuery($row, context);
+
       if (actionCode === window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE) {
         context.additionalUrlParameters = {
           fieldId: this._treeFieldId,
@@ -907,6 +940,10 @@ export class BackendEntityGrid extends Observable {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
       }
     }
+  }
+
+  addFieldsToParams(rowElement) {
+
   }
 
   _executePostSelectActions() {
