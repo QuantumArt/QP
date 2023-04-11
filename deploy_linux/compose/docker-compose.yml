@@ -2,6 +2,17 @@ volumes:
   qp-temp-volume:
   qp-library-volume:
 services:
+  qp-configuration:
+    container_name: qp-configuration
+    image: "qpcms/qp-configuration-service:0.9.1.20"
+    restart: always
+    ports:
+      - "5200:80"
+    environment:
+      - QpConfigurationPath=/qpconfig/config.xml
+      - Jwt__Secret=QP.TestSecret.gwfeP7mbqqLiDmquIrlr
+    volumes:
+      - ${HOST_CONFIG_PATH}:/qpconfig/config.xml
   qp:
     container_name: qp-stable
     image: qpcms/qp:${QP_TAG}
@@ -13,7 +24,8 @@ services:
      - Properties__EnableSignalR=false
      - Properties__EnableArticleScheduler=true
      - Properties__EnableCommonScheduler=true
-     - Properties__QpConfigPath=/qpconfig/config.xml
+     - Properties__QpConfigUrl=http://qp-configuration:80
+     - Properties__QpConfigToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRUC5Db25maWd1cmF0aW9uU2VydmljZS5Jc3N1ZXIiLCJleHAiOjE3MjQ1NjQ1NjQsImF1ZCI6IlFQLkNvbmZpZ3VyYXRpb25TZXJ2aWNlLkF1ZGllbmNlIn0.IB5Pk5Reym8wXmGc9vDI7llxxNSRevi7gwCtStwK5Sw
      - TZ=Europe/Moscow
     deploy:
       resources:
@@ -24,7 +36,6 @@ services:
     volumes:
      - qp-temp-volume:/qptemp
      - qp-library-volume:/qplibrary
-     - ${HOST_CONFIG_PATH}:/qpconfig/config.xml
   qp-storage:
     container_name: qp-storage-stable
     image: 'qpcms/qp-storage:${STORAGE_TAG}'
