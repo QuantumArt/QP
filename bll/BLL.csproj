@@ -48,6 +48,7 @@
   <ItemGroup>
     <ProjectReference Include="..\dal\DAL.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\Merger\Merger.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\QA.Workflow\QA.Workflow.Integration.QP\QA.Workflow.Integration.QP.csproj" />
     <ProjectReference Include="..\QA.Workflow\QA.Workflow.QP-DPC\QA.Workflow.QP-DPC.csproj" />
     <ProjectReference Include="..\QA.Workflow\QA.Workflow.TaskWorker\QA.Workflow.TaskWorker.csproj" />
     <ProjectReference Include="..\QA.Workflow\QA.Workflow\QA.Workflow.csproj" />

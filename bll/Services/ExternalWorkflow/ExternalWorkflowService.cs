@@ -22,7 +22,7 @@ namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
 public class ExternalWorkflowService : IExternalWorkflowService
 {
-    public const string ExternalWorkflowSettingName = "EXTERNAL_WORKFLOW";
+    private const string ExternalWorkflowSettingName = "EXTERNAL_WORKFLOW";
     private const string ContentIdSettingName = "EXTERNAL_WORKFLOW_CONTENT_ID";
     private const string WorkflowContentRelationFieldName = "ContentId";
     private const string AssignmentToWorkflowRelationFieldName = "Workflow";
@@ -32,6 +32,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string SchemaIdFieldName = "SchemaId";
     private const string ContentItemIdName = "ContentItemId";
     private const string ContentIdName = "ContentId";
+    private const string NewWorkflowStatusName = "Процесс запущен";
 
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
@@ -91,27 +92,47 @@ public class ExternalWorkflowService : IExternalWorkflowService
     {
         try
         {
+            _logger.LogInformation("Starting processes for article id {Article} in content {Content} for customer code {CustomerCode}",
+                contentItemId,
+                contentId,
+                customerCode);
+
+            QPContext.IsAdmin = true;
+
+            List<ListItem> list = ArticleRepository.GetSimpleList(new()
+            {
+                EntityId = contentItemId.ToString(),
+                ParentEntityId = contentId,
+                SelectedEntitiesIds = new[] { contentItemId },
+                SelectionMode = ListSelectionMode.OnlySelectedItems
+            });
+
+            _logger.LogTrace("Article display name {Name}",
+                list.Count == 0 ? "not found" : list.First().Text);
+
             int workflowContentId = GetContentIdForWorkflow(contentItemId, contentId);
             int externalWorkflowContentId = GetValueFromQpConfig<int>(ContentIdSettingName);
 
             Content assignmentsContent = ContentRepository.GetById(externalWorkflowContentId);
             int fieldId = assignmentsContent.Fields.Single(f => f.Name == WorkflowContentRelationFieldName).Id;
-            Dictionary<int, string> workflowsToStart = ArticleRepository.GetRelatedItems(new int[1] {fieldId}, workflowContentId);
+            Dictionary<int, string> workflowsToStart = ArticleRepository.GetRelatedItems(new int[1] { fieldId }, workflowContentId);
 
             if (workflowsToStart.Count == 0)
             {
-                _logger.LogWarning("Unable to find assigned workflow for content {Content}.", workflowContentId);
+                _logger.LogWarning("Unable to find assigned workflow for content {Content}", workflowContentId);
 
                 return true;
             }
 
             foreach (string workflowToStart in workflowsToStart.Values)
             {
-                string definitionName = GetWorkflowDefinitionToStart(workflowToStart);
+                _logger.LogInformation("Starting workflow {Workflow}", workflowToStart);
+
+                WorkflowToStart workflow = GetWorkflowDefinitionToStart(workflowToStart);
 
                 ProcessDefinitionRequest request = new()
                 {
-                    Key = definitionName,
+                    Key = workflow.DefinitionName,
                     Version = "latest"
                 };
 
@@ -121,15 +142,21 @@ public class ExternalWorkflowService : IExternalWorkflowService
                     { "ContentId", contentId }
                 };
 
-                bool result = await _workflowProcessService.StartProcessInstance(request,
+                string result = await _workflowProcessService.StartProcessInstance(request,
                     string.Empty,
                     customerCode,
                     variables);
 
-                if (!result)
+                if (string.IsNullOrWhiteSpace(result))
                 {
                     throw new InvalidOperationException("Process not started.");
                 }
+
+                SaveStartedWorkflowInfoToDb(result,
+                    workflow.WorkflowName,
+                    list.Count == 0 ? contentItemId.ToString() : list.First().Text,
+                    workflow.WorkflowId,
+                    contentItemId);
             }
 
             return true;
@@ -139,6 +166,67 @@ public class ExternalWorkflowService : IExternalWorkflowService
             _logger.LogError(e, "Failed to start process.");
 
             return false;
+        }
+        finally
+        {
+            QPContext.IsAdmin = false;
+        }
+    }
+
+    private void SaveStartedWorkflowInfoToDb(string processId, string workflowName, string articleName, int workflowId, int contentItemId)
+    {
+        try
+        {
+            DateTime now = DateTime.Now;
+            ExternalWorkflowDAL workflowEntity = new()
+            {
+                Created = now,
+                ProcessId = processId,
+                WorkflowName = workflowName,
+                ArticleName = articleName,
+            };
+
+            ExternalWorkflowDAL createdWorkflow = DefaultRepository.SimpleSave(workflowEntity);
+
+            if (createdWorkflow is not { Id: > 0 })
+            {
+                throw new InvalidOperationException("Unable to save process info to DB.");
+            }
+
+            ExternalWorkflowStatusDAL workflowStatus = new()
+            {
+                Created = now,
+                CreatedBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn,
+                Status = NewWorkflowStatusName,
+                ExternalWorkflowId = createdWorkflow.Id
+            };
+
+            ExternalWorkflowStatusDAL createWorkflowStatus = DefaultRepository.SimpleSave(workflowStatus);
+
+            if (createWorkflowStatus is not { Id: > 0 })
+            {
+                throw new InvalidOperationException("Unable to save process status to DB.");
+            }
+
+            ExternalWorkflowInProgressDAL workflowProgress = new()
+            {
+                ProcessId = createdWorkflow.Id,
+                WorkflowId = workflowId,
+                ArticleId = contentItemId,
+                CurrentStatus = createWorkflowStatus.Id,
+                LastModifiedBy = SpecialIds.AdminUserId
+            };
+
+            ExternalWorkflowInProgressDAL createdWorkflowProgress = DefaultRepository.SimpleSave(workflowProgress);
+
+            if (createdWorkflowProgress is not { Id: > 0 })
+            {
+                throw new InvalidOperationException("Unable to create process progress in DB.");
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while saving workflow process info to db");
         }
     }
 
@@ -245,7 +333,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         return info;
     }
 
-    private static string GetWorkflowDefinitionToStart(string workflow)
+    private static WorkflowToStart GetWorkflowDefinitionToStart(string workflow)
     {
         if (!int.TryParse(workflow, out int workflowArticleId))
         {
@@ -284,7 +372,12 @@ public class ExternalWorkflowService : IExternalWorkflowService
             throw new InvalidOperationException("Unable to retrieve process key from QP.");
         }
 
-        return definitionName;
+        return new()
+        {
+            DefinitionName = definitionName,
+            WorkflowId = workflowId,
+            WorkflowName = workflowInfo.FieldValues.Single(x => x.Field.Name == "Title").Value
+        };
     }
 
     private static int GetContentIdForWorkflow(int contentItemId, int contentId)

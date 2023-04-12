@@ -66,6 +66,7 @@ using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow;
+using Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -247,9 +248,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IDbService, DbService>()
                 ;
 
-            services
-               .AddCamundaWorkflow(Configuration)
-               .AddScoped<IExternalWorkflowService, ExternalWorkflowService>();
+            services.RegisterExternalWorkflow(Configuration);
 
             if (qpOptions.EnableLdapAuthentication)
             {
