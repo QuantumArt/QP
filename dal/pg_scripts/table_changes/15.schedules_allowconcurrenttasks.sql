@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS Schedules ADD COLUMN IF NOT EXISTS AllowConcurrentTasks boolean NOT NULL DEFAULT true;
