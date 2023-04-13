@@ -2169,10 +2169,9 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                         countCmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
 
-
-
                     var countResult = countCmd.ExecuteScalar();
                     totalRecords = Convert.ToInt32(countResult);
+                    countCmd.Parameters.Clear();
                 }
             }
 
