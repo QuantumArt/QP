@@ -5,6 +5,7 @@ using QA.Workflow.Integration.QP.Models;
 using QA.Workflow.TaskWorker.Extensions;
 using QA.Workflow.TaskWorker.Interfaces;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow.ExternalTasks;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
@@ -28,7 +29,8 @@ public static class ExternalWorkflowRegistration
         services.AddScoped<IExternalWorkflowService, ExternalWorkflowService>();
         IExternalTaskCollection taskCollection = services.RegisterCamundaExternalTaskWorker(configuration);
 
-        //ToDo: register external tasks
+        services.AddSingleton<UpdateProcessStatus>();
+        taskCollection.Register<UpdateProcessStatus>();
 
         return services;
     }

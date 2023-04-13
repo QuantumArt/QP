@@ -1,4 +1,4 @@
-﻿CREATE SEQUENCE IF NOT EXISTS public.external_workflow_seq;
+﻿CREATE SEQUENCE IF NOT EXISTS public.external_workflow_seq start 1;
 
 CREATE TABLE IF NOT EXISTS public.external_workflow (
     id numeric(18,0) NOT NULL DEFAULT nextval('external_workflow_seq'::regclass),
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.external_workflow (
 ALTER SEQUENCE external_workflow_seq
 OWNED BY external_workflow.id;
 
-CREATE SEQUENCE IF NOT EXISTS public.external_workflow_status_seq;
+CREATE SEQUENCE IF NOT EXISTS public.external_workflow_status_seq start 1;
 
 CREATE TABLE IF NOT EXISTS public.external_workflow_status (
     id numeric(18,0) NOT NULL DEFAULT nextval('external_workflow_status_seq'::regclass),
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public.external_workflow_status (
 ALTER SEQUENCE external_workflow_status_seq
 OWNED BY external_workflow_status.id;
 
-CREATE SEQUENCE IF NOT EXISTS public.external_workflow_in_progress_seq;
+CREATE SEQUENCE IF NOT EXISTS public.external_workflow_in_progress_seq start 1;
 
 CREATE TABLE IF NOT EXISTS public.external_workflow_in_progress (
     id numeric(18,0) NOT NULL DEFAULT nextval('external_workflow_in_progress_seq'::regclass),

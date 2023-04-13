@@ -102,13 +102,13 @@ public class ExternalWorkflowProcessWatcher : IHostedService
             }
 
             QPContext.CurrentDbConnectionInfo = cnnInfo;
-            List<string> processes = QPContext.EFContext.ExternalWorkflowSet
+            List<decimal> processes = QPContext.EFContext.ExternalWorkflowInProgressSet
                .Select(w => w.ProcessId)
                .ToList();
 
             _logger.LogTrace("For customer code {CustomerCode} was found {ProcessCount} processes", tenant, processes.Count);
 
-            foreach (string process in processes)
+            foreach (decimal process in processes)
             {
                 await CheckProcessAndStopIfDead(process, tenant);
             }
@@ -119,13 +119,16 @@ public class ExternalWorkflowProcessWatcher : IHostedService
         }
     }
 
-    private async Task CheckProcessAndStopIfDead(string process, string tenant)
+    private async Task CheckProcessAndStopIfDead(decimal process, string tenant)
     {
         try
         {
             _logger.LogTrace("Checking process {Process} for customer code {CustomerCode}", process, tenant);
 
-            bool isAlive = await _processService.CheckProcessExistence(process, tenant);
+            ExternalWorkflowDAL processInfo = QPContext.EFContext.ExternalWorkflowSet
+               .Single(x => x.Id == process);
+
+            bool isAlive = await _processService.CheckProcessExistence(processInfo.ProcessId, tenant);
 
             if (isAlive)
             {
@@ -146,18 +149,15 @@ public class ExternalWorkflowProcessWatcher : IHostedService
         }
     }
 
-    private void StopProcessInDb(string process)
+    private void StopProcessInDb(decimal process)
     {
         try
         {
-            ExternalWorkflowDAL workflow = QPContext.EFContext.ExternalWorkflowSet
-               .Single(w => w.ProcessId == process);
-
             ExternalWorkflowStatusDAL newStatus = new()
             {
                 Created = DateTime.Now,
                 Status = DeadProcessStatusName,
-                ExternalWorkflowId = workflow.Id,
+                ExternalWorkflowId = process,
                 CreatedBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn
             };
 
@@ -165,13 +165,13 @@ public class ExternalWorkflowProcessWatcher : IHostedService
 
             if (savedStatus is not { Id: > 0 })
             {
-                _logger.LogError("Failed to save new status {Status} for process {Process}",
+                _logger.LogError("Failed to save new status {Status} for process {ProcessId}",
                     DeadProcessStatusName,
-                    workflow.ProcessId);
+                    process);
             }
 
             ExternalWorkflowInProgressDAL inProcess = QPContext.EFContext.ExternalWorkflowInProgressSet
-               .SingleOrDefault(x => x.ProcessId == workflow.Id);
+               .SingleOrDefault(x => x.ProcessId == process);
 
             if (inProcess != null)
             {

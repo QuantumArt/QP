@@ -17,14 +17,15 @@ public class ExternalWorkflowHistoryDALConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<ExternalWorkflowStatusDAL> builder)
     {
-        builder.ToTable("EXTERNAL_WORKFLOW_HISTORY");
+        builder.ToTable("EXTERNAL_WORKFLOW_STATUS");
 
         builder.Property(x => x.Id).HasColumnName("ID");
         builder.Property(x => x.Created).HasColumnName("CREATED");
         builder.Property(x => x.CreatedBy).HasColumnName("CREATED_BY");
-        builder.Property(x => x.Status).HasColumnName("CURRENT_STATUS");
+        builder.Property(x => x.Status).HasColumnName("STATUS");
         builder.Property(x => x.ExternalWorkflowId).HasColumnName("EXTERNAL_WORKFLOW_ID");
 
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

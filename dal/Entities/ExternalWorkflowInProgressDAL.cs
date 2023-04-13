@@ -27,5 +27,6 @@ public class ExternalWorkflowInProgressDALConfiguration : IEntityTypeConfigurati
         builder.Property(x => x.WorkflowId).HasColumnName("WORKFLOW_ID");
 
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

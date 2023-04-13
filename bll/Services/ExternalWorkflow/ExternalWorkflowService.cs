@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using QA.Workflow.Integration.QP.Models;
 using QA.Workflow.Interfaces;
 using QA.Workflow.Models;
 using Quantumart.QP8.BLL.Repository;
@@ -22,7 +23,6 @@ namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
 public class ExternalWorkflowService : IExternalWorkflowService
 {
-    private const string ExternalWorkflowSettingName = "EXTERNAL_WORKFLOW";
     private const string ContentIdSettingName = "EXTERNAL_WORKFLOW_CONTENT_ID";
     private const string WorkflowContentRelationFieldName = "ContentId";
     private const string AssignmentToWorkflowRelationFieldName = "Workflow";
@@ -30,8 +30,6 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string WorkflowIdentityFieldName = "WorkflowID";
     private const string MainSchemaFieldName = "IsMainSchema";
     private const string SchemaIdFieldName = "SchemaId";
-    private const string ContentItemIdName = "ContentItemId";
-    private const string ContentIdName = "ContentId";
     private const string NewWorkflowStatusName = "Процесс запущен";
 
     private readonly IWorkflowDeploymentService _deploymentService;
@@ -178,9 +176,11 @@ public class ExternalWorkflowService : IExternalWorkflowService
         try
         {
             DateTime now = DateTime.Now;
+            string createdBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn;
             ExternalWorkflowDAL workflowEntity = new()
             {
                 Created = now,
+                CreatedBy = createdBy,
                 ProcessId = processId,
                 WorkflowName = workflowName,
                 ArticleName = articleName,
@@ -196,7 +196,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
             ExternalWorkflowStatusDAL workflowStatus = new()
             {
                 Created = now,
-                CreatedBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn,
+                CreatedBy = createdBy,
                 Status = NewWorkflowStatusName,
                 ExternalWorkflowId = createdWorkflow.Id
             };
@@ -267,8 +267,8 @@ public class ExternalWorkflowService : IExternalWorkflowService
             foreach (UserTask userTask in userTasks)
             {
                 Dictionary<string, object> variables = await _workflowUserTaskService.GetTaskVariables(userTask.Id);
-                int contentItemId = GetVariable<int>(variables, ContentItemIdName);
-                int contentId = GetVariable<int>(variables, ContentIdName);
+                int contentItemId = GetVariable<int>(variables, ExternalWorkflowQpDpcSettings.ContentItemId);
+                int contentId = GetVariable<int>(variables, ExternalWorkflowQpDpcSettings.ContentId);
 
                 Content content = ContentRepository.GetById(contentId);
                 Article article = ArticleRepository.GetById(contentItemId);
@@ -417,7 +417,8 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
     public static bool IsExternalWorkflowEnabled()
     {
-        AppSettingsDAL externalWorkflowSetting = QPContext.EFContext.AppSettingsSet.FirstOrDefault(x => x.Key == ExternalWorkflowSettingName);
+        AppSettingsDAL externalWorkflowSetting = QPContext.EFContext.AppSettingsSet
+           .FirstOrDefault(x => x.Key == ExternalWorkflowQpDpcSettings.ExternalWorkflowSettingName);
 
         return externalWorkflowSetting != null && bool.TryParse(externalWorkflowSetting.Value, out bool externalWorkflowEnabled) && externalWorkflowEnabled;
     }
