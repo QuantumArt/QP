@@ -15,4 +15,5 @@ public interface IExternalWorkflowService
 
     Task<int> GetTaskCount();
     Task<UserTaskInfo> GetUserTasks(int page, int pageSize);
+    Task<string> GetUserTaskKey(string taskId);
 }

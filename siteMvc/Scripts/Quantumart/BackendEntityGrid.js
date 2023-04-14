@@ -962,18 +962,31 @@ export class BackendEntityGrid extends Observable {
     eventArgs.set_entityTypeCode(this._entityTypeCode);
     eventArgs.set_entities(this.getSelectedEntities());
     eventArgs.set_parentEntityId(this._parentEntityId);
-
+    let context = {};
     if (this._allowFilterSelectedEntities && !this._hostIsWindow) {
-      eventArgs.set_context({
+      context = {
         dataQueryParams: this.createDataQueryParams(),
         url: this._gridComponent.dataSource.transport.options.read.url
-      });
+      };
     }
-
+    context = this.addAdditionalParametersToSelectedEntityContext(context);
+    eventArgs.set_context(context);
     this.notify(window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, eventArgs);
 
     this._refreshHeaderCheckbox();
     this._refreshCancelSelection();
+  }
+
+  addAdditionalParametersToSelectedEntityContext(context) {
+    if (this._selectedEntitiesIDs.length > 1)
+    {
+      return context;
+    }
+
+    const row = this.getRowByEntityId(this._selectedEntitiesIDs[0]);
+    const $row = this.getRow(row);
+    context = this.addAdditionalParametersToQuery($row, context);
+    return context;
   }
 
   _isAllRowsSelectedInCurrentPage() {

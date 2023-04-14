@@ -62,14 +62,24 @@ export class BackendActionExecutor extends Observable {
           );
 
           if (actionUrl) {
-            const postParams = {
-              IDs: entityIDs,
-              actionCode,
-              parentEntityId: eventArgs.get_parentEntityId(),
-              entityTypeCode: eventArgs.get_entityTypeCode(),
-              level: selectedAction.ActionType.RequiredPermissionLevel
-            };
-
+            let postParams = {};
+            const forcedForm = this.getFormWithForceSubmit();
+            if (forcedForm)
+            {
+              Array.from(forcedForm.elements).forEach((input) => {
+                postParams[input.name] = input.value;
+              });
+            }
+            else
+            {
+              postParams = {
+                IDs: entityIDs,
+                actionCode,
+                parentEntityId: eventArgs.get_parentEntityId(),
+                entityTypeCode: eventArgs.get_entityTypeCode(),
+                level: selectedAction.ActionType.RequiredPermissionLevel
+              };
+            }
             const normalCallback = function (data) {
               BackendActionExecutor.showResult(data);
               callback(data && data.Type === window.ACTION_MESSAGE_TYPE_ERROR
@@ -152,6 +162,15 @@ export class BackendActionExecutor extends Observable {
         }
       }
     }
+  }
+
+  getFormWithForceSubmit() {
+    const forms = document.getElementsByName("ForceFormSubmit");
+    if (!forms || forms.length === 0) {
+      return null;
+    }
+
+    return forms[0].closest('form');
   }
 
   /**
@@ -776,7 +795,14 @@ export class BackendActionParameters {
       this._parentEntityId = options.eventArgs.get_parentEntityId();
       this._entityTypeCode = options.eventArgs.get_entityTypeCode();
       this._previousAction = options.eventArgs.get_previousAction();
-      this._context = options.eventArgs.get_context();
+      if (options.eventArgs.get_context())
+      {
+        this._context = options.eventArgs.get_context();
+      }
+      else
+      {
+        this._context = options.context;
+      }
       this._forceOpenWindow = options.eventArgs.get_isWindow();
     } else {
       if (options.entities) {

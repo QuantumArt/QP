@@ -422,4 +422,11 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
         return externalWorkflowSetting != null && bool.TryParse(externalWorkflowSetting.Value, out bool externalWorkflowEnabled) && externalWorkflowEnabled;
     }
+
+    public async Task<string> GetUserTaskKey(string taskId)
+    {
+        UserTask task = await _workflowUserTaskService.GetUserTaskById(taskId);
+
+        return task == null ? string.Empty : task.FormKey;
+    }
 }

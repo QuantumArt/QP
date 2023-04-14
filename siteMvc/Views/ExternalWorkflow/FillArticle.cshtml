@@ -1,0 +1,7 @@
+﻿@model Quantumart.QP8.WebMvc.ViewModels.ExternalWorkflowUserTask.FillArticleViewModel;
+
+@using (Html.BeginTabForm(Model))
+{
+  @Html.LabelForModel(Model.Message);
+  @Html.HiddenFor(x => x.ForceFormSubmit);
+}
