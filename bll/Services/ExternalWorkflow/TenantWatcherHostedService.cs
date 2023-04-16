@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using QA.Workflow.Integration.QP;
 using QA.Workflow.Integration.QP.Models;
 using QA.Workflow.TaskWorker.Models;
 using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
 public class TenantWatcherHostedService : WorkflowTenantWatcher
 {
-    private readonly IServiceProvider _serviceProvider;
-
     public TenantWatcherHostedService(ILogger<WorkflowTenantWatcher> logger,
         IOptions<ExtendedCamundaSettings> settings,
-        WorkflowTenants tenants,
-        IServiceProvider serviceProvider)
+        WorkflowTenants tenants)
         : base(logger, settings.Value, tenants)
     {
-        _serviceProvider = serviceProvider;
     }
 
     public override Task<List<string>> LoadCustomerCodes()

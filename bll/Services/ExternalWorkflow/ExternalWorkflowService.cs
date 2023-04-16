@@ -427,6 +427,6 @@ public class ExternalWorkflowService : IExternalWorkflowService
     {
         UserTask task = await _workflowUserTaskService.GetUserTaskById(taskId);
 
-        return task == null ? string.Empty : task.FormKey;
+        return task?.FormKey;
     }
 }
