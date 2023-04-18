@@ -29,7 +29,7 @@ public class ExternalWorkflowUserActionsController : AuthQpController
     [BackendActionContext(ActionCode.GetExternalWorkflowUserTasks)]
     public async Task<IActionResult> GetUserTask([FromQuery(Name = "TaskId")] string taskId)
     {
-        IUserTaskHandler userTask = await _externalWorkflowService.GetUserTaskHandler(taskId);
+        AbstractUserTask userTask = await _externalWorkflowService.GetUserTaskHandler(taskId);
         UserTaskBase result = userTask.GetUserTaskForm();
 
         return await JsonHtml(result.ViewName, GetViewModel(result.GetType()));
@@ -41,7 +41,7 @@ public class ExternalWorkflowUserActionsController : AuthQpController
     [BackendActionContext(ActionCode.CompleteExternalWorkflowUserTask)]
     public async Task<IActionResult> CompleteUserTask([FromQuery(Name = "TaskId")] string taskId)
     {
-        IUserTaskHandler userTask = await _externalWorkflowService.GetUserTaskHandler(taskId);
+        AbstractUserTask userTask = await _externalWorkflowService.GetUserTaskHandler(taskId);
 
         using StreamReader reader = new(Request.Body);
         string body = await reader.ReadToEndAsync();

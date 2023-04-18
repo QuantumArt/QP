@@ -334,17 +334,10 @@ public class ExternalWorkflowService : IExternalWorkflowService
         {
             Login = user.LogOn
         };
-        info.Roles.AddRange(user.Groups.Select(x => x.Name).ToList());
 
-        foreach (UserGroup userGroup in user.Groups)
+        foreach (int groupId in QPContext.CurrentGroupIds)
         {
-            UserGroup parentGroup = userGroup.ParentGroup;
-
-            while (parentGroup != null)
-            {
-                info.Roles.Add(parentGroup.Name);
-                parentGroup = parentGroup.ParentGroup;
-            }
+            info.Roles.Add(UserGroupRepository.GetById(groupId).Name);
         }
 
         return info;
@@ -446,7 +439,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         return task?.FormKey;
     }
 
-    public async Task<IUserTaskHandler> GetUserTaskHandler(string taskId)
+    public async Task<AbstractUserTask> GetUserTaskHandler(string taskId)
     {
         string taskKey = await GetUserTaskKey(taskId);
 
@@ -462,7 +455,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
             throw new InvalidOperationException($"Unable to find registered user task type {taskKey}");
         }
 
-        return (IUserTaskHandler)_serviceProvider.GetRequiredService(userTaskType);
+        return (AbstractUserTask)_serviceProvider.GetRequiredService(userTaskType);
     }
 
     public async Task<Dictionary<string, object>> GetTaskVariables(string taskId) =>

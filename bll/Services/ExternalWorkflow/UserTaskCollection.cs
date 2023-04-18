@@ -8,7 +8,7 @@ public class UserTaskCollection : IUserTaskCollection
     public List<Type> UserTasks { get; } = new();
 
     public void Register<TUserTask>()
-        where TUserTask : IUserTaskHandler
+        where TUserTask : AbstractUserTask
     {
         UserTasks.Add(typeof(TUserTask));
     }

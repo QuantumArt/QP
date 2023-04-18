@@ -1,27 +1,26 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using QA.Workflow.Interfaces;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTaskModels;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow.UserTasks;
 
-public class FillArticleUserTask : IUserTaskHandler
+public class FillArticleUserTask : AbstractUserTask
 {
-    private readonly IExternalWorkflowService _externalWorkflow;
-
     public FillArticleUserTask(IExternalWorkflowService externalWorkflow)
+        : base(externalWorkflow)
     {
-        _externalWorkflow = externalWorkflow;
     }
 
-    public UserTaskBase GetUserTaskForm() =>
+    public override UserTaskBase GetUserTaskForm() =>
         new FillArticleDto
         {
             ViewName = "../ExternalWorkflow/FillArticle"
         };
 
-    public async Task CompleteUserTask(string taskId, string taskResult)
+    public override async Task CompleteUserTask(string taskId, string taskResult)
     {
-        await _externalWorkflow.CompleteUserTask(taskId, null);
+        Dictionary<string, object> variables = await ExternalWorkflow.GetTaskVariables(taskId);
+        Dictionary<string, object> completionVariables = GetDictionaryWithExecutedUser(variables);
+        await ExternalWorkflow.CompleteUserTask(taskId, completionVariables);
     }
 }

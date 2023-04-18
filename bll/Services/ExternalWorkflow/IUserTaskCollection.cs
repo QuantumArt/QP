@@ -8,5 +8,5 @@ public interface IUserTaskCollection
     List<Type> UserTasks { get; }
 
     void Register<TUserTask>()
-        where TUserTask : IUserTaskHandler;
+        where TUserTask : AbstractUserTask;
 }

@@ -20,7 +20,7 @@ public interface IExternalWorkflowService
 
     Task<string> GetUserTaskKey(string taskId);
 
-    Task<IUserTaskHandler> GetUserTaskHandler(string taskId);
+    Task<AbstractUserTask> GetUserTaskHandler(string taskId);
 
     Task CompleteUserTask(string taskId, Dictionary<string, object> variables);
 
