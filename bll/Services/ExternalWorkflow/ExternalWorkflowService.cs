@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using QA.Workflow.Integration.QP.Models;
 using QA.Workflow.Interfaces;
@@ -36,16 +37,22 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private readonly ILogger<ExternalWorkflowService> _logger;
     private readonly IWorkflowProcessService _workflowProcessService;
     private readonly IWorkflowUserTaskService _workflowUserTaskService;
+    private readonly IUserTaskCollection _userTaskCollection;
+    private readonly IServiceProvider _serviceProvider;
 
     public ExternalWorkflowService(IWorkflowDeploymentService deploymentService,
         ILogger<ExternalWorkflowService> logger,
         IWorkflowProcessService workflowProcessService,
-        IWorkflowUserTaskService workflowUserTaskService)
+        IWorkflowUserTaskService workflowUserTaskService,
+        IUserTaskCollection userTaskCollection,
+        IServiceProvider serviceProvider)
     {
         _deploymentService = deploymentService;
         _logger = logger;
         _workflowProcessService = workflowProcessService;
         _workflowUserTaskService = workflowUserTaskService;
+        _userTaskCollection = userTaskCollection;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task<bool> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token)
@@ -298,7 +305,17 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
     }
 
-    private static T GetVariable<T>(Dictionary<string, object> variables, string name)
+    public async Task CompleteUserTask(string taskId, Dictionary<string, object> variables)
+    {
+        bool completionResult = await _workflowUserTaskService.CompleteUserTask(taskId, variables);
+
+        if (!completionResult)
+        {
+            throw new InvalidOperationException($"Unable to complete task with id {taskId}");
+        }
+    }
+
+    public T GetVariable<T>(Dictionary<string, object> variables, string name)
     {
         if (!variables.TryGetValue(name, out object variable))
         {
@@ -392,7 +409,6 @@ public class ExternalWorkflowService : IExternalWorkflowService
         Article article = ArticleRepository.GetById(contentItemId);
         string actualContentId = article.FieldValues.Single(f => f.Field.ExactType == FieldExactTypes.Classifier).Value;
 
-
         if (!int.TryParse(actualContentId, out int workflowContentId))
         {
             throw new InvalidOperationException("Unable to get content id by classifier field");
@@ -429,4 +445,26 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
         return task?.FormKey;
     }
+
+    public async Task<IUserTaskHandler> GetUserTaskHandler(string taskId)
+    {
+        string taskKey = await GetUserTaskKey(taskId);
+
+        if (string.IsNullOrWhiteSpace(taskKey))
+        {
+            throw new InvalidOperationException($"Unable to find task key for task {taskId}");
+        }
+
+        Type userTaskType = _userTaskCollection.UserTasks.SingleOrDefault(x => x.Name == taskKey);
+
+        if (userTaskType is null)
+        {
+            throw new InvalidOperationException($"Unable to find registered user task type {taskKey}");
+        }
+
+        return (IUserTaskHandler)_serviceProvider.GetRequiredService(userTaskType);
+    }
+
+    public async Task<Dictionary<string, object>> GetTaskVariables(string taskId) =>
+        await _workflowUserTaskService.GetTaskVariables(taskId);
 }

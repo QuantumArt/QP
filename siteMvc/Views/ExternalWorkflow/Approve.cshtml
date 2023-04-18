@@ -1,0 +1,8 @@
+﻿@model Quantumart.QP8.WebMvc.ViewModels.ExternalWorkflowUserTask.ApproveViewModel;
+
+@using (Html.BeginTabForm(Model))
+{
+  @Html.TextBoxFieldFor(x => x.Message);
+  @Html.CheckBoxFieldFor(x => x.Approved);
+  @Html.HiddenFor(x => x.ForceFormSubmit);
+}

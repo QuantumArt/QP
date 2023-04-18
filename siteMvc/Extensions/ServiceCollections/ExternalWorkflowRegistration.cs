@@ -7,6 +7,7 @@ using QA.Workflow.TaskWorker.Interfaces;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.ExternalTasks;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow.UserTasks;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
 
@@ -31,6 +32,15 @@ public static class ExternalWorkflowRegistration
 
         services.AddSingleton<UpdateProcessStatus>();
         taskCollection.Register<UpdateProcessStatus>();
+
+        UserTaskCollection userTasks = new();
+        services.AddSingleton<IUserTaskCollection>(userTasks);
+
+        services.AddScoped<FillArticleUserTask>();
+        userTasks.Register<FillArticleUserTask>();
+
+        services.AddScoped<ApproveUserTask>();
+        userTasks.Register<ApproveUserTask>();
 
         return services;
     }

@@ -66,8 +66,12 @@ export class BackendActionExecutor extends Observable {
             const forcedForm = this.getFormWithForceSubmit();
             if (forcedForm)
             {
-              Array.from(forcedForm.elements).forEach((input) => {
-                postParams[input.name] = input.value;
+              const form = new FormData(forcedForm);
+              Array.from(form.entries()).forEach((input) => {
+                if (!postParams[input[0]])
+                {
+                  postParams[input[0]] = input[1];
+                }
               });
             }
             else
