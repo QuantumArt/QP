@@ -10,8 +10,8 @@
 
 namespace Quantumart.QP8.Resources {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Quantumart.QP8.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class NotificationStrings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal NotificationStrings() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Quantumart.QP8.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add New Notification.
         /// </summary>
@@ -68,7 +68,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AddNewNotification", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Any Status.
         /// </summary>
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AnyStatus", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Basic Parameters.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("BasicParameters", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose Field.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ChooseField", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose Format.
         /// </summary>
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ChooseFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot create notification because there are aggregated fields in the content.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ContentContainsAggregatedFields", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create Default Format.
         /// </summary>
@@ -122,7 +122,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CreateDefaultFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default Sender  Name.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("DefaultSenderName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to E-mail.
         /// </summary>
@@ -140,7 +140,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Email", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select at least one event.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("EventNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Events.
         /// </summary>
@@ -158,7 +158,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Events", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to External.
         /// </summary>
@@ -167,7 +167,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("External", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to External URL.
         /// </summary>
@@ -176,7 +176,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ExternalUrl", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter external URL!.
         /// </summary>
@@ -185,7 +185,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ExternalUrlNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter valid external URL!.
         /// </summary>
@@ -194,7 +194,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ExternalUrlNotValid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Field.
         /// </summary>
@@ -203,7 +203,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Field", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select field.
         /// </summary>
@@ -212,7 +212,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FieldNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create.
         /// </summary>
@@ -221,7 +221,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForCreate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delayed Publication.
         /// </summary>
@@ -230,7 +230,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForDelayedPublication", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Request On Demand.
         /// </summary>
@@ -239,7 +239,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForFrontend", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Format.
         /// </summary>
@@ -248,7 +248,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Format", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select format.
         /// </summary>
@@ -257,7 +257,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FormatIdNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Modify.
         /// </summary>
@@ -266,7 +266,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForModify", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remove.
         /// </summary>
@@ -275,7 +275,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForRemove", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Status Changed.
         /// </summary>
@@ -284,7 +284,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForStatusChanged", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Status Partially Changed.
         /// </summary>
@@ -293,7 +293,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ForStatusPartiallyChanged", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Notification Not Found (Id = {0}).
         /// </summary>
@@ -302,7 +302,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NotificationNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
@@ -311,7 +311,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Options", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to QP8 User.
         /// </summary>
@@ -320,7 +320,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("QP8User", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Everyone In History.
         /// </summary>
@@ -329,7 +329,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("RadioEveryone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to E-mail From Article Field.
         /// </summary>
@@ -338,7 +338,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("RadioFromArticle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
@@ -347,7 +347,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("RadioNone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
@@ -356,7 +356,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("RadioUser", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User Group.
         /// </summary>
@@ -365,7 +365,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("RadioUserGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Receiver.
         /// </summary>
@@ -374,7 +374,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Receiver", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Receiver Type.
         /// </summary>
@@ -383,7 +383,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ReceiverType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sender.
         /// </summary>
@@ -392,7 +392,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Sender", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of E-mail should not exceed {0} characters!.
         /// </summary>
@@ -401,7 +401,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SenderEmailLengthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter sender e-mail!.
         /// </summary>
@@ -410,7 +410,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SenderEmailNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter valid sender e-mail!.
         /// </summary>
@@ -419,7 +419,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SenderEmailNotValid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sender Name.
         /// </summary>
@@ -428,7 +428,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SenderName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The length of login should not exceed {0} characters!.
         /// </summary>
@@ -437,7 +437,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SenderNameMaxLengthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please enter sender name!.
         /// </summary>
@@ -446,7 +446,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SenderNameNotEntered", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Send Files As Attachments.
         /// </summary>
@@ -455,7 +455,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SendFiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Status.
         /// </summary>
@@ -464,7 +464,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Status", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unbind.
         /// </summary>
@@ -473,7 +473,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Unbind", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Notification was unbinded from workflow.
         /// </summary>
@@ -482,7 +482,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UnbindedMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use Default Sender Name.
         /// </summary>
@@ -491,7 +491,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UseDefaultSenderName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use QA_Mail component in QP7 Backend.
         /// </summary>
@@ -500,7 +500,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UseQaMail", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use QP8 User Email.
         /// </summary>
@@ -509,7 +509,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UseQP8UserEmail", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
@@ -518,7 +518,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("User", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User Group.
         /// </summary>
@@ -527,7 +527,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UserGroup", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select user group.
         /// </summary>
@@ -536,7 +536,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UserGroupNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please select user.
         /// </summary>
@@ -545,7 +545,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UserNotSelected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use service for sending.
         /// </summary>
@@ -554,13 +554,31 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UseService", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This notification is default and bound to workflow ({0})..
         /// </summary>
         public static string WarningString {
             get {
                 return ResourceManager.GetString("WarningString", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to This notification is default and bound to workflow ({0})..
+        /// </summary>
+        public static string Template {
+            get {
+                return ResourceManager.GetString("Template", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to This notification is default and bound to workflow ({0})..
+        /// </summary>
+        public static string TemplateIdNotEntered {
+            get {
+                return ResourceManager.GetString("TemplateIdNotEntered", resourceCulture);
             }
         }
     }

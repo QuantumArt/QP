@@ -25,12 +25,8 @@
 			@Html.CheckBoxFieldFor(s => s.Data.UseService)
 		}
 		<div class="nfp-externalPanel">
-		@Html.CheckBoxFieldFor(s => s.CreateDefaultFormat, "FormatPanel", true)
-		@using (Html.BeginPanel("FormatPanel"))
-		{
-			@Html.SelectFieldFor(model => model.Data.FormatId, Html.List(Model.Formats), Model.SelectFormatOptions)
-		}
-		</div>
+      @Html.SelectFieldFor(model => model.Data.TemplateId, Html.List(Model.Templates))
+    </div>
 	}
 
 	using (Html.BeginFieldGroup(NotificationStrings.Events))
