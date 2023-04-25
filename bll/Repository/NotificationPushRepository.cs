@@ -8,6 +8,7 @@ using System.Transactions;
 using System.Xml.Linq;
 using NLog;
 using NLog.Fluent;
+using QP.ConfigurationService.Models;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -15,6 +16,7 @@ using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
 using Quantumart.QP8.Configuration;
+using DatabaseType = Quantumart.QP8.Constants.DatabaseType;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -120,12 +122,6 @@ namespace Quantumart.QP8.BLL.Repository
                 return;
             }
 
-            if (QPContext.DatabaseType == DatabaseType.Postgres)
-            {
-                Logger.Error("Non-service notifications is not supported in PostgreSQL");
-                return;
-            }
-
             foreach (var item in ArticleIds)
             {
                 if (waitFor)
@@ -217,13 +213,13 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-                var cnn = new DBConnector(connectionString)
+                var cnn = new DBConnector(connectionString, (QP.ConfigurationService.Models.DatabaseType)QPContext.DatabaseType)
                 {
                     CacheData = false,
                     DisableServiceNotifications = true,
                     DisableInternalNotifications = disableInternalNotifications,
                     ExternalExceptionHandler = HandleException,
-                    ThrowNotificationExceptions = false
+                    ThrowNotificationExceptions = false,
                 };
 
                 QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
