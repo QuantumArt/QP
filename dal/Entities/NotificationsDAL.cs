@@ -51,6 +51,7 @@ namespace Quantumart.QP8.DAL.Entities
         public string ExternalUrl { get; set; }
         public bool ForDelayedPublication { get; set; }
         public bool UseService { get; set; }
+        public decimal? TemplateId { get; set; }
 
         public ContentDAL Content { get; set; }
         public FieldDAL EmailField { get; set; }
@@ -98,7 +99,7 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.FromUserName).HasColumnName("from_user_name");
 				builder.Property(x => x.ForStatusPartiallyChanged).HasColumnName("for_status_partially_changed");
 				builder.Property(x => x.UseQaMail).HasColumnName("USE_QA_MAIL");
-
+                builder.Property(x => x.TemplateId).HasColumnName("TEMPLATE_ID");
 
                 builder.HasKey(x => x.Id);
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Exceptions;
@@ -10,6 +11,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
@@ -63,6 +65,8 @@ namespace Quantumart.QP8.BLL.Services
         MessageResult MultipleAssembleNotification(int[] ids);
 
         bool IsSiteDotNetByObjectFormatId(int objectFormattId);
+
+        IEnumerable<ListItem> GetTemplates();
     }
 
     public class NotificationService : INotificationService
@@ -181,6 +185,28 @@ namespace Quantumart.QP8.BLL.Services
         {
             return StatusTypeRepository.GetStatusList(siteId).Select(status => new ListItem { Text = status.Name, Value = status.Id.ToString() })
                 .ToArray();
+        }
+
+        public IEnumerable<ListItem> GetTemplates()
+        {
+            const string notificationTemplateContentIdSettingName = "NOTIFICATION_TEMPLATE_CONTENT_ID";
+
+            AppSettingsDAL setting = QPContext.EFContext.AppSettingsSet
+               .FirstOrDefault(x => x.Key == notificationTemplateContentIdSettingName);
+
+            if (setting is null || string.IsNullOrWhiteSpace(setting.Value))
+            {
+                throw new InvalidOperationException($"Unable to find setting {notificationTemplateContentIdSettingName} in QP settings.");
+            }
+
+            if (!int.TryParse(setting.Value, out int contentId))
+            {
+                throw new InvalidOperationException($"Unable to parse {notificationTemplateContentIdSettingName} value {setting.Value} as int");
+            }
+
+            IEnumerable<Article> articles = ArticleRepository.GetList(null, true, true, contentId);
+
+            return articles.Select(x => new ListItem(x.Id.ToString(), x.Name));
         }
 
         public Notification UpdateNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl)

@@ -104,6 +104,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "UseQP8UserEmail", ResourceType = typeof(NotificationStrings))]
         public bool FromBackenduser { get; set; }
 
+        [Display(Name = "Template", ResourceType = typeof(NotificationStrings))]
+        public int? TemplateId { get; set; }
+
         public User ToUser { get; set; }
 
         public UserGroup ToUserGroup { get; set; }
