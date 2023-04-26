@@ -291,4 +291,7 @@
   <data name="TemplateIdNotEntered" xml:space="preserve">
     <value>Выберите шаблон уведомления</value>
   </data>
+  <data name="ChooseTemplate" xml:space="preserve">
+    <value>Выберите шаблон</value>
+  </data>
 </root>

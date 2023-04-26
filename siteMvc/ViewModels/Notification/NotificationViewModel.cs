@@ -67,7 +67,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
                 if (_templates == null)
                 {
                     _templates = _service.GetTemplates().ToList();
-                    _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseField, Value = string.Empty});
+                    _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseTemplate, Value = string.Empty});
                 }
 
                 return _templates;

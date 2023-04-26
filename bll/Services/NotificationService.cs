@@ -189,17 +189,19 @@ namespace Quantumart.QP8.BLL.Services
 
         public IEnumerable<ListItem> GetTemplates()
         {
+            const string notificationTemplateContentIdSettingName = "NOTIFICATION_TEMPLATE_CONTENT_ID";
+
             AppSettingsDAL setting = QPContext.EFContext.AppSettingsSet
-               .FirstOrDefault(x => x.Key == "TEMPLATE_CONTENT");
+               .FirstOrDefault(x => x.Key == notificationTemplateContentIdSettingName);
 
             if (setting is null || string.IsNullOrWhiteSpace(setting.Value))
             {
-                throw new InvalidOperationException("Unable to find setting TemplatesContent in QP settings.");
+                throw new InvalidOperationException($"Unable to find setting {notificationTemplateContentIdSettingName} in QP settings.");
             }
 
             if (!int.TryParse(setting.Value, out int contentId))
             {
-                throw new InvalidOperationException($"Unable to parse template content id {setting.Value} as int");
+                throw new InvalidOperationException($"Unable to parse {notificationTemplateContentIdSettingName} value {setting.Value} as int");
             }
 
             IEnumerable<Article> articles = ArticleRepository.GetList(null, true, true, contentId);

@@ -291,4 +291,7 @@
   <data name="Template" xml:space="preserve">
     <value>Notification template</value>
   </data>
+  <data name="ChooseTemplate" xml:space="preserve">
+    <value>Choose template</value>
+  </data>
 </root>
