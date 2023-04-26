@@ -219,7 +219,7 @@ namespace Quantumart.QP8.BLL.Repository
                     DisableServiceNotifications = true,
                     DisableInternalNotifications = disableInternalNotifications,
                     ExternalExceptionHandler = HandleException,
-                    ThrowNotificationExceptions = false,
+                    ThrowNotificationExceptions = false
                 };
 
                 QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);

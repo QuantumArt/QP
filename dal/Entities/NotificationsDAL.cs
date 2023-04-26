@@ -51,7 +51,7 @@ namespace Quantumart.QP8.DAL.Entities
         public string ExternalUrl { get; set; }
         public bool ForDelayedPublication { get; set; }
         public bool UseService { get; set; }
-        public decimal TemplateId { get; set; }
+        public decimal? TemplateId { get; set; }
 
         public ContentDAL Content { get; set; }
         public FieldDAL EmailField { get; set; }
