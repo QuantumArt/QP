@@ -34,7 +34,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             {
                 if (_formats == null)
                 {
-                    _formats = _service.GetTemplates().ToList();
+                    _formats = _service.GetObjectFormatsAsListItemsByContentId(_contentId).ToList();
                     _formats.Insert(0, new ListItem { Text = NotificationStrings.ChooseFormat, Value = string.Empty });
                 }
 
