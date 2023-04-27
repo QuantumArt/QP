@@ -58,6 +58,23 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             }
         }
 
+        private List<ListItem> _templates;
+
+        public List<ListItem> Templates
+        {
+            get
+            {
+                if (_templates == null)
+                {
+                    _templates = _service.GetTemplates().ToList();
+                    _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseTemplate, Value = string.Empty});
+                }
+
+                return _templates;
+            }
+
+        }
+
         private List<ListItem> _fields;
 
         public List<ListItem> Fields
@@ -126,7 +143,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
         public static NotificationViewModel Create(BLL.Notification notification, string tabId, int parentId, INotificationService service)
         {
             var model = Create<NotificationViewModel>(notification, tabId, parentId);
-            model.CreateDefaultFormat = model.IsNew;
+            model.CreateDefaultFormat = false;
             model._contentId = parentId;
             model._service = service;
             model.ShowUnbindButton = notification.CanBeUnbound;
@@ -137,22 +154,20 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
         {
             base.DoCustomBinding();
 
+            CreateDefaultFormat = false;
+            Data.FormatId = null;
+
             if (Data.IsExternal)
             {
-                CreateDefaultFormat = false;
-            }
-
-            if (CreateDefaultFormat)
-            {
-                Data.FormatId = null;
+                Data.TemplateId = null;
             }
         }
 
         public override IEnumerable<ValidationResult> ValidateViewModel()
         {
-            if (!CreateDefaultFormat && !Data.FormatId.HasValue && !Data.IsExternal)
+            if (!Data.IsExternal && !Data.TemplateId.HasValue)
             {
-                yield return new ValidationResult(NotificationStrings.FormatIdNotEntered, new[] {"Data.FormatId"});
+                yield return new ValidationResult(NotificationStrings.TemplateIdNotEntered, new[] { "Data.TemplateId" });
             }
         }
 
