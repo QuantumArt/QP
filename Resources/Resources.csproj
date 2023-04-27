@@ -81,6 +81,7 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ExternalWorkflowStrings.ru-ru.resx</DependentUpon>
+    </Compile>
     <Compile Update="NotificationStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
