@@ -33,6 +33,9 @@ public static class ExternalWorkflowRegistration
         services.AddSingleton<UpdateProcessStatus>();
         taskCollection.Register<UpdateProcessStatus>();
 
+        services.AddSingleton<SendNotification>();
+        taskCollection.Register<SendNotification>();
+
         UserTaskCollection userTasks = new();
         services.AddSingleton<IUserTaskCollection>(userTasks);
 
