@@ -45,7 +45,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
-using QA.Workflow.Extensions;
 using Quantumart.QP8.ArticleScheduler;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services.API;
@@ -65,7 +64,6 @@ using CustomActionService = Quantumart.QP8.BLL.Services.CustomActionService;
 using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
-using Quantumart.QP8.BLL.Services.ExternalWorkflow;
 using Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
 
 namespace Quantumart.QP8.WebMvc

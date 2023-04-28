@@ -36,6 +36,7 @@
     <PackageReference Include="Irony" Version="1.1.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.12" PrivateAssets="None" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" PrivateAssets="None" />
+    <PackageReference Include="Quantumart.Workflow.Integration.QP" Version="1.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" PrivateAssets="None" />
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
     <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.4.0" PrivateAssets="None" />
@@ -48,9 +49,6 @@
   <ItemGroup>
     <ProjectReference Include="..\dal\DAL.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\Merger\Merger.csproj" PrivateAssets="All" />
-    <ProjectReference Include="..\QA.Workflow\QA.Workflow.Integration.QP\QA.Workflow.Integration.QP.csproj" />
-    <ProjectReference Include="..\QA.Workflow\QA.Workflow.TaskWorker\QA.Workflow.TaskWorker.csproj" />
-    <ProjectReference Include="..\QA.Workflow\QA.Workflow\QA.Workflow.csproj" />
     <ProjectReference Include="..\QP8.Plugins.Contract\QP8.Plugins.Contract.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\security\Security.csproj" PrivateAssets="All" />
