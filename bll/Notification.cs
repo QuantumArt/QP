@@ -265,6 +265,7 @@ namespace Quantumart.QP8.BLL
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    HideRecipients = false;
                     break;
                 case ReceiverType.UserGroup:
                     UserId = null;

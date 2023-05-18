@@ -138,20 +138,17 @@
 	       Enabled = !Model.Data.WorkFlowId.HasValue
 	     }
 	   )
-	   @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
 	 }
    using (Html.BeginPanel("FieldPanel"))
 	 {
      @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
-	   @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
 	 }
-   using (Html.BeginPanel("HistoryPanel"))
-   {
-     @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
-   }
-	 using (Html.BeginPanel("EmptyPanel"))
+   using (Html.BeginPanel("EmptyPanel"))
 	 {
 	 }
+   <div class="nfp-multipleRecipients">
+     @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
+   </div>
  }
 
 	@using (Html.BeginFieldGroup(NotificationStrings.Options))
@@ -160,9 +157,9 @@
         @Html.CheckBoxFieldFor(s => s.Data.UseQaMail)
  }
 	</div>
+  @Html.HiddenFor(x => x.NonMultipleRecipientTypes)
   <partial name="Version" model="@Model.Data" />
   <partial name="EntityDirectLink" model="@Model" />
-
 }
 
 @Html.PrepareInitScript(Model)
