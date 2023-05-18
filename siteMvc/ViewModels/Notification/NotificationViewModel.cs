@@ -115,7 +115,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
         {
             new ListItem(ReceiverType.User.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.User), "UserPanel"),
             new ListItem(ReceiverType.UserGroup.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.UserGroup), "UserGroupPanel"),
-            new ListItem(ReceiverType.EveryoneInHistory.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EveryoneInHistory), "EmptyPanel"),
+            new ListItem(ReceiverType.EveryoneInHistory.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EveryoneInHistory), "HistoryPanel"),
             new ListItem(ReceiverType.EmailFromArticle.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromArticle), "FieldPanel"),
             new ListItem(ReceiverType.None.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.None), "EmptyPanel")
         };

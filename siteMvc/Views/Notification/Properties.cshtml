@@ -137,12 +137,18 @@
 	     {
 	       Enabled = !Model.Data.WorkFlowId.HasValue
 	     }
-	     )
+	   )
+	   @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
 	 }
-	 using (Html.BeginPanel("FieldPanel"))
+   using (Html.BeginPanel("FieldPanel"))
 	 {
-            @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
+     @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
+	   @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
 	 }
+   using (Html.BeginPanel("HistoryPanel"))
+   {
+     @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
+   }
 	 using (Html.BeginPanel("EmptyPanel"))
 	 {
 	 }
