@@ -13,7 +13,9 @@ export class BackendNotificationPropertiesMediator {
     const $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
     const $externalCheckbox = $('.nfp-external', $root);
     const $multipleRecipientsRedioButton = $('.nfp-receiver-radio', $root);
+
     const nonMultipleRecipientTypes = document.getElementById('NonMultipleRecipientTypes').value.split(',');
+
     const onMultipleRecipientsChanged = function () {
       if (nonMultipleRecipientTypes.includes($(':checked', $multipleRecipientsRedioButton)[0].value)) {
         $multipleRecipientsPanel.hide();
