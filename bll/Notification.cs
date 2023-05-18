@@ -288,6 +288,7 @@ namespace Quantumart.QP8.BLL
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = true;
+                    HideRecipients = false;
                     break;
             }
         }
