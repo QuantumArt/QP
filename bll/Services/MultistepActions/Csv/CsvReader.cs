@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _reader = new FileReader(settings);
             _skipFirstLine = _reader.Lines.First().Skip;
             _skipSecondLine = _skipFirstLine && _reader.Lines.Skip(1).First().Skip;
-            _notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
+            _notificationRepository = new NotificationPushRepository { IgnoreInternal = false };
             _traceFields = GetTraceFields(contentId);
             _jObject = InitJObject(_traceFields);
         }
@@ -80,7 +81,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         }
 
 
-        public void Process(int step, int itemsPerStep, out int processedItemsCount)
+        public void Process(int step, int itemsPerStep, out int processedItemsCount, DbTransaction transaction)
         {
             _csvLines = _reader.Lines.Where(s => !s.Skip).Skip(step * itemsPerStep).Take(itemsPerStep).ToArray();
             _initNumber = _csvLines.First().Number - 1;
@@ -89,7 +90,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 .ToDictionary(n => n.Id.ToString(), m => m);
             InitFields(_importSettings, fields);
             ConvertCsvLinesToArticles(fields);
-            WriteArticlesToDb();
+            WriteArticlesToDb(transaction);
             processedItemsCount = _csvLines.Count();
         }
 
@@ -110,49 +111,49 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
         }
 
-        private void WriteArticlesToDb()
+        private void WriteArticlesToDb(DbTransaction transaction)
         {
             switch (_importSettings.ImportAction)
             {
                 case (int)CsvImportMode.InsertAll:
-                    InsertArticles(_articlesListFromCsv);
+                    InsertArticles(_articlesListFromCsv, transaction);
                     break;
                 case (int)CsvImportMode.InsertAndUpdate:
-                    var existingArticles = UpdateArticles(_articlesListFromCsv);
+                    var existingArticles = UpdateArticles(_articlesListFromCsv, transaction);
                     var remainingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
-                    InsertArticles(remainingArticles);
+                    InsertArticles(remainingArticles, transaction);
                     break;
                 case (int)CsvImportMode.Update:
-                    UpdateArticles(_articlesListFromCsv);
+                    UpdateArticles(_articlesListFromCsv, transaction);
                     break;
                 case (int)CsvImportMode.UpdateIfChanged:
                     var changedArticles = _articlesListFromCsv.Filter(a => a.Created == DateTime.MinValue);
-                    UpdateArticles(changedArticles);
+                    UpdateArticles(changedArticles, transaction);
                     break;
                 case (int)CsvImportMode.InsertNew:
                     var nonExistingArticles = GetArticles(_articlesListFromCsv, false);
-                    InsertArticles(nonExistingArticles);
+                    InsertArticles(nonExistingArticles, transaction);
                     break;
                 default:
                     throw new NotImplementedException($"Неизвестный режим импорта: {_importSettings.ImportAction}");
             }
         }
 
-        private void InsertArticles(ExtendedArticleList articlesToInsert)
+        private void InsertArticles(ExtendedArticleList articlesToInsert, DbTransaction transaction)
         {
             if (articlesToInsert.Any())
             {
-                var insertingArticles = InsertArticlesToDb(articlesToInsert);
+                var insertingArticles = InsertArticlesToDb(articlesToInsert, transaction);
                 var insertedArticles = insertingArticles.GetBaseArticleIds();
                 SaveInsertedArticleIdsToSettings(insertedArticles);
             }
         }
 
-        private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesToUpdate)
+        private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesToUpdate, DbTransaction transaction)
         {
             if (articlesToUpdate.Any())
             {
-                var updatingArticles = UpdateArticlesToDb(articlesToUpdate);
+                var updatingArticles = UpdateArticlesToDb(articlesToUpdate, transaction);
                 var updatedArticles = updatingArticles.GetBaseArticleIds();
                 SaveUpdatedArticleIdsToSettings(updatedArticles);
                 return updatingArticles;
@@ -475,7 +476,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return existingArticles;
         }
 
-        private ExtendedArticleList InsertArticlesToDb(ExtendedArticleList articleList)
+        private ExtendedArticleList InsertArticlesToDb(ExtendedArticleList articleList, DbTransaction transaction)
         {
             var baseArticles = articleList.GetBaseArticles();
             var idsList = InsertArticlesIds(baseArticles, baseArticles.All(a => a.UniqueId.HasValue)).ToArray();
@@ -516,11 +517,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
-            _notificationRepository.SendNotifications();
+            _notificationRepository.SendBatchNotifications(transaction);
             return articleList;
         }
 
-        private ExtendedArticleList UpdateArticlesToDb(ExtendedArticleList articlesList)
+        private ExtendedArticleList UpdateArticlesToDb(ExtendedArticleList articlesList, DbTransaction transaction)
         {
             var existingArticles = GetArticles(articlesList, true);
             var extensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
@@ -587,7 +588,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, updateArticles: true);
-            _notificationRepository.SendNotifications();
+            _notificationRepository.SendBatchNotifications(transaction);
             return existingArticles;
         }
 
