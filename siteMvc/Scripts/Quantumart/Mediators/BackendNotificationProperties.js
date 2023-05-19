@@ -19,8 +19,7 @@ export class BackendNotificationPropertiesMediator {
     const onMultipleRecipientsChanged = function () {
       if (nonMultipleRecipientTypes.includes($(':checked', $multipleRecipientsRedioButton)[0].value)) {
         $multipleRecipientsPanel.hide();
-      }
-      else {
+      } else {
         $multipleRecipientsPanel.show();
       }
     }
