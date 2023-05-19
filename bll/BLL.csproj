@@ -2,13 +2,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>3.3.5</Version>
+    <Version>3.3.6</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Authors>Pavel Celut, Sergey Koryakin</Authors>
     <Company>Quantum Art</Company>
     <Product>QP</Product>
     <Description>Internal QP8 API, that could help to write custom administrative modules for QP8</Description>
-    <Copyright>Copyright © 2007-2019 Quantum Art</Copyright>
+    <Copyright>Copyright © 2007-2023 Quantum Art</Copyright>
     <AssemblyName>Quantumart.QP8.BLL</AssemblyName>
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
     <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
