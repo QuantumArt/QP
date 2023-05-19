@@ -294,4 +294,7 @@
   <data name="ChooseTemplate" xml:space="preserve">
     <value>Choose template</value>
   </data>
+  <data name="HideRecipients" xml:space="preserve">
+    <value>Hide recipients from each other</value>
+  </data>
 </root>

@@ -120,6 +120,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             new ListItem(ReceiverType.None.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.None), "EmptyPanel")
         };
 
+        public string NonMultipleRecipientTypes => $"{ReceiverType.None},{ReceiverType.User}";
+
         public SelectOptions SelectFormatOptions
         {
             get

@@ -303,6 +303,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide recipients from each other.
+        /// </summary>
+        public static string HideRecipients {
+            get {
+                return ResourceManager.GetString("HideRecipients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notification Not Found (Id = {0}).
         /// </summary>
         public static string NotificationNotFound {

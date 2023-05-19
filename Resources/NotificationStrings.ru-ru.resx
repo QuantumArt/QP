@@ -294,4 +294,7 @@
   <data name="ChooseTemplate" xml:space="preserve">
     <value>Выберите шаблон</value>
   </data>
+  <data name="HideRecipients" xml:space="preserve">
+    <value>Скрыть получателей друг от друга</value>
+  </data>
 </root>

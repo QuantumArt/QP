@@ -125,6 +125,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "ReceiverType", ResourceType = typeof(NotificationStrings))]
         public int SelectedReceiverType { get; set; }
 
+        [Display(Name = "HideRecipients", ResourceType = typeof(NotificationStrings))]
+        public bool HideRecipients { get; set; }
+
         public override string EntityTypeCode => Constants.EntityTypeCode.Notification;
 
         public override int ParentEntityId => ContentId;
@@ -262,6 +265,7 @@ namespace Quantumart.QP8.BLL
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    HideRecipients = false;
                     break;
                 case ReceiverType.UserGroup:
                     UserId = null;
@@ -284,6 +288,7 @@ namespace Quantumart.QP8.BLL
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = true;
+                    HideRecipients = false;
                     break;
             }
         }
