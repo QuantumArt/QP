@@ -12,17 +12,17 @@ export class BackendNotificationPropertiesMediator {
     const $senderNameCheckbox = $('.nfp-useDefaultSenderNameCheckbox', $root);
     const $backendEmailCheckbox = $('.nfp-useBackendEmailCheckbox', $root);
     const $externalCheckbox = $('.nfp-external', $root);
-    const $multipleRecipientsRedioButton = $('.nfp-receiver-radio', $root);
+    const $multipleRecipientsRadioButton = $('.nfp-receiver-radio', $root);
 
-    const nonMultipleRecipientTypes = document.getElementById('NonMultipleRecipientTypes').value.split(',');
+    const nonMultipleRecipientTypes = $('#NonMultipleRecipientTypes')[0].value.split(',');
 
     const onMultipleRecipientsChanged = function () {
-      if (nonMultipleRecipientTypes.includes($(':checked', $multipleRecipientsRedioButton)[0].value)) {
+      if (nonMultipleRecipientTypes.includes($(':checked', $multipleRecipientsRadioButton)[0].value)) {
         $multipleRecipientsPanel.hide();
       } else {
         $multipleRecipientsPanel.show();
       }
-    }
+    };
 
     const onExternalChanged = function () {
       if ($externalCheckbox.is(':checked')) {
@@ -60,6 +60,8 @@ export class BackendNotificationPropertiesMediator {
       $statusCheckBoxes.unbind();
       $senderNameCheckbox.unbind();
       $backendEmailCheckbox.unbind();
+      $externalCheckbox.unbind();
+      $multipleRecipientsRadioButton.unbind();
     };
 
     onStatusChanged();
@@ -72,7 +74,7 @@ export class BackendNotificationPropertiesMediator {
     $senderNameCheckbox.bind('click', onUseDefaultSenderNameChanged);
     $backendEmailCheckbox.bind('click', onUseBackendEmailChanged);
     $externalCheckbox.bind('click', onExternalChanged);
-    $multipleRecipientsRedioButton.bind('change', onMultipleRecipientsChanged);
+    $multipleRecipientsRadioButton.bind('change', onMultipleRecipientsChanged);
 
     return {
       dispose
