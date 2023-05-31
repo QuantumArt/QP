@@ -141,12 +141,16 @@
 	 }
    using (Html.BeginPanel("FieldPanel"))
 	 {
-     @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
-	 }
-   using (Html.BeginPanel("EmptyPanel"))
-	 {
-	 }
-   <div class="nfp-multipleRecipients">
+                @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
+            }
+           using (Html.BeginPanel("CategoryPanel"))
+            {
+                @Html.SelectFieldFor(model => model.Data.CategoryFieldId, Html.List(Model.Categories))
+            }
+            using (Html.BeginPanel("EmptyPanel"))
+            {
+            }
+            <div class="nfp-multipleRecipients">
      @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
    </div>
  }
