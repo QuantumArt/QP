@@ -53,6 +53,8 @@ namespace Quantumart.QP8.DAL.Entities
         public bool UseService { get; set; }
         public decimal? TemplateId { get; set; }
         public bool HideRecipients { get; set; }
+        public Nullable<decimal> CategoryFieldId { get; set; }
+        public bool UseEmailFromContent { get; set; }
 
         public ContentDAL Content { get; set; }
         public FieldDAL EmailField { get; set; }
@@ -62,11 +64,9 @@ namespace Quantumart.QP8.DAL.Entities
         public UserGroupDAL ToUserGroup { get; set; }
         public UserDAL ToUser { get; set; }
         public WorkflowDAL Workflow { get; set; }
-        public UserDAL LastModifiedByUser { get; set; }        
-        public Nullable<decimal> CategoryFieldId { get; set; }
+        public UserDAL LastModifiedByUser { get; set; }
         public FieldDAL CategoryField { get; set; }
 
-        public bool UseEmailFromContent { get; set; }
     }
         public class NotificationsDALConfiguration : IEntityTypeConfiguration<NotificationsDAL>
         {
@@ -121,6 +121,6 @@ namespace Quantumart.QP8.DAL.Entities
     			builder.HasOne(x => x.Workflow).WithMany(y => y.Notifications).HasForeignKey(x => x.WorkflowId);
     			builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
                 builder.HasOne(x => x.CategoryField).WithMany(y => y.CategoryNotifications).HasForeignKey(x => x.CategoryFieldId);
-        }
+            }
         }
 }
