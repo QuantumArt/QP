@@ -55,6 +55,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Field", ResourceType = typeof(NotificationStrings))]
         public int? EmailFieldId { get; set; }
 
+        [Display(Name = "Category", ResourceType = typeof(NotificationStrings))]
+        public int? CategoryFieldId { get; set; }
+
         public int? WorkFlowId { get; set; }
 
         public Workflow Workflow { get; set; }
@@ -112,6 +115,8 @@ namespace Quantumart.QP8.BLL
         public UserGroup ToUserGroup { get; set; }
 
         public bool NoEmail { get; set; }
+
+        public bool UseEmailFromContent { get; set; }      
 
         [Display(Name = "External", ResourceType = typeof(NotificationStrings))]
         public bool IsExternal { get; set; }
@@ -266,22 +271,37 @@ namespace Quantumart.QP8.BLL
                     EmailFieldId = null;
                     NoEmail = false;
                     HideRecipients = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
                 case ReceiverType.UserGroup:
                     UserId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
                 case ReceiverType.EmailFromArticle:
                     UserId = null;
                     GroupId = null;
                     NoEmail = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
                 case ReceiverType.EveryoneInHistory:
                     UserId = null;
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
+                    break;
+                case ReceiverType.EmailFromContent:
+                    UserId = null;
+                    GroupId = null;
+                    EmailFieldId = null;
+                    NoEmail = false;
+                    UseEmailFromContent = true;
                     break;
                 case ReceiverType.None:
                     UserId = null;
@@ -289,6 +309,8 @@ namespace Quantumart.QP8.BLL
                     EmailFieldId = null;
                     NoEmail = true;
                     HideRecipients = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
             }
         }
@@ -308,6 +330,11 @@ namespace Quantumart.QP8.BLL
             if (EmailFieldId.HasValue)
             {
                 return ReceiverType.EmailFromArticle;
+            }
+
+            if (UseEmailFromContent)
+            {
+                return ReceiverType.EmailFromContent;
             }
 
             return NoEmail ? ReceiverType.None : ReceiverType.EveryoneInHistory;

@@ -91,6 +91,22 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             }
         }
 
+        private List<ListItem> _categories;
+
+        public List<ListItem> Categories
+        {
+            get
+            {
+                if (_categories == null)
+                {
+                    _categories = _service.GetRelationFieldsAsListItemsByContentId(_contentId).ToList();
+                    _categories.Insert(0, new ListItem { Text = NotificationStrings.ChooseCategory, Value = string.Empty });
+                }
+
+                return _categories;
+            }
+        }
+
         [Display(Name = "CreateDefaultFormat", ResourceType = typeof(NotificationStrings))]
         public bool CreateDefaultFormat { get; set; }
 
@@ -117,6 +133,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             new ListItem(ReceiverType.UserGroup.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.UserGroup), "UserGroupPanel"),
             new ListItem(ReceiverType.EveryoneInHistory.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EveryoneInHistory), "EmptyPanel"),
             new ListItem(ReceiverType.EmailFromArticle.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromArticle), "FieldPanel"),
+            new ListItem(ReceiverType.EmailFromContent.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromContent), "CategoryPanel"),
             new ListItem(ReceiverType.None.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.None), "EmptyPanel")
         };
 
