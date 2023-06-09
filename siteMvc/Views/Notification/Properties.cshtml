@@ -146,6 +146,7 @@
            using (Html.BeginPanel("CategoryPanel"))
             {
                 @Html.SelectFieldFor(model => model.Data.CategoryFieldId, Html.List(Model.Categories))
+                @Html.SelectFieldFor(model => model.Data.ConfirmationTemplateId, Html.List(Model.Templates))
             }
             using (Html.BeginPanel("EmptyPanel"))
             {

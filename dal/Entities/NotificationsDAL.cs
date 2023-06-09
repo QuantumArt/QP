@@ -55,6 +55,7 @@ namespace Quantumart.QP8.DAL.Entities
         public bool HideRecipients { get; set; }
         public Nullable<decimal> CategoryFieldId { get; set; }
         public bool UseEmailFromContent { get; set; }
+        public decimal? ConfirmationTemplateId { get; set; }
 
         public ContentDAL Content { get; set; }
         public FieldDAL EmailField { get; set; }

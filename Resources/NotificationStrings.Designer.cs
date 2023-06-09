@@ -133,6 +133,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirmation template.
+        /// </summary>
+        public static string ConfirmationTemplate {
+            get {
+                return ResourceManager.GetString("ConfirmationTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You cannot create notification because there are aggregated fields in the content.
         /// </summary>
         public static string ContentContainsAggregatedFields {

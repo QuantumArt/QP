@@ -58,6 +58,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Category", ResourceType = typeof(NotificationStrings))]
         public int? CategoryFieldId { get; set; }
 
+        [Display(Name = "ConfirmationTemplate", ResourceType = typeof(NotificationStrings))]
+        public int? ConfirmationTemplateId { get; set; }
+
         public int? WorkFlowId { get; set; }
 
         public Workflow Workflow { get; set; }

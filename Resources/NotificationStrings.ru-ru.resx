@@ -306,4 +306,7 @@
   <data name="ChooseCategory" xml:space="preserve">
     <value>Выберите категорию</value>
   </data>
+  <data name="ConfirmationTemplate" xml:space="preserve">
+    <value>Шаблон подтверждения</value>
+  </data>
 </root>
