@@ -109,8 +109,9 @@ namespace Quantumart.QP8.DAL.Entities
                 builder.Property(x => x.HideRecipients).HasColumnName("HIDE_RECIPIENTS");
                 builder.Property(x => x.CategoryFieldId).HasColumnName("category_attribute_id");
                 builder.Property(x => x.UseEmailFromContent).HasColumnName("use_email_from_content");
+                builder.Property(x => x.ConfirmationTemplateId).HasColumnName("confirmation_template_id");
 
-                builder.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
                 builder.HasOne(x => x.Content).WithMany(y => y.Notifications).HasForeignKey(x => x.ContentId);
     			builder.HasOne(x => x.EmailField).WithMany(y => y.DependentNotifications).HasForeignKey(x => x.EmailFieldId);
