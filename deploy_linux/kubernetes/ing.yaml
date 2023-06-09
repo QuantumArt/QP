@@ -5,7 +5,7 @@ metadata:
   namespace: qp
 spec:
   rules:
-  - host: storage.qp.dev.qsupport.ru
+  - host: qp-storage.test
     http:
       paths:
       - backend:
@@ -23,7 +23,7 @@ metadata:
   namespace: qp
 spec:
   rules:
-  - host: qp.dev.qsupport.ru
+  - host: qp.test
     http:
       paths:
       - backend:
