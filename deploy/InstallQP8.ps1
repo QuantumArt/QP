@@ -132,7 +132,7 @@ Try { $connected = (New-Object System.Net.Sockets.TcpClient('localhost', $port))
 If ($connected) { throw "$port is busy"}
 
 
-$requiredRuntime = '3.1.8'
+$requiredRuntime = '6.0.16'
 Try {
     $actualRuntime = (Get-ChildItem (Get-Command dotnet).Path.Replace('dotnet.exe', 'shared\Microsoft.AspNetCore.App')).Name
 } Catch {
