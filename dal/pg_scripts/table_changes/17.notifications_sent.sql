@@ -1,4 +1,4 @@
-﻿CREATE SEQUENCE IF NOT EXISTS public.notifications_sent_seq START 1;
+CREATE SEQUENCE IF NOT EXISTS public.notifications_sent_seq START 1;
 
 ALTER TABLE public.notifications_sent ADD COLUMN IF NOT EXISTS id int NOT NULL DEFAULT nextval('notifications_sent_seq'::regclass);
 
