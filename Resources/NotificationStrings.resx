@@ -306,4 +306,7 @@
   <data name="ChooseCategory" xml:space="preserve">
     <value>Choose Category</value>
   </data>
+  <data name="ConfirmationTemplate" xml:space="preserve">
+    <value>Confirmation template</value>
+  </data>
 </root>
