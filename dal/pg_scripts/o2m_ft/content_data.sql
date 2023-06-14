@@ -12,7 +12,7 @@ BEGIN
 		ALTER TABLE content_data ALTER COLUMN data TYPE text;
 	END IF;
 END
-$$
+$$;
 
 ALTER TABLE content_data ADD COLUMN IF NOT EXISTS o2m_data numeric(18,0) NULL;
 
