@@ -2435,7 +2435,10 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static int GetVisualEditorPluginMaxOrder(DbConnection sqlConnection)
         {
-            using (var cmd = DbCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]", sqlConnection))
+            DatabaseType dbType = GetDbType(sqlConnection);
+            string commandText = dbType == DatabaseType.SqlServer ? "select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]" : "select MAX(\"order\") FROM public.ve_plugin";
+
+            using (var cmd = DbCommandFactory.Create(commandText, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var maxOrder = cmd.ExecuteScalar();
@@ -2445,7 +2448,10 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static int GetVisualEditorStyleMaxOrder(DbConnection sqlConnection)
         {
-            using (var cmd = DbCommandFactory.Create("select MAX([ORDER]) FROM [dbo].[VE_STYLE]", sqlConnection))
+            DatabaseType dbType = GetDbType(sqlConnection);
+            string commandText = dbType == DatabaseType.SqlServer ? "select MAX([ORDER]) FROM [dbo].[VE_STYLE]" : "select MAX(\"order\") FROM public.ve_style";
+
+            using (var cmd = DbCommandFactory.Create(commandText, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 var maxOrder = cmd.ExecuteScalar();
