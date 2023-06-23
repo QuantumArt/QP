@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -66,8 +65,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             {
                 if (_templates == null)
                 {
-                    _templates = _service.GetTemplates().ToList();
-                    _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseTemplate, Value = string.Empty});
+                    try
+                    {
+                        _templates = _service.GetTemplates().ToList();
+                        _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseTemplate, Value = string.Empty});
+                    }
+                    catch
+                    {
+                        _templates = new List<ListItem>();
+                        _templates.Insert(0, new ListItem { Text = NotificationStrings.TemplatesNotConfigured, Value = string.Empty});
+                    }
+
                 }
 
                 return _templates;
