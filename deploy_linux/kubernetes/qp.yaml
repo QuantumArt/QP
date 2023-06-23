@@ -199,7 +199,7 @@ spec:
         envFrom:
         - configMapRef:
             name: qp-config
-        image: qpcms/qp:8.3.0.29
+        image: qpcms/qp:||version||
         name: qp
         ports:
         - containerPort: 80
