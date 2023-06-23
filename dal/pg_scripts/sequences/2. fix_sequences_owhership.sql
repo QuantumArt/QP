@@ -7,13 +7,10 @@ DECLARE rec RECORD;
 BEGIN
     FOR rec IN
         select
-            n.nspname as schema_name,
-            c.relname as table_name,
-			u.usename as owner_name,
-            a.attname as column_name,
+            u.usename as owner_name,
             substring(pg_get_expr(d.adbin, d.adrelid) from E'^nextval\\(''([^'']*)''(?:::text|::regclass)?\\)') as seq_name
         FROM pg_class c
-				 JOIN pg_user u on (u.usesysid=c.relowner)
+                 JOIN pg_user u on (u.usesysid=c.relowner)
                  JOIN pg_attribute a on (c.oid=a.attrelid)
                  JOIN pg_attrdef d on (a.attrelid=d.adrelid and a.attnum=d.adnum)
                  JOIN pg_namespace n on (c.relnamespace=n.oid)
