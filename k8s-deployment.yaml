@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: qp
-        image: "||registry||/qp:||version||"
+        image: "||registry||/||image||:||version||"
         envFrom:
         - configMapRef:
             name: qp-config        

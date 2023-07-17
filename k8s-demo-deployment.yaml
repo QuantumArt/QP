@@ -35,7 +35,7 @@ spec:
           value: "true"
         - name: Properties__EnableCommonScheduler
           value: "true"
-        image: spbdocker03:5000/qp:||version||
+        image: "||registry||/||image||:||version||"
         imagePullPolicy: IfNotPresent
         name: qp-media
         ports:
