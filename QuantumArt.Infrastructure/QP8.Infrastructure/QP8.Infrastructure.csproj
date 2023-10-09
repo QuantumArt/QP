@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Npgsql" Version="6.0.8" />
-    <PackageReference Include="Quantumart.AspNetCore" Version="6.0.7" />
+    <PackageReference Include="Quantumart.AspNetCore" Version="6.0.8-beta1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
