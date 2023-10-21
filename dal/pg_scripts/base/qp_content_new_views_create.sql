@@ -4,7 +4,6 @@ CREATE OR REPLACE PROCEDURE qp_content_new_views_create(
 )
 
 LANGUAGE 'plpgsql'
-
 AS $BODY$
 	DECLARE
 	    sql text;
@@ -16,22 +15,37 @@ AS $BODY$
 	    field_template text;
 	    type_name text;
 	    is_user_query boolean;
+	    use_native boolean;
 	BEGIN
-	    fields := ARRAY[
-	        'coalesce(CONTENT_ITEM_ID::int, 0) as CONTENT_ITEM_ID',
-	        'coalesce(STATUS_TYPE_ID::int, 0) as STATUS_TYPE_ID',
-	        'coalesce(VISIBLE::int::boolean, false) as VISIBLE',
-	        'coalesce(ARCHIVE::int::boolean, false) as ARCHIVE',
-	        'CREATED',
-	        'MODIFIED',
-	        'coalesce(LAST_MODIFIED_BY::int, 0) as LAST_MODIFIED_BY'
-	    ];
+        use_native := use_native_ef_types from content where content_id = cid;
         is_user_query := virtual_type = 3 from content where content_id = cid;
+        if use_native then
+            fields := ARRAY[
+                'CONTENT_ITEM_ID',
+                'STATUS_TYPE_ID',
+                'VISIBLE',
+                'ARCHIVE',
+                'CREATED',
+                'MODIFIED',
+                'LAST_MODIFIED_BY'
+                ];
+        else
+            fields := ARRAY[
+                'coalesce(CONTENT_ITEM_ID::int, 0) as CONTENT_ITEM_ID',
+                'coalesce(STATUS_TYPE_ID::int, 0) as STATUS_TYPE_ID',
+                'coalesce(VISIBLE::int::boolean, false) as VISIBLE',
+                'coalesce(ARCHIVE::int::boolean, false) as ARCHIVE',
+                'CREATED',
+                'MODIFIED',
+                'coalesce(LAST_MODIFIED_BY::int, 0) as LAST_MODIFIED_BY'
+                ];
+        end if;
+
         attrs := array_agg(ca.* order by attribute_order) from content_attribute ca where content_id = cid;
 	    if attrs is not null THEN
             foreach attr in ARRAY attrs
             loop
-                do_cast := true;
+                do_cast := not use_native;
                 field_template = 'cast(%s as %s) as %s';
                 field := '"' || lower(attr.attribute_name) || '"';
                 if attr.attribute_type_id = 2 and attr.attribute_size = 0 and attr.is_long then
