@@ -41,7 +41,6 @@ namespace Quantumart.QP8.ArticleScheduler
                         QPConfiguration.XmlConfigPath = _props.XmlConfigPath;
 
                         var customers = QPConfiguration.GetCustomers(AppName)
-                            .Where(c => c.DbType == DatabaseType.SqlServer)
                             .Where(c => !c.ExcludeFromSchedulers)
                             .ToList();
                         new QpScheduler(unityConfig.UnityContainer, customers, _props.PrtgLoggerTasksQueueCheckShiftTime).Run();
