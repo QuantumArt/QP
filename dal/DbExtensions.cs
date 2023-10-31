@@ -1,8 +1,10 @@
+using Npgsql;
+using Quantumart.QP8.Constants;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Npgsql;
 
 namespace Quantumart.QP8.DAL
 {
@@ -38,6 +40,19 @@ namespace Quantumart.QP8.DAL
                     throw new ApplicationException("Unknown db type");
             }
         }
+
+        public static DbParameter AddWithValue(this List<DbParameter> parameterCollection, string parameterName, object value, DbType fieldType, DatabaseType dbType)
+        {
+            DbParameter parameter = dbType switch
+            {
+                DatabaseType.Postgres => new NpgsqlParameter(parameterName, fieldType) { Value = value },
+                DatabaseType.SqlServer => new SqlParameter(parameterName, fieldType) { Value = value },
+                _ => throw new ArgumentException("Unknown db type", nameof(fieldType))
+            };
+
+            parameterCollection.Add(parameter);
+            return parameter;
+        }        
 
         public static void Fill(this DataAdapter da, DataTable dt)
         {

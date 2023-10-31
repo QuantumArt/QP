@@ -3979,24 +3979,30 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var filters = new List<string>(4);
             var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
+            var parameters = new List<DbParameter>();
+
             if (!string.IsNullOrEmpty(options.Login))
             {
-                filters.Add($"U.LOGIN LIKE '%{options.Login}%'");
+                filters.Add($"U.LOGIN LIKE @login");
+                parameters.AddWithValue("@login", $"%{options.Login}%", DbType.String, dbType);
             }
 
             if (!string.IsNullOrEmpty(options.Email))
             {
-                filters.Add($"U.EMAIL LIKE '%{options.Email}%'");
+                filters.Add($"U.EMAIL LIKE @email");
+                parameters.AddWithValue("@email", $"%{options.Email}%", DbType.String, dbType);
             }
 
             if (!string.IsNullOrEmpty(options.FirstName))
             {
-                filters.Add($"U.FIRST_NAME LIKE '%{options.FirstName}%'");
+                filters.Add($"U.FIRST_NAME LIKE @firstName");
+                parameters.AddWithValue("@firstName", $"%{options.FirstName}%", DbType.String, dbType);
             }
 
             if (!string.IsNullOrEmpty(options.LastName))
             {
-                filters.Add($"U.LAST_NAME LIKE '%{options.LastName}%'");
+                filters.Add($"U.LAST_NAME LIKE @lastName");
+                parameters.AddWithValue("@lastName", $"%{options.LastName}%", DbType.String, dbType);
             }
 
             if (filters.Any())
@@ -4018,7 +4024,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "LOGIN ASC" : options.SortExpression;
             }
 
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.User, selectBlock, fromBlock, orderBy, strFilter, options.StartRecord, options.PageSize, out totalRecords);
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.User, selectBlock, fromBlock, orderBy, strFilter, options.StartRecord, options.PageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetChildContentPermissionsForUser(DbConnection sqlConnection, int siteId, int userId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
