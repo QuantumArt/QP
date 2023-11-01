@@ -42,7 +42,8 @@ public class LdapConnectionFactory
         var connection = new LdapConnection(ldapConnectionOptions)
         {
             SecureSocketLayer = _setting.UseSsl,
-            ConnectionTimeout = (int)_setting.ConnectionTimeout.TotalMilliseconds
+            ConnectionTimeout = (int)_setting.ConnectionTimeout.TotalMilliseconds,
+            Constraints = new() { ReferralFollowing = true }
         };
         connection.Connect(_setting.Server, GetServerPort());
         return connection;
