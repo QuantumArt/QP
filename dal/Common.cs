@@ -3984,25 +3984,25 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (!string.IsNullOrEmpty(options.Login))
             {
                 filters.Add($"U.LOGIN LIKE @login");
-                parameters.AddWithValue("@login", $"%{options.Login}%", DbType.String, dbType);
+                parameters.AddWithValue("@login", $"%{options.Login}%", dbType);
             }
 
             if (!string.IsNullOrEmpty(options.Email))
             {
                 filters.Add($"U.EMAIL LIKE @email");
-                parameters.AddWithValue("@email", $"%{options.Email}%", DbType.String, dbType);
+                parameters.AddWithValue("@email", $"%{options.Email}%", dbType);
             }
 
             if (!string.IsNullOrEmpty(options.FirstName))
             {
                 filters.Add($"U.FIRST_NAME LIKE @firstName");
-                parameters.AddWithValue("@firstName", $"%{options.FirstName}%", DbType.String, dbType);
+                parameters.AddWithValue("@firstName", $"%{options.FirstName}%", dbType);
             }
 
             if (!string.IsNullOrEmpty(options.LastName))
             {
                 filters.Add($"U.LAST_NAME LIKE @lastName");
-                parameters.AddWithValue("@lastName", $"%{options.LastName}%", DbType.String, dbType);
+                parameters.AddWithValue("@lastName", $"%{options.LastName}%", dbType);
             }
 
             if (filters.Any())
@@ -4016,8 +4016,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (options.SelectedIDs != null && options.SelectedIDs.Any())
             {
                 selectBlock += $" ,{SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (UIS.USER_ID IS NOT NULL) THEN 1 else 0 end")} AS is_selected";
-                fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in ({string.Join(",", options.SelectedIDs)})) AS UIS ON UIS.USER_ID = U.USER_ID";
+                fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in (SELECT ID FROM {dbType.GetIdTable("@selectedIds")})) AS UIS ON UIS.USER_ID = U.USER_ID";
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "is_selected DESC, LOGIN ASC" : options.SortExpression;
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
             }
             else
             {

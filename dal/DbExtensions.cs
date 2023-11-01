@@ -41,18 +41,22 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DbParameter AddWithValue(this List<DbParameter> parameterCollection, string parameterName, object value, DbType fieldType, DatabaseType dbType)
+        public static DbParameter AddWithValue(this List<DbParameter> parameterCollection, string parameterName, object value, DatabaseType dbType)
         {
-            DbParameter parameter = dbType switch
-            {
-                DatabaseType.Postgres => new NpgsqlParameter(parameterName, fieldType) { Value = value },
-                DatabaseType.SqlServer => new SqlParameter(parameterName, fieldType) { Value = value },
-                _ => throw new ArgumentException("Unknown db type", nameof(fieldType))
-            };
-
+            var parameter = SqlQuerySyntaxHelper.CreateDbParameter(dbType, parameterName, value);
             parameterCollection.Add(parameter);
             return parameter;
-        }        
+        }
+
+        public static DbParameter AddWithValue(this List<DbParameter> parameterCollection, string parameterName, int[] ids, DatabaseType dbType)
+        {
+            var parameter = SqlQuerySyntaxHelper.GetIdsDatatableParam(parameterName, ids, dbType);
+            parameterCollection.Add(parameter);
+            return parameter;
+        }
+
+        public static string GetIdTable(this DatabaseType dbType, string name, string alias = "i") =>
+            SqlQuerySyntaxHelper.IdList(dbType, name, alias);
 
         public static void Fill(this DataAdapter da, DataTable dt)
         {
