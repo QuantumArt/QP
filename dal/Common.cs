@@ -1985,7 +1985,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                     AND (
                         ci.content_item_id not in (select content_item_id from waiting_for_approval {nolock})
                         OR ci.content_item_id in (select content_item_id from waiting_for_approval {nolock} where user_id = @userId)
-                    )";
+                    ) AND ci.archive = 0";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -2028,7 +2028,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                         AND (
                                             ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
                                             OR ci.content_item_id in (select content_item_id from waiting_for_approval {withNoLock} where user_id = {userId})
-                                        )",
+                                        ) AND ci.archive = 0",
                 startRow,
                 pageSize,
                 out totalRecords
