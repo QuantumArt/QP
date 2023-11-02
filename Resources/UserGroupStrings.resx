@@ -142,7 +142,7 @@
     <value>Group used parallel workflow could not contain users bound to Administrators group or it descendants. Users: {0}</value>
   </data>
   <data name="GroupCouldntBindWorkflowGroupUsers" xml:space="preserve">
-    <value>Administrators group or it descendants could not contain users bound to  groups used parallel workflow. Users: {0}</value>
+    <value>Administrators group or it descendants could not contain users bound to groups used parallel workflow. Users: {0}</value>
   </data>
   <data name="GroupCouldntUseWorkflow" xml:space="preserve">
     <value>Group used parallel workflow could not be parent</value>
