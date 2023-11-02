@@ -466,7 +466,7 @@
     <value>Disable Changing Actions</value>
   </data>
   <data name="ArticleChangingIsProhibited" xml:space="preserve">
-    <value>Changing\Creation actions of this content arcticles is prohibited.</value>
+    <value>Changing\Creation actions of this content articles is prohibited.</value>
   </data>
   <data name="ContentChangingIsProhibited" xml:space="preserve">
     <value>Content changing actions are disabled</value>

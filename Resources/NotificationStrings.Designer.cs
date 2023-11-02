@@ -555,7 +555,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Notification was unbinded from workflow.
+        ///   Looks up a localized string similar to Notification was unbounded from workflow.
         /// </summary>
         public static string UnbindedMessage {
             get {
