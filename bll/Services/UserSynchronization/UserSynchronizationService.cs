@@ -32,6 +32,12 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         {
             QPContext.CurrentUserId = _settings.DefaultUserId;
             var qpGroups = UserGroupRepository.GetNtGroups().ToList();
+
+            if (qpGroups.Count == 0)
+            {
+                return;
+            }
+
             var adGroups = GetAdGroupsToProcess(qpGroups);
             var adUsers = _activeDirectory.GetUsers(adGroups);
             var qpUsers = UserRepository.GetNtUsers();
