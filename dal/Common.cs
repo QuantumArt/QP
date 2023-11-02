@@ -3718,12 +3718,13 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static IEnumerable<int> UserGroups_SelectWorkflowGroupUserIDs(int[] userIds, DbConnection connection)
         {
+            var useParallelWorkflowTrue = SqlQuerySyntaxHelper.IsTrue(GetDbType(connection), "G.USE_PARALLEL_WORKFLOW");
             var result = new List<int>();
-            const string queryTemplate = @"select GB.[USER_ID] from dbo.USER_GROUP_BIND GB
-                                    join dbo.USER_GROUP G ON G.GROUP_ID = GB.GROUP_ID
-                                    WHERE G.USE_PARALLEL_WORKFLOW = 1 and GB.[USER_ID] in ({0})";
+            const string queryTemplate = @"select GB.USER_ID from USER_GROUP_BIND GB
+                                    join USER_GROUP G ON G.GROUP_ID = GB.GROUP_ID
+                                    WHERE {1} and GB.USER_ID in ({0})";
 
-            var query = string.Format(queryTemplate, string.Join(",", userIds));
+            var query = string.Format(queryTemplate, string.Join(",", userIds), useParallelWorkflowTrue);
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
