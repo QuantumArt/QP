@@ -223,7 +223,7 @@
     <value>Unbind</value>
   </data>
   <data name="UnbindedMessage" xml:space="preserve">
-    <value>Notification was unbinded from workflow</value>
+    <value>Notification was unbound from workflow</value>
   </data>
   <data name="CreateDefaultFormat" xml:space="preserve">
     <value>Create Default Format</value>

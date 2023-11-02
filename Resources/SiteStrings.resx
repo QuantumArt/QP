@@ -481,7 +481,7 @@
     <value>Warning! Site is now in live mode. Site properties was modified by {1} at {0}. Do you really want to proceed assembling?</value>
   </data>
   <data name="UseEnglishQuotes" xml:space="preserve">
-    <value>Use english typografic rules</value>
+    <value>Use english typographic rules</value>
   </data>
   <data name="RemoveSiteStageName" xml:space="preserve">
     <value>Removing Site "{0}"</value>
