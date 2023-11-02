@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Xml.Linq;
 using NLog;
 using NLog.Fluent;
+using QP.ConfigurationService.Models;
 using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -15,13 +16,13 @@ using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
 using Quantumart.QP8.Configuration;
-using IsolationLevel = System.Transactions.IsolationLevel;
+using DatabaseType = Quantumart.QP8.Constants.DatabaseType;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class NotificationPushRepository
     {
-        private const string NotificationSavepointName = "NotificationSavepoint";
+
         private static ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private int ContentId { get; set; }
@@ -114,55 +115,6 @@ namespace Quantumart.QP8.BLL.Repository
             SendNonServiceNotifications(false);
         }
 
-        internal void SendBatchNotifications(DbTransaction transaction)
-        {
-            transaction.Save(NotificationSavepointName);
-            try
-            {
-                SendServiceNotifications(true);
-                SendInternalNotificationsBatch();
-            }
-            catch
-            {
-                transaction.Rollback(NotificationSavepointName);
-            }
-        }
-
-        private void SendInternalNotificationsBatch()
-        {
-            if (IgnoreInternal)
-            {
-                return;
-            }
-
-            DBConnector dbConnector = new(ConnectionString, (QP.ConfigurationService.Models.DatabaseType)QPContext.DatabaseType)
-            {
-                CacheData = false,
-                DisableServiceNotifications = true,
-                DisableInternalNotifications = false,
-                ExternalExceptionHandler = HandleException,
-                ThrowNotificationExceptions = true,
-                WithTransaction = true,
-                ExternalConnection = QPContext.CurrentConnectionScope.DbConnection
-            };
-
-            QPConfiguration.SetAppSettings(dbConnector.DbConnectorSettings);
-
-            try
-            {
-                foreach (string simpleCode in Codes)
-                {
-                    dbConnector.SendInternalNotificationBatch(simpleCode, ArticleIds);
-                }
-            }
-            catch (Exception ex)
-            {
-                HandleException(ex);
-
-                throw;
-            }
-        }
-
         internal void SendNonServiceNotifications(bool waitFor)
         {
             if (!NonServiceNotifications.Any())
@@ -183,7 +135,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal void SendServiceNotifications(bool throwException = false)
+        internal void SendServiceNotifications()
         {
             if (!ServiceNotifications.Any())
             {
@@ -254,11 +206,6 @@ namespace Quantumart.QP8.BLL.Repository
             catch (Exception ex)
             {
                 HandleException(ex);
-
-                if (throwException)
-                {
-                    throw;
-                }
             }
         }
 
