@@ -41,19 +41,19 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DbParameter AddWithValue(this List<DbParameter> parameterCollection, string parameterName, object value, DatabaseType dbType)
+        public static List<DbParameter> AddWithValue(this List<DbParameter> parameterCollection, string parameterName, object value, DatabaseType dbType)
         {
             var parameter = SqlQuerySyntaxHelper.CreateDbParameter(dbType, parameterName, value);
             parameterCollection.Add(parameter);
-            return parameter;
+            return parameterCollection;
         }
 
-        public static DbParameter AddWithValue(this List<DbParameter> parameterCollection, string parameterName, int[] ids, DatabaseType dbType)
+        public static List<DbParameter> AddWithValue(this List<DbParameter> parameterCollection, string parameterName, int[] ids, DatabaseType dbType)
         {
             var parameter = SqlQuerySyntaxHelper.GetIdsDatatableParam(parameterName, ids, dbType);
             parameterCollection.Add(parameter);
-            return parameter;
-        }
+            return parameterCollection;
+        }        
 
         public static string GetIdTable(this DatabaseType dbType, string name, string alias = "i") =>
             SqlQuerySyntaxHelper.IdList(dbType, name, alias);
