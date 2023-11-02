@@ -1,5 +1,4 @@
 using System;
-using System.Data.Common;
 using System.Transactions;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
@@ -57,55 +56,48 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
             var reader = new CsvReader(SiteId, ContentId, settings);
             var result = new MultistepActionStepResult();
-
-            DbConnection connection = QPContext.CurrentConnectionScope.DbConnection;
-            DbTransaction transaction = connection.BeginTransaction();
-
-            using (new QPConnectionScope())
+            using (var ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             {
-                try
+                using (new QPConnectionScope())
                 {
-                    reader.Process(step,
-                        ItemsPerStep,
-                        out var processedItemsCount,
-                        transaction);
-
-                    var lastStep = step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep;
-
-                    if (lastStep)
+                    try
                     {
-                        ContentRepository.UpdateContentModification(ContentId);
-                        reader.PostUpdateM2MRelationAndO2MRelationFields();
+                        reader.Process(step, ItemsPerStep, out var processedItemsCount);
+                        var lastStep = step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep;
+                        if (lastStep)
+                        {
+                            ContentRepository.UpdateContentModification(ContentId);
+                            reader.PostUpdateM2MRelationAndO2MRelationFields();
+                        }
+
+                        settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
+
+                        var logData = new ImportArticlesLogData()
+                        {
+                            Id = settings.Id,
+                            InsertedArticleIds = settings.InsertedArticleIds.ToArray(),
+                            UpdatedArticleIds = settings.UpdatedArticleIds.ToArray(),
+                            ImportAction = (CsvImportMode)settings.ImportAction
+                        };
+
+                        ImportLogger.Trace()
+                            .Message("Import articles step: {step}.", step)
+                            .Property("result", logData)
+                            .Property("customerCode", QPContext.CurrentCustomerCode)
+                            .Write();
+
+                        result.ProcessedItemsCount = processedItemsCount;
+                        result.TraceResult = reader.GetTraceResult();
+                        result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";
                     }
-
-                    settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
-
-                    var logData = new ImportArticlesLogData()
+                    catch (Exception ex)
                     {
-                        Id = settings.Id,
-                        InsertedArticleIds = settings.InsertedArticleIds.ToArray(),
-                        UpdatedArticleIds = settings.UpdatedArticleIds.ToArray(),
-                        ImportAction = (CsvImportMode)settings.ImportAction
-                    };
-
-                    ImportLogger.Trace()
-                       .Message("Import articles step: {step}.", step)
-                       .Property("result", logData)
-                       .Property("customerCode", QPContext.CurrentCustomerCode)
-                       .Write();
-
-                    result.ProcessedItemsCount = processedItemsCount;
-                    result.TraceResult = reader.GetTraceResult();
-                    result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";
+                        throw new ImportException(string.Format(ImportStrings.ImportInterrupted, ex.Message, reader.LastProcessed), ex, settings);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new ImportException(string.Format(ImportStrings.ImportInterrupted, ex.Message, reader.LastProcessed), ex, settings);
-                }
+
+                ts.Complete();
             }
-
-            transaction.Commit();
 
             return result;
         }
