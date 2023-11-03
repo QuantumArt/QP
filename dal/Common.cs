@@ -2589,12 +2589,12 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 if (!linkFilter.IsNull)
                 {
                     var paramName = "@link" + linkFilter.LinkId;
-                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {IdList(dbType, paramName)})" : string.Empty;
+                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY id HAVING COUNT(id) = (SELECT COUNT(*) FROM {IdList(dbType, paramName)})" : string.Empty;
                     sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids, dbType));
 
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString} EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
+                        ? $"{inverseString} EXISTS (select id from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
                         : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
