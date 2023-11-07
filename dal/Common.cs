@@ -3001,7 +3001,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 filter = $"cnt.CONTENT_ID IN (SELECT ID FROM {dbType.GetIdTable("@aggregatedContentIds")})";
                 filter = SqlFilterComposer.Compose(filter, $"ca.AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}");
                 filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
-                parameters.AddWithValue("@aggregatedContentIds", aggregatedContentIds.Union(new[] { options.ContentId }), dbType);
+                parameters.AddWithValue("@aggregatedContentIds", aggregatedContentIds.Union(new[] { options.ContentId }).ToArray(), dbType);
             }
 
             var selectBuilder = new StringBuilder();
@@ -3026,6 +3026,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT ATTRIBUTE_ID from CONTENT_ATTRIBUTE where ATTRIBUTE_ID in (SELECT ID FROM {0})) AS cas ON ca.ATTRIBUTE_ID = cas.ATTRIBUTE_ID ", dbType.GetIdTable("@selectedIds"));
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
             }
 
             return GetSimplePagedList(
