@@ -18,18 +18,18 @@
 | qp_articles | Заблокированные статьи (не используется в QP8) |
 | qp_authenticate | Универсальная процедура аутентификации |
 | qp_batch_delete_contents | Пакетное удаление контентов (используется при удалении сайта) |
-| qp_build_link_view | Строит представления (Пользовательские представления вида LINK_NN, Пользовательские представления вида LINK_NN_UNITED) |
+| qp_build_link_view | Строит представления (Пользовательские представления LINK_NN, Пользовательские представления LINK_NN_UNITED) |
 | qp_build_query_vcontent_view | Построение виртуального контента типа USERQUERY (не используется в QP8) |
 | qp_build_union_vcontent_view | Построение виртуального контента типа UNION (не используется в QP8) |
 | qp_check_entity_existence | Проверка сущности на существование |
-| qp_check_target_table_async | Определение того, какая таблица является целевой для статьи ([Пользовательские таблицы вида CONTENT_NNN](main#пользовательские-таблицы-вида-content_nnn), [Пользовательские таблицы вида CONTENT_NNN_ASYNC](main#пользовательские-таблицы-вида-content_nnn_async) |
+| qp_check_target_table_async | Определение того, какая таблица является целевой для статьи ([Пользовательские таблицы CONTENT_NNN](main#пользовательские-таблицы-content_nnn), [Пользовательские таблицы CONTENT_NNN_ASYNC](main#пользовательские-таблицы-content_nnn_async) |
 | qp_check_unique_data_in_set | Проверка уникальности для набора полей (список ID) |
 | qp_clean_versions | Очистка дубликатов версий БД (фиксов) |
 | qp_clear_relations | Очистка ссылок на статью (приудалении) |
 | qp_clear_versions_for_field | Удаление данных версий для поля |
 | qp_content_constraint_list | Список ограничений уникальности контента (не используется в QP8) |
-| qp_content_frontend_views_create | Cоздание представлений (Пользовательские представления вида CONTENT_NNN_LIVE, Пользовательские представления вида CONTENT_NNN_STAGE) |
-| qp_content_frontend_views_recreate | Обновление представлений (Пользовательские представления вида CONTENT_NNN_LIVE, Пользовательские представления вида CONTENT_NNN_STAGE) |
+| qp_content_frontend_views_create | Cоздание представлений (Пользовательские представления CONTENT_NNN_LIVE, Пользовательские представления CONTENT_NNN_STAGE) |
+| qp_content_frontend_views_recreate | Обновление представлений (Пользовательские представления CONTENT_NNN_LIVE, Пользовательские представления CONTENT_NNN_STAGE) |
 | qp_content_items_list | Получение списка статей (не используется в QP8) |
 | qp_content_list | Получение списка контентов с учетом Security |
 | qp_content_list_for_group | Получение списка контентов для группы с учетом Security |
