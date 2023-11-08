@@ -134,7 +134,8 @@ export class BackendLibraryManager extends Observable {
         || eventArgs.get_isUpdated()
         || eventArgs.get_isRemoving()
       ) || actionTypeCode === window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED
-        || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED)
+        || actionTypeCode === window.ACTION_TYPE_CODE_FILE_CROPPED
+        || actionTypeCode === window.ACTION_TYPE_CODE_FILE_RESIZED)
     ) {
       this.refreshLibraryGroup(entityTypeCode, eventArgs.get_parentEntityId());
     }

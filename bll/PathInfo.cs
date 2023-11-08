@@ -15,6 +15,7 @@ namespace Quantumart.QP8.BLL
         public string Path { get; set; }
 
         public string Url { get; set; }
+        public string BaseUploadUrl { get; set; }
 
         public PathInfo GetSubPathInfo(string folderName)
         {
@@ -30,7 +31,7 @@ namespace Quantumart.QP8.BLL
 
             if (folderName.Equals(string.Empty))
             {
-                return new PathInfo { Path = Path, Url = Url };
+                return new PathInfo { Path = Path, Url = Url, BaseUploadUrl = BaseUploadUrl};
             }
 
             var replacedName = folderName.Replace(@"\", @"/");
@@ -39,7 +40,7 @@ namespace Quantumart.QP8.BLL
             {
                 folderName = replacedName;
             }
-            return new PathInfo { Path = $@"{Path}{I.Path.DirectorySeparatorChar}{folderName}", Url = $@"{Url}{replacedName}/" };
+            return new PathInfo { Path = $@"{Path}{I.Path.DirectorySeparatorChar}{folderName}", Url = $@"{Url}{replacedName}/", BaseUploadUrl = BaseUploadUrl};
         }
 
         public string GetPath(string fileName) => I.Path.Combine(Path, ReplaceUp(fileName));

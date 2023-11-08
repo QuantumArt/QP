@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using QP8.Infrastructure.Web.Extensions;
@@ -27,6 +24,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private const string ContentDispositionTemplate = "attachment; filename=\"{0}\"; filename*=UTF-8''{0}";
         private const int DefaultSvgWidth = 800;
         private const int DefaultSvgHeight = 600;
+
+        private ILibraryService _libraryService { get; set; }
+
+        public LibraryController(ILibraryService libraryService)
+        {
+            _libraryService = libraryService;
+        }
 
         public class FilePropertiesOptions
         {
@@ -198,6 +202,76 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(new { ok = true, message = string.Empty });
         }
 
+        [HttpPost]
+        public async Task<JsonResult> CheckForAutoResize([FromBody] CheckAutoResizeViewModel resizeParameters)
+        {
+            var settings = await _libraryService.GetSettingsFromStorage(resizeParameters.BaseUrl);
+
+            if (settings?.ReduceSizes == null || string.IsNullOrEmpty(settings.ResizedImageTemplate) || settings.ExtensionsAllowedToResize.Length == 0)
+            {
+                return Json(new { ok = false, message = LibraryStrings.AutoResizeSettingsAreIncorrect});
+            }
+
+            var sourcePath = resizeParameters.FolderUrl;
+            var path = PathInfo.ConvertToPath(sourcePath);
+
+            var ext = Path.GetExtension(resizeParameters.FileName);
+
+            if (string.IsNullOrEmpty(ext) || !settings.ExtensionsAllowedToResize.Contains(ext))
+            {
+                return Json(new { ok = false, message = string.Format(LibraryStrings.ExtensionIsNotAllowed, ext) });
+            }
+
+            if (settings.ReduceSizes.Any(a=> a.ReduceRatio <= 0))
+            {
+                return Json(new { ok = false, message = string.Format(LibraryStrings.InvalidReduceRatio, ext) });
+            }
+
+            if (!PathInfo.CheckSecurity(path).Result)
+            {
+                return Json(new { ok = false, message = string.Format(LibraryStrings.AccessDenied, path, QPContext.CurrentUserName) });
+            }
+
+            var filename = Path.GetFileNameWithoutExtension(resizeParameters.FileName);
+            var basePath = Path.GetDirectoryName(path);
+            var filenames = settings.ReduceSizes.Select(s => Path.Combine(basePath, string.Format(settings.ResizedImageTemplate, filename, s.Postfix, ext)));
+
+            foreach (var file in filenames)
+            {
+                if (System.IO.File.Exists(file))
+                {
+                    return Json(new { ok = false, message = string.Format(LibraryStrings.AutoResizedFileExists, file) });
+                }
+            }
+
+            return Json(new { ok = true, message = string.Empty, reduceSizes = settings.ReduceSizes, resizedImageTemplate = settings.ResizedImageTemplate });
+        }
+
+        [HttpPost]
+        public JsonResult AutoResize([FromBody] AutoResizeViewModel resizeParameters)
+        {
+            var sourcePath = resizeParameters.FolderUrl;
+            var path = PathInfo.ConvertToPath(sourcePath);
+
+            var ext = Path.GetExtension(resizeParameters.FileName);
+
+            var filename = Path.GetFileNameWithoutExtension(resizeParameters.FileName);
+            var basePath = Path.GetDirectoryName(path);
+
+            foreach (var size in resizeParameters.ReduceSizes)
+            {
+                var newFile = Path.Combine(basePath, string.Format(resizeParameters.ResizedImageTemplate, filename, size.Postfix, ext));
+                using (Image image = Image.Load(Path.Combine(path, resizeParameters.FileName)))
+                {
+                    image.Mutate(x => x.Resize((int)(image.Width / size.ReduceRatio), (int) (image.Height / size.ReduceRatio)));
+                    image.Save(newFile);
+                }
+            }
+
+            return Json(new { ok = true, message = string.Empty });
+        }
+
+
         private static string GetMimeType(string extension)
         {
             if (extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase) || extension.Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase))
@@ -213,6 +287,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase))
             {
                 return MimeTypes.Png;
+            }
+
+            if (extension.Equals(".webp", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return MimeTypes.Webp;
             }
 
             return string.Empty;
@@ -293,7 +372,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             var result = !string.IsNullOrEmpty(message)
                 ? (object)new { proceed = false, msg = message }
-                : new { proceed = true, url, folderUrl = pathInfo.Url, width, height };
+                : new { proceed = true, url, folderUrl = pathInfo.Url, width, height, baseUrl = pathInfo.BaseUploadUrl };
 
             return Json(result);
         }

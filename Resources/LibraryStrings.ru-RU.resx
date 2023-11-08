@@ -255,4 +255,16 @@
   <data name="ExtensionIsNotAllowed" xml:space="preserve">
     <value>Расширение {0} не является допустимым</value>
   </data>
+  <data name="InvalidReduceRatio" xml:space="preserve">
+    <value>Коэффициент масштабирования должен быть больше нуля</value>
+  </data>
+  <data name="AutoResizeConfirmMessage" xml:space="preserve">
+    <value>Автоматически будут созданы уменьшенные копии файла {0} в соответствии с настройками хранилища.</value>
+  </data>
+  <data name="AutoResizedFileExists" xml:space="preserve">
+    <value>Уменьшенный файл {0} уже существует. Другие копии не были созданы </value>
+  </data>
+  <data name="AutoResizeSettingIsIncorrect" xml:space="preserve">
+    <value>Настройки автоуменьшения на сторадже заданы некорректно или отсутствуют.</value>
+  </data>
 </root>

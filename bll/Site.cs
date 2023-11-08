@@ -384,7 +384,7 @@ namespace Quantumart.QP8.BLL
 
         public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
 
-        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
+        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl, BaseUploadUrl = (UseAbsoluteUploadUrl ? UploadUrlPrefix : "http://" + Dns)};
 
         public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 
@@ -543,6 +543,7 @@ namespace Quantumart.QP8.BLL
 
         public static string GetFullyQualifiedName(string nameSpace, string className) => string.IsNullOrEmpty(nameSpace) ? className : $"{nameSpace}.{className}";
 
+    //    public static string GetFileUploadPrefix() => ;
         public void SaveVisualEditorCommands(int[] activeCommandIds)
         {
             var oldCommands = VisualEditorRepository.GetResultCommands(Id)
