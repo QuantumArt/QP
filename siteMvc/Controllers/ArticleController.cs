@@ -59,7 +59,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
+            Dictionary<string, object[]> customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy)
@@ -99,8 +100,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
+            IList<ArticleSearchQueryParam> searchQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
+            Dictionary<string, object[]> customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy)
@@ -153,7 +156,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
+            Dictionary<string, object[]> customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy,
@@ -203,8 +207,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [FromForm(Name="IDs")]string ids,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,            
+            string customFilter2,
+            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
+            Dictionary<string, object[]> customFilter,
             bool? onlyIds,
             string orderBy)
         {

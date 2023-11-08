@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Xml.Linq;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
@@ -184,15 +185,18 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
+        internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, Dictionary<string, object[]> customFilter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
         {
             using (new QPConnectionScope())
             {
                 var content = ContentRepository.GetById(contentId);
                 var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out var useMainTable);
-                filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
-
                 var sqlParams = new List<DbParameter>();
+                var sqlConnection = QPConnectionScope.Current.DbConnection;
+                var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
+                var filter = CommonCustomFilters.GetFilterQuety(sqlConnection, sqlParams, dbType, customFilter);
+                filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
+                
                 var options = new ArticlePageOptions
                 {
                     ContentId = contentId,
@@ -217,7 +221,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     UseSql2012Syntax = QPContext.DatabaseType == DatabaseType.Postgres || QPContext.CurrentSqlVersion.Major >= 11
                 };
 
-                return Common.GetArticlesPage(QPConnectionScope.Current.DbConnection, options, sqlParams, out totalRecords);
+                return Common.GetArticlesPage(sqlConnection, options, sqlParams, out totalRecords);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -627,11 +628,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _MultipleSelectForCustomAction(
             string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            string customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
+            ContentListFilter filter,
+            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
+            Dictionary<string, object[]> customFilter)
         {
             filter = filter ?? new ContentListFilter();
-            if (!string.IsNullOrEmpty(customFilter))
+            if (customFilter != null)
             {
                 filter.CustomFilter = customFilter;
             }
@@ -659,7 +662,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            string customFilter)
+            Dictionary<string, object[]> customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;

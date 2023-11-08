@@ -3141,9 +3141,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                     break;
             }
 
-            if (!string.IsNullOrEmpty(options.CustomFilter))
+            if (options.CustomFilter != null)
             {
-                filterBuilder.AppendFormat(" AND ({0})", options.CustomFilter);
+                filterBuilder.Append(CommonCustomFilters.GetFilterQuety(sqlConnection, parameters, dbType, options.CustomFilter));
             }
 
             return GetSimplePagedList(
