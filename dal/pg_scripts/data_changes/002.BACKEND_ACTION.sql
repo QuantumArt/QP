@@ -123,10 +123,10 @@ on conflict do nothing;
 insert into backend_action(type_id, entity_type_id, name, code)
     values ((select id from action_type where code = 'auto_resize'), (select id from entity_type where code = 'site_file'),
             'Auto Resize Site File', 'auto_resize_site_file')
-on conflict do nothing
+on conflict do nothing;
 
 insert into backend_action(type_id, entity_type_id, name, code)
     values ((select id from action_type where code = 'auto_resize'), (select id from entity_type where code = 'content_file'),
         'Auto Resize Content File', 'auto_resize_content_file')
-on conflict do nothing
+on conflict do nothing;
 
