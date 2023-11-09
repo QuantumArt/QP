@@ -11,7 +11,7 @@ ImageAutoResizeClient._cache = {};
   let _parameters = null;
 
   const displayErrors = function (errors) {
-    $q.alertFail(errors);
+    $q.alertError(errors);
   };
 
   const _defaultParameters = {
