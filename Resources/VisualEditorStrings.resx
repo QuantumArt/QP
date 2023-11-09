@@ -133,28 +133,28 @@
     <value>HTML Attributes</value>
   </data>
   <data name="CommandAliasDuplicate" xml:space="preserve">
-    <value>Command`s #{0} alias should be unique within its VE Plugin`s сommands</value>
+    <value>Command`s #{0} alias should be unique within its VE Plugin`s commands</value>
   </data>
   <data name="CommandAliasMaxLengthExceeded" xml:space="preserve">
     <value>The length of command`s #{0} Alias should not exceed 255 characters!</value>
   </data>
   <data name="CommandAliasNonUnique" xml:space="preserve">
-    <value>Command`s #{0} Alias should be unique within all VE сommands!</value>
+    <value>Command`s #{0} Alias should be unique within all VE commands!</value>
   </data>
   <data name="CommandAliasRequired" xml:space="preserve">
     <value>Please enter alias for command #{0}!</value>
   </data>
   <data name="CommandNameDuplicate" xml:space="preserve">
-    <value>Command`s #{0} name should be unique within its VE Plugin`s сommands!</value>
+    <value>Command`s #{0} name should be unique within its VE Plugin`s commands!</value>
   </data>
   <data name="CommandNameInvalidFormat" xml:space="preserve">
     <value>Command #{0} has invalid name format!</value>
   </data>
   <data name="CommandNameMaxLengthExceeded" xml:space="preserve">
-    <value>The Length of command`s #{0} name should not exceed 255 сharacters!</value>
+    <value>The Length of command`s #{0} name should not exceed 255 characters!</value>
   </data>
   <data name="CommandNameNonUnique" xml:space="preserve">
-    <value>Command`s #{0} name should be unique within all VE сommands</value>
+    <value>Command`s #{0} name should be unique within all VE commands</value>
   </data>
   <data name="CommandNameRequired" xml:space="preserve">
     <value>Please enter name for command #{0}!</value>

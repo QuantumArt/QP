@@ -1985,7 +1985,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                     AND (
                         ci.content_item_id not in (select content_item_id from waiting_for_approval {nolock})
                         OR ci.content_item_id in (select content_item_id from waiting_for_approval {nolock} where user_id = @userId)
-                    )";
+                    ) AND ci.archive = 0";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -2028,7 +2028,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                         AND (
                                             ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
                                             OR ci.content_item_id in (select content_item_id from waiting_for_approval {withNoLock} where user_id = {userId})
-                                        )",
+                                        ) AND ci.archive = 0",
                 startRow,
                 pageSize,
                 out totalRecords
@@ -2589,12 +2589,12 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 if (!linkFilter.IsNull)
                 {
                     var paramName = "@link" + linkFilter.LinkId;
-                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {IdList(dbType, paramName)})" : string.Empty;
+                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY id HAVING COUNT(id) = (SELECT COUNT(*) FROM {IdList(dbType, paramName)})" : string.Empty;
                     sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids, dbType));
 
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString} EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
+                        ? $"{inverseString} EXISTS (select id from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
                         : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
@@ -3718,12 +3718,13 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static IEnumerable<int> UserGroups_SelectWorkflowGroupUserIDs(int[] userIds, DbConnection connection)
         {
+            var useParallelWorkflowTrue = SqlQuerySyntaxHelper.IsTrue(GetDbType(connection), "G.USE_PARALLEL_WORKFLOW");
             var result = new List<int>();
-            const string queryTemplate = @"select GB.[USER_ID] from dbo.USER_GROUP_BIND GB
-                                    join dbo.USER_GROUP G ON G.GROUP_ID = GB.GROUP_ID
-                                    WHERE G.USE_PARALLEL_WORKFLOW = 1 and GB.[USER_ID] in ({0})";
+            const string queryTemplate = @"select GB.USER_ID from USER_GROUP_BIND GB
+                                    join USER_GROUP G ON G.GROUP_ID = GB.GROUP_ID
+                                    WHERE {1} and GB.USER_ID in ({0})";
 
-            var query = string.Format(queryTemplate, string.Join(",", userIds));
+            var query = string.Format(queryTemplate, string.Join(",", userIds), useParallelWorkflowTrue);
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;

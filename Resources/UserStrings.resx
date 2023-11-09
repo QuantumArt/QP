@@ -178,7 +178,7 @@
     <value>Please enter e-mail!</value>
   </data>
   <data name="EnableContentGroupingInTree" xml:space="preserve">
-    <value>Enable сontent grouping in backend tree</value>
+    <value>Enable content grouping in backend tree</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>English</value>
@@ -244,7 +244,7 @@
     <value>Please enter copy new password!</value>
   </data>
   <data name="NewPasswordIncorrect" xml:space="preserve">
-    <value>Incorrect new pasword!</value>
+    <value>Incorrect new password!</value>
   </data>
   <data name="NewPasswordMatchCurrentPassword" xml:space="preserve">
     <value>New password cannot match current password</value>
@@ -283,7 +283,7 @@
     <value>Minimum password length is 7 chars</value>
   </data>
   <data name="PasswordNotComplex" xml:space="preserve">
-    <value>Password must contain characters from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alfanumeric characters</value>
+    <value>Password must contain characters from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alphanumeric characters</value>
   </data>
   <data name="PasswordNotEntered" xml:space="preserve">
     <value>Please enter password!</value>
