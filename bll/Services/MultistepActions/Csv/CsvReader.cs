@@ -4,9 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using NLog;
+using NLog.Fluent;
 using QP8.Infrastructure.Web.Extensions;
 using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Enums.Csv;
@@ -16,6 +19,7 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -25,6 +29,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     public class CsvReader
     {
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
+        private static ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly int _siteId;
         private readonly int _contentId;
@@ -89,7 +94,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 .ToDictionary(n => n.Id.ToString(), m => m);
             InitFields(_importSettings, fields);
             ConvertCsvLinesToArticles(fields);
-            WriteArticlesToDb();
+            WriteArticlesToDb(step * itemsPerStep >= ArticleCount - itemsPerStep);
             processedItemsCount = _csvLines.Count();
         }
 
@@ -110,51 +115,94 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
         }
 
-        private void WriteArticlesToDb()
+        private void WriteArticlesToDb(bool lastStep = false)
         {
-            switch (_importSettings.ImportAction)
+            List<NotificationArticles> notificationList = new();
+
+            using (TransactionScope ts = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
             {
-                case (int)CsvImportMode.InsertAll:
-                    InsertArticles(_articlesListFromCsv);
-                    break;
-                case (int)CsvImportMode.InsertAndUpdate:
-                    var existingArticles = UpdateArticles(_articlesListFromCsv);
-                    var remainingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
-                    InsertArticles(remainingArticles);
-                    break;
-                case (int)CsvImportMode.Update:
-                    UpdateArticles(_articlesListFromCsv);
-                    break;
-                case (int)CsvImportMode.UpdateIfChanged:
-                    var changedArticles = _articlesListFromCsv.Filter(a => a.Created == DateTime.MinValue);
-                    UpdateArticles(changedArticles);
-                    break;
-                case (int)CsvImportMode.InsertNew:
-                    var nonExistingArticles = GetArticles(_articlesListFromCsv, false);
-                    InsertArticles(nonExistingArticles);
-                    break;
-                default:
-                    throw new NotImplementedException($"Неизвестный режим импорта: {_importSettings.ImportAction}");
+                switch (_importSettings.ImportAction)
+                {
+                    case (int)CsvImportMode.InsertAll:
+                        InsertArticles(_articlesListFromCsv, ref notificationList);
+
+                        break;
+                    case (int)CsvImportMode.InsertAndUpdate:
+                        var existingArticles = UpdateArticles(_articlesListFromCsv, ref notificationList);
+                        var remainingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
+                        InsertArticles(remainingArticles, ref notificationList);
+
+                        break;
+                    case (int)CsvImportMode.Update:
+                        UpdateArticles(_articlesListFromCsv, ref notificationList);
+
+                        break;
+                    case (int)CsvImportMode.UpdateIfChanged:
+                        var changedArticles = _articlesListFromCsv.Filter(a => a.Created == DateTime.MinValue);
+                        UpdateArticles(changedArticles, ref notificationList);
+
+                        break;
+                    case (int)CsvImportMode.InsertNew:
+                        var nonExistingArticles = GetArticles(_articlesListFromCsv, false);
+                        InsertArticles(nonExistingArticles, ref notificationList);
+
+                        break;
+                    default:
+                        throw new NotImplementedException($"Неизвестный режим импорта: {_importSettings.ImportAction}");
+                }
+
+                if (lastStep)
+                {
+                    ContentRepository.UpdateContentModification(_contentId);
+                    PostUpdateM2MRelationAndO2MRelationFields(ref notificationList);
+                }
+
+                ts.Complete();
+            }
+
+            NotifyProcessedArticles(notificationList);
+        }
+
+        private void NotifyProcessedArticles(List<NotificationArticles> notificationList)
+        {
+            foreach (NotificationArticles notificationArticles in notificationList)
+            {
+                try
+                {
+                    _notificationRepository.PrepareNotifications(_contentId, notificationArticles.ArticleIds.ToArray(), notificationArticles.NotificationCode);
+                    _notificationRepository.SendBatchNotification();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error()
+                       .Exception(e)
+                       .Message("Error while sending notifications for articles {Articles} with code {Code}",
+                            string.Join(", ", notificationArticles.ArticleIds),
+                            notificationArticles.NotificationCode)
+                       .Write();
+                }
             }
         }
 
-        private void InsertArticles(ExtendedArticleList articlesToInsert)
+        private void InsertArticles(ExtendedArticleList articlesToInsert, ref List<NotificationArticles> notificationArticlesList)
         {
             if (articlesToInsert.Any())
             {
                 var insertingArticles = InsertArticlesToDb(articlesToInsert);
                 var insertedArticles = insertingArticles.GetBaseArticleIds();
                 SaveInsertedArticleIdsToSettings(insertedArticles);
+                notificationArticlesList.Add(new(insertedArticles, NotificationCode.Create));
             }
         }
 
-        private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesToUpdate)
+        private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesToUpdate, ref List<NotificationArticles> notificationArticlesList)
         {
             if (articlesToUpdate.Any())
             {
                 var updatingArticles = UpdateArticlesToDb(articlesToUpdate);
                 var updatedArticles = updatingArticles.GetBaseArticleIds();
                 SaveUpdatedArticleIdsToSettings(updatedArticles);
+                notificationArticlesList.Add(new(updatedArticles, NotificationCode.Update));
                 return updatingArticles;
             }
 
@@ -759,7 +807,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         }
 
         // Добавление значений m2m и o2m полей
-        public void PostUpdateM2MRelationAndO2MRelationFields()
+        public void PostUpdateM2MRelationAndO2MRelationFields(ref List<NotificationArticles> notificationArticlesList)
         {
             if (_importSettings.ContainsO2MRelationOrM2MRelationFields)
             {
@@ -767,11 +815,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var values = GetNewValues();
                 if (values.Any())
                 {
-                    var repo = new NotificationPushRepository();
-                    repo.PrepareNotifications(_contentId, values.Select(n => n.NewId).Distinct().ToArray(), NotificationCode.Update);
                     PostUpdateM2MValues(values);
                     PostUpdateO2MValues(values);
-                    repo.SendNotifications();
+                    notificationArticlesList.Add(new(values.Select(x => x.NewId).Distinct().ToList(), NotificationCode.Update));
                 }
             }
         }
