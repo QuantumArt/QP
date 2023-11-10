@@ -257,7 +257,7 @@
 
 ## Таблица PHRASES
 
-Хранит информацию о фразах (строковых ресурсах, подлежащих переводу)
+Хранит информацию о фразах (строковых ресурсах, подлежащих переводу). Не используется в новой версии QP8
 
 | Имя поля       | Описание |
 |----------------|----------|
@@ -272,7 +272,7 @@
 
 ## Таблица TRANSLATIONS
 
-Хранит переводы фраз
+Хранит переводы фраз. Не используется в новой версии QP8
 
 | Имя поля       | Описание |
 |----------------|----------|
@@ -567,6 +567,6 @@
 
 | Имя триггера   | Описание |
 |----------------|----------|
-| ti_plugin_field_value | Вызывается при вставке записей в таблицу PLUGIN_FIELD_VALUE. Выполняет вставку или обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#пользовательские-таблицы-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#пользовательские-таблицы-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#пользовательские-таблицы-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) заполнена у вставляемой записи. Реализован для всех поддерживаемых типов БД |
-| td_plugin_field_value | Вызывается при удалении записей из таблицы PLUGIN_FIELD_VALUE. Выполняет удаление или обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#пользовательские-таблицы-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#пользовательские-таблицы-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#пользовательские-таблицы-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) была заполнена у удаляемой записи. Реализован для всех поддерживаемых типов БД |
-| tu_plugin_field_value | Вызывается при обновлении записей в таблице PLUGIN_FIELD_VALUE. Выполняет обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#пользовательские-таблицы-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#пользовательские-таблицы-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#пользовательские-таблицы-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) была обновлена. Реализован для всех поддерживаемых типов БД |
+| ti_plugin_field_value | Вызывается при вставке записей в таблицу PLUGIN_FIELD_VALUE. Выполняет вставку или обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#таблицы-плагинов-для-сайтов-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#таблицы-плагинов-для-контентов-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#таблицы-плагинов-для-полей-контентов-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) заполнена у вставляемой записи. Реализован для всех поддерживаемых типов БД |
+| td_plugin_field_value | Вызывается при удалении записей из таблицы PLUGIN_FIELD_VALUE. Выполняет удаление или обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#таблицы-плагинов-для-сайтов-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#таблицы-плагинов-для-контентов-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#таблицы-плагинов-для-полей-контентов-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) была заполнена у удаляемой записи. Реализован для всех поддерживаемых типов БД |
+| tu_plugin_field_value | Вызывается при обновлении записей в таблице PLUGIN_FIELD_VALUE. Выполняет обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#таблицы-плагинов-для-сайтов-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#таблицы-плагинов-для-контентов-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#таблицы-плагинов-для-полей-контентов-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) была обновлена. Реализован для всех поддерживаемых типов БД |
