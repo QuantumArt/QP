@@ -1,29 +1,12 @@
-# Quantumart.QP8.BLL и QP8.Infrastructure.\*
+# Nuget-пакет Quantumart.QP8.BLL
 
 ## Назначение
 
-* **Quantumart.QP8.BLL** - API, предоставляющий доступ к функциональности QP8. Используется для создания админок,  встраиваемых в QP8.
-* **QP8.Infrastructure.\*** - служебные пакеты. Для последней версии `Quantumart.QP8.BLL` актуальны только `QP8. Infrastructure` и `QP8.Infrastructure.Web`.
+API, предоставляющий доступ к функциональности QP8. Используется для создания админок, встраиваемых в QP8.
 
-## Пакеты
+## Репозиторий
 
-* [Quantumart.QP8.BLL](https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL)
-* [QP8.Infrastructure](https://nuget.qsupport.ru/packages/QP8.Infrastructure)
-* [QP8.Infrastructure.Web](https://nuget.qsupport.ru/packages/QP8.Infrastructure.Web)
-
-## QP8.Infrastructure.\*
-
-### QP8.Infrastructure.2.3.4
-
-* Обновление Quantumart.AspNetCore до 6.0.8 (#172194)
-
-### QP8.Infrastructure.2.3.3
-
-* Обновление Quantumart.AspNetCore до 6.0.7
-
-### QP8.Infrastructure.2.3.2
-
-* Обновление Quantumart.AspNetCore до 6.0.5
+https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
