@@ -3,7 +3,7 @@
 ## Docker-образы
 
 * [qp](docker/qp.md)
-* [qp-storage](docker/qp-storage.md)
+* [qp-console](docker/qp-console.md)
 
 ## Nuget-пакеты
 
@@ -17,4 +17,4 @@
 
 ## Описание структуры БД
 
-* [Общее описание](db/db.md)
+* [Общее описание](db.md)
