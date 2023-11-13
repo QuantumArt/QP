@@ -4,9 +4,10 @@
 
 Образ содержит основное приложение **QP8.CMS c поддержкой PostgreSQL**. Использование образа описано в [руководстве администратора QP8.CMS c поддержкой PostgreSQL](https://storage.qp.qsupport.ru/qa_official_site/images/downloads/qp8-pg-admin-man.pdf) (в разделе **Установка на Linux**).
 
-## Репозиторий
+## Репозитории
 
-https://hub.docker.com/r/qpcms/qp/tags
+* DockerHub: [qpcms/qp](https://hub.docker.com/r/qpcms/qp/tags)
+* QA Harbor: registry.quantumart.ru/qp8-cms/qp
 
 ## История версий
 
