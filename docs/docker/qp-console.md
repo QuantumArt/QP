@@ -6,8 +6,8 @@
 
 ## Репозитории
 
-* Dockerhub: [qpcms/qp-console](https://hub.docker.com/r/qpcms/qp-console/tags)
-* QA Harbor: registry.quantumart.ru/qp8-cms/console
+* [DockerHub](https://hub.docker.com/r/qpcms/qp-console/tags): `qpcms/qp-console`
+* QA Harbor: `registry.quantumart.ru/qp8-cms/console`
 
 ## История версий
 

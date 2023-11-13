@@ -6,8 +6,8 @@
 
 ## Репозитории
 
-* DockerHub: [qpcms/qp](https://hub.docker.com/r/qpcms/qp/tags)
-* QA Harbor: registry.quantumart.ru/qp8-cms/qp
+* [DockerHub](https://hub.docker.com/r/qpcms/qp/tags): `qpcms/qp`
+* QA Harbor: `registry.quantumart.ru/qp8-cms/qp`
 
 ## История версий
 
