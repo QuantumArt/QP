@@ -4,10 +4,10 @@
 
 Cлужебные пакеты, которые используются в [Quantumart.QP8.BLL](Quantumart.QP8.BLL) Для последней версии актуальны только `QP8.Infrastructure` и `QP8.Infrastructure.Web`.
 
-## Репозиторий
+## Репозитории
 
-* https://nuget.qsupport.ru/packages/QP8.Infrastructure
-* https://nuget.qsupport.ru/packages/QP8.Infrastructure.Web
+* <https://nuget.qsupport.ru/packages/QP8.Infrastructure>
+* <https://nuget.qsupport.ru/packages/QP8.Infrastructure.Web>
 
 ## История версий
 
