@@ -57,7 +57,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _reader = new FileReader(settings);
             _skipFirstLine = _reader.Lines.First().Skip;
             _skipSecondLine = _skipFirstLine && _reader.Lines.Skip(1).First().Skip;
-            _notificationRepository = new NotificationPushRepository { IgnoreInternal = true };
+            _notificationRepository = new() { IgnoreInternal = false };
             _traceFields = GetTraceFields(contentId);
             _jObject = InitJObject(_traceFields);
         }
@@ -153,8 +153,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 if (lastStep)
                 {
-                    ContentRepository.UpdateContentModification(_contentId);
                     PostUpdateM2MRelationAndO2MRelationFields(ref notificationList);
+                    ContentRepository.UpdateContentModification(_contentId);
                 }
 
                 ts.Complete();
@@ -527,7 +527,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             var baseArticles = articleList.GetBaseArticles();
             var idsList = InsertArticlesIds(baseArticles, baseArticles.All(a => a.UniqueId.HasValue)).ToArray();
-            _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Create);
             var defaultValues = Article.CreateNew(_contentId).FieldValues;
             var notMappedDefaultValues = defaultValues
                 .Where(
@@ -546,6 +545,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             {
                 var id = idsList[i];
                 var article = articleList[i];
+                article.BaseArticle.Id = id;
                 foreach (var aggregatedArticle in article.Extensions.Values.Where(ex => ex != null))
                 {
                     var parent = aggregatedArticle.FieldValues.Find(fv => fv.Field.Aggregated);
@@ -564,7 +564,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
-            _notificationRepository.SendNotifications();
             return articleList;
         }
 
@@ -573,7 +572,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var existingArticles = GetArticles(articlesList, true);
             var extensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
             var idsList = existingArticles.GetBaseArticleIds().ToArray();
-            _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Update);
 
             if (_importSettings.CreateVersions)
             {
@@ -635,7 +633,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, updateArticles: true);
-            _notificationRepository.SendNotifications();
             return existingArticles;
         }
 
