@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActionNotFound" xml:space="preserve">
+  <data name="ActionNotFoundById" xml:space="preserve">
     <value>Action not found (Id = {0})</value>
   </data>
   <data name="ActionNotFoundByCode" xml:space="preserve">
@@ -269,5 +269,8 @@
   </data>
   <data name="ActionNotfoundByAlias" xml:space="preserve">
     <value>Action not found (Alias = {0})</value>
+  </data>
+  <data name="ActionNotFound" xml:space="preserve">
+    <value>Action not found</value>
   </data>
 </root>

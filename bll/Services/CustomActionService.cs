@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (action == null)
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, id));
+                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundById, id));
             }
 
             return action;
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (!CustomActionRepository.Exists(customAction.Id))
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, customAction.Id));
+                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundById, customAction.Id));
             }
 
             customAction = Normalize(customAction, selectedActionsIds);
