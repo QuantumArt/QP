@@ -82,6 +82,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QP8.Infrastructure.TestTool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Plugins.Contract", "QP8.Plugins.Contract\QP8.Plugins.Contract.csproj", "{9CD1C054-2E57-4C25-866E-5F9C1FC2C6C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Files", "Quantumart.QP8.Scheduler.Files\Quantumart.QP8.Scheduler.Files.csproj", "{F77370A1-90BF-48D7-971A-A67C5FD5C677}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug MVC2 NET35|Any CPU = Debug MVC2 NET35|Any CPU
@@ -1458,6 +1460,54 @@ Global
 		{9CD1C054-2E57-4C25-866E-5F9C1FC2C6C8}.Stage|Mixed Platforms.Build.0 = Debug|Any CPU
 		{9CD1C054-2E57-4C25-866E-5F9C1FC2C6C8}.Stage|x86.ActiveCfg = Debug|Any CPU
 		{9CD1C054-2E57-4C25-866E-5F9C1FC2C6C8}.Stage|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug MVC2 NET35|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug_AspnetCore|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug_AspnetCore|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Debug|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Live|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Live|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Live|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Live|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Live|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Live|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release MVC2 NET35|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release MVC2 NET35|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release MVC2 NET35|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release MVC2 NET35|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release MVC2 NET35|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release MVC2 NET35|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release_AspnetCore|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release_AspnetCore|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release_AspnetCore|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release_AspnetCore|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release_AspnetCore|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release_AspnetCore|x86.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release|x86.ActiveCfg = Release|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Release|x86.Build.0 = Release|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Stage|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Stage|Any CPU.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Stage|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Stage|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Stage|x86.ActiveCfg = Debug|Any CPU
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677}.Stage|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1482,6 +1532,7 @@ Global
 		{EF8CC04A-6AE2-4CF4-9367-31701651639B} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{C8D0F9D8-0F40-4480-B60F-C50791E9F8C1} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
 		{D303B005-9E08-427E-92E7-8C8DCC303C53} = {C154FDD0-B9E5-4398-8462-F8243B45B73E}
+		{F77370A1-90BF-48D7-971A-A67C5FD5C677} = {F77A9BEF-3EF5-4AA7-ACA6-403145FA2382}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45
