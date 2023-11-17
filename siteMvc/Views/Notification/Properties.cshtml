@@ -159,7 +159,6 @@
 	@using (Html.BeginFieldGroup(NotificationStrings.Options))
  {
         @Html.CheckBoxFieldFor(s => s.Data.SendFiles)
-        @Html.CheckBoxFieldFor(s => s.Data.UseQaMail)
  }
 	</div>
   @Html.HiddenFor(x => x.NonMultipleRecipientTypes)
