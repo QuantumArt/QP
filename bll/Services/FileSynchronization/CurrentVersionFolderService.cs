@@ -24,20 +24,26 @@ public class CurrentVersionFolderService : ICurrentVersionFolderService
     {
         QPContext.CurrentUserId = _options.DefaultUserId;
         _logger.Info($"Start processing files on customer code {customerName}");
-        var contentIds = SiteRepository.GetAll().SelectMany(n => ContentRepository.GetContentIdsBySiteId(n.Id)).ToArray();
+        var contentIds = SiteRepository.GetAll().SelectMany(n => ContentRepository.GetContentIds(n.Id)).ToArray();
         foreach (var contentId in contentIds)
         {
             var dirInfo = GetRootDirectoryInfo(contentId);
+            if (dirInfo is not { Exists: true })
+            {
+                continue;
+            }
+
             var currentVersionDir = GetCurrentVersionDirectoryInfo(dirInfo);
             if (currentVersionDir == null)
             {
                 continue;
             }
 
-            var foundFiles = GetFilesToDelete(currentVersionDir, GetContentFiles(dirInfo));
-            _logger.Info($"Found {foundFiles.Length} files for content {contentId}, but the number is limited to {numFiles}");
+            var contentFiles = GetContentFiles(dirInfo);
+            var filesToDelete = GetFilesToDelete(currentVersionDir, contentFiles);
+            _logger.Info($"Found {filesToDelete.Length} files for content {contentId}, but the number is limited to {numFiles}");
 
-            foreach (var info in foundFiles.Take(numFiles))
+            foreach (var info in filesToDelete.Take(numFiles))
             {
                 _logger.Info($"Deleting file {info.FullName}");
                 info.Delete();
@@ -47,12 +53,12 @@ public class CurrentVersionFolderService : ICurrentVersionFolderService
 
     private string[] GetContentFiles(DirectoryInfo rootDirInfo)
     {
-        var dirs = rootDirInfo.GetDirectories("*", SearchOption.AllDirectories)
+        var dirs = rootDirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
             .Where(n => n.Name != ArticleVersion.RootFolder && n.Name != "_temp").ToArray();
         var result = new List<string>();
         foreach (var dir in dirs)
         {
-            result.AddRange(dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Select(n => n.Name));
+            result.AddRange(dir.EnumerateFiles("*", SearchOption.AllDirectories).Select(n => n.Name));
         }
         result.AddRange(rootDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Select(n => n.Name));
         return result.ToArray();
@@ -62,7 +68,12 @@ public class CurrentVersionFolderService : ICurrentVersionFolderService
     {
         var factory = new ContentFolderFactory();
         var repository = factory.CreateRepository();
-        var pathInfo = repository.GetRoot(contentId).PathInfo;
+        var root = repository.GetRoot(contentId);
+        if (root == null)
+        {
+            return null;
+        }
+        var pathInfo = root.PathInfo;
         return new DirectoryInfo(pathInfo.Path);
     }
 

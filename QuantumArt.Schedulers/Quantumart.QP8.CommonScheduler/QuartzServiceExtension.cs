@@ -2,6 +2,7 @@ using AutoMapper.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.Scheduler.Files;
 using Quantumart.QP8.Scheduler.Notification.Processors;
 using Quantumart.QP8.Scheduler.Users;
 using Quartz;
@@ -40,6 +41,7 @@ namespace Quantumart.QP8.CommonScheduler
             AddTask<SystemNotificationJob>(configurator, rootSection);
             AddTask<InterfaceCleanupJob>(configurator, rootSection);
             AddTask<SystemCleanupJob>(configurator, rootSection);
+            AddTask<SyncCurrentVersionFolderJob>(configurator, rootSection);
             AddTask<T.CdcDataImportJob>(configurator, rootSection);
             AddTask<T.CheckNotificationQueueJob>(configurator, rootSection);
             AddTask<E.CdcDataImportJob>(configurator, rootSection);
