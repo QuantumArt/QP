@@ -1,6 +1,5 @@
-﻿using System;
-using System.Net.Http;
-using System.Text.Json;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Quantumart.QP8.BLL.Services;
@@ -8,7 +7,7 @@ namespace Quantumart.QP8.BLL.Services;
 public class LibraryService : ILibraryService
 {
     private readonly IHttpClientFactory _factory;
-    private const string _reduceSettingdEndpoint = "_reduce_settings";
+    private readonly string _reduceSettingsEndpoint = "_reduce_settings";
 
     public LibraryService(IHttpClientFactory factory)
     {
@@ -18,13 +17,7 @@ public class LibraryService : ILibraryService
     public async Task<StorageReduceSettings> GetSettingsFromStorage(string url)
     {
         var client = _factory.CreateClient();
-        var result = await client.GetAsync($"{url}/{_reduceSettingdEndpoint}");
-        if (result.IsSuccessStatusCode)
-        {
-            var content = await result.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<StorageReduceSettings>(content);
-        }
-
-        return null;
+        var result = await client.GetAsync($"{url}/{_reduceSettingsEndpoint}");
+        return result.IsSuccessStatusCode ? await result.Content.ReadFromJsonAsync<StorageReduceSettings>() : null;
     }
 }
