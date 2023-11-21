@@ -1,6 +1,7 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -20,6 +21,7 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -114,7 +116,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                     return new JsonResult(new
                     {
                         success = false,
-                        message = ex.Dump()
+                        message = GetClientDump(ex)
                     });
 
                 case ExceptionResultMode.OperationAction:
@@ -128,7 +130,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                         return new JsonResult(new JSendResponse
                         {
                             Status = JSendStatus.Fail,
-                            Message = ex.Dump(),
+                            Message = GetClientDump(ex),
                         }, JsonSettingsRegistry.CamelCaseSettings);
                     }
 
@@ -136,7 +138,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                     return new JsonResult(new JSendResponse
                     {
                         Status = JSendStatus.Error,
-                        Message = ex.Dump(),
+                        Message = GetClientDump(ex),
                     }, JsonSettingsRegistry.CamelCaseSettings);
 
                 default:
@@ -179,6 +181,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                     Content = writer.GetStringBuilder().ToString()
                 };
             }
+        }
+
+        private static string GetClientDump(Exception ex)
+        {
+           return string.Join(Environment.NewLine, ex.GetExceptionsList().Select(x => x.Data[ExceptionHelpers.ClientMessageKey] ?? GlobalStrings._500Error));
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿@model Exception
+﻿@using QP8.Infrastructure.Extensions
+@using Quantumart.QP8.Resources
+@model Exception
 
-<h3>Error: <i>@Model.Message</i></h3>
+<h3>Error: <i>@(Model.Data[ExceptionHelpers.ClientMessageKey] ?? GlobalStrings._500Error)</i></h3>
 <p>
   <b>Source</b>: @Model.Source
 </p>
