@@ -1404,7 +1404,7 @@ $c.autoResize = function (imgUrl, urlParams) {
   let win = null;
   const queryResult = $q.getJsonSync(imgUrl);
   if (queryResult.proceed) {
-      win = $c.setAutoResizeSettings(urlParams, queryResult.folderUrl,queryResult.baseUrl);
+    win = $c.setAutoResizeSettings(urlParams, queryResult.folderUrl, queryResult.baseUrl);
   } else {
     $q.alertError(queryResult.msg);
   }
@@ -1460,7 +1460,7 @@ $c.openCropWindow = function (url, folderUrl, urlParams) {
   return imgCropResize;
 };
 
-$c.setAutoResizeSettings = function(urlParams, folderUrl, baseUrl) {
+$c.setAutoResizeSettings = function (urlParams, folderUrl, baseUrl) {
   const imgAutoResize = ImageAutoResizeClient.create({
     onCompleteCallback() {
       const newEventArgs = new BackendEventArgs();
@@ -1473,11 +1473,12 @@ $c.setAutoResizeSettings = function(urlParams, folderUrl, baseUrl) {
       newEventArgs.set_actionCode(actionCode);
       newEventArgs.set_parentEntityId(urlParams.id);
       Backend.getInstance()._onActionExecuted(newEventArgs);
-  }});
+    }
+  });
 
-  imgAutoResize.autoResize(folderUrl,urlParams.fileName, baseUrl);
+  imgAutoResize.autoResize(folderUrl, urlParams.fileName, baseUrl);
   return imgAutoResize;
-}
+};
 
 $c.correctPreviewSize = function (size, minSize, maxSize) {
   let newSize = size;

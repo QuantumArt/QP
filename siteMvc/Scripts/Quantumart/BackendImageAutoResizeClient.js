@@ -30,8 +30,19 @@ ImageAutoResizeClient._cache = {};
     }
   };
 
+  const _autoresize = function (resizeParams) {
+    $q.getJsonFromUrl('POST', _parameters.autoResizeActionUrl, resizeParams).done(response => {
+      if (!response.ok) {
+        const message = response.message || $l.Crop.defaultErrorMessage;
+        displayErrors([message]);
+      } else if (typeof _parameters.onCompleteCallback === 'function') {
+        _parameters.onCompleteCallback();
+      }
+    }).fail(() => {
+      displayErrors([$l.Crop.defaultErrorMessage]);
+    });
+  };
   const _autoResizeCheckParameters = function (folderUrl, fileName, baseUrl) {
-
     const resizeCheckParams = { folderUrl, fileName, baseUrl };
 
     $q.getJsonFromUrl('POST', _parameters.checkAutoResizeActionUrl,
@@ -39,7 +50,9 @@ ImageAutoResizeClient._cache = {};
     ).done(response => {
       if (response.ok) {
         const resizeParams = {
-          folderUrl, fileName, baseUrl,
+          folderUrl,
+          fileName,
+          baseUrl,
           reduceSizes: response.reduceSizes,
           resizedImageTemplate: response.resizedImageTemplate
         };
@@ -53,24 +66,11 @@ ImageAutoResizeClient._cache = {};
     });
   };
 
-  const _autoresize = function(resizeParams)  {
-    $q.getJsonFromUrl('POST', _parameters.autoResizeActionUrl, resizeParams).done(response => {
-      if (!response.ok) {
-        const message = response.message || $l.Crop.defaultErrorMessage;
-        displayErrors([message]);
-      } else if (typeof _parameters.onCompleteCallback === 'function') {
-           _parameters.onCompleteCallback();
-      }
-    }).fail(() => {
-      displayErrors([$l.Crop.defaultErrorMessage]);
-    });
-  }
-
-  const autoResize = function(folderUrl, fileName, baseUrl) {
+  const autoResize = function (folderUrl, fileName, baseUrl) {
     if ($q.confirmMessage(String.format(window.AUTO_RESIZE_CONFIRM_MESSAGE, fileName))) {
       _autoResizeCheckParameters(folderUrl, fileName, baseUrl);
     }
-  }
+  };
 
   // eslint-disable-next-line
   imgAutoResize.create = function (parameters) {
