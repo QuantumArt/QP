@@ -38,7 +38,7 @@
         public const string ActionPermissionTree = "action_permission_tree";
         public const string AllFilesUploaded = "all_files_uploaded";
         public const string FileCropped = "file_cropped";
-        public const string FileResized= "file_resized";
+        public const string FileResized = "file_resized";
         public const string MultipleUnlock = "multiple_unlock";
         public const string Compare = "compare";
         public const string SelectChildArticles = "select_child_articles";

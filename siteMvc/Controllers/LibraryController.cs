@@ -25,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private const int DefaultSvgWidth = 800;
         private const int DefaultSvgHeight = 600;
 
-        private ILibraryService _libraryService { get; set; }
+        private readonly ILibraryService _libraryService;
 
         public LibraryController(ILibraryService libraryService)
         {
@@ -121,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var path = (string)TempData[id];
 
-            if (!string.IsNullOrEmpty(path))
+            if (!string.IsNullOrWhiteSpace(path))
             {
                 var dir = Path.GetDirectoryName(path);
                 var file = Path.GetFileName(path);
@@ -142,7 +142,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { ok = false, message = string.Format(LibraryStrings.FileExistsTryAnother, path) });
             }
 
-            if (string.IsNullOrEmpty(ext) || string.IsNullOrEmpty(GetMimeType(ext)))
+            if (string.IsNullOrWhiteSpace(ext) || string.IsNullOrWhiteSpace(GetMimeType(ext)))
             {
                 return Json(new { ok = false, message = string.Format(LibraryStrings.ExtensionIsNotAllowed, ext) });
             }
@@ -207,7 +207,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var settings = await _libraryService.GetSettingsFromStorage(resizeParameters.BaseUrl);
 
-            if (settings?.ReduceSizes == null || string.IsNullOrEmpty(settings.ResizedImageTemplate) || settings.ExtensionsAllowedToResize.Length == 0)
+            if (settings?.ReduceSizes == null || string.IsNullOrWhiteSpace(settings.ResizedImageTemplate) || settings.ExtensionsAllowedToResize.Length == 0)
             {
                 return Json(new { ok = false, message = LibraryStrings.AutoResizeSettingsAreIncorrect});
             }
@@ -217,7 +217,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             var ext = Path.GetExtension(resizeParameters.FileName);
 
-            if (string.IsNullOrEmpty(ext) || !settings.ExtensionsAllowedToResize.Contains(ext))
+            if (string.IsNullOrWhiteSpace(ext) || !settings.ExtensionsAllowedToResize.Contains(ext))
             {
                 return Json(new { ok = false, message = string.Format(LibraryStrings.ExtensionIsNotAllowed, ext) });
             }
@@ -370,7 +370,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 message = string.Format(LibraryStrings.NotExists, normalizedFileName);
             }
 
-            var result = !string.IsNullOrEmpty(message)
+            var result = !string.IsNullOrWhiteSpace(message)
                 ? (object)new { proceed = false, msg = message }
                 : new { proceed = true, url, folderUrl = pathInfo.Url, width, height, baseUrl = pathInfo.BaseUploadUrl };
 

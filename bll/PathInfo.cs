@@ -15,6 +15,7 @@ namespace Quantumart.QP8.BLL
         public string Path { get; set; }
 
         public string Url { get; set; }
+
         public string BaseUploadUrl { get; set; }
 
         public PathInfo GetSubPathInfo(string folderName)
