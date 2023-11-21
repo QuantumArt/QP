@@ -95,4 +95,12 @@ update BACKEND_ACTION set SHORT_NAME = 'Compare with Current' where NAME = 'Comp
 update BACKEND_ACTION set SHORT_NAME = 'Preview' where NAME = 'Preview QP Plugin version'
 update BACKEND_ACTION set SHORT_NAME = 'Versions' where NAME = 'QP Plugin versions'
 
+if not exists(select * from BACKEND_ACTION where code = 'auto_resize_site_file')
+    insert into [BACKEND_ACTION] (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE)
+    values (dbo.qp_action_type_id('auto_resize'), dbo.qp_entity_type_id('site_file'), 'Auto Resize Site File', 'auto_resize_site_file')
+
+if not exists(select * from BACKEND_ACTION where code = 'auto_resize_content_file')
+    insert into [BACKEND_ACTION] (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE)
+    values (dbo.qp_action_type_id('auto_resize'), dbo.qp_entity_type_id('content_file'), 'Auto Resize Content File', 'auto_resize_content_file')
+
 GO
