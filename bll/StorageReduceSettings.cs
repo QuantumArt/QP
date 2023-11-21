@@ -14,12 +14,3 @@ public class StorageReduceSettings
     [JsonPropertyName("reduceSizes")]
     public ReduceSize[] ReduceSizes { get; set; }
 }
-
-public class ReduceSize
-{
-    [JsonPropertyName("postfix")]
-    public string Postfix { get; set; }
-
-    [JsonPropertyName("reduceRatio")]
-    public decimal ReduceRatio { get; set; }
-}
