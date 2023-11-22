@@ -50,8 +50,12 @@ export class BackendEntityDataListBase extends Observable {
       this._maxListWidth = options.maxListWidth;
       this._maxListHeight = options.maxListHeight;
       this._showIds = options.showIds;
-      this._filter = options.filter;
-      this._initFilter = this._filter;
+
+      if ($q.any(options.filter)) {
+        this._filter = options.filter;
+        this._initFilter = this._filter;
+      }
+
       this._hostIsWindow = options.hostIsWindow;
       this._isCollapsable = options.isCollapsable;
       this._enableCopy = options.enableCopy;
@@ -86,8 +90,8 @@ export class BackendEntityDataListBase extends Observable {
   _listManagerComponent = null;
   _selectPopupWindowComponent = null;
   _showIds = false;
-  _filter = '';
-  _initFilter = '';
+  _filter = [];
+  _initFilter = [];
   _hostIsWindow = false;
   _isCollapsable = false;
   _enableCopy = true;
@@ -868,17 +872,31 @@ export class BackendEntityDataListBase extends Observable {
   }
 
   applyFilter(filter) {
-    let result = this._initFilter;
-    if (filter) {
-      result = result && result.trim() ? `${result} and ${filter}` : filter;
-    }
 
-    if (result !== this._filter) {
-      this._filter = result;
-      if (this.getListItemCount() > 0) {
-        this.refreshList();
+    for (var i = 0; i < this._filter.length; i++) {
+      var currentFilter = JSON.stringify(this._filter[i]);
+      var newFilter = JSON.stringify(filter);
+
+      if (currentFilter == newFilter) {
+        return;
       }
     }
+
+    this._filter.push(filter);
+    if (this.getListItemCount() > 0) {
+      this.refreshList();
+    }
+    //let result = this._initFilter;
+    //if (filter) {
+    //  result = result && result.trim() ? `${result} and ${filter} ` : filter;
+    //}
+
+    //if (result !== this._filter) {
+    //  this._filter = result;
+    //  if (this.getListItemCount() > 0) {
+    //    this.refreshList();
+    //  }
+    //}
   }
 
   getFilter() {

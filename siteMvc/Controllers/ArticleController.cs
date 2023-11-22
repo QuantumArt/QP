@@ -17,6 +17,7 @@ using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
+using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
@@ -59,8 +60,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
-            Dictionary<string, object[]> customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
+            CustomFilter[] customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy)
@@ -102,8 +103,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
             IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
-            Dictionary<string, object[]> customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
+            CustomFilter[] customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy)
@@ -156,8 +157,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
-            Dictionary<string, object[]> customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
+            CustomFilter[] customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy,
@@ -209,8 +210,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [FromForm(Name="IDs")]string ids,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,            
             string customFilter2,
-            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
-            Dictionary<string, object[]> customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
+            CustomFilter[] customFilter,
             bool? onlyIds,
             string orderBy)
         {

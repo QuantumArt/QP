@@ -1,4 +1,6 @@
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.DTO;
+using Quantumart.QP8.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,26 +11,28 @@ namespace Quantumart.QP8.DAL
 {
     public static class CommonCustomFilters
     {
-        public static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, Dictionary<string, object[]> map)
+        public static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter[] filters)
         {
-            if (map == null || map.Count == 0)
+            if (filters == null || filters.Length == 0)
             {
                 return string.Empty;
             }
 
-            var queries = map
+            var queries = filters
                 .Select(item => GetFilterQuety(sqlConnection, parameters, dbType, item))
                 .Where(query => !string.IsNullOrEmpty(query))
                 .ToArray();
 
-            return $"(({string.Join(") AND (", queries)}))";
+            return SqlFilterComposer.Compose(queries);
         }
 
-        private static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, KeyValuePair<string, object[]> item) => item.Key switch
+        private static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item) => item.Filter switch
         {
-            "Archive" => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
-            "Relation" => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
-            _ => throw new NotImplementedException($"filter {item.Key} is not implemented")
+            CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
+            CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
+            CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, item.Field, item.Value),
+            CustomFilter.FalseFilter => GetFalseFilter(),
+            _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
         private static string GetArchiveFilter(List<DbParameter> parameters, DatabaseType dbType, int archive)
@@ -51,30 +55,31 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static int GetIntValue(object[] values)
+        private static string GetFieldFilter(DbConnection sqlConnection, string field, object value)
         {
-            if (values != null && values.Length == 1)
-            {
-                if (values[0] is long value)
-                {
-                    return (int)value;
-                }
-            }
-
-            throw new ArgumentException("Values can't be casted to int value", nameof(values));
+            return null;
         }
 
-        private static string GetStringValue(object[] values)
+        private static string GetFalseFilter() => "1 = 0";
+
+        private static int GetIntValue(object value)
         {
-            if (values != null && values.Length == 1)
+            if (value is long result)
             {
-                if (values[0] is string value)
-                {
-                    return value;
-                }
+                return (int)result;
             }
 
-            throw new ArgumentException("Values can't be casted to int value", nameof(values));
+            throw new ArgumentException("Value can't be casted to int value", nameof(value));
+        }
+
+        private static string GetStringValue(object value)
+        {
+            if (value is string result)
+            {
+                return result;
+            }
+
+            throw new ArgumentException("Value can't be casted to string value", nameof(value));
         }
     }
 }

@@ -23,6 +23,6 @@ namespace Quantumart.QP8.DAL.DTO
 
         public int LanguageId { get; set; }
 
-        public Dictionary<string, object[]> CustomFilter { get; set; }
+        public CustomFilter[] CustomFilter { get; set; }
     }
 }

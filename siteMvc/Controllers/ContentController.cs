@@ -15,6 +15,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -630,8 +631,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
             ContentListFilter filter,
-            [ModelBinder(typeof(JsonStringModelBinder<Dictionary<string, object[]>>))]
-            Dictionary<string, object[]> customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
+            CustomFilter[] customFilter)
         {
             filter = filter ?? new ContentListFilter();
             if (customFilter != null)
@@ -661,8 +662,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _MultipleSelectForWorkflow(
             string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            Dictionary<string, object[]> customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
+            ContentListFilter filter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
+            CustomFilter[] customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;

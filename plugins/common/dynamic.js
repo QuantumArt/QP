@@ -105,10 +105,11 @@ Quantumart.QP8.BackendDocumentContext.prototype.setFilter = function (inputName,
     if (fieldName) {
       var fieldExpr = this.isPg ? 'c."' + fieldName.toLowerCase() + '"' : 'c.[' + fieldName + ']';
       filter = fieldExpr + ' in (' + value + ')';
+      filter = { filter: "Field", field: fieldName, value: value };
     } else {
       filter = 'c.content_item_id in (select linked_item_id from item_link where item_id in (' + value + '))';
     }
-  }
+  }  
 
   this.applyFilter(inputName, filter, $form);
 };
