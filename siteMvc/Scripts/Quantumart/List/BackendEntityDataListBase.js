@@ -51,9 +51,17 @@ export class BackendEntityDataListBase extends Observable {
       this._maxListHeight = options.maxListHeight;
       this._showIds = options.showIds;
 
-      if ($q.any(options.filter)) {
-        this._filter = options.filter;
-        this._initFilter = this._filter;
+      if (!$q.isNullOrWhiteSpace(options.filter)) {
+        try {
+          var filterStr = options.filter.replace(/'/g, '"');
+          var filter = JSON.parse(filterStr);
+          this._filter = filter;
+          this._initFilter = this._filter;
+        }
+        catch (err) {
+          console.error(err);
+          console.log("filter is not valid", options.filter);
+        }
       }
 
       this._hostIsWindow = options.hostIsWindow;

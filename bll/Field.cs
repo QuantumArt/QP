@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -21,6 +23,7 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QPublishing.Info;
@@ -98,6 +101,7 @@ namespace Quantumart.QP8.BLL
             FieldExactTypes.Classifier
         });
 
+        public static CustomFilter DefaultExternalRelationFilter = CustomFilter.GetArchiveFilter(0);
         public static readonly string DefaultRelationFilter = "c.archive = 0";
         public static readonly string ArchiveFilter = "c.archive = 1";
 
@@ -314,6 +318,7 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "RelationCondition", ResourceType = typeof(FieldStrings))]
         [StringLength(255, ErrorMessageResourceName = "RelationConditionMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string RelationCondition { get; set; }
+        public CustomFilter ExternalRelationCondition { get; set; }
 
         [Display(Name = "ViewInList", ResourceType = typeof(FieldStrings))]
         public bool ViewInList { get; set; }
@@ -491,6 +496,10 @@ namespace Quantumart.QP8.BLL
         }
 
         public string RelationFilter => SqlFilterComposer.Compose(UseRelationCondition ? "(" + RelationCondition + ")" : "", DefaultRelationFilter);
+
+        public CustomFilter[] ExternalRelationFilter => UseRelationCondition ?
+            new[] { DefaultExternalRelationFilter, ExternalRelationCondition } :
+            new[] { DefaultExternalRelationFilter };
 
         [Display(Name = "FieldType", ResourceType = typeof(FieldStrings))]
         public FieldExactTypes ExactType
@@ -3006,6 +3015,28 @@ namespace Quantumart.QP8.BLL
             return ExactType != FieldExactTypes.M2ORelation
                 ? RelationFilter
                 : $"(c.{escapedBackRelationName} = {articleId} OR c.{escapedBackRelationName} IS NULL) AND c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ARCHIVE")} = 0";
+        }
+
+        public string GetExternalRelationFilters(int fieldId)
+        {
+            var filter = new List<CustomFilter>();
+
+            if (UseRelationCondition)
+            {
+                filter.Add(CustomFilter.GetRelationFilter(fieldId));
+            }
+
+            var sb = new StringBuilder();
+            using (var sw = new StringWriter(sb))
+            using (var writer = new JsonTextWriter(sw))
+            {
+                writer.QuoteChar = '\'';
+
+                var ser = new JsonSerializer();
+                ser.Serialize(writer, filter.ToArray());
+            }
+
+            return sb.ToString();
         }
 
         public void ParseStringEnumJson(string json)

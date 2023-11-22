@@ -234,7 +234,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var baseField = field.GetBaseField(articleId);
             var contentId = baseField.RelateToContentId ?? 0;
             var fieldId = baseField.Id;
-            var filter = baseField.GetRelationFilter(articleId);
+            var filter = baseField.GetExternalRelationFilters(fieldId);
             var relatedToContent = baseField.RelatedToContent;
             var addNewActionCode = ActionCode.None;
             var readActionCode = ActionCode.None;
