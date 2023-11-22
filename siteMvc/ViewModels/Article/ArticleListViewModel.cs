@@ -5,6 +5,7 @@ using System.Dynamic;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
@@ -38,6 +39,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public string CustomFilter { get; set; }
 
+        public List<CustomFilter> CustomExternalFilter { get; set; }
+
         public IEnumerable<BLL.Field> DisplayFields { get; set; }
 
         public string GetDataActionName
@@ -59,6 +62,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             IsViewChangable = true;
             ShowArchive = false;
             CustomFilter = "";
+            CustomExternalFilter = new List<CustomFilter>();
             AutoCheckChildren = false;
         }
 
@@ -186,6 +190,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 return CustomFilter.Contains(filter) ? CustomFilter : SqlFilterComposer.Compose(CustomFilter, filter);
             }
         }
+
+        public override List<CustomFilter> ExternalFilter => new List<CustomFilter>(CustomExternalFilter)
+        {
+            DAL.DTO.CustomFilter.GetArchiveFilter(Convert.ToInt32(ShowArchive))
+        };
 
         public override ExpandoObject MainComponentOptions
         {
