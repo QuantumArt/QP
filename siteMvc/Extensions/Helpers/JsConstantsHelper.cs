@@ -81,8 +81,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.ACTION_TYPE_CODE_LIBRARY = \"{ActionTypeCode.Library}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_PREVIEW = \"{ActionTypeCode.Preview}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_CROP = \"{ActionTypeCode.Crop}\"");
+            constants.AppendLine($"window.ACTION_TYPE_CODE_AUTO_RESIZE = \"{ActionTypeCode.AutoResize}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_ALL_FILES_UPLOADED = \"{ActionTypeCode.AllFilesUploaded}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_FILE_CROPPED = \"{ActionTypeCode.FileCropped}\"");
+            constants.AppendLine($"window.ACTION_TYPE_CODE_FILE_RESIZED = \"{ActionTypeCode.FileResized}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_DOWNLOAD = \"{ActionTypeCode.Download}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_REMOVE = \"{ActionTypeCode.Remove}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_MULTIPLE_REMOVE = \"{ActionTypeCode.MultipleRemove}\"");
@@ -280,6 +282,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.UPLOAD_SECURITY_MESSAGE = \"{LibraryStrings.UploadIsNotAllowed}\"");
             constants.AppendLine($"window.HTML_UPLOAD_MAX_SIZE_MESSAGE = \"{LibraryStrings.HtmlUploaderMaxSizeExceeded}\"");
             constants.AppendLine($"window.HTML_UPLOAD_ERROR_MESSAGE = \"{LibraryStrings.HtmlUploaderErrorMesage}\"");
+            constants.AppendLine($"window.AUTO_RESIZE_CONFIRM_MESSAGE = \"{LibraryStrings.AutoResizeConfirmMessage}\"");
 
             // Константы PlUpload
             constants.AppendLine($"window.PL_IMAGE_RESOLUTION = \"{Plupload.ImageResolution}\"");

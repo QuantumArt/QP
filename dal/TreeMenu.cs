@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.Constants;
+using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QP8.DAL
 {
@@ -22,6 +24,16 @@ namespace Quantumart.QP8.DAL
         {
             var query = GetSqlQuery(context, connection, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId, userId, isAdmin, customerCode, enableContentGrouping, true);
             return string.IsNullOrWhiteSpace(query) ? 0 : Common.ExecuteScalarLong(connection, query);
+        }
+
+        private static string[] GetDisabledCodes(QPModelDataContext context, string code, int parentId)
+        {
+            if (code == EntityTypeCode.Site && parentId != 0 && (context.SiteSet.SingleOrDefault(n => n.Id == parentId)?.ExternalDevelopment ?? false))
+            {
+                return new[] { EntityTypeCode.PageTemplate };
+            }
+
+            return Array.Empty<string>();
         }
 
 
@@ -182,7 +194,12 @@ namespace Quantumart.QP8.DAL
 
             else
             {
+                var codes = GetDisabledCodes(context, newEntityTypeCode, parentEntityId ?? 0);
                 var condition = $" et.disabled = {SqlQuerySyntaxHelper.ToBoolSql(databaseType, false)}";
+                if (codes.Any())
+                {
+                    condition += $" and et.code not in ({string.Join(",", codes.Select(n => "'" + n + "'"))})";
+                }
                 condition += string.IsNullOrWhiteSpace(newEntityTypeCode)
                     ? " and et.parent_id is null "
                     : $" and et.parent_id = {newEntityType.Id} ";

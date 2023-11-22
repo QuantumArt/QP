@@ -384,7 +384,7 @@ namespace Quantumart.QP8.BLL
 
         public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
 
-        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
+        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl, BaseUploadUrl = (UseAbsoluteUploadUrl ? UploadUrlPrefix : "http://" + Dns)};
 
         public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 

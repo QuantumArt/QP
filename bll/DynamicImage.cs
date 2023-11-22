@@ -11,6 +11,7 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -22,6 +23,7 @@ namespace Quantumart.QP8.BLL
         public const string PNG_EXTENSION = "PNG";
         public const string GIF_EXTENSION = "GIF";
         public const string SVG_EXTENSION = "SVG";
+        public const string WEBP_EXTENSION = "WEBP";
 
         public const short MinImageSize = 1;
         public const short MaxImageSize = 9999;
@@ -146,6 +148,11 @@ namespace Quantumart.QP8.BLL
                     return "image/png";
                 }
 
+                if (Type == "WEBP")
+                {
+                    return "image/webp";
+                }
+
                 return string.Empty;
             }
         }
@@ -167,6 +174,11 @@ namespace Quantumart.QP8.BLL
                 if (Type == "PNG")
                 {
                     return new PngEncoder();
+                }
+
+                if (Type == "WEBP")
+                {
+                    return new WebpEncoder();
                 }
 
                 return null;

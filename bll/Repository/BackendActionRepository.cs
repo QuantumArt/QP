@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
@@ -16,7 +17,7 @@ namespace Quantumart.QP8.BLL.Repository
             var action = BackendActionCache.Actions.SingleOrDefault(a => a.Id == actionId);
             if (action == null)
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, actionId));
+                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundById, actionId));
             }
 
             return action;
@@ -27,7 +28,9 @@ namespace Quantumart.QP8.BLL.Repository
             var action = BackendActionCache.Actions.SingleOrDefault(a => a.Code == actionCode);
             if (action == null)
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
+                var ex = new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
+                ex.Data.Add(ExceptionHelpers.ClientMessageKey, string.Format(CustomActionStrings.ActionNotFound));
+                throw ex;
             }
 
             return action;
@@ -39,7 +42,9 @@ namespace Quantumart.QP8.BLL.Repository
             var action = BackendActionCache.Actions.SingleOrDefault(a => a.Id == actionId);
             if (action == null)
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByAlias, alias));
+               var ex = new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByAlias, alias));
+               ex.Data.Add(ExceptionHelpers.ClientMessageKey, string.Format(CustomActionStrings.ActionNotFound));
+               throw ex;
             }
 
             return action;
@@ -52,15 +57,17 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<BackendActionStatus> GetStatusesList(string actionCode, int entityId)
         {
-
             using (var scope = new QPConnectionScope())
             {
                 var userId = QPContext.CurrentUserId;
                 var action = BackendActionCache.Actions.FirstOrDefault(x => x.Code == actionCode);
                 if (action == null)
                 {
-                    throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
+                    var ex = new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
+                    ex.Data.Add(ExceptionHelpers.ClientMessageKey, string.Format(CustomActionStrings.ActionNotFound));
+                    throw ex;
                 }
+
                 var actionId = action.Id;
                 var entityCode = EntityTypeRepository.GetById(action.EntityTypeId)?.Code;
                 var statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(

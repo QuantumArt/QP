@@ -6,6 +6,8 @@ namespace QP8.Infrastructure.Extensions
 {
     public static class ExceptionHelpers
     {
+        public const string ClientMessageKey = "ClientMessage";
+
         public static IEnumerable<Exception> GetExceptionsList(this Exception ex)
         {
             while (true)

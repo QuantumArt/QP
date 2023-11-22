@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>3.3.9</Version>
+    <Version>3.3.10</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Authors>Pavel Celut, Sergey Koryakin</Authors>
     <Company>Quantum Art</Company>
@@ -36,7 +36,7 @@
     <PackageReference Include="Irony" Version="1.1.0" PrivateAssets="None" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.12" PrivateAssets="None" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" PrivateAssets="None" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" PrivateAssets="None" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" PrivateAssets="None" />
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
     <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.4.0" PrivateAssets="None" />
   </ItemGroup>

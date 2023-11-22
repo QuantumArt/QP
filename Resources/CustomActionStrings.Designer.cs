@@ -63,6 +63,15 @@ namespace Quantumart.QP8.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Action not found (Id = {0}).
         /// </summary>
+        public static string ActionNotFoundById {
+            get {
+                return ResourceManager.GetString("ActionNotFoundById", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Action not found.
+        /// </summary>
         public static string ActionNotFound {
             get {
                 return ResourceManager.GetString("ActionNotFound", resourceCulture);

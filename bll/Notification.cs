@@ -23,7 +23,7 @@ namespace Quantumart.QP8.BLL
         internal static Notification Create(int contentId)
         {
             var notification = new Notification { ContentId = contentId };
-            notification.UseQaMail = !notification.Content.Site.IsDotNet;
+            notification.UseQaMail = false;
             notification.ExternalUrl = notification.Content.Site.ExternalUrl;
             return notification;
         }
@@ -119,7 +119,7 @@ namespace Quantumart.QP8.BLL
 
         public bool NoEmail { get; set; }
 
-        public bool UseEmailFromContent { get; set; }      
+        public bool UseEmailFromContent { get; set; }
 
         [Display(Name = "External", ResourceType = typeof(NotificationStrings))]
         public bool IsExternal { get; set; }
@@ -235,13 +235,14 @@ namespace Quantumart.QP8.BLL
 
         public override void DoCustomBinding()
         {
+            UseQaMail = false;
+
             if (IsExternal)
             {
                 FromDefaultName = true;
                 FromBackenduser = true;
                 SelectedReceiverType = ReceiverType.EveryoneInHistory;
                 SendFiles = false;
-                UseQaMail = false;
                 FromUserName = null;
                 FromUserEmail = null;
                 FormatId = null;

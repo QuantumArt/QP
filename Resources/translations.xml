@@ -6687,4 +6687,7 @@
   <phrase key="qp plugin versions">
     <translation languageId="2">Версии плагина QP</translation>
   </phrase>
+  <phrase key="auto resize">
+    <translation languageId="2">Автоматическое уменьшение</translation>
+  </phrase>
 </translations>
