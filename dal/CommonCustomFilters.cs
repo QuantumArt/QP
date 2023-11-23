@@ -1,4 +1,3 @@
-using Fluid.Ast;
 using Newtonsoft.Json.Linq;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
@@ -13,7 +12,7 @@ namespace Quantumart.QP8.DAL
 {
     public static class CommonCustomFilters
     {
-        public static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter[] filters)
+        public static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter[] filters)
         {
             if (filters == null || filters.Length == 0)
             {
@@ -21,18 +20,19 @@ namespace Quantumart.QP8.DAL
             }
 
             var queries = filters
-                .Select((item, index) => GetFilterQuety(sqlConnection, parameters, dbType, item, index))
+                .Select((item, index) => GetFilterQuery(sqlConnection, parameters, dbType, item, index))
                 .Where(query => !string.IsNullOrEmpty(query))
                 .ToArray();
 
             return SqlFilterComposer.Compose(queries);
         }
 
-        private static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item, int index) => item.Filter switch
+        private static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item, int index) => item.Filter switch
         {
             CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
             CustomFilter.FieldFilter => GetFieldFilter(parameters, dbType, item.Field, item.Value, index),
+            CustomFilter.MtMFilter => GetMtMFilter(parameters, dbType, item.Field, item.Value, index),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
@@ -95,6 +95,35 @@ namespace Quantumart.QP8.DAL
                 var paramName = $"@fieldIds{index}";
                 parameters.AddWithValue(paramName, ids, dbType);
                 return $"{fieldExpr} in (select id from {dbType.GetIdTable(paramName)})";
+            }
+
+            throw new ArgumentException("Not supported argument type", nameof(value));
+        }
+
+        private static string GetMtMFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
+        {
+            var fieldExpr = dbType switch
+            {
+                DatabaseType.Postgres => $"c.\"{field.ToLowerInvariant()}\"",
+                DatabaseType.SqlServer => $"c.[{field}]",
+                _ => throw new ArgumentException("Not supported DB type", nameof(dbType))
+            };
+
+            var query = "c.content_item_id in (select linked_item_id from item_link where item_id";
+
+            if (value is int)
+            {
+                var paramName = $"@fieldValue{index}";
+                parameters.AddWithValue(paramName, value, dbType);
+                return $"{query} = {paramName}";
+            }
+
+            if (value is JArray array)
+            {
+                var ids = array.ToObject<int[]>();
+                var paramName = $"@fieldIds{index}";
+                parameters.AddWithValue(paramName, ids, dbType);
+                return $"{query} in (select id from {dbType.GetIdTable(paramName)})";
             }
 
             throw new ArgumentException("Not supported argument type", nameof(value));
