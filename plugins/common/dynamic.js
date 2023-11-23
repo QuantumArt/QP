@@ -99,19 +99,17 @@ Quantumart.QP8.BackendDocumentContext.prototype.changeDynamicResolvers = functio
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.setFilter = function (inputName, value, fieldName, $form) {
-  var filter = '';
-
   if (value) {
+    var filter = null;
+
     if (fieldName) {
-      var fieldExpr = this.isPg ? 'c."' + fieldName.toLowerCase() + '"' : 'c.[' + fieldName + ']';
-      filter = fieldExpr + ' in (' + value + ')';
       filter = { filter: "Field", field: fieldName, value: value };
     } else {
-      filter = 'c.content_item_id in (select linked_item_id from item_link where item_id in (' + value + '))';
+      filter = { filter: "Mtm", value: value };
     }
-  }  
 
-  this.applyFilter(inputName, filter, $form);
+    this.applyFilter(inputName, filter, $form);
+  }    
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.applyFilter = function (inputName, filter, $form) {

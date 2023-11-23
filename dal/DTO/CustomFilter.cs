@@ -3,9 +3,9 @@ namespace Quantumart.QP8.DAL.DTO
     public class CustomFilter
     {
         public const string ArchiveFilter = "Archive";
+        public const string MtMFilter = "MtM";
         public const string RelationFilter = "Relation";
         public const string FieldFilter = "Field";
-        public const string FalseFilter = "False";
 
         public string Filter { get; set; }
         public string Field { get; set; }
@@ -30,9 +30,10 @@ namespace Quantumart.QP8.DAL.DTO
             Value = value
         };
 
-        public static CustomFilter GetFalseFilter() => new CustomFilter
+        public static CustomFilter GetMtMFilter(object value) => new CustomFilter
         {
-            Filter = FalseFilter
+            Filter = MtMFilter,
+            Value = value
         };
 
         public override bool Equals(object obj)

@@ -31,7 +31,6 @@ namespace Quantumart.QP8.DAL
             CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
             CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, item.Field, item.Value),
-            CustomFilter.FalseFilter => GetFalseFilter(),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
@@ -55,12 +54,26 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        private static string GetMtMFilter(List<DbParameter> parameters, DatabaseType dbType, object value)
+        {
+            if (value is int id)
+            {
+                parameters.AddWithValue("@mtmId", id, dbType);
+                return "c.content_item_id in (select linked_item_id from item_link where item_id = @mtmId";
+            }
+            else if (value is int[] ids)
+            {
+                parameters.AddWithValue("@mtmIds", ids, dbType);
+                return $"c.content_item_id in (select linked_item_id from item_link where item_id (select id from {dbType.GetIdTable("@mtmIds")})";
+            }
+
+            throw new ArgumentException("Not supported argument type", nameof(value));
+        }
+
         private static string GetFieldFilter(DbConnection sqlConnection, string field, object value)
         {
             return null;
         }
-
-        private static string GetFalseFilter() => "1 = 0";
 
         private static int GetIntValue(object value)
         {
