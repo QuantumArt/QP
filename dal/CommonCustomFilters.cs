@@ -1,3 +1,5 @@
+using Fluid.Ast;
+using Newtonsoft.Json.Linq;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Utils;
@@ -19,18 +21,18 @@ namespace Quantumart.QP8.DAL
             }
 
             var queries = filters
-                .Select(item => GetFilterQuety(sqlConnection, parameters, dbType, item))
+                .Select((item, index) => GetFilterQuety(sqlConnection, parameters, dbType, item, index))
                 .Where(query => !string.IsNullOrEmpty(query))
                 .ToArray();
 
             return SqlFilterComposer.Compose(queries);
         }
 
-        private static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item) => item.Filter switch
+        private static string GetFilterQuety(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item, int index) => item.Filter switch
         {
             CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
-            CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, item.Field, item.Value),
+            CustomFilter.FieldFilter => GetFieldFilter(parameters, dbType, item.Field, item.Value, index),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
@@ -61,8 +63,9 @@ namespace Quantumart.QP8.DAL
                 parameters.AddWithValue("@mtmId", id, dbType);
                 return "c.content_item_id in (select linked_item_id from item_link where item_id = @mtmId";
             }
-            else if (value is int[] ids)
+            if (value is JArray array)
             {
+                var ids = array.ToObject<int[]>();
                 parameters.AddWithValue("@mtmIds", ids, dbType);
                 return $"c.content_item_id in (select linked_item_id from item_link where item_id (select id from {dbType.GetIdTable("@mtmIds")})";
             }
@@ -70,9 +73,31 @@ namespace Quantumart.QP8.DAL
             throw new ArgumentException("Not supported argument type", nameof(value));
         }
 
-        private static string GetFieldFilter(DbConnection sqlConnection, string field, object value)
+        private static string GetFieldFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
         {
-            return null;
+            var fieldExpr = dbType switch
+            {
+                DatabaseType.Postgres => $"c.\"{field.ToLowerInvariant()}\"",
+                DatabaseType.SqlServer => $"c.[{field}]",
+                _ => throw new ArgumentException("Not supported DB type", nameof(dbType))
+            };
+
+            if (value is string || value is int)
+            {
+                var paramName = $"@fieldValue{index}";
+                parameters.AddWithValue(paramName, value, dbType);
+                return $"{fieldExpr} = {paramName}";
+            }
+
+            if (value is JArray array)
+            {
+                var ids = array.ToObject<int[]>();
+                var paramName = $"@fieldIds{index}";
+                parameters.AddWithValue(paramName, ids, dbType);
+                return $"{fieldExpr} in (select id from {dbType.GetIdTable(paramName)})";
+            }
+
+            throw new ArgumentException("Not supported argument type", nameof(value));
         }
 
         private static int GetIntValue(object value)
