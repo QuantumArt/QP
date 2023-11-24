@@ -3314,11 +3314,12 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
         public static bool CheckRelationCondition(DbConnection connection, int articleId, int contentId, string relCondition)
         {
-            using (var cmd = DbCommandFactory.Create($"select count(content_item_id) as cnt from content_{contentId}_united c with(nolock) where content_item_id = @id and ({relCondition})", connection))
+            var dbType = GetDbType(connection);
+            using (var cmd = DbCommandFactory.Create($"select count(content_item_id) as cnt from content_{contentId}_united c {WithNoLock(dbType)} where content_item_id = @id and ({relCondition})", connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@id", articleId);
-                return (int)cmd.ExecuteScalar() != 0;
+                return Convert.ToInt32(cmd.ExecuteScalar()) != 0;
             }
         }
 
