@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using NLog;
 using NLog.Fluent;
+using QP8.Infrastructure.Extensions;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -20,12 +22,14 @@ namespace Quantumart.QP8.WebMvc
                 var ex = context.Features.Get<IExceptionHandlerFeature>();
                 if (ex != null)
                 {
-                     Logger.Error()
+                    Logger.Error()
                          .Exception(ex.Error)
                          .Message("Unhandled exception occurs")
                          .Write();
 
-                    var err = $"<h1>Error: {ex.Error.Message}</h1>{ex.Error.StackTrace}";
+                    var message = ex.Error.Data[ExceptionHelpers.ClientMessageKey] ?? GlobalStrings._500Error;
+
+                    var err = $"<h1>Error: {message}</h1>";
                     await context.Response.WriteAsync(err).ConfigureAwait(false);
                 }
             });
