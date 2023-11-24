@@ -6690,4 +6690,13 @@
   <phrase key="auto resize">
     <translation languageId="2">Автоматическое уменьшение</translation>
   </phrase>
+  <phrase key="scheduled tasks">
+    <translation languageId="2">Задачи по расписанию</translation>
+  </phrase>
+  <phrase key="run job">
+    <translation languageId="2">Запустить задачу</translation>
+  </phrase>
+  <phrase key="clean up sent notifications">
+    <translation languageId="2">Очистка отправленных уведомлений</translation>
+  </phrase>
 </translations>

@@ -33,22 +33,45 @@ public class CurrentVersionFolderService : ICurrentVersionFolderService
                 continue;
             }
 
-            var currentVersionDir = GetCurrentVersionDirectoryInfo(dirInfo);
-            if (currentVersionDir == null)
+            var currentVersionDirInfo = GetCurrentVersionDirectoryInfo(dirInfo);
+            if (currentVersionDirInfo is { Exists: true } && numFiles > 0)
             {
-                continue;
+                numFiles = ProcessCurrentVersionFiles(numFiles, dirInfo, currentVersionDirInfo, contentId);
             }
 
-            var contentFiles = GetContentFiles(dirInfo);
-            var filesToDelete = GetFilesToDelete(currentVersionDir, contentFiles);
-            _logger.Info($"Found {filesToDelete.Length} files for content {contentId}, but the number is limited to {numFiles}");
-
-            foreach (var info in filesToDelete.Take(numFiles))
+            var tempDirInfo = dirInfo.GetDirectories("_temp").FirstOrDefault();
+            if (tempDirInfo is { Exists: true } && numFiles > 0)
             {
-                _logger.Info($"Deleting file {info.FullName}");
-                info.Delete();
+                numFiles = ProcessTempFiles(numFiles, tempDirInfo, contentId);
             }
         }
+    }
+
+    private int ProcessCurrentVersionFiles(int numFiles, DirectoryInfo dirInfo, DirectoryInfo currentVersionDirInfo, int contentId)
+    {
+        var contentFiles = GetContentFiles(dirInfo);
+        var filesToDelete = GetFilesToDelete(currentVersionDirInfo, contentFiles);
+        _logger.Info($"Found {filesToDelete.Length} files in current version folder for content {contentId}, but the number is limited to {numFiles}");
+        return ProcessFiles(numFiles, filesToDelete);
+    }
+
+    private int ProcessTempFiles(int numFiles, DirectoryInfo tempDirInfo, int contentId)
+    {
+        var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).ToArray();
+        _logger.Info($"Found {filesToDelete.Length} files in _temp folder for content {contentId}, but the number is limited to {numFiles}");
+        return ProcessFiles(numFiles, filesToDelete);
+    }
+
+    private static int ProcessFiles(int numFiles, FileInfo[] filesToDelete)
+    {
+        var processed = 0;
+        foreach (var info in filesToDelete.Take(numFiles))
+        {
+            _logger.Info($"Deleting file {info.FullName}");
+            info.Delete();
+            processed++;
+        }
+        return numFiles - processed;
     }
 
     private string[] GetContentFiles(DirectoryInfo rootDirInfo)
