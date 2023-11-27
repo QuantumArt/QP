@@ -30,7 +30,9 @@ namespace Quantumart.QP8.DAL
         private static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item, int index) => item.Filter switch
         {
             CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
+            CustomFilter.VirtualTypeFilter => GetVirtualTypeFilter(parameters, dbType, GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
+            CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
             CustomFilter.FieldFilter => GetFieldFilter(parameters, dbType, item.Field, item.Value, index),
             CustomFilter.MtMFilter => GetMtMFilter(parameters, dbType, item.Field, item.Value, index),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
@@ -40,6 +42,49 @@ namespace Quantumart.QP8.DAL
         {
             parameters.AddWithValue("@archive", archive, dbType);
             return "c.archive = @archive";
+        }
+
+        private static string GetVirtualTypeFilter(List<DbParameter> parameters, DatabaseType dbType, int type)
+        {
+            return type == 0 ? "c.virtual_type = 0" : "c.virtual_type <> 0";
+        }
+
+        private static string GetBackwardFilter(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, object value)
+        {
+            int articleId;
+            int fieldId;
+
+            if (value is JArray array)
+            {
+                var values = array.ToObject<int[]>();
+                articleId = values[0];
+                fieldId = values[1];
+            }
+            else
+            {
+                throw new ArgumentException("array expected", nameof(value));
+            }
+
+            var query = "SELECT ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @attributeId";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@attributeId", fieldId);
+
+                var field = cmd.ExecuteScalar();
+
+                if (DBNull.Value.Equals(field))
+                {
+                    return null;
+                }
+                else
+                {
+                    parameters.AddWithValue("@currentArticleId", articleId, dbType);
+                    var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)field);
+                    return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND c.archive = 0";
+                }
+            }
         }
 
         private static string GetRelationFilter(DbConnection sqlConnection, int relationFieldId)

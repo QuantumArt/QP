@@ -3,8 +3,10 @@ namespace Quantumart.QP8.DAL.DTO
     public class CustomFilter
     {
         public const string ArchiveFilter = "Archive";
+        public const string VirtualTypeFilter = "VirtualType";
         public const string MtMFilter = "MtM";
         public const string RelationFilter = "Relation";
+        public const string BackwardFilter = "Backward";
         public const string FieldFilter = "Field";
 
         public string Filter { get; set; }
@@ -17,10 +19,22 @@ namespace Quantumart.QP8.DAL.DTO
             Value = value
         };
 
-        public static CustomFilter GetRelationFilter(int value) => new CustomFilter
+        public static CustomFilter GetVirtualType(int value) => new CustomFilter
+        {
+            Filter = VirtualTypeFilter,
+            Value = value
+        };
+
+        public static CustomFilter GetRelationFilter(int fieldId) => new CustomFilter
         {
             Filter = RelationFilter,
-            Value = value
+            Value = fieldId
+        };
+
+        public static CustomFilter GetBackwardFilter(int articleId, int fieldId) => new CustomFilter
+        {
+            Filter = BackwardFilter,
+            Value = new int[] { articleId, fieldId }
         };
 
         public static CustomFilter GetFieldFilter(string field, object value) => new CustomFilter

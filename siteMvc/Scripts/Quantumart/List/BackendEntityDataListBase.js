@@ -56,7 +56,7 @@ export class BackendEntityDataListBase extends Observable {
           var filterStr = options.filter.replace(/'/g, '"');
           var filter = JSON.parse(filterStr);
           this._filter = filter;
-          this._initFilter = this._filter;
+          this._filterMap = new Map(filter.map(item => [JSON.stringify(item), item]));
         }
         catch (err) {
           console.error(err);
@@ -99,7 +99,7 @@ export class BackendEntityDataListBase extends Observable {
   _selectPopupWindowComponent = null;
   _showIds = false;
   _filter = [];
-  _initFilter = [];
+  _filterMap = new Map();
   _hostIsWindow = false;
   _isCollapsable = false;
   _enableCopy = true;
@@ -876,35 +876,25 @@ export class BackendEntityDataListBase extends Observable {
   }
 
   setFilter(filter) {
-    this._filter = filter;
+    var filterKey = JSON.stringify(filter);
+    if (!this._filterMap.has(filterKey)) {
+      this._filterMap.set(filterKey, filter);
+      this._filter.push(filter);
+      return true;
+    }
+    return false;
   }
 
   applyFilter(filter) {
+    var filterKey = JSON.stringify(filter);
+    if (!this._filterMap.has(filterKey)) {
+      this._filterMap.set(filterKey, filter);
+      this._filter.push(filter);
 
-    for (var i = 0; i < this._filter.length; i++) {
-      var currentFilter = JSON.stringify(this._filter[i]);
-      var newFilter = JSON.stringify(filter);
-
-      if (currentFilter == newFilter) {
-        return;
+      if (this.getListItemCount() > 0) {
+        this.refreshList();
       }
     }
-
-    this._filter.push(filter);
-    if (this.getListItemCount() > 0) {
-      this.refreshList();
-    }
-    //let result = this._initFilter;
-    //if (filter) {
-    //  result = result && result.trim() ? `${result} and ${filter} ` : filter;
-    //}
-
-    //if (result !== this._filter) {
-    //  this._filter = result;
-    //  if (this.getListItemCount() > 0) {
-    //    this.refreshList();
-    //  }
-    //}
   }
 
   getFilter() {

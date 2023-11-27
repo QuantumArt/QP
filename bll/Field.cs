@@ -318,7 +318,6 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "RelationCondition", ResourceType = typeof(FieldStrings))]
         [StringLength(255, ErrorMessageResourceName = "RelationConditionMaxLengthExceeded", ErrorMessageResourceType = typeof(FieldStrings))]
         public string RelationCondition { get; set; }
-        public CustomFilter ExternalRelationCondition { get; set; }
 
         [Display(Name = "ViewInList", ResourceType = typeof(FieldStrings))]
         public bool ViewInList { get; set; }
@@ -496,10 +495,6 @@ namespace Quantumart.QP8.BLL
         }
 
         public string RelationFilter => SqlFilterComposer.Compose(UseRelationCondition ? "(" + RelationCondition + ")" : "", DefaultRelationFilter);
-
-        public CustomFilter[] ExternalRelationFilter => UseRelationCondition ?
-            new[] { DefaultExternalRelationFilter, ExternalRelationCondition } :
-            new[] { DefaultExternalRelationFilter };
 
         [Display(Name = "FieldType", ResourceType = typeof(FieldStrings))]
         public FieldExactTypes ExactType
@@ -3017,13 +3012,20 @@ namespace Quantumart.QP8.BLL
                 : $"(c.{escapedBackRelationName} = {articleId} OR c.{escapedBackRelationName} IS NULL) AND c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ARCHIVE")} = 0";
         }
 
-        public string GetExternalRelationFilters(int fieldId)
+        public string GetExternalRelationFilters(int articleId)
         {
-            var filter = new List<CustomFilter>();
+            var filter = new List<CustomFilter>() { DefaultExternalRelationFilter };
 
-            if (UseRelationCondition)
+            if (ExactType == FieldExactTypes.M2ORelation)
             {
-                filter.Add(CustomFilter.GetRelationFilter(fieldId));
+                filter.Add(CustomFilter.GetBackwardFilter(articleId, BackRelation.Id));
+            }
+            else
+            {
+                if (UseRelationCondition)
+                {
+                    filter.Add(CustomFilter.GetRelationFilter(Id));
+                }  
             }
 
             var sb = new StringBuilder();

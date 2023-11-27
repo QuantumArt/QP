@@ -138,7 +138,7 @@ export class BackendEntityGrid extends Observable {
       }
 
       if ($q.any(options.filter)) {
-          this._filter = this._filter.concat(options.filter);
+          this._filter = options.filter;
       }
 
       if (options.isWindow) {
@@ -176,7 +176,7 @@ export class BackendEntityGrid extends Observable {
       }
 
       if ($q.any(hostOptions.filter)) {
-        this._filter = this._filter.concat(hostOptions.filter);
+        this._filter = hostOptions.filter;
       }
 
       if (hostOptions.currentPage) {
