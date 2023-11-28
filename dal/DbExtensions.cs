@@ -53,7 +53,7 @@ namespace Quantumart.QP8.DAL
             var parameter = SqlQuerySyntaxHelper.GetIdsDatatableParam(parameterName, ids, dbType);
             parameterCollection.Add(parameter);
             return parameterCollection;
-        }        
+        }
 
         public static string GetIdTable(this DatabaseType dbType, string name, string alias = "i") =>
             SqlQuerySyntaxHelper.IdList(dbType, name, alias);
