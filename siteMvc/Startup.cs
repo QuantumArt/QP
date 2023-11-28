@@ -242,7 +242,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IExternalSystemNotificationService, ExternalSystemNotificationService>()
                 .AddTransient<ISchedulerCustomerCollection, SchedulerCustomerCollection>()
                 .AddTransient<ICommonUserService, CommonUserService>()
-                .AddTransient<ICurrentVersionFolderService, CurrentVersionFolderService>()
+                .AddTransient<ICleanSystemFoldersService, CleanSystemFoldersService>()
                 .AddTransient<ElasticCdcImportService>()
                 .AddTransient<TarantoolCdcImportService>()
                 .AddTransient<IDbService, DbService>()

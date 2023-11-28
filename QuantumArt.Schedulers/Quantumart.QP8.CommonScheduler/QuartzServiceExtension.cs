@@ -41,7 +41,7 @@ namespace Quantumart.QP8.CommonScheduler
             AddTask<SystemNotificationJob>(configurator, rootSection);
             AddTask<InterfaceCleanupJob>(configurator, rootSection);
             AddTask<SystemCleanupJob>(configurator, rootSection);
-            AddTask<SyncCurrentVersionFolderJob>(configurator, rootSection);
+            AddTask<CleanSystemFoldersJob>(configurator, rootSection);
             AddTask<T.CdcDataImportJob>(configurator, rootSection);
             AddTask<T.CheckNotificationQueueJob>(configurator, rootSection);
             AddTask<E.CdcDataImportJob>(configurator, rootSection);

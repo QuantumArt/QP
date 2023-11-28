@@ -10,17 +10,17 @@ namespace Quantumart.QP8.Scheduler.Files;
 
 [DisallowConcurrentExecution]
 [PersistJobDataAfterExecution]
-public class SyncCurrentVersionFolderJob : IJob
+public class CleanSystemFoldersJob : IJob
 {
-    private const string MaxNumberOfFilesKey = "MaxNumberOfFiles";
+    private const string MaxNumberOfFilesKey = "MaxNumberOfFilesPerRun";
 
     private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
     private readonly ISchedulerCustomerCollection _schedulerCustomers;
-    private readonly ICurrentVersionFolderService _service;
+    private readonly ICleanSystemFoldersService _service;
 
-    public SyncCurrentVersionFolderJob(
+    public CleanSystemFoldersJob(
         ISchedulerCustomerCollection schedulerCustomers,
-        ICurrentVersionFolderService service
+        ICleanSystemFoldersService service
     )
     {
         _schedulerCustomers = schedulerCustomers;
@@ -29,7 +29,7 @@ public class SyncCurrentVersionFolderJob : IJob
 
     public Task Execute(IJobExecutionContext context)
     {
-        Logger.Info($"Start synchronizing current version folder");
+        Logger.Info($"Start cleaning system folders");
         var customers = _schedulerCustomers.GetItems();
 
         var dataMap = context.MergedJobDataMap;
@@ -59,7 +59,7 @@ public class SyncCurrentVersionFolderJob : IJob
             }
         }
 
-        Logger.Info($"Finished synchronizing current version folder");
+        Logger.Info($"Finished cleaning system folders");
         return Task.CompletedTask;
     }
 
@@ -67,7 +67,7 @@ public class SyncCurrentVersionFolderJob : IJob
     {
         using (new QPConnectionScope(customer.ConnectionString, customer.DbType))
         {
-            _service.SyncFolders(customer.CustomerName, limit);
+            _service.CleanSystemFolders(customer.CustomerName, limit);
         }
     }
 }

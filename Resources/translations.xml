@@ -6687,16 +6687,31 @@
   <phrase key="qp plugin versions">
     <translation languageId="2">Версии плагина QP</translation>
   </phrase>
-  <phrase key="auto resize">
+  <phrase key="Auto Resize">
     <translation languageId="2">Автоматическое уменьшение</translation>
   </phrase>
-  <phrase key="scheduled tasks">
+  <phrase key="Scheduled Tasks">
     <translation languageId="2">Задачи по расписанию</translation>
   </phrase>
-  <phrase key="run job">
+  <phrase key="Run Job">
     <translation languageId="2">Запустить задачу</translation>
   </phrase>
-  <phrase key="clean up sent notifications">
+  <phrase key="Sending notifications">
+    <translation languageId="2">Отправка уведомлений</translation>
+  </phrase>
+  <phrase key="Cleaning up sent notifications">
     <translation languageId="2">Очистка отправленных уведомлений</translation>
+  </phrase>
+  <phrase key="Disabling users who has been inactive during period specified in InactivePeriodInDays parameter">
+    <translation languageId="2">Блокировка пользователей, которые были неактивны в течение периода времени, заданного в параметре InactivePeriodInDays</translation>
+  </phrase>
+  <phrase key="Enabling disabled users except for ones specified in ExcludedUsers parameter">
+    <translation languageId="2">Разблокировка заблокированных пользователей, кроме тех, которые заданы в параметре ExcludedUsers</translation>
+  </phrase>
+  <phrase key="Cleaning system folders on file storage which can be limited to MaxNumberOfFilesPerRun parameter">
+    <translation languageId="2">Очистка системных папок в файловом хранилище, которая может быть ограничена параметром MaxNumberOfFilesPerRun</translation>
+  </phrase>
+  <phrase key="Synchronizing users with Active Directory">
+    <translation languageId="2">Синхронизация пользователей с Active Directory</translation>
   </phrase>
 </translations>

@@ -10,17 +10,17 @@ using Quantumart.QP8.BLL.Services.API;
 
 namespace Quantumart.QP8.BLL.Services.FileSynchronization;
 
-public class CurrentVersionFolderService : ICurrentVersionFolderService
+public class CleanSystemFoldersService : ICleanSystemFoldersService
 {
     private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
     private CommonSchedulerProperties _options;
 
-    public CurrentVersionFolderService(IOptions<CommonSchedulerProperties> options)
+    public CleanSystemFoldersService(IOptions<CommonSchedulerProperties> options)
     {
         _options = options.Value;
     }
 
-    public void SyncFolders(string customerName, int numFiles)
+    public void CleanSystemFolders(string customerName, int numFiles)
     {
         QPContext.CurrentUserId = _options.DefaultUserId;
         _logger.Info($"Start processing files on customer code {customerName}");
