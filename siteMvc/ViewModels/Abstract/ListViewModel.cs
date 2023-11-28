@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         public int[] SelectedIDs { get; set; }
 
         public virtual string Filter { get; set; }
-        public virtual List<CustomFilter> ExternalFilter { get; set;}
+        public virtual CustomFilter[] ExternalFilter { get; set;}
 
         public bool ShowIds { get; set; }
 
@@ -54,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             AutoGenerateLink = true;
             GenerateLinkOnTitle = true;
             Filter = string.Empty;
-            ExternalFilter = new List<CustomFilter>();
+            ExternalFilter = new CustomFilter[0];
             ShowIds = true;
             AutoLoad = true;
         }

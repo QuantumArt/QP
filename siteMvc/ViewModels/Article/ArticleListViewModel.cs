@@ -191,10 +191,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             }
         }
 
-        public override List<CustomFilter> ExternalFilter => new List<CustomFilter>(CustomExternalFilter)
-        {
-            DAL.DTO.CustomFilter.GetArchiveFilter(Convert.ToInt32(ShowArchive))
-        };
+        public override CustomFilter[] ExternalFilter =>
+            new List<CustomFilter>(CustomExternalFilter) { DAL.DTO.CustomFilter.GetArchiveFilter(Convert.ToInt32(ShowArchive)) }.ToArray();
 
         public override ExpandoObject MainComponentOptions
         {
