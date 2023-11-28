@@ -3028,17 +3028,7 @@ namespace Quantumart.QP8.BLL
                 }  
             }
 
-            var sb = new StringBuilder();
-            using (var sw = new StringWriter(sb))
-            using (var writer = new JsonTextWriter(sw))
-            {
-                writer.QuoteChar = '\'';
-
-                var ser = new JsonSerializer();
-                ser.Serialize(writer, filter.ToArray());
-            }
-
-            return sb.ToString();
+            return JsonConvert.SerializeObject(filter.ToArray());
         }
 
         public void ParseStringEnumJson(string json)
