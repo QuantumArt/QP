@@ -194,7 +194,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var sqlParams = new List<DbParameter>();
                 var sqlConnection = QPConnectionScope.Current.DbConnection;
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-                var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, customFilter);
+                var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, customFilter);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
                 
                 var options = new ArticlePageOptions

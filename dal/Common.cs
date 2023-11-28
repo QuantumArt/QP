@@ -3143,7 +3143,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             if (options.CustomFilter?.Any() ?? false)
             {
-                filterBuilder.AppendFormat(" AND ({0})", CommonCustomFilters.GetFilterQuery(sqlConnection, parameters, dbType, options.CustomFilter));
+                filterBuilder.AppendFormat(" AND ({0})", CommonCustomFilters.GetFilterQuery(sqlConnection, parameters, dbType, options.SiteId ?? 0, options.CustomFilter));
             }
 
             return GetSimplePagedList(

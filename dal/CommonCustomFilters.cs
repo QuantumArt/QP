@@ -6,13 +6,32 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 
 namespace Quantumart.QP8.DAL
 {
     public static class CommonCustomFilters
     {
-        public static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter[] filters)
+        private static string[] StringTypes = new string[] { "NVARCHAR", "NTEXT" };
+        private static string NumericType = "NUMERIC";
+        private static string DateTimeType = "DATETIME";
+
+        /// <summary>
+        /// Фильтрация кастомных фильтров
+        /// </summary>
+        /// <param name="sqlConnection">sql соединение</param>
+        /// <param name="parameters">параметры sql запроса, каждый фильтр может добавлять туда свои параметры</param>
+        /// <param name="dbType">тип базы данных</param>
+        /// <param name="parentId">идентификатор родительской сущности для фильтра. В частности это может быть id контента или id сайта</param>
+        /// <param name="filters">массив кастомных фильтров</param>
+        /// <returns>sql выражение с условиями фильтрации кастомных фильтров</returns>
+        public static string GetFilterQuery(
+            DbConnection sqlConnection,
+            List<DbParameter> parameters,
+            DatabaseType dbType,
+            int parentId,
+            CustomFilter[] filters)
         {
             if (filters == null || filters.Length == 0)
             {
@@ -20,20 +39,20 @@ namespace Quantumart.QP8.DAL
             }
 
             var queries = filters
-                .Select((item, index) => GetFilterQuery(sqlConnection, parameters, dbType, item, index))
+                .Select((item, index) => GetFilterQuery(sqlConnection, parameters, dbType, parentId, item, index))
                 .Where(query => !string.IsNullOrEmpty(query))
                 .ToArray();
 
             return SqlFilterComposer.Compose(queries);
         }
 
-        private static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, CustomFilter item, int index) => item.Filter switch
+        private static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int parentId, CustomFilter item, int index) => item.Filter switch
         {
             CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
             CustomFilter.VirtualTypeFilter => GetVirtualTypeFilter(parameters, dbType, GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
             CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
-            CustomFilter.FieldFilter => GetFieldFilter(parameters, dbType, item.Field, item.Value, index),
+            CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.Value, index),
             CustomFilter.MtMFilter => GetMtMFilter(parameters, dbType, item.Field, item.Value, index),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
@@ -100,60 +119,113 @@ namespace Quantumart.QP8.DAL
                 return DBNull.Value.Equals(filter) ? null : (string)filter;
             }
         }
-
-        private static string GetMtMFilter(List<DbParameter> parameters, DatabaseType dbType, object value)
+        private static string GetFieldFilter(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int contentId, string field, object value, int index)
         {
-            if (value is int id)
+            string fieldFype = null;
+
+            if (FieldName.ContentItemId.Equals(field, StringComparison.InvariantCultureIgnoreCase))
             {
-                parameters.AddWithValue("@mtmId", id, dbType);
-                return "c.content_item_id in (select linked_item_id from item_link where item_id = @mtmId";
+                fieldFype = NumericType;
             }
-            if (value is JArray array)
+            else
             {
-                var ids = array.ToObject<int[]>();
-                parameters.AddWithValue("@mtmIds", ids, dbType);
-                return $"c.content_item_id in (select linked_item_id from item_link where item_id (select id from {dbType.GetIdTable("@mtmIds")})";
+                fieldFype = GetAttributeType(sqlConnection, dbType, contentId, field);
             }
 
-            throw new ArgumentException("Not supported argument type", nameof(value));
+            
+            var fieldExpr = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field);
+            var paramName = $"@fieldValue{index}";
+            bool isAtomic = true;
+
+            if (fieldFype == null)
+            {
+                throw new ArgumentException($"Field {field} not fount", nameof(field));
+            }
+
+            if (StringTypes.Contains(fieldFype))
+            {
+                if (value is string stringValue)
+                {
+                    parameters.AddWithValue(paramName, stringValue, dbType);
+                }
+                else
+                {
+                    throw new ArgumentException($"Value {value} for field {field} must be string", nameof(value));
+                }
+            }
+
+            if (fieldFype == NumericType)
+            {
+                if (value is int intValue)
+                {
+                    parameters.AddWithValue(paramName, intValue, dbType);
+                }
+                else if (value is decimal numericValue)
+                {
+                    parameters.AddWithValue(paramName, numericValue, dbType);
+                }
+                else if (value is string stringValue)
+                {
+                    if (int.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out intValue))
+                    {
+                        parameters.AddWithValue(paramName, intValue, dbType);
+                    }
+                    else if (decimal.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decimalValue))
+                    {
+                        parameters.AddWithValue(paramName, decimalValue, dbType);
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"Value {value} for field {field} must be number", nameof(value));
+                    }
+                }
+                if (value is JArray intArray)
+                {
+                    var ids = intArray.ToObject<int[]>();
+                    parameters.AddWithValue(paramName, ids, dbType);
+                    isAtomic = false;
+                }
+            }
+
+            if (fieldFype == DateTimeType)
+            {
+                if (value is string stringValue)
+                {
+                    if (DateTime.TryParse(stringValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+                    {
+                        parameters.AddWithValue(paramName, date, dbType);
+                    }                    
+                }
+
+                throw new ArgumentException($"Value {value} for field {field} must be date", nameof(value));
+            }
+
+            return isAtomic ? $"c.{fieldExpr} = {paramName}" : $"c.{fieldExpr} in (select id from {dbType.GetIdTable(paramName)})";
+
         }
 
-        private static string GetFieldFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
+        private static string GetAttributeType(DbConnection sqlConnection, DatabaseType dbType, int contentId, string field)
         {
-            var fieldExpr = dbType switch
-            {
-                DatabaseType.Postgres => $"c.\"{field.ToLowerInvariant()}\"",
-                DatabaseType.SqlServer => $"c.[{field}]",
-                _ => throw new ArgumentException("Not supported DB type", nameof(dbType))
-            };
+            var comparitionOperator = dbType == DatabaseType.Postgres ? "iLIKE" : "LIKE";
 
-            if (value is string || value is int)
+            var query =
+                $@"SELECT t.DATABASE_TYPE from CONTENT_ATTRIBUTE a
+                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID
+                WHERE CONTENT_ID = @contentId AND ATTRIBUTE_NAME {comparitionOperator} @field";
+
+            using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
-                var paramName = $"@fieldValue{index}";
-                parameters.AddWithValue(paramName, value, dbType);
-                return $"{fieldExpr} = {paramName}";
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@contentId", contentId);
+                cmd.Parameters.AddWithValue("@field", field);
+
+                var fieldType = cmd.ExecuteScalar();
+                return DBNull.Value.Equals(fieldType) ? null : (string)fieldType;
             }
-
-            if (value is JArray array)
-            {
-                var ids = array.ToObject<int[]>();
-                var paramName = $"@fieldIds{index}";
-                parameters.AddWithValue(paramName, ids, dbType);
-                return $"{fieldExpr} in (select id from {dbType.GetIdTable(paramName)})";
-            }
-
-            throw new ArgumentException("Not supported argument type", nameof(value));
         }
 
         private static string GetMtMFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
-        {
-            var fieldExpr = dbType switch
-            {
-                DatabaseType.Postgres => $"c.\"{field.ToLowerInvariant()}\"",
-                DatabaseType.SqlServer => $"c.[{field}]",
-                _ => throw new ArgumentException("Not supported DB type", nameof(dbType))
-            };
-
+        {            
             var query = "c.content_item_id in (select linked_item_id from item_link where item_id";
 
             if (value is int)
