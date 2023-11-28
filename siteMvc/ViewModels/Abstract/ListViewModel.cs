@@ -35,6 +35,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         public int[] SelectedIDs { get; set; }
 
         public virtual string Filter { get; set; }
+
         public virtual CustomFilter[] ExternalFilter { get; set;}
 
         public bool ShowIds { get; set; }
