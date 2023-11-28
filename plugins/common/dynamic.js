@@ -105,7 +105,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.setFilter = function (inputName,
     if (fieldName) {
       filter = { filter: "Field", field: fieldName, value: value };
     } else {
-      filter = { filter: "MtM", value: value };
+      filter = { filter: "M2M", value: value };
     }
 
     this.applyFilter(inputName, filter, $form);

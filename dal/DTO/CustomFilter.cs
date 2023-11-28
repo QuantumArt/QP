@@ -4,7 +4,7 @@ namespace Quantumart.QP8.DAL.DTO
     {
         public const string ArchiveFilter = "Archive";
         public const string VirtualTypeFilter = "VirtualType";
-        public const string MtMFilter = "MtM";
+        public const string MtMFilter = "M2M";
         public const string RelationFilter = "Relation";
         public const string BackwardFilter = "Backward";
         public const string FieldFilter = "Field";
