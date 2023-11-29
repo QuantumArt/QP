@@ -46,9 +46,9 @@ public class CleanSystemFoldersJob : IJob
         {
             try
             {
-                if (!context.CancellationToken.IsCancellationRequested)
+                if (!context.CancellationToken.IsCancellationRequested && limit > 0)
                 {
-                    ProcessCustomer(customer, limit, context.CancellationToken);
+                    limit = ProcessCustomer(customer, limit);
                 }
             }
             catch (Exception ex)
@@ -63,11 +63,13 @@ public class CleanSystemFoldersJob : IJob
         return Task.CompletedTask;
     }
 
-    private void ProcessCustomer(QaConfigCustomer customer, int limit, CancellationToken token)
+    private int ProcessCustomer(QaConfigCustomer customer, int limit)
     {
         using (new QPConnectionScope(customer.ConnectionString, customer.DbType))
         {
-            _service.CleanSystemFolders(customer.CustomerName, limit);
+            limit = _service.CleanSystemFolders(customer.CustomerName, limit);
         }
+
+        return limit;
     }
 }

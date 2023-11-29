@@ -12,24 +12,24 @@ namespace Quantumart.QP8.BLL.Services.FileSynchronization;
 
 public class CleanSystemFoldersService : ICleanSystemFoldersService
 {
-    private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-    private CommonSchedulerProperties _options;
+    private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+    private readonly CommonSchedulerProperties _options;
 
     public CleanSystemFoldersService(IOptions<CommonSchedulerProperties> options)
     {
         _options = options.Value;
     }
 
-    public void CleanSystemFolders(string customerName, int numFiles)
+    public int CleanSystemFolders(string customerName, int numFiles)
     {
         QPContext.CurrentUserId = _options.DefaultUserId;
-        _logger.Info($"Start processing customer code {customerName}");
+        Logger.Info($"Start processing customer code {customerName}");
         var contentIds = SiteRepository.GetAll().SelectMany(n => ContentRepository.GetContentIds(n.Id)).ToArray();
         foreach (var contentId in contentIds)
         {
             if (numFiles == 0)
             {
-                return;
+                return 0;
             }
 
             var dirInfo = GetContentRootDirectoryInfo(contentId);
@@ -44,6 +44,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
             var dirInfo = GetSiteRootDirectoryInfo(siteId);
             numFiles = ClearSiteTempFolder(numFiles, dirInfo, siteId);
         }
+        return numFiles;
     }
 
     private int ClearSiteTempFolder(int numFiles, DirectoryInfo dirInfo, int siteId)
@@ -53,10 +54,10 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
             var tempDirInfo = dirInfo.Parent?.GetDirectories("temp").FirstOrDefault();
             if (tempDirInfo is { Exists: true })
             {
-                var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).ToArray();
+                var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.AllDirectories).ToArray();
                 if (filesToDelete.Any())
                 {
-                    _logger.Info($"Found {filesToDelete.Length} files in temp folder for site {siteId}," +
+                    Logger.Info($"Found {filesToDelete.Length} files in temp folder for site {siteId}," +
                         $" but the number is limited to {numFiles}");
                     numFiles = ProcessFiles(numFiles, filesToDelete);
                 }
@@ -75,7 +76,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
                 var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).ToArray();
                 if (filesToDelete.Any())
                 {
-                    _logger.Info($"Found {filesToDelete.Length} files in _temp folder for content {contentId}," +
+                    Logger.Info($"Found {filesToDelete.Length} files in _temp folder for content {contentId}," +
                         $" but the number is limited to {numFiles}");
                     numFiles = ProcessFiles(numFiles, filesToDelete);
                 }
@@ -94,9 +95,9 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
                 var versionDirs = allVersionsDir.GetDirectories("*");
                 foreach (var versionDir in versionDirs)
                 {
-                    if (!versionDir.EnumerateFileSystemInfos().Any() && numFiles > 0)
+                    if (versionDir.Name != "current" && !versionDir.EnumerateFileSystemInfos().Any() && numFiles > 0)
                     {
-                       _logger.Info($"Removing empty folder {versionDir.Name}");
+                       Logger.Info($"Removing empty folder {versionDir.Name} for content {contentId}");
                        Directory.Delete(versionDir.FullName);
                        numFiles--;
                     }
@@ -121,7 +122,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
                     var filesToDelete = GetFilesToDelete(currentVersionDirInfo, contentFiles);
                     if (filesToDelete.Any())
                     {
-                        _logger.Info($"Found {filesToDelete.Length} files in current version folder " +
+                        Logger.Info($"Found {filesToDelete.Length} files in current version folder " +
                             $"for content {contentId}, but the number is limited to {numFiles}");
                         numFiles = ProcessFiles(numFiles, filesToDelete);
                     }
@@ -136,7 +137,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
         var processed = 0;
         foreach (var info in filesToDelete.Take(numFiles))
         {
-            _logger.Info($"Deleting file {info.FullName}");
+            Logger.Info($"Deleting file {info.FullName}");
             info.Delete();
             processed++;
         }

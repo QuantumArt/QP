@@ -2,5 +2,5 @@
 
 public interface ICleanSystemFoldersService
 {
-    void CleanSystemFolders(string customerName, int numFiles);
+    int CleanSystemFolders(string customerName, int numFiles);
 }
