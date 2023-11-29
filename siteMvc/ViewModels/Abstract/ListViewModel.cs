@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL.DTO;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
@@ -36,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public virtual string Filter { get; set; }
 
-        public virtual CustomFilter[] ExternalFilter { get; set;}
+        public virtual CustomFilterItem[] ExternalFilter { get; set;}
 
         public bool ShowIds { get; set; }
 
@@ -55,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             AutoGenerateLink = true;
             GenerateLinkOnTitle = true;
             Filter = string.Empty;
-            ExternalFilter = new CustomFilter[0];
+            ExternalFilter = new CustomFilterItem[0];
             ShowIds = true;
             AutoLoad = true;
         }

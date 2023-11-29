@@ -15,7 +15,6 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -631,8 +630,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
             ContentListFilter filter,
-            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
-            CustomFilter[] customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter)
         {
             filter = filter ?? new ContentListFilter();
             if (customFilter != null)
@@ -664,8 +663,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [Bind(Prefix = "searchQuery")]
             [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
             ContentListFilter filter,
-            [ModelBinder(typeof(JsonStringModelBinder<CustomFilter[]>))]
-            CustomFilter[] customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;

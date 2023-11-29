@@ -1,0 +1,23 @@
+using Quantumart.QP8.DAL.DTO;
+
+namespace Quantumart.QP8.BLL.Services
+{
+    public class CustomFilterItem
+    {
+        public string Filter { get; set; }
+        public string Field { get; set; }
+        public object Value { get; set; }
+
+        public static CustomFilterItem GetArchiveFilter(int value)
+        {
+            var filrer = CustomFilter.GetArchiveFilter(value);
+
+            return new CustomFilterItem
+            {
+                Filter = filrer.Filter,
+                Field = filrer.Field,
+                Value = filrer.Value
+            };
+        }
+    }
+}

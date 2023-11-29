@@ -17,6 +17,7 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
@@ -185,7 +186,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, CustomFilter[] customFilter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
+        internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, CustomFilterItem[] customFilter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
         {
             using (new QPConnectionScope())
             {
@@ -194,7 +195,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var sqlParams = new List<DbParameter>();
                 var sqlConnection = QPConnectionScope.Current.DbConnection;
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-                var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, customFilter);
+                var filters = customFilter.Select(item => new CustomFilter { Filter = item.Filter, Field = item.Field, Value = item.Value }).ToArray();
+                var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, filters);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
                 
                 var options = new ArticlePageOptions
