@@ -232,7 +232,7 @@ namespace Quantumart.QP8.DAL
             {
                 var paramName = $"@fieldValue{index}";
                 parameters.AddWithValue(paramName, value, dbType);
-                return $"{query} = {paramName}";
+                return $"{query} = {paramName})";
             }
 
             if (value is JArray array)
@@ -240,7 +240,7 @@ namespace Quantumart.QP8.DAL
                 var ids = array.ToObject<int[]>();
                 var paramName = $"@fieldIds{index}";
                 parameters.AddWithValue(paramName, ids, dbType);
-                return $"{query} in (select id from {dbType.GetIdTable(paramName)})";
+                return $"{query} in (select id from {dbType.GetIdTable(paramName)}))";
             }
 
             throw new ArgumentException("Not supported argument type", nameof(value));
