@@ -23,43 +23,112 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
     public void CleanSystemFolders(string customerName, int numFiles)
     {
         QPContext.CurrentUserId = _options.DefaultUserId;
-        _logger.Info($"Start processing files on customer code {customerName}");
+        _logger.Info($"Start processing customer code {customerName}");
         var contentIds = SiteRepository.GetAll().SelectMany(n => ContentRepository.GetContentIds(n.Id)).ToArray();
         foreach (var contentId in contentIds)
         {
-            var dirInfo = GetRootDirectoryInfo(contentId);
-            if (dirInfo is not { Exists: true })
+            if (numFiles == 0)
             {
-                continue;
+                return;
             }
 
-            var currentVersionDirInfo = GetCurrentVersionDirectoryInfo(dirInfo);
-            if (currentVersionDirInfo is { Exists: true } && numFiles > 0)
-            {
-                numFiles = ProcessCurrentVersionFiles(numFiles, dirInfo, currentVersionDirInfo, contentId);
-            }
+            var dirInfo = GetContentRootDirectoryInfo(contentId);
+            numFiles = SyncCurrentVersionFolder(numFiles, dirInfo, contentId);
+            numFiles = ClearContentTempFolder(numFiles, dirInfo, contentId);
+            numFiles = RemoveEmptyVersionFolders(numFiles, dirInfo, contentId);
+        }
 
-            var tempDirInfo = dirInfo.GetDirectories("_temp").FirstOrDefault();
-            if (tempDirInfo is { Exists: true } && numFiles > 0)
-            {
-                numFiles = ProcessTempFiles(numFiles, tempDirInfo, contentId);
-            }
+        var siteIds = SiteRepository.GetAll().Select(n => n.Id).ToArray();
+        foreach (var siteId in siteIds)
+        {
+            var dirInfo = GetSiteRootDirectoryInfo(siteId);
+            numFiles = ClearSiteTempFolder(numFiles, dirInfo, siteId);
         }
     }
 
-    private int ProcessCurrentVersionFiles(int numFiles, DirectoryInfo dirInfo, DirectoryInfo currentVersionDirInfo, int contentId)
+    private int ClearSiteTempFolder(int numFiles, DirectoryInfo dirInfo, int siteId)
     {
-        var contentFiles = GetContentFiles(dirInfo);
-        var filesToDelete = GetFilesToDelete(currentVersionDirInfo, contentFiles);
-        _logger.Info($"Found {filesToDelete.Length} files in current version folder for content {contentId}, but the number is limited to {numFiles}");
-        return ProcessFiles(numFiles, filesToDelete);
+        if (dirInfo is { Exists: true } && numFiles > 0)
+        {
+            var tempDirInfo = dirInfo.Parent?.GetDirectories("temp").FirstOrDefault();
+            if (tempDirInfo is { Exists: true })
+            {
+                var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).ToArray();
+                if (filesToDelete.Any())
+                {
+                    _logger.Info($"Found {filesToDelete.Length} files in temp folder for site {siteId}," +
+                        $" but the number is limited to {numFiles}");
+                    numFiles = ProcessFiles(numFiles, filesToDelete);
+                }
+            }
+        }
+        return numFiles;
     }
 
-    private int ProcessTempFiles(int numFiles, DirectoryInfo tempDirInfo, int contentId)
+    private int ClearContentTempFolder(int numFiles, DirectoryInfo dirInfo, int contentId)
     {
-        var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).ToArray();
-        _logger.Info($"Found {filesToDelete.Length} files in _temp folder for content {contentId}, but the number is limited to {numFiles}");
-        return ProcessFiles(numFiles, filesToDelete);
+        if (dirInfo is { Exists: true } && numFiles > 0)
+        {
+            var tempDirInfo = dirInfo.GetDirectories("_temp").FirstOrDefault();
+            if (tempDirInfo is { Exists: true })
+            {
+                var filesToDelete = tempDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).ToArray();
+                if (filesToDelete.Any())
+                {
+                    _logger.Info($"Found {filesToDelete.Length} files in _temp folder for content {contentId}," +
+                        $" but the number is limited to {numFiles}");
+                    numFiles = ProcessFiles(numFiles, filesToDelete);
+                }
+            }
+        }
+        return numFiles;
+    }
+
+    private int RemoveEmptyVersionFolders(int numFiles, DirectoryInfo dirInfo, int contentId)
+    {
+        if (dirInfo is { Exists: true } && numFiles > 0)
+        {
+            var allVersionsDir = dirInfo.GetDirectories(ArticleVersion.RootFolder).FirstOrDefault();
+            if (allVersionsDir is { Exists: true })
+            {
+                var versionDirs = allVersionsDir.GetDirectories("*");
+                foreach (var versionDir in versionDirs)
+                {
+                    if (!versionDir.EnumerateFileSystemInfos().Any() && numFiles > 0)
+                    {
+                       _logger.Info($"Removing empty folder {versionDir.Name}");
+                       Directory.Delete(versionDir.FullName);
+                       numFiles--;
+                    }
+                }
+
+            }
+        }
+        return numFiles;
+    }
+
+    private int SyncCurrentVersionFolder(int numFiles, DirectoryInfo dirInfo, int contentId)
+    {
+        if (dirInfo is { Exists: true } && numFiles > 0)
+        {
+            var versionsDir = dirInfo.GetDirectories(ArticleVersion.RootFolder).FirstOrDefault();
+            if (versionsDir is { Exists: true })
+            {
+                var currentVersionDirInfo = versionsDir.GetDirectories("current").FirstOrDefault();
+                if (currentVersionDirInfo is { Exists: true })
+                {
+                    var contentFiles = GetContentFiles(dirInfo);
+                    var filesToDelete = GetFilesToDelete(currentVersionDirInfo, contentFiles);
+                    if (filesToDelete.Any())
+                    {
+                        _logger.Info($"Found {filesToDelete.Length} files in current version folder " +
+                            $"for content {contentId}, but the number is limited to {numFiles}");
+                        numFiles = ProcessFiles(numFiles, filesToDelete);
+                    }
+                }
+            }
+        }
+        return numFiles;
     }
 
     private static int ProcessFiles(int numFiles, FileInfo[] filesToDelete)
@@ -87,7 +156,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
         return result.ToArray();
     }
 
-    private DirectoryInfo GetRootDirectoryInfo(int contentId)
+    private DirectoryInfo GetContentRootDirectoryInfo(int contentId)
     {
         var factory = new ContentFolderFactory();
         var repository = factory.CreateRepository();
@@ -100,10 +169,17 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
         return new DirectoryInfo(pathInfo.Path);
     }
 
-    private DirectoryInfo GetCurrentVersionDirectoryInfo(DirectoryInfo rootDirInfo)
+    private DirectoryInfo GetSiteRootDirectoryInfo(int siteId)
     {
-        var versionsDir = rootDirInfo.GetDirectories(ArticleVersion.RootFolder).FirstOrDefault();
-        return versionsDir?.GetDirectories("current").FirstOrDefault();
+        var factory = new SiteFolderFactory();
+        var repository = factory.CreateRepository();
+        var root = repository.GetRoot(siteId);
+        if (root == null)
+        {
+            return null;
+        }
+        var pathInfo = root.PathInfo;
+        return new DirectoryInfo(pathInfo.Path);
     }
 
     private FileInfo[] GetFilesToDelete(DirectoryInfo currentVersionDir, string[] contentFiles)
