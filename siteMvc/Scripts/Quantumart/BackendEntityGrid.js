@@ -138,7 +138,7 @@ export class BackendEntityGrid extends Observable {
       }
 
       if ($q.any(options.filter)) {
-          this._filter = options.filter;
+        this._filter = options.filter;
       }
 
       if (options.isWindow) {

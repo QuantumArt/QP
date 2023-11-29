@@ -172,7 +172,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     StartRecord = cmd.StartRecord,
                     PageSize = cmd.PageSize,
                     LanguageId = QPContext.CurrentLanguageId,
-                    CustomFilter = filter.CustomFilter.Select(item => new CustomFilter
+                    CustomFilter = filter.CustomFilter?.Select(item => new CustomFilter
                     {
                         Filter = item.Filter,
                         Field = item.Filter,
