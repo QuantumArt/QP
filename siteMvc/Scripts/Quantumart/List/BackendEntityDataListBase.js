@@ -868,7 +868,7 @@ export class BackendEntityDataListBase extends Observable {
   }
 
   setFilter(filter) {
-    var filterKey = JSON.stringify(filter);
+    const filterKey = JSON.stringify(filter);
     if (!this._filterSet.has(filterKey)) {
       this._filterSet.add(filterKey);
       this._filter.push(filter);
@@ -878,7 +878,7 @@ export class BackendEntityDataListBase extends Observable {
   }
 
   applyFilter(filter) {
-    var filterKey = JSON.stringify(filter);
+    const filterKey = JSON.stringify(filter);
     if (!this._filterSet.has(filterKey)) {
       this._filterSet.add(filterKey);
       this._filter.push(filter);

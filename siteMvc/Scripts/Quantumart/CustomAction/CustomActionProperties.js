@@ -16,10 +16,10 @@ export class CustomActionEntityTypesObserver {
           window.ENTITY_TYPE_CODE_VIRTUAL_FIELD
         ];
         const virtualType = $.inArray(code, testCodes) > -1 ? 1 : 0;
-        const filter = { filter: "VirtualType", value: virtualType };
+        const filter = { filter: 'VirtualType', value: virtualType };
         const obj = $contents.data('entity_data_list_component');
         if (obj && obj.setFilter(filter)) {
-            obj.removeAllListItems();
+          obj.removeAllListItems();
         }
       }
     };
