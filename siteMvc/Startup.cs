@@ -64,6 +64,7 @@ using CustomActionService = Quantumart.QP8.BLL.Services.CustomActionService;
 using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
+using Quantumart.QP8.BLL.Services.FileSynchronization;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -241,6 +242,7 @@ namespace Quantumart.QP8.WebMvc
                 .AddTransient<IExternalSystemNotificationService, ExternalSystemNotificationService>()
                 .AddTransient<ISchedulerCustomerCollection, SchedulerCustomerCollection>()
                 .AddTransient<ICommonUserService, CommonUserService>()
+                .AddTransient<ICleanSystemFoldersService, CleanSystemFoldersService>()
                 .AddTransient<ElasticCdcImportService>()
                 .AddTransient<TarantoolCdcImportService>()
                 .AddTransient<IDbService, DbService>()
