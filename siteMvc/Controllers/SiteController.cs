@@ -219,7 +219,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "folderId")]
+        [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "folderId")]
         public JsonResult _FolderPath(int folderId)
         {
             var folder = SiteFolderService.GetById(folderId);

@@ -121,7 +121,7 @@
     <value>Непредвиденная ошибка на сервере</value>
   </data>
   <data name="ActionIsNotAccessible" xml:space="preserve">
-    <value>У Вас недостаточно прав, чтобы выполнить действие '{0}'</value>
+    <value>У Вас недостаточно прав, чтобы выполнить действие {0}</value>
   </data>
   <data name="CancelSelection" xml:space="preserve">
     <value>Отменить выбор</value>
@@ -130,7 +130,7 @@
     <value>Уменьшить значение</value>
   </data>
   <data name="EntityIsNotAccessible" xml:space="preserve">
-    <value>У Вас недостаточно прав, чтобы выполнить действие (тип: '{0}', тип сущности: '{1}', ID: {2}).</value>
+    <value>У Вас недостаточно прав, чтобы выполнить действие (тип: {0}, тип сущности: {1}, ID сущности: {2}).</value>
   </data>
   <data name="ErrorSummary_FormErrors" xml:space="preserve">
     <value>При заполнении формы возникли следующие ошибки:</value>
