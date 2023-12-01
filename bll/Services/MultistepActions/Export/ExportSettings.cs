@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Info;
@@ -71,7 +72,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             get
             {
                 var fileName = $"content_{ContentId}_{DateTimeForFileName.Year}_{DateTimeForFileName.Month}_{DateTimeForFileName.Day}_{DateTimeForFileName.Hour}_{DateTimeForFileName.Minute}_{DateTimeForFileName.Second}.csv";
-                return $"{QPConfiguration.TempDirectory}{Path.DirectorySeparatorChar}{fileName}";
+                return $"{PathHelper.GetUploadPath()}{Path.DirectorySeparatorChar}{fileName}";
             }
         }
 

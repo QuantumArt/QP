@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Configuration;
@@ -67,11 +68,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public List<int> InsertedArticleIds { get; set; }
 
-        private string GetUploadFilePath()
-        {
-            var currentSite = SiteRepository.GetById(SiteId);
-            return WebUtility.UrlDecode(ImportArticlesParams.GetUploadPath(currentSite, ContentId));
-        }
+        private string GetUploadFilePath() => WebUtility.UrlDecode(PathHelper.GetUploadPath());
 
         public bool IsWorkflowAssigned { get; set; }
 
