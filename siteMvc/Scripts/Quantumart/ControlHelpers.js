@@ -1413,7 +1413,7 @@ $c.autoResize = function (imgUrl, urlParams) {
 };
 
 $c.openPreviewWindow = function (url, width, height) {
-  const urlWithTime = `${url}?t=${new Date().getTime()}`;
+  const urlWithTime = `${encodeURI(url)}?t=${new Date().getTime()}`;
   const html = new $.telerik.stringBuilder();
   html
     .cat('<div class="previewImage">')
