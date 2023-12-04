@@ -26,9 +26,7 @@ namespace Quantumart.QP8.WebMvc
                          .Exception(ex.Error)
                          .Message("Unhandled exception occurs")
                          .Write();
-
                     var message = ex.Error.Data[ExceptionHelpers.ClientMessageKey] ?? GlobalStrings._500Error;
-
                     var err = $"<h1>Error: {message}</h1>";
                     await context.Response.WriteAsync(err).ConfigureAwait(false);
                 }

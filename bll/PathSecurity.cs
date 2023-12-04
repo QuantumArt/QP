@@ -52,45 +52,46 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        private static PathSecurityResult CheckContentFolder(string pathToFind, int contentId)
+        private static PathSecurityResult CheckContentFolder(string pathToFind, int contentId, string requestedTypeCode)
         {
             var result = new PathSecurityResult();
             var factory = new ContentFolderFactory();
             var contentFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(contentId));
             if (contentFolder != null)
             {
-                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.ContentFolder, contentFolder.Id, ActionTypeCode.Update);
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.ContentFolder, contentFolder.Id, requestedTypeCode);
                 result.FolderId = contentFolder.Id;
             }
             else
             {
-                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update);
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, requestedTypeCode);
             }
 
             return result;
         }
 
-        private static PathSecurityResult CheckSiteFolder(string pathToFind, int siteId)
+        private static PathSecurityResult CheckSiteFolder(string pathToFind, int siteId, string requestedTypeCode)
         {
             var result = new PathSecurityResult();
             var factory = new SiteFolderFactory();
             var siteFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(siteId));
             if (siteFolder != null)
             {
-                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.SiteFolder, siteFolder.Id, ActionTypeCode.Update);
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.SiteFolder, siteFolder.Id, requestedTypeCode);
                 result.FolderId = siteFolder.Id;
             }
             else
             {
-                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Site, siteId, ActionTypeCode.Update);
+                result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.Site, siteId, requestedTypeCode);
             }
 
             return result;
         }
 
-        public static PathSecurityResult Check(string path)
+        public static PathSecurityResult Check(string path, bool forModify)
         {
             var sep = System.IO.Path.DirectorySeparatorChar;
+            var typeCode = forModify ? ActionTypeCode.Update : ActionTypeCode.Read;
             var result = new PathSecurityResult();
             var pathToFind = path;
             if (pathToFind[pathToFind.Length - 1].ToString() != sep.ToString())
@@ -112,7 +113,7 @@ namespace Quantumart.QP8.BLL
                 result.IsSite = true;
                 pathToFind = pathToFind.Replace(images, string.Empty);
 
-                var checksiteFolderResult = CheckSiteFolder(pathToFind, site.Id);
+                var checksiteFolderResult = CheckSiteFolder(pathToFind, site.Id, typeCode);
                 result.Result = checksiteFolderResult.Result;
                 result.FolderId = checksiteFolderResult.FolderId;
                 return result;
@@ -124,7 +125,7 @@ namespace Quantumart.QP8.BLL
             {
                 var contentId = int.Parse(match.Groups[1].Value);
                 pathToFind = pathToFind.Replace(match.Value, string.Empty);
-                return CheckContentFolder(pathToFind, contentId);
+                return CheckContentFolder(pathToFind, contentId, typeCode);
             }
 
             return result;

@@ -2,6 +2,7 @@ using System;
 using System.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions.Base;
@@ -34,11 +35,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            // if (!(filterContext.HttpContext.User.Identity is QpIdentity identity) || !identity.IsAuthenticated)
-            // {
-            //     throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);
-            // }
-
             IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
 
             string actionCode = _actionCode;
@@ -54,7 +50,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
             if (!securityService.IsActionAccessible(actionCode, out BackendAction action))
             {
-                throw new SecurityException(string.Format(GlobalStrings.ActionIsNotAccessible, action.Name));
+                var message = string.Format(GlobalStrings.ActionIsNotAccessible, action.Name);
+                var clientMessage = CustomActionStrings.ActionNotAccessible;
+                throw new SecurityException(message) { Data = { { ExceptionHelpers.ClientMessageKey, clientMessage } } };
             }
 
             base.OnActionExecuting(filterContext);

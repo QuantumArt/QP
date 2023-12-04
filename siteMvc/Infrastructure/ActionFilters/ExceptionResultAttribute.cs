@@ -185,7 +185,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         private static string GetClientDump(Exception ex)
         {
-           return string.Join(Environment.NewLine, ex.GetExceptionsList().Select(x => x.Data[ExceptionHelpers.ClientMessageKey] ?? GlobalStrings._500Error));
+           return string.Join(Environment.NewLine, ex.GetExceptionsList().Select(x =>
+           {
+               return x.Data[ExceptionHelpers.ClientMessageKey] ?? GlobalStrings._500Error;
+           }));
         }
     }
 }
