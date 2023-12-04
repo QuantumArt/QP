@@ -69,7 +69,7 @@ export class BackendFileNameListView extends Observable {
           .cat(String.format('<li title="{0}"><div class="fileItem" data-file_name="{0}">', encodeURI(item.FullName)))
           .catIf('<input type="checkbox" />', that._selectMode === window.FILE_LIST_SELECT_MODE_MULTIPLE)
           .cat(String.format('<img src="{1}{2}" /><label>{0}</label></div></li>',
-           $('<div>').text(item.Name).html(), window.THEME_IMAGE_FOLDER_URL_SMALL_FILE_TYPE_ICONS, item.SmallIconLink));
+            $('<div>').text(item.Name).html(), window.THEME_IMAGE_FOLDER_URL_SMALL_FILE_TYPE_ICONS, item.SmallIconLink));
 
         if (columnCounter === window.FILE_LIST_ITEMS_PER_COLUMN - 1) {
           html.cat('</ul></div>');
