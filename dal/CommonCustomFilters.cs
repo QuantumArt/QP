@@ -13,9 +13,9 @@ namespace Quantumart.QP8.DAL
 {
     public static class CommonCustomFilters
     {
-        private static string[] StringTypes = new string[] { "NVARCHAR", "NTEXT" };
-        private static string NumericType = "NUMERIC";
-        private static string DateTimeType = "DATETIME";
+        private const string NumericType = "NUMERIC";
+        private const string DateTimeType = "DATETIME";
+        private static string[] _stringTypes = new string[] { "NVARCHAR", "NTEXT" };
 
         /// <summary>
         /// Фильтрация кастомных фильтров
@@ -119,29 +119,30 @@ namespace Quantumart.QP8.DAL
                 return DBNull.Value.Equals(filter) ? null : (string)filter;
             }
         }
+
         private static string GetFieldFilter(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int contentId, string field, object value, int index)
         {
-            string fieldFype = null;
+            string fieldType = string.Empty;
 
             if (FieldName.ContentItemId.Equals(field, StringComparison.InvariantCultureIgnoreCase))
             {
-                fieldFype = NumericType;
+                fieldType = NumericType;
             }
             else
             {
-                fieldFype = GetAttributeType(sqlConnection, dbType, contentId, field);
+                fieldType = GetAttributeType(sqlConnection, dbType, contentId, field);
             }
 
             var fieldExpr = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field);
             var paramName = $"@fieldValue{index}";
             var isAtomic = true;
 
-            if (fieldFype == null)
+            if (fieldType == null)
             {
                 throw new ArgumentException($"Field {field} not found", nameof(field));
             }
 
-            if (StringTypes.Contains(fieldFype))
+            if (_stringTypes.Contains(fieldType))
             {
                 if (value is string stringValue)
                 {
@@ -153,7 +154,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
 
-            if (fieldFype == NumericType)
+            if (fieldType == NumericType)
             {
                 if (value is int intValue)
                 {
@@ -186,7 +187,7 @@ namespace Quantumart.QP8.DAL
                 }
             }
 
-            if (fieldFype == DateTimeType)
+            if (fieldType == DateTimeType)
             {
                 if (value is string stringValue)
                 {
@@ -248,6 +249,11 @@ namespace Quantumart.QP8.DAL
         {
             if (value is long result)
             {
+                if (!result.IsInRange(int.MinValue, int.MaxValue, true))
+                {
+                    throw new ArgumentException("Value is out of range of int values", nameof(value));
+                }
+
                 return (int)result;
             }
 

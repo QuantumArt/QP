@@ -50,11 +50,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             IsSelect = false;
             AllowMultipleEntitySelection = true;
             AllowGlobalSelection = true;
-            SelectedIDs = new int[0];
+            SelectedIDs = Array.Empty<int>();
             AutoGenerateLink = true;
             GenerateLinkOnTitle = true;
             Filter = string.Empty;
-            ExternalFilter = new CustomFilterItem[0];
+            ExternalFilter = Array.Empty<CustomFilterItem>();
             ShowIds = true;
             AutoLoad = true;
         }

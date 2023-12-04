@@ -39,7 +39,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public string CustomFilter { get; set; }
 
-        public List<CustomFilterItem> CustomExternalFilter { get; set; }
+        public CustomFilterItem[] CustomExternalFilter { get; set; }
 
         public IEnumerable<BLL.Field> DisplayFields { get; set; }
 
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             IsViewChangable = true;
             ShowArchive = false;
             CustomFilter = "";
-            CustomExternalFilter = new List<CustomFilterItem>();
+            CustomExternalFilter = Array.Empty<CustomFilterItem>();
             AutoCheckChildren = false;
         }
 
