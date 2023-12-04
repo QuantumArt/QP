@@ -49,14 +49,14 @@ export class BackendFilePreviewListView extends BackendFileNameListView {
     if (data.TotalRecords > 0) {
       jQuery.each(data.Data, (index, item) => {
         const link = that._getThumbnailLink(item, options);
-        html.cat(String.format('<div class="fileItem" data-file_name="{0}">', item.FullName))
+        html.cat(String.format('<div class="fileItem" data-file_name="{0}">', encodeURI(item.FullName)))
           .catIf('<input type="checkbox" />', that._selectMode === window.FILE_LIST_SELECT_MODE_MULTIPLE)
           .cat(
             String.format('<div class="preview" style="background-image:url({3});"></div>'
             + '<h5><ul><li title="{4}">{0}</li></ul></h5>'
             + '<span>{1}</span>'
             + '<span>{2}</span>'
-          + '</div>', item.Name, item.Modified, item.Size, link, item.FullName));
+              + '</div>', $('<div>').text(item.Name).html(), item.Modified, item.Size, link, $('<div>').text(item.FullName).html()));
       });
     } else {
       html.cat($l.FileList.noRecords);
