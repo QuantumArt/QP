@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             if (!securityService.IsActionAccessible(actionCode, out BackendAction action))
             {
                 var message = string.Format(GlobalStrings.ActionIsNotAccessible, action.Name);
-                var clientMessage = string.Format(GlobalStrings.ActionIsNotAccessible, action.Code);
+                var clientMessage = CustomActionStrings.ActionNotAccessible;
                 throw new SecurityException(message) { Data = { { ExceptionHelpers.ClientMessageKey, clientMessage } } };
             }
 

@@ -130,7 +130,7 @@
     <value>Уменьшить значение</value>
   </data>
   <data name="EntityIsNotAccessible" xml:space="preserve">
-    <value>У Вас недостаточно прав, чтобы выполнить действие (тип: {0}, тип сущности: {1}, ID сущности: {2}).</value>
+    <value>У Вас недостаточно прав, чтобы выполнить действие типа {0} для сущности типа {1} с ID: {2}.</value>
   </data>
   <data name="ErrorSummary_FormErrors" xml:space="preserve">
     <value>При заполнении формы возникли следующие ошибки:</value>

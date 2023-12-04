@@ -130,7 +130,7 @@
     <value>Decrease Value</value>
   </data>
   <data name="EntityIsNotAccessible" xml:space="preserve">
-    <value>You have no enough permissions to execute action (type: {0}, entity type: {1}, entity ID: {2}).</value>
+    <value>You have no enough permissions to execute action of type {0} for entity of type {1} with ID: {2}.</value>
   </data>
   <data name="ErrorSummary_FormErrors" xml:space="preserve">
     <value>When filling out the form appeared the following errors:</value>
