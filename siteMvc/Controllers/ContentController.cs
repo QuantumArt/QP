@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
@@ -18,7 +13,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -31,6 +25,9 @@ using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

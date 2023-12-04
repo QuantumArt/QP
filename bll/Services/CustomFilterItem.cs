@@ -10,13 +10,13 @@ namespace Quantumart.QP8.BLL.Services
 
         public static CustomFilterItem GetArchiveFilter(int value)
         {
-            var filrer = CustomFilter.GetArchiveFilter(value);
+            var filter = CustomFilter.GetArchiveFilter(value);
 
             return new CustomFilterItem
             {
-                Filter = filrer.Filter,
-                Field = filrer.Field,
-                Value = filrer.Value
+                Filter = filter.Filter,
+                Field = filter.Field,
+                Value = filter.Value
             };
         }
     }

@@ -53,7 +53,7 @@ namespace Quantumart.QP8.DAL
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
             CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
             CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.Value, index),
-            CustomFilter.MtMFilter => GetMtMFilter(parameters, dbType, item.Field, item.Value, index),
+            CustomFilter.M2MFilter => GetM2MFilter(parameters, dbType, item.Field, item.Value, index),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
@@ -132,14 +132,13 @@ namespace Quantumart.QP8.DAL
                 fieldFype = GetAttributeType(sqlConnection, dbType, contentId, field);
             }
 
-            
             var fieldExpr = SqlQuerySyntaxHelper.EscapeEntityName(dbType, field);
             var paramName = $"@fieldValue{index}";
-            bool isAtomic = true;
+            var isAtomic = true;
 
             if (fieldFype == null)
             {
-                throw new ArgumentException($"Field {field} not fount", nameof(field));
+                throw new ArgumentException($"Field {field} not found", nameof(field));
             }
 
             if (StringTypes.Contains(fieldFype))
@@ -194,24 +193,23 @@ namespace Quantumart.QP8.DAL
                     if (DateTime.TryParse(stringValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
                     {
                         parameters.AddWithValue(paramName, date, dbType);
-                    }                    
+                    }
                 }
 
                 throw new ArgumentException($"Value {value} for field {field} must be date", nameof(value));
             }
 
             return isAtomic ? $"c.{fieldExpr} = {paramName}" : $"c.{fieldExpr} in (select id from {dbType.GetIdTable(paramName)})";
-
         }
 
         private static string GetAttributeType(DbConnection sqlConnection, DatabaseType dbType, int contentId, string field)
         {
-            var comparitionOperator = dbType == DatabaseType.Postgres ? "iLIKE" : "LIKE";
+            var comparisonOperator = dbType == DatabaseType.Postgres ? "iLIKE" : "LIKE";
 
             var query =
                 $@"SELECT t.DATABASE_TYPE from CONTENT_ATTRIBUTE a
                 JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID
-                WHERE CONTENT_ID = @contentId AND ATTRIBUTE_NAME {comparitionOperator} @field";
+                WHERE CONTENT_ID = @contentId AND ATTRIBUTE_NAME {comparisonOperator} @field";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
@@ -224,8 +222,8 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static string GetMtMFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
-        {            
+        private static string GetM2MFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
+        {
             var query = "c.content_item_id in (select linked_item_id from item_link where item_id";
 
             if (value is int)
