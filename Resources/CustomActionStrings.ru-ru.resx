@@ -270,10 +270,13 @@
   <data name="WindowWidthIsNotInRange" xml:space="preserve">
     <value>Значение ширины окна не входит в допустимый диапазон: от {0} до {1}</value>
   </data>
-  <data name="ActionNotfoundByAlias" xml:space="preserve">
+  <data name="ActionNotFoundByAlias" xml:space="preserve">
     <value>Действие не найдено (Alias = {0})</value>
   </data>
   <data name="ActionNotFound" xml:space="preserve">
     <value>Действие не найдено</value>
+  </data>
+  <data name="ActionNotAccessible" xml:space="preserve">
+    <value>Действие недоступно</value>
   </data>
 </root>

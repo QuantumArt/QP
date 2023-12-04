@@ -76,10 +76,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return GetTestFileDownloadResult(info, HttpUtility.UrlDecode(fileName), isVersion);
         }
 
-        public JsonResult ExportFileDownload(int id, string fileName)
+        public JsonResult ExportFileDownload(string fileName)
         {
-            var currentSite = SiteService.Read(id);
-            var folderForUpload = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{CsvWriter.FolderForDownload}{Path.DirectorySeparatorChar}";
+            var folderForUpload = $@"{PathHelper.GetUploadPath()}{Path.DirectorySeparatorChar}";
             var inf = new PathInfo
             {
                 Path = folderForUpload
@@ -331,6 +330,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private JsonResult GetTestFileDownloadResult(PathInfo info, string fileName, bool isVersion)
         {
+            if (!PathInfo.CheckSecurity(info.Path, false).Result)
+            {
+                return Json(new { proceed = false, msg = string.Format(LibraryStrings.AccessDenied, info.Path, QPContext.CurrentUserName) });
+            }
             var normalizedFileName = isVersion ? Path.GetFileName(HttpUtility.UrlDecode(fileName)) : HttpUtility.UrlDecode(fileName);
             var path = info.GetPath(normalizedFileName);
             return System.IO.File.Exists(path)

@@ -267,10 +267,13 @@
   <data name="WindowWidthIsNotInRange" xml:space="preserve">
     <value>Values of Window Width is not in acceptable range: from {0} to {1}</value>
   </data>
-  <data name="ActionNotfoundByAlias" xml:space="preserve">
+  <data name="ActionNotFoundByAlias" xml:space="preserve">
     <value>Action not found (Alias = {0})</value>
   </data>
   <data name="ActionNotFound" xml:space="preserve">
     <value>Action not found</value>
+  </data>
+  <data name="ActionNotAccessible" xml:space="preserve">
+    <value>Action not accessible</value>>
   </data>
 </root>
