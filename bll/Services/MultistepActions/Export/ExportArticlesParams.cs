@@ -4,14 +4,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     public class ExportArticlesParams : IMultistepActionSettings
     {
-        public int SiteId;
+        public int SiteId { get; }
 
-        public int ContentId;
+        public int ContentId { get; }
 
         [JsonProperty("IDs")]
-        public int[] Ids;
+        public int[] Ids { get; }
 
-        public bool IsArchive;
+        public bool IsArchive { get; }
 
         public ExportArticlesParams(int siteId, int contentId, int[] ids)
         {

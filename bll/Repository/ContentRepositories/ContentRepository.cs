@@ -1118,6 +1118,14 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             }
         }
 
+        internal static int[] GetContentIds(int siteId)
+        {
+            using (new QPConnectionScope())
+            {
+                return QPContext.EFContext.ContentSet.Where(n => n.SiteId == siteId).Select(n => (int)n.Id).ToArray();
+            }
+        }
+
         internal static void CopyContentsGroups(int sourceSiteId, int destinationSiteId)
         {
             using (new QPConnectionScope())

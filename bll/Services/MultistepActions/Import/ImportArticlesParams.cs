@@ -1,14 +1,11 @@
-﻿using System.IO;
-using System.Text;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Configuration;
+﻿using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesParams : IMultistepActionSettings
     {
-        public int SiteId;
-        public int ContentId;
+        public int SiteId { get; }
+        public int ContentId { get; }
 
         public ImportArticlesParams(int siteId, int contentId)
         {
@@ -18,16 +15,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public int StagesCount => 3;
 
-        public string UploadPath => GetUploadPath(SiteRepository.GetById(SiteId), ContentId);
-
-        public static string GetUploadPath(Site site, int contentId)
-        {
-            var sb = new StringBuilder();
-            sb.Append(QPConfiguration.TempDirectory);
-            sb.Append(Path.DirectorySeparatorChar);
-            sb.Append(QPContext.CurrentCustomerCode);
-            sb.Append(Path.DirectorySeparatorChar);
-            return sb.ToString();
-        }
+        public string UploadPath => PathHelper.GetUploadPath();
     }
 }

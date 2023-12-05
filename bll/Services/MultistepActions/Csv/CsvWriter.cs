@@ -20,7 +20,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvWriter
     {
-        public static readonly string FolderForDownload = $"temp{Path.DirectorySeparatorChar}download";
         private const string IdentifierFieldName = FieldName.ContentItemId;
 
         private const string FieldNameHeaderTemplate = "{0}.{1}";
@@ -46,27 +45,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public bool CsvReady => _itemsPerStep * (_step + 1) >= _ids.Length;
 
-        public string CopyFileToTempUploadDirectory()
-        {
-            var fileInfo = new FileInfo(_settings.UploadFilePath);
-            if (fileInfo.Exists)
-            {
-                var currentSite = SiteRepository.GetById(_siteId);
-                var uploadDir = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{FolderForDownload}";
-                if (!Directory.Exists(uploadDir))
-                {
-                    Directory.CreateDirectory(uploadDir);
-                }
-
-                var newFileUploadPath = $@"{uploadDir}{Path.DirectorySeparatorChar}{fileInfo.Name}";
-                File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
-                File.Delete(_settings.UploadFilePath);
-
-                return $"{fileInfo.Name}";
-            }
-
-            return string.Empty;
-        }
 
         public int Write(int step, int itemsPerStep)
         {
@@ -209,6 +187,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            PathHelper.EnsureUploadPathCreated();
             using (var sw = new StreamWriter(_settings.UploadFilePath, true, Encoding.GetEncoding(_settings.Encoding)))
             {
                 sw.Write(_sb.ToString());

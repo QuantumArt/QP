@@ -61,7 +61,7 @@ namespace Quantumart.QP8.BLL
             return new FolderFile(new I.FileInfo(path));
         }
 
-        public static PathSecurityResult CheckSecurity(string path) => PathSecurity.Check(path);
+        public static PathSecurityResult CheckSecurity(string path, bool forModify = true) => PathSecurity.Check(path, forModify);
 
         public static string ConvertToUrl(string path)
         {
