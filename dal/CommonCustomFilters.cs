@@ -174,6 +174,10 @@ namespace Quantumart.QP8.DAL
                     {
                         parameters.AddWithValue(paramName, intValue, dbType);
                     }
+                    else if (long.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out longValue))
+                    {
+                        parameters.AddWithValue(paramName, longValue, dbType);
+                    }
                     else if (decimal.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal decimalValue))
                     {
                         parameters.AddWithValue(paramName, decimalValue, dbType);
