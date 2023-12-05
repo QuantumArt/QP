@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using QP8.Infrastructure.Web.Extensions;
@@ -16,6 +12,11 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -72,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             var info = GetFilePathInfo(fieldId, entityId, isVersion);
-            return GetTestFileDownloadResult(info, fileName, isVersion);
+            return GetTestFileDownloadResult(info, HttpUtility.UrlDecode(fileName), isVersion);
         }
 
         public JsonResult ExportFileDownload(string fileName)
@@ -83,7 +84,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Path = folderForUpload
             };
 
-            return GetTestFileDownloadResult(inf, fileName, false);
+            return GetTestFileDownloadResult(inf, HttpUtility.UrlDecode(fileName), false);
         }
 
         public JsonResult TestLibraryFileDownload(int id, string fileName, string entityTypeCode)
@@ -95,7 +96,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { proceed = false, msg = string.Format(formatString, id) });
             }
 
-            return GetTestFileDownloadResult(pathInfo, fileName, false);
+            return GetTestFileDownloadResult(pathInfo, HttpUtility.UrlDecode(fileName), false);
         }
 
         public JsonResult GetImageProperties(string id, string fileName, bool isVersion, int? entityId, int? parentEntityId)
@@ -107,17 +108,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             var pathInfo = GetFilePathInfo(fieldId, entityId, isVersion);
-            return GetFileProperties(pathInfo, fileName, new FilePropertiesOptions { IsVersion = isVersion });
+            return GetFileProperties(pathInfo, HttpUtility.UrlDecode(fileName), new FilePropertiesOptions { IsVersion = isVersion });
         }
 
         public JsonResult GetLibraryImageProperties(int id, string fileName, string entityTypeCode)
         {
             var pathInfo = entityTypeCode == EntityTypeCode.ContentFile ? ContentFolderService.GetPathInfo(id) : SiteFolderService.GetPathInfo(id);
-            return GetFileProperties(pathInfo, fileName, new FilePropertiesOptions());
+            return GetFileProperties(pathInfo, HttpUtility.UrlDecode(fileName), new FilePropertiesOptions());
         }
 
         public ActionResult DownloadFile(string id, string fileName)
-        {
+        {            
             var path = (string)TempData[id];
 
             if (!string.IsNullOrWhiteSpace(path))
@@ -125,7 +126,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 var dir = Path.GetDirectoryName(path);
                 var file = Path.GetFileName(path);
                 var readStream = new PhysicalFileProvider(dir).GetFileInfo(file).CreateReadStream();
-                return File(readStream, MimeTypes.OctetStream, fileName);
+                return File(readStream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
             }
 
             return Json(null);
@@ -333,7 +334,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 return Json(new { proceed = false, msg = string.Format(LibraryStrings.AccessDenied, info.Path, QPContext.CurrentUserName) });
             }
-            var normalizedFileName = isVersion ? Path.GetFileName(fileName) : fileName;
+            var normalizedFileName = isVersion ? Path.GetFileName(HttpUtility.UrlDecode(fileName)) : HttpUtility.UrlDecode(fileName);
             var path = info.GetPath(normalizedFileName);
             return System.IO.File.Exists(path)
                 ? Json(new { proceed = true, key = SavePath(path) })
@@ -354,7 +355,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private JsonResult GetFileProperties(PathInfo pathInfo, string fileName, FilePropertiesOptions options)
         {
-            var normalizedFileName = options.IsVersion ? Path.GetFileName(fileName) : fileName;
+            var normalizedFileName = options.IsVersion ? Path.GetFileName(HttpUtility.UrlDecode(fileName)) : HttpUtility.UrlDecode(fileName);
             var path = pathInfo.GetPath(normalizedFileName);
             var url = string.Empty;
             var message = string.Empty;
