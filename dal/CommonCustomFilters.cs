@@ -15,7 +15,7 @@ namespace Quantumart.QP8.DAL
     {
         private const string NumericType = "NUMERIC";
         private const string DateTimeType = "DATETIME";
-        private static string[] _stringTypes = new string[] { "NVARCHAR", "NTEXT" };
+        private static readonly string[] _stringTypes = new[] { "NVARCHAR", "NTEXT" };
 
         /// <summary>
         /// Фильтрация кастомных фильтров
@@ -49,11 +49,11 @@ namespace Quantumart.QP8.DAL
         private static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int parentId, CustomFilter item, int index) => item.Filter switch
         {
             CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
-            CustomFilter.VirtualTypeFilter => GetVirtualTypeFilter(parameters, dbType, GetIntValue(item.Value)),
+            CustomFilter.VirtualTypeFilter => GetVirtualTypeFilter(GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
             CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
             CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.Value, index),
-            CustomFilter.M2MFilter => GetM2MFilter(parameters, dbType, item.Field, item.Value, index),
+            CustomFilter.M2MFilter => GetM2MFilter(parameters, dbType, item.Value, index),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
@@ -63,7 +63,7 @@ namespace Quantumart.QP8.DAL
             return "c.archive = @archive";
         }
 
-        private static string GetVirtualTypeFilter(List<DbParameter> parameters, DatabaseType dbType, int type)
+        private static string GetVirtualTypeFilter(int type)
         {
             return type == 0 ? "c.virtual_type = 0" : "c.virtual_type <> 0";
         }
@@ -160,6 +160,10 @@ namespace Quantumart.QP8.DAL
                 {
                     parameters.AddWithValue(paramName, intValue, dbType);
                 }
+                if (value is long longValue)
+                {
+                    parameters.AddWithValue(paramName, longValue, dbType);
+                }
                 else if (value is decimal numericValue)
                 {
                     parameters.AddWithValue(paramName, numericValue, dbType);
@@ -223,7 +227,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static string GetM2MFilter(List<DbParameter> parameters, DatabaseType dbType, string field, object value, int index)
+        private static string GetM2MFilter(List<DbParameter> parameters, DatabaseType dbType, object value, int index)
         {
             var query = "c.content_item_id in (select linked_item_id from item_link where item_id";
 
