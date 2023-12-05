@@ -1,4 +1,7 @@
-﻿using Quantumart.QP8.Constants;
+using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.DTO;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.BLL.ListItems
 {
@@ -20,7 +23,7 @@ namespace Quantumart.QP8.BLL.ListItems
 
         public ContentSelectMode Mode { get; set; }
 
-        public string CustomFilter { get; set; }
+        public CustomFilterItem[] CustomFilter { get; set; }
 
         public static ContentListFilter Empty => new ContentListFilter();
     }

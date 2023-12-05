@@ -1,8 +1,10 @@
+using Npgsql;
+using Quantumart.QP8.Constants;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Npgsql;
 
 namespace Quantumart.QP8.DAL
 {
@@ -38,6 +40,23 @@ namespace Quantumart.QP8.DAL
                     throw new ApplicationException("Unknown db type");
             }
         }
+
+        public static List<DbParameter> AddWithValue(this List<DbParameter> parameterCollection, string parameterName, object value, DatabaseType dbType)
+        {
+            var parameter = SqlQuerySyntaxHelper.CreateDbParameter(dbType, parameterName, value);
+            parameterCollection.Add(parameter);
+            return parameterCollection;
+        }
+
+        public static List<DbParameter> AddWithValue(this List<DbParameter> parameterCollection, string parameterName, int[] ids, DatabaseType dbType)
+        {
+            var parameter = SqlQuerySyntaxHelper.GetIdsDatatableParam(parameterName, ids, dbType);
+            parameterCollection.Add(parameter);
+            return parameterCollection;
+        }
+
+        public static string GetIdTable(this DatabaseType dbType, string name, string alias = "i") =>
+            SqlQuerySyntaxHelper.IdList(dbType, name, alias);
 
         public static void Fill(this DataAdapter da, DataTable dt)
         {

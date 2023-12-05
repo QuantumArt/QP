@@ -66,7 +66,7 @@ export class BackendEntityGrid extends Observable {
     this._autoLoad = true;
     this._delayAutoLoad = false;
     this._contextMenuActionCode = '';
-    this._filter = '';
+    this._filter = [];
     this._hostIsWindow = false;
     this._treeFieldId = 0;
     this._isBindToExternal = false;
@@ -137,7 +137,7 @@ export class BackendEntityGrid extends Observable {
         this._delayAutoLoad = options.delayAutoLoad;
       }
 
-      if (options.filter) {
+      if ($q.any(options.filter)) {
         this._filter = options.filter;
       }
 
@@ -175,7 +175,7 @@ export class BackendEntityGrid extends Observable {
         this._contextQuery = hostOptions.contextQuery;
       }
 
-      if (hostOptions.filter) {
+      if ($q.any(hostOptions.filter)) {
         this._filter = hostOptions.filter;
       }
 
@@ -1053,8 +1053,8 @@ export class BackendEntityGrid extends Observable {
       params.contextQuery = this._contextQuery;
     }
 
-    if (!$q.isNull(this._filter)) {
-      params.customFilter = this._filter;
+    if ($q.any(this._filter)) {
+      params.customFilter = JSON.stringify(this._filter);
     }
 
     return params;

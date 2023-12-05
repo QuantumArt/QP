@@ -1,4 +1,5 @@
-﻿using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.DAL.DTO
 {
@@ -22,6 +23,6 @@ namespace Quantumart.QP8.DAL.DTO
 
         public int LanguageId { get; set; }
 
-        public string CustomFilter { get; set; }
+        public CustomFilter[] CustomFilter { get; set; }
     }
 }

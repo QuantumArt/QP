@@ -1623,7 +1623,7 @@ $c.initEntityDataList = function (dataListElem, actionExecutingHandler, editorOp
       maxListWidth: +$dataList.data('max_list_width') || 0,
       maxListHeight: +$dataList.data('max_list_height') || 0,
       showIds: $q.toBoolean($dataList.data('show_ids'), false),
-      filter: $q.toString($dataList.data('filter'), ''),
+      filter: $dataList.data('filter'),
       hostIsWindow: $q.toBoolean(editorOptions ? editorOptions.hostIsWindow : false, false),
       isCollapsable: $q.toBoolean($dataList.data('is_collapsable'), false),
       enableCopy: $q.toBoolean($dataList.data('enable_copy'), true),

@@ -1835,68 +1835,93 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             var dbType = GetDbType(sqlConnection);
 
             var filters = new List<string>();
+            var parameters = new List<DbParameter>();
 
             if (!string.IsNullOrEmpty(actionCode))
             {
-                filters.Add($"BA.CODE = '{Cleaner.ToSafeSqlString(actionCode)}'");
+                filters.Add($"BA.CODE = @actionCode");
+                parameters.AddWithValue("@actionCode", actionCode, dbType);
             }
 
             if (!string.IsNullOrEmpty(actionTypeCode))
             {
-                filters.Add($"AT.CODE = '{Cleaner.ToSafeSqlString(actionTypeCode)}'");
+                filters.Add($"AT.CODE = @actionTypeCode");
+                parameters.AddWithValue("@actionTypeCode", actionTypeCode, dbType);
             }
 
             if (!string.IsNullOrEmpty(entityTypeCode))
             {
-                filters.Add($"ET.CODE = '{Cleaner.ToSafeSqlString(entityTypeCode)}'");
+                filters.Add($"ET.CODE = @entityTypeCode");
+                parameters.AddWithValue("@entityTypeCode", entityTypeCode, dbType);
             }
 
             if (!string.IsNullOrEmpty(entityStringId))
             {
-                filters.Add($"L.ENTITY_STRING_ID = '{Cleaner.ToSafeSqlString(entityStringId)}'");
+                filters.Add($"L.ENTITY_STRING_ID = @entityStringId");
+                parameters.AddWithValue("@entityStringId", entityStringId, dbType);
             }
 
             if (!string.IsNullOrEmpty(parentEntityId))
             {
-                filters.Add($"{SqlQuerySyntaxHelper.CastToVarchar(dbType, "L.PARENT_ENTITY_ID")} = '{Cleaner.ToSafeSqlString(parentEntityId)}'");
+                filters.Add($"{SqlQuerySyntaxHelper.CastToVarchar(dbType, "L.PARENT_ENTITY_ID")} = @parentEntityId");
+                parameters.AddWithValue("@parentEntityId", parentEntityId, dbType);
             }
 
             if (!string.IsNullOrEmpty(entityTitle))
             {
-                filters.Add($"L.ENTITY_TITLE LIKE '%{Cleaner.ToSafeSqlString(entityTitle)}%'");
+                filters.Add($"L.ENTITY_TITLE LIKE @entityTitle");
+                parameters.AddWithValue("@entityTitle", $"%{entityTitle}%", dbType);
             }
 
             to = string.IsNullOrWhiteSpace(to) ? from : to;
             if (Converter.TryConvertToSqlDateTimeString(from, out string sqlDt, out DateTime? dt, sqlFormat: "yyyyMMdd HH:mm:00"))
             {
-                filters.Add($"L.EXEC_TIME >= '{sqlDt}'");
+                filters.Add($"L.EXEC_TIME >= @startTime");
+                parameters.AddWithValue("@startTime", sqlDt, dbType);
             }
 
             if (Converter.TryConvertToSqlDateTimeString(to, out sqlDt, out dt, sqlFormat: "yyyyMMdd HH:mm:59"))
             {
-                filters.Add($"L.EXEC_TIME <= '{sqlDt}'");
+                filters.Add($"L.EXEC_TIME <= @endTime");
+                parameters.AddWithValue("@endTime", sqlDt, dbType);
             }
 
             if (userIds.Any())
             {
-                filters.Add($"U.{Escape(dbType, "USER_ID")} in ({string.Join(",", userIds)})");
+                filters.Add($"U.{Escape(dbType, "USER_ID")} in (SELECT ID FROM {dbType.GetIdTable("@userIds")})");
+                parameters.AddWithValue("@userIds", userIds, dbType);
             }
 
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.CustomerCode,
-                $@"L.ID as Id, L.EXEC_TIME AS ExecutionTime, L.API as IsApi, AT.CODE AS ActionTypeCode, AT.NAME AS ActionTypeName, ET.CODE AS EntityTypeCode, ET.NAME AS EntityTypeName,
-                L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.{Escape(dbType, "USER_ID")} as UserId, U.{Escape(dbType, "LOGIN")} as UserLogin, BA.NAME as ActionName",
-                $"BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.{Escape(dbType, "USER_ID")} = U.{Escape(dbType, "USER_ID")}" +
-                " INNER JOIN ACTION_TYPE AT ON AT.CODE = L.ACTION_TYPE_CODE" +
-                " INNER JOIN ENTITY_TYPE ET ON ET.CODE = L.ENTITY_TYPE_CODE" +
-                " INNER JOIN BACKEND_ACTION BA ON BA.CODE = L.ACTION_CODE"
+                $@"
+                L.ID as Id,
+                L.EXEC_TIME AS ExecutionTime,
+                L.API as IsApi,
+                AT.CODE AS ActionTypeCode,
+                AT.NAME AS ActionTypeName,
+                ET.CODE AS EntityTypeCode,
+                ET.NAME AS EntityTypeName,
+                L.ENTITY_STRING_ID AS EntityStringId,
+                L.PARENT_ENTITY_ID AS ParentEntityId,
+                L.ENTITY_TITLE AS EntityTitle,
+                U.{Escape(dbType, "USER_ID")} as UserId,
+                U.{Escape(dbType, "LOGIN")} as UserLogin,
+                BA.NAME as ActionName"
+                ,
+                $@"
+                BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.{Escape(dbType, "USER_ID")} = U.{Escape(dbType, "USER_ID")}
+                INNER JOIN ACTION_TYPE AT ON AT.CODE = L.ACTION_TYPE_CODE
+                INNER JOIN ENTITY_TYPE ET ON ET.CODE = L.ENTITY_TYPE_CODE
+                INNER JOIN BACKEND_ACTION BA ON BA.CODE = L.ACTION_CODE"
                 ,
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "ExecutionTime DESC",
                 string.Join(" AND ", filters),
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
@@ -1935,6 +1960,8 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
         {
             var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@userId", userId, dbType);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Article,
@@ -1954,10 +1981,11 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                       INNER JOIN {ns}.STATUS_TYPE as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
                                       INNER JOIN {ns}.{Escape(dbType, "USERS")} as us on us.USER_ID = it.LAST_MODIFIED_BY",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "ID ASC",
-                $"it.{Escape(dbType, "locked_by")} = {userId}",
+                $"it.{Escape(dbType, "locked_by")} = @userId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             ).ToList();
         }
 
@@ -2000,6 +2028,8 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
             var withNoLock = WithNoLock(dbType);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@userId", userId, dbType);
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Article,
@@ -2022,16 +2052,17 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                     INNER JOIN status_type as typ {withNoLock} on typ.STATUS_TYPE_ID = ci.STATUS_TYPE_ID
                                     INNER JOIN users as us on us.USER_ID = ci.LAST_MODIFIED_BY",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
-                $@"(wr2.user_id = {userId}
-                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind_recursive {withNoLock} WHERE user_id={userId})
+                $@"(wr2.user_id = @userId
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind_recursive {withNoLock} WHERE user_id = @userId
                                         )
                                         AND (
                                             ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
-                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval {withNoLock} where user_id = {userId})
+                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval {withNoLock} where user_id = @userId)
                                         ) AND ci.archive = 0",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             ).ToList();
         }
 
@@ -2264,9 +2295,9 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                         cmd.Parameters.AddRange(sqlParameters.ToArray());
                     }
 
-
                     var ds = new DataSet();
                     DataAdapterFactory.Create(cmd).Fill(ds);
+
                     if (ds.Tables.Count > 0)
                     {
                         result = ds.Tables[0];
@@ -2338,7 +2369,8 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
         public static IEnumerable<DataRow> GetNotificationsPage(DbConnection sqlConnection, int contentId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = GetDbType(sqlConnection);
-
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@contentId", contentId, dbType);
             var selectBlock = $@"
 NOTIFICATION_ID AS Id,
 NOTIFICATION_NAME as {Escape(dbType, "Name")},
@@ -2372,10 +2404,11 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 selectBlock,
                 fromBlock,
                 !string.IsNullOrEmpty(orderBy) ? orderBy : Escape(dbType, "Name"),
-                $"n.CONTENT_ID = {contentId}",
+                $"n.CONTENT_ID = @contentId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
@@ -2419,6 +2452,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
             var dbType = GetDbType(sqlConnection);
             var textType = dbType == DatabaseType.SqlServer ? "NVARCHAR" : "TEXT";
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@pluginId", pluginId, dbType);
+
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.QpPluginVersion,
@@ -2426,10 +2462,11 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 "p.MODIFIED as Modified, p.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
                 "PLUGIN_VERSION p inner join users u on p.LAST_MODIFIED_BY = u.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "ID",
-                $"p.PLUGIN_ID = {pluginId}",
+                "p.PLUGIN_ID = @pluginId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
@@ -2526,7 +2563,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
             {
-                whereBuilder.Append($" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM {(databaseType == DatabaseType.Postgres ? "unnest(@filterIds) i(id)" : "@filterIds")})");
+                whereBuilder.Append($" AND c.CONTENT_ITEM_ID IN (SELECT ID FROM {databaseType.GetIdTable("@filterIds")})");
             }
 
             var defaultSortExpression = useSelection ? "is_selected DESC, MODIFIED DESC" : "MODIFIED DESC";
@@ -2953,21 +2990,23 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
             var aggregatedContentIds = GetReferencedAggregatedContentIds(sqlConnection, options.ContentId);
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@contentId", options.ContentId, dbType);
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
-            var filter = "cnt.CONTENT_ID = " + options.ContentId;
+            var filter = "cnt.CONTENT_ID = @contentId";
 
             if (options.Mode == FieldSelectMode.ForExport || options.Mode == FieldSelectMode.ForExportExpanded)
             {
-                filter = "cnt.CONTENT_ID IN (" + string.Join(",", aggregatedContentIds.Union(new[] { options.ContentId })) + ")";
+                filter = $"cnt.CONTENT_ID IN (SELECT ID FROM {dbType.GetIdTable("@aggregatedContentIds")})";
                 filter = SqlFilterComposer.Compose(filter, $"ca.AGGREGATED = {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}");
                 filter = options.Mode == FieldSelectMode.ForExport ? SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID <> 13") : SqlFilterComposer.Compose(filter, "ca.ATTRIBUTE_TYPE_ID in (11, 13)");
+                parameters.AddWithValue("@aggregatedContentIds", aggregatedContentIds.Union(new[] { options.ContentId }).ToArray(), dbType);
             }
-
 
             var selectBuilder = new StringBuilder();
             selectBuilder.Append($@"ca.ATTRIBUTE_ID AS Id,
-  CASE WHEN (cnt.CONTENT_ID = {options.ContentId}) THEN ATTRIBUTE_NAME ELSE {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "cnt.CONTENT_NAME", "'.'", "ATTRIBUTE_NAME")} END as Name,
+  CASE WHEN (cnt.CONTENT_ID = @contentId) THEN ATTRIBUTE_NAME ELSE {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "cnt.CONTENT_NAME", "'.'", "ATTRIBUTE_NAME")} END as Name,
  ATTRIBUTE_NAME as FieldName,
  cnt.CONTENT_NAME as ContentName,
  ca.CREATED as Created,
@@ -2986,7 +3025,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             fromBuilder.Append(" INNER JOIN ATTRIBUTE_TYPE at on ca.attribute_type_id = at.attribute_type_id");
             if (useSelection)
             {
-                fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT ATTRIBUTE_ID from CONTENT_ATTRIBUTE where ATTRIBUTE_ID in ({0})) AS cas ON ca.ATTRIBUTE_ID = cas.ATTRIBUTE_ID ", string.Join(",", options.SelectedIDs));
+                fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT ATTRIBUTE_ID from CONTENT_ATTRIBUTE where ATTRIBUTE_ID in (SELECT ID FROM {0})) AS cas ON ca.ATTRIBUTE_ID = cas.ATTRIBUTE_ID ", dbType.GetIdTable("@selectedIds"));
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
             }
 
             return GetSimplePagedList(
@@ -2998,13 +3038,21 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 filter,
                 options.StartRecord,
                 options.PageSize,
-                out totalRecords);
+                out totalRecords,
+                sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetContentsPage(DbConnection sqlConnection, ContentPageOptions options, out int totalRecords)
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+
+            if (options.SiteId.HasValue)
+            {
+                parameters.AddWithValue("@siteId", options.SiteId.Value, dbType);
+            }
+
             var selectBuilder = new StringBuilder();
 
             selectBuilder.Append("c.CONTENT_ID as Id, c.CONTENT_NAME as Name, c.DESCRIPTION as Description, c.CREATED as Created, c.MODIFIED as Modified, c.VIRTUAL_TYPE as VirtualType");
@@ -3021,7 +3069,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
-                fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in ({0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", string.Join(",", options.SelectedIDs));
+                fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in (SELECT ID FROM {0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", dbType.GetIdTable("@selectedIds"));
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
             }
 
             if (options.Mode == ContentSelectMode.ForWorkflow)
@@ -3040,7 +3089,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             {
                 if (options.GroupId.Value > 0)
                 {
-                    filterBuilder.AppendFormat("C.CONTENT_GROUP_ID = {0} AND ", options.GroupId.Value);
+                    filterBuilder.Append("C.CONTENT_GROUP_ID = @groupId AND ");
+                    parameters.AddWithValue("@groupId", options.GroupId.Value, dbType);
                 }
                 else
                 {
@@ -3050,30 +3100,31 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             if (!string.IsNullOrWhiteSpace(options.ContentName))
             {
-                filterBuilder.AppendFormat("C.CONTENT_NAME LIKE '%{0}%' AND ", Cleaner.ToSafeSqlLikeCondition(dbType, options.ContentName));
+                filterBuilder.Append("C.CONTENT_NAME LIKE @contentName AND ");
+                parameters.AddWithValue("@contentName", $"%{options.ContentName}%", dbType);
             }
 
             var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
             switch (options.Mode)
             {
                 case ContentSelectMode.ForUnion:
-                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND VIRTUAL_TYPE IN (0, 1))");
+                    filterBuilder.Append($"((C.SITE_ID = @siteId or c.is_shared = {trueValue}) AND VIRTUAL_TYPE IN (0, 1))");
                     break;
 
                 case ContentSelectMode.ForJoin:
-                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND VIRTUAL_TYPE = 0)");
+                    filterBuilder.Append($"((C.SITE_ID = @siteId or c.is_shared = {trueValue}) AND VIRTUAL_TYPE = 0)");
                     break;
 
                 case ContentSelectMode.ForField:
-                    filterBuilder.AppendFormat("(C.SITE_ID = {0})", options.SiteId);
+                    filterBuilder.Append("(C.SITE_ID = @siteId)");
                     break;
 
                 case ContentSelectMode.ForContainer:
-                    filterBuilder.Append($"(C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) ");
+                    filterBuilder.Append($"(C.SITE_ID = @siteId or c.is_shared = {trueValue}) ");
                     break;
 
                 case ContentSelectMode.ForForm:
-                    filterBuilder.Append($"((C.SITE_ID = {options.SiteId} or c.is_shared = {trueValue}) AND c.VIRTUAL_TYPE = 0) ");
+                    filterBuilder.Append($"((C.SITE_ID = @siteId or c.is_shared = {trueValue}) AND c.VIRTUAL_TYPE = 0) ");
                     break;
 
                 case ContentSelectMode.ForCustomAction:
@@ -3083,16 +3134,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 default:
                     if (options.SiteId.HasValue)
                     {
-                        filterBuilder.AppendFormat(" C.SITE_ID = {0} AND ", options.SiteId.Value);
+                        filterBuilder.Append(" C.SITE_ID = @siteId AND ");
                     }
 
                     filterBuilder.AppendFormat(" C.VIRTUAL_TYPE {0} 0 ", options.IsVirtual ? "<>" : "=");
                     break;
             }
 
-            if (!string.IsNullOrEmpty(options.CustomFilter))
+            if (options.CustomFilter?.Any() ?? false)
             {
-                filterBuilder.AppendFormat(" AND ({0})", options.CustomFilter);
+                filterBuilder.AppendFormat(" AND ({0})", CommonCustomFilters.GetFilterQuery(sqlConnection, parameters, dbType, options.SiteId ?? 0, options.CustomFilter));
             }
 
             return GetSimplePagedList(
@@ -3106,7 +3157,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 options.PageSize,
                 out totalRecords,
                 options.UserId,
-                options.UseSecurity
+                options.UseSecurity,
+                sqlParameters: parameters
             );
         }
 
@@ -3115,6 +3167,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
             var selectBuilder = new StringBuilder();
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
 
             selectBuilder.Append("s.SITE_ID as Id, s.SITE_NAME as Name, s.DESCRIPTION as Description, s.CREATED as Created, s.MODIFIED as Modified, U.LOGIN as LastModifiedByUser");
             selectBuilder.Append($", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName ");
@@ -3129,7 +3182,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             if (useSelection)
             {
-                fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT SITE_ID from SITE s where SITE_ID in ({0})) AS cis ON s.SITE_ID = cis.SITE_ID ", string.Join(",", options.SelectedIDs));
+                fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT SITE_ID from SITE s where SITE_ID in (SELECT ID FROM {0})) AS cis ON s.SITE_ID = cis.SITE_ID ", dbType.GetIdTable("@selectedIds"));
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
             }
 
             if (options.UseSecurity)
@@ -3149,7 +3203,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 options.PageSize,
                 out totalRecords,
                 options.UserId,
-                options.UseSecurity
+                options.UseSecurity,
+                sqlParameters: parameters
             );
         }
 
@@ -3786,6 +3841,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static IEnumerable<DataRow> GetSitePermissionPage(DbConnection sqlConnection, int siteId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@siteId", siteId, dbType);
+
             var selectBlock = $@"SA.SITE_ACCESS_ID AS ID
                                       ,U.{Escape(dbType, "LOGIN")} AS UserLogin
                                       ,G.GROUP_NAME AS GroupName
@@ -3803,13 +3861,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "SITE_ID = " + siteId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "SITE_ID = @siteId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetContentPermissionPage(DbConnection sqlConnection, int contentId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@contentId", contentId, dbType);
+
             var selectBlock = $@"SA.CONTENT_ACCESS_ID AS ID
                                       ,U.{Escape(dbType, "LOGIN")} AS UserLogin
                                       ,G.GROUP_NAME AS GroupName
@@ -3827,13 +3888,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ID = " + contentId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ID = @contentId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetArticlePermissionPage(DbConnection sqlConnection, int articleId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@articleId", articleId, dbType);
+
             var selectBlock = $@"SA.CONTENT_ITEM_ACCESS_ID AS ID
                                       ,U.LOGIN AS UserLogin
                                       ,G.GROUP_NAME AS GroupName
@@ -3851,13 +3915,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ITEM_ID = " + articleId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "CONTENT_ITEM_ID = @articleId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetWorkflowPermissionPage(DbConnection sqlConnection, int workflowId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@workflowId", workflowId, dbType);
+
             var selectBlock = $@"SA.WORKFLOW_ACCESS_ACCESS_ID AS ID
                                       ,U.LOGIN AS UserLogin
                                       ,G.GROUP_NAME AS GroupName
@@ -3875,13 +3942,15 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "WORKFLOW_ID = " + workflowId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "WORKFLOW_ID = @workflowId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetSiteFolderPermissionPage(DbConnection sqlConnection, int folderId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@folderId", folderId, dbType);
 
             var selectBlock = $@"SA.FOLDER_ACCESS_ID AS ID
                                       ,U.LOGIN AS UserLogin
@@ -3900,13 +3969,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN USERS U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "FOLDER_ID = " + folderId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "FOLDER_ID = @folderId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetEntityTypePermissionPage(DbConnection sqlConnection, int entityTypeId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@entityTypeId", entityTypeId, dbType);
+
             var selectBlock = $@"SA.ENTITY_TYPE_ACCESS_ID AS ID
                                     ,U.LOGIN AS UserLogin
                                     ,G.GROUP_NAME AS GroupName
@@ -3924,13 +3996,16 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ENTITY_TYPE_ID = " + entityTypeId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ENTITY_TYPE_ID = @entityTypeId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetActionPermissionPage(DbConnection sqlConnection, int actionId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@actionId", actionId, dbType);
+
             var selectBlock = $@"SA.ACTION_ACCESS_ID AS ID
                                     ,U.LOGIN AS UserLogin
                                     ,G.GROUP_NAME AS GroupName
@@ -3948,8 +4023,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                     JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
                                     JOIN {Escape(dbType, "USERS")} U2 ON U2.USER_ID = SA.LAST_MODIFIED_BY";
 
-            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ACTION_ID = " + actionId;
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords);
+            var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : string.Empty) + "ACTION_ID = @actionId";
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.SitePermission, selectBlock, fromBlock, orderBy, localFilter, startRow, pageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetUserGroupPage(DbConnection sqlConnection, List<int> selectedIds, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
@@ -3981,24 +4056,30 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             var filters = new List<string>(4);
             var dbType = GetDbType(sqlConnection);
             var ns = DbSchemaName(dbType);
+            var parameters = new List<DbParameter>();
+
             if (!string.IsNullOrEmpty(options.Login))
             {
-                filters.Add($"U.LOGIN LIKE '%{options.Login}%'");
+                filters.Add($"U.LOGIN LIKE @login");
+                parameters.AddWithValue("@login", $"%{options.Login}%", dbType);
             }
 
             if (!string.IsNullOrEmpty(options.Email))
             {
-                filters.Add($"U.EMAIL LIKE '%{options.Email}%'");
+                filters.Add($"U.EMAIL LIKE @email");
+                parameters.AddWithValue("@email", $"%{options.Email}%", dbType);
             }
 
             if (!string.IsNullOrEmpty(options.FirstName))
             {
-                filters.Add($"U.FIRST_NAME LIKE '%{options.FirstName}%'");
+                filters.Add($"U.FIRST_NAME LIKE @firstName");
+                parameters.AddWithValue("@firstName", $"%{options.FirstName}%", dbType);
             }
 
             if (!string.IsNullOrEmpty(options.LastName))
             {
-                filters.Add($"U.LAST_NAME LIKE '%{options.LastName}%'");
+                filters.Add($"U.LAST_NAME LIKE @lastName");
+                parameters.AddWithValue("@lastName", $"%{options.LastName}%", dbType);
             }
 
             if (filters.Any())
@@ -4012,20 +4093,25 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (options.SelectedIDs != null && options.SelectedIDs.Any())
             {
                 selectBlock += $" ,{SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (UIS.USER_ID IS NOT NULL) THEN 1 else 0 end")} AS is_selected";
-                fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in ({string.Join(",", options.SelectedIDs)})) AS UIS ON UIS.USER_ID = U.USER_ID";
+                fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in (SELECT ID FROM {dbType.GetIdTable("@selectedIds")})) AS UIS ON UIS.USER_ID = U.USER_ID";
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "is_selected DESC, LOGIN ASC" : options.SortExpression;
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
             }
             else
             {
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "LOGIN ASC" : options.SortExpression;
             }
 
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.User, selectBlock, fromBlock, orderBy, strFilter, options.StartRecord, options.PageSize, out totalRecords);
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.User, selectBlock, fromBlock, orderBy, strFilter, options.StartRecord, options.PageSize, out totalRecords, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetChildContentPermissionsForUser(DbConnection sqlConnection, int siteId, int userId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@userId", userId, dbType);
+            parameters.AddWithValue("@siteId", siteId, dbType);
+
             var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.USER_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
                                 coalesce(P2.PROPAGATE_TO_ITEMS, cast(0 as numeric(18, 0))) AS PropagateToItems,
@@ -4033,19 +4119,20 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.USER_ID = {{0}}
+                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.USER_ID = @userId
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE C.SITE_ID = {{1}}) AS TR";
+                                 WHERE C.SITE_ID = @siteId) AS TR";
 
-            fromBlock = string.Format(fromBlock, userId, siteId);
+
             string filter = null;
             if (contentId.HasValue)
             {
-                filter = "ID = " + contentId.Value;
+                filter = "ID = @contentId";
+                parameters.AddWithValue("@contentId", contentId.Value, dbType);
             }
 
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.Content, "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Site, parentEntityId: siteId);
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.Content, "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Site, parentEntityId: siteId, sqlParameters: parameters);
         }
 
         public static DataRow GetChildContentPermissionForUser(DbConnection sqlConnection, int siteId, int contentId, int userId)
@@ -4058,7 +4145,11 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static IEnumerable<DataRow> GetChildContentPermissionsForGroup(DbConnection sqlConnection, int siteId, int groupId, string orderBy, int startRow, int pageSize, out int totalRecords, int? contentId = null)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@groupId", groupId, dbType);
+            parameters.AddWithValue("@siteId", siteId, dbType);
             var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
+
             var fromBlock = $@"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
                                 coalesce(P2.PROPAGATE_TO_ITEMS, cast(0 as numeric(18, 0))) As PropagateToItems,
@@ -4066,20 +4157,19 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
+                                 LEFT JOIN content_access_permlevel_site P2 ON P1.CONTENT_ID = P2.CONTENT_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = @groupId
                                  RIGHT JOIN CONTENT C ON P1.CONTENT_ID = C.CONTENT_ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE C.SITE_ID = {{1}}) AS TR";
-
-            fromBlock = string.Format(fromBlock, groupId, siteId);
+                                 WHERE C.SITE_ID = @siteId) AS TR";
 
             string filter = null;
             if (contentId.HasValue)
             {
-                filter = "ID = " + contentId.Value;
+                filter = "ID = @contentId";
+                parameters.AddWithValue("@contentId", contentId.Value, dbType);
             }
 
-            return GetSimplePagedList(sqlConnection, EntityTypeCode.Content, "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Site, parentEntityId: siteId);
+            return GetSimplePagedList(sqlConnection, EntityTypeCode.Content, "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Site, parentEntityId: siteId, sqlParameters: parameters);
         }
 
         public static DataRow GetChildContentPermissionForGroup(DbConnection sqlConnection, int siteId, int contentId, int groupId)
@@ -4092,6 +4182,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static IEnumerable<DataRow> GetChildArticlePermissionsForUser(DbConnection sqlConnection, int contentId, int userId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@userId", userId, dbType);
             var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
             var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
 
@@ -4102,17 +4194,18 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                                 ,L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
-                                LEFT JOIN content_item_access_permlevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.{Escape(dbType, "USER_ID")} = {userId}
+                                LEFT JOIN content_item_access_permlevel_content P2 ON P1.CONTENT_ITEM_ID = P2.CONTENT_ITEM_ID and P1.PERMISSION_LEVEL = p2.PERMISSION_LEVEL and P2.{Escape(dbType, "USER_ID")} = @userId
                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
                                 RIGHT JOIN CONTENT_{contentId} CI {WithNoLock(dbType)} ON CI.CONTENT_ITEM_ID = P1.CONTENT_ITEM_ID) AS TR";
 
             string filter = null;
             if (articleId.HasValue)
             {
-                filter = "ID = " + articleId.Value;
+                filter = "ID = @articleId";
+                parameters.AddWithValue("@articleId", articleId.Value, dbType);
             }
 
-            return GetSimplePagedList(sqlConnection, "content_item", "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Content, parentEntityId: contentId);
+            return GetSimplePagedList(sqlConnection, "content_item", "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Content, parentEntityId: contentId, sqlParameters: parameters);
         }
 
         public static DataRow GetChildArticlePermissionForUser(DbConnection sqlConnection, int contentId, int articleId, int userId)
@@ -4125,6 +4218,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static IEnumerable<DataRow> GetChildArticlePermissionsForGroup(DbConnection sqlConnection, int contentId, int groupId, string titleFieldName, string orderBy, int startRow, int pageSize, out int totalRecords, int? articleId = null)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
             var trueValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, true);
             var falseValue = SqlQuerySyntaxHelper.ToBoolSql(dbType, false);
             var fromBlock = $@"(select CI.CONTENT_ITEM_ID AS ID, {SqlQuerySyntaxHelper.CastToString(dbType, $"CI.{Escape(dbType, titleFieldName)}")} AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
@@ -4143,10 +4237,11 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             string filter = null;
             if (articleId.HasValue)
             {
-                filter = "ID = " + articleId.Value;
+                filter = "ID = @articleId";
+                parameters.AddWithValue("@articleId", articleId.Value, dbType);
             }
 
-            return GetSimplePagedList(sqlConnection, "content_item", "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Content, parentEntityId: contentId);
+            return GetSimplePagedList(sqlConnection, "content_item", "*", fromBlock, orderBy, filter, startRow, pageSize, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, parentEntityTypeCode: EntityTypeCode.Content, parentEntityId: contentId, sqlParameters: parameters);
         }
 
         public static DataRow GetChildArticlePermissionForGroup(DbConnection sqlConnection, int contentId, int articleId, int groupId) =>
@@ -4373,51 +4468,74 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static IEnumerable<DataRow> GetEntityTypePermissionsForGroup(DbConnection sqlConnection, int groupId, int? entityId = null)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@groupId", groupId, dbType);
+            if (entityId.HasValue)
+            {
+                parameters.AddWithValue("@entityId", entityId.Value, dbType);
+            }
+
             var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit from
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = @groupId
                                  RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{1}}) AS TR";
+                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{0}}) AS TR";
 
-            fromBlock = string.Format(fromBlock, groupId, entityId.HasValue ? $"AND T.ID = {entityId.Value}" : string.Empty);
+            fromBlock = string.Format(fromBlock, entityId.HasValue ? "AND T.ID = @entityId" : string.Empty);
 
             int totalRecords;
-            return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100);
+            return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetEntityTypePermissionsForUser(DbConnection sqlConnection, int userId, int? entityId = null)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@userId", userId, dbType);
+            if (entityId.HasValue)
+            {
+                parameters.AddWithValue("@entityId", entityId.Value, dbType);
+            }
+
             var fromBlock = $@"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit, L.PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = {{0}}
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = @userId
                                  RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{1}}) AS TR";
+                                 WHERE T.ACTION_PERMISSION_ENABLE = {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)} {{0}}) AS TR";
 
-            fromBlock = string.Format(fromBlock, userId, entityId.HasValue ? $"AND T.ID = {entityId.Value}" : string.Empty);
+            fromBlock = string.Format(fromBlock, entityId.HasValue ? "AND T.ID = @entityId" : string.Empty);
 
             int totalRecords;
-            return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100);
+            return GetSimplePagedList(sqlConnection, "ENTITY_TYPE", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetActionPermissionsForGroup(QPModelDataContext efContext, DbConnection sqlConnection, int groupId, int entityTypeId, int? actionId)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
             var refreshActionTypeId = efContext.ActionTypeSet.First(x => x.Code.Equals(ActionTypeCode.Refresh)).Id;
+            parameters.AddWithValue("@refreshActionTypeId", refreshActionTypeId, dbType);
+            parameters.AddWithValue("@groupId", groupId, dbType);
+            parameters.AddWithValue("@entityTypeId", entityTypeId, dbType);
+            if (actionId.HasValue)
+            {
+                parameters.AddWithValue("@actionId", actionId.Value, dbType);
+            }
+
             var fromBlock = $@"(select
                                     T.ID,
                                     T.NAME,
-                                    COALESCE(L.PERMISSION_LEVEL_NAME, {{2}}) AS PERMISSION_LEVEL_NAME,
+                                    COALESCE(L.PERMISSION_LEVEL_NAME, {{0}}) AS PERMISSION_LEVEL_NAME,
                                    {SqlQuerySyntaxHelper.CastToBool(dbType, "case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit
                                 from
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {{0}}
+                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = @groupId
                                  RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ENTITY_TYPE_ID = {{1}} {{3}} AND T.{Escape(dbType, "TYPE_ID")} != {refreshActionTypeId}) AS TR";
+                                 WHERE T.ENTITY_TYPE_ID = @entityTypeId {{1}} AND T.{Escape(dbType, "TYPE_ID")} != @refreshActionTypeId) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermission = GetEntityTypePermissionsForGroup(sqlConnection, groupId, entityTypeId).FirstOrDefault();
@@ -4426,29 +4544,40 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 entityPermissionLevelName = $"N'{entityPermission.Field<string>("PERMISSION_LEVEL_NAME")}'";
             }
 
-            fromBlock = string.Format(fromBlock, groupId, entityTypeId, entityPermissionLevelName, actionId.HasValue ? $"AND T.ID = {actionId.Value}" : string.Empty);
+            fromBlock = string.Format(fromBlock, entityPermissionLevelName, actionId.HasValue ? "AND T.ID = @actionId" : string.Empty);
 
             int totalRecords;
-            return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100);
+            return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out totalRecords, useSecurity: true, groupId: groupId, startLevel: 0, endLevel: 100, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetActionPermissionsForUser(QPModelDataContext efContext, DbConnection sqlConnection, int userId, int entityTypeId, int? actionId)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
             var refreshActionTypeId = efContext.ActionTypeSet.First(x => x.Code.Equals(ActionTypeCode.Refresh)).Id;
+            parameters.AddWithValue("@refreshActionTypeId", refreshActionTypeId, dbType);
+
+            parameters.AddWithValue("@userId", userId, dbType);
+            parameters.AddWithValue("@entityTypeId", entityTypeId, dbType);
+            if (actionId.HasValue)
+            {
+                parameters.AddWithValue("@actionId", actionId.Value, dbType);
+            }
+
+
             var fromBlock = $@"(
 select
 T.ID,
 T.NAME,
-COALESCE(L.PERMISSION_LEVEL_NAME, {{2}}) AS PERMISSION_LEVEL_NAME,
+COALESCE(L.PERMISSION_LEVEL_NAME, {{0}}) AS PERMISSION_LEVEL_NAME,
 {SqlQuerySyntaxHelper.CastToBool(dbType, $"case when P2.{Escape(dbType, "USER_ID")} IS NOT NULL THEN 1 ELSE 0 END")} AS IsExplicit,
-COALESCE(L.PERMISSION_LEVEL, {{4}}) AS PERMISSION_LEVEL
+COALESCE(L.PERMISSION_LEVEL, {{2}}) AS PERMISSION_LEVEL
                                  FROM
                                  (<$_security_insert_$>) P1
-                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = {{0}}
+                                 LEFT JOIN backend_action_access_permlevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.{Escape(dbType, "USER_ID")} = @userId
                                  RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
                                  LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-                                 WHERE T.ENTITY_TYPE_ID = {{1}} {{3}} AND T.{Escape(dbType, "TYPE_ID")} != {refreshActionTypeId}) AS TR";
+                                 WHERE T.ENTITY_TYPE_ID = @entityTypeId {{1}} AND T.{Escape(dbType, "TYPE_ID")} != @refreshActionTypeId) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermissionLevel = "NULL";
@@ -4462,8 +4591,8 @@ COALESCE(L.PERMISSION_LEVEL, {{4}}) AS PERMISSION_LEVEL
                 }
             }
 
-            fromBlock = string.Format(fromBlock, userId, entityTypeId, entityPermissionLevelName, actionId.HasValue ? $"AND T.ID = {actionId.Value}" : string.Empty, entityPermissionLevel);
-            return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out int _, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100);
+            fromBlock = string.Format(fromBlock, entityPermissionLevelName, actionId.HasValue ? "AND T.ID = @actionId" : string.Empty, entityPermissionLevel);
+            return GetSimplePagedList(sqlConnection, "backend_action", "*", fromBlock, "ID ASC", null, 0, 0, out int _, useSecurity: true, userId: userId, startLevel: 0, endLevel: 100, sqlParameters: parameters);
         }
 
         public static IEnumerable<DataRow> GetVisualEditorCommandsBySiteId(DbConnection sqlConnection, int siteId)
@@ -4917,6 +5046,9 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
         public static IEnumerable<DataRow> GetWorkflowsPage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@siteId", siteId, dbType);
+
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Workflow,
@@ -4924,16 +5056,20 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 "w.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
                 "WORKFLOW w inner join users u on w.LAST_MODIFIED_BY = u.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : Escape(dbType, "Name"),
-                "w.SITE_ID = " + siteId,
+                "w.SITE_ID = @siteId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
         public static IEnumerable<DataRow> GetStatusTypePage(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@siteId", siteId, dbType);
+
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.StatusType,
@@ -4941,10 +5077,11 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 " s.LAST_MODIFIED_BY as LastModifiedBy, u.LOGIN as LastModifiedByLogin",
                 "STATUS_TYPE s inner join users u on s.LAST_MODIFIED_BY = u.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "Weight",
-                "s.SITE_ID = " + siteId,
+                "s.SITE_ID = @siteId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
@@ -5472,6 +5609,9 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
         public static IEnumerable<DataRow> GetPageTemplatesBySiteId(DbConnection sqlConnection, int siteId, string orderBy, out int totalRecords, int startRow = 0, int pageSize = 0)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@siteId", siteId, dbType);
+
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.PageTemplate,
@@ -5479,16 +5619,20 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 $"p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName",
                 "PAGE_TEMPLATE as p inner join users u on p.LAST_MODIFIED_BY = u.user_id left outer join users u2 on p.LOCKED_BY = u2.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : $"{Escape(dbType, "Name")} ASC",
-                "p.SITE_ID = " + siteId,
+                "p.SITE_ID = @siteId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
         public static IEnumerable<DataRow> GetPagesByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@templateId", templateId, dbType);
+
             return GetSimplePagedList(
                 sqlConnection,
                 EntityTypeCode.Page,
@@ -5498,16 +5642,19 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 $"{DbSchemaName(dbType)}.{Escape(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
                 " = uu.user_id left outer join users u2 on p.LAST_ASSEMBLED_BY = u2.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "Name Asc",
-                "p.PAGE_TEMPLATE_ID = " + templateId,
+                "p.PAGE_TEMPLATE_ID = @templateId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
         public static IEnumerable<DataRow> GetTemplateObjectsByTemplateId(DbConnection sqlConnection, int templateId, string orderBy, out int totalRecords, int startRow, int pageSize)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@templateId", templateId, dbType);
 
             var selectBlock = $@"
 o.parent_object_id as parentId,
@@ -5535,10 +5682,11 @@ left join (select distinct parent_object_id as object_id from object) oo on o.OB
                 selectBlock,
                 fromBlock,
                 !string.IsNullOrEmpty(orderBy) ? orderBy : $"{Escape(dbType, "Name")} ASC",
-                "o.PAGE_TEMPLATE_ID = " + templateId,
+                "o.PAGE_TEMPLATE_ID = @templateId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
@@ -5549,10 +5697,11 @@ left join (select distinct parent_object_id as object_id from object) oo on o.OB
             "u.[LOGIN] as [LastModifiedByLogin], t.[TYPE_NAME] as [TypeName], o.LAST_MODIFIED_BY AS [LastModifiedBy], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName, cast(0 as bit) as Overriden",
             "[PAGE_OBJECT] o inner join USERS u on o.LAST_MODIFIED_BY = u.USER_ID inner join [OBJECT_TYPE] t on o.OBJECT_TYPE_ID = t.OBJECT_TYPE_ID left outer join users u2 on o.[LOCKED_BY] = u2.user_id",
             !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "o.[PAGE_ID] = " + pageId,
+            "o.[PAGE_ID] = @pageId",
             startRow,
             pageSize,
-            out totalRecords
+            out totalRecords,
+            sqlParameters: new List<DbParameter>().AddWithValue("@pageId", pageId, GetDbType(sqlConnection))
         );
 
         public static IEnumerable<DataRow> GetObjectFormatsByObjectId(DbConnection sqlConnection, int objectId, string orderBy, out int totalRecords, int startRow, int pageSize, bool pageOrTemplate) => GetSimplePagedList(
@@ -5562,10 +5711,11 @@ left join (select distinct parent_object_id as object_id from object) oo on o.OB
             "u.[LOGIN] as [LastModifiedByLogin], o.LAST_MODIFIED_BY AS [LastModifiedBy], u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName, t.[OBJECT_FORMAT_ID] as [FormatIdToCheck]",
             "[OBJECT_FORMAT] o inner join USERS u on o.LAST_MODIFIED_BY = u.USER_ID inner join [OBJECT] t on o.OBJECT_ID = t.OBJECT_ID left outer join users u2 on o.[LOCKED_BY] = u2.user_id",
             !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "o.[OBJECT_ID] = " + objectId,
+            "o.[OBJECT_ID] = @objectId",
             startRow,
             pageSize,
-            out totalRecords
+            out totalRecords,
+            sqlParameters: new List<DbParameter>().AddWithValue("@objectId", objectId, GetDbType(sqlConnection))
         );
 
         public static string GetSiteScriptLanguageByPageId(DbConnection sqlConnection, int pageId)
@@ -5601,10 +5751,11 @@ left join (select distinct parent_object_id as object_id from object) oo on o.OB
             "dbo.[PAGE] as p inner join users as u on p.LAST_MODIFIED_BY = u.user_id left outer join users uu on p.[LAST_ASSEMBLED_BY] = uu.user_id left outer join users u2 on p.[ASSEMBLED] = u2.user_id" +
             " left outer join page_template as t on p.[PAGE_TEMPLATE_ID] = t.[PAGE_TEMPLATE_ID]",
             !string.IsNullOrEmpty(orderBy) ? orderBy : "[Name] ASC",
-            "t.[SITE_ID] = " + parentId,
+            "t.[SITE_ID] = @parentId",
             startRow,
             pageSize,
-            out totalRecords
+            out totalRecords,
+            sqlParameters: new List<DbParameter>().AddWithValue("@parentId", parentId, GetDbType(sqlConnection))
         );
 
         public static void CopyContentCustomActions(DbConnection sqlConnection, int sourceId, int destinationId)
@@ -5668,6 +5819,9 @@ order by ActionDate desc
         public static List<DataRow> GetAllHistoryStatusesForArticle(DbConnection sqlConnection, int articleId, string orderBy, int startRow, int pageSize, out int totalRecords)
         {
             var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@articleId", articleId, dbType);
+
             var selectBlock = @"h.STATUS_HISTORY_ID as ID
                                             ,h.STATUS_HISTORY_DATE as ActionDate
                                             ,COALESCE(h1.DESCRIPTION, h.DESCRIPTION) as Comment
@@ -5686,10 +5840,11 @@ order by ActionDate desc
                 selectBlock,
                 formattableString,
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "ActionDate DESC",
-                $"h.CONTENT_ITEM_ID = {articleId}",
+                "h.CONTENT_ITEM_ID = @articleId",
                 startRow,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             ).ToList();
         }
 
@@ -6037,10 +6192,11 @@ order by ActionDate desc
                 s.MODIFIED as Modified, s.[CREATED] as Created, s.LAST_MODIFIED_BY as LastModifiedBy, s.BUILT_IN, u.[LOGIN] as LastModifiedByLogin ",
             @" [workflow_rules] as wr inner join status_type as s on s.[STATUS_TYPE_ID] = wr.[SUCCESSOR_STATUS_ID] inner join USERS as u on u.[USER_ID] = s.LAST_MODIFIED_BY ",
             !string.IsNullOrEmpty(orderBy) ? orderBy : "[Id]",
-            "WORKFLOW_ID = " + workflowId,
+            "WORKFLOW_ID = @workflowId",
             startRow,
             pageSize,
-            out totalRecords
+            out totalRecords,
+            sqlParameters: new List<DbParameter>().AddWithValue("@workflowId", workflowId, GetDbType(sqlConnection))
         );
 
         public static IEnumerable<DataRow> GetAllStatusesForWorkflow(DbConnection sqlConnection, int workflowId)
@@ -6247,24 +6403,31 @@ order by ActionDate desc
 
         public static IEnumerable<DataRow> GetSearchFormatPage(DbConnection sqlConnection, string sortExpression, int siteId, int? templateId, int? pageId, string filter, out int totalRecords, int start, int pageSize)
         {
+            var dbType = GetDbType(sqlConnection);
+            var parameters = new List<DbParameter>();
+            parameters.AddWithValue("@siteId", siteId, dbType);
+
             var filters = new List<string>
             {
-                $"s.SITE_ID = '{Cleaner.ToSafeSqlString(siteId.ToString())}'"
+                "s.SITE_ID = @siteId"
             };
 
             if (templateId.HasValue)
             {
-                filters.Add($"t.[PAGE_TEMPLATE_ID] = '{Cleaner.ToSafeSqlString(templateId.ToString())}'");
+                filters.Add("t.[PAGE_TEMPLATE_ID] = @templateId");
+                parameters.AddWithValue("@templateId", templateId, dbType);
             }
 
             if (pageId.HasValue)
             {
-                filters.Add($"p.[PAGE_ID] = '{Cleaner.ToSafeSqlString(pageId.ToString())}'");
+                filters.Add("p.[PAGE_ID] = @pageId");
+                parameters.AddWithValue("@pageId", pageId, dbType);
             }
 
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                filters.Add(string.Format("(f.[FORMAT_BODY] like '%{0}%' OR f.[CODE_BEHIND] like '%{0}%')", Cleaner.ToSafeSqlString(filter)));
+                filters.Add(string.Format("(f.[FORMAT_BODY] like @formatFilter OR f.[CODE_BEHIND] like @formatFilter)"));
+                parameters.AddWithValue("@formatFilter", $"%{filter}%", dbType);
             }
 
             return GetSimplePagedList(
@@ -6277,7 +6440,8 @@ order by ActionDate desc
                 string.Join(" AND ", filters),
                 start,
                 pageSize,
-                out totalRecords
+                out totalRecords,
+                sqlParameters: parameters
             );
         }
 
@@ -6387,10 +6551,11 @@ order by ActionDate desc
             "v.[OBJECT_FORMAT_VERSION_ID] as Id, v.[DESCRIPTION] as Description, v.[MODIFIED] as Modified, u.Login as [LastModifiedByLogin]",
             "[OBJECT_FORMAT_VERSION] as v inner join USERS as u on v.[LAST_MODIFIED_BY] = u.[USER_ID]",
             !string.IsNullOrEmpty(orderBy) ? orderBy : "Id",
-            "v.[OBJECT_FORMAT_ID] = " + formatId,
+            "v.[OBJECT_FORMAT_ID] = @formatId",
             startRow,
             pageSize,
-            out totalRecords
+            out totalRecords,
+            sqlParameters: new List<DbParameter>().AddWithValue("@formatId", formatId, GetDbType(sqlConnection))
         );
 
         public static void RestoreObjectFormatVersion(DbConnection connection, int versionId)
@@ -6404,6 +6569,7 @@ order by ActionDate desc
         }
         public static List<int> CheckForArticlesExistence(DbConnection sqlConnection, List<int> relatedIds, string condition, int contentId)
         {
+            var dbType = GetDbType(sqlConnection);
             var result = new List<int>();
             if (!string.IsNullOrEmpty(condition))
             {
@@ -6415,12 +6581,12 @@ order by ActionDate desc
                 relatedIds.Add(0);
             }
 
-            var dbType = GetDbType(sqlConnection);
-
-            var query = $"select content_item_id from content_{contentId} c {WithNoLock(dbType)} where content_item_id in ({string.Join(",", relatedIds)}) {condition}";
+            var query = $"select content_item_id from content_{contentId} c {WithNoLock(dbType)} where content_item_id in (select id from {dbType.GetIdTable("@relatedIds")}) {condition}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@relatedIds", relatedIds, dbType));
+
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())

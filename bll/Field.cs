@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -21,6 +23,7 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QPublishing.Info;
@@ -98,6 +101,7 @@ namespace Quantumart.QP8.BLL
             FieldExactTypes.Classifier
         });
 
+        public static CustomFilter DefaultExternalRelationFilter = CustomFilter.GetArchiveFilter(0);
         public static readonly string DefaultRelationFilter = "c.archive = 0";
         public static readonly string ArchiveFilter = "c.archive = 1";
 
@@ -3006,6 +3010,25 @@ namespace Quantumart.QP8.BLL
             return ExactType != FieldExactTypes.M2ORelation
                 ? RelationFilter
                 : $"(c.{escapedBackRelationName} = {articleId} OR c.{escapedBackRelationName} IS NULL) AND c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "ARCHIVE")} = 0";
+        }
+
+        public string GetExternalRelationFilters(int articleId)
+        {
+            var filter = new List<CustomFilter>() { DefaultExternalRelationFilter };
+
+            if (ExactType == FieldExactTypes.M2ORelation)
+            {
+                filter.Add(CustomFilter.GetBackwardFilter(articleId, BackRelation.Id));
+            }
+            else
+            {
+                if (UseRelationCondition)
+                {
+                    filter.Add(CustomFilter.GetRelationFilter(Id));
+                }  
+            }
+
+            return JsonConvert.SerializeObject(filter.ToArray());
         }
 
         public void ParseStringEnumJson(string json)
