@@ -202,7 +202,8 @@ namespace Quantumart.QP8.DAL
             int? searchLimit = null,
             string extraSelect = "",
             string extraFrom = "",
-            string orderBy = "")
+            string orderBy = "",
+            IList<DbParameter> sqlParameters = null)
         {
             var databaseType = GetDbType(cn);
             string securityJoin = "";
@@ -234,7 +235,14 @@ namespace Quantumart.QP8.DAL
                 ORDER BY {actualOrderBy}
                 {limit}
             ";
-            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", idsToFilter, databaseType), GetIdsDatatableParam("@myData", selectedArticleIds, databaseType));
+
+            var parameters = new List<DbParameter>(sqlParameters ?? new List<DbParameter>())
+            {
+                GetIdsDatatableParam("@ids", idsToFilter, databaseType),
+                GetIdsDatatableParam("@myData", selectedArticleIds, databaseType)
+            };
+
+            return GetDatatableResult(cn, query, parameters.ToArray());
         }
 
         public static void ExecuteSql(DbConnection connection, string sqlString, List<DbParameter> parameters, string returnIdParamName, out int id)

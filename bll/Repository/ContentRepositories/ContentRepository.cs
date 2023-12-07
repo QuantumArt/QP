@@ -172,15 +172,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     StartRecord = cmd.StartRecord,
                     PageSize = cmd.PageSize,
                     LanguageId = QPContext.CurrentLanguageId,
-                    CustomFilter = filter.CustomFilter?
-                    .Where(item => item != null)
-                    .Select(item => new CustomFilter
-                    {
-                        Filter = item.Filter,
-                        Field = item.Filter,
-                        Value = item.Value
-                    })
-                    .ToArray()
+                    CustomFilter = MapperFacade.CustomFilterMapper.GetDalList(filter?.CustomFilter?.ToList()).ToArray()
                 };
 
                 var rows = Common.GetContentsPage(scope.DbConnection, options, out var totalRecords);

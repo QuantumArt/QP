@@ -54,6 +54,7 @@ namespace Quantumart.QP8.DAL
             CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
             CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.Value, index),
             CustomFilter.M2MFilter => GetM2MFilter(parameters, dbType, item.Value, index),
+            CustomFilter.FalseFilter => GetFalseFilter(),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
         };
 
@@ -73,11 +74,10 @@ namespace Quantumart.QP8.DAL
             int articleId;
             int fieldId;
 
-            if (value is JArray array)
+            if (TryGetIntValues(value, out var array))
             {
-                var values = array.ToObject<int[]>();
-                articleId = values[0];
-                fieldId = values[1];
+                articleId = array[0];
+                fieldId = array[1];
             }
             else
             {
@@ -187,9 +187,8 @@ namespace Quantumart.QP8.DAL
                         throw new ArgumentException($"Value {value} for field {field} must be number", nameof(value));
                     }
                 }
-                if (value is JArray intArray)
+                else if (TryGetIntValues(value, out var ids))
                 {
-                    var ids = intArray.ToObject<int[]>();
                     parameters.AddWithValue(paramName, ids, dbType);
                     isAtomic = false;
                 }
@@ -241,10 +240,8 @@ namespace Quantumart.QP8.DAL
                 parameters.AddWithValue(paramName, value, dbType);
                 return $"{query} = {paramName})";
             }
-
-            if (value is JArray array)
+            else if(TryGetIntValues(value, out var ids))
             {
-                var ids = array.ToObject<int[]>();
                 var paramName = $"@fieldIds{index}";
                 parameters.AddWithValue(paramName, ids, dbType);
                 return $"{query} in (select id from {dbType.GetIdTable(paramName)}))";
@@ -253,16 +250,22 @@ namespace Quantumart.QP8.DAL
             throw new ArgumentException("Not supported argument type", nameof(value));
         }
 
+        private static string GetFalseFilter() => "1 = 0";
+
         private static int GetIntValue(object value)
         {
-            if (value is long result)
+            if (value is int intResult)
             {
-                if (!result.IsInRange(int.MinValue, int.MaxValue, true))
+                return intResult;
+            }
+            else if (value is long longResult)
+            {
+                if (!longResult.IsInRange(int.MinValue, int.MaxValue, true))
                 {
                     throw new ArgumentException("Value is out of range of int values", nameof(value));
                 }
 
-                return (int)result;
+                return (int)longResult;
             }
 
             throw new ArgumentException("Value can't be casted to int value", nameof(value));
@@ -276,6 +279,23 @@ namespace Quantumart.QP8.DAL
             }
 
             throw new ArgumentException("Value can't be casted to string value", nameof(value));
+        }
+
+        private static bool TryGetIntValues(object value, out int[] ids)
+        {
+            if (value is JArray jarray)
+            {
+                ids = jarray.ToObject<int[]>();
+                return ids != null;
+            }
+            else if(value is int[] array)
+            {
+                ids = array;
+                return true ;
+            }
+
+            ids = null;
+            return false;
         }
     }
 }

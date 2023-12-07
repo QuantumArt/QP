@@ -11,6 +11,7 @@ using System.Transactions;
 using System.Xml.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
@@ -195,15 +196,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var sqlParams = new List<DbParameter>();
                 var sqlConnection = QPConnectionScope.Current.DbConnection;
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-                var filters = customFilter?
-                    .Where(item => item != null)
-                    .Select(item => new CustomFilter
-                    {
-                        Filter = item.Filter,
-                        Field = item.Field,
-                        Value = item.Value
-                    })
-                    .ToArray();
+                var filters = MapperFacade.CustomFilterMapper.GetDalList(customFilter?.ToList()).ToArray();
                 var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, filters);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
                 
@@ -475,30 +468,37 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
                 var isUserAdmin = QPContext.IsAdmin;
                 var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, query.ParentEntityId, ActionTypeCode.List);
+
+                
+                var sqlFilterParameters = new List<DbParameter>();
+                var filters = MapperFacade.CustomFilterMapper.GetDalList(query?.Filter?.ToList());
+
                 if (!availableForList)
                 {
-                    query.Filter = SqlFilterComposer.Compose(query.Filter, "1 = 0");
+                    filters.Add(CustomFilter.GetFalseFilter());
                 }
 
+                var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.DbType, query.ParentEntityId, filters.ToArray());
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
                     QPContext.EFContext,
-                    QPConnectionScope.Current.DbConnection,
+                    scope.DbConnection,
                     QPContext.CurrentUserId,
                     query.ParentEntityId,
                     displayExpression,
                     query.SelectionMode,
                     PermissionLevel.List,
-                    query.Filter,
+                    customFilrer,
                     useSecurity,
                     selection.ToArray(),
                     null,
                     null,
                     string.Empty,
                     extraFrom,
-                    orderByExpression);
+                    orderByExpression,
+                    sqlParameters: sqlFilterParameters);
 
                 return rows.Select(r => new ListItem
                 {
