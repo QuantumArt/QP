@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
@@ -21,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
         public bool ReturnSelf { get; set; }
 
         [BindProperty(Name="filter")]
-        public string Filter { get; set; }
+        public CustomFilterItem[] Filter { get; set; }
 
         [BindProperty(Name="hostFilter")]
         public string HostFilter { get; set; }
