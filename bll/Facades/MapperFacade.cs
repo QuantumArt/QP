@@ -165,6 +165,7 @@ namespace Quantumart.QP8.BLL.Facades
             StatusTypeMapper = Create<StatusMapper>(cfg, true);
             SiteFolderRowMapper = Create<SiteFolderRowMapper>(cfg);
             ContentFolderRowMapper = Create<ContentFolderRowMapper>(cfg);
+            CustomFilterMapper = Create<CustomFilterMapper>(cfg, true);
         }
 
         internal static DataRowMapper DataRowMapper = new DataRowMapper();
@@ -282,5 +283,6 @@ namespace Quantumart.QP8.BLL.Facades
         internal static SystemNotificationMapper SystemNotificationMapper;
         internal static XmlDbUpdateLogMapper XmlDbUpdateLogMapper;
         internal static XmlDbUpdateActionsLogMapper XmlDbUpdateActionsLogMapper;
+        internal static CustomFilterMapper CustomFilterMapper;
     }
 }

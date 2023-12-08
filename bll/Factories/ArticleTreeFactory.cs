@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Processors.TreeProcessors;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Factories
 {
@@ -19,7 +20,7 @@ namespace Quantumart.QP8.BLL.Factories
         /// </summary>
         internal static ITreeProcessor Create(ChildListQuery query)
         {
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
                 if (query.EntityTypeCode == EntityTypeCode.Article || query.EntityTypeCode == EntityTypeCode.VirtualArticle)
                 {
@@ -27,7 +28,11 @@ namespace Quantumart.QP8.BLL.Factories
                     var searchQueryParams = query.SearchQueryParams;
                     var articleContextQueryParams = query.ContextQueryParams;
 
-                    query.Filter = ArticleRepository.FillFullTextSearchParams(contentId, query.Filter, searchQueryParams , query.Parser, out var ftsOptions, out var extensionContentIds, out var _);
+                    var sqlFilterParameters = new List<DbParameter>();
+                    var filters = MapperFacade.CustomFilterMapper.GetDalList(query?.Filter?.ToList());
+                    var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.DbType, query.ParentEntityId, filters.ToArray());
+
+                    customFilrer = ArticleRepository.FillFullTextSearchParams(contentId, customFilrer, searchQueryParams , query.Parser, out var ftsOptions, out var extensionContentIds, out var _);
 
                     var filterSqlParams = new List<DbParameter>();
                     var sourceQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQueryParams, filterSqlParams);
@@ -40,11 +45,13 @@ namespace Quantumart.QP8.BLL.Factories
                             ? sourceQuery
                             : $"({query.HostFilter} AND {sourceQuery})";
 
-                    var filterForSmpl = string.IsNullOrWhiteSpace(combinedFilter) ? query.Filter : combinedFilter;
+                    var isCustom = string.IsNullOrWhiteSpace(combinedFilter);
+                    var filterForSmpl = isCustom ? customFilrer : combinedFilter;
+                    var sqlSmplFilterParameters = isCustom ? sqlFilterParameters : new List<DbParameter>();
 
                     return hasFtsSearchParams || hasFilterSearchParams
-                        ? new ArticleFtsProcessor(contentId, query.Filter, combinedFilter, linkedFilters, articleContextQueryParams, filterSqlParams, extensionContentIds, ftsOptions)
-                        : new ArticleSimpleProcessor(contentId, query.EntityId, filterForSmpl, query.EntityTypeCode, query.SelectItemIDs) as ITreeProcessor;
+                        ? new ArticleFtsProcessor(contentId, customFilrer, combinedFilter, linkedFilters, articleContextQueryParams, filterSqlParams, extensionContentIds, ftsOptions, sqlFilterParameters)
+                        : new ArticleSimpleProcessor(contentId, query.EntityId, filterForSmpl, query.EntityTypeCode, query.SelectItemIDs, sqlSmplFilterParameters) as ITreeProcessor;
                 }
 
                 if (query.EntityTypeCode == EntityTypeCode.SiteFolder || query.EntityTypeCode == EntityTypeCode.ContentFolder)

@@ -15,6 +15,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using QP8.Plugins.Contract;
+using Newtonsoft.Json;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -269,7 +270,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 MaxListHeight = 200,
                 MaxListWidth = 350,
                 ShowIds = true,
-                Filter = filter
+                Filter = filter == null ? null : JsonConvert.SerializeObject(filter)
             };
 
             return source.Relation(id, list, options, baseField.RelationType, isListOverflow, listArgs);

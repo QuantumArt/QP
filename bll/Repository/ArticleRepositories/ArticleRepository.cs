@@ -11,6 +11,7 @@ using System.Transactions;
 using System.Xml.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
@@ -146,7 +147,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             result.LockedByToolTip = article.LockedByToolTip;
 
             var treeField = FieldRepository.GetById(ContentRepository.GetTreeFieldId(article.ContentId));
-            var children = GetArticleTreeForParentResult(article.Id, filter, treeField).ToList();
+            var sqlParameters = new List<DbParameter>();
+            var children = GetArticleTreeForParentResult(article.Id, filter, treeField, sqlParameters).ToList();
 
             result.HasChildren = children.Any();
             if (loadChildArticles)
@@ -195,15 +197,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var sqlParams = new List<DbParameter>();
                 var sqlConnection = QPConnectionScope.Current.DbConnection;
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-                var filters = customFilter?
-                    .Where(item => item != null)
-                    .Select(item => new CustomFilter
-                    {
-                        Filter = item.Filter,
-                        Field = item.Field,
-                        Value = item.Value
-                    })
-                    .ToArray();
+                var filters = MapperFacade.CustomFilterMapper.GetDalList(customFilter?.ToList()).ToArray();
                 var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, filters);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
                 
@@ -475,30 +469,37 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
                 var isUserAdmin = QPContext.IsAdmin;
                 var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, query.ParentEntityId, ActionTypeCode.List);
+
+                
+                var sqlFilterParameters = new List<DbParameter>();
+                var filters = MapperFacade.CustomFilterMapper.GetDalList(query?.Filter?.ToList());
+
                 if (!availableForList)
                 {
-                    query.Filter = SqlFilterComposer.Compose(query.Filter, "1 = 0");
+                    filters.Add(CustomFilter.GetFalseFilter());
                 }
 
+                var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.DbType, query.ParentEntityId, filters.ToArray());
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
                     QPContext.EFContext,
-                    QPConnectionScope.Current.DbConnection,
+                    scope.DbConnection,
                     QPContext.CurrentUserId,
                     query.ParentEntityId,
                     displayExpression,
                     query.SelectionMode,
                     PermissionLevel.List,
-                    query.Filter,
+                    customFilrer,
                     useSecurity,
                     selection.ToArray(),
                     null,
                     null,
                     string.Empty,
                     extraFrom,
-                    orderByExpression);
+                    orderByExpression,
+                    sqlParameters: sqlFilterParameters);
 
                 return rows.Select(r => new ListItem
                 {
@@ -509,7 +510,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions, IList<DbParameter> sqlParameters)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -517,7 +518,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
 
                 var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name, treeField.ContentId);
-                var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField).ToList();
+                var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField, sqlParameters).ToList();
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
                 foreach (var kv in treeItemsDict.Where(ti => searchIds.Contains(int.Parse(ti.Key))))
                 {
@@ -559,7 +560,7 @@ WHERE {whereBuilder}
 ";
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField)
+        internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField, IList<DbParameter> sqlParameters)
         {
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             var dbType = QPContext.DatabaseType;
@@ -567,19 +568,19 @@ WHERE {whereBuilder}
                 ? $"c.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} = {rootId.Value}"
                 : $"c.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, treeField.Name)} IS NULL");
 
-            return GetArticleTreeItemsResult(commonFilter, extraFilter, treeField, null);
+            return GetArticleTreeItemsResult(commonFilter, extraFilter, treeField, null, sqlParameters);
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticleTreeFilteredResult(IList<int> idsToFilter, string commonFilter, Field treeField)
+        internal static IEnumerable<EntityTreeItem> GetArticleTreeFilteredResult(IList<int> idsToFilter, string commonFilter, Field treeField, IList<DbParameter> sqlParameters)
         {
             var dbType = QPContext.DatabaseType;
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             return idsToFilter == null
-                ? GetArticleTreeForParentResult(null, commonFilter, treeField)
-                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}) ", extraFilter, treeField, idsToFilter);
+                ? GetArticleTreeForParentResult(null, commonFilter, treeField, sqlParameters)
+                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}) ", extraFilter, treeField, idsToFilter, sqlParameters);
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter)
+        internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter, IList<DbParameter> sqlParameters)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -614,7 +615,8 @@ cil.locked_by,
                     ArticleFullTextSearchSettings.SearchResultLimit,
                     extraSelect: extraSelect,
                     extraFrom: extraFrom,
-                    orderBy: GetSimpleListOrderExpression(treeField, fields));
+                    orderBy: GetSimpleListOrderExpression(treeField, fields),
+                    sqlParameters: sqlParameters);
 
                 return rows.Select(dr =>
                 {

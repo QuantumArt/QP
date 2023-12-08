@@ -8,6 +8,7 @@ namespace Quantumart.QP8.DAL.DTO
         public const string RelationFilter = "Relation";
         public const string BackwardFilter = "Backward";
         public const string FieldFilter = "Field";
+        public const string FalseFilter = "False";
 
         public string Filter { get; set; }
         public string Field { get; set; }
@@ -50,19 +51,9 @@ namespace Quantumart.QP8.DAL.DTO
             Value = value
         };
 
-        public override bool Equals(object obj)
+        public static CustomFilter GetFalseFilter() => new CustomFilter
         {
-            if (obj is CustomFilter filter)
-            {
-                return filter.Filter == Filter && filter.Field == Field && filter.Value == Value;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+            Filter = FalseFilter
+        };
     }    
 }
