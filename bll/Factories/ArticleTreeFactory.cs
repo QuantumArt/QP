@@ -30,7 +30,7 @@ namespace Quantumart.QP8.BLL.Factories
 
                     var sqlFilterParameters = new List<DbParameter>();
                     var filters = MapperFacade.CustomFilterMapper.GetDalList(query?.Filter?.ToList());
-                    var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.DbType, query.ParentEntityId, filters.ToArray());
+                    var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.CurrentDbType, query.ParentEntityId, filters.ToArray());
 
                     customFilrer = ArticleRepository.FillFullTextSearchParams(contentId, customFilrer, searchQueryParams , query.Parser, out var ftsOptions, out var extensionContentIds, out var _);
 

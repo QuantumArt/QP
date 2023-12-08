@@ -479,7 +479,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     filters.Add(CustomFilter.GetFalseFilter());
                 }
 
-                var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.DbType, query.ParentEntityId, filters.ToArray());
+                var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.CurrentDbType, query.ParentEntityId, filters.ToArray());
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
