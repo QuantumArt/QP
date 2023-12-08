@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using AutoMapper;
 using Quantumart.QP8.BLL.Factories;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
-using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 // ReSharper disable PossibleInvalidOperationException
 // ReSharper disable PossibleMultipleEnumeration
