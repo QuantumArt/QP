@@ -23,7 +23,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
         public CustomFilterItem[] Filter { get; set; }
 
         [BindProperty(Name="hostFilter")]
-        public string HostFilter { get; set; }
+        public CustomFilterItem[] HostFilter { get; set; }
 
         [BindProperty(Name="selectItemIDs")]
         public string SelectItemIDs { get; set; }

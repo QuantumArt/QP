@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Quantumart.QP8.DAL
 {
@@ -72,5 +73,12 @@ namespace Quantumart.QP8.DAL
                     throw new ApplicationException("Unknown db type");
             }
         }
+
+        public static ICollection<DbParameter> Clone(this ICollection<DbParameter> parameters) =>
+            parameters?
+            .Cast<ICloneable>()
+            .Select(x => x.Clone())
+            .Cast<DbParameter>()
+            .ToList();
     }
 }

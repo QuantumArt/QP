@@ -203,7 +203,7 @@ namespace Quantumart.QP8.DAL
             string extraSelect = "",
             string extraFrom = "",
             string orderBy = "",
-            IList<DbParameter> sqlParameters = null)
+            ICollection<DbParameter> sqlParameters = null)
         {
             var databaseType = GetDbType(cn);
             string securityJoin = "";
@@ -236,7 +236,7 @@ namespace Quantumart.QP8.DAL
                 {limit}
             ";
 
-            var parameters = new List<DbParameter>(sqlParameters ?? new List<DbParameter>())
+            var parameters = new List<DbParameter>(sqlParameters?.Clone() ?? new List<DbParameter>())
             {
                 GetIdsDatatableParam("@ids", idsToFilter, databaseType),
                 GetIdsDatatableParam("@myData", selectedArticleIds, databaseType)

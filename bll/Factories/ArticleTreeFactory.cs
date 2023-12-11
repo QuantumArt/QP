@@ -32,6 +32,10 @@ namespace Quantumart.QP8.BLL.Factories
                     var filters = MapperFacade.CustomFilterMapper.GetDalList(query?.Filter?.ToList());
                     var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.CurrentDbType, query.ParentEntityId, filters.ToArray());
 
+                    var sqlHostFilterParameters = new List<DbParameter>();
+                    var hostFilters = MapperFacade.CustomFilterMapper.GetDalList(query?.HostFilter?.ToList());
+                    var hostFilter = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlHostFilterParameters, scope.CurrentDbType, query.ParentEntityId, hostFilters.ToArray());
+
                     customFilrer = ArticleRepository.FillFullTextSearchParams(contentId, customFilrer, searchQueryParams , query.Parser, out var ftsOptions, out var extensionContentIds, out var _);
 
                     var filterSqlParams = new List<DbParameter>();
@@ -40,17 +44,18 @@ namespace Quantumart.QP8.BLL.Factories
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
                     var hasFilterSearchParams = !string.IsNullOrEmpty(sourceQuery) || linkedFilters.Any();
                     var combinedFilter = string.IsNullOrWhiteSpace(sourceQuery)
-                        ? query.HostFilter
-                        : string.IsNullOrWhiteSpace(query.HostFilter)
+                        ? hostFilter
+                        : string.IsNullOrWhiteSpace(hostFilter)
                             ? sourceQuery
-                            : $"({query.HostFilter} AND {sourceQuery})";
+                            : $"({hostFilter} AND {sourceQuery})";
 
                     var isCustom = string.IsNullOrWhiteSpace(combinedFilter);
                     var filterForSmpl = isCustom ? customFilrer : combinedFilter;
-                    var sqlSmplFilterParameters = isCustom ? sqlFilterParameters : new List<DbParameter>();
+                    var sqlSmplFilterParameters = isCustom ? sqlFilterParameters : sqlHostFilterParameters;
+                    filterSqlParams.AddRange(sqlSmplFilterParameters);
 
                     return hasFtsSearchParams || hasFilterSearchParams
-                        ? new ArticleFtsProcessor(contentId, customFilrer, combinedFilter, linkedFilters, articleContextQueryParams, filterSqlParams, extensionContentIds, ftsOptions, sqlFilterParameters)
+                        ? new ArticleFtsProcessor(contentId, customFilrer, combinedFilter, linkedFilters, articleContextQueryParams, filterSqlParams, extensionContentIds, ftsOptions)
                         : new ArticleSimpleProcessor(contentId, query.EntityId, filterForSmpl, query.EntityTypeCode, query.SelectItemIDs, sqlSmplFilterParameters) as ITreeProcessor;
                 }
 
