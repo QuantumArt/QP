@@ -74,7 +74,8 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static ICollection<DbParameter> Clone(this ICollection<DbParameter> parameters) => parameters?
+        public static ICollection<DbParameter> Clone(this ICollection<DbParameter> parameters) =>
+            parameters?
             .Cast<ICloneable>()
             .Select(x => x.Clone())
             .Cast<DbParameter>()
