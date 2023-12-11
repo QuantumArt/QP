@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -750,28 +750,6 @@ namespace Quantumart.QP8.Utils
 
             sqlTimeString = string.Empty;
             timeSpan = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Преобразует строку с датой в определенном формате в формат даты для SQLServer (yyyyMMdd HH:mm:ss)
-        /// </summary>
-        public static bool TryConvertToSqlDateTimeString(string dateTimeString, out string sqlDateString, out DateTime? dateTime, string format = null, string sqlFormat = "yyyyMMdd HH:mm:ss")
-        {
-            DateTime dt;
-            var parseResult = string.IsNullOrEmpty(format)
-                ? DateTime.TryParse(dateTimeString, out dt)
-                : DateTime.TryParseExact(dateTimeString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
-
-            if (parseResult)
-            {
-                sqlDateString = dt.ToString(sqlFormat);
-                dateTime = dt;
-                return true;
-            }
-
-            sqlDateString = string.Empty;
-            dateTime = null;
             return false;
         }
 
