@@ -1882,22 +1882,22 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             }
 
             to = string.IsNullOrWhiteSpace(to) ? from : to;
-            if (Converter.TryConvertToSqlDateTimeString(from, out string sqlDt, out DateTime? dt, sqlFormat: "yyyyMMdd HH:mm:00"))
+            if (DateTime.TryParse(from, out DateTime startTime))
             {
                 filters.Add($"L.EXEC_TIME >= @startTime");
-                parameters.AddWithValue("@startTime", sqlDt, dbType);
+                parameters.AddWithValue("@startTime", startTime, dbType);
             }
 
-            if (Converter.TryConvertToSqlDateTimeString(to, out sqlDt, out dt, sqlFormat: "yyyyMMdd HH:mm:59"))
+            if (DateTime.TryParse(to, out DateTime endTime))
             {
                 filters.Add($"L.EXEC_TIME <= @endTime");
-                parameters.AddWithValue("@endTime", sqlDt, dbType);
+                parameters.AddWithValue("@endTime", endTime.AddSeconds(59), dbType);
             }
 
             if (userIds.Any())
             {
                 filters.Add($"U.{Escape(dbType, "USER_ID")} in (SELECT ID FROM {dbType.GetIdTable("@userIds")})");
-                parameters.AddWithValue("@userIds", userIds, dbType);
+                parameters.AddWithValue("@userIds", userIds.ToArray(), dbType);
             }
 
             return GetSimplePagedList(
@@ -2061,7 +2061,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                     INNER JOIN users as us on us.USER_ID = ci.LAST_MODIFIED_BY",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
                 $@"(wr2.user_id = @userId
-                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind_recursive {withNoLock} WHERE user_id = @userId
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind_recursive {withNoLock} WHERE user_id = @userId)
                                         )
                                         AND (
                                             ci.content_item_id not in (select content_item_id from waiting_for_approval {withNoLock})
@@ -4103,7 +4103,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 selectBlock += $" ,{SqlQuerySyntaxHelper.CastToBool(dbType, "CASE WHEN (UIS.USER_ID IS NOT NULL) THEN 1 else 0 end")} AS is_selected";
                 fromBlock += $" LEFT OUTER JOIN (select USER_ID from USERS where USER_ID in (SELECT ID FROM {dbType.GetIdTable("@selectedIds")})) AS UIS ON UIS.USER_ID = U.USER_ID";
                 orderBy = string.IsNullOrWhiteSpace(options.SortExpression) ? "is_selected DESC, LOGIN ASC" : options.SortExpression;
-                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs.ToArray(), dbType);
             }
             else
             {
