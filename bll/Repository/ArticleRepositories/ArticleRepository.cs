@@ -510,7 +510,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions, IList<DbParameter> sqlParameters)
+        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -518,7 +518,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
 
                 var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name, treeField.ContentId);
-                var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField, sqlParameters).ToList();
+                var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField, filterSqlParams).ToList();
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
                 foreach (var kv in treeItemsDict.Where(ti => searchIds.Contains(int.Parse(ti.Key))))
                 {
@@ -560,7 +560,7 @@ WHERE {whereBuilder}
 ";
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField, IList<DbParameter> sqlParameters)
+        internal static IEnumerable<EntityTreeItem> GetArticleTreeForParentResult(int? rootId, string commonFilter, Field treeField, ICollection<DbParameter> sqlParameters)
         {
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             var dbType = QPContext.DatabaseType;
@@ -571,7 +571,7 @@ WHERE {whereBuilder}
             return GetArticleTreeItemsResult(commonFilter, extraFilter, treeField, null, sqlParameters);
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticleTreeFilteredResult(IList<int> idsToFilter, string commonFilter, Field treeField, IList<DbParameter> sqlParameters)
+        internal static IEnumerable<EntityTreeItem> GetArticleTreeFilteredResult(IList<int> idsToFilter, string commonFilter, Field treeField, ICollection<DbParameter> sqlParameters)
         {
             var dbType = QPContext.DatabaseType;
             var extraFilter = commonFilter.Replace("c.", "cnt.");
@@ -580,7 +580,7 @@ WHERE {whereBuilder}
                 : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM {SqlQuerySyntaxHelper.IdList(dbType, "@ids", "i")}) ", extraFilter, treeField, idsToFilter, sqlParameters);
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter, IList<DbParameter> sqlParameters)
+        internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter, ICollection<DbParameter> sqlParameters)
         {
             using (var scope = new QPConnectionScope())
             {

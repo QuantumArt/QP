@@ -23,9 +23,8 @@ namespace Quantumart.QP8.BLL.Processors.TreeProcessors
         private readonly ICollection<DbParameter> _filterSqlParams;
         private readonly int[] _extensionContentIds;
         private readonly ArticleFullTextSearchParameter _ftsOptions;
-        private IList<DbParameter> _sqlParameters;
 
-        public ArticleFtsProcessor(int parentEntityId, string commonFilter, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions, IList<DbParameter> sqlParameters)
+        public ArticleFtsProcessor(int parentEntityId, string commonFilter, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<DbParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             _parentEntityId = parentEntityId;
             _commonFilter = commonFilter;
@@ -35,13 +34,12 @@ namespace Quantumart.QP8.BLL.Processors.TreeProcessors
             _filterSqlParams = filterSqlParams;
             _extensionContentIds = extensionContentIds;
             _ftsOptions = ftsOptions;
-            _sqlParameters = sqlParameters;
         }
 
         public IList<EntityTreeItem> Process()
         {
             var treeField = FieldRepository.GetById(ContentRepository.GetTreeFieldId(_parentEntityId));
-            return ArticleRepository.GetArticlesTreeForFtsResult(_commonFilter, treeField, _filterQuery, _linkedFilters, _contextQuery, _filterSqlParams, _extensionContentIds, _ftsOptions, _sqlParameters).ToList();
+            return ArticleRepository.GetArticlesTreeForFtsResult(_commonFilter, treeField, _filterQuery, _linkedFilters, _contextQuery, _filterSqlParams, _extensionContentIds, _ftsOptions).ToList();
         }
     }
 }

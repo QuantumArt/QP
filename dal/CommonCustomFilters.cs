@@ -234,10 +234,10 @@ namespace Quantumart.QP8.DAL
         {
             var query = "c.content_item_id in (select linked_item_id from item_link where item_id";
 
-            if (value is int)
+            if (TryGetIntValue(value, out var id))
             {
                 var paramName = $"@fieldValue{index}";
-                parameters.AddWithValue(paramName, value, dbType);
+                parameters.AddWithValue(paramName, id, dbType);
                 return $"{query} = {paramName})";
             }
             else if(TryGetIntValues(value, out var ids))
@@ -279,6 +279,29 @@ namespace Quantumart.QP8.DAL
             }
 
             throw new ArgumentException("Value can't be casted to string value", nameof(value));
+        }
+
+        private static bool TryGetIntValue(object value, out int id)
+        {
+            if (value is int intResult)
+            {
+                id = intResult;
+                return true;
+            }
+            else if (value is long longResult)
+            {
+                if (!longResult.IsInRange(int.MinValue, int.MaxValue, true))
+                {
+                    id = 0;
+                    return false;
+                }
+
+                id = (int)longResult;
+                return true;
+            }
+
+            id = 0;
+            return false;
         }
 
         private static bool TryGetIntValues(object value, out int[] ids)
