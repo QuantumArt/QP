@@ -3034,7 +3034,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT ATTRIBUTE_ID from CONTENT_ATTRIBUTE where ATTRIBUTE_ID in (SELECT ID FROM {0})) AS cas ON ca.ATTRIBUTE_ID = cas.ATTRIBUTE_ID ", dbType.GetIdTable("@selectedIds"));
-                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs.ToArray(), dbType);
             }
 
             return GetSimplePagedList(
@@ -3078,7 +3078,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in (SELECT ID FROM {0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", dbType.GetIdTable("@selectedIds"));
-                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs.ToArray(), dbType);
             }
 
             if (options.Mode == ContentSelectMode.ForWorkflow)
@@ -3191,7 +3191,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT SITE_ID from SITE s where SITE_ID in (SELECT ID FROM {0})) AS cis ON s.SITE_ID = cis.SITE_ID ", dbType.GetIdTable("@selectedIds"));
-                parameters.AddWithValue("@selectedIds", options.SelectedIDs, dbType);
+                parameters.AddWithValue("@selectedIds", options.SelectedIDs.ToArray(), dbType);
             }
 
             if (options.UseSecurity)

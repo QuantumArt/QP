@@ -869,13 +869,21 @@ export class BackendEntityDataListBase extends Observable {
 
   setFilter(filter) {
     if (filter) {
+      const oldValue = JSON.stringify(this._filter);
+
       if (Array.isArray(filter)) {
         this._filter = filter
       }
       else {
         this._filter = [filter];
       }
+
+      const newValue = JSON.stringify(this._filter);
+
+      return oldValue !== newValue; 
     }
+
+    return false;
   }
 
   applyFilter(filter) {
