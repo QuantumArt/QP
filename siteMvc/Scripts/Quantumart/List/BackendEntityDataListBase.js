@@ -872,22 +872,21 @@ export class BackendEntityDataListBase extends Observable {
       const oldValue = JSON.stringify(this._filter);
 
       if (Array.isArray(filter)) {
-        this._filter = filter
-      }
-      else {
+        this._filter = filter;
+      } else {
         this._filter = [filter];
       }
 
       const newValue = JSON.stringify(this._filter);
 
-      return oldValue !== newValue; 
+      return oldValue !== newValue;
     }
 
     return false;
   }
 
   applyFilter(filter) {
-    let result = this._initFilter.slice(0);
+    const result = this._initFilter.slice(0);
     if (filter) {
       result.push(filter);
     }
