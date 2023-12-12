@@ -52,7 +52,7 @@ namespace Quantumart.QP8.DAL
             CustomFilter.VirtualTypeFilter => GetVirtualTypeFilter(GetIntValue(item.Value)),
             CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
             CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
-            CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.Default, item.Value, index),
+            CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.AllowNull, item.Value, index),
             CustomFilter.M2MFilter => GetM2MFilter(parameters, dbType, item.Value, index),
             CustomFilter.FalseFilter => GetFalseFilter(),
             _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
@@ -120,7 +120,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static string GetFieldFilter(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int contentId, string field, object defaultValue, object value, int index)
+        private static string GetFieldFilter(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int contentId, string field, bool allowNull, object value, int index)
         {
             string fieldType = string.Empty;
 
@@ -137,7 +137,6 @@ namespace Quantumart.QP8.DAL
             var paramName = $"@fieldValue{index}";
             var defaultParamName = $"@defaultFieldValue{index}";
             var isAtomic = true;
-            var hasDefault = false;
 
             if (fieldType == null)
             {
@@ -148,12 +147,6 @@ namespace Quantumart.QP8.DAL
             {
                 if (value is string stringValue)
                 {
-                    if (defaultValue is int stringDefaultValue)
-                    {
-                        parameters.AddWithValue(defaultParamName, stringDefaultValue, dbType);
-                        hasDefault = true;
-                    }
-
                     parameters.AddWithValue(paramName, stringValue, dbType);
                 }
                 else
@@ -166,32 +159,14 @@ namespace Quantumart.QP8.DAL
             {
                 if (value is int intValue)
                 {
-                    if (defaultValue is int intDefaultValue)
-                    {
-                        parameters.AddWithValue(defaultParamName, intDefaultValue, dbType);
-                        hasDefault = true;
-                    }
-
                     parameters.AddWithValue(paramName, intValue, dbType);
                 }
                 if (value is long longValue)
                 {
-                    if (defaultValue is long longDefaultValue)
-                    {
-                        parameters.AddWithValue(defaultParamName, longDefaultValue, dbType);
-                        hasDefault = true;
-                    }
-
                     parameters.AddWithValue(paramName, longValue, dbType);
                 }
                 else if (value is decimal numericValue)
                 {
-                    if (defaultValue is decimal numericDefaultValue)
-                    {
-                        parameters.AddWithValue(defaultParamName, numericDefaultValue, dbType);
-                        hasDefault = true;
-                    }
-
                     parameters.AddWithValue(paramName, numericValue, dbType);
                 }
                 else if (value is string stringValue)
@@ -216,6 +191,12 @@ namespace Quantumart.QP8.DAL
                 else if (TryGetIntValues(value, out var ids))
                 {
                     parameters.AddWithValue(paramName, ids, dbType);
+
+                    if (allowNull)
+                    {
+                        parameters.AddWithValue(defaultParamName, ids.FirstOrDefault(), dbType);                        
+                    }
+
                     isAtomic = false;
                 }
             }
@@ -233,7 +214,7 @@ namespace Quantumart.QP8.DAL
                 throw new ArgumentException($"Value {value} for field {field} must be date", nameof(value));
             }
 
-            var fieldExpression = hasDefault ? $"COALESCE(c.{fieldName}, {defaultParamName})" : $"c.{fieldName}";
+            var fieldExpression = allowNull ? $"COALESCE(c.{fieldName}, {(isAtomic ? paramName : defaultParamName)})" : $"c.{fieldName}";
 
             return isAtomic ? $"{fieldExpression} = {paramName}" : $"{fieldExpression} in (select id from {dbType.GetIdTable(paramName)})";
         }
