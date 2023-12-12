@@ -283,6 +283,19 @@ namespace Quantumart.QP8.DAL
 
         private static bool TryGetIntValue(object value, out int id)
         {
+            if (value is string stringValue)
+            {
+                if (int.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out int parsedResult))
+                {
+                    id = parsedResult;
+                    return true;
+                }
+                else
+                {
+                    id = 0;
+                    return false;
+                }
+            }
             if (value is int intResult)
             {
                 id = intResult;
