@@ -6,6 +6,7 @@ namespace Quantumart.QP8.BLL.Services
     {
         public string Filter { get; set; }
         public string Field { get; set; }
+        public bool AllowNull { get; set; }
         public object Value { get; set; }
 
         public static CustomFilterItem GetArchiveFilter(int value)

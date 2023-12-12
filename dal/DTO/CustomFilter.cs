@@ -12,6 +12,7 @@ namespace Quantumart.QP8.DAL.DTO
 
         public string Filter { get; set; }
         public string Field { get; set; }
+        public bool AllowNull { get; set; }
         public object Value { get; set; }
 
         public static CustomFilter GetArchiveFilter(int value) => new CustomFilter
