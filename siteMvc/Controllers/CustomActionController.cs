@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Fluent;
+using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
@@ -48,9 +49,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     .Message("Executing custom action url: {url}", customActionToExecute.CustomAction.FullUrl)
                     .Write();
 
-                if (!customActionToExecute.IsActionAccessable)
+                if (!customActionToExecute.IsActionAccessible)
                 {
-                    throw new SecurityException(customActionToExecute.SecurityErrorMesage);
+                    var message = customActionToExecute.SecurityErrorMessage;
+                    var clientMessage = customActionToExecute.ClientSecurityErrorMessage;
+                    throw new SecurityException(message) { Data = { { ExceptionHelpers.ClientMessageKey, clientMessage } } };
                 }
 
                 if (customActionToExecute.CustomAction.Action.IsInterface)

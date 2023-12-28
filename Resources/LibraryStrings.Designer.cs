@@ -10,8 +10,8 @@
 
 namespace Quantumart.QP8.Resources {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Quantumart.QP8.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class LibraryStrings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal LibraryStrings() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Quantumart.QP8.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Access to the path {0} is denied for user {1}.
         /// </summary>
@@ -68,7 +68,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AccessDenied", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to All Types.
         /// </summary>
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AllFileTypes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File {0} already exists. Overwrite?.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("AlreadyExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to bytes.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Bytes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cannot read folder contents because you have no enough permissions.
         /// </summary>
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CannotReadFolderBecauseOfSecurity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Content folder (id = {0}) is not exists.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ContentFolderNotExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Copying files from site {0}.
         /// </summary>
@@ -122,7 +122,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CopySiteFiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Style sheet.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("CSS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dimensions.
         /// </summary>
@@ -140,7 +140,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Dimensions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Extension.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Extension", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Extension {0} is not allowed.
         /// </summary>
@@ -158,7 +158,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ExtensionIsNotAllowed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File {0} already exists.
         /// </summary>
@@ -167,7 +167,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FileExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File {0} already exists. Please, try enter another name.
         /// </summary>
@@ -176,7 +176,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FileExistsTryAnother", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File Name.
         /// </summary>
@@ -185,7 +185,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FileName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File {0} is not found.
         /// </summary>
@@ -194,7 +194,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FileNotExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File Type.
         /// </summary>
@@ -203,7 +203,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FileType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Find.
         /// </summary>
@@ -212,7 +212,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Find", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Flash movie.
         /// </summary>
@@ -221,7 +221,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Flash", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GB.
         /// </summary>
@@ -230,7 +230,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Upload file error..
         /// </summary>
@@ -239,7 +239,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("HtmlUploaderErrorMesage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File: {0}. Max size exceeded: {1} Mb.
         /// </summary>
@@ -248,7 +248,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("HtmlUploaderMaxSizeExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Image.
         /// </summary>
@@ -257,7 +257,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Image", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid id {0}.
         /// </summary>
@@ -266,7 +266,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("InvalidId", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Javascript.
         /// </summary>
@@ -275,7 +275,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Javascript", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to KB.
         /// </summary>
@@ -284,7 +284,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("KB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File properties.
         /// </summary>
@@ -293,7 +293,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Legend_FileParameters", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Max size exceeded: {0} Mb.
         /// </summary>
@@ -302,7 +302,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("MaxSizeExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to MB.
         /// </summary>
@@ -311,7 +311,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("MB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Media file.
         /// </summary>
@@ -320,7 +320,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Media", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unable to upload file {0}. Extension {1} is not allowed.
         /// </summary>
@@ -329,7 +329,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NotAllowedExtensionForUpload", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File {0} doesn&apos;t exist.
         /// </summary>
@@ -338,7 +338,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("NotExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Microsoft Office.
         /// </summary>
@@ -347,7 +347,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Office", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unable to proceed requested operation for the file {0}.
         /// </summary>
@@ -356,7 +356,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("OperationIsNotSupported", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to PDF.
         /// </summary>
@@ -365,7 +365,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("PDF", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Physical Path.
         /// </summary>
@@ -374,7 +374,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("PhysicalPath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File: {0}. Unhandled error: {1}. Pl error code: {2}.
         /// </summary>
@@ -383,7 +383,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("PlUploadErrorReport", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
@@ -392,7 +392,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("ResetFilter", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Root Folder.
         /// </summary>
@@ -401,7 +401,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("RootFolder", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Site folder (id = {0}) is not exists.
         /// </summary>
@@ -410,7 +410,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("SiteFolderNotExists", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Size.
         /// </summary>
@@ -419,7 +419,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Size", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Total.
         /// </summary>
@@ -428,7 +428,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Total", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
@@ -437,7 +437,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Unknown", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Upload.
         /// </summary>
@@ -446,7 +446,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Upload", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You have no access to upload files to the folder {0}.
         /// </summary>
@@ -455,7 +455,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UploadIsNotAllowed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Virtual Path.
         /// </summary>
@@ -464,13 +464,38 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("VirtualPath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to File {0} has zero-size, it won`t be uploaded.
         /// </summary>
         public static string ZeroSizeWarning {
             get {
                 return ResourceManager.GetString("ZeroSizeWarning", resourceCulture);
+            }
+        }
+
+        public static string InvalidReduceRatio {
+            get {
+                return ResourceManager.GetString("InvalidReduceRatio", resourceCulture);
+            }
+        }
+
+        public static string AutoResizeConfirmMessage {
+            get {
+                return ResourceManager.GetString("AutoResizeConfirmMessage", resourceCulture);
+            }
+        }
+
+        public static string AutoResizedFileExists {
+            get {
+                return ResourceManager.GetString("AutoResizedFileExists", resourceCulture);
+            }
+        }
+
+
+        public static string AutoResizeSettingsAreIncorrect {
+            get {
+                return ResourceManager.GetString("AutoResizeSettingsAreIncorrect", resourceCulture);
             }
         }
     }

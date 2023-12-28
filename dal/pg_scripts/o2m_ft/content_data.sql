@@ -1,4 +1,18 @@
-ALTER TABLE content_data ALTER COLUMN data TYPE text;
+DO $$
+BEGIN
+	IF EXISTS (
+		SELECT NULL
+		FROM information_schema.columns
+		WHERE
+			table_schema = 'public' AND
+			table_name = 'content_data' AND
+			column_name = 'data' AND
+			data_type <> 'text')
+	THEN
+		ALTER TABLE content_data ALTER COLUMN data TYPE text;
+	END IF;
+END
+$$;
 
 ALTER TABLE content_data ADD COLUMN IF NOT EXISTS o2m_data numeric(18,0) NULL;
 

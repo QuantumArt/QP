@@ -18,7 +18,7 @@ namespace Quantumart.QP8.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class NotificationStrings {
@@ -87,6 +87,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Category.
+        /// </summary>
+        public static string Category {
+            get {
+                return ResourceManager.GetString("Category", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose Category.
+        /// </summary>
+        public static string ChooseCategory {
+            get {
+                return ResourceManager.GetString("ChooseCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Field.
         /// </summary>
         public static string ChooseField {
@@ -110,6 +128,15 @@ namespace Quantumart.QP8.Resources {
         public static string ChooseTemplate {
             get {
                 return ResourceManager.GetString("ChooseTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmation template.
+        /// </summary>
+        public static string ConfirmationTemplate {
+            get {
+                return ResourceManager.GetString("ConfirmationTemplate", resourceCulture);
             }
         }
         
@@ -303,6 +330,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide recipients from each other.
+        /// </summary>
+        public static string HideRecipients {
+            get {
+                return ResourceManager.GetString("HideRecipients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notification Not Found (Id = {0}).
         /// </summary>
         public static string NotificationNotFound {
@@ -344,6 +380,15 @@ namespace Quantumart.QP8.Resources {
         public static string RadioFromArticle {
             get {
                 return ResourceManager.GetString("RadioFromArticle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail From Content.
+        /// </summary>
+        public static string RadioFromContent {
+            get {
+                return ResourceManager.GetString("RadioFromContent", resourceCulture);
             }
         }
         
@@ -492,6 +537,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Templates not configured for internal notifications.
+        /// </summary>
+        public static string TemplatesNotConfigured {
+            get {
+                return ResourceManager.GetString("TemplatesNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unbind.
         /// </summary>
         public static string Unbind {
@@ -501,7 +555,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Notification was unbinded from workflow.
+        ///   Looks up a localized string similar to Notification was unbound from workflow.
         /// </summary>
         public static string UnbindedMessage {
             get {

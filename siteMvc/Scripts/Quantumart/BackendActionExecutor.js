@@ -203,6 +203,11 @@ export class BackendActionExecutor extends Observable {
         BackendLibrary.generateActionUrl('TestLibraryFileDownload', urlParams), fileName
       );
       actionStatus = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
+    } else if (actionTypeCode === window.ACTION_TYPE_CODE_AUTO_RESIZE
+      && (entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
+        || entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_FILE)) {
+      $c.autoResize(BackendLibrary.generateActionUrl('GetLibraryImageProperties', urlParams), urlParams);
+      actionStatus = window.BACKEND_ACTION_EXECUTION_STATUS_SUCCESS;
     }
     if (actionTypeCode === window.ACTION_TYPE_CODE_CROP
       && (entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE

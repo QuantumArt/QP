@@ -469,7 +469,7 @@
     <value>Fields could not be changed because there are inherited fields in the virtual JOIN contents</value>
   </data>
   <data name="UseEnglishQuotes" xml:space="preserve">
-    <value>Use english typografic rules</value>
+    <value>Use english typographic rules</value>
   </data>
   <data name="M2ORelation" xml:space="preserve">
     <value>Many-to-One Relation</value>
@@ -616,7 +616,7 @@
     <value>You cannot reset "Aggregated" because the current content is classifier default value</value>
   </data>
   <data name="CopyPermissionsToChildren" xml:space="preserve">
-    <value>Сopy permissions while creating children</value>
+    <value>Copy permissions while creating children</value>
   </data>
   <data name="RelationSecurityFieldMustBeRequired" xml:space="preserve">
     <value>Relation security field must be required</value>

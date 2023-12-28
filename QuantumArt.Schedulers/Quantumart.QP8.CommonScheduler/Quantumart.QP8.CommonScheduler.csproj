@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Quantumart.QP8.Scheduler.Files\Quantumart.QP8.Scheduler.Files.csproj" />
     <ProjectReference Include="..\Quantumart.QP8.CdcDataImport.Elastic\Quantumart.QP8.CdcDataImport.Elastic.csproj" />
     <ProjectReference Include="..\Quantumart.QP8.CdcDataImport.Tarantool\Quantumart.QP8.CdcDataImport.Tarantool.csproj" />
     <ProjectReference Include="..\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj" />

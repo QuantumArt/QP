@@ -484,6 +484,11 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static string GetEntityTitle(long? entityId, string entityTypeCode, decimal? parentEntityId)
         {
+            var accessible = SecurityRepository.IsEntityAccessible(entityTypeCode, Convert.ToInt32(entityId), ActionTypeCode.List);
+            if (!accessible)
+            {
+                return Translator.Translate("No access");
+            }
 
             if (entityTypeCode == EntityTypeCode.VirtualArticle)
             {

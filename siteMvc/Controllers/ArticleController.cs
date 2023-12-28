@@ -59,7 +59,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy)
@@ -99,8 +100,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int parentId,
             int page,
             int pageSize,
-            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))]
+            IList<ArticleSearchQueryParam> searchQuery,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy)
@@ -153,7 +156,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int page,
             int pageSize,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter,
             bool? onlyIds,
             int[] filterIds,
             string orderBy,
@@ -204,7 +208,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int pageSize,
             [FromForm(Name="IDs")]string ids,
             [ModelBinder(typeof(JsonStringModelBinder<IList<ArticleSearchQueryParam>>))] IList<ArticleSearchQueryParam> searchQuery,
-            string customFilter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter,
             bool? onlyIds,
             string orderBy)
         {

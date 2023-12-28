@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -86,7 +87,7 @@ namespace Quantumart.QP8.BLL.Services
                 ListId = field.Id,
                 SelectionMode = ListSelectionMode.OnlySelectedItems,
                 SelectedEntitiesIds = selectedArticleIDs.ToArray(),
-                Filter = field.RelationFilter
+                Filter = MapperFacade.CustomFilterMapper.GetBizList(field?.ExternalRelationFilter).ToArray()
             }
             );
 

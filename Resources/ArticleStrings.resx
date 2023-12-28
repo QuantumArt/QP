@@ -190,7 +190,7 @@
     <value>Visibility</value>
   </data>
   <data name="Visible" xml:space="preserve">
-    <value>Always Visble</value>
+    <value>Always Visible</value>
   </data>
   <data name="WithoutEndDate" xml:space="preserve">
     <value>Without End</value>
@@ -514,7 +514,7 @@
     <value>Current article violates relation condition</value>
   </data>
   <data name="BaseRelationUniqueViolation" xml:space="preserve">
-    <value>Unique constrant violation for base field (Duplicates found: {0})</value>
+    <value>Unique constraint violation for base field (Duplicates found: {0})</value>
   </data>
   <data name="IsInvisibleTooltip" xml:space="preserve">
     <value>Invisible</value>
@@ -589,7 +589,7 @@
     <value>View result limit</value>
   </data>
   <data name="ExpandChilds" xml:space="preserve">
-    <value>Expand childs</value>
+    <value>Expand children</value>
   </data>
   <data name="ExpandParents" xml:space="preserve">
     <value>Expand parents</value>

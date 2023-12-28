@@ -1,0 +1,279 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qp
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qp-app-config
+  namespace: qp
+data:
+  config.xml: |
+    <?xml version="1.0" encoding="ISO-8859-1"?>
+    <configuration>
+    <app_vars>
+    <app_var app_var_name="TempDirectory"></app_var>
+    <app_var app_var_name="SqlMetalPath"></app_var>
+    <app_var app_var_name="MailHost">localhost</app_var>
+    <app_var app_var_name="MailLogin"></app_var>
+    <app_var app_var_name="MailPassword"></app_var>
+    <app_var app_var_name="MailFromName">Q-Publishing Backend</app_var>
+    <app_var app_var_name="ADsConnectionString"></app_var>
+    <app_var app_var_name="ADsPath"></app_var>
+    <app_var app_var_name="ADsFieldName"></app_var>
+    <app_var app_var_name="AllowSelectCustomerCode">yes</app_var>
+    <app_var app_var_name="ApplicationTitle">Local QP8 (release {release})</app_var>
+    </app_vars>
+    <customers>
+    <customer customer_name="demosite" db_type="Postgres">
+      <db>Server=pgserver;Port=5432;Database=demosite;User Id=pguser;Password=pgpass</db>
+    </customer>
+    </customers>
+    </configuration>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qp-config
+  namespace: qp
+data:
+  CONFIGURATION_SERVICE_HOST: http://conf-service
+  CONFIGURATION_SERVICE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRUC5Db25maWd1cmF0aW9uU2VydmljZS5Jc3N1ZXIiLCJleHAiOjE3MjQ1NjQ1NjQsImF1ZCI6IlFQLkNvbmZpZ3VyYXRpb25TZXJ2aWNlLkF1ZGllbmNlIn0.IB5Pk5Reym8wXmGc9vDI7llxxNSRevi7gwCtStwK5Sw
+  TZ: Europe/Moscow
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conf-service-config
+  namespace: qp
+data:
+  CONFIGURATION_SERVICE_SECRET: QP.TestSecret.gwfeP7mbqqLiDmquIrlr
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qp-config
+  namespace: qp
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi
+  volumeMode: Filesystem
+  volumeName: qp-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qp-library
+  namespace: qp
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  volumeName: qp-library
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: conf-service
+  name: conf-service
+  namespace: qp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conf-service
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: conf-service
+        logging: enabled
+    spec:
+      containers:
+      - env:
+        - name: QpConfigurationPath
+          value: /app/config/config.xml
+        - name: Jwt__Secret
+          valueFrom:
+            configMapKeyRef:
+              key: CONFIGURATION_SERVICE_SECRET
+              name: conf-service-config
+        image: qpcms/qp-configuration-service:0.9.1.20
+        name: conf-service
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config/config.xml
+          subPath: config.xml
+      volumes:
+      - name: config-volume
+        configMap:
+          name: qp-app-config
+          items:
+          - key: config.xml
+            path: config.xml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-storage
+  namespace: qp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-storage
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: qp-storage
+    spec:
+      containers:
+      - image: qpcms/qp-storage:1.0.0.9
+        imagePullPolicy: IfNotPresent
+        name: qp-storage
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /app/wwwroot
+          name: library-volume
+      volumes:
+      - name: library-volume
+        persistentVolumeClaim:
+          claimName: qp-library
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp
+  namespace: qp
+spec:
+  selector:
+    matchLabels:
+      app: qp
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: qp
+        logging: enabled
+    spec:
+      containers:
+      - env:
+        - name: Properties__QpConfigUrl
+          valueFrom:
+            configMapKeyRef:
+              key: CONFIGURATION_SERVICE_HOST
+              name: qp-config
+        - name: Properties__QpConfigToken
+          valueFrom:
+            configMapKeyRef:
+              key: CONFIGURATION_SERVICE_TOKEN
+              name: qp-config
+        - name: Properties__TempDirectory
+          value: /qptemp
+        - name: Properties__EnableSignalR
+          value: "false"
+        - name: Properties__EnableArticleScheduler
+          value: "true"
+        - name: Properties__EnableCommonScheduler
+          value: "true"
+        envFrom:
+        - configMapRef:
+            name: qp-config
+        image: qpcms/qp:||version||
+        name: qp
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /qptemp
+          name: temp-volume
+        - mountPath: /qplibrary
+          name: library-volume
+        - mountPath: /etc/localtime
+          name: time-config
+          subPathExpr: $(TZ)
+        - mountPath: /etc/timezone
+          name: timezone-config
+          subPath: TZ
+      volumes:
+      - name: temp-volume
+        emptyDir: {}
+      - name: library-volume
+        persistentVolumeClaim:
+          claimName: qp-library
+      - name: time-config
+        hostPath:
+          path: /usr/share/zoneinfo
+      - name: timezone-config
+        configMap:
+          name: qp-config
+          items:
+          - key: TZ
+            path: TZ
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-storage
+  namespace: qp
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: qp-storage
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conf-service
+  namespace: qp
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: conf-service
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp
+  namespace: qp
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: qp
+  type: ClusterIP

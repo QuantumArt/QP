@@ -153,7 +153,8 @@ export class BackendHighlightedTextArea {
       || url.endsWith('.jpeg')
       || url.endsWith('.png')
       || url.endsWith('.bmp')
-      || url.endsWith('.svg')) {
+      || url.endsWith('.svg')
+      || url.endsWith('.webp')) {
       return $.telerik.formatString('<img src="{0}"/>', url);
     } else if (url.endsWith('.js')) {
       return $.telerik.formatString('<script language="JavaScript" src="{0}" type="text/javascript"></script>', url);
@@ -209,7 +210,6 @@ export class BackendHighlightedTextArea {
     }
 
     this._storedTempValue = cm.getValue();
-    this._storedTempValue = 'qweqwe';
     tArea.data('codeMirror', cm);
     cm = null;
   }

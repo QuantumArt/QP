@@ -263,6 +263,8 @@ $q.toBoolean = function toBoolean(value, defaultValue) {
   return false;
 };
 
+
+$q.any = value => Array.isArray(value) && value.length > 0;
 $q.isNull = value => value === undefined || value === null;
 $q.isNullOrEmpty = function (value) {
   let result = false;

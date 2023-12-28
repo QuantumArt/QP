@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -172,10 +172,8 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     StartRecord = cmd.StartRecord,
                     PageSize = cmd.PageSize,
                     LanguageId = QPContext.CurrentLanguageId,
-                    CustomFilter = filter.CustomFilter
+                    CustomFilter = MapperFacade.CustomFilterMapper.GetDalList(filter?.CustomFilter?.ToList()).ToArray()
                 };
-
-
 
                 var rows = Common.GetContentsPage(scope.DbConnection, options, out var totalRecords);
                 return new ListResult<ContentListItem> { Data = MapperFacade.ContentListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
@@ -1109,6 +1107,14 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             using (new QPConnectionScope())
             {
                 return Common.GetContentIdsBySiteId(QPConnectionScope.Current.DbConnection, sourceSiteId);
+            }
+        }
+
+        internal static int[] GetContentIds(int siteId)
+        {
+            using (new QPConnectionScope())
+            {
+                return QPContext.EFContext.ContentSet.Where(n => n.SiteId == siteId).Select(n => (int)n.Id).ToArray();
             }
         }
 

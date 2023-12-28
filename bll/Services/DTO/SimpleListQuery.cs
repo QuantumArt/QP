@@ -1,6 +1,6 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.Constants;
+using System;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
         public int[] SelectedEntitiesIds { get; set; }
 
         [BindProperty(Name="filter")]
-        public string Filter { get; set; }
+        public CustomFilterItem[] Filter { get; set; }
 
         [BindProperty(Name="testEntityId")]
         public int TestEntityId { get; set; }

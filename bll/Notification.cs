@@ -23,7 +23,7 @@ namespace Quantumart.QP8.BLL
         internal static Notification Create(int contentId)
         {
             var notification = new Notification { ContentId = contentId };
-            notification.UseQaMail = !notification.Content.Site.IsDotNet;
+            notification.UseQaMail = false;
             notification.ExternalUrl = notification.Content.Site.ExternalUrl;
             return notification;
         }
@@ -54,6 +54,12 @@ namespace Quantumart.QP8.BLL
 
         [Display(Name = "Field", ResourceType = typeof(NotificationStrings))]
         public int? EmailFieldId { get; set; }
+
+        [Display(Name = "Category", ResourceType = typeof(NotificationStrings))]
+        public int? CategoryFieldId { get; set; }
+
+        [Display(Name = "ConfirmationTemplate", ResourceType = typeof(NotificationStrings))]
+        public int? ConfirmationTemplateId { get; set; }
 
         public int? WorkFlowId { get; set; }
 
@@ -113,6 +119,8 @@ namespace Quantumart.QP8.BLL
 
         public bool NoEmail { get; set; }
 
+        public bool UseEmailFromContent { get; set; }
+
         [Display(Name = "External", ResourceType = typeof(NotificationStrings))]
         public bool IsExternal { get; set; }
 
@@ -124,6 +132,9 @@ namespace Quantumart.QP8.BLL
 
         [Display(Name = "ReceiverType", ResourceType = typeof(NotificationStrings))]
         public int SelectedReceiverType { get; set; }
+
+        [Display(Name = "HideRecipients", ResourceType = typeof(NotificationStrings))]
+        public bool HideRecipients { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Notification;
 
@@ -224,13 +235,14 @@ namespace Quantumart.QP8.BLL
 
         public override void DoCustomBinding()
         {
+            UseQaMail = false;
+
             if (IsExternal)
             {
                 FromDefaultName = true;
                 FromBackenduser = true;
                 SelectedReceiverType = ReceiverType.EveryoneInHistory;
                 SendFiles = false;
-                UseQaMail = false;
                 FromUserName = null;
                 FromUserEmail = null;
                 FormatId = null;
@@ -262,28 +274,47 @@ namespace Quantumart.QP8.BLL
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    HideRecipients = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
                 case ReceiverType.UserGroup:
                     UserId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
                 case ReceiverType.EmailFromArticle:
                     UserId = null;
                     GroupId = null;
                     NoEmail = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
                 case ReceiverType.EveryoneInHistory:
                     UserId = null;
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
+                    break;
+                case ReceiverType.EmailFromContent:
+                    UserId = null;
+                    GroupId = null;
+                    EmailFieldId = null;
+                    NoEmail = false;
+                    UseEmailFromContent = true;
                     break;
                 case ReceiverType.None:
                     UserId = null;
                     GroupId = null;
                     EmailFieldId = null;
                     NoEmail = true;
+                    HideRecipients = false;
+                    CategoryFieldId = null;
+                    UseEmailFromContent = false;
                     break;
             }
         }
@@ -303,6 +334,11 @@ namespace Quantumart.QP8.BLL
             if (EmailFieldId.HasValue)
             {
                 return ReceiverType.EmailFromArticle;
+            }
+
+            if (UseEmailFromContent)
+            {
+                return ReceiverType.EmailFromContent;
             }
 
             return NoEmail ? ReceiverType.None : ReceiverType.EveryoneInHistory;
