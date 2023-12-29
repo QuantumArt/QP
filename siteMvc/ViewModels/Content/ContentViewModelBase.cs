@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
 using Quantumart.QP8.BLL;
@@ -13,6 +14,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Content
     {
         public readonly string ClassBlock = "class";
 
+        [Required]
         public BLL.Content Data
         {
             get => (BLL.Content)EntityData;

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Library
@@ -6,6 +7,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
     {
         internal static ContentFolderViewModel Create(ContentFolder folder, string tabId, int parentId) => Create<ContentFolderViewModel>(folder, tabId, parentId);
 
+        [Required]
         public new ContentFolder Data
         {
             get => (ContentFolder)EntityData;

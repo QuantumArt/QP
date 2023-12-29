@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -10,6 +12,8 @@ namespace Quantumart.QP8.BLL
     {
         public int ObjectId { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public Content Content { get; set; }
 
         public Container()

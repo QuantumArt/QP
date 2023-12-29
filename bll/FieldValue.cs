@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Quantumart.QP8.BLL
 {
     public class FieldValue
     {
-
+        [Required]
         public Field Field { get; set; }
 
         public string Value

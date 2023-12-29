@@ -38,6 +38,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             return viewModel;
         }
 
+        [Required]
         public BLL.Field Data
         {
             get => (BLL.Field)EntityData;

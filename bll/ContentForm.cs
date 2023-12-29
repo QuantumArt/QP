@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
@@ -20,10 +22,14 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "SubmissionResponsePage", ResourceType = typeof(TemplateStrings))]
         public int? ThankYouPageId { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public Content Content { get; set; }
 
         public object Object { get; set; }
 
+        [ValidateNever]
+        [BindNever]
         public Page Page { get; set; }
 
         public IEnumerable<NetLanguage> NetLanguages { get; set; }

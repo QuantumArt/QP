@@ -17,6 +17,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
     {
         private ICustomActionService _service;
 
+        [Required]
         public BLL.CustomAction Data
         {
             get => (BLL.CustomAction)EntityData;

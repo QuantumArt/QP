@@ -191,6 +191,7 @@ namespace Quantumart.QP8.BLL
 
         #endregion
 
+        [Required]
         public Field Field { get; set; }
 
         public int Id { get; set; }
