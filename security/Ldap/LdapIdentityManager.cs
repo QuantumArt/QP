@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
 using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
@@ -19,10 +19,10 @@ public class LdapIdentityManager : ILdapIdentityManager
     private readonly LdapHelper _ldapHelper;
     private readonly IOptions<LdapSettings> _ldapSetting;
     private readonly LdapConnectionFactory _ldapConnectionFactory;
+    private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
     public LdapIdentityManager(LdapConnectionFactory ldapConnectionFactory, LdapHelper ldapHelper,
-        IOptions<LdapSettings> ldapSetting,
-        ILogger<LdapIdentityManager> logger)
+        IOptions<LdapSettings> ldapSetting)
     {
         _ldapConnectionFactory = ldapConnectionFactory;
         _ldapHelper = ldapHelper;
@@ -78,7 +78,7 @@ public class LdapIdentityManager : ILdapIdentityManager
     {
         return _ldapConnectionFactory.WithAdminAuthConnection(connection =>
         {
-            return connection
+            var result = connection
             .Search(
                 _ldapSetting.Value.BaseSearchDistinguishedName,
                 LdapConnection.ScopeSub,
@@ -86,6 +86,10 @@ public class LdapIdentityManager : ILdapIdentityManager
                 attrsToSelect,
                 false)
             .ToList();
+
+            Logger.Trace(() => $"LDAP entries: BaseSearchDistinguishedName: {_ldapSetting.Value.BaseSearchDistinguishedName} filter: {filter} count: {result.Count} ");
+
+            return result;
         });
     }
 
@@ -173,7 +177,9 @@ public class LdapIdentityManager : ILdapIdentityManager
                 LdapConnection.ScopeSub,
                 $"(samaccountname={login})",
                 null,
-                false);
+        false);
+
+        Logger.Trace(() => $"LDAP entry by login: BaseSearchDistinguishedName: {_ldapSetting.Value.BaseSearchDistinguishedName} filter: (samaccountname={login}) count: {search.Count} ");
 
         return search.FirstOrDefault();
     }

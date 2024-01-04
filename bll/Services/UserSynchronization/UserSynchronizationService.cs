@@ -35,12 +35,19 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
             if (qpGroups.Count == 0)
             {
+                Logger.Info($"QP groups not found");
                 return;
             }
 
             var adGroups = GetAdGroupsToProcess(qpGroups);
             var adUsers = _activeDirectory.GetUsers(adGroups);
             var qpUsers = UserRepository.GetNtUsers();
+
+            Logger.Trace(() => $"Found QP groups: {string.Join(',', qpGroups.Select(g => g.Id))}");
+            Logger.Trace(() => $"Found QP users:{string.Join(", ", qpUsers.Select(u => u.Id))}");
+            Logger.Trace(() => $"Found AD groups: {string.Join("; ", adGroups.Select(g => g.ReferencedPath))}");
+            Logger.Trace(() => $"Found AD users: {string.Join("; ", adGroups.Select(u => u.ReferencedPath))}");
+            
             AddUsers(adUsers, adGroups, qpUsers, qpGroups);
             UpdateUsers(qpUsers, adUsers, adGroups, qpGroups);
             DisableUsers(qpUsers, adUsers);
