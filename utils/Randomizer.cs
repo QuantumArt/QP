@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Security.Cryptography;
 
 namespace Quantumart.QP8.Utils
 {
@@ -16,16 +17,19 @@ namespace Quantumart.QP8.Utils
 			int symbolStringLength = symbolString.Length; // длина строки символов
 			int randomNumber = 0; // cлучайное число
 			string randomSymbol = ""; // случайный символ
-			Random randomizer = new Random(); // рандомайзер
 			string result = ""; // результирующая переменная
 
-			for (int i = 0; i < randomStringLength; i++)
-			{
-				randomNumber = randomizer.Next(symbolStringLength);
-				randomSymbol = symbolString.Substring(randomNumber, 1);
 
-				result += randomSymbol;
-			}
+            using (var randomizer = RandomNumberGenerator.Create())
+            {
+                for (int i = 0; i < randomStringLength; i++)
+                {
+                    randomNumber = randomizer.Next(symbolStringLength);
+                    randomSymbol = symbolString.Substring(randomNumber, 1);
+
+                    result += randomSymbol;
+                }
+            }
 
 			return result;
 		}
