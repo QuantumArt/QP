@@ -1,23 +1,22 @@
-using System;
 using System.Security.Cryptography;
 
 namespace Quantumart.QP8.Utils
 {
-	public static class Randomizer
-	{
-		/// <summary>
-		/// Генерирует случайную строку символов, которая необходима 
-		/// для отключения кэширования графических файлов баннеров
-		/// </summary>
-		/// <param name="randomStringLength">длина строки</param>
-		/// <returns>случайная строка символов</returns>
-		public static string GenerateRandomString(int randomStringLength)
-		{
-			string symbolString = "QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567"; // строка символов
-			int symbolStringLength = symbolString.Length; // длина строки символов
-			int randomNumber = 0; // cлучайное число
-			string randomSymbol = ""; // случайный символ
-			string result = ""; // результирующая переменная
+    public static class Randomizer
+    {
+        /// <summary>
+        /// Генерирует случайную строку символов, которая необходима 
+        /// для отключения кэширования графических файлов баннеров
+        /// </summary>
+        /// <param name="randomStringLength">длина строки</param>
+        /// <returns>случайная строка символов</returns>
+        public static string GenerateRandomString(int randomStringLength)
+        {
+            string symbolString = "QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567"; // строка символов
+            int symbolStringLength = symbolString.Length; // длина строки символов
+            int randomNumber = 0; // cлучайное число
+            string randomSymbol = ""; // случайный символ
+            string result = ""; // результирующая переменная
 
 
             using (var randomizer = RandomNumberGenerator.Create())
@@ -31,7 +30,7 @@ namespace Quantumart.QP8.Utils
                 }
             }
 
-			return result;
-		}
-	}
+            return result;
+        }
+    }
 }

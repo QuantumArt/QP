@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using NLog;
+using NLog.Fluent;
 using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,12 @@ public class LdapIdentityManager : ILdapIdentityManager
                 false)
             .ToList();
 
-            Logger.Trace(() => $"LDAP entries: BaseSearchDistinguishedName: {_ldapSetting.Value.BaseSearchDistinguishedName} filter: {filter} count: {result.Count} ");
+            Logger.Trace()
+               .Message("LDAP query")
+               .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
+               .Property("filter", filter)
+               .Property("reultCount", result.Count)
+               .Write();
 
             return result;
         });

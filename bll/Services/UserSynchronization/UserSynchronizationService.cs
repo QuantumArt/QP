@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.API;
@@ -43,10 +44,14 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             var adUsers = _activeDirectory.GetUsers(adGroups);
             var qpUsers = UserRepository.GetNtUsers();
 
-            Logger.Trace(() => $"Found QP groups: {string.Join(',', qpGroups.Select(g => g.Id))}");
-            Logger.Trace(() => $"Found QP users:{string.Join(", ", qpUsers.Select(u => u.Id))}");
-            Logger.Trace(() => $"Found AD groups: {string.Join("; ", adGroups.Select(g => g.ReferencedPath))}");
-            Logger.Trace(() => $"Found AD users: {string.Join("; ", adUsers.Select(u => u.ReferencedPath))}");
+
+            Logger.Trace()
+               .Message("Found users and groups")
+               .Property("qpGroups", string.Join(',', qpGroups.Select(g => g.Id)))
+               .Property("qpUsers", string.Join(", ", qpUsers.Select(u => u.Id)))
+               .Property("adGroups", string.Join("; ", adGroups.Select(g => g.ReferencedPath)))
+               .Property("adUsers", string.Join("; ", adUsers.Select(u => u.ReferencedPath)))
+               .Write();
             
             AddUsers(adUsers, adGroups, qpUsers, qpGroups);
             UpdateUsers(qpUsers, adUsers, adGroups, qpGroups);
