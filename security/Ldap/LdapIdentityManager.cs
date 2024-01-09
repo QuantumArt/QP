@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using NLog;
+using NLog.Filters;
 using NLog.Fluent;
 using Novell.Directory.Ldap;
 using System;
@@ -178,14 +179,21 @@ public class LdapIdentityManager : ILdapIdentityManager
 
     private LdapEntry GetLdapEntryByLogin(ILdapConnection connection, string login)
     {
+        var filter = $"(samaccountname={login})";
+
         var search = connection.Search(
                 _ldapSetting.Value.BaseSearchDistinguishedName,
                 LdapConnection.ScopeSub,
-                $"(samaccountname={login})",
+                filter,
                 null,
         false);
 
-        Logger.Trace(() => $"LDAP entry by login: BaseSearchDistinguishedName: {_ldapSetting.Value.BaseSearchDistinguishedName} filter: (samaccountname={login}) count: {search.Count} ");
+        Logger.Trace()
+           .Message("LDAP query by login")
+           .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
+           .Property("filter", filter)
+           .Property("resultCount", search.Count)
+           .Write();
 
         return search.FirstOrDefault();
     }

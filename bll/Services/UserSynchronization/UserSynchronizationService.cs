@@ -47,10 +47,10 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
             Logger.Trace()
                .Message("Found users and groups")
-               .Property("qpGroups", string.Join(',', qpGroups.Select(g => g.Id)))
-               .Property("qpUsers", string.Join(", ", qpUsers.Select(u => u.Id)))
-               .Property("adGroups", string.Join("; ", adGroups.Select(g => g.ReferencedPath)))
-               .Property("adUsers", string.Join("; ", adUsers.Select(u => u.ReferencedPath)))
+               .Property("qpGroups", qpGroups.Select(g => g.Id).ToArray())
+               .Property("qpUsers", qpUsers.Select(u => u.Id).ToArray())
+               .Property("adGroups", adGroups.Select(g => g.ReferencedPath).ToArray())
+               .Property("adUsers", adUsers.Select(u => u.ReferencedPath).ToArray())
                .Write();
             
             AddUsers(adUsers, adGroups, qpUsers, qpGroups);
