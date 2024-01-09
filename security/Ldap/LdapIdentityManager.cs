@@ -92,7 +92,7 @@ public class LdapIdentityManager : ILdapIdentityManager
                .Message("LDAP query")
                .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
                .Property("filter", filter)
-               .Property("reultCount", result.Count)
+               .Property("resultCount", result.Count)
                .Write();
 
             return result;
