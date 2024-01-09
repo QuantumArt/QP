@@ -1,5 +1,7 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
+using NLog.Filters;
+using NLog.Fluent;
 using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
@@ -19,10 +21,10 @@ public class LdapIdentityManager : ILdapIdentityManager
     private readonly LdapHelper _ldapHelper;
     private readonly IOptions<LdapSettings> _ldapSetting;
     private readonly LdapConnectionFactory _ldapConnectionFactory;
+    private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
     public LdapIdentityManager(LdapConnectionFactory ldapConnectionFactory, LdapHelper ldapHelper,
-        IOptions<LdapSettings> ldapSetting,
-        ILogger<LdapIdentityManager> logger)
+        IOptions<LdapSettings> ldapSetting)
     {
         _ldapConnectionFactory = ldapConnectionFactory;
         _ldapHelper = ldapHelper;
@@ -78,7 +80,7 @@ public class LdapIdentityManager : ILdapIdentityManager
     {
         return _ldapConnectionFactory.WithAdminAuthConnection(connection =>
         {
-            return connection
+            var result = connection
             .Search(
                 _ldapSetting.Value.BaseSearchDistinguishedName,
                 LdapConnection.ScopeSub,
@@ -86,6 +88,15 @@ public class LdapIdentityManager : ILdapIdentityManager
                 attrsToSelect,
                 false)
             .ToList();
+
+            Logger.Trace()
+               .Message("LDAP query")
+               .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
+               .Property("filter", filter)
+               .Property("resultCount", result.Count)
+               .Write();
+
+            return result;
         });
     }
 
@@ -168,12 +179,21 @@ public class LdapIdentityManager : ILdapIdentityManager
 
     private LdapEntry GetLdapEntryByLogin(ILdapConnection connection, string login)
     {
+        var filter = $"(samaccountname={login})";
+
         var search = connection.Search(
                 _ldapSetting.Value.BaseSearchDistinguishedName,
                 LdapConnection.ScopeSub,
-                $"(samaccountname={login})",
+                filter,
                 null,
-                false);
+        false);
+
+        Logger.Trace()
+           .Message("LDAP query by login")
+           .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
+           .Property("filter", filter)
+           .Property("resultCount", search.Count)
+           .Write();
 
         return search.FirstOrDefault();
     }

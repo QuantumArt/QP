@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.ViewModels.Library;
 using SixLabors.ImageSharp;
@@ -15,6 +16,7 @@ using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -343,10 +345,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private string SavePath(string path)
         {
-            var rnd = new Random();
-            var key = rnd.Next().ToString();
-            TempData[key] = path;
-            return key;
+            using (var rnd = RandomNumberGenerator.Create())
+            {
+                var key = rnd.Next().ToString();
+                TempData[key] = path;
+                return key;
+            }
         }
 
         private static PathInfo GetFilePathInfo(int fieldId, int? entityId, bool isVersion) => !isVersion

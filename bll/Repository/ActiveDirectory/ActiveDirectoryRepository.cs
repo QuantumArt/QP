@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using Novell.Directory.Ldap;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security.Ldap;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.ActiveDirectory
 {
