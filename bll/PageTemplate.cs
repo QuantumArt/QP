@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -220,6 +222,8 @@ namespace Quantumart.QP8.BLL
 
         public override int ParentEntityId => SiteId;
 
+        [ValidateNever]
+        [BindNever]
         public Site Site { get; set; }
 
         public override string LockedByAnyoneElseMessage => TemplateStrings.LockedByAnyoneElse;

@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -32,6 +34,8 @@ namespace Quantumart.QP8.BLL
 
         private Content _content;
 
+        [BindNever]
+        [ValidateNever]
         public Content Content
         {
             get => _content ?? (_content = ContentRepository.GetById(ContentId));
@@ -50,6 +54,8 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "QP8User", ResourceType = typeof(NotificationStrings))]
         public int? FromBackenduserId { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public User FromUser { get; set; }
 
         [Display(Name = "Field", ResourceType = typeof(NotificationStrings))]
@@ -63,6 +69,8 @@ namespace Quantumart.QP8.BLL
 
         public int? WorkFlowId { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public Workflow Workflow { get; set; }
 
         [Display(Name = "Status", ResourceType = typeof(NotificationStrings))]
@@ -113,8 +121,12 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "Template", ResourceType = typeof(NotificationStrings))]
         public int? TemplateId { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public User ToUser { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public UserGroup ToUserGroup { get; set; }
 
         public bool NoEmail { get; set; }

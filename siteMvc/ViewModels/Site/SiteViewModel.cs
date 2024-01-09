@@ -35,6 +35,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
 
         public string AggregationListItemsDataExternalCssItems { get; set; }
 
+        [Required]
         public BLL.Site Data
         {
             get => (BLL.Site)EntityData;
