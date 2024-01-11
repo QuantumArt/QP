@@ -619,7 +619,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
                 }
 
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) = {timeFrom.Value.TotalSeconds})";
+                return $"({ns}qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) = {timeFrom.Value.TotalSeconds})";
             }
 
             // если обе даты пустые - то возвращаем null
@@ -648,14 +648,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             if (!string.IsNullOrWhiteSpace(timeFromString) && string.IsNullOrWhiteSpace(timeToString))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) >= {timeFrom.Value.TotalSeconds})";
+                return $"({ns}qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) >= {timeFrom.Value.TotalSeconds})";
             }
 
             // дата "от" пустая а "до" не пустая
             if (string.IsNullOrWhiteSpace(timeFromString) && !string.IsNullOrWhiteSpace(timeToString))
             {
                 // ReSharper disable once PossibleInvalidOperationException
-                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) <= {timeTo.Value.TotalSeconds})";
+                return $"({ns}qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) <= {timeTo.Value.TotalSeconds})";
             }
 
             // обе границы диапазона не пустые
@@ -663,14 +663,14 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
             // ReSharper disable PossibleInvalidOperationException
             if (timeFrom.Value < timeTo.Value)
             {
-                return $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
+                return $"({ns}qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) BETWEEN {timeFrom.Value.TotalSeconds} AND {timeTo.Value.TotalSeconds})";
             }
 
             // ReSharper restore PossibleInvalidOperationException
 
             return timeFrom.Value > timeTo.Value
-                ? $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
-                : $"({ns}.qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) = {timeFrom.Value.TotalSeconds})";
+                ? $"({ns}qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) BETWEEN {timeTo.Value.TotalSeconds} AND {timeFrom.Value.TotalSeconds})"
+                : $"({ns}qp_abs_time_seconds({GetTableAlias(p)}.{fieldName}) = {timeFrom.Value.TotalSeconds})";
         }
 
         private static string ParseNumericRangeParam(ArticleSearchQueryParam p)

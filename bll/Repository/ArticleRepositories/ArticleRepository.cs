@@ -200,7 +200,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var filters = MapperFacade.CustomFilterMapper.GetDalList(customFilter?.ToList()).ToArray();
                 var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, filters);
                 filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
-                
+
                 var options = new ArticlePageOptions
                 {
                     ContentId = contentId,
@@ -470,7 +470,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 var isUserAdmin = QPContext.IsAdmin;
                 var availableForList = isUserAdmin || SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, query.ParentEntityId, ActionTypeCode.List);
 
-                
+
                 var sqlFilterParameters = new List<DbParameter>();
                 var filters = MapperFacade.CustomFilterMapper.GetDalList(query?.Filter?.ToList());
 
@@ -736,7 +736,7 @@ cil.locked_by,
                         {
                             var displayField = ContentRepository.GetTitleField(id);
                             var contentItemIdField = databaseType == DatabaseType.Postgres ? "c.content_item_id::integer" : "c.content_item_id";
-                            parts.Add($"{SqlQuerySyntaxHelper.DbSchemaName(databaseType)}.qp_link_titles({field.LinkId.Value}, {contentItemIdField}, {displayField.Id}, 255)");
+                            parts.Add($"{SqlQuerySyntaxHelper.DbSchemaName(databaseType)}qp_link_titles({field.LinkId.Value}, {contentItemIdField}, {displayField.Id}, 255)");
                         }
                     }
                 }
@@ -1147,7 +1147,7 @@ cil.locked_by,
                         if (field.Type.Name == FieldTypeName.Time)
                         {
                             var schema = SqlQuerySyntaxHelper.DbSchemaName(dbType);
-                            newFieldName = $"{schema}.qp_abs_time(c.{newFieldName})";
+                            newFieldName = $"{schema}qp_abs_time(c.{newFieldName})";
                         }
                     }
                     else if (!SqlSorting.ContainsEscapeSymbols(newFieldName, dbType))

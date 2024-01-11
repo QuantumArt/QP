@@ -1367,9 +1367,9 @@ namespace Quantumart.QP8.BLL.Helpers
         internal string GenerateCreateJoinViewDdl(int virtualContentId, int joinRootContentId, IEnumerable<VirtualFieldData> virtualFieldsData)
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}} AS ";
-            string joinTableNameTemplate = $"{schema}.CONTENT_{{0}} ";
-            string rootContentNameTemplate = $"{schema}.CONTENT_{{0}}";
+            string viewNameTemplate = $"CREATE VIEW {schema}content_{{0}} AS ";
+            string joinTableNameTemplate = $"{schema}CONTENT_{{0}} ";
+            string rootContentNameTemplate = $"{schema}CONTENT_{{0}}";
             return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
         }
 
@@ -1379,9 +1379,9 @@ namespace Quantumart.QP8.BLL.Helpers
         internal string GenerateCreateJoinAsyncViewDdl(int virtualContentId, int joinRootContentId, IEnumerable<VirtualFieldData> virtualFieldsData)
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}}_async AS ";
-            string joinTableNameTemplate = $"{schema}.CONTENT_{{0}}_united ";
-            string rootContentNameTemplate = $"{schema}.CONTENT_{{0}}_async";
+            string viewNameTemplate = $"CREATE VIEW {schema}content_{{0}}_async AS ";
+            string joinTableNameTemplate = $"{schema}CONTENT_{{0}}_united ";
+            string rootContentNameTemplate = $"{schema}CONTENT_{{0}}_async";
             return GenerateCreateJoinViewDdl(virtualContentId, joinRootContentId, virtualFieldsData.ToList(), viewNameTemplate, joinTableNameTemplate, rootContentNameTemplate);
         }
 
@@ -1464,16 +1464,16 @@ namespace Quantumart.QP8.BLL.Helpers
         internal string GenerateCreateUnionViewDdl(int contentId, IEnumerable<int> unionSourceContentIds, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}} AS ";
-            string sourceTableNameTemplate = $"{schema}.CONTENT_{{0}}";
+            string viewNameTemplate = $"CREATE VIEW {schema}content_{{0}} AS ";
+            string sourceTableNameTemplate = $"{schema}CONTENT_{{0}}";
             return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
         internal string GenerateCreateUnionAsyncViewDdl(int contentId, IEnumerable<int> unionSourceContentIds, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
         {
             var schema = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-            string viewNameTemplate = $"CREATE VIEW {schema}.content_{{0}}_async AS ";
-            string sourceTableNameTemplate = $"{schema}.CONTENT_{{0}}_async";
+            string viewNameTemplate = $"CREATE VIEW {schema}content_{{0}}_async AS ";
+            string sourceTableNameTemplate = $"{schema}CONTENT_{{0}}_async";
             return GenerateCreateUnionViewDdl(contentId, unionSourceContentIds.ToList(), contentFieldNames.ToList(), fieldNameInSourceContents, viewNameTemplate, sourceTableNameTemplate);
         }
 
@@ -1520,27 +1520,17 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             try
             {
-                const string createViewTemplate = "CREATE VIEW {0}.{1} AS {2}";
-
                 // View
                 var viewName = $"content_{content.Id}";
                 var schemaName = DAL.SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-                var viewCreateDdl = string.Format(createViewTemplate, schemaName, viewName, content.UserQuery);
+                var viewCreateDdl = $"CREATE VIEW {schemaName}{viewName} AS {content.UserQuery}";
                 VirtualContentRepository.RunCreateViewDdl(viewCreateDdl);
 
                 // united view
                 var unitedViewName = $"content_{content.Id}_united";
-                string viewUnitedCreateDdl;
-                if (string.IsNullOrEmpty(content.UserQueryAlternative))
-                {
-                    var unitedViewQuery = $"select * from {viewName}";
-                    viewUnitedCreateDdl = string.Format(createViewTemplate, schemaName, unitedViewName, unitedViewQuery);
-                }
-                else
-                {
-                    viewUnitedCreateDdl = string.Format(createViewTemplate, schemaName, unitedViewName, content.UserQueryAlternative);
-                }
-
+                var unitedQuery = content.UserQueryAlternative;
+                unitedQuery = !string.IsNullOrEmpty(unitedQuery) ? unitedQuery : $"select * from {viewName}";
+                var viewUnitedCreateDdl = $"CREATE VIEW {schemaName}{unitedViewName} AS {unitedQuery}";
                 VirtualContentRepository.RunCreateViewDdl(viewUnitedCreateDdl);
             }
             catch (SqlException ex)

@@ -91,7 +91,7 @@ namespace Quantumart.QP8.DAL
             var unescapedIndexName = IndexName(dbType, tableName, actualFieldName, false);
             var pgCheck = dbType == DatabaseType.Postgres ? " IF EXISTS " : "";
             var sqlCheck = dbType == DatabaseType.Postgres ? "" : $"if exists(select name from sysindexes where name = '{unescapedIndexName}')";
-            var tablePrefix = (dbType == DatabaseType.SqlServer) ? $@"{DbSchemaName(dbType)}.{tableName}." : "";
+            var tablePrefix = (dbType == DatabaseType.SqlServer) ? $@"{DbSchemaName(dbType)}{tableName}." : "";
             var sql = $@"{sqlCheck} drop index {pgCheck} {tablePrefix}{indexName}";
             ExecuteSql(cnn, sql);
         }
@@ -173,7 +173,7 @@ namespace Quantumart.QP8.DAL
             var asyncTableName = tableName + "_ASYNC";
             var dtType = (dbType == DatabaseType.Postgres) ? "timestamp with time zone" : "datetime";
             var sql = $@"
-            create table {DbSchemaName(dbType)}.{{0}} (
+            create table {DbSchemaName(dbType)}{{0}} (
                 {Escape(dbType, "CONTENT_ITEM_ID")} numeric(18,0) NOT NULL PRIMARY KEY,
                 {Escape(dbType, "STATUS_TYPE_ID")} numeric(18,0) NOT NULL,
                 {Escape(dbType, "VISIBLE")} numeric(18,0) NOT NULL,
@@ -195,7 +195,7 @@ namespace Quantumart.QP8.DAL
             var fieldTableName = "plugin_content_attribute_" + id;
 
             var sql = $@"
-            create table {DbSchemaName(dbType)}.{{0}} (
+            create table {DbSchemaName(dbType)}{{0}} (
                 {Escape(dbType, "ID")} numeric(18,0) NOT NULL PRIMARY KEY
              )";
 
@@ -261,8 +261,8 @@ namespace Quantumart.QP8.DAL
             var dbType = GetDbType(cnn);
             var tableName = "content_" + id;
             var asyncTableName = tableName + "_async";
-            var sql = (dbType == DatabaseType.Postgres) ? $@"drop table if exists {DbSchemaName(dbType)}.{{0}}" :
-                $@"exec qp_drop_existing '{DbSchemaName(dbType)}.{{0}}', 'IsUserTable'";
+            var sql = (dbType == DatabaseType.Postgres) ? $@"drop table if exists {DbSchemaName(dbType)}{{0}}" :
+                $@"exec qp_drop_existing '{DbSchemaName(dbType)}{{0}}', 'IsUserTable'";
 
             ExecuteSql(cnn, String.Format(sql, tableName));
             ExecuteSql(cnn, String.Format(sql, asyncTableName));
@@ -275,8 +275,8 @@ namespace Quantumart.QP8.DAL
             var contentTableName = "plugin_content_" + id;
             var fieldTableName = "plugin_content_attribute_" + id;
 
-            var sql = (dbType == DatabaseType.Postgres) ? $@"drop table if exists {DbSchemaName(dbType)}.{{0}}" :
-                $@"exec qp_drop_existing '{DbSchemaName(dbType)}.{{0}}', 'IsUserTable'";
+            var sql = (dbType == DatabaseType.Postgres) ? $@"drop table if exists {DbSchemaName(dbType)}{{0}}" :
+                $@"exec qp_drop_existing '{DbSchemaName(dbType)}{{0}}', 'IsUserTable'";
 
             ExecuteSql(cnn, String.Format(sql, siteTableName));
             ExecuteSql(cnn, String.Format(sql, contentTableName));
@@ -527,10 +527,10 @@ namespace Quantumart.QP8.DAL
         public static void CreateLinkTables(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = GetDbType(connection);
-            var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
-            var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
-            var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
-            var asyncRevTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async_rev";
+            var tableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}";
+            var revTableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}_rev";
+            var asyncTableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}_async";
+            var asyncRevTableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}_async_rev";
 
             var sql = $@"CREATE TABLE {{0}} (id int NOT NULL, linked_id int NOT NULL, PRIMARY KEY (id, linked_id))";
 
@@ -543,10 +543,10 @@ namespace Quantumart.QP8.DAL
         public static void DropLinkTables(DbConnection connection, ContentToContentDAL item)
         {
             var dbType = GetDbType(connection);
-            var tableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}";
-            var revTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_rev";
-            var asyncTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async";
-            var asyncRevTableName = $@"{DbSchemaName(dbType)}.item_link_{item.LinkId}_async_rev";
+            var tableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}";
+            var revTableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}_rev";
+            var asyncTableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}_async";
+            var asyncRevTableName = $@"{DbSchemaName(dbType)}item_link_{item.LinkId}_async_rev";
             var sql = $@"DROP TABLE {{0}}";
 
             ExecuteSql(connection, String.Format(sql, tableName));

@@ -31,8 +31,6 @@ namespace Quantumart.QP8.DAL
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.HasDefaultSchema("public");
-
             foreach(var entity in modelBuilder.Model.GetEntityTypes())
             {
                 entity.SetTableName(entity.GetTableName().ToSnakeCase());

@@ -228,11 +228,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
                 else if (field.ExactType == FieldExactTypes.M2ORelation)
                 {
-                    sb.Append($", {ns}.qp_m2o_titles({articleIdField}, {field.RelatedAttributeId}, {field.BackRelatedAttributeId}, 255) as {fieldAlias}");
+                    sb.Append($", {ns}qp_m2o_titles({articleIdField}, {field.RelatedAttributeId}, {field.BackRelatedAttributeId}, 255) as {fieldAlias}");
                 }
                 else
                 {
-                    sb.Append($", {ns}.qp_link_titles({field.LinkId}, {articleIdField}, {field.RelatedAttributeId}, 255) as {fieldAlias}");
+                    sb.Append($", {ns}qp_link_titles({field.LinkId}, {articleIdField}, {field.RelatedAttributeId}, 255) as {fieldAlias}");
                 }
             }
 
@@ -263,14 +263,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     switch (f.ExactType)
                     {
                         case FieldExactTypes.M2MRelation:
-                            parts.Add($"{ns}.qp_link_titles({f.LinkId.Value}, {field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
+                            parts.Add($"{ns}qp_link_titles({f.LinkId.Value}, {field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
                             break;
                         case FieldExactTypes.O2MRelation:
                             var o2mName = $"{f.RelationTableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.RelatedAttributeName)}";
                             parts.Add(SqlQuerySyntaxHelper.CastToString(dbType, o2mName));
                            break;
                         case FieldExactTypes.M2ORelation:
-                            parts.Add($"{ns}.qp_m2o_titles({field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, {f.BackRelatedAttributeId}, 255)");
+                            parts.Add($"{ns}qp_m2o_titles({field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, {f.BackRelatedAttributeId}, 255)");
                             break;
                         default:
                             var fieldName = $"{field.RelationTableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}";
