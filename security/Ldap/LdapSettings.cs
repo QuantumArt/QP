@@ -27,4 +27,6 @@ public class LdapSettings
     /// Connection timeout in milliseconds
     /// </summary>
     public TimeSpan ConnectionTimeout { get; init; }
+
+    public bool FollowReferences { get; init; }
 }

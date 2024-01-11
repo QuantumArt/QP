@@ -43,7 +43,7 @@ public class LdapConnectionFactory
         {
             SecureSocketLayer = _setting.UseSsl,
             ConnectionTimeout = (int)_setting.ConnectionTimeout.TotalMilliseconds,
-            Constraints = new() { ReferralFollowing = true }
+            Constraints = new() { ReferralFollowing = _setting.FollowReferences }
         };
         connection.Connect(_setting.Server, GetServerPort());
         return connection;
