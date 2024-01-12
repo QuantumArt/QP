@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_content_united_views_recreate()
+CREATE OR REPLACE PROCEDURE qp_content_united_views_recreate()
 LANGUAGE 'plpgsql'
 
 AS $BODY$

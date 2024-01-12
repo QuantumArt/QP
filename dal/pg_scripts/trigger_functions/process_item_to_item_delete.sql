@@ -1,8 +1,8 @@
--- FUNCTION: public.process_item_to_item_delete()
+-- FUNCTION: process_item_to_item_delete()
 
--- DROP FUNCTION public.process_item_to_item_delete();
+-- DROP FUNCTION process_item_to_item_delete();
 
-CREATE OR REPLACE FUNCTION public.process_item_to_item_delete()
+CREATE OR REPLACE FUNCTION process_item_to_item_delete()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

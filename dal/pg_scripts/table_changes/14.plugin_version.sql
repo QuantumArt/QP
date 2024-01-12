@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public.plugin_version
+CREATE TABLE IF NOT EXISTS plugin_version
 (
     id               numeric(18)              NOT NULL default nextval('plugin_version_seq')
         constraint pk_plugin_version primary key,
@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS public.plugin_version
     created          timestamp with time zone NOT NULL DEFAULT (now()),
     modified         timestamp with time zone NOT NULL DEFAULT (now()),
     last_modified_by numeric(18)              NOT NULL
-        constraint fk_plugin_version_last_modified_by references public.users (user_id)
+        constraint fk_plugin_version_last_modified_by references users (user_id)
 
 );
 
--- drop table public.plugin_version
+-- drop table plugin_version
 

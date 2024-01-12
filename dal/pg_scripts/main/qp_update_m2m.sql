@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_update_m2m(numeric, numeric, text, boolean, boolean)
+-- PROCEDURE: qp_update_m2m(numeric, numeric, text, boolean, boolean)
 
--- DROP PROCEDURE public.qp_update_m2m(numeric, numeric, text, boolean, boolean);
+-- DROP PROCEDURE qp_update_m2m(numeric, numeric, text, boolean, boolean);
 
-CREATE OR REPLACE PROCEDURE public.qp_update_m2m(
+CREATE OR REPLACE PROCEDURE qp_update_m2m(
 	id numeric,
 	link_id numeric,
 	value text,

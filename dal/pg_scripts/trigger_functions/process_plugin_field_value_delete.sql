@@ -1,8 +1,8 @@
--- FUNCTION: public.process_plugin_field_value_delete()
+-- FUNCTION: process_plugin_field_value_delete()
 
--- DROP FUNCTION public.process_plugin_field_value_delete();
+-- DROP FUNCTION process_plugin_field_value_delete();
 
-CREATE OR REPLACE FUNCTION public.process_plugin_field_value_delete()
+CREATE OR REPLACE FUNCTION process_plugin_field_value_delete()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

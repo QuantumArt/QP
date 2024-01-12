@@ -1,8 +1,8 @@
--- FUNCTION: public.process_content_item_insert()
+-- FUNCTION: process_content_item_insert()
 
--- DROP FUNCTION public.process_content_item_insert();
+-- DROP FUNCTION process_content_item_insert();
 
-CREATE OR REPLACE FUNCTION public.process_content_item_delete()
+CREATE OR REPLACE FUNCTION process_content_item_delete()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

@@ -1,8 +1,8 @@
--- FUNCTION: public.process_content_item_update()
+-- FUNCTION: process_content_item_update()
 
--- DROP FUNCTION public.process_content_item_update();
+-- DROP FUNCTION process_content_item_update();
 
-CREATE OR REPLACE FUNCTION public.process_content_item_update()
+CREATE OR REPLACE FUNCTION process_content_item_update()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_publish(
+CREATE OR REPLACE PROCEDURE qp_publish(
 	ids int[],
 	last_modified_by int,
 	with_aggregated boolean default true)

@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_create_content_item_access(
+CREATE OR REPLACE PROCEDURE qp_create_content_item_access(
 	ids numeric[]
 )
 LANGUAGE 'plpgsql'

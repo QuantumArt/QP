@@ -1,8 +1,8 @@
--- FUNCTION: public.qp_authenticate(text, text, boolean, boolean)
+-- FUNCTION: qp_authenticate(text, text, boolean, boolean)
 
--- DROP FUNCTION public.qp_authenticate(text, text, boolean, boolean);
+-- DROP FUNCTION qp_authenticate(text, text, boolean, boolean);
 
-CREATE OR REPLACE FUNCTION public.qp_authenticate(
+CREATE OR REPLACE FUNCTION qp_authenticate(
 	login text,
 	password text,
 	use_nt_login boolean DEFAULT false,

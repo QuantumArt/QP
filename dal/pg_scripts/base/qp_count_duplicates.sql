@@ -1,4 +1,4 @@
-CREATE OR REPLACE function public.qp_count_duplicates(content_id int, field_ids int[], ids int[] default null,
+CREATE OR REPLACE function qp_count_duplicates(content_id int, field_ids int[], ids int[] default null,
                                                        include_archive boolean default false) returns int
 LANGUAGE 'plpgsql'
 

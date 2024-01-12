@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_create_content_item_versions(
+CREATE OR REPLACE PROCEDURE qp_create_content_item_versions(
 	ids numeric[],
 	last_modified_by numeric
 )

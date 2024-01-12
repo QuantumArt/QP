@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.qp_mass_update_content_item(input xml, content_id int, last_modified_by int, not_for_replication int, create_versions bool, import_only bool DEFAULT false)
+CREATE OR REPLACE FUNCTION qp_mass_update_content_item(input xml, content_id int, last_modified_by int, not_for_replication int, create_versions bool, import_only bool DEFAULT false)
 RETURNS TABLE(id numeric)
 LANGUAGE 'plpgsql'
 as

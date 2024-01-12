@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_link_view_create(
+CREATE OR REPLACE PROCEDURE qp_link_view_create(
 	id int
 )
 LANGUAGE 'plpgsql'

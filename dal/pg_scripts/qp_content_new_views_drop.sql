@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_content_new_views_drop(
+CREATE OR REPLACE PROCEDURE qp_content_new_views_drop(
     cid numeric
 )
 

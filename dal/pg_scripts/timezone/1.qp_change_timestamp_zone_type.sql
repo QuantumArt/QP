@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_change_timestamp_zone_time(
+CREATE OR REPLACE PROCEDURE qp_change_timestamp_zone_time(
 	table_name text,
 	column_name text,
 	use_timezone boolean default true

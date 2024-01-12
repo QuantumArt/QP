@@ -1,6 +1,6 @@
 DROP FUNCTION IF EXISTS qp_persist_article;
 
-CREATE OR REPLACE FUNCTION public.qp_persist_article(input xml)
+CREATE OR REPLACE FUNCTION qp_persist_article(input xml)
 RETURNS TABLE(id int, modified timestamp with time zone)
 LANGUAGE 'plpgsql'
 
