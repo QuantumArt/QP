@@ -41,9 +41,14 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             }
 
             var adGroups = GetAdGroupsToProcess(qpGroups);
-            var adUsers = _activeDirectory.GetUsers(adGroups);
-            var qpUsers = UserRepository.GetNtUsers();
+            var adUsers = Array.Empty<ActiveDirectoryUser>();
 
+            if (adGroups.Length != 0)
+            {
+                adUsers = _activeDirectory.GetUsers(adGroups);
+            }
+
+            var qpUsers = UserRepository.GetNtUsers();
 
             Logger.Trace()
                .Message("Found users and groups")
@@ -52,7 +57,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                .Property("adGroups", adGroups.Select(g => g.ReferencedPath).ToArray())
                .Property("adUsers", adUsers.Select(u => u.ReferencedPath).ToArray())
                .Write();
-            
+
             AddUsers(adUsers, adGroups, qpUsers, qpGroups);
             UpdateUsers(qpUsers, adUsers, adGroups, qpGroups);
             DisableUsers(qpUsers, adUsers);

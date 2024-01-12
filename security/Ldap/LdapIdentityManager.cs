@@ -81,22 +81,37 @@ public class LdapIdentityManager : ILdapIdentityManager
         return _ldapConnectionFactory.WithAdminAuthConnection(connection =>
         {
             var result = connection
-            .Search(
-                _ldapSetting.Value.BaseSearchDistinguishedName,
-                LdapConnection.ScopeSub,
-                filter,
-                attrsToSelect,
-                false)
-            .ToList();
+               .Search(_ldapSetting.Value.BaseSearchDistinguishedName,
+                    LdapConnection.ScopeSub,
+                    filter,
+                    attrsToSelect,
+                    false);
+
+            List<LdapEntry> entries = new(result.Count);
+
+            while (result.HasMore())
+            {
+                try
+                {
+                    entries.Add(result.Next());
+                }
+                catch (LdapReferralException)
+                {
+                    if (_ldapSetting.Value.FollowReferences)
+                    {
+                        throw;
+                    }
+                }
+            }
 
             Logger.Trace()
                .Message("LDAP query")
                .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
                .Property("filter", filter)
-               .Property("resultCount", result.Count)
+               .Property("resultCount", entries.Count)
                .Write();
 
-            return result;
+            return entries;
         });
     }
 
@@ -201,7 +216,7 @@ public class LdapIdentityManager : ILdapIdentityManager
     /// <summary>
     /// Получение AD пользователя
     /// </summary>
-    /// <param name="login"></param>   
+    /// <param name="login"></param>
     /// <returns></returns>
     private (bool, LdapEntry) TryGetLdapEntry(string login)
     {
