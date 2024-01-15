@@ -4,7 +4,7 @@ BEGIN
 		SELECT NULL
 		FROM information_schema.columns
 		WHERE
-			table_schema = 'public' AND
+			table_schema = CURRENT_SCHEMA() AND
 			table_name = 'content_data' AND
 			column_name = 'data' AND
 			data_type <> 'text')
