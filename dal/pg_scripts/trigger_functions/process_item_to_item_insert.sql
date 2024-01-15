@@ -1,8 +1,8 @@
--- FUNCTION: public.process_item_to_item_insert()
+-- FUNCTION: process_item_to_item_insert()
 
--- DROP FUNCTION public.process_item_to_item_insert();
+-- DROP FUNCTION process_item_to_item_insert();
 
-CREATE OR REPLACE FUNCTION public.process_item_to_item_insert()
+CREATE OR REPLACE FUNCTION process_item_to_item_insert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

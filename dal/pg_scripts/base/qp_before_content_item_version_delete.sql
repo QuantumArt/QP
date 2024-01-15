@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_before_content_item_version_delete(
+CREATE OR REPLACE PROCEDURE qp_before_content_item_version_delete(
 	version_ids integer[])
 LANGUAGE 'plpgsql'
 AS $BODY$

@@ -1,8 +1,8 @@
--- FUNCTION: public.qp_get_hash(text, bigint)
+-- FUNCTION: qp_get_hash(text, bigint)
 
--- DROP FUNCTION public.qp_get_hash(text, bigint);
+-- DROP FUNCTION qp_get_hash(text, bigint);
 
-CREATE OR REPLACE FUNCTION public.qp_get_hash(
+CREATE OR REPLACE FUNCTION qp_get_hash(
 	text,
 	bigint)
     RETURNS bytea

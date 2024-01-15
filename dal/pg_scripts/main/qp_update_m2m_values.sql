@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_update_m2m_values(xml)
+-- PROCEDURE: qp_update_m2m_values(xml)
 
--- DROP PROCEDURE public.qp_update_m2m_values(xml);
+-- DROP PROCEDURE qp_update_m2m_values(xml);
 
-CREATE OR REPLACE PROCEDURE public.qp_update_m2m_values(
+CREATE OR REPLACE PROCEDURE qp_update_m2m_values(
 	xml_parameter xml)
 LANGUAGE 'plpgsql'
 

@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_link_view_drop(
+CREATE OR REPLACE PROCEDURE qp_link_view_drop(
 	id int
 )
 LANGUAGE 'plpgsql'

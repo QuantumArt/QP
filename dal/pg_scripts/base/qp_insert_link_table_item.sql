@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
+-- PROCEDURE: qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
 
--- DROP PROCEDURE public.qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean);
+-- DROP PROCEDURE qp_insert_link_table_item(numeric, numeric, link[], boolean, boolean, boolean);
 
-CREATE OR REPLACE PROCEDURE public.qp_insert_link_table_item(
+CREATE OR REPLACE PROCEDURE qp_insert_link_table_item(
 	link_id numeric,
 	content_id numeric,
 	links link[],

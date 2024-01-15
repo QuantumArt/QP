@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE FUNCTION public.qp_get_article_tsvector(id int)
+CREATE OR REPLACE FUNCTION qp_get_article_tsvector(id int)
 RETURNS tsvector
     STABLE
     LANGUAGE 'plpgsql'

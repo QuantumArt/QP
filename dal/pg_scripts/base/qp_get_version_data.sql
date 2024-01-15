@@ -1,8 +1,8 @@
--- FUNCTION: public.qp_get_version_data(numeric, numeric)
+-- FUNCTION: qp_get_version_data(numeric, numeric)
 
--- DROP FUNCTION public.qp_get_version_data(numeric, numeric);
+-- DROP FUNCTION qp_get_version_data(numeric, numeric);
 
-CREATE OR REPLACE FUNCTION public.qp_get_version_data(
+CREATE OR REPLACE FUNCTION qp_get_version_data(
 	attribute_id numeric,
 	version_id numeric)
     RETURNS text

@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_content_united_view_create(
+CREATE OR REPLACE PROCEDURE qp_content_united_view_create(
 	cid numeric,
 	is_new boolean DEFAULT false
 )

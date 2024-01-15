@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_archive(
+CREATE OR REPLACE PROCEDURE qp_archive(
 	ids int[],
 	flag boolean,
 	last_modified_by int,

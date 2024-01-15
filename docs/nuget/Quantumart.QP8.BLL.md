@@ -10,6 +10,11 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.3.11
+
+* Убрана зависимость от схемы public в PostgreSQL (#173717)
+* Обновление Quantumart.AspNetCore до 6.0.13
+
 ### Quantumart.QP8.BLL.3.3.10
 
 * Обновление Quantumart.AspNetCore до 6.0.11 (#173120)

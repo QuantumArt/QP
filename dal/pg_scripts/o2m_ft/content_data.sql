@@ -4,7 +4,7 @@ BEGIN
 		SELECT NULL
 		FROM information_schema.columns
 		WHERE
-			table_schema = 'public' AND
+			table_schema = CURRENT_SCHEMA() AND
 			table_name = 'content_data' AND
 			column_name = 'data' AND
 			data_type <> 'text')
@@ -23,10 +23,10 @@ update content_data cd set o2m_data = data::numeric from content_attribute ca
 where ca.attribute_id = cd.attribute_id and ca.attribute_type_id = 11 and ca.link_id is null
 and cd.o2m_data is null and cd.data is not null;
 
--- DROP INDEX public.ix_o2m_data;
+-- DROP INDEX ix_o2m_data;
 
 CREATE INDEX IF NOT EXISTS ix_o2m_data
-    ON public.content_data USING btree
+    ON content_data USING btree
     (o2m_data)
     TABLESPACE pg_default;
 
@@ -44,9 +44,9 @@ BEGIN
 
   BEGIN
 
-    ALTER TABLE public.content_data
+    ALTER TABLE content_data
         ADD CONSTRAINT fk_content_data_content_attribute FOREIGN KEY (attribute_id)
-        REFERENCES public.content_attribute (attribute_id) MATCH SIMPLE
+        REFERENCES content_attribute (attribute_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE;
 
@@ -61,9 +61,9 @@ DO $$
 BEGIN
   BEGIN
 
-    ALTER TABLE public.content_data
+    ALTER TABLE content_data
         ADD CONSTRAINT fk_content_data_content_item FOREIGN KEY (content_item_id)
-        REFERENCES public.content_item (content_item_id) MATCH SIMPLE
+        REFERENCES content_item (content_item_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 

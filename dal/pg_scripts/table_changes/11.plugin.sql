@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public.plugin
+CREATE TABLE IF NOT EXISTS plugin
 (
     id                       numeric(18)              NOT NULL default nextval('plugin_seq')
         constraint pk_plugin primary key,
@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS public.plugin
     created                  timestamp with time zone NOT NULL DEFAULT (now()),
     modified                 timestamp with time zone NOT NULL DEFAULT (now()),
     last_modified_by         numeric(18)              NOT NULL
-        constraint fk_plugin_last_modified_by references public.users (user_id)
+        constraint fk_plugin_last_modified_by references users (user_id)
 );
 
 
 CREATE UNIQUE INDEX IF NOT EXISTS ix_plugin_name ON plugin(name);
 
--- drop table public.plugin
+-- drop table plugin

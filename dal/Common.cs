@@ -1150,7 +1150,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var schema = DbSchemaName(dbType);
-            var sql = $@"SELECT {schema}.qp_get_user_weight(@userId, @workflowId)";
+            var sql = $@"SELECT {schema}qp_get_user_weight(@userId, @workflowId)";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
@@ -1945,11 +1945,11 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
             selectBuilder.Append(", CA.CREATED, CA.MODIFIED, CA.LAST_MODIFIED_BY, U.USER_ID, U.LOGIN");
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append($" {ns}.CUSTOM_ACTION CA");
-            fromBuilder.Append($" JOIN {ns}.BACKEND_ACTION A ON CA.ACTION_ID = A.ID");
-            fromBuilder.Append($" JOIN {ns}.ACTION_TYPE AT ON AT.ID = A.TYPE_ID");
-            fromBuilder.Append($" JOIN {ns}.ENTITY_TYPE ET ON ET.ID = A.ENTITY_TYPE_ID");
-            fromBuilder.Append($" JOIN {ns}.USERS U ON U.USER_ID = CA.LAST_MODIFIED_BY");
+            fromBuilder.Append($" {ns}CUSTOM_ACTION CA");
+            fromBuilder.Append($" JOIN {ns}BACKEND_ACTION A ON CA.ACTION_ID = A.ID");
+            fromBuilder.Append($" JOIN {ns}ACTION_TYPE AT ON AT.ID = A.TYPE_ID");
+            fromBuilder.Append($" JOIN {ns}ENTITY_TYPE ET ON ET.ID = A.ENTITY_TYPE_ID");
+            fromBuilder.Append($" JOIN {ns}USERS U ON U.USER_ID = CA.LAST_MODIFIED_BY");
 
             return GetSimplePagedList(
                 sqlConnection,
@@ -1975,7 +1975,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                 EntityTypeCode.Article,
                 $@"CONTENT_ITEM_ID as ID
                                       ,it.content_id as ParentId
-                                      ,{ns}.qp_get_article_title_func(it.Content_Item_Id, it.content_id) as Title
+                                      ,{ns}qp_get_article_title_func(it.Content_Item_Id, it.content_id) as Title
                                       ,con.CONTENT_NAME as ContentName
                                       ,site.SITE_NAME as SiteName
                                       ,typ.STATUS_TYPE_NAME as StatusName
@@ -1983,11 +1983,11 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                                       ,it.MODIFIED as Modified
                                       ,us.LOGIN as LastModifiedByUser
                                       ,it.PERMANENT_LOCK as IsPermanentLock",
-                $@"{ns}.CONTENT_ITEM as it
-                                      INNER JOIN {ns}.{Escape(dbType, "content")} as con on con.CONTENT_ID = it.CONTENT_ID
-                                      INNER JOIN {ns}.{Escape(dbType, "site")} as site on site.SITE_ID = con.SITE_ID
-                                      INNER JOIN {ns}.STATUS_TYPE as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
-                                      INNER JOIN {ns}.{Escape(dbType, "USERS")} as us on us.USER_ID = it.LAST_MODIFIED_BY",
+                $@"{ns}CONTENT_ITEM as it
+                                      INNER JOIN {ns}{Escape(dbType, "content")} as con on con.CONTENT_ID = it.CONTENT_ID
+                                      INNER JOIN {ns}{Escape(dbType, "site")} as site on site.SITE_ID = con.SITE_ID
+                                      INNER JOIN {ns}STATUS_TYPE as typ on typ.STATUS_TYPE_ID = it.STATUS_TYPE_ID
+                                      INNER JOIN {ns}{Escape(dbType, "USERS")} as us on us.USER_ID = it.LAST_MODIFIED_BY",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "ID ASC",
                 $"it.{Escape(dbType, "locked_by")} = @userId",
                 startRow,
@@ -2043,7 +2043,7 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                 EntityTypeCode.Article,
                 $@"ci.content_item_id as ID
                                     ,ci.content_id as ParentId
-                                    ,{ns}.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
+                                    ,{ns}qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
                                     ,s.site_name as SiteName
                                     ,c.CONTENT_NAME as ContentName
                                     ,ci.MODIFIED as Modified
@@ -2401,7 +2401,7 @@ n.email_attribute_id,
 COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
 
-            var fromBlock = $@"{DbSchemaName(dbType)}.NOTIFICATIONS n left outer join user_group ug on n.group_id = ug.group_id
+            var fromBlock = $@"{DbSchemaName(dbType)}NOTIFICATIONS n left outer join user_group ug on n.group_id = ug.group_id
                 left outer join users u on n.user_id = u.user_id left outer join CONTENT_ATTRIBUTE as a on n.email_attribute_id = a.ATTRIBUTE_ID
                 inner join users u2 on n.LAST_MODIFIED_BY = u2.user_id";
 
@@ -2481,7 +2481,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static int GetVisualEditorPluginMaxOrder(DbConnection sqlConnection)
         {
             DatabaseType dbType = GetDbType(sqlConnection);
-            string commandText = dbType == DatabaseType.SqlServer ? "select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]" : "select MAX(\"order\") FROM public.ve_plugin";
+            string commandText = dbType == DatabaseType.SqlServer ? "select MAX([ORDER]) FROM [dbo].[VE_PLUGIN]" : "select MAX(\"order\") FROM ve_plugin";
 
             using (var cmd = DbCommandFactory.Create(commandText, sqlConnection))
             {
@@ -2494,7 +2494,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         public static int GetVisualEditorStyleMaxOrder(DbConnection sqlConnection)
         {
             DatabaseType dbType = GetDbType(sqlConnection);
-            string commandText = dbType == DatabaseType.SqlServer ? "select MAX([ORDER]) FROM [dbo].[VE_STYLE]" : "select MAX(\"order\") FROM public.ve_style";
+            string commandText = dbType == DatabaseType.SqlServer ? "select MAX([ORDER]) FROM [dbo].[VE_STYLE]" : "select MAX(\"order\") FROM ve_style";
 
             using (var cmd = DbCommandFactory.Create(commandText, sqlConnection))
             {
@@ -2639,14 +2639,14 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
                     inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString} EXISTS (select id from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
+                        ? $"{inverseString} EXISTS (select id from {ns}item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id and linked_id in (select id from {IdList(dbType, paramName)}){unionAllSqlString})"
                         : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)} and cu.content_item_id in (select id from {IdList(dbType, paramName)})) ";
                 }
                 else
                 {
                     inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
-                        ? $"{inverseString}EXISTS (select * from {ns}.item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id)"
+                        ? $"{inverseString}EXISTS (select * from {ns}item_link_{linkFilter.LinkId}_united{revString} {WithNoLock(dbType)} where {tableAlias}.content_item_id = id)"
                         : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united {WithNoLock(dbType)} where {tableAlias}.content_item_id = {Escape(dbType, linkFilter.FieldName)}) ";
                 }
 
@@ -2915,7 +2915,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
             var isPostgres = databaseType == DatabaseType.Postgres;
             var tablePrefix = options.UseMainTableForVariations ? "c" : "ch";
-            fromBuilder.AppendLine($" {DbSchemaName(databaseType)}.CONTENT_{options.ContentId}_UNITED c {WithNoLock(databaseType)}");
+            fromBuilder.AppendLine($" {DbSchemaName(databaseType)}CONTENT_{options.ContentId}_UNITED c {WithNoLock(databaseType)}");
 
             if (!options.UseMainTableForVariations)
             {
@@ -2926,12 +2926,12 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             {
                 fromBuilder.AppendLine($" LEFT JOIN CONTENT_ITEM cil {WithNoLock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL");
                 fromBuilder.AppendLine($" LEFT JOIN CONTENT_{options.ContentId}_ASYNC ca {WithNoLock(databaseType)} on {tablePrefix}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID");
-                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} lu {WithNoLock(databaseType)} ON cil.LOCKED_BY = lu.USER_ID");
-                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_ITEM_SCHEDULE")} sch {WithNoLock(databaseType)} ON {tablePrefix}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} lu {WithNoLock(databaseType)} ON cil.LOCKED_BY = lu.USER_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "CONTENT_ITEM_SCHEDULE")} sch {WithNoLock(databaseType)} ON {tablePrefix}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID");
             }
 
-            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} mu {WithNoLock(databaseType)} ON {tablePrefix}.LAST_MODIFIED_BY = mu.USER_ID");
-            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "STATUS_TYPE")} st {WithNoLock(databaseType)} ON {tablePrefix}.STATUS_TYPE_ID = st.STATUS_TYPE_ID");
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "USERS")} mu {WithNoLock(databaseType)} ON {tablePrefix}.LAST_MODIFIED_BY = mu.USER_ID");
+            fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, "STATUS_TYPE")} st {WithNoLock(databaseType)} ON {tablePrefix}.STATUS_TYPE_ID = st.STATUS_TYPE_ID");
 
             if (useSelection)
             {
@@ -2946,14 +2946,14 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldId)))
             {
-                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{reference.TargetContentId}_UNITED c_{reference.TargetContentId}_{reference.ReferenceFieldId} {WithNoLock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, referenceMap[reference.ReferenceFieldId])} = c_{reference.TargetContentId}_{reference.ReferenceFieldId}.CONTENT_ITEM_ID");
+                fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}CONTENT_{reference.TargetContentId}_UNITED c_{reference.TargetContentId}_{reference.ReferenceFieldId} {WithNoLock(databaseType)} ON c.{SqlQuerySyntaxHelper.EscapeEntityName(databaseType, referenceMap[reference.ReferenceFieldId])} = c_{reference.TargetContentId}_{reference.ReferenceFieldId}.CONTENT_ITEM_ID");
             }
 
             foreach (var contentId in options.ExtensionContentIds)
             {
                 if (fieldMap.ContainsKey(contentId))
                 {
-                    fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}.CONTENT_{contentId}_UNITED c_{contentId} {WithNoLock(databaseType)} ON c.CONTENT_ITEM_ID = c_{contentId}.{fieldMap[contentId]}");
+                    fromBuilder.AppendLine($" LEFT JOIN {DbSchemaName(databaseType)}CONTENT_{contentId}_UNITED c_{contentId} {WithNoLock(databaseType)} ON c.CONTENT_ITEM_ID = c_{contentId}.{fieldMap[contentId]}");
                 }
             }
         }
@@ -3029,7 +3029,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             var fromBuilder = new StringBuilder();
             fromBuilder.Append("CONTENT cnt INNER JOIN CONTENT_ATTRIBUTE ca ON cnt.CONTENT_ID = ca.CONTENT_ID");
-            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
+            fromBuilder.Append($" INNER JOIN {DbSchemaName(dbType)}{Escape(dbType, "USERS")} lmb ON ca.LAST_MODIFIED_BY = lmb.USER_ID");
             fromBuilder.Append(" INNER JOIN ATTRIBUTE_TYPE at on ca.attribute_type_id = at.attribute_type_id");
             if (useSelection)
             {
@@ -3072,9 +3072,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             var fromBuilder = new StringBuilder();
             var ns = DbSchemaName(dbType);
-            fromBuilder.Append($"{ns}.CONTENT c INNER JOIN {ns}.SITE s ON c.SITE_ID = s.SITE_ID");
-            fromBuilder.Append($" INNER JOIN {ns}.{Escape(dbType, "USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
-            fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
+            fromBuilder.Append($"{ns}CONTENT c INNER JOIN {ns}SITE s ON c.SITE_ID = s.SITE_ID");
+            fromBuilder.Append($" INNER JOIN {ns}{Escape(dbType, "USERS")} u ON c.LAST_MODIFIED_BY = U.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {ns}CONTENT_GROUP cg ON c.CONTENT_GROUP_ID = cg.CONTENT_GROUP_ID");
             if (useSelection)
             {
                 fromBuilder.AppendFormat(" LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in (SELECT ID FROM {0})) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ", dbType.GetIdTable("@selectedIds"));
@@ -3083,7 +3083,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             if (options.Mode == ContentSelectMode.ForWorkflow)
             {
-                fromBuilder.Append($" LEFT JOIN {ns}.CONTENT_WORKFLOW_BIND cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
+                fromBuilder.Append($" LEFT JOIN {ns}CONTENT_WORKFLOW_BIND cwb ON c.CONTENT_ID = cwb.CONTENT_ID");
             }
 
             if (options.UseSecurity)
@@ -3185,8 +3185,8 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             }
 
             var fromBuilder = new StringBuilder();
-            fromBuilder.Append($"{DbSchemaName(dbType)}.SITE s INNER JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} u ON s.LAST_MODIFIED_BY = u.USER_ID");
-            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}.{Escape(dbType, "USERS")} u2 ON s.LOCKED_BY = u2.USER_ID");
+            fromBuilder.Append($"{DbSchemaName(dbType)}SITE s INNER JOIN {DbSchemaName(dbType)}{Escape(dbType, "USERS")} u ON s.LAST_MODIFIED_BY = u.USER_ID");
+            fromBuilder.Append($" LEFT JOIN {DbSchemaName(dbType)}{Escape(dbType, "USERS")} u2 ON s.LOCKED_BY = u2.USER_ID");
 
             if (useSelection)
             {
@@ -4096,7 +4096,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             }
 
             var selectBlock = @"U.USER_ID as ID, U.LOGIN, U.FIRST_NAME, U.LAST_NAME, U.EMAIL, U.LANGUAGE_ID, L.LANGUAGE_NAME, U.LAST_LOGIN, U.DISABLED, U.CREATED, U.MODIFIED, U.LAST_MODIFIED_BY, MU.LOGIN as LAST_MODIFIED_BY_LOGIN";
-            var fromBlock = $@"{ns}.USERS U JOIN {ns}.USERS MU ON MU.USER_ID = U.LAST_MODIFIED_BY JOIN {ns}.LANGUAGES L ON L.LANGUAGE_ID =  U.LANGUAGE_ID";
+            var fromBlock = $@"{ns}USERS U JOIN {ns}USERS MU ON MU.USER_ID = U.LAST_MODIFIED_BY JOIN {ns}LANGUAGES L ON L.LANGUAGE_ID =  U.LANGUAGE_ID";
 
             if (options.SelectedIDs != null && options.SelectedIDs.Any())
             {
@@ -4619,7 +4619,7 @@ cmd.{Escape(dbType, "PLUGIN_ID")},
 cmd.{Escape(dbType, "CREATED")},
 cmd.{Escape(dbType, "MODIFIED")},
 cmd.{Escape(dbType, "LAST_MODIFIED_BY")}
-from {DbSchemaName(dbType)}.VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.SITE_ID = {siteId} ORDER BY cmd.{Escape(dbType, "ID")}";
+from {DbSchemaName(dbType)}VE_COMMAND_SITE_BIND bnd INNER JOIN {DbSchemaName(dbType)}VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.SITE_ID = {siteId} ORDER BY cmd.{Escape(dbType, "ID")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4645,7 +4645,7 @@ cmd.{Escape(dbType, "PLUGIN_ID")},
 cmd.{Escape(dbType, "CREATED")},
 cmd.{Escape(dbType, "MODIFIED")},
 cmd.{Escape(dbType, "LAST_MODIFIED_BY")}
-from {DbSchemaName(dbType)}.VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(dbType)}.VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.FIELD_ID = {fieldId} ORDER BY cmd.{Escape(dbType, "ID")}";
+from {DbSchemaName(dbType)}VE_COMMAND_FIELD_BIND bnd INNER JOIN {DbSchemaName(dbType)}VE_COMMAND cmd ON bnd.COMMAND_ID = cmd.ID where bnd.FIELD_ID = {fieldId} ORDER BY cmd.{Escape(dbType, "ID")}";
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5096,7 +5096,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
         public static IEnumerable<DataRow> GetStatusTypeWeightsBySiteId(DbConnection connection, int siteId, int exceptId)
         {
             var dbType = GetDbType(connection);
-            var query = $"select {Escape(dbType, "WEIGHT")} FROM {DbSchemaName(dbType)}.{Escape(dbType, "STATUS_TYPE")} where {Escape(dbType, "SITE_ID")} = @siteId and {Escape(dbType, "STATUS_TYPE_ID")} <> @id";
+            var query = $"select {Escape(dbType, "WEIGHT")} FROM {DbSchemaName(dbType)}{Escape(dbType, "STATUS_TYPE")} where {Escape(dbType, "SITE_ID")} = @siteId and {Escape(dbType, "STATUS_TYPE_ID")} <> @id";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5293,7 +5293,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 return GetAggregatedArticlesIdsSqlServer(connection, articleId, classifierFields, types, isLive);
             }
 
-            var query = $"select public.qp_get_aggregated_ids(@articleId::integer, @classifierIds, @contentIds, @isLive)";
+            var query = $"select qp_get_aggregated_ids(@articleId::integer, @classifierIds, @contentIds, @isLive)";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5647,7 +5647,7 @@ INSERT INTO VE_STYLE_FIELD_BIND (style_id, field_id, {Escape(dbType, "on")})
                 "p.PAGE_ID AS Id, p.GENERATE_TRACE AS GenerateTrace, p.LOCKED_BY AS LockedBy, p.REASSEMBLE AS Reassemble, p.PAGE_NAME AS Name, p.DESCRIPTION AS Description, " +
                 "p.PAGE_FILENAME as FileName, p.page_folder as Folder, p.CREATED AS Created, p.MODIFIED AS Modified, p.LAST_MODIFIED_BY AS LastModifiedBy, u.LOGIN AS LastModifiedByLogin, " +
                 $"p.ASSEMBLED as Assembled, p.LAST_ASSEMBLED_BY as LastAssembledBy, uu.LOGIN as LastAssembledByLogin, {SqlQuerySyntaxHelper.ConcatStrValues(dbType, "u2.FIRST_NAME", "' '", "u2.LAST_NAME")} as LockedByFullName, t.TEMPLATE_NAME as TemplateName",
-                $"{DbSchemaName(dbType)}.{Escape(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
+                $"{DbSchemaName(dbType)}{Escape(dbType, "PAGE")} as p inner join users u on p.LAST_MODIFIED_BY = u.user_id INNER JOIN page_template as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID left outer join users uu on p.LAST_ASSEMBLED_BY " +
                 " = uu.user_id left outer join users u2 on p.LAST_ASSEMBLED_BY = u2.user_id",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "Name Asc",
                 "p.PAGE_TEMPLATE_ID = @templateId",
@@ -10288,7 +10288,7 @@ order by ActionDate desc
             var dbType = GetDbType(connection);
             var q = $@"
             select
-                case when {DbSchemaName(dbType)}.qp_get_hash(@password, {Escape(dbType, "salt")}) = {Escape(dbType, "hash")}
+                case when {DbSchemaName(dbType)}qp_get_hash(@password, {Escape(dbType, "salt")}) = {Escape(dbType, "hash")}
                     then {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}
                     else {SqlQuerySyntaxHelper.ToBoolSql(dbType, false)}
                 end

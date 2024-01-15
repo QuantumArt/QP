@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PROCEDURE public.qp_content_user_query_view_recreate(
+CREATE OR REPLACE PROCEDURE qp_content_user_query_view_recreate(
     cid integer
 )
 LANGUAGE 'plpgsql'

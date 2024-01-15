@@ -6,10 +6,10 @@ DO $$
 		sql text;
 	begin
 
-		indices := array_agg(indexname) FROM pg_indexes where indexname like '%public.%';
+		indices := array_agg(indexname) FROM pg_indexes where indexname like '%%';
 		if indices is not null then
 			foreach item in array indices loop
-				new_item := replace(item, 'public.', 'dbo.');
+				new_item := replace(item, '', 'dbo.');
 				sql := format('alter index "%s" rename to "%s"', item, new_item);
 				raise notice '%', sql;
 				execute sql;

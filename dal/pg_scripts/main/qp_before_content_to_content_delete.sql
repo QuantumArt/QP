@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_before_content_to_content_delete(
+CREATE OR REPLACE PROCEDURE qp_before_content_to_content_delete(
 	ids integer[])
 LANGUAGE 'plpgsql'
 AS $BODY$

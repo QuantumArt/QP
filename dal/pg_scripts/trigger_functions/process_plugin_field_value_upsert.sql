@@ -1,8 +1,8 @@
--- FUNCTION: public.process_plugin_field_value_upsert()
+-- FUNCTION: process_plugin_field_value_upsert()
 
--- DROP FUNCTION public.process_plugin_field_value_upsert();
+-- DROP FUNCTION process_plugin_field_value_upsert();
 
-CREATE OR REPLACE FUNCTION public.process_plugin_field_value_upsert()
+CREATE OR REPLACE FUNCTION process_plugin_field_value_upsert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

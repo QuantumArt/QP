@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_copy_schedule_to_child_delays(id int)
+CREATE OR REPLACE PROCEDURE qp_copy_schedule_to_child_delays(id int)
 LANGUAGE 'plpgsql'
 AS $BODY$
 	DECLARE

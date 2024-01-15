@@ -1,4 +1,4 @@
-create or replace function public.qp_batch_insert(input xml, visible int, user_id int)
+create or replace function qp_batch_insert(input xml, visible int, user_id int)
     returns table("OriginalArticleId" int, "CreatedArticleId" int, "ContentId" int)
     volatile
     language plpgsql

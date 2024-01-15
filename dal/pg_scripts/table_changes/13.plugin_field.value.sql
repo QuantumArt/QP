@@ -1,15 +1,15 @@
-CREATE TABLE IF NOT EXISTS public.plugin_field_value
+CREATE TABLE IF NOT EXISTS plugin_field_value
 (
     id                   numeric(18) NOT NULL default nextval('plugin_field_value_seq')
         constraint pk_plugin_field_value primary key,
     plugin_field_id      numeric(18) NOT NULL
-        constraint fk_plugin_field_value_plugin_field_id references public.plugin_field (id) on delete cascade,
+        constraint fk_plugin_field_value_plugin_field_id references plugin_field (id) on delete cascade,
     content_id           numeric(18) NULL
-        constraint fk_plugin_field_value_content_id references public.content (content_id),
+        constraint fk_plugin_field_value_content_id references content (content_id),
     site_id              numeric(18) NULL
-        constraint fk_plugin_field_value_site_id references public.site (site_id),
+        constraint fk_plugin_field_value_site_id references site (site_id),
     content_attribute_id numeric(18) NULL
-        constraint fk_plugin_field_value_content_attribute_id references public.content_attribute (attribute_id) ON DELETE CASCADE,
+        constraint fk_plugin_field_value_content_attribute_id references content_attribute (attribute_id) ON DELETE CASCADE,
     value                text        NULL
 );
 

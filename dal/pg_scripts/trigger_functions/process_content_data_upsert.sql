@@ -1,8 +1,8 @@
--- FUNCTION: public.process_content_data_upsert()
+-- FUNCTION: process_content_data_upsert()
 
--- DROP FUNCTION public.process_content_data_upsert();
+-- DROP FUNCTION process_content_data_upsert();
 
-CREATE OR REPLACE FUNCTION public.process_content_data_upsert()
+CREATE OR REPLACE FUNCTION process_content_data_upsert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100

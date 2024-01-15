@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[])
+-- PROCEDURE: qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[])
 
--- DROP PROCEDURE public.qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[]);
+-- DROP PROCEDURE qp_update_items_with_content_data_pivot(integer, integer[], boolean, integer[]);
 
-CREATE OR REPLACE PROCEDURE public.qp_update_items_flags(
+CREATE OR REPLACE PROCEDURE qp_update_items_flags(
 	content_id integer,
 	ids integer[],
 	is_async boolean)

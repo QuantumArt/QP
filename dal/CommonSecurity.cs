@@ -467,7 +467,7 @@ namespace Quantumart.QP8.DAL
             var castToInt = dbType == DatabaseType.Postgres ? "::integer" : string.Empty;
 
             return n.LinkId.HasValue
-                ? $"{SqlQuerySyntaxHelper.DbSchemaName(dbType)}.qp_link_ids({n.LinkId}{castToInt}, c{n.JoinOrder}.CONTENT_ITEM_ID{castToInt}, {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}) as {fieldName}"
+                ? $"{SqlQuerySyntaxHelper.DbSchemaName(dbType)}qp_link_ids({n.LinkId}{castToInt}, c{n.JoinOrder}.CONTENT_ITEM_ID{castToInt}, {SqlQuerySyntaxHelper.ToBoolSql(dbType, true)}) as {fieldName}"
                 : $"{SqlQuerySyntaxHelper.CastToString(dbType, $"c{n.Order}.content_item_id")} as {fieldName}";
         }
 
