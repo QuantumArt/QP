@@ -203,14 +203,31 @@ public class LdapIdentityManager : ILdapIdentityManager
                 null,
         false);
 
+        List<LdapEntry> entries = new(search.Count);
+
+        while (search.HasMore())
+        {
+            try
+            {
+                entries.Add(search.Next());
+            }
+            catch (LdapReferralException)
+            {
+                if (_ldapSetting.Value.FollowReferences)
+                {
+                    throw;
+                }
+            }
+        }
+
         Logger.Trace()
            .Message("LDAP query by login")
            .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
            .Property("filter", filter)
-           .Property("resultCount", search.Count)
+           .Property("resultCount", entries.Count)
            .Write();
 
-        return search.FirstOrDefault();
+        return entries.FirstOrDefault();
     }
 
     /// <summary>
