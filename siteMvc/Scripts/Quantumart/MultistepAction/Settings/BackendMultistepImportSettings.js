@@ -343,7 +343,7 @@ export class MultistepActionImportSettings {
         $(item).append($('<option>', {
           value: entry,
           text: entry,
-          selected: $(item).next().html() === entry
+          selected: $(item).next().html().toLowerCase() === entry.toLowerCase()
         }));
       });
     });
