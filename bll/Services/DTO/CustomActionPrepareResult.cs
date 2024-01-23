@@ -4,8 +4,10 @@
     {
         public CustomAction CustomAction { get; set; }
 
-        public bool IsActionAccessable { get; set; }
+        public bool IsActionAccessible { get; set; }
 
-        public string SecurityErrorMesage { get; set; }
+        public string SecurityErrorMessage { get; set; }
+
+        public string ClientSecurityErrorMessage { get; set; }
     }
 }

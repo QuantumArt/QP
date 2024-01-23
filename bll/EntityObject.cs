@@ -91,7 +91,8 @@ namespace Quantumart.QP8.BLL
         public virtual PathInfo PathInfo => new PathInfo
         {
             Path = string.Empty,
-            Url = string.Empty
+            Url = string.Empty,
+            BaseUploadUrl = string.Empty
         };
 
         [ValidateNever]

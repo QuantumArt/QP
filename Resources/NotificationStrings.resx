@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -223,7 +223,7 @@
     <value>Unbind</value>
   </data>
   <data name="UnbindedMessage" xml:space="preserve">
-    <value>Notification was unbinded from workflow</value>
+    <value>Notification was unbound from workflow</value>
   </data>
   <data name="CreateDefaultFormat" xml:space="preserve">
     <value>Create Default Format</value>
@@ -239,6 +239,9 @@
   </data>
   <data name="RadioFromArticle" xml:space="preserve">
     <value>E-mail From Article Field</value>
+  </data>
+  <data name="RadioFromContent" xml:space="preserve">
+    <value>E-mail From Content</value>
   </data>
   <data name="RadioNone" xml:space="preserve">
     <value>None</value>
@@ -273,7 +276,7 @@
   <data name="ExternalUrl" xml:space="preserve">
     <value>External URL</value>
   </data>
-	<data name="UseService" xml:space="preserve">
+  <data name="UseService" xml:space="preserve">
     <value>Use service for sending</value>
   </data>
   <data name="ExternalUrlNotEntered" xml:space="preserve">
@@ -293,5 +296,20 @@
   </data>
   <data name="ChooseTemplate" xml:space="preserve">
     <value>Choose template</value>
+  </data>
+  <data name="HideRecipients" xml:space="preserve">
+    <value>Hide recipients from each other</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="ChooseCategory" xml:space="preserve">
+    <value>Choose Category</value>
+  </data>
+  <data name="ConfirmationTemplate" xml:space="preserve">
+    <value>Confirmation template</value>
+  </data>
+  <data name="TemplatesNotConfigured" xml:space="preserve">
+    <value>Templates not configured for internal notifications</value>
   </data>
 </root>

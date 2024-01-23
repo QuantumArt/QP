@@ -453,6 +453,8 @@ namespace Quantumart.QP8.BLL
                 case 3:
                     return NotificationStrings.RadioFromArticle;
                 case 4:
+                    return NotificationStrings.RadioFromContent;
+                case 5:
                     return NotificationStrings.RadioNone;
                 default:
                     return string.Empty;

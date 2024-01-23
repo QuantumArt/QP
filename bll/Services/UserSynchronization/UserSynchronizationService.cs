@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.API;
@@ -32,9 +33,31 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         {
             QPContext.CurrentUserId = _settings.DefaultUserId;
             var qpGroups = UserGroupRepository.GetNtGroups().ToList();
+
+            if (qpGroups.Count == 0)
+            {
+                Logger.Info($"QP groups not found");
+                return;
+            }
+
             var adGroups = GetAdGroupsToProcess(qpGroups);
-            var adUsers = _activeDirectory.GetUsers(adGroups);
+            var adUsers = Array.Empty<ActiveDirectoryUser>();
+
+            if (adGroups.Length != 0)
+            {
+                adUsers = _activeDirectory.GetUsers(adGroups);
+            }
+
             var qpUsers = UserRepository.GetNtUsers();
+
+            Logger.Trace()
+               .Message("Found users and groups")
+               .Property("qpGroups", qpGroups.Select(g => g.Id).ToArray())
+               .Property("qpUsers", qpUsers.Select(u => u.Id).ToArray())
+               .Property("adGroups", adGroups.Select(g => g.ReferencedPath).ToArray())
+               .Property("adUsers", adUsers.Select(u => u.ReferencedPath).ToArray())
+               .Write();
+
             AddUsers(adUsers, adGroups, qpUsers, qpGroups);
             UpdateUsers(qpUsers, adUsers, adGroups, qpGroups);
             DisableUsers(qpUsers, adUsers);

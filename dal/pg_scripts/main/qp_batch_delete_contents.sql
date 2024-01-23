@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_batch_delete_contents(site_id int, count_to_del int DEFAULT 20)
+CREATE OR REPLACE PROCEDURE qp_batch_delete_contents(site_id int, count_to_del int DEFAULT 20)
 LANGUAGE 'plpgsql'
 
 AS $BODY$

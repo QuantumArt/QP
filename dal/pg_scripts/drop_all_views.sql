@@ -5,7 +5,7 @@ DO $$
 	    sql text;
 	begin
 
-	    views := array_agg(table_name) from information_schema.views c where table_schema = 'public';
+	    views := array_agg(table_name) from information_schema.views c where table_schema = CURRENT_SCHEMA();
 
 		if views is not null then
 			foreach item in array views loop

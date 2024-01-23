@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration>
+  <app_vars>
+    <app_var app_var_name="TempDirectory"></app_var>
+    <app_var app_var_name="SqlMetalPath"></app_var>
+    <app_var app_var_name="MailHost">localhost</app_var>
+    <app_var app_var_name="MailLogin"></app_var>
+    <app_var app_var_name="MailPassword"></app_var>
+    <app_var app_var_name="MailFromName">Q-Publishing Backend</app_var>
+    <app_var app_var_name="ADsConnectionString"></app_var>
+    <app_var app_var_name="ADsPath"></app_var>
+    <app_var app_var_name="ADsFieldName"></app_var>
+    <app_var app_var_name="AllowSelectCustomerCode">yes</app_var>
+    <app_var app_var_name="ApplicationTitle">Local QP8 (release {release})</app_var>
+  </app_vars>
+  <customers>
+    <customer customer_name="demosite" db_type="Postgres">
+      <db>Server=pgserver;Port=5432;Database=demosite;User Id=pguser;Password=pgpass</db>
+    </customer>
+  </customers>
+</configuration>

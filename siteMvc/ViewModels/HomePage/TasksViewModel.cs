@@ -21,8 +21,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         public override string ActionCode => Constants.ActionCode.ScheduledTasks;
         public List<JobInfo> Tasks { get; set; }
-        
+
         public bool CanManageScheduledTasks => QPContext.CanManageScheduledTasks;
+
+        public string RunJob => Translator.Translate("Run Job");
     }
 
     public class ScheduledTaskViewModel

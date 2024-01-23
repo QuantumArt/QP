@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -39,7 +40,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
-                model.Data = ContentFolderService.Save(model.Data);
+                model.Data = ContentFolderService.Save((ContentFolder)model.Data);
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSiteFolder });
             }
@@ -74,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                model.Data = ContentFolderService.Update(model.Data);
+                model.Data = ContentFolderService.Update((ContentFolder)model.Data);
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }

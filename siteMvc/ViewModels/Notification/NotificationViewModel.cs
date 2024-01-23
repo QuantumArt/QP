@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -66,8 +65,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             {
                 if (_templates == null)
                 {
-                    _templates = _service.GetTemplates().ToList();
-                    _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseTemplate, Value = string.Empty});
+                    try
+                    {
+                        _templates = _service.GetTemplates().ToList();
+                        _templates.Insert(0, new ListItem { Text = NotificationStrings.ChooseTemplate, Value = string.Empty});
+                    }
+                    catch
+                    {
+                        _templates = new List<ListItem>();
+                        _templates.Insert(0, new ListItem { Text = NotificationStrings.TemplatesNotConfigured, Value = string.Empty});
+                    }
+
                 }
 
                 return _templates;
@@ -88,6 +96,22 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
                 }
 
                 return _fields;
+            }
+        }
+
+        private List<ListItem> _categories;
+
+        public List<ListItem> Categories
+        {
+            get
+            {
+                if (_categories == null)
+                {
+                    _categories = _service.GetRelationFieldsAsListItemsByContentId(_contentId).ToList();
+                    _categories.Insert(0, new ListItem { Text = NotificationStrings.ChooseCategory, Value = string.Empty });
+                }
+
+                return _categories;
             }
         }
 
@@ -117,8 +141,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Notification
             new ListItem(ReceiverType.UserGroup.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.UserGroup), "UserGroupPanel"),
             new ListItem(ReceiverType.EveryoneInHistory.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EveryoneInHistory), "EmptyPanel"),
             new ListItem(ReceiverType.EmailFromArticle.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromArticle), "FieldPanel"),
+            new ListItem(ReceiverType.EmailFromContent.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.EmailFromContent), "CategoryPanel"),
             new ListItem(ReceiverType.None.ToString(), BLL.Content.GetReceiverTypeString(ReceiverType.None), "EmptyPanel")
         };
+
+        public string NonMultipleRecipientTypes => $"{ReceiverType.None},{ReceiverType.User}";
 
         public SelectOptions SelectFormatOptions
         {

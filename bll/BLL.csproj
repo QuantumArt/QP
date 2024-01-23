@@ -2,13 +2,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>3.3.5</Version>
+    <Version>3.3.11</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Authors>Pavel Celut, Sergey Koryakin</Authors>
     <Company>Quantum Art</Company>
     <Product>QP</Product>
     <Description>Internal QP8 API, that could help to write custom administrative modules for QP8</Description>
-    <Copyright>Copyright © 2007-2019 Quantum Art</Copyright>
+    <Copyright>Copyright © 2007-2023 Quantum Art</Copyright>
     <AssemblyName>Quantumart.QP8.BLL</AssemblyName>
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
     <RepositoryUrl>https://github.com/QuantumArt/QP</RepositoryUrl>
@@ -38,6 +38,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" PrivateAssets="None" />
     <PackageReference Include="Quantumart.Workflow.Integration.QP" Version="1.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" PrivateAssets="None" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" PrivateAssets="None" />
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
     <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.4.0" PrivateAssets="None" />
   </ItemGroup>

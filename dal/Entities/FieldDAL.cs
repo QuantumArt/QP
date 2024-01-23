@@ -117,6 +117,7 @@ namespace Quantumart.QP8.DAL.Entities
         public DynamicImageFieldDAL DynamicImageSettings { get; set; }
         public ICollection<ItemToItemVersionDAL> ItemToItemVersion { get; set; }
         public ICollection<NotificationsDAL> DependentNotifications { get; set; }
+        public ICollection<NotificationsDAL> CategoryNotifications { get; set; }
         public ICollection<VersionContentDataDAL> VersionContentData { get; set; }
         public ICollection<ContentConstraintRuleDAL> ConstraintRule { get; set; }
         public ICollection<FieldDAL> BackRelations { get; set; }

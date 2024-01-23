@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_update_m2o_final(
+CREATE OR REPLACE PROCEDURE qp_update_m2o_final(
 	id numeric)
 LANGUAGE 'plpgsql'
 

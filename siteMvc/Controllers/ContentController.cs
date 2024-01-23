@@ -1,7 +1,3 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QP8.Infrastructure.Web.Enums;
@@ -17,7 +13,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -30,6 +25,9 @@ using Quantumart.QP8.WebMvc.ViewModels.Library;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -627,11 +625,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _MultipleSelectForCustomAction(
             string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            string customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
+            ContentListFilter filter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter)
         {
             filter = filter ?? new ContentListFilter();
-            if (!string.IsNullOrEmpty(customFilter))
+            if (customFilter != null)
             {
                 filter.CustomFilter = customFilter;
             }
@@ -658,8 +658,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _MultipleSelectForWorkflow(
             string tabId, int parentId, [FromForm(Name="IDs")]string ids, int page, int pageSize, string orderBy,
             [Bind(Prefix = "searchQuery")]
-            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
-            string customFilter)
+            [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))]
+            ContentListFilter filter,
+            [ModelBinder(typeof(JsonStringModelBinder<CustomFilterItem[]>))]
+            CustomFilterItem[] customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;

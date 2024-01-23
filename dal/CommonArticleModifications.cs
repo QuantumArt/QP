@@ -23,7 +23,7 @@ namespace Quantumart.QP8.DAL
 
             var databaseType = DatabaseTypeHelper.ResolveDatabaseType(currentDbConnection);
             var ns = SqlQuerySyntaxHelper.DbSchemaName(databaseType);
-            var sql = $"select id, modified from {ns}.qp_persist_article(@xml)";
+            var sql = $"select id, modified from {ns}qp_persist_article(@xml)";
             using (var cmd = DbCommandFactory.Create(sql, currentDbConnection))
             {
                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetXmlParameter("@xml", xml, databaseType));
@@ -255,7 +255,7 @@ namespace Quantumart.QP8.DAL
         public static void SetArchiveFlag(DbConnection connection, IEnumerable<int> articleIds, int userId, bool flag, bool withAggregated)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}qp_aggregated_and_self(@ids)" : "@ids";
             var source = IdList(dbType, idParam);
             var value = flag ? 1 : 0;
 
@@ -277,7 +277,7 @@ namespace Quantumart.QP8.DAL
         public static void Publish(DbConnection connection, IEnumerable<int> articleIds, int userId, bool withAggregated)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}qp_aggregated_and_self(@ids)" : "@ids";
             var source = IdList(dbType, idParam);
             string sql = $@"call qp_publish(@ids, @userId);";
             if (dbType == DatabaseType.SqlServer)
@@ -315,7 +315,7 @@ namespace Quantumart.QP8.DAL
         public static void DeleteArticles(DbConnection connection, List<int> ids, bool withAggregated)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var idParam = withAggregated ? $@"{DbSchemaName(dbType)}qp_aggregated_and_self(@ids)" : "@ids";
             var source = IdList(dbType, idParam);
 
             if (ids != null && ids.Any())
@@ -333,7 +333,7 @@ namespace Quantumart.QP8.DAL
         public static void GetContentModification(DbConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref List<int> liveIds, ref List<int> stageIds)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
-            var idsParam = withAggregated ? $"{DbSchemaName(dbType)}.qp_aggregated_and_self(@ids)" : "@ids";
+            var idsParam = withAggregated ? $"{DbSchemaName(dbType)}qp_aggregated_and_self(@ids)" : "@ids";
             var source = IdList(dbType, idsParam);
 
             var aggFunc = returnPublishedForLive ? "max" : "min";

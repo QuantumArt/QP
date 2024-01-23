@@ -1,5 +1,7 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
+using NLog.Filters;
+using NLog.Fluent;
 using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
@@ -19,10 +21,10 @@ public class LdapIdentityManager : ILdapIdentityManager
     private readonly LdapHelper _ldapHelper;
     private readonly IOptions<LdapSettings> _ldapSetting;
     private readonly LdapConnectionFactory _ldapConnectionFactory;
+    private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
     public LdapIdentityManager(LdapConnectionFactory ldapConnectionFactory, LdapHelper ldapHelper,
-        IOptions<LdapSettings> ldapSetting,
-        ILogger<LdapIdentityManager> logger)
+        IOptions<LdapSettings> ldapSetting)
     {
         _ldapConnectionFactory = ldapConnectionFactory;
         _ldapHelper = ldapHelper;
@@ -78,14 +80,38 @@ public class LdapIdentityManager : ILdapIdentityManager
     {
         return _ldapConnectionFactory.WithAdminAuthConnection(connection =>
         {
-            return connection
-            .Search(
-                _ldapSetting.Value.BaseSearchDistinguishedName,
-                LdapConnection.ScopeSub,
-                filter,
-                attrsToSelect,
-                false)
-            .ToList();
+            var result = connection
+               .Search(_ldapSetting.Value.BaseSearchDistinguishedName,
+                    LdapConnection.ScopeSub,
+                    filter,
+                    attrsToSelect,
+                    false);
+
+            List<LdapEntry> entries = new(result.Count);
+
+            while (result.HasMore())
+            {
+                try
+                {
+                    entries.Add(result.Next());
+                }
+                catch (LdapReferralException)
+                {
+                    if (_ldapSetting.Value.FollowReferences)
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            Logger.Trace()
+               .Message("LDAP query")
+               .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
+               .Property("filter", filter)
+               .Property("resultCount", entries.Count)
+               .Write();
+
+            return entries;
         });
     }
 
@@ -168,20 +194,46 @@ public class LdapIdentityManager : ILdapIdentityManager
 
     private LdapEntry GetLdapEntryByLogin(ILdapConnection connection, string login)
     {
+        var filter = $"(samaccountname={login})";
+
         var search = connection.Search(
                 _ldapSetting.Value.BaseSearchDistinguishedName,
                 LdapConnection.ScopeSub,
-                $"(samaccountname={login})",
+                filter,
                 null,
-                false);
+        false);
 
-        return search.FirstOrDefault();
+        List<LdapEntry> entries = new(search.Count);
+
+        while (search.HasMore())
+        {
+            try
+            {
+                entries.Add(search.Next());
+            }
+            catch (LdapReferralException)
+            {
+                if (_ldapSetting.Value.FollowReferences)
+                {
+                    throw;
+                }
+            }
+        }
+
+        Logger.Trace()
+           .Message("LDAP query by login")
+           .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
+           .Property("filter", filter)
+           .Property("resultCount", entries.Count)
+           .Write();
+
+        return entries.FirstOrDefault();
     }
 
     /// <summary>
     /// Получение AD пользователя
     /// </summary>
-    /// <param name="login"></param>   
+    /// <param name="login"></param>
     /// <returns></returns>
     private (bool, LdapEntry) TryGetLdapEntry(string login)
     {

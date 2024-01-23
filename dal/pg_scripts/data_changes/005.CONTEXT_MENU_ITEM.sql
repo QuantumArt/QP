@@ -11,12 +11,12 @@ on conflict do nothing;
 insert into context_menu_item(context_menu_id, action_id, name, "order",  icon)
 values ((select id from context_menu where code = 'virtual_article'), (select id from backend_action where code = 'unselect_child_articles'),
         'Unselect Child Articles', 90, 'deselect_all.gif')
-on conflict do nothing;        
+on conflict do nothing;
 
 insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
 values ((select id from context_menu where code = 'virtual_article'), (select id from backend_action where code = 'select_child_articles'),
         'Select Child Articles', 80, 'select_all.gif')
-on conflict do nothing;        
+on conflict do nothing;
 
 insert into context_menu_item (context_menu_id, action_id, name, "order", icon, bottom_separator)
 values ((select id from context_menu where code = 'custom_action'), (select id from backend_action where code = 'copy_custom_action'),
@@ -66,4 +66,14 @@ on conflict do nothing;
 insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
 values((select id from context_menu where code = 'plugin_version'), (select id from backend_action where code = 'preview_plugin_version'),
        'Preview', 1, 'properties.gif')
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+values((select id from context_menu where code = 'content_file'), (select id from backend_action where code = 'auto_resize_content_file'),
+       'Auto Resize', 51, 'crop.gif')
+on conflict do nothing;
+
+insert into context_menu_item(context_menu_id, action_id, name, "order", icon)
+values((select id from context_menu where code = 'site_file'), (select id from backend_action where code = 'auto_resize_site_file'),
+       'Auto Resize', 51, 'crop.gif')
 on conflict do nothing;

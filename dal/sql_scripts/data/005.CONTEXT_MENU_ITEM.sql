@@ -53,3 +53,11 @@ if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_co
 if not exists (select * From CONTEXT_MENU_ITEM where CONTEXT_MENU_ID = dbo.qp_context_menu_id('plugin_version') and name = 'Preview')
     insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
     values(dbo.qp_context_menu_id('plugin_version'), dbo.qp_action_id('preview_plugin_version'), 'Preview', 1, 'properties.gif')
+
+if not exists(select * from CONTEXT_MENU_ITEM where action_id = dbo.qp_action_id('auto_resize_content_file'))
+    insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+    values(dbo.qp_context_menu_id('content_file'), dbo.qp_action_id('auto_resize_content_file'), 'Auto Resize', 51, 'crop.gif')
+
+if not exists(select * from CONTEXT_MENU_ITEM where action_id = dbo.qp_action_id('auto_resize_site_file'))
+    insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
+    values(dbo.qp_context_menu_id('site_file'), dbo.qp_action_id('auto_resize_site_file'), 'Auto Resize', 51, 'crop.gif')

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: qp
-  namespace: qp
+  namespace: "||namespace||"
 spec:
   replicas: 1
   selector:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: qp
-        image: "||registry||/qp:||version||"
+        image: "||registry||/||image||:||version||"
         envFrom:
         - configMapRef:
             name: qp-config        
@@ -81,7 +81,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: qp
-  namespace: qp
+  namespace: "||namespace||"
 spec:
   ports:
   - port: 80
@@ -95,7 +95,7 @@ metadata:
   name: qp
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "2m"
-  namespace: qp
+  namespace: "||namespace||"
 spec:
   rules:
   - host: "||host||"

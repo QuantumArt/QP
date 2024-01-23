@@ -1,8 +1,8 @@
--- FUNCTION: public.qp_get_display_fields(numeric, boolean)
+-- FUNCTION: qp_get_display_fields(numeric, boolean)
 
--- DROP FUNCTION public.qp_get_display_fields(numeric, boolean);
+-- DROP FUNCTION qp_get_display_fields(numeric, boolean);
 
-CREATE OR REPLACE FUNCTION public.qp_get_display_fields(
+CREATE OR REPLACE FUNCTION qp_get_display_fields(
 	content_id numeric,
 	with_relation_field boolean DEFAULT false)
     RETURNS content_attribute[]

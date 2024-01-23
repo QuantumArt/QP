@@ -18,8 +18,7 @@
     "nibble": "eslint-nibble ./siteMvc/Scripts/Quantumart/ || exit 0",
     "lint": "eslint ./siteMvc/Scripts/Quantumart/",
     "type-check": "tsc --noEmit --project siteMvc/tsconfig.json || exit 0",
-    "webpack": "webpack --watch --config siteMvc/webpack.config.js",
-    "preinstall": "npx npm-force-resolutions"
+    "webpack": "webpack --watch --config siteMvc/webpack.config.js"
   },
   "dependencies": {
     "natives": "^1.1.6",
@@ -76,7 +75,7 @@
     "tsconfig-paths-webpack-plugin": "^1.2.0",
     "typescript": "^2.6.2",
     "webpack": "^3.10.0",
-    "yargs": "^17.5.1"
+    "yargs": "^17.7.2"
   },
   "resolutions": {}
 }

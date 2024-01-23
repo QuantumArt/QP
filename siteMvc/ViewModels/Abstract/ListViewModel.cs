@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL.Services;
@@ -34,6 +35,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public virtual string Filter { get; set; }
 
+        public virtual CustomFilterItem[] ExternalFilter { get; set;}
+
         public bool ShowIds { get; set; }
 
         public bool AutoLoad { get; set; }
@@ -47,10 +50,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             IsSelect = false;
             AllowMultipleEntitySelection = true;
             AllowGlobalSelection = true;
-            SelectedIDs = new int[0];
+            SelectedIDs = Array.Empty<int>();
             AutoGenerateLink = true;
             GenerateLinkOnTitle = true;
             Filter = string.Empty;
+            ExternalFilter = Array.Empty<CustomFilterItem>();
             ShowIds = true;
             AutoLoad = true;
         }
@@ -98,7 +102,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
                 result.allowGlobalSelection = AllowGlobalSelection;
                 result.contextMenuCode = ContextMenuCode;
-                result.filter = Filter;
+                result.filter = ExternalFilter;
                 result.actionCodeForLink = ActionCodeForLink;
                 result.autoGenerateLink = AutoGenerateLink;
                 result.selectAllId = SelectAllId;

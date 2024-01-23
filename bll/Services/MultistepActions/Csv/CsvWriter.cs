@@ -20,7 +20,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
     public class CsvWriter
     {
-        public static readonly string FolderForDownload = $"temp{Path.DirectorySeparatorChar}download";
         private const string IdentifierFieldName = FieldName.ContentItemId;
 
         private const string FieldNameHeaderTemplate = "{0}.{1}";
@@ -46,27 +45,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public bool CsvReady => _itemsPerStep * (_step + 1) >= _ids.Length;
 
-        public string CopyFileToTempUploadDirectory()
-        {
-            var fileInfo = new FileInfo(_settings.UploadFilePath);
-            if (fileInfo.Exists)
-            {
-                var currentSite = SiteRepository.GetById(_siteId);
-                var uploadDir = $@"{currentSite.UploadDir}{Path.DirectorySeparatorChar}{FolderForDownload}";
-                if (!Directory.Exists(uploadDir))
-                {
-                    Directory.CreateDirectory(uploadDir);
-                }
-
-                var newFileUploadPath = $@"{uploadDir}{Path.DirectorySeparatorChar}{fileInfo.Name}";
-                File.Copy(_settings.UploadFilePath, newFileUploadPath, true);
-                File.Delete(_settings.UploadFilePath);
-
-                return $"{fileInfo.Name}";
-            }
-
-            return string.Empty;
-        }
 
         public int Write(int step, int itemsPerStep)
         {
@@ -209,6 +187,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            PathHelper.EnsureUploadPathCreated();
             using (var sw = new StreamWriter(_settings.UploadFilePath, true, Encoding.GetEncoding(_settings.Encoding)))
             {
                 sw.Write(_sb.ToString());
@@ -249,11 +228,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
                 else if (field.ExactType == FieldExactTypes.M2ORelation)
                 {
-                    sb.Append($", {ns}.qp_m2o_titles({articleIdField}, {field.RelatedAttributeId}, {field.BackRelatedAttributeId}, 255) as {fieldAlias}");
+                    sb.Append($", {ns}qp_m2o_titles({articleIdField}, {field.RelatedAttributeId}, {field.BackRelatedAttributeId}, 255) as {fieldAlias}");
                 }
                 else
                 {
-                    sb.Append($", {ns}.qp_link_titles({field.LinkId}, {articleIdField}, {field.RelatedAttributeId}, 255) as {fieldAlias}");
+                    sb.Append($", {ns}qp_link_titles({field.LinkId}, {articleIdField}, {field.RelatedAttributeId}, 255) as {fieldAlias}");
                 }
             }
 
@@ -284,14 +263,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     switch (f.ExactType)
                     {
                         case FieldExactTypes.M2MRelation:
-                            parts.Add($"{ns}.qp_link_titles({f.LinkId.Value}, {field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
+                            parts.Add($"{ns}qp_link_titles({f.LinkId.Value}, {field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, 255)");
                             break;
                         case FieldExactTypes.O2MRelation:
                             var o2mName = $"{f.RelationTableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.RelatedAttributeName)}";
                             parts.Add(SqlQuerySyntaxHelper.CastToString(dbType, o2mName));
                            break;
                         case FieldExactTypes.M2ORelation:
-                            parts.Add($"{ns}.qp_m2o_titles({field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, {f.BackRelatedAttributeId}, 255)");
+                            parts.Add($"{ns}qp_m2o_titles({field.RelationTableAlias}.{contentItemIdField}, {f.RelatedAttributeId}, {f.BackRelatedAttributeId}, 255)");
                             break;
                         default:
                             var fieldName = $"{field.RelationTableAlias}.{SqlQuerySyntaxHelper.EscapeEntityName(dbType, f.Name)}";

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -29,6 +30,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         [Display(Name = "DoNotCopyTemplates", ResourceType = typeof(SiteStrings))]
         public bool DoNotCopyTemplates { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public BLL.Site Data
         {
             get => (BLL.Site)EntityData;

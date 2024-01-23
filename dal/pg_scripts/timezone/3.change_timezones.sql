@@ -6,9 +6,9 @@ DO $$
 		sql text;
 	begin
 
-	    columns := array_agg(row(c.table_name, c.column_name)) from information_schema.columns c where table_schema = 'public' and data_type = 'timestamp without time zone'
+	    columns := array_agg(row(c.table_name, c.column_name)) from information_schema.columns c where table_schema = CURRENT_SCHEMA() and data_type = 'timestamp without time zone'
         and not table_name in (
-	        select table_name from information_schema.views where table_schema = 'public'
+	        select table_name from information_schema.views where table_schema = CURRENT_SCHEMA()
         )
 	    and (table_name like '%content_%'
         or table_name in (

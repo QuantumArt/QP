@@ -62,8 +62,11 @@
   {
     @Html.TextBoxFieldFor(s => s.Data.Tag)
     @Html.TextBoxFieldFor(s => s.Data.OverridesTag)
-    @Html.AggregationListFieldFor(s => s.Data.AttributeItems, Model.Data.AttributeItems, "Name,ItemValue")
-    @Html.AggregationListFieldFor(s => s.Data.StylesItems, Model.Data.StylesItems, "Name,ItemValue")
+    if (!Model.Data.IsSystem)
+    {
+      @Html.AggregationListFieldFor(s => s.Data.AttributeItems, Model.Data.AttributeItems, "Name,ItemValue")
+      @Html.AggregationListFieldFor(s => s.Data.StylesItems, Model.Data.StylesItems, "Name,ItemValue")
+    }
   }
 
   <partial name="Version" model="@Model.Data" />

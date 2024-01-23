@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_merge_links_multiple(integer[], boolean)
+-- PROCEDURE: qp_merge_links_multiple(integer[], boolean)
 
--- DROP PROCEDURE public.qp_merge_links_multiple(integer[], boolean);
+-- DROP PROCEDURE qp_merge_links_multiple(integer[], boolean);
 
-CREATE OR REPLACE PROCEDURE public.qp_merge_links_multiple(
+CREATE OR REPLACE PROCEDURE qp_merge_links_multiple(
 	ids integer[],
 	force_merge boolean)
 LANGUAGE 'plpgsql'

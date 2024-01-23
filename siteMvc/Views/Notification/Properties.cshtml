@@ -137,26 +137,33 @@
 	     {
 	       Enabled = !Model.Data.WorkFlowId.HasValue
 	     }
-	     )
+	   )
 	 }
-	 using (Html.BeginPanel("FieldPanel"))
+   using (Html.BeginPanel("FieldPanel"))
 	 {
-            @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
-	 }
-	 using (Html.BeginPanel("EmptyPanel"))
-	 {
-	 }
+                @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
+            }
+           using (Html.BeginPanel("CategoryPanel"))
+            {
+                @Html.SelectFieldFor(model => model.Data.CategoryFieldId, Html.List(Model.Categories))
+                @Html.SelectFieldFor(model => model.Data.ConfirmationTemplateId, Html.List(Model.Templates))
+            }
+            using (Html.BeginPanel("EmptyPanel"))
+            {
+            }
+            <div class="nfp-multipleRecipients">
+     @Html.CheckBoxFieldFor(x => x.Data.HideRecipients)
+   </div>
  }
 
 	@using (Html.BeginFieldGroup(NotificationStrings.Options))
  {
         @Html.CheckBoxFieldFor(s => s.Data.SendFiles)
-        @Html.CheckBoxFieldFor(s => s.Data.UseQaMail)
  }
 	</div>
+  @Html.HiddenFor(x => x.NonMultipleRecipientTypes)
   <partial name="Version" model="@Model.Data" />
   <partial name="EntityDirectLink" model="@Model" />
-
 }
 
 @Html.PrepareInitScript(Model)

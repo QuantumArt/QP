@@ -38,6 +38,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             return viewModel;
         }
 
+        [Required]
         public BLL.Field Data
         {
             get => (BLL.Field)EntityData;
@@ -510,7 +511,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         {
             new ListItem(DynamicImage.JPG_EXTENSION, DynamicImage.JPG_EXTENSION, true),
             new ListItem(DynamicImage.PNG_EXTENSION, DynamicImage.PNG_EXTENSION),
-            new ListItem(DynamicImage.GIF_EXTENSION, DynamicImage.GIF_EXTENSION)
+            new ListItem(DynamicImage.GIF_EXTENSION, DynamicImage.GIF_EXTENSION),
+            new ListItem(DynamicImage.WEBP_EXTENSION, DynamicImage.WEBP_EXTENSION)
         };
 
         /// <summary>

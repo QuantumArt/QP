@@ -13,6 +13,7 @@ import { BackendLibrary } from './Library/BackendLibrary';
 import { BackendVisualEditor } from './Editor/BackendVisualEditor';
 import { BackendWorkflow } from './Editor/BackendWorkflowEditor';
 import { ImageCropResizeClient } from './BackendImageCropResizeClient';
+import { ImageAutoResizeClient } from './BackendImageAutoResizeClient';
 import { $q } from './Utils';
 
 
@@ -1399,8 +1400,20 @@ $c.crop = function (testUrl, urlParams) {
   return win;
 };
 
+$c.autoResize = function (imgUrl, urlParams) {
+  let win = null;
+  const queryResult = $q.getJsonSync(imgUrl);
+  if (queryResult.proceed) {
+    win = $c.setAutoResizeSettings(urlParams, queryResult.folderUrl, queryResult.baseUrl);
+  } else {
+    $q.alertError(queryResult.msg);
+  }
+
+  return win;
+};
+
 $c.openPreviewWindow = function (url, width, height) {
-  const urlWithTime = `${url}?t=${new Date().getTime()}`;
+  const urlWithTime = `${encodeURI(url)}?t=${new Date().getTime()}`;
   const html = new $.telerik.stringBuilder();
   html
     .cat('<div class="previewImage">')
@@ -1445,6 +1458,26 @@ $c.openCropWindow = function (url, folderUrl, urlParams) {
 
   imgCropResize.openWindow();
   return imgCropResize;
+};
+
+$c.setAutoResizeSettings = function (urlParams, folderUrl, baseUrl) {
+  const imgAutoResize = ImageAutoResizeClient.create({
+    onCompleteCallback() {
+      const newEventArgs = new BackendEventArgs();
+      newEventArgs.set_entityTypeCode(urlParams.entityTypeCode);
+      newEventArgs.set_actionTypeCode(window.ACTION_TYPE_CODE_FILE_RESIZED);
+      const actionCode = urlParams.entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FILE
+        ? window.ACTION_CODE_UPDATE_SITE_FILE
+        : window.ACTION_CODE_UPDATE_CONTENT_FILE;
+
+      newEventArgs.set_actionCode(actionCode);
+      newEventArgs.set_parentEntityId(urlParams.id);
+      Backend.getInstance()._onActionExecuted(newEventArgs);
+    }
+  });
+
+  imgAutoResize.autoResize(folderUrl, urlParams.fileName, baseUrl);
+  return imgAutoResize;
 };
 
 $c.correctPreviewSize = function (size, minSize, maxSize) {
@@ -1590,7 +1623,7 @@ $c.initEntityDataList = function (dataListElem, actionExecutingHandler, editorOp
       maxListWidth: +$dataList.data('max_list_width') || 0,
       maxListHeight: +$dataList.data('max_list_height') || 0,
       showIds: $q.toBoolean($dataList.data('show_ids'), false),
-      filter: $q.toString($dataList.data('filter'), ''),
+      filter: $dataList.data('filter'),
       hostIsWindow: $q.toBoolean(editorOptions ? editorOptions.hostIsWindow : false, false),
       isCollapsable: $q.toBoolean($dataList.data('is_collapsable'), false),
       enableCopy: $q.toBoolean($dataList.data('enable_copy'), true),

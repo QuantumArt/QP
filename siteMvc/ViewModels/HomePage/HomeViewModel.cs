@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
@@ -40,6 +42,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         public IEnumerable<ListItem> Sites { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public BLL.User CurrentUser { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;

@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW public.user_group_bind_recursive
+CREATE OR REPLACE VIEW user_group_bind_recursive
  AS
  WITH RECURSIVE r AS (
          SELECT user_group_bind.user_id,

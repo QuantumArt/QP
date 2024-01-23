@@ -219,7 +219,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "folderId")]
+        [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "folderId")]
         public JsonResult _FolderPath(int folderId)
         {
             var folder = SiteFolderService.GetById(folderId);
@@ -228,7 +228,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 success = true,
                 path = folder.PathInfo.Path,
                 url = folder.PathInfo.Url,
-                libraryPath = folder.OsSpecificPath
+                libraryPath = folder.OsSpecificPath,
+                prefixUploadUrl = folder.PathInfo.BaseUploadUrl
             });
         }
 

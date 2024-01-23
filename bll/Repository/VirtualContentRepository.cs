@@ -205,7 +205,7 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
                     var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-                    var createTestViewSql = $"CREATE VIEW {schema}.{viewName} AS {userQuery}";
+                    var createTestViewSql = $"CREATE VIEW {schema}{viewName} AS {userQuery}";
                     using (var connect = QPContext.CreateDbConnection())
                     {
                         connect.Open();
@@ -237,7 +237,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
                 var schema = SqlQuerySyntaxHelper.DbSchemaName(QPContext.DatabaseType);
-                var createTestViewSql = $"CREATE VIEW {schema}.{viewName} AS {userQuery}";
+                var createTestViewSql = $"CREATE VIEW {schema}{viewName} AS {userQuery}";
                 RunCreateViewDdl(createTestViewSql);
 
                 var dttU = Common.GetViewColumnUsage(scope.DbConnection, viewName);

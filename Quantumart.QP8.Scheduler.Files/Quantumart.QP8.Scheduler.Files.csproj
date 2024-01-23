@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.7.15" />
+      <PackageReference Include="Quartz" Version="3.3.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\QuantumArt.Schedulers\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj" />
+    </ItemGroup>
+
+</Project>

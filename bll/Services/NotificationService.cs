@@ -36,6 +36,8 @@ namespace Quantumart.QP8.BLL.Services
 
         IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId);
 
+        IEnumerable<ListItem> GetRelationFieldsAsListItemsByContentId(int contentId);
+
         MessageResult UnbindNotification(int notificationId);
 
         MessageResult Remove(int id);
@@ -173,6 +175,15 @@ namespace Quantumart.QP8.BLL.Services
         public IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId)
         {
             return FieldRepository.GetFullList(contentId).Where(f => f.TypeId == 1).Select(field => new ListItem
+            {
+                Text = field.Name,
+                Value = field.Id.ToString()
+            }).ToArray();
+        }
+
+        public IEnumerable<ListItem> GetRelationFieldsAsListItemsByContentId(int contentId)
+        {
+            return FieldRepository.GetFullList(contentId).Where(f => f.TypeId == 11).Select(field => new ListItem
             {
                 Text = field.Name,
                 Value = field.Id.ToString()

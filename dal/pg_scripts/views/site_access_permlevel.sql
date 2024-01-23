@@ -1,8 +1,8 @@
--- View: public.site_access_permlevel
+-- View: site_access_permlevel
 
--- DROP VIEW public.site_access_permlevel;
+-- DROP VIEW site_access_permlevel;
 
-CREATE OR REPLACE VIEW public.site_access_permlevel AS
+CREATE OR REPLACE VIEW site_access_permlevel AS
  SELECT c.site_id,
     c.user_id,
     c.group_id,

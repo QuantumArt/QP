@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_update_m2o(numeric, numeric, text, boolean)
+-- PROCEDURE: qp_update_m2o(numeric, numeric, text, boolean)
 
--- DROP PROCEDURE public.qp_update_m2o(numeric, numeric, text, boolean);
+-- DROP PROCEDURE qp_update_m2o(numeric, numeric, text, boolean);
 
-CREATE OR REPLACE PROCEDURE public.qp_update_m2o(
+CREATE OR REPLACE PROCEDURE qp_update_m2o(
 	id numeric,
 	field_id numeric,
 	ids text,

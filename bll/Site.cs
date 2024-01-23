@@ -345,16 +345,16 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                var prefix = UseAbsoluteUploadUrl ? UploadUrlPrefix : "http://" + Dns;
+                var prefix = UseAbsoluteUploadUrl ? UploadUrlPrefix : "//" + Dns;
                 return prefix + UploadUrl;
             }
         }
 
         public string ImagesLongUploadUrl => LongUploadUrl + "images";
 
-        public string LiveUrl => "http://" + Dns + LiveVirtualRoot;
+        public string LiveUrl => "//" + Dns + LiveVirtualRoot;
 
-        public string StageUrl => "http://" + (SeparateDns ? StageDns : Dns) + StageVirtualRoot;
+        public string StageUrl => "//" + (SeparateDns ? StageDns : Dns) + StageVirtualRoot;
 
         public string CurrentUrl => IsLive ? LiveUrl : StageUrl;
 
@@ -384,7 +384,7 @@ namespace Quantumart.QP8.BLL
 
         public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
 
-        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
+        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl, BaseUploadUrl = (UseAbsoluteUploadUrl ? UploadUrlPrefix : "//" + Dns)};
 
         public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 

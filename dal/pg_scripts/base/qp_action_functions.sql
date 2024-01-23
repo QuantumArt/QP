@@ -1,4 +1,4 @@
-create or replace function public.qp_context_menu_id(_code text) returns bigint
+create or replace function qp_context_menu_id(_code text) returns bigint
 immutable
     strict
     language plpgsql
@@ -9,7 +9,7 @@ begin
 end;
 $$;
 
-create or replace function public.qp_action_type_id(_code text) returns bigint
+create or replace function qp_action_type_id(_code text) returns bigint
 immutable
     strict
     language plpgsql
@@ -20,7 +20,7 @@ begin
 end;
 $$;
 
-create or replace function public.qp_entity_type_id(_code text) returns bigint
+create or replace function qp_entity_type_id(_code text) returns bigint
 immutable
     strict
     language plpgsql
@@ -31,7 +31,7 @@ begin
 end;
 $$;
 
-create or replace function public.qp_action_id(_code text) returns bigint
+create or replace function qp_action_id(_code text) returns bigint
 immutable
     strict
     language plpgsql

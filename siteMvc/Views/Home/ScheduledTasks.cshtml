@@ -1,4 +1,5 @@
 ﻿@using Quantumart.QP8.Resources
+@using Quantumart.QP8.BLL
 @model Quantumart.QP8.WebMvc.ViewModels.HomePage.ScheduledTasksViewModel
 
 @using (Html.BeginTabForm(Model))
@@ -9,6 +10,7 @@
   }
   foreach (var task in Model.Tasks)
   {
+    task.Description = Translator.Translate(task.Description);
     using (Html.BeginFieldGroup(HomeStrings.Task))
     {
       <dl class="row">
@@ -72,7 +74,7 @@
         <span class="runJob linkButton actionLink" data-job-name="@task.Name">
         <a href="javascript: void(0)">
           <span class="icon restore"><img src="Static/Common/0.gif" alt="runJob"></span>
-          <span class="text" > Run Job</span>
+          <span class="text" >@Model.RunJob</span>
         </a>
       </span>
       }

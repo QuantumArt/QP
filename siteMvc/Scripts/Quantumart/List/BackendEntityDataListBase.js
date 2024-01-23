@@ -50,8 +50,12 @@ export class BackendEntityDataListBase extends Observable {
       this._maxListWidth = options.maxListWidth;
       this._maxListHeight = options.maxListHeight;
       this._showIds = options.showIds;
-      this._filter = options.filter;
-      this._initFilter = this._filter;
+
+      if ($q.any(options.filter)) {
+        this._filter = options.filter.slice(0);
+        this._initFilter = this._filter.slice(0);
+      }
+
       this._hostIsWindow = options.hostIsWindow;
       this._isCollapsable = options.isCollapsable;
       this._enableCopy = options.enableCopy;
@@ -86,8 +90,8 @@ export class BackendEntityDataListBase extends Observable {
   _listManagerComponent = null;
   _selectPopupWindowComponent = null;
   _showIds = false;
-  _filter = '';
-  _initFilter = '';
+  _filter = [];
+  _initFilter = [];
   _hostIsWindow = false;
   _isCollapsable = false;
   _enableCopy = true;
@@ -864,16 +868,30 @@ export class BackendEntityDataListBase extends Observable {
   }
 
   setFilter(filter) {
-    this._filter = filter;
+    if (filter) {
+      const oldValue = JSON.stringify(this._filter);
+
+      if (Array.isArray(filter)) {
+        this._filter = filter;
+      } else {
+        this._filter = [filter];
+      }
+
+      const newValue = JSON.stringify(this._filter);
+
+      return oldValue !== newValue;
+    }
+
+    return false;
   }
 
   applyFilter(filter) {
-    let result = this._initFilter;
+    const result = this._initFilter.slice(0);
     if (filter) {
-      result = result && result.trim() ? `${result} and ${filter}` : filter;
+      result.push(filter);
     }
 
-    if (result !== this._filter) {
+    if (JSON.stringify(result) !== JSON.stringify(this._filter)) {
       this._filter = result;
       if (this.getListItemCount() > 0) {
         this.refreshList();

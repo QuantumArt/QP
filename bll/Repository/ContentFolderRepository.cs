@@ -65,7 +65,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         public override List<PathSecurityInfo> GetPaths(int contentId)
         {
-            return CurrentSet.Where(n => n.ContentId == contentId).Select(n => new PathSecurityInfo { Id = (int)n.Id, Path = n.Path }).ToList();
+            return CurrentSet.Where(n => n.ContentId == contentId)
+                .Select(n => new PathSecurityInfo
+                {
+                    Id = (int)n.Id,
+                    Path = n.Path.Replace('\\', System.IO.Path.DirectorySeparatorChar)
+                }).ToList();
         }
 
         public override string FolderNotFoundMessage(int id) => string.Format(LibraryStrings.ContentFolderNotExists);

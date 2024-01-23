@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_replicate_items(integer[], integer[], integer)
+-- PROCEDURE: qp_replicate_items(integer[], integer[], integer)
 
--- DROP PROCEDURE public.qp_replicate_items(integer[], integer[], integer);
+-- DROP PROCEDURE qp_replicate_items(integer[], integer[], integer);
 
-CREATE OR REPLACE PROCEDURE public.qp_replicate_items(
+CREATE OR REPLACE PROCEDURE qp_replicate_items(
 	ids integer[],
 	attr_ids integer[] DEFAULT NULL::integer[],
 	modification_update_interval integer DEFAULT '-1'::integer)

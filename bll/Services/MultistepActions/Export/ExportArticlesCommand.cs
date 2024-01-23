@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
@@ -71,7 +71,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
             if (csv.CsvReady)
             {
-                result.AdditionalInfo = csv.CopyFileToTempUploadDirectory();
+                var info = new FileInfo(settings.UploadFilePath);
+                result.AdditionalInfo = info.Exists ? info.Name : string.Empty;
             }
 
             return result;

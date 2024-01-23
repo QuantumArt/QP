@@ -1,8 +1,8 @@
--- FUNCTION: public.qp_get_display_field(numeric, boolean)
+-- FUNCTION: qp_get_display_field(numeric, boolean)
 
--- DROP FUNCTION public.qp_get_display_field(numeric, boolean);
+-- DROP FUNCTION qp_get_display_field(numeric, boolean);
 
-CREATE OR REPLACE FUNCTION public.qp_get_display_field(
+CREATE OR REPLACE FUNCTION qp_get_display_field(
 	content_id numeric,
 	with_relation_field boolean DEFAULT false)
     RETURNS text
@@ -25,7 +25,7 @@ FROM (
                         THEN -1
                     ELSE 1
                     END AS attribute_priority
-         from unnest(public.qp_get_display_fields(content_id, with_relation_field))
+         from unnest(qp_get_display_fields(content_id, with_relation_field))
          order by view_in_list desc, attribute_priority desc, attribute_order asc
      ) a
 LIMIT 1;

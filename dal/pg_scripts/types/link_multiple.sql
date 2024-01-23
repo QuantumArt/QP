@@ -1,5 +1,5 @@
 DO $$ BEGIN
-	CREATE TYPE public.link_multiple AS
+	CREATE TYPE link_multiple AS
 	(
 		id numeric(18,0),
 		link_id numeric(18,0),

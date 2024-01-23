@@ -62,7 +62,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (action == null)
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, id));
+                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundById, id));
             }
 
             return action;
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (!CustomActionRepository.Exists(customAction.Id))
             {
-                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFound, customAction.Id));
+                throw new ApplicationException(string.Format(CustomActionStrings.ActionNotFoundById, customAction.Id));
             }
 
             customAction = Normalize(customAction, selectedActionsIds);
@@ -348,21 +348,23 @@ namespace Quantumart.QP8.BLL.Services
 
         private static CustomActionPrepareResult SecurityCheck(CustomActionPrepareResult result, CustomAction action, IEnumerable<int> ids)
         {
-            result.IsActionAccessable = true;
-            result.SecurityErrorMesage = null;
+            result.IsActionAccessible = true;
+            result.SecurityErrorMessage = null;
 
             if (!SecurityRepository.IsActionAccessible(action.Action.Code))
             {
-                result.IsActionAccessable = false;
-                result.SecurityErrorMesage = string.Format(GlobalStrings.ActionIsNotAccessible, action.Name);
+                result.IsActionAccessible = false;
+                result.SecurityErrorMessage = string.Format(GlobalStrings.ActionIsNotAccessible, action.Action.Code);
+                result.ClientSecurityErrorMessage = CustomActionStrings.ActionNotAccessible;
             }
             else
             {
                 var notAccessedIDs = EntityPermissionCheck(action, ids).ToList();
                 if (notAccessedIDs.Any())
                 {
-                    result.IsActionAccessable = false;
-                    result.SecurityErrorMesage = string.Format(GlobalStrings.EntityIsNotAccessible, action.Action.ActionType.Name, action.Action.EntityType.Name, string.Join(",", notAccessedIDs));
+                    result.IsActionAccessible = false;
+                    result.SecurityErrorMessage = string.Format(GlobalStrings.EntityIsNotAccessible, action.Action.ActionType.Code, action.Action.EntityType.Code, string.Join(",", notAccessedIDs));
+                    result.ClientSecurityErrorMessage = CustomActionStrings.ActionNotAccessible;
                 }
             }
 

@@ -214,7 +214,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static List<PathInfo> GetPathInfoList()
         {
-            return QPContext.EFContext.SiteSet.Select(n => new PathInfo { Url = (n.UseAbsoluteUploadUrl == 1 ? n.UploadUrlPrefix : "http://" + n.Dns) + n.UploadUrl, Path = n.UploadDir }).ToList();
+            return QPContext.EFContext.SiteSet.Select(n => new PathInfo { Url = (n.UseAbsoluteUploadUrl == 1 ? n.UploadUrlPrefix : "//" + n.Dns) + n.UploadUrl, Path = n.UploadDir, BaseUploadUrl = (n.UseAbsoluteUploadUrl == 1 ? n.UploadUrlPrefix : "//" + n.Dns)}).ToList();
         }
 
         internal static bool ContextClassNameExists(Site site)

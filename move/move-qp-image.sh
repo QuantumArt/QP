@@ -1,4 +1,4 @@
 #!/bin/sh
-docker pull '||registry-source||/qp:||version||' && \
-docker tag '||registry-source||/qp:||version||' '||registry-destination||/qp:||version||' && \
-docker push '||registry-destination||/qp:||version||'
+docker pull '||registry-source||/||image-source||:||version||' && \
+docker tag '||registry-source||/||image-source||:||version||' '||registry-destination||/||image-destination||:||version||' && \
+docker push '||registry-destination||/||image-destination||:||version||'

@@ -22,6 +22,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public string AggregationListItemsVeCommandsDisplay { get; set; }
 
+        [Required]
         public VisualEditorPlugin Data
         {
             get => (VisualEditorPlugin)EntityData;

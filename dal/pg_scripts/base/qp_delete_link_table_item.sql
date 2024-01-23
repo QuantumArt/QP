@@ -1,8 +1,8 @@
--- PROCEDURE: public.qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
+-- PROCEDURE: qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean)
 
--- DROP PROCEDURE public.qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean);
+-- DROP PROCEDURE qp_delete_link_table_item(numeric, numeric, link[], boolean, boolean, boolean);
 
-CREATE OR REPLACE PROCEDURE public.qp_delete_link_table_item(
+CREATE OR REPLACE PROCEDURE qp_delete_link_table_item(
 	link_id numeric,
 	content_id numeric,
 	links link[],

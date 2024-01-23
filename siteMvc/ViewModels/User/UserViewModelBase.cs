@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -11,6 +12,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
     {
         protected IUserService Service;
 
+        [Required]
         public BLL.User Data
         {
             get => (BLL.User)EntityData;
