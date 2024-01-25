@@ -62,6 +62,6 @@ namespace Quantumart.QP8.Configuration
 
         public bool ForceHttpForImageResizing { get; set; }
 
-        public string SessionEncryptionKeysPath { get; set; } = string.Empty;
+        public string SessionEncryptionKeysPath { get; set; }
     }
 }
