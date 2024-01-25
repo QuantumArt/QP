@@ -35,6 +35,7 @@ using Quantumart.QP8.Configuration;
 using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -83,6 +84,12 @@ namespace Quantumart.QP8.WebMvc
             Configuration.Bind("Properties", qpOptions);
             services.AddSingleton(qpOptions);
             QPConfiguration.Options = qpOptions;
+
+            if (!string.IsNullOrWhiteSpace(qpOptions.SessionEncryptionKeysPath))
+            {
+                services.AddDataProtection()
+                   .PersistKeysToFileSystem(new DirectoryInfo(qpOptions.SessionEncryptionKeysPath));
+            }
 
             services.Configure<FormOptions>(Configuration.GetSection("Form"));
 
