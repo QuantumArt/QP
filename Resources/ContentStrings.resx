@@ -504,4 +504,7 @@
   <data name="TraceImportScript" xml:space="preserve">
     <value>Trace script after CSV Import</value>
   </data>
+  <data name="UseNativeEfTypes" xml:space="preserve">
+    <value>Use native EF types in table columns</value>
+  </data>
 </root>

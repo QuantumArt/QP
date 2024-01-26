@@ -414,6 +414,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "DisableChangingActions", ResourceType = typeof(ContentStrings))]
         public bool DisableChangingActions { get; set; }
 
+        [Display(Name = "UseNativeEfTypes", ResourceType = typeof(ContentStrings))]
+        public bool UseNativeEfTypes { get; set; }
+
         [Display(Name = "FormScript", ResourceType = typeof(ContentStrings))]
         public string FormScript { get; set; }
 

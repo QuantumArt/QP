@@ -67,6 +67,8 @@ namespace Quantumart.QP8.DAL.Entities
         public bool DownloadEfSource { get; set; }
         public bool DisableListAutoWrap { get; set; }
 
+        public bool UseNativeEfTypes { get; set; }
+
         public ICollection<CodeSnippetDAL> CodeSnippets { get; set; }
         public ICollection<ContentDAL> Contents { get; set; }
         public ICollection<ContentGroupDAL> ContentGroups { get; set; }
@@ -146,6 +148,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.Property(x => x.EnableOnScreen).HasColumnName("ENABLE_ONSCREEN");
             builder.Property(x => x.UseEnglishQuotes).HasColumnName("USE_ENGLISH_QUOTES");
             builder.Property(x => x.ReplaceUrlsInDB).HasColumnName("REPLACE_URLS_IN_DB");
+            builder.Property(x => x.UseNativeEfTypes).HasColumnName("USE_NATIVE_EF_TYPES");
 
             builder.HasKey(x => x.Id);
 

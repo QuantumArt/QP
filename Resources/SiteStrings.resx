@@ -594,4 +594,7 @@
   <data name="ReplaceUrlsInDB" xml:space="preserve">
     <value>Replace urls to placeholders</value>
   </data>
+  <data name="UseNativeEfTypes" xml:space="preserve">
+    <value>Use native EF types in table columns</value>
+  </data>
 </root>

@@ -588,4 +588,7 @@
   <data name="ReplaceUrlsInDB" xml:space="preserve">
     <value>Заменять ссылки на плейсхолдеры</value>
   </data>
+  <data name="UseNativeEfTypes" xml:space="preserve">
+    <value>Использовать естественные типы EF для колонок таблиц</value>
+  </data>
 </root>
