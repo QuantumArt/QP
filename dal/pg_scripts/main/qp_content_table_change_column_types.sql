@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE public.qp_content_table_change_column_types(
+CREATE OR REPLACE PROCEDURE qp_content_table_change_column_types(
 	cid numeric, is_async boolean)
 LANGUAGE 'plpgsql'
 AS $BODY$
