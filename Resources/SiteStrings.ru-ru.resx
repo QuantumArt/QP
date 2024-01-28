@@ -589,6 +589,6 @@
     <value>Заменять ссылки на плейсхолдеры</value>
   </data>
   <data name="UseNativeEfTypes" xml:space="preserve">
-    <value>Использовать естественные типы EF для колонок таблиц</value>
+    <value>Использовать естественные типы EF в столбцах новых контентных таблиц</value>
   </data>
 </root>

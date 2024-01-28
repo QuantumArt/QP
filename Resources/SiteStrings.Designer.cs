@@ -1464,7 +1464,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use native EF types in table columns.
+        ///   Looks up a localized string similar to Use native EF types in columns of new content tables.
         /// </summary>
         public static string UseNativeEfTypes {
             get {

@@ -393,8 +393,8 @@ namespace Quantumart.QP8.BLL
                 if (data != null)
                 {
                     _liveModified = (DateTime)data["MODIFIED"];
-                    _liveLastModifiedBy = UserRepository.GetById((int)(decimal)data["LAST_MODIFIED_BY"]);
-                    _liveStatusTypeId = (int)(decimal)data["STATUS_TYPE_ID"];
+                    _liveLastModifiedBy = UserRepository.GetById(Convert.ToInt32(data["LAST_MODIFIED_BY"]));
+                    _liveStatusTypeId = Convert.ToInt32(data["STATUS_TYPE_ID"]);
                 }
             }
             return _liveFieldValues;
@@ -1255,7 +1255,7 @@ namespace Quantumart.QP8.BLL
             foreach (DataRow dr in data.Rows)
             {
                 var result = new List<FieldValue>();
-                var id = (int)(decimal)dr["content_item_id"];
+                var id = Convert.ToInt32(dr["content_item_id"]);
                 var article = articlesArr.SingleOrDefault(n => n.Id == id);
 
                 if (article == null)
@@ -1263,7 +1263,7 @@ namespace Quantumart.QP8.BLL
                     continue;
                 }
 
-                var statusTypeId = (int)(decimal)dr["status_type_id"];
+                var statusTypeId = Convert.ToInt32(dr["status_type_id"]);
                 if (article.StatusTypeId != statusTypeId)
                 {
                     article.StatusTypeId = statusTypeId;

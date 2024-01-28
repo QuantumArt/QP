@@ -188,18 +188,49 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, CustomFilterItem[] customFilter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
+        internal static IEnumerable<DataRow> GetList(
+            int contentId,
+            int[] selectedArticleIDs,
+            ListCommand cmd,
+            IList<ArticleSearchQueryParam> searchQueryParams,
+            IList<ArticleContextQueryParam> contextQueryParams,
+            CustomFilterItem[] customFilter,
+            ArticleFullTextSearchQueryParser ftsParser,
+            bool? onlyIds,
+            int[] filterIds,
+            out int totalRecords
+        )
         {
             using (new QPConnectionScope())
             {
                 var content = ContentRepository.GetById(contentId);
-                var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out var useMainTable);
+                var contextFilter = GetContextFilter(
+                    contextQueryParams,
+                    content.Fields.ToList(),
+                    out var useMainTable
+                );
                 var sqlParams = new List<DbParameter>();
                 var sqlConnection = QPConnectionScope.Current.DbConnection;
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
                 var filters = MapperFacade.CustomFilterMapper.GetDalList(customFilter?.ToList()).ToArray();
-                var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, filters);
-                filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
+                var filter = CommonCustomFilters.GetFilterQuery(
+                    sqlConnection,
+                    sqlParams,
+                    dbType,
+                    EntityTypeCode.Article,
+                    contentId,
+                    filters,
+                    content.UseNativeEfTypes
+                );
+                filter = FillFullTextSearchParams(
+                    contentId,
+                    filter,
+                    searchQueryParams,
+                    ftsParser,
+                    out var ftsOptions,
+                    out var extensionContentIds,
+                    out var contentReferences
+                );
 
                 var options = new ArticlePageOptions
                 {
@@ -479,7 +510,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     filters.Add(CustomFilter.GetFalseFilter());
                 }
 
-                var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.CurrentDbType, query.ParentEntityId, filters.ToArray());
+                var filter = CommonCustomFilters.GetFilterQuery(
+                        scope.DbConnection,
+                        sqlFilterParameters,
+                        scope.CurrentDbType,
+                        EntityTypeCode.Article,
+                        query.ParentEntityId,
+                        filters.ToArray(),
+                        field.Content.UseNativeEfTypes
+                    );
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
@@ -491,7 +530,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     displayExpression,
                     query.SelectionMode,
                     PermissionLevel.List,
-                    customFilrer,
+                    filter,
                     useSecurity,
                     selection.ToArray(),
                     null,

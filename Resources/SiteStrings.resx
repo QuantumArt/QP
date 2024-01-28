@@ -595,6 +595,6 @@
     <value>Replace urls to placeholders</value>
   </data>
   <data name="UseNativeEfTypes" xml:space="preserve">
-    <value>Use native EF types in table columns</value>
+    <value>Use native EF types in columns of new content tables</value>
   </data>
 </root>
