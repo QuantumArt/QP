@@ -623,7 +623,7 @@ WHERE content_item_id = {contentItemId}
             {
                 cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
                 return GetDataTableForCommand(cmd).AsEnumerable()
-                    .Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+                    .Select(row => Convert.ToInt32(row["content_item_id"])).ToArray();
             }
         }
 
@@ -721,7 +721,7 @@ WHERE content_item_id = {contentItemId}
                  cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@status_ids", statusList, dbType));
 
                  return GetDataTableForCommand(cmd).AsEnumerable()
-                     .Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+                     .Select(row => Convert.ToInt32(row["content_item_id"])).ToArray();
              }
          }
 

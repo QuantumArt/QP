@@ -517,7 +517,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                         EntityTypeCode.Article,
                         query.ParentEntityId,
                         filters.ToArray(),
-                        field.Content.UseNativeEfTypes
+                        fields[0].Content.UseNativeEfTypes
                     );
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
@@ -659,11 +659,11 @@ cil.locked_by,
 
                 return rows.Select(dr =>
                 {
-                    var id = dr.Field<decimal>("id");
+                    var id = Convert.ToInt32(dr["id"]);
                     var result = new EntityTreeItem
                     {
                         Id = id.ToString(CultureInfo.InvariantCulture),
-                        ParentId = (int?)dr.Field<decimal?>("parentId"),
+                        ParentId = Converter.ToNullableInt32(dr["parentId"]),
                         Alias = Cleaner.RemoveAllHtmlTags(dr.Field<string>("title")),
                         HasChildren = dr.Field<bool>("has_children")
                     };

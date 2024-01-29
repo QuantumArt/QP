@@ -90,7 +90,7 @@ namespace Quantumart.QP8.DAL
                 {
                     while (dr.Read())
                     {
-                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? string.Empty);
+                        values.Add(Convert.ToInt32(dr[0]), dr[1]?.ToString() ?? string.Empty);
                     }
                 }
 
@@ -106,7 +106,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@value", value);
                 var result = cmd.ExecuteScalar();
-                return result == null ? 0 : (int)(decimal)result;
+                return result == null ? 0 : Convert.ToInt32(result);
             }
         }
 
@@ -522,7 +522,7 @@ order by 1, 2
                 dt.AsEnumerable()
                     .Select(
                         row =>
-                            new { Id = (int)(decimal)row[keyFieldName], LinkedId = (int)(decimal)row[valueFieldName] });
+                            new { Id = Convert.ToInt32(row[keyFieldName]), LinkedId = Convert.ToInt32(row[valueFieldName]) });
             foreach (var item in data)
             {
                 if (!result.ContainsKey(item.Id))
@@ -561,9 +561,9 @@ order by 1, 2
                         row =>
                             new
                             {
-                                Id = (int)(decimal)row[keyFieldName],
-                                LinkedId = (int)(decimal)row[valueFieldName],
-                                LinkId = (int)(decimal)row[groupFieldName]
+                                Id = Convert.ToInt32(row[keyFieldName]),
+                                LinkedId = Convert.ToInt32(row[valueFieldName]),
+                                LinkId = Convert.ToInt32(row[groupFieldName])
                             });
 
             foreach (var item in data)
@@ -741,7 +741,7 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
                 cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+                return dt.AsEnumerable().Select(row => Convert.ToInt32(row["content_item_id"])).ToArray();
             }
         }
 
@@ -966,7 +966,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             {
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 var result = cmd.ExecuteScalar();
-                return result == DBNull.Value ? 0 : (int)(decimal)result;
+                return result == DBNull.Value ? 0 : Convert.ToInt32(result);
             }
         }
 
@@ -1156,7 +1156,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@workflowId", workflowId);
                 var value = cmd.ExecuteScalar();
-                return value == DBNull.Value ? 0 : dbType == DatabaseType.SqlServer ? (int)(decimal)value : (int)value;
+                return value == DBNull.Value ? 0 : Convert.ToInt32(value);
             }
         }
 
@@ -3601,7 +3601,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 cmd.Parameters.AddWithValue("@count_to_del", contentsToRemove);
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(r => Converter.ToInt32(r.Field<decimal>(0))).ToArray();
+                return dt.AsEnumerable().Select(r => Converter.ToInt32(r[0])).ToArray();
             }
         }
 
@@ -5987,7 +5987,7 @@ order by ActionDate desc
                     var result = new Dictionary<int, string>();
                     while (reader.Read())
                     {
-                        var id = (int)(decimal)reader["CONTENT_ID"];
+                        var id = Convert.ToInt32(reader["CONTENT_ID"]);
                         var name = (string)reader["ATTRIBUTE_NAME"];
                         result[id] = name;
                     }
@@ -6068,7 +6068,7 @@ order by ActionDate desc
 
                     while (reader.Read())
                     {
-                        var id = (int)(decimal)reader["ATTRIBUTE_ID"];
+                        var id = Convert.ToInt32(reader["ATTRIBUTE_ID"]);
                         var name = (string)reader["ATTRIBUTE_NAME"];
                         result[id] = name;
                     }
@@ -6122,7 +6122,7 @@ order by ActionDate desc
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                return (int)(decimal)cmd.ExecuteScalar();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -10255,7 +10255,7 @@ order by ActionDate desc
                 ? "SELECT DISTINCT Id, ParentId FROM CTE"
                 : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl";
 
-            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
+            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => Convert.ToInt32(dr[0])).ToList();
         }
 
 
@@ -10314,7 +10314,7 @@ order by ActionDate desc
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@childId", childId);
                 var result = cmd.ExecuteScalar();
-                return result == null ? 0 : (int)(decimal)result;
+                return result == null ? 0 : Convert.ToInt32(result);
             }
         }
 

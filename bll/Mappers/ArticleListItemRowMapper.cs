@@ -10,8 +10,8 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<DataRow, ArticleListItem>(MemberList.Source)
-                .ForMember(biz => biz.Id, opt => opt.MapFrom(row => row.Field<decimal>("ID")))
-                .ForMember(biz => biz.ParentId, opt => opt.MapFrom(row => row.Field<decimal>("ParentId")))
+                .ForMember(biz => biz.Id, opt => opt.MapFrom(row => Convert.ToInt32(row["ID"])))
+                .ForMember(biz => biz.ParentId, opt => opt.MapFrom(row => Convert.ToInt32(row["ParentId"])))
                 .ForMember(biz => biz.StatusName, opt => opt.MapFrom(row => row.Field<string>("StatusName")))
                 .ForMember(biz => biz.SiteName, opt => opt.MapFrom(row => row.Field<string>("SiteName")))
                 .ForMember(biz => biz.ContentName, opt => opt.MapFrom(row => row.Field<string>("ContentName")))

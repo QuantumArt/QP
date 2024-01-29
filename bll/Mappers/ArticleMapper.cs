@@ -11,7 +11,7 @@ namespace Quantumart.QP8.BLL.Mappers
         public override void CreateBizMapper(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<ArticleDAL, Article>(MemberList.Source)
-                .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Converter.ToInt32(src.LockedBy)))
+                .ForMember(biz => biz.LockedBy, opt => opt.MapFrom(src => Convert.ToInt32(src.LockedBy)))
                 .ForMember(data => data.WorkflowBinding, opt => opt.Ignore());
         }
 

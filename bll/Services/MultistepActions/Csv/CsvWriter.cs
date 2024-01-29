@@ -106,7 +106,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var aliases = _settings.FieldsToExpandSettings.Select(n => n.Alias).ToArray();
 
             var fields = _extensionContents.SelectMany(c => c.Fields).Concat(FieldRepository.GetFullList(_contentId)).ToList();
-            var ids = articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToArray();
+            var ids = articles.AsEnumerable().Select(n => Convert.ToInt32(n["content_item_id"])).ToArray();
             var extensionIdsMap = _extensionContents.ToDictionary(c => c.Id, c => articles
                 .AsEnumerable()
                 .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
@@ -126,11 +126,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 foreach (var field in m2oFields)
                 {
                     var m2ODisplayFieldName = ContentRepository.GetTitleName(field.BackRelation.ContentId);
-                    var m2OValues = ArticleRepository.GetM2OValues(articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToList(),
-                                                                    field.BackRelation.ContentId,
-                                                                    field.Id,
-                                                                    field.BackRelation.Name,
-                                                                    m2ODisplayFieldName);
+                    var m2OValues = ArticleRepository.GetM2OValues(
+                        articles.AsEnumerable().Select(
+                            n => Convert.ToInt32(n["content_item_id"])
+                        ).ToList(),
+                        field.BackRelation.ContentId,
+                        field.Id,
+                        field.BackRelation.Name,
+                        m2ODisplayFieldName
+                    );
 
                     foreach (var value in m2OValues)
                     {

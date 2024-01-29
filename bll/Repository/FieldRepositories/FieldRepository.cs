@@ -670,18 +670,18 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 foreach (DataRow row in Common.GetBaseFieldsForM2O(scope.DbConnection, contentId, fieldId).Rows)
                 {
                     var parts = new List<string>();
-                    if (siteId != (int)(decimal)row["site_id"])
+                    if (siteId != Convert.ToInt32(row["site_id"]))
                     {
                         parts.Add((string)row["site_name"]);
                     }
 
-                    if (contentId != (int)(decimal)row["content_id"])
+                    if (contentId != Convert.ToInt32(row["content_id"]))
                     {
                         parts.Add((string)row["content_name"]);
                     }
 
                     parts.Add((string)row["attribute_name"]);
-                    var currentFieldId = (int)(decimal)row["attribute_id"];
+                    var currentFieldId = Convert.ToInt32(row["attribute_id"]);
                     var resultPart = new ListItem { Text = string.Join(".", parts), Value = currentFieldId.ToString() };
                     if (currentFieldId == fieldId)
                     {
