@@ -64,10 +64,10 @@ spec:
         emptyDir: {}
       - name: library-volume
         persistentVolumeClaim:
-          claimName: qp-keys
+          claimName: qp-library
       - name: session-keys-volume
         persistentVolumeClaim:
-          claimName: qp-library
+          claimName: qp-keys
       - name: time-config
         hostPath:
           path: /usr/share/zoneinfo
