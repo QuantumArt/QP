@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -105,7 +105,10 @@ namespace Quantumart.QP8.BLL
 
         public static CustomFilter DefaultExternalRelationFilter = CustomFilter.GetArchiveFilter(0);
         public static readonly string DefaultRelationFilter = "c.archive = 0";
+        public static readonly string DefaultRelationNativeFilter = "not c.archive";
         public static readonly string ArchiveFilter = "c.archive = 1";
+        public static readonly string ArchiveNativeFilter = "c.archive";
+
 
         /// <summary>
         /// Разрешенные DataBase типы колонок полей
@@ -496,7 +499,15 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public string RelationFilter => SqlFilterComposer.Compose(UseRelationCondition ? "(" + RelationCondition + ")" : "", DefaultRelationFilter);
+        public string RelationFilter
+        {
+            get
+            {
+                var defaultFilter = RelatedToContent.UseNativeEfTypes ? DefaultRelationNativeFilter : DefaultRelationFilter;
+                return SqlFilterComposer.Compose(
+                    UseRelationCondition ? "(" + RelationCondition + ")" : "", defaultFilter);
+            }
+        }
 
         public List<CustomFilter> ExternalRelationFilter
         {
@@ -3042,10 +3053,10 @@ namespace Quantumart.QP8.BLL
                 if (UseRelationCondition)
                 {
                     filter.Add(CustomFilter.GetRelationFilter(Id));
-                }  
+                }
             }
 
-            return MapperFacade.CustomFilterMapper.GetBizList(filter).ToArray();           
+            return MapperFacade.CustomFilterMapper.GetBizList(filter).ToArray();
         }
 
         public void ParseStringEnumJson(string json)

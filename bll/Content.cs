@@ -471,7 +471,8 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var field = TreeField;
-                return field == null ? string.Empty : Field.DefaultRelationFilter;
+                return field == null ? string.Empty :
+                    field.Content.UseNativeEfTypes ? Field.DefaultRelationNativeFilter : Field.DefaultRelationFilter;
             }
         }
 

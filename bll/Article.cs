@@ -386,7 +386,9 @@ namespace Quantumart.QP8.BLL
 
                 var oldIsLive = QPContext.IsLive;
                 QPContext.IsLive = true;
-                var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
+                var data = ArticleRepository.GetData(
+                    Id, DisplayContentId, QPContext.IsLive, excludeArchive, fields[0].Content.UseNativeEfTypes
+                );
                 _liveFieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
                 QPContext.IsLive = oldIsLive;
 
@@ -405,7 +407,9 @@ namespace Quantumart.QP8.BLL
             if (_fieldValues == null)
             {
                 var fields = FieldRepository.GetFullList(DisplayContentId);
-                var data = ArticleRepository.GetData(Id, DisplayContentId, QPContext.IsLive, excludeArchive);
+                var data = ArticleRepository.GetData(
+                    Id, DisplayContentId, QPContext.IsLive, excludeArchive, fields[0].Content.UseNativeEfTypes
+                );
                 _fieldValues = GetFieldValues(data, fields, this, 0, null, excludeArchive);
             }
             return _fieldValues;

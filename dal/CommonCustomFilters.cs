@@ -111,24 +111,29 @@ namespace Quantumart.QP8.DAL
                 throw new ArgumentException("array expected", nameof(value));
             }
 
-            var query = "SELECT ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @attributeId";
+            var query = "SELECT ca.ATTRIBUTE_NAME, c.USE_NATIVE_EF_TYPES " +
+                " FROM CONTENT_ATTRIBUTE ca " +
+                " INNER JOIN CONTENT c ON c.CONTENT_ID = ca.CONTENT_ID " +
+                " WHERE ATTRIBUTE_ID = @attributeId";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attributeId", fieldId);
 
-                var field = cmd.ExecuteScalar();
+                var reader = cmd.ExecuteReader();
 
-                if (DBNull.Value.Equals(field))
+                if (DBNull.Value.Equals(reader[0]))
                 {
                     return null;
                 }
                 else
                 {
                     parameters.AddWithValue("@currentArticleId", articleId, dbType);
-                    var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)field);
-                    return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND c.archive = 0";
+                    var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)reader[0]);
+                    var useNativeBool = (bool)reader[1];
+                    var archiveFilter = useNativeBool ? "not c.archive" : "c.archive = 0";
+                    return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND {archiveFilter}";
                 }
             }
         }
