@@ -121,19 +121,17 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attributeId", fieldId);
 
-                var reader = cmd.ExecuteReader();
-
-                if (DBNull.Value.Equals(reader[0]))
+                using (var reader = cmd.ExecuteReader())
                 {
+                    if (reader.Read() && !DBNull.Value.Equals(reader[0]))
+                    {
+                        parameters.AddWithValue("@currentArticleId", articleId, dbType);
+                        var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)reader[0]);
+                        var useNativeBool = (bool)reader[1];
+                        var archiveFilter = useNativeBool ? "not c.archive" : "c.archive = 0";
+                        return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND {archiveFilter}";
+                    }
                     return null;
-                }
-                else
-                {
-                    parameters.AddWithValue("@currentArticleId", articleId, dbType);
-                    var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)reader[0]);
-                    var useNativeBool = (bool)reader[1];
-                    var archiveFilter = useNativeBool ? "not c.archive" : "c.archive = 0";
-                    return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND {archiveFilter}";
                 }
             }
         }

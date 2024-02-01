@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -367,9 +367,14 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                         ChangeCleanEmptyGropusTriggerState(scope.DbConnection, false);
                     }
 
+                    var oldContent = GetById(content.Id);
                     var binding = content.WorkflowBinding;
                     var fieldValues = content.QpPluginFieldValues;
                     var newContent = DefaultRepository.Update<Content, ContentDAL>(content);
+                    if (oldContent.UseNativeEfTypes != newContent.UseNativeEfTypes)
+                    {
+                        Common.ChangeNativeEfTypes(scope.DbConnection, content.Id, newContent.UseNativeEfTypes);
+                    }
                     var isAggregated = IsAnyAggregatedFields(content.Id);
                     if (!isAggregated)
                     {

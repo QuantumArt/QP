@@ -1080,7 +1080,8 @@ cil.locked_by,
         /// <param name="fieldId">ID базового поля связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static Dictionary<int, string> GetRelatedItems(IEnumerable<int> fieldIds, int? id, bool excludeArchive = false)
+        internal static Dictionary<int, string> GetRelatedItems(
+            IEnumerable<int> fieldIds, int? id, bool excludeArchive = false)
         {
             var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
                 new Common.FieldInfo()
@@ -1094,9 +1095,8 @@ cil.locked_by,
 
             using (new QPConnectionScope())
             {
-                var useNativeBool = fiList[0].UseNativeBool;
                 return Common.GetRelatedArticles(
-                    QPConnectionScope.Current.DbConnection, fiList, id, QPContext.IsLive, excludeArchive, useNativeBool
+                    QPConnectionScope.Current.DbConnection, fiList, id, QPContext.IsLive, excludeArchive
                 );
             }
         }
@@ -1136,14 +1136,17 @@ cil.locked_by,
                 {
                     ContentId = field.ContentId,
                     Name = field.Name,
-                    Id = field.Id
+                    Id = field.Id,
+                    UseNativeBool = field.Content.UseNativeEfTypes
+
                 };
                 var dict = Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, new [] {fi}, ids, QPContext.IsLive, excludeArchive)[fieldId];
                 return dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
             }
         }
 
-        internal static Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(IEnumerable<int> fieldIds, IEnumerable<int> ids, bool excludeArchive = false)
+        internal static Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(
+            IEnumerable<int> fieldIds, IEnumerable<int> ids, bool excludeArchive = false)
         {
             var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
                 new Common.FieldInfo()
@@ -1158,7 +1161,7 @@ cil.locked_by,
             using (var scope = new QPConnectionScope())
             {
                 return Common.GetRelatedArticlesMultiple(
-                    scope.DbConnection, fiList, ids, QPContext.IsLive, excludeArchive, fiList[0].UseNativeBool
+                    scope.DbConnection, fiList, ids, QPContext.IsLive, excludeArchive
                 );
             }
         }

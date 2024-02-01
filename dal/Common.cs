@@ -729,8 +729,7 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
             IEnumerable<FieldInfo> fiList,
             int? id,
             bool isLive,
-            bool excludeArchive = false,
-            bool useNativeBool = false
+            bool excludeArchive = false
         )
         {
             if (!fiList.Any())
@@ -742,14 +741,14 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
                 var databaseType = GetDbType(connection);
                 var suffix = isLive ? string.Empty : "_united";
                 var action = id.HasValue ? " = @id" : " is null ";
-                var isArchive = excludeArchive ? (useNativeBool ? " and not archive" : " and archive = 0") : string.Empty;
                 var fieldIds = fiList.Select(n => n.Id).ToArray();
                 var strTemplates = fiList.Select(fi => $@"
 select
 content_item_id,
 cast({fi.Id} as decimal) as field_id
 from content_{fi.ContentId}{suffix} {WithNoLock(databaseType)}
-where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {isArchive}");
+where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action}
+{(excludeArchive ? (fi.UseNativeBool ? " and not archive" : " and archive = 0") : string.Empty)}");
 
                 var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
 
@@ -796,7 +795,8 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
             var strTemplates = fiList.Select(fi => $@"
                 select content_item_id as linked_item_id, {Escape(dbType, fi.Name)} as item_id, cast({fi.Id} as decimal) as field_id
                 from content_{fi.ContentId}{suffix} {WithNoLock(dbType)}
-                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@itemIds")}) {isArchive}
+                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@itemIds")})
+                {(excludeArchive ? (fi.UseNativeBool ? "not archive" : "and archive = 0") : string.Empty)}
             ");
 
             var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);

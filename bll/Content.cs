@@ -304,6 +304,7 @@ namespace Quantumart.QP8.BLL
             Content result = new Content();
             result.Site = site;
             result.SiteId = site.Id;
+            result.UseNativeEfTypes = site.UseNativeEfTypes;
             result.GroupId = ContentGroup.GetDefaultGroup(site.Id).Id;
             return result;
         }

@@ -620,5 +620,17 @@ namespace Quantumart.QP8.DAL
             var asyncSql = String.Format(indexTemplate, sqlAsyncCheck, asyncIndexName);;
             ExecuteSql(cnn, asyncSql);
         }
+
+        public static void ChangeNativeEfTypes(DbConnection cnn, int contentId, bool useNative)
+        {
+            var dbType = GetDbType(cnn);
+            if (dbType == DatabaseType.Postgres)
+            {
+                var spName = "qp_content_change_column_types_forced";
+                var sql = SqlQuerySyntaxHelper.SpCall(dbType, spName, $"{contentId}, {useNative}");
+                ExecuteSql(cnn, sql);
+            }
+
+        }
     }
 }

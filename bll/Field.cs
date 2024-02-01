@@ -499,11 +499,13 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [ValidateNever]
         public string RelationFilter
         {
             get
             {
-                var defaultFilter = RelatedToContent.UseNativeEfTypes ? DefaultRelationNativeFilter : DefaultRelationFilter;
+                var useNative = RelatedToContent?.UseNativeEfTypes ?? false;
+                var defaultFilter = useNative ? DefaultRelationNativeFilter : DefaultRelationFilter;
                 return SqlFilterComposer.Compose(
                     UseRelationCondition ? "(" + RelationCondition + ")" : "", defaultFilter);
             }

@@ -1,5 +1,5 @@
 CREATE OR REPLACE PROCEDURE qp_content_table_change_column_types(
-	cid numeric, is_async boolean)
+	cid numeric, is_async boolean, use_native boolean)
 LANGUAGE 'plpgsql'
 AS $BODY$
 	DECLARE
@@ -14,9 +14,7 @@ AS $BODY$
 	    type_name text;
 	    int_type_name text;
 	    bool_type_name text;
-		use_native boolean;
 BEGIN
-		use_native := use_native_ef_types from content where content_id = cid;
 		target_table := case is_async when true then 'content_%s_async' else 'content_%s' end;
 		target_table := format(target_table, cid);
 		sql_template := 'alter table %s alter column %s type %s';
