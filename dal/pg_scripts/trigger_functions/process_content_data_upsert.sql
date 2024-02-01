@@ -19,6 +19,7 @@ AS $BODY$
 		source text;
 		column_type text;
 		sql text;
+        use_native bool;
     BEGIN
 
 		IF NOT EXISTS(select content_data_id from new_table where not not_for_replication) THEN
@@ -83,6 +84,7 @@ AS $BODY$
 		FOREACH attr_id in array attribute_ids
 		LOOP
 			attr := row(ca.*) from content_attribute ca where ca.attribute_id = attr_id;
+			use_native := content.use_native_ef_types from content where content_id = attr.content_id;
 
 			ids := array_agg(i.content_item_id) from new_table i
                 inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
@@ -98,9 +100,13 @@ AS $BODY$
 				and ci.splitted;
 			async_ids := COALESCE(async_ids, ARRAY[]::int[]);
 
-			IF attr.attribute_type_id in (2,3,11,13) THEN
+			IF attr.attribute_type_id in (2,11,13) THEN
 				column_type := 'numeric';
-			ELSEIF attr.attribute_type_id in (4,5,6) THEN
+            ELSEIF attr.attribute_type_id in (3) and not use_native THEN
+                column_type := 'numeric';
+            ELSEIF attr.attribute_type_id in (3) and use_native THEN
+                column_type := 'bool';
+            ELSEIF attr.attribute_type_id in (4,5,6) THEN
 				column_type := 'timestamp with time zone';
 			ELSE
 				column_type := 'text';

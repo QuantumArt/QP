@@ -82,14 +82,14 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static void CreateFrontendViews(int contentId)
+        internal static void CreateFrontendViews(int contentId, bool useNative)
         {
             using (var scope = new QPConnectionScope())
             {
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(scope.DbConnection);
                 if (dbType == DatabaseType.Postgres)
                 {
-                    Common.CreateContentViews(scope.DbConnection, contentId, false);
+                    Common.CreateContentViews(scope.DbConnection, contentId, false, useNative);
                 }
                 else
                 {

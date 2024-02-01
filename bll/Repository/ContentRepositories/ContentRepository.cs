@@ -295,7 +295,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     {
                         DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
                     }
-                    Common.CreateContentTables(scope.DbConnection, newContent.Id);
+                    Common.CreateContentTables(scope.DbConnection, newContent.Id, newContent.UseNativeEfTypes);
                     Common.CreateContentModification(scope.DbConnection, newContent.Id);
                     CommonSecurity.CreateContentAccess(scope.DbConnection, newContent.Id);
 

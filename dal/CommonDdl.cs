@@ -13,23 +13,13 @@ namespace Quantumart.QP8.DAL
 {
     public static partial class Common
     {
-        public static void AddColumn(DbConnection cnn, FieldDAL field, bool rebuildViews = true)
+        public static void AddColumn(DbConnection cnn, FieldDAL field, bool rebuildViews, bool useNative)
         {
             var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
             var asyncTableName = tableName + "_async";
-            var columnType = (dbType == DatabaseType.SqlServer) ? field.Type.DatabaseType : PgColumnType(field.Type.DatabaseType);
+            var columnType = dbType == DatabaseType.SqlServer ? SqlColumnType(field) : PgColumnType(field, useNative);
             var fieldDef = $@"{Escape(dbType, field.Name)} {columnType}";
-            if (field.Type.DatabaseType == "NVARCHAR")
-            {
-                fieldDef += $"({field.Size})";
-            }
-            else if (field.Type.DatabaseType == "NUMERIC")
-            {
-                var firstSize = (field.Type.Name == FieldTypeName.Numeric) ? 38 : 18;
-                fieldDef += $"({firstSize}, {field.Size})";
-            }
-
             var sql = $"alter table {{0}} add {fieldDef}";
 
             var contentId = (int)field.ContentId;
@@ -43,7 +33,7 @@ namespace Quantumart.QP8.DAL
 
             if (rebuildViews)
             {
-                CreateContentViews(cnn, contentId);
+                CreateContentViews(cnn, contentId, useNative: useNative);
             }
 
             if (field.IndexFlag == 1)
@@ -53,16 +43,57 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static string PgColumnType(string type)
+
+        private static string SqlColumnType(FieldDAL field)
         {
-            switch (type)
+            var result = field.Type.DatabaseType;
+            if (field.Type.DatabaseType == "NVARCHAR")
+            {
+                result += $"({field.Size})";
+            }
+            else if (field.Type.DatabaseType == "NUMERIC")
+            {
+                var firstSize = field.Type.Name == FieldTypeName.Numeric ? 38 : 18;
+                result += $"({firstSize}, {field.Size})";
+            }
+            return result;
+        }
+
+        private static string PgColumnType(FieldDAL field, bool useNative)
+        {
+            switch (field.Type.DatabaseType)
             {
                 case "NUMERIC":
-                    return "numeric";
+                    if (!useNative || field.Size > 0 && field.IsLong)
+                    {
+                        return $"numeric(18, {field.Size})";
+                    }
+
+                    if (field.Type.Name == FieldTypeName.Boolean)
+                    {
+                        return "bool";
+                    }
+
+                    if (field.Size > 0)
+                    {
+                        return "float";
+                    }
+
+                    return field.IsLong ? "bigint" : "int";
+
                 case "DATETIME":
-                    return "timestamp with time zone";
+                    if (useNative && field.Type.Name == FieldTypeName.Date)
+                    {
+                        return "date";
+                    }
+                    if (useNative && field.Type.Name == FieldTypeName.Time)
+                    {
+                        return "timetz";
+                    }
+
+                    return "timestamptz";
                 case "NVARCHAR":
-                    return "character varying";
+                    return $"varchar({field.Size})";
                 default:
                     return "text";
             }
@@ -96,7 +127,7 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, sql);
         }
 
-        public static void DropColumn(DbConnection cnn, FieldDAL field, bool rebuildViews = true)
+        public static void DropColumn(DbConnection cnn, FieldDAL field, bool rebuildViews = true, bool useNative = false)
         {
             var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
@@ -121,7 +152,7 @@ namespace Quantumart.QP8.DAL
 
             if (rebuildViews)
             {
-                CreateContentViews(cnn, contentId);
+                CreateContentViews(cnn, contentId, useNative: useNative);
             }
         }
 
@@ -166,21 +197,23 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, sql);
         }
 
-        public static void CreateContentTables(DbConnection cnn, int id)
+        public static void CreateContentTables(DbConnection cnn, int id, bool useNative)
         {
             var dbType = GetDbType(cnn);
             var tableName = "CONTENT_" + id;
             var asyncTableName = tableName + "_ASYNC";
-            var dtType = (dbType == DatabaseType.Postgres) ? "timestamp with time zone" : "datetime";
+            var dtType = dbType == DatabaseType.Postgres ? "timestamp with time zone" : "datetime";
+            var boolType = useNative ? "bool" : "numeric(18,0)";
+            var intType = useNative ? "int" : "numeric(18,0)";
             var sql = $@"
             create table {DbSchemaName(dbType)}{{0}} (
-                {Escape(dbType, "CONTENT_ITEM_ID")} numeric(18,0) NOT NULL PRIMARY KEY,
-                {Escape(dbType, "STATUS_TYPE_ID")} numeric(18,0) NOT NULL,
-                {Escape(dbType, "VISIBLE")} numeric(18,0) NOT NULL,
-                {Escape(dbType, "ARCHIVE")} numeric(18,0) NOT NULL,
+                {Escape(dbType, "CONTENT_ITEM_ID")} {intType} NOT NULL PRIMARY KEY,
+                {Escape(dbType, "STATUS_TYPE_ID")} {intType} NOT NULL,
+                {Escape(dbType, "VISIBLE")} {boolType} NOT NULL,
+                {Escape(dbType, "ARCHIVE")} {boolType} NOT NULL,
                 {Escape(dbType, "CREATED")} {dtType} NOT NULL DEFAULT {Now(dbType)},
                 {Escape(dbType, "MODIFIED")} {dtType} NOT NULL DEFAULT {Now(dbType)},
-                {Escape(dbType, "LAST_MODIFIED_BY")} numeric(18,0) NOT NULL
+                {Escape(dbType, "LAST_MODIFIED_BY")} {intType} NOT NULL
              )";
 
             ExecuteSql(cnn, String.Format(sql, tableName));
@@ -204,7 +237,7 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, String.Format(sql, fieldTableName));
         }
 
-        public static void CreateContentViews(DbConnection cnn, int id, bool withUnited = true)
+        public static void CreateContentViews(DbConnection cnn, int id, bool withUnited = true, bool useNative = false)
         {
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
@@ -228,10 +261,10 @@ namespace Quantumart.QP8.DAL
                     ExecuteSql(cnn, unitedSql);
                 }
 
-                var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create", idStr);
+                var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create_force_native", $"{id}, false, {useNative}");
                 ExecuteSql(cnn, feSql);
 
-                var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", idStr);
+                var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", $"{id}, {useNative}");
                 ExecuteSql(cnn, newSql);
             }
         }
@@ -408,21 +441,20 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(connection, sql);
         }
 
-        private static void RecreateColumn(DbConnection cnn, FieldDAL oldField, FieldDAL newField)
+        private static void RecreateColumn(DbConnection cnn, FieldDAL oldField, FieldDAL newField, bool useNative)
         {
             var tableName = "content_" + newField.ContentId;
             var asyncTableName = tableName + "_async";
             DropColumn(cnn, oldField, false);
-            AddColumn(cnn, newField, false);
-            FillColumn(cnn, tableName, newField);
-            FillColumn(cnn, asyncTableName, newField);
-
+            AddColumn(cnn, newField, false, useNative);
+            FillColumn(cnn, tableName, newField, useNative);
+            FillColumn(cnn, asyncTableName, newField, useNative);
         }
 
-        private static void FillColumn(DbConnection cnn, string tableName, FieldDAL newField)
+        private static void FillColumn(DbConnection cnn, string tableName, FieldDAL newField, bool useNative)
         {
             var dbType = GetDbType(cnn);
-            var typeExpr = dbType == DatabaseType.Postgres ? PgColumnType(newField.Type.DatabaseType) : "nvarchar(max)";
+            var typeExpr = dbType == DatabaseType.Postgres ? PgColumnType(newField, useNative) : "nvarchar(max)";
             var sql = $@"
                 update {tableName} set {Escape(dbType, newField.Name)} = cast(coalesce(cd.blob_data, cd.data) as {typeExpr})
                 from content_data cd
@@ -434,15 +466,15 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateColumn(DbConnection connection, FieldDAL oldField, FieldDAL newField)
+        public static void UpdateColumn(DbConnection connection, FieldDAL oldField, FieldDAL newField, bool useNative = false)
         {
             bool isIncompatibleChange = oldField.Type.DatabaseType != newField.Type.DatabaseType ||
                 oldField.Size != newField.Size && newField.Type.DatabaseType != "NTEXT";
             if (isIncompatibleChange)
             {
                 DropContentViews(connection, (int)newField.ContentId);
-                RecreateColumn(connection, oldField, newField);
-                CreateContentViews(connection, (int)newField.ContentId);;
+                RecreateColumn(connection, oldField, newField, useNative);
+                CreateContentViews(connection, (int)newField.ContentId, useNative: useNative);
                 return;
             }
 
@@ -461,7 +493,7 @@ namespace Quantumart.QP8.DAL
                 DropContentViews(connection, (int)newField.ContentId);
                 RenameColumn(connection, tableName, oldField.Name, newField.Name);
                 RenameColumn(connection, asyncTableName, oldField.Name, newField.Name);
-                CreateContentViews(connection, (int)newField.ContentId);;
+                CreateContentViews(connection, (int)newField.ContentId, useNative: useNative);
 
                 if (oldField.IndexFlag == 1 && newField.IndexFlag == 1)
                 {

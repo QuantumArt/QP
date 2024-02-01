@@ -339,7 +339,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Field, item);
                     var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
                     var field = GetDal(newItem);
-                    Common.AddColumn(scope.DbConnection, field);
+                    Common.AddColumn(scope.DbConnection, field, true, item.Content.UseNativeEfTypes);
 
                     DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
 
@@ -408,7 +408,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     var oldDal = GetDal(preUpdateField);
                     var newDal = GetDal(newItem);
-                    Common.UpdateColumn(scope.DbConnection, oldDal, newDal);
+                    Common.UpdateColumn(scope.DbConnection, oldDal, newDal, item.Content.UseNativeEfTypes);
 
                     UpdateRelationData(item, preUpdateField);
 

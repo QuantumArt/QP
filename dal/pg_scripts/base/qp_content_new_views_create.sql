@@ -1,6 +1,7 @@
 
 CREATE OR REPLACE PROCEDURE qp_content_new_views_create(
-    cid numeric
+    cid numeric,
+    use_native boolean = FALSE
 )
 
 LANGUAGE 'plpgsql'
@@ -15,9 +16,7 @@ AS $BODY$
 	    field_template text;
 	    type_name text;
 	    is_user_query boolean;
-	    use_native boolean;
 	BEGIN
-        use_native := use_native_ef_types from content where content_id = cid;
         is_user_query := virtual_type = 3 from content where content_id = cid;
         if use_native then
             fields := ARRAY[

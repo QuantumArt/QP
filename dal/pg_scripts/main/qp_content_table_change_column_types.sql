@@ -45,7 +45,7 @@ BEGIN
                     or attr.attribute_type_id = 2 and attr.attribute_size = 0 and not attr.is_long then
                     type_name := case use_native when true then 'int' else 'numeric(18,0)' end;
                 elseif attr.attribute_type_id = 2 and attr.attribute_size <> 0 and not attr.is_long then
-                    type_name := case use_native when true then 'bigint' else format('numeric(18, %s)', attr.attribute_size) end;
+                    type_name := case use_native when true then 'float' else format('numeric(18, %s)', attr.attribute_size) end;
                 elseif attr.attribute_type_id = 2 and attr.attribute_size <> 0 and attr.is_long then
                     type_name := format('numeric(18, %s)', attr.attribute_size);
                 elseif attr.attribute_type_id = 3 then
