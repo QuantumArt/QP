@@ -246,7 +246,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             var orderBy = string.IsNullOrEmpty(_settings.OrderByField) ? IdentifierFieldName : _settings.OrderByField;
             var archive = _settings.IsArchive ? "1": "0";
-            var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = {archive}";
+            var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and ci.archive = {archive}";
             return ArticleRepository.GetArticlesForExport(_contentId, _settings.ExtensionsStr, sb.ToString(), filter, 1, _itemsPerStep, orderBy, fieldsToExpand);
         }
 
