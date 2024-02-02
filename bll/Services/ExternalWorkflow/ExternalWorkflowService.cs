@@ -25,6 +25,8 @@ namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 public class ExternalWorkflowService : IExternalWorkflowService
 {
     private const string ContentIdSettingName = "EXTERNAL_WORKFLOW_CONTENT_ID";
+    private const string SchemaNameFieldIdSettingName = "EXTERNAL_WORKFLOW_SCHEMA_NAME_FIELD_ID";
+    private const string SchemaFileFieldIdSettingName = "EXTERNAL_WORKFLOW_SCHEMA_FILE_FIELD_ID";
     private const string WorkflowContentRelationFieldName = "ContentId";
     private const string AssignmentToWorkflowRelationFieldName = "Workflow";
     private const string WorkflowSchemaRelationFieldName = "WorkflowSchemas";
@@ -68,18 +70,27 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 ProcessName = workflowName
             };
 
+            int schemaNameFieldId = GetValueFromQpConfig<int>(SchemaNameFieldIdSettingName);
+            int schemaFileFieldId = GetValueFromQpConfig<int>(SchemaFileFieldIdSettingName);
+
             int[] schemas = workflowFields.Single(f => f.Field.Name == WorkflowSchemaRelationFieldName).RelatedItems;
-            Site site = SiteRepository.GetById(siteId);
 
             foreach (int schema in schemas)
             {
                 Article workflowSchema = ArticleRepository.GetById(schema);
                 List<FieldValue> schemaFields = workflowSchema.LoadFieldValues();
-                string schemaName = schemaFields.Single(f => f.Field.Name == "Title").Value;
-                string fileName = schemaFields.Single(f => f.Field.Name == "SchemaFile").Value;
-                byte[] fileBytes = await File.ReadAllBytesAsync(Path.Combine(site.UploadDir, fileName), token);
+                string schemaName = schemaFields.Single(f => f.Field.Id == schemaNameFieldId).Value;
+                FieldValue schemaFileField = schemaFields.Single(f => f.Field.Id == schemaFileFieldId);
+                string filePath = Path.Combine(schemaFileField.Field.PathInfo.Path, schemaFileField.Value);
 
-                deployment.Files.Add(new() { Name = schemaName, FileName = fileName, FileBytes = fileBytes});
+                if (!File.Exists(filePath))
+                {
+                    throw new ArgumentException("Unable to locate file in path {Path}", filePath);
+                }
+
+                byte[] fileBytes = await File.ReadAllBytesAsync(filePath, token);
+
+                deployment.Files.Add(new() { Name = schemaName, FileName = Path.GetFileName(filePath), FileBytes = fileBytes});
             }
             bool result = await _deploymentService.CreateDeployment(deployment);
 
