@@ -468,7 +468,10 @@ order by 1, 2
                     cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", itemIds, dbType));
                 }
                 cmd.Parameters.AddWithValue("@includeArchive", includeArchive);
-                cmd.Parameters.AddWithValue("@useNativeBool", useNativeBool);
+                if (dbType == DatabaseType.Postgres)
+                {
+                    cmd.Parameters.AddWithValue("@useNativeBool", useNativeBool);
+                }
 
                 return (int)cmd.ExecuteScalar();
             }
