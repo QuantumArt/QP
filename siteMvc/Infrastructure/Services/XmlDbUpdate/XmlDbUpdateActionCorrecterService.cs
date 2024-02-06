@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using QP8.Infrastructure;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
@@ -330,14 +331,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void CorrectArticleForm(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
         {
+            var content = _dbContentService.Get(action.ParentId);
             CorrectDynamicArticleFormGuidValues(action.Form, useGuidSubstitution);
-            CorrectDynamicArticleFormIdValues(action.Form, action.ParentId);
+            CorrectDynamicArticleFormIdValues(action.Form, content);
         }
 
-        private void CorrectDynamicArticleFormIdValues(Dictionary<string, StringValues> form, int contentId)
+        private void CorrectDynamicArticleFormIdValues(Dictionary<string, StringValues> form, Content content)
         {
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
             var fieldNames = form.Keys.Where(field => fieldRegexp.IsMatch(field)).ToArray();
+
             foreach (var fieldName in fieldNames)
             {
                 var fieldId = fieldName.Replace("field_", string.Empty);
@@ -352,16 +355,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (fieldValues.Any())
                 {
-                    if (_dbContentService.IsRelation(contentId, correctedFieldId))
+                    var field = content.Fields.SingleOrDefault(n => n.Id == correctedFieldId);
+                    if (field != null)
                     {
-                        fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
-                    }
+                        switch (field.ExactType)
+                        {
+                            case FieldExactTypes.O2MRelation:
+                            case FieldExactTypes.M2MRelation:
+                            case FieldExactTypes.M2ORelation:
+                                fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
+                                break;
+                            case FieldExactTypes.Classifier:
+                                fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
+                                break;
+                        }
 
-                    if (_dbContentService.IsClassifier(contentId, correctedFieldId))
-                    {
-                        fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
+                        if (content.NetName == "QPDiscriminator" && field.LinqPropertyName == "PreferredContentId")
+                        {
+                            fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
+                        }
                     }
-
                     form[$"field_{correctedFieldId}"] = new StringValues(fieldValues.ToArray());
                 }
             }
