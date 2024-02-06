@@ -12,5 +12,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         internal IList<string> FilePathes { get; set; } = new List<string>();
 
         internal string ConnectionString { get; set; }
+
+        internal string SaveFilePath { get; set; }
     }
 }
