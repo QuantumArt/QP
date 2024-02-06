@@ -414,7 +414,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     if (oldDal.Order != item.Order)
                     {
-                        RecreateNewViews(item.ContentId);
+                        RecreateNewViews(item.ContentId, item.Content.UseNativeEfTypes);
                     }
 
                     UpdateConstraint(constraint, newItem);
@@ -695,11 +695,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             return result;
         }
 
-        public static void RecreateNewViews(int contentId)
+        public static void RecreateNewViews(int contentId, bool useNative)
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.RecreateNewViews(scope.DbConnection, contentId);
+                Common.RecreateNewViews(scope.DbConnection, contentId, useNative);
             }
         }
 

@@ -264,12 +264,12 @@ namespace Quantumart.QP8.DAL
                 var feSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_frontend_views_create_force_native", $"{id}, false, {useNative}");
                 ExecuteSql(cnn, feSql);
 
-                var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", $"{id}, {useNative}");
+                var newSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create_force_native", $"{id}, {useNative}");
                 ExecuteSql(cnn, newSql);
             }
         }
 
-        public static void RecreateNewViews(DbConnection cnn, int id)
+        public static void RecreateNewViews(DbConnection cnn, int id, bool useNative)
         {
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
@@ -284,7 +284,7 @@ namespace Quantumart.QP8.DAL
                 var dropSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_drop", idStr);
                 ExecuteSql(cnn, dropSql);
 
-                var createSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create", idStr);
+                var createSql = SqlQuerySyntaxHelper.SpCall(dbType, "qp_content_new_views_create_force_native", $"{id}, {useNative}");
                 ExecuteSql(cnn, createSql);
             }
         }
@@ -503,7 +503,7 @@ namespace Quantumart.QP8.DAL
             }
             else if (oldField.IsLong != newField.IsLong)
             {
-                RecreateNewViews(connection, (int)newField.ContentId);
+                RecreateNewViews(connection, (int)newField.ContentId, useNative);
             }
 
             if (oldField.IndexFlag == 0 && newField.IndexFlag == 1)
