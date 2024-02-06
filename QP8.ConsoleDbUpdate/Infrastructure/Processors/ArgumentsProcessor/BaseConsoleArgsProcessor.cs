@@ -103,7 +103,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             _ = optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             _ = optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
             _ = optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv]", m => { });
-            _ = optionSet.Add("e|export=", "path to save record of replaying files", e => Settings.SaveFilePath = e);
+            _ = optionSet.Add("e|export=", "path to save record of replaying files (optional)", e => Settings.SaveFilePath = e);
             _ = optionSet.Add("h|help", "show this message and exit", h => Program.ShouldShowHelp = h != null);
             return optionSet;
         }
