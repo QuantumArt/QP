@@ -1,4 +1,6 @@
 
+drop procedure if exists qp_content_new_views_create(numeric);
+
 CREATE OR REPLACE PROCEDURE qp_content_new_views_create(
     cid numeric,
     use_native boolean = FALSE
