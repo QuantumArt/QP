@@ -332,15 +332,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void CorrectArticleForm(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
         {
-            var content = _dbContentService.Get(action.ParentId);
             CorrectDynamicArticleFormGuidValues(action.Form, useGuidSubstitution);
-            CorrectDynamicArticleFormIdValues(action.Form, content);
+            CorrectDynamicArticleFormIdValues(action.Form, action.ParentId);
         }
 
-        private void CorrectDynamicArticleFormIdValues(Dictionary<string, StringValues> form, Content content)
+        private void CorrectDynamicArticleFormIdValues(Dictionary<string, StringValues> form, int contentId)
         {
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
             var fieldNames = form.Keys.Where(field => fieldRegexp.IsMatch(field)).ToArray();
+            var correctedContentId = CorrectIdValue(EntityTypeCode.Content, contentId);
+            var content = _dbContentService.Get(correctedContentId);
             var fields = (content.AggregatedContents.Any()
                 ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
                 : content.Fields).ToDictionary(n => n.Id.ToString(), n => n);
@@ -411,7 +412,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 var xaml = (string)value;
                 if (!string.IsNullOrWhiteSpace(xaml))
                 {
-                    var content = _dbContentService.Get(contentId);
+                    var correctedContentId = CorrectIdValue(EntityTypeCode.Content, contentId);
+                    var content = _dbContentService.Get(correctedContentId);
                     if (content == null)
                     {
                         return;
@@ -420,15 +422,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     var fields = content.AggregatedContents.Any()
                         ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
                         : content.Fields;
-                    var fieldMapping = _idsToReplace.ContainsKey(EntityTypeCode.Field)
-                        ? fields.Where(n => _idsToReplace[EntityTypeCode.Field].ContainsKey(n.Id))
-                            .ToDictionary(n => n.Id, n => _idsToReplace[EntityTypeCode.Field][n.Id])
-                        : new Dictionary<int,int>();
+
+                    var fieldMapping = fields
+                        .Select(n => new { Key = n.Id, Value = CorrectIdValue(EntityTypeCode.Field, n.Id) })
+                        .Where(n => n.Key != n.Value)
+                        .ToList();
 
                     foreach (var map in fieldMapping)
                     {
                         xaml = xaml.Replace($"field_{map.Key}", $"field_{map.Value}");
                     }
+
                     form[key] = new StringValues(xaml);
                 }
             }
