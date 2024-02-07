@@ -405,26 +405,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 return;
             }
-            var content = _dbContentService.Get(contentId);
-            if (content == null)
-            {
-                return;
-            }
-
-            var fields = content.AggregatedContents.Any()
-                ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
-                : content.Fields;
-            var fieldMapping = _idsToReplace.ContainsKey(EntityTypeCode.Field)
-                ? fields.Where(n => _idsToReplace[EntityTypeCode.Field].ContainsKey(n.Id))
-                    .ToDictionary(n => n.Id, n => _idsToReplace[EntityTypeCode.Field][n.Id])
-                : new Dictionary<int,int>();
-
             const string key = "Data.XamlValidation";
             if (form.TryGetValue(key, out var value))
             {
                 var xaml = (string)value;
                 if (!string.IsNullOrWhiteSpace(xaml))
                 {
+                    var content = _dbContentService.Get(contentId);
+                    if (content == null)
+                    {
+                        return;
+                    }
+
+                    var fields = content.AggregatedContents.Any()
+                        ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
+                        : content.Fields;
+                    var fieldMapping = _idsToReplace.ContainsKey(EntityTypeCode.Field)
+                        ? fields.Where(n => _idsToReplace[EntityTypeCode.Field].ContainsKey(n.Id))
+                            .ToDictionary(n => n.Id, n => _idsToReplace[EntityTypeCode.Field][n.Id])
+                        : new Dictionary<int,int>();
+
                     foreach (var map in fieldMapping)
                     {
                         xaml = xaml.Replace($"field_{map.Key}", $"field_{map.Value}");
