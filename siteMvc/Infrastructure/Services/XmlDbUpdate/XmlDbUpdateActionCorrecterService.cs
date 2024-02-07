@@ -344,7 +344,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var content = _dbContentService.Get(correctedContentId);
             var fields = (content.AggregatedContents.Any()
                 ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
-                : content.Fields).ToDictionary(n => n.Id.ToString(), n => n);
+                : content.Fields).ToDictionary(n => n.Id, n => n);
 
             foreach (var fieldName in fieldNames)
             {
@@ -353,14 +353,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 {
                     continue;
                 }
-
                 var correctedFieldId = CorrectIdValue(EntityTypeCode.Field, parsedFieldId);
+
                 var fieldValues = ((string)form[fieldName]).Split(',').ToList();
                 form.Remove(fieldName);
 
                 if (fieldValues.Any())
                 {
-                    if (fields.TryGetValue(fieldId, out var field))
+                    if (fields.TryGetValue(correctedFieldId, out var field))
                     {
                         switch (field.ExactType)
                         {
