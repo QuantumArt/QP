@@ -47,7 +47,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
                     HasExcelSeparator = true
                 },
                 _updateExisting,
-                Settings.ConnectionString);
+                Settings.ConnectionString,
+                Settings.SaveFilePath);
         }
     }
 }

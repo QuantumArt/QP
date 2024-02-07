@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Mono.Options;
 using QP8.Infrastructure.Extensions;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;
@@ -78,6 +79,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 IDataProcessor dataProcessor = DataProcessorFactory.Create(
                     settings, factory.Server.Host.Services, factory.CreateClient()
                     );
+
+                QPConfiguration.TempDirectory = settings.RecordPath;
 
                 if (Console.IsInputRedirected && !DisablePipedInput)
                 {

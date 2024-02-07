@@ -31,7 +31,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
                 _generateNewContentIds,
                 _useGuidSubstitution,
                 _disableDataIntegrity,
-                Settings.ConnectionString);
+                Settings.ConnectionString,
+                Settings.SaveFilePath);
         }
 
         protected internal override void PrintEnteredData()
