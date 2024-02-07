@@ -411,11 +411,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 return;
             }
 
-            var fieldMapping = (content.AggregatedContents.Any()
+            var fields = content.AggregatedContents.Any()
                 ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
-                : content.Fields)
-                .Where(n => _idsToReplace[EntityTypeCode.Field].ContainsKey(n.Id))
-                .ToDictionary(n => n.Id, n => _idsToReplace[EntityTypeCode.Field][n.Id]);
+                : content.Fields;
+            var fieldMapping = _idsToReplace.ContainsKey(EntityTypeCode.Field)
+                ? fields.Where(n => _idsToReplace[EntityTypeCode.Field].ContainsKey(n.Id))
+                    .ToDictionary(n => n.Id, n => _idsToReplace[EntityTypeCode.Field][n.Id])
+                : new Dictionary<int,int>();
 
             const string key = "Data.XamlValidation";
             if (form.TryGetValue(key, out var value))
