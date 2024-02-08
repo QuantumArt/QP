@@ -26,9 +26,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
             bool generateNewContentIds,
             bool useGuidSubstitution,
             bool disableDataIntegrity,
-            string connectionString,
-            string recordPath)
-            : base(filePathes, customerCode, dbType, connectionString, recordPath)
+            string connectionString)
+            : base(filePathes, customerCode, dbType, connectionString)
         {
             GenerateNewFieldIds = generateNewFieldIds;
             GenerateNewContentIds = generateNewContentIds;
