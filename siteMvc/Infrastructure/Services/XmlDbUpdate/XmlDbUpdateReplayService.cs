@@ -229,11 +229,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 throw new InvalidOperationException("DB versions doesn't match");
             }
-
-            if (_appInfoRepository.RecordActions())
-            {
-                throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
-            }
         }
 
         private static bool ValidateDbVersion(XContainer doc, string currentDbVersion)
