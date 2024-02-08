@@ -41,7 +41,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             Console.WriteLine($@"Files: {string.Join(", ", Settings.FilePathes)}");
             Console.WriteLine($@"Verbosity Level: {Program.VerboseLevel}");
             Console.WriteLine($@"Is silent mode enabled: {Program.IsSilentModeEnabled}");
-            Console.WriteLine($@"Path to save record of replay: {Settings.SaveFilePath}");
             Console.WriteLine();
 
             if (!Program.IsSilentModeEnabled)
@@ -103,7 +102,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             _ = optionSet.Add("v|verbose", "increase debug message verbosity [v|vv|vvv]:[error|warning|info].", v => { });
             _ = optionSet.Add("s|silent", "enable silent mode for automatization.", s => { });
             _ = optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv]", m => { });
-            _ = optionSet.Add("e|export=", "path to save record of replaying files (optional)", e => Settings.SaveFilePath = e);
             _ = optionSet.Add("h|help", "show this message and exit", h => Program.ShouldShowHelp = h != null);
             return optionSet;
         }

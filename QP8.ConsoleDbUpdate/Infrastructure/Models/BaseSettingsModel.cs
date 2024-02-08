@@ -21,9 +21,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         internal string ConnectionString;
 
-        [JsonProperty]
-        internal string RecordPath;
-
         internal string CustomerCodeOrConnectionString => string.IsNullOrWhiteSpace(ConnectionString)
                     ? CustomerCode
                     : ConnectionString;
@@ -32,15 +29,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
             IList<string> pathes,
             string customerCode,
             DatabaseType dbType,
-            string connectionString,
-            string recordPath)
+            string connectionString)
         {
             FilePathes = pathes;
             CustomerCode = customerCode;
             DbType = dbType;
             UserId = 1;
             ConnectionString = connectionString;
-            RecordPath = recordPath;
         }
     }
 }
