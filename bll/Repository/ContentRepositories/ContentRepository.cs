@@ -458,6 +458,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             var oldId = content.Id;
             content.LoadWorkflowBinding();
             content.Id = 0;
+            content.XamlValidation = null;
 
             if (forceId.HasValue)
             {

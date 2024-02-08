@@ -1,7 +1,11 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Mono.Options;
 using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
@@ -73,12 +77,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 Logger.Debug($"Parsed settings: {settings.ToJsonLog()}");
 
                 WebApplicationFactory<Startup> factory = new();
-                _ = factory.CreateDefaultClient();
+
+                _ = factory.WithWebHostBuilder(config =>
+                    config.ConfigureAppConfiguration(c =>
+                        c.AddJsonFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "appsettings.json"))
+                           .AddEnvironmentVariables()));
 
                 IDataProcessor dataProcessor = DataProcessorFactory.Create(
                     settings, factory.Server.Host.Services, factory.CreateClient()
                     );
-
                 if (Console.IsInputRedirected && !DisablePipedInput)
                 {
                     dataProcessor.Process(StandardInputData);

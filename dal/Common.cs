@@ -1313,7 +1313,14 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
         {
             var dbType = GetDbType(connection);
             var withNoLock = WithNoLock(dbType);
-            var query = $"select 1 where EXISTS (select C1.CONTENT_ITEM_ID from content_{contentId}_united C1 {withNoLock} join content_{relatedContentId}_united C2 {withNoLock} ON C1.{Escape(dbType, fieldName)} != C2.CONTENT_ITEM_ID)";
+            var query = $@"
+                select 1 where exists (
+                    select C1.* from content_{contentId}_united {withNoLock} C1
+                    where C1.{Escape(dbType, fieldName)} is not null and not exists (
+                        select 1 from content_{relatedContentId}_united C2
+                        where C1.{Escape(dbType, fieldName)} = C2.CONTENT_ITEM_ID
+                    )
+                )";
             using (var cmd = DbCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;

@@ -19,7 +19,7 @@ namespace Quantumart.QP8.BLL.Factories
         /// <summary>
         /// Фабрика для запроса на отображение дерева в QP
         /// </summary>
-        internal static ITreeProcessor Create(ChildListQuery query)
+        public static ITreeProcessor Create(ChildListQuery query)
         {
             using (var scope = new QPConnectionScope())
             {

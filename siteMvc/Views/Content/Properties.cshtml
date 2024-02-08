@@ -72,19 +72,23 @@
 	    )
   }
 
-  using (Html.BeginFieldGroup(ContentStrings.Legend_CustomValidation))
+  if (!Model.Data.IsNew)
   {
-    @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlValidation, Model.XamlValidationPanel, true)
-    using (Html.BeginPanel(Model.XamlValidationPanel))
+    using (Html.BeginFieldGroup(ContentStrings.Legend_CustomValidation))
     {
-      @Html.HtmlFieldFor(s => s.Data.XamlValidation,
-        @<div class="qp-expandedContent">
-          @Html.QpTextAreaFor(s => s.Data.XamlValidation, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
-        </div>
-      )
+      @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlValidation, Model.XamlValidationPanel, true)
+      using (Html.BeginPanel(Model.XamlValidationPanel))
+      {
+        @Html.HtmlFieldFor(s => s.Data.XamlValidation,
+          @<div class="qp-expandedContent">
+            @Html.QpTextAreaFor(s => s.Data.XamlValidation, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
+          </div>
+        )
+      }
+      @Html.CheckBoxFieldFor(s => s.Data.DisableXamlValidation)
     }
-    @Html.CheckBoxFieldFor(s => s.Data.DisableXamlValidation)
   }
+
   <partial name="QpPluginFields" model="@Model.Data.QpPluginFieldValueGroups" />
   <partial name="Version" model="@Model.Data" />
   <partial name="EntityDirectLink" model="@Model" />

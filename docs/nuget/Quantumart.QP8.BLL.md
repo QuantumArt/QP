@@ -10,6 +10,10 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.3.12
+
+* Обновлена библиотека SqlClient до 4.8.6
+
 ### Quantumart.QP8.BLL.3.3.11
 
 * Убрана зависимость от схемы public в PostgreSQL (#173717)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using QP8.Infrastructure;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
 using Quantumart.QP8.Constants;
@@ -229,6 +230,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             CorrectFormValue(EntityTypeCode.Workflow, action.Form, HttpContextFormConstants.DataWorkflowBindingWorkflowId);
             CorrectFormValue(EntityTypeCode.Content, action.Form, HttpContextFormConstants.DataParentContentId);
             CorrectFormValue(EntityTypeCode.ContentGroup, action.Form, HttpContextFormConstants.DataGroupId);
+            CorrectXamlValidation(action.Form, int.Parse(action.Ids[0]));
         }
 
         private void CorrectVirtualContentForm(XmlDbUpdateRecordedAction action)
@@ -338,6 +340,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
             var fieldNames = form.Keys.Where(field => fieldRegexp.IsMatch(field)).ToArray();
+            var correctedContentId = CorrectIdValue(EntityTypeCode.Content, contentId);
+            var content = _dbContentService.Get(correctedContentId);
+            var fields = (content.AggregatedContents.Any()
+                ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
+                : content.Fields).ToDictionary(n => n.Id, n => n);
+
             foreach (var fieldName in fieldNames)
             {
                 var fieldId = fieldName.Replace("field_", string.Empty);
@@ -345,23 +353,32 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 {
                     continue;
                 }
-
                 var correctedFieldId = CorrectIdValue(EntityTypeCode.Field, parsedFieldId);
+
                 var fieldValues = ((string)form[fieldName]).Split(',').ToList();
                 form.Remove(fieldName);
 
                 if (fieldValues.Any())
                 {
-                    if (_dbContentService.IsRelation(contentId, correctedFieldId))
+                    if (fields.TryGetValue(correctedFieldId, out var field))
                     {
-                        fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
-                    }
+                        switch (field.ExactType)
+                        {
+                            case FieldExactTypes.O2MRelation:
+                            case FieldExactTypes.M2MRelation:
+                            case FieldExactTypes.M2ORelation:
+                                fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
+                                break;
+                            case FieldExactTypes.Classifier:
+                                fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
+                                break;
+                        }
 
-                    if (_dbContentService.IsClassifier(contentId, correctedFieldId))
-                    {
-                        fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
+                        if (content.NetName == "QPDiscriminator" && field.LinqPropertyName == "PreferredContentId")
+                        {
+                            fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
+                        }
                     }
-
                     form[$"field_{correctedFieldId}"] = new StringValues(fieldValues.ToArray());
                 }
             }
@@ -382,6 +399,45 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 form.Remove($"field_uniqueid_{parsedFieldId}");
             }
         }
+
+        private void CorrectXamlValidation(Dictionary<string, StringValues> form, int contentId)
+        {
+            if (contentId == 0)
+            {
+                return;
+            }
+            const string key = "Data.XamlValidation";
+            if (form.TryGetValue(key, out var value))
+            {
+                var xaml = (string)value;
+                if (!string.IsNullOrWhiteSpace(xaml))
+                {
+                    var correctedContentId = CorrectIdValue(EntityTypeCode.Content, contentId);
+                    var content = _dbContentService.Get(correctedContentId);
+                    if (content == null)
+                    {
+                        return;
+                    }
+
+                    var fields = content.AggregatedContents.Any()
+                        ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
+                        : content.Fields;
+
+                    var fieldMapping = fields
+                        .Select(n => new { Key = n.Id, Value = CorrectIdValue(EntityTypeCode.Field, n.Id) })
+                        .Where(n => n.Key != n.Value)
+                        .ToList();
+
+                    foreach (var map in fieldMapping)
+                    {
+                        xaml = xaml.Replace($"field_{map.Key}", $"field_{map.Value}");
+                    }
+
+                    form[key] = new StringValues(xaml);
+                }
+            }
+        }
+
 
         private void CorrectFormValue(string entityTypeCode, Dictionary<string, StringValues> form, string formKey, string jsonKey)
         {
@@ -440,7 +496,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                             newValue = "[" + newValue + "]";
                         }
 
-                         newValues.Add(CorrectIdValue(entityTypeCode, newValue));
+                        newValues.Add(CorrectIdValue(entityTypeCode, newValue));
                     }
 
                     form.Add(key, new StringValues(newValues.ToArray()));
