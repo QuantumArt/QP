@@ -26,7 +26,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Settings;
-using LogLevel = NLog.LogLevel;
 using LogManager = NLog.LogManager;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
@@ -49,9 +48,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 return;
             }
 
+            IServiceProvider serviceProvider = filterContext.HttpContext.RequestServices;
+            var options = serviceProvider.GetRequiredService<QPublishingOptions>();
+
             if (IsAjaxRequest(filterContext))
             {
-                filterContext.Result = GetJsonResult(filterContext);
+                filterContext.Result = GetJsonResult(filterContext, options.UseClientExceptions);
             }
             else
             {
@@ -106,7 +108,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             return true;
         }
 
-        private JsonResult GetJsonResult(ExceptionContext filterContext)
+        private JsonResult GetJsonResult(ExceptionContext filterContext, bool useClientExceptions)
         {
             Exception ex = filterContext.Exception;
 
@@ -116,7 +118,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                     return new JsonResult(new
                     {
                         success = false,
-                        message = GetClientDump(ex)
+                        message = useClientExceptions ? GetClientDump(ex) : ex.Dump()
                     });
 
                 case ExceptionResultMode.OperationAction:
@@ -130,7 +132,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                         return new JsonResult(new JSendResponse
                         {
                             Status = JSendStatus.Fail,
-                            Message = GetClientDump(ex),
+                            Message = useClientExceptions ? GetClientDump(ex) : ex.Dump()
                         }, JsonSettingsRegistry.CamelCaseSettings);
                     }
 
@@ -138,7 +140,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                     return new JsonResult(new JSendResponse
                     {
                         Status = JSendStatus.Error,
-                        Message = GetClientDump(ex),
+                        Message = useClientExceptions ? GetClientDump(ex) : ex.Dump()
                     }, JsonSettingsRegistry.CamelCaseSettings);
 
                 default:
