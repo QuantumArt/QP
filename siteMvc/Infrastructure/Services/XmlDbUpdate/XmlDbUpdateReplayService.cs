@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
@@ -148,7 +148,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 catch (Exception ex)
                 {
                     var throwEx = new XmlDbUpdateReplayActionException("Error while deserializing xml action string.", ex);
-                    throwEx.Data.Add(LoggerData.XmlDbUpdateExceptionXmlActionStringData, xmlActionString.ToJsonLog());
+                    throwEx.Data.Add(LoggerData.XmlActionString, xmlActionString.ToJsonLog());
                     throw throwEx;
                 }
 
@@ -208,16 +208,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction ReplayAction(XmlDbUpdateRecordedAction xmlAction, string backendUrl)
         {
+            var correctedAction = _actionsCorrecterService.PreActionCorrections(xmlAction, _useGuidSubstitution);
             try
             {
-                var correctedAction = _actionsCorrecterService.PreActionCorrections(xmlAction, _useGuidSubstitution);
                 var httpContext = _httpContextProcessor.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution, _serviceProvider);
                 return _actionsCorrecterService.PostActionCorrections(correctedAction, httpContext);
             }
             catch (Exception ex)
             {
                 var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
-                throwEx.Data.Add(LoggerData.XmlDbUpdateExceptionActionToReplayData, xmlAction.ToJsonLog());
+                throwEx.Data.Add(LoggerData.ActionToReplay, xmlAction.ToJsonLog());
+                throwEx.Data.Add(LoggerData.ActionToReplayCorrected, correctedAction.ToJsonLog());
                 throw throwEx;
             }
         }

@@ -281,3 +281,4 @@ package/pack/qp8release
 /projectfiles.tar
 /.env
 *.lutconfig
+QuantumArt.Tests/QP8.Integration.Tests/.runsettings
