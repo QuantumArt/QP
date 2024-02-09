@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Fluent;
 using QP8.Infrastructure;
@@ -52,13 +53,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor,
-            IServiceProvider provider = null, bool throwActionReplayed = false)
+            IServiceProvider provider, bool throwActionReplayed = false)
             : this(connectionString, DatabaseType.SqlServer, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor, provider, throwActionReplayed)
         {
         }
 
         public XmlDbUpdateReplayService(string connectionString, DatabaseType dbType, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor,
-            IServiceProvider serviceProvider = null, bool throwActionReplayed = false)
+            IServiceProvider serviceProvider, bool throwActionReplayed = false)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -230,7 +231,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 throw new InvalidOperationException("DB versions doesn't match");
             }
 
-            if (_appInfoRepository.RecordActions())
+            var options = _serviceProvider.GetService<QPublishingOptions>();
+
+
+            if (_appInfoRepository.RecordActions() && !options.AllowReplayWithRecording)
             {
                 throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
             }
