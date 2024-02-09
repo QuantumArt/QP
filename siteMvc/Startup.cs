@@ -35,6 +35,7 @@ using Quantumart.QP8.Configuration;
 using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -43,6 +44,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Web;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.ArticleScheduler;
@@ -72,206 +75,235 @@ namespace Quantumart.QP8.WebMvc
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        private Logger _logger;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var qpOptions = new QPublishingOptions();
-            Configuration.Bind("Properties", qpOptions);
-            services.AddSingleton(qpOptions);
-            QPConfiguration.Options = qpOptions;
+            _logger.Info("Starting QP");
 
-            services.Configure<FormOptions>(Configuration.GetSection("Form"));
-
-            if (qpOptions.EnableArticleScheduler)
+            try
             {
-                var schedulerOptions = new ArticleSchedulerProperties(qpOptions);
-                Configuration.Bind("ArticleScheduler", schedulerOptions);
-                services.AddSingleton(schedulerOptions);
+                var qpOptions = new QPublishingOptions();
+                Configuration.Bind("Properties", qpOptions);
+                services.AddSingleton(qpOptions);
+                QPConfiguration.Options = qpOptions;
 
-                services.AddHostedService<S.ArticleService>();
-            }
-
-            var commonSchedulerProperties = new CommonSchedulerProperties();
-            if (qpOptions.EnableCommonScheduler)
-            {
-                Configuration.Bind("CommonScheduler", commonSchedulerProperties);
-            }
-            services.AddSingleton(commonSchedulerProperties);
-            services.AddQuartzService(commonSchedulerProperties.Name, qpOptions.EnableCommonScheduler ? Configuration.GetSection("CommonScheduler") : null);
-
-            // used by Session middleware
-            services.AddDistributedMemoryCache();
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedProtoHeaderName = "X-FORWARDED-PROTO";
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                // Only loopback proxies are allowed by default.
-                // Clear that restriction because forwarders are enabled by explicit
-                // configuration.
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+                if (!string.IsNullOrWhiteSpace(qpOptions.SessionEncryptionKeysPath))
                 {
+                    if (!Directory.Exists(qpOptions.SessionEncryptionKeysPath))
+                    {
+                        _logger.Warn("Session storage not exists on configured path {Path}", qpOptions.SessionEncryptionKeysPath);
+                    }
+                    else
+                    {
+                        services.AddDataProtection()
+                           .PersistKeysToFileSystem(new DirectoryInfo(qpOptions.SessionEncryptionKeysPath));
+                    }
+                }
+
+                services.Configure<FormOptions>(Configuration.GetSection("Form"));
+
+                if (qpOptions.EnableArticleScheduler)
+                {
+                    var schedulerOptions = new ArticleSchedulerProperties(qpOptions);
+                    Configuration.Bind("ArticleScheduler", schedulerOptions);
+                    services.AddSingleton(schedulerOptions);
+
+                    services.AddHostedService<S.ArticleService>();
+                }
+
+                var commonSchedulerProperties = new CommonSchedulerProperties();
+
+                if (qpOptions.EnableCommonScheduler)
+                {
+                    Configuration.Bind("CommonScheduler", commonSchedulerProperties);
+                }
+
+                services.AddSingleton(commonSchedulerProperties);
+                services.AddQuartzService(commonSchedulerProperties.Name, qpOptions.EnableCommonScheduler ? Configuration.GetSection("CommonScheduler") : null);
+
+                // used by Session middleware
+                services.AddDistributedMemoryCache();
+
+                services.Configure<ForwardedHeadersOptions>(options =>
+                {
+                    options.ForwardedProtoHeaderName = "X-FORWARDED-PROTO";
+
+                    options.ForwardedHeaders =
+                        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+                    // Only loopback proxies are allowed by default.
+                    // Clear that restriction because forwarders are enabled by explicit
+                    // configuration.
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
+                });
+
+                services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                   .AddCookie(options =>
+                    {
+                        options.Cookie.HttpOnly = true;
+                        options.ExpireTimeSpan = TimeSpan.FromMinutes(qpOptions.CookieTimeout);
+                        options.LoginPath = new PathString("/Logon");
+                        options.LogoutPath = new PathString("/Logon/Logout");
+                        options.AccessDeniedPath = new PathString("/Logon");
+                        options.SlidingExpiration = true;
+                    });
+
+                services.AddOptions();
+                services.AddHttpContextAccessor();
+                services.AddHttpClient();
+
+                services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+                services.AddScoped<IUrlHelper>(x =>
+                {
+                    var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+                    var factory = x.GetRequiredService<IUrlHelperFactory>();
+
+                    return factory.GetUrlHelper(actionContext);
+                });
+
+                services.AddSession(options =>
+                {
+                    options.IdleTimeout = TimeSpan.FromSeconds(qpOptions.SessionTimeout);
                     options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(qpOptions.CookieTimeout);
-                    options.LoginPath = new PathString("/Logon");
-                    options.LogoutPath = new PathString("/Logon/Logout");
-                    options.AccessDeniedPath = new PathString("/Logon");
-                    options.SlidingExpiration = true;
+                    options.Cookie.IsEssential = true;
                 });
 
-            services.AddOptions();
-            services.AddHttpContextAccessor();
-            services.AddHttpClient();
+                services
+                   .AddMvc(options =>
+                    {
+                        options.ModelBinderProviders.Insert(0, new QpModelBinderProvider());
+                        options.EnableEndpointRouting = false;
+                    })
+                   .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                    });
 
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddScoped<IUrlHelper>(x =>
-            {
-                var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
-                var factory = x.GetRequiredService<IUrlHelperFactory>();
-                return factory.GetUrlHelper(actionContext);
-            });
+                services.AddAuthorization(options => { options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode")); });
 
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromSeconds(qpOptions.SessionTimeout);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
-
-            services
-                .AddMvc(options =>
-                {
-                    options.ModelBinderProviders.Insert(0, new QpModelBinderProvider());
-                    options.EnableEndpointRouting = false;
-                })
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode"));
-            });
-
-            // servicesn
-            services
-                    .AddTransient<AuthenticationHelper>()
-                    .AddTransient<JsLanguageHelper>()
-                    .AddTransient<JsConstantsHelper>()
-                    .AddSingleton<ISearchGrammarParser, IronySearchGrammarParser>()
-                    .AddTransient<IStopWordList, StopWordList>()
-                    .AddTransient<IArticleSearchRepository, ArticleSearchRepository>()
-                    .AddTransient<ISearchInArticlesRepository, SearchInArticlesRepository>()
-                    .AddTransient<ISearchInArticlesService, SearchInArticlesService>()
-                    .AddTransient<IBackendActionLogRepository, AuditRepository>()
-                    .AddTransient<IBackendActionLogPagesRepository, AuditRepository>()
-                    .AddTransient<IButtonTracePagesRepository, AuditRepository>()
-                    .AddTransient<IRemovedEntitiesPagesRepository, AuditRepository>()
-                    .AddTransient<ISessionLogRepository, AuditRepository>()
-                    .AddTransient<IApplicationInfoRepository, ApplicationInfoRepository>()
-                    .AddTransient<IArticleRepository, ArticleRepository>()
-                    .AddTransient<IContentRepository, ContentRepository>()
-                    .AddTransient<IArticleSearchService, ArticleSearchService>()
-                    .AddTransient<IBackendActionLogService, BackendActionLogService>()
-                    .AddTransient<IButtonTraceService, ButtonTraceService>()
-                    .AddTransient<IRemovedEntitiesService, RemovedEntitiesService>()
-                    .AddTransient<ISessionLogService, SessionLogService>()
-                    .AddTransient<ICustomActionService, CustomActionService>()
-                    .AddTransient<IFieldDefaultValueService, FieldDefaultValueService>()
-                    .AddTransient<IRecreateDynamicImagesService, RecreateDynamicImagesService>()
-                    .AddTransient<IUserService, UserService>()
-                    .AddTransient<IUserGroupService, UserGroupService>()
-                    .AddTransient<IXmlDbUpdateLogRepository, XmlDbUpdateLogRepository>()
-                    .AddTransient<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
-                    .AddTransient<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
-                    .AddTransient<IArticleService, A.ArticleService>()
-                    .AddTransient<IContentService, ContentService>()
-                    .AddTransient<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
-                    .AddTransient<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
-                    .AddTransient<INotificationService, NotificationService>()
-                    .AddTransient<IActionPermissionTreeService, ActionPermissionTreeService>()
-                    .AddTransient<ISecurityService, SecurityService>()
-                    .AddTransient<IVisualEditorService, VisualEditorService>()
-                    .AddTransient<IQpPluginService, QpPluginService>()
-                    .AddTransient<ILibraryService, LibraryService>()
-                    .AddTransient<IWorkflowService, WorkflowService>()
-                    .AddTransient<IStatusTypeService, StatusTypeService>()
-                    .AddTransient<IPageTemplateService, PageTemplateService>()
-                    .AddTransient<IPageService, PageService>()
-                    .AddTransient<IObjectService, ObjectService>()
-                    .AddTransient<IFormatService, FormatService>()
-                    .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
-                    .AddTransient<ResourceDictionary>() // preload QA.Configuration
-                    .AddTransient<QuartzService>()
-                    .AddScoped<LogOnCredentials>()
+                // servicesn
+                services
+                   .AddTransient<AuthenticationHelper>()
+                   .AddTransient<JsLanguageHelper>()
+                   .AddTransient<JsConstantsHelper>()
+                   .AddSingleton<ISearchGrammarParser, IronySearchGrammarParser>()
+                   .AddTransient<IStopWordList, StopWordList>()
+                   .AddTransient<IArticleSearchRepository, ArticleSearchRepository>()
+                   .AddTransient<ISearchInArticlesRepository, SearchInArticlesRepository>()
+                   .AddTransient<ISearchInArticlesService, SearchInArticlesService>()
+                   .AddTransient<IBackendActionLogRepository, AuditRepository>()
+                   .AddTransient<IBackendActionLogPagesRepository, AuditRepository>()
+                   .AddTransient<IButtonTracePagesRepository, AuditRepository>()
+                   .AddTransient<IRemovedEntitiesPagesRepository, AuditRepository>()
+                   .AddTransient<ISessionLogRepository, AuditRepository>()
+                   .AddTransient<IApplicationInfoRepository, ApplicationInfoRepository>()
+                   .AddTransient<IArticleRepository, ArticleRepository>()
+                   .AddTransient<IContentRepository, ContentRepository>()
+                   .AddTransient<IArticleSearchService, ArticleSearchService>()
+                   .AddTransient<IBackendActionLogService, BackendActionLogService>()
+                   .AddTransient<IButtonTraceService, ButtonTraceService>()
+                   .AddTransient<IRemovedEntitiesService, RemovedEntitiesService>()
+                   .AddTransient<ISessionLogService, SessionLogService>()
+                   .AddTransient<ICustomActionService, CustomActionService>()
+                   .AddTransient<IFieldDefaultValueService, FieldDefaultValueService>()
+                   .AddTransient<IRecreateDynamicImagesService, RecreateDynamicImagesService>()
+                   .AddTransient<IUserService, UserService>()
+                   .AddTransient<IUserGroupService, UserGroupService>()
+                   .AddTransient<IXmlDbUpdateLogRepository, XmlDbUpdateLogRepository>()
+                   .AddTransient<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
+                   .AddTransient<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
+                   .AddTransient<IArticleService, A.ArticleService>()
+                   .AddTransient<IContentService, ContentService>()
+                   .AddTransient<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
+                   .AddTransient<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
+                   .AddTransient<INotificationService, NotificationService>()
+                   .AddTransient<IActionPermissionTreeService, ActionPermissionTreeService>()
+                   .AddTransient<ISecurityService, SecurityService>()
+                   .AddTransient<IVisualEditorService, VisualEditorService>()
+                   .AddTransient<IQpPluginService, QpPluginService>()
+                   .AddTransient<ILibraryService, LibraryService>()
+                   .AddTransient<IWorkflowService, WorkflowService>()
+                   .AddTransient<IStatusTypeService, StatusTypeService>()
+                   .AddTransient<IPageTemplateService, PageTemplateService>()
+                   .AddTransient<IPageService, PageService>()
+                   .AddTransient<IObjectService, ObjectService>()
+                   .AddTransient<IFormatService, FormatService>()
+                   .AddTransient<ProcessRemoteValidationIf>() //preload XAML validation
+                   .AddTransient<ResourceDictionary>() // preload QA.Configuration
+                   .AddTransient<QuartzService>()
+                   .AddScoped<LogOnCredentials>()
                     ;
 
-            services
-                .AddTransient<WorkflowPermissionService>()
-                .AddTransient<SitePermissionService>()
-                .AddTransient<SiteFolderPermissionService>()
-                .AddTransient<ContentPermissionService>()
-                .AddTransient<ChildContentPermissionService>()
-                .AddTransient<ArticlePermissionService>()
-                .AddTransient<ChildArticlePermissionService>()
-                .AddTransient<EntityTypePermissionService>()
-                .AddTransient<EntityTypePermissionChangeService>()
-                .AddTransient<ActionPermissionService>()
-                .AddTransient<ActionPermissionChangeService>()
-                ;
+                services
+                   .AddTransient<WorkflowPermissionService>()
+                   .AddTransient<SitePermissionService>()
+                   .AddTransient<SiteFolderPermissionService>()
+                   .AddTransient<ContentPermissionService>()
+                   .AddTransient<ChildContentPermissionService>()
+                   .AddTransient<ArticlePermissionService>()
+                   .AddTransient<ChildArticlePermissionService>()
+                   .AddTransient<EntityTypePermissionService>()
+                   .AddTransient<EntityTypePermissionChangeService>()
+                   .AddTransient<ActionPermissionService>()
+                   .AddTransient<ActionPermissionChangeService>()
+                    ;
 
-            services
-                .AddTransient<ISearchGrammarParser, IronySearchGrammarParser>()
-                .AddTransient<ArticleFullTextSearchQueryParser>()
-                ;
+                services
+                   .AddTransient<ISearchGrammarParser, IronySearchGrammarParser>()
+                   .AddTransient<ArticleFullTextSearchQueryParser>()
+                    ;
 
-            services
-                .AddTransient<IInterfaceNotificationProvider, InterfaceNotificationProvider>()
-                .AddTransient<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>()
-                .AddTransient<IExternalSystemNotificationService, ExternalSystemNotificationService>()
-                .AddTransient<ISchedulerCustomerCollection, SchedulerCustomerCollection>()
-                .AddTransient<ICommonUserService, CommonUserService>()
-                .AddTransient<ICleanSystemFoldersService, CleanSystemFoldersService>()
-                .AddTransient<ElasticCdcImportService>()
-                .AddTransient<TarantoolCdcImportService>()
-                .AddTransient<IDbService, DbService>()
-                ;
+                services
+                   .AddTransient<IInterfaceNotificationProvider, InterfaceNotificationProvider>()
+                   .AddTransient<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>()
+                   .AddTransient<IExternalSystemNotificationService, ExternalSystemNotificationService>()
+                   .AddTransient<ISchedulerCustomerCollection, SchedulerCustomerCollection>()
+                   .AddTransient<ICommonUserService, CommonUserService>()
+                   .AddTransient<ICleanSystemFoldersService, CleanSystemFoldersService>()
+                   .AddTransient<ElasticCdcImportService>()
+                   .AddTransient<TarantoolCdcImportService>()
+                   .AddTransient<IDbService, DbService>()
+                    ;
 
             services.RegisterExternalWorkflow(Configuration);
 
-            if (qpOptions.EnableLdapAuthentication)
-            {
-                services.AddOptions<LdapSettings>()
-                .Bind(Configuration.GetSection("Ldap"))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+                if (qpOptions.EnableLdapAuthentication)
+                {
+                    services.AddOptions<LdapSettings>()
+                       .Bind(Configuration.GetSection("Ldap"))
+                       .ValidateDataAnnotations()
+                       .ValidateOnStart();
 
-                services.AddSingleton<LdapConnectionFactory>();
-                services.AddSingleton<LdapHelper>();
-                services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
-                services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
-                services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                    services.AddSingleton<LdapConnectionFactory>();
+                    services.AddSingleton<LdapHelper>();
+                    services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
+                    services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
+                    services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                }
+                else
+                {
+                    services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                    services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+                }
+
+                RegisterMultistepActionServices(services);
             }
-            else
+            catch (Exception e)
             {
-                services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
-                services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+                _logger.Error(e, "Error while starting QP");
+
+                throw;
             }
-
-            RegisterMultistepActionServices(services);
-
         }
 
         private static void RegisterMultistepActionServices(IServiceCollection services)

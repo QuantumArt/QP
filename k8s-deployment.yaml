@@ -52,6 +52,8 @@ spec:
         - name: timezone-config
           mountPath: /etc/timezone
           subPath: TZ
+        - name: session-keys-volume
+          mountPath: /opt/qp/keys
         resources:
           limits:
             memory: "1Gi"
@@ -63,6 +65,9 @@ spec:
       - name: library-volume
         persistentVolumeClaim:
           claimName: qp-library
+      - name: session-keys-volume
+        persistentVolumeClaim:
+          claimName: qp-keys
       - name: time-config
         hostPath:
           path: /usr/share/zoneinfo

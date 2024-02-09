@@ -16,7 +16,12 @@ namespace Quantumart.QP8.Configuration
             QpConfigPollingInterval = TimeSpan.FromMinutes(2);
             Version = "8.0.0";
             BuildVersion = "8.0.0.0-00000000";
+            UseClientExceptions = true;
         }
+
+        public bool AllowReplayWithRecording { get; set; }
+
+        public bool UseClientExceptions { get; set; }
 
         public string Version { get; set; }
 
@@ -61,5 +66,7 @@ namespace Quantumart.QP8.Configuration
         public bool EnableLdapAuthentication { get; set; }
 
         public bool ForceHttpForImageResizing { get; set; }
+
+        public string SessionEncryptionKeysPath { get; set; }
     }
 }

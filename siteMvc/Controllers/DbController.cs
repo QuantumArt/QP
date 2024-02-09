@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -32,19 +33,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
         private readonly IXmlDbUpdateActionCorrecterService _actionsCorrecterService;
         private readonly IUserService _userService;
+        private readonly IServiceProvider _serviceProvider;
 
         public DbController(
             IXmlDbUpdateLogService xmlDbUpdateServce,
             IApplicationInfoRepository appInfoRepository,
             IXmlDbUpdateHttpContextProcessor httpContextProcessor,
             IXmlDbUpdateActionCorrecterService actionsCorrecterService,
-            IUserService userService)
+            IUserService userService,
+            IServiceProvider provider)
         {
             _xmlDbUpdateLogService = xmlDbUpdateServce;
             _appInfoRepository = appInfoRepository;
             _actionsCorrecterService = actionsCorrecterService;
             _httpContextProcessor = httpContextProcessor;
             _userService = userService;
+            _serviceProvider = provider;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -127,6 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 _appInfoRepository,
                 _actionsCorrecterService,
                 _httpContextProcessor,
+                _serviceProvider,
                 throwActionReplayed: true
             ).Process(model.XmlString);
 

@@ -24,31 +24,6 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
             _contentRepository = contentRepository;
         }
 
-        public bool IsRelation(int contentId, int fieldId) => GetRelations(contentId).Contains(fieldId);
-
-        public bool IsClassifier(int contentId, int fieldId) => GetClassifiers(contentId).Contains(fieldId);
-
-        private IEnumerable<int> GetRelations(int contentId)
-        {
-            var content = _contentRepository.GetById(contentId);
-            var fields = content.AggregatedContents.Any()
-                ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
-                : content.Fields;
-
-            return fields
-                .Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.ExactType))
-                .Select(f => f.Id);
-        }
-
-        private IEnumerable<int> GetClassifiers(int contentId)
-        {
-            return _contentRepository
-                .GetById(contentId)
-                .Fields
-                .Where(n => new[] { FieldExactTypes.Classifier }.Contains(n.ExactType))
-                .Select(f => f.Id);
-        }
-
         public static Content New(int siteId, int? groupId) => InternalNew(siteId, groupId);
 
         internal static Content InternalNew(int siteId, int? groupId)
@@ -69,6 +44,8 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
         }
 
         public static Content Read(int id) => InternalRead(id);
+
+        public Content Get(int id) => Read(id);
 
         internal static Content InternalRead(int id)
         {
