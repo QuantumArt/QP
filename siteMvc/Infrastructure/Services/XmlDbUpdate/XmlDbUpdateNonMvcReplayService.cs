@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
