@@ -19,6 +19,8 @@ namespace Quantumart.QP8.Configuration
             UseClientExceptions = true;
         }
 
+        public bool AllowReplayWithRecording { get; set; }
+
         public bool UseClientExceptions { get; set; }
 
         public string Version { get; set; }
