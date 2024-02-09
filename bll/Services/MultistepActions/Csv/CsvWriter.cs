@@ -15,6 +15,7 @@ using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
@@ -109,9 +110,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var ids = articles.AsEnumerable().Select(n => Convert.ToInt32(n["content_item_id"])).ToArray();
             var extensionIdsMap = _extensionContents.ToDictionary(c => c.Id, c => articles
                 .AsEnumerable()
-                .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
+                .Select(n => Converter.ToNullableInt32(n[string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)]))
                 .Where(n => n.HasValue)
-                .Select(n => (int)n.Value)
+                .Select(n => n.Value)
                 .ToArray()
             );
 
