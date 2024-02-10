@@ -35,6 +35,11 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
             return QPContext.EFContext.ArticleSet.Any(a => a.ContentId == contentId);
         }
 
+        int IContentRepository.CountArticles(int contentId)
+        {
+            return QPContext.EFContext.ArticleSet.Count(a => a.ContentId == contentId);
+        }
+
         string IContentRepository.GetTreeFieldName(int contentId, int exceptId)
         {
             var treeId = GetTreeFieldId(contentId, exceptId);

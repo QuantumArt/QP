@@ -19,6 +19,8 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         /// <param name="contentId">Идентификатор контента</param>
         bool IsAnyArticle(int contentId);
 
+        int CountArticles(int contentId);
+
         string GetTreeFieldName(int contentId, int exceptId);
 
         IEnumerable<int> GetDisplayFieldIds(int contentId, bool withRelations, int excludeId);

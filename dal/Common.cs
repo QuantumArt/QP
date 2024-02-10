@@ -115,8 +115,8 @@ namespace Quantumart.QP8.DAL
             int id,
             int contentId,
             bool isLive,
-            bool excludeArchive = false,
-            bool useNativeBool = false
+            bool excludeArchive,
+            bool useNativeBool
         )
         {
             var databaseType = GetDbType(connection);
@@ -138,10 +138,10 @@ namespace Quantumart.QP8.DAL
             int contentId,
             bool isVirtual,
             bool isLive,
-            bool excludeArchive = false,
-            string filter = "",
-            bool returnOnlyIds = false,
-            bool useNativeBool = false
+            bool excludeArchive,
+            string filter,
+            bool returnOnlyIds,
+            bool useNativeBool
         )
         {
             var dbType = GetDbType(connection);
@@ -786,13 +786,11 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action}
             IEnumerable<FieldInfo> fiList,
             IEnumerable<int> ids,
             bool isLive,
-            bool excludeArchive = false,
-            bool useNativeBool = false
+            bool excludeArchive = false
         )
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var suffix = isLive ? string.Empty : "_united";
-            var isArchive = excludeArchive ? (useNativeBool ? "not archive" : "and archive = 0") : string.Empty;
             var fieldIds = fiList.Select(n => n.Id).ToArray();
 
             var strTemplates = fiList.Select(fi => $@"

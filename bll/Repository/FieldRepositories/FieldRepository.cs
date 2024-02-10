@@ -238,13 +238,14 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     var field = GetById(id);
                     field.ReorderContentFields(true);
                     var isVirtual = field.Content.IsVirtual;
+                    var useNative = field.Content.UseNativeEfTypes;
                     FieldDAL dal = GetDal(field);
 
                     DefaultRepository.Delete<FieldDAL>(id);
 
                     if (!isVirtual)
                     {
-                        Common.DropColumn(scope.DbConnection, dal);
+                        Common.DropColumn(scope.DbConnection, dal, true, useNative);
                         DropLinkWithCheck(scope.DbConnection, dal);
                     }
                 }

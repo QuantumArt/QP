@@ -129,8 +129,14 @@ namespace Quantumart.QP8.BLL
                     }
                     else
                     {
-                        var count = (!newUnrelatedItemsWithoutArchive.Any() ? 0 : ArticleRepository.CountDuplicates(Field.BackRelation.Constraint, unRelatedItemsAfterUpdate, Field.BackRelationId.Value))
-                            + ArticleRepository.CountDuplicates(Field.BackRelation.Constraint, ids.ToArray(), Field.BackRelationId.Value);
+                        var count = !newUnrelatedItemsWithoutArchive.Any() ? 0 :
+                            ArticleRepository.CountDuplicates(
+                                Field.BackRelation.Constraint,
+                                unRelatedItemsAfterUpdate.Union(ids).ToArray(),
+                                Field.BackRelationId.Value,
+                                false,
+                                Field.BackRelation.Content.UseNativeEfTypes
+                            );
 
                         if (count > 0)
                         {

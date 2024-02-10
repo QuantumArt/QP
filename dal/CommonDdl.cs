@@ -33,7 +33,7 @@ namespace Quantumart.QP8.DAL
 
             if (rebuildViews)
             {
-                CreateContentViews(cnn, contentId, useNative: useNative);
+                CreateContentViews(cnn, contentId, true, useNative);
             }
 
             if (field.IndexFlag == 1)
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, sql);
         }
 
-        public static void DropColumn(DbConnection cnn, FieldDAL field, bool rebuildViews = true, bool useNative = false)
+        public static void DropColumn(DbConnection cnn, FieldDAL field, bool rebuildViews, bool useNative)
         {
             var dbType = GetDbType(cnn);
             var tableName = "content_" + field.ContentId;
@@ -152,7 +152,7 @@ namespace Quantumart.QP8.DAL
 
             if (rebuildViews)
             {
-                CreateContentViews(cnn, contentId, useNative: useNative);
+                CreateContentViews(cnn, contentId, true, useNative);
             }
         }
 
@@ -237,7 +237,7 @@ namespace Quantumart.QP8.DAL
             ExecuteSql(cnn, String.Format(sql, fieldTableName));
         }
 
-        public static void CreateContentViews(DbConnection cnn, int id, bool withUnited = true, bool useNative = false)
+        public static void CreateContentViews(DbConnection cnn, int id, bool withUnited, bool useNative)
         {
             var dbType = GetDbType(cnn);
             var idStr = id.ToString();
@@ -445,7 +445,7 @@ namespace Quantumart.QP8.DAL
         {
             var tableName = "content_" + newField.ContentId;
             var asyncTableName = tableName + "_async";
-            DropColumn(cnn, oldField, false);
+            DropColumn(cnn, oldField, false, useNative);
             AddColumn(cnn, newField, false, useNative);
             FillColumn(cnn, tableName, newField, useNative);
             FillColumn(cnn, asyncTableName, newField, useNative);
@@ -466,7 +466,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateColumn(DbConnection connection, FieldDAL oldField, FieldDAL newField, bool useNative = false)
+        public static void UpdateColumn(DbConnection connection, FieldDAL oldField, FieldDAL newField, bool useNative)
         {
             bool isIncompatibleChange = oldField.Type.DatabaseType != newField.Type.DatabaseType ||
                 oldField.Size != newField.Size && newField.Type.DatabaseType != "NTEXT";
@@ -474,7 +474,7 @@ namespace Quantumart.QP8.DAL
             {
                 DropContentViews(connection, (int)newField.ContentId);
                 RecreateColumn(connection, oldField, newField, useNative);
-                CreateContentViews(connection, (int)newField.ContentId, useNative: useNative);
+                CreateContentViews(connection, (int)newField.ContentId, true, useNative);
                 return;
             }
 
@@ -493,7 +493,7 @@ namespace Quantumart.QP8.DAL
                 DropContentViews(connection, (int)newField.ContentId);
                 RenameColumn(connection, tableName, oldField.Name, newField.Name);
                 RenameColumn(connection, asyncTableName, oldField.Name, newField.Name);
-                CreateContentViews(connection, (int)newField.ContentId, useNative: useNative);
+                CreateContentViews(connection, (int)newField.ContentId, true, useNative);
 
                 if (oldField.IndexFlag == 1 && newField.IndexFlag == 1)
                 {

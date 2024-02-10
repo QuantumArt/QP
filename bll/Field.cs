@@ -1613,14 +1613,14 @@ namespace Quantumart.QP8.BLL
             {
                 if (IsNew && !Constraint.IsComplex)
                 {
-                    if (_contentRepository.IsAnyArticle(ContentId))
+                    if (_contentRepository.CountArticles(ContentId) > 1)
                     {
                         errors.ErrorFor(f => IsUnique, FieldStrings.CannotCreateUniqueFieldBecauseOfExisting);
                     }
                 }
                 else
                 {
-                    var count = Constraint.CountDuplicates(0);
+                    var count = Constraint.CountDuplicates(0, Content.UseNativeEfTypes);
                     if (count > 0)
                     {
                         errors.ErrorFor(f => IsUnique, string.Format(FieldStrings.ExistingDataIsNotUnique, count));

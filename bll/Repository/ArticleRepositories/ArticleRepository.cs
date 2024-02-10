@@ -281,7 +281,8 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                        content.IsVirtual,
                        excludeArchive,
                        filter,
-                       useNativeBool: content.UseNativeEfTypes
+                       false,
+                       content.UseNativeEfTypes
                    );
                    result = InternalGetList(content, data, loadFieldValues, excludeArchive).ToArray();
                 }
@@ -841,7 +842,7 @@ cil.locked_by,
             return orderExpression;
         }
 
-        internal static DataRow GetData(int id, int contentId, bool isLive, bool excludeArchive = false, bool useNativeBool = false)
+        internal static DataRow GetData(int id, int contentId, bool isLive, bool excludeArchive, bool useNativeBool)
         {
             using (new QPConnectionScope())
             {
@@ -855,10 +856,10 @@ cil.locked_by,
             IEnumerable<int> ids,
             int contentId,
             bool isVirtual,
-            bool excludeArchive = false,
-            string filter = "",
-            bool returnOnlyIds = false,
-            bool useNativeBool = false
+            bool excludeArchive,
+            string filter,
+            bool returnOnlyIds,
+            bool useNativeBool
         )
         {
             using (new QPConnectionScope())
@@ -1026,8 +1027,8 @@ cil.locked_by,
             ContentConstraint constraint,
             int[] restrictToIds,
             int exceptFieldId,
-            bool includeArchive = false,
-            bool useNativeBool = false)
+            bool includeArchive,
+            bool useNativeBool)
         {
             if (restrictToIds != null && restrictToIds.Length == 0)
             {
