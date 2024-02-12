@@ -67,6 +67,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public bool IsLive { get; set; }
 
+        [BindNever]
+        [ValidateNever]
         public List<FieldValue> ActualFieldValues => IsLive ? Data.LiveFieldValues : Data.FieldValues;
 
         public bool IsReadOnly => Data.ViewType != ArticleViewType.Normal && Data.ViewType != ArticleViewType.PreviewVersion || Data.IsAggregated || IsChangingActionsProhibited;
