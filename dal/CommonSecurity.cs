@@ -492,7 +492,7 @@ namespace Quantumart.QP8.DAL
                     {
                         while (reader.Read())
                         {
-                            var id = (int)(decimal)reader["content_item_id"];
+                            var id = Convert.ToInt32(reader["content_item_id"]);
                             result[id] = false;
                         }
                     }

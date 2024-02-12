@@ -90,7 +90,7 @@ namespace Quantumart.QP8.DAL
                 {
                     while (dr.Read())
                     {
-                        values.Add((int)(decimal)dr[0], dr[1]?.ToString() ?? string.Empty);
+                        values.Add(Convert.ToInt32(dr[0]), dr[1]?.ToString() ?? string.Empty);
                     }
                 }
 
@@ -106,15 +106,22 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@value", value);
                 var result = cmd.ExecuteScalar();
-                return result == null ? 0 : (int)(decimal)result;
+                return result == null ? 0 : Convert.ToInt32(result);
             }
         }
 
-        public static DataRow GetArticleRow(DbConnection connection, int id, int contentId, bool isLive, bool excludeArchive = false)
+        public static DataRow GetArticleRow(
+            DbConnection connection,
+            int id,
+            int contentId,
+            bool isLive,
+            bool excludeArchive,
+            bool useNativeBool
+        )
         {
             var databaseType = GetDbType(connection);
             var suffix = isLive ? string.Empty : "_united";
-            var isExcludeArchive = excludeArchive ? $"and archive = 0" : string.Empty;
+            var isExcludeArchive = excludeArchive ? (useNativeBool ? "and not archive" : "and archive = 0") : string.Empty;
             using (var cmd = DbCommandFactory.Create($"select * from content_{contentId}{suffix} {WithNoLock(databaseType)} where content_item_id = @id {isExcludeArchive}", connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -125,7 +132,17 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static DataTable GetArticleTable(DbConnection connection, IEnumerable<int> ids, int contentId, bool isVirtual, bool isLive, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
+        public static DataTable GetArticleTable(
+            DbConnection connection,
+            IEnumerable<int> ids,
+            int contentId,
+            bool isVirtual,
+            bool isLive,
+            bool excludeArchive,
+            string filter,
+            bool returnOnlyIds,
+            bool useNativeBool
+        )
         {
             var dbType = GetDbType(connection);
             var fields = returnOnlyIds ? "c.content_item_id" : "c.*, ci.locked_by, ci.splitted, ci.schedule_new_version_publication";
@@ -142,7 +159,7 @@ namespace Quantumart.QP8.DAL
 
             if (excludeArchive)
             {
-                conditions.Add("c.archive = 0");
+                conditions.Add(useNativeBool ? "not c.archive" : "c.archive = 0");
             }
 
             if (!string.IsNullOrEmpty(filter))
@@ -425,10 +442,17 @@ order by 1, 2
 
         }
 
-        public static int CountDuplicates(DbConnection connection, int contentId, int[] fieldIds, int[] itemIds, bool includeArchive)
+        public static int CountDuplicates(
+            DbConnection connection,
+            int contentId,
+            int[] fieldIds,
+            int[] itemIds,
+            bool includeArchive,
+            bool useNativeBool)
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-            var sql = dbType == DatabaseType.SqlServer ? "qp_count_duplicates" : "select qp_count_duplicates(@content_id, @field_ids, @ids, @includeArchive);";
+            var sql = dbType == DatabaseType.SqlServer ? "qp_count_duplicates"
+                : "select qp_count_duplicates(@content_id, @field_ids, @ids, @includeArchive, @useNativeBool);";
             using (var cmd = DbCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = dbType == DatabaseType.SqlServer ? CommandType.StoredProcedure : CommandType.Text;
@@ -444,6 +468,10 @@ order by 1, 2
                     cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", itemIds, dbType));
                 }
                 cmd.Parameters.AddWithValue("@includeArchive", includeArchive);
+                if (dbType == DatabaseType.Postgres)
+                {
+                    cmd.Parameters.AddWithValue("@useNativeBool", useNativeBool);
+                }
 
                 return (int)cmd.ExecuteScalar();
             }
@@ -522,7 +550,7 @@ order by 1, 2
                 dt.AsEnumerable()
                     .Select(
                         row =>
-                            new { Id = (int)(decimal)row[keyFieldName], LinkedId = (int)(decimal)row[valueFieldName] });
+                            new { Id = Convert.ToInt32(row[keyFieldName]), LinkedId = Convert.ToInt32(row[valueFieldName]) });
             foreach (var item in data)
             {
                 if (!result.ContainsKey(item.Id))
@@ -561,9 +589,9 @@ order by 1, 2
                         row =>
                             new
                             {
-                                Id = (int)(decimal)row[keyFieldName],
-                                LinkedId = (int)(decimal)row[valueFieldName],
-                                LinkId = (int)(decimal)row[groupFieldName]
+                                Id = Convert.ToInt32(row[keyFieldName]),
+                                LinkedId = Convert.ToInt32(row[valueFieldName]),
+                                LinkId = Convert.ToInt32(row[groupFieldName])
                             });
 
             foreach (var item in data)
@@ -692,12 +720,20 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
 
             public int Id { get; set; }
 
+            public bool UseNativeBool { get; set; }
+
             public override bool Equals(object obj) => Id == ((FieldInfo)obj).Id;
 
             public override int GetHashCode() => Id;
         }
 
-        public static Dictionary<int, string> GetRelatedArticles(DbConnection connection, IEnumerable<FieldInfo> fiList, int? id, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, string> GetRelatedArticles(
+            DbConnection connection,
+            IEnumerable<FieldInfo> fiList,
+            int? id,
+            bool isLive,
+            bool excludeArchive = false
+        )
         {
             if (!fiList.Any())
             {
@@ -708,14 +744,14 @@ where item_id = @id and link_id in (select id from {IdList(databaseType, "@linkI
                 var databaseType = GetDbType(connection);
                 var suffix = isLive ? string.Empty : "_united";
                 var action = id.HasValue ? " = @id" : " is null ";
-                var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
                 var fieldIds = fiList.Select(n => n.Id).ToArray();
                 var strTemplates = fiList.Select(fi => $@"
 select
 content_item_id,
 cast({fi.Id} as decimal) as field_id
 from content_{fi.ContentId}{suffix} {WithNoLock(databaseType)}
-where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {isArchive}");
+where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action}
+{(excludeArchive ? (fi.UseNativeBool ? " and not archive" : " and archive = 0") : string.Empty)}");
 
                 var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
 
@@ -741,21 +777,27 @@ where {SqlQuerySyntaxHelper.EscapeEntityName(databaseType, fi.Name)} {action} {i
                 cmd.Parameters.Add(GetIdsDatatableParam("@itemIds", ids, dbType));
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(row => (int)(decimal)row["content_item_id"]).ToArray();
+                return dt.AsEnumerable().Select(row => Convert.ToInt32(row["content_item_id"])).ToArray();
             }
         }
 
-        public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(DbConnection connection, IEnumerable<FieldInfo> fiList, IEnumerable<int> ids, bool isLive, bool excludeArchive = false)
+        public static Dictionary<int, Dictionary<int, List<int>>> GetRelatedArticlesMultiple(
+            DbConnection connection,
+            IEnumerable<FieldInfo> fiList,
+            IEnumerable<int> ids,
+            bool isLive,
+            bool excludeArchive = false
+        )
         {
             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
             var suffix = isLive ? string.Empty : "_united";
-            var isArchive = excludeArchive ? " and archive = 0" : string.Empty;
             var fieldIds = fiList.Select(n => n.Id).ToArray();
 
             var strTemplates = fiList.Select(fi => $@"
                 select content_item_id as linked_item_id, {Escape(dbType, fi.Name)} as item_id, cast({fi.Id} as decimal) as field_id
                 from content_{fi.ContentId}{suffix} {WithNoLock(dbType)}
-                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@itemIds")}) {isArchive}
+                where {Escape(dbType, fi.Name)} in (select id from {IdList(dbType, "@itemIds")})
+                {(excludeArchive ? (fi.UseNativeBool ? "not archive" : "and archive = 0") : string.Empty)}
             ");
 
             var sql = string.Join(Environment.NewLine + "union all" + Environment.NewLine, strTemplates);
@@ -966,7 +1008,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             {
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 var result = cmd.ExecuteScalar();
-                return result == DBNull.Value ? 0 : (int)(decimal)result;
+                return result == DBNull.Value ? 0 : Convert.ToInt32(result);
             }
         }
 
@@ -1126,14 +1168,17 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
             }
         }
 
-        public static bool IsCountOverflow(DbConnection connection, int contentId, bool includeArchive, int countLimit)
+        public static bool IsCountOverflow(
+            DbConnection connection, int contentId, bool includeArchive, int countLimit, bool useNativeBool
+        )
         {
             var databaseType = GetDbType(connection);
-            var archiveSql = (includeArchive) ? "" : $" where archive = 0";
+            var where = (includeArchive) ? "" : (useNativeBool ? "not archive" : "archive = 0");
             var sql = $@"select count(*) from (
-                    select {Top(databaseType, countLimit + 1)} content_item_id from content_{contentId}
+                    select {Top(databaseType, countLimit + 1)} content_item_id
+                    from content_{contentId}
                     {WithNoLock(databaseType)}
-                    {archiveSql}
+                    where {where}
                     {Limit(databaseType, countLimit + 1)}
                 ) a";
 
@@ -1156,7 +1201,7 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@workflowId", workflowId);
                 var value = cmd.ExecuteScalar();
-                return value == DBNull.Value ? 0 : dbType == DatabaseType.SqlServer ? (int)(decimal)value : (int)value;
+                return value == DBNull.Value ? 0 : Convert.ToInt32(value);
             }
         }
 
@@ -3158,7 +3203,9 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
 
             if (options.CustomFilter?.Any() ?? false)
             {
-                filterBuilder.AppendFormat(" AND ({0})", CommonCustomFilters.GetFilterQuery(sqlConnection, parameters, dbType, options.SiteId ?? 0, options.CustomFilter));
+                filterBuilder.AppendFormat(" AND ({0})", CommonCustomFilters.GetFilterQuery(
+                    sqlConnection, parameters, dbType, EntityTypeCode.Content, options.SiteId ?? 0, options.CustomFilter
+                ));
             }
 
             return GetSimplePagedList(
@@ -3606,7 +3653,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
                 cmd.Parameters.AddWithValue("@count_to_del", contentsToRemove);
                 var dt = new DataTable();
                 DataAdapterFactory.Create(cmd).Fill(dt);
-                return dt.AsEnumerable().Select(r => Converter.ToInt32(r.Field<decimal>(0))).ToArray();
+                return dt.AsEnumerable().Select(r => Converter.ToInt32(r[0])).ToArray();
             }
         }
 
@@ -5992,7 +6039,7 @@ order by ActionDate desc
                     var result = new Dictionary<int, string>();
                     while (reader.Read())
                     {
-                        var id = (int)(decimal)reader["CONTENT_ID"];
+                        var id = Convert.ToInt32(reader["CONTENT_ID"]);
                         var name = (string)reader["ATTRIBUTE_NAME"];
                         result[id] = name;
                     }
@@ -6073,7 +6120,7 @@ order by ActionDate desc
 
                     while (reader.Read())
                     {
-                        var id = (int)(decimal)reader["ATTRIBUTE_ID"];
+                        var id = Convert.ToInt32(reader["ATTRIBUTE_ID"]);
                         var name = (string)reader["ATTRIBUTE_NAME"];
                         result[id] = name;
                     }
@@ -6127,7 +6174,7 @@ order by ActionDate desc
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                return (int)(decimal)cmd.ExecuteScalar();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -7070,13 +7117,16 @@ order by ActionDate desc
             }
         }
 
-        public static Dictionary<int, int> GetArticleHierarchy(DbConnection sqlConnection, int contentId, string treeFieldName)
+        public static Dictionary<int, int> GetArticleHierarchy(
+            DbConnection sqlConnection, int contentId, string treeFieldName, bool useNativeBool)
         {
             var result = new Dictionary<int, int>();
             var dbType = GetDbType(sqlConnection);
             var name = Escape(dbType, treeFieldName);
+            var archiveFilter = useNativeBool ? "not archive" : "archive = 0";
             var parentIdParam = string.IsNullOrEmpty(treeFieldName) ? "cast(0 as numeric)" : $"coalesce({name}, 0)";
-            var sql = $"select content_item_id as id, {parentIdParam} as parent_id from content_{contentId}_united {WithNoLock(dbType)} where archive = 0";
+            var select = $"content_item_id as id, {parentIdParam} as parent_id";
+            var sql = $"select {select} from content_{contentId}_united {WithNoLock(dbType)} where {archiveFilter}";
             using (var cmd = DbCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -10260,7 +10310,7 @@ order by ActionDate desc
                 ? "SELECT DISTINCT Id, ParentId FROM CTE"
                 : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl";
 
-            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
+            return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids, dbType)).Select(dr => Convert.ToInt32(dr[0])).ToList();
         }
 
 
@@ -10319,7 +10369,7 @@ order by ActionDate desc
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@childId", childId);
                 var result = cmd.ExecuteScalar();
-                return result == null ? 0 : (int)(decimal)result;
+                return result == null ? 0 : Convert.ToInt32(result);
             }
         }
 

@@ -304,6 +304,7 @@ namespace Quantumart.QP8.BLL
             Content result = new Content();
             result.Site = site;
             result.SiteId = site.Id;
+            result.UseNativeEfTypes = site.UseNativeEfTypes;
             result.GroupId = ContentGroup.GetDefaultGroup(site.Id).Id;
             return result;
         }
@@ -414,6 +415,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "DisableChangingActions", ResourceType = typeof(ContentStrings))]
         public bool DisableChangingActions { get; set; }
 
+        [Display(Name = "UseNativeEfTypes", ResourceType = typeof(ContentStrings))]
+        public bool UseNativeEfTypes { get; set; }
+
         [Display(Name = "FormScript", ResourceType = typeof(ContentStrings))]
         public string FormScript { get; set; }
 
@@ -468,7 +472,8 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var field = TreeField;
-                return field == null ? string.Empty : Field.DefaultRelationFilter;
+                return field == null ? string.Empty :
+                    field.Content.UseNativeEfTypes ? Field.DefaultRelationNativeFilter : Field.DefaultRelationFilter;
             }
         }
 

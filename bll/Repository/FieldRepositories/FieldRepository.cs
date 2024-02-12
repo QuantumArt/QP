@@ -238,13 +238,14 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     var field = GetById(id);
                     field.ReorderContentFields(true);
                     var isVirtual = field.Content.IsVirtual;
+                    var useNative = field.Content.UseNativeEfTypes;
                     FieldDAL dal = GetDal(field);
 
                     DefaultRepository.Delete<FieldDAL>(id);
 
                     if (!isVirtual)
                     {
-                        Common.DropColumn(scope.DbConnection, dal);
+                        Common.DropColumn(scope.DbConnection, dal, true, useNative);
                         DropLinkWithCheck(scope.DbConnection, dal);
                     }
                 }
@@ -339,7 +340,7 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                     DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Field, item);
                     var newItem = DefaultRepository.Save<Field, FieldDAL>(item);
                     var field = GetDal(newItem);
-                    Common.AddColumn(scope.DbConnection, field);
+                    Common.AddColumn(scope.DbConnection, field, true, item.Content.UseNativeEfTypes);
 
                     DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Field);
 
@@ -408,13 +409,13 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
 
                     var oldDal = GetDal(preUpdateField);
                     var newDal = GetDal(newItem);
-                    Common.UpdateColumn(scope.DbConnection, oldDal, newDal);
+                    Common.UpdateColumn(scope.DbConnection, oldDal, newDal, item.Content.UseNativeEfTypes);
 
                     UpdateRelationData(item, preUpdateField);
 
                     if (oldDal.Order != item.Order)
                     {
-                        RecreateNewViews(item.ContentId);
+                        RecreateNewViews(item.ContentId, item.Content.UseNativeEfTypes);
                     }
 
                     UpdateConstraint(constraint, newItem);
@@ -670,18 +671,18 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
                 foreach (DataRow row in Common.GetBaseFieldsForM2O(scope.DbConnection, contentId, fieldId).Rows)
                 {
                     var parts = new List<string>();
-                    if (siteId != (int)(decimal)row["site_id"])
+                    if (siteId != Convert.ToInt32(row["site_id"]))
                     {
                         parts.Add((string)row["site_name"]);
                     }
 
-                    if (contentId != (int)(decimal)row["content_id"])
+                    if (contentId != Convert.ToInt32(row["content_id"]))
                     {
                         parts.Add((string)row["content_name"]);
                     }
 
                     parts.Add((string)row["attribute_name"]);
-                    var currentFieldId = (int)(decimal)row["attribute_id"];
+                    var currentFieldId = Convert.ToInt32(row["attribute_id"]);
                     var resultPart = new ListItem { Text = string.Join(".", parts), Value = currentFieldId.ToString() };
                     if (currentFieldId == fieldId)
                     {
@@ -695,11 +696,11 @@ namespace Quantumart.QP8.BLL.Repository.FieldRepositories
             return result;
         }
 
-        public static void RecreateNewViews(int contentId)
+        public static void RecreateNewViews(int contentId, bool useNative)
         {
             using (var scope = new QPConnectionScope())
             {
-                Common.RecreateNewViews(scope.DbConnection, contentId);
+                Common.RecreateNewViews(scope.DbConnection, contentId, useNative);
             }
         }
 

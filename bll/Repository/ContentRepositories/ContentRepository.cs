@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -33,6 +33,11 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
         bool IContentRepository.IsAnyArticle(int contentId)
         {
             return QPContext.EFContext.ArticleSet.Any(a => a.ContentId == contentId);
+        }
+
+        int IContentRepository.CountArticles(int contentId)
+        {
+            return QPContext.EFContext.ArticleSet.Count(a => a.ContentId == contentId);
         }
 
         string IContentRepository.GetTreeFieldName(int contentId, int exceptId)
@@ -295,7 +300,7 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                     {
                         DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
                     }
-                    Common.CreateContentTables(scope.DbConnection, newContent.Id);
+                    Common.CreateContentTables(scope.DbConnection, newContent.Id, newContent.UseNativeEfTypes);
                     Common.CreateContentModification(scope.DbConnection, newContent.Id);
                     CommonSecurity.CreateContentAccess(scope.DbConnection, newContent.Id);
 
@@ -367,9 +372,14 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
                         ChangeCleanEmptyGropusTriggerState(scope.DbConnection, false);
                     }
 
+                    var oldContent = GetById(content.Id);
                     var binding = content.WorkflowBinding;
                     var fieldValues = content.QpPluginFieldValues;
                     var newContent = DefaultRepository.Update<Content, ContentDAL>(content);
+                    if (oldContent.UseNativeEfTypes != newContent.UseNativeEfTypes)
+                    {
+                        Common.ChangeNativeEfTypes(scope.DbConnection, content.Id, newContent.UseNativeEfTypes);
+                    }
                     var isAggregated = IsAnyAggregatedFields(content.Id);
                     if (!isAggregated)
                     {

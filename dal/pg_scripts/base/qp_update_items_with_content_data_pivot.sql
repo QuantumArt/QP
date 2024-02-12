@@ -21,7 +21,10 @@ AS $BODY$
 	  sel text;
 	  attrs_update text[];
 	  upd text;
+      use_native bool;
 	BEGIN
+        use_native := use_native_ef_types from content
+            where content.content_id = qp_update_items_with_content_data_pivot.content_id;
 
 		table_name := 'content_' || content_id;
 		IF is_async THEN
@@ -49,8 +52,13 @@ AS $BODY$
 			res := array_to_string(attrs_result, ', ');
 
 			attrs_select := array_agg(FORMAT('"%s"::%s', b.name, b.type)) from (
-				select lower(a.attribute_name) as name, CASE WHEN a.attribute_type_id in (2,3,11,13) THEN
-					'numeric'
+			select lower(a.attribute_name) as name,
+            CASE WHEN a.attribute_type_id in (2,11,13) THEN
+                    'numeric'
+                WHEN a.attribute_type_id in (3) and not use_native THEN
+                    'numeric'
+                WHEN a.attribute_type_id in (3) and use_native THEN
+                    'bool'
 				WHEN a.attribute_type_id in (4,5,6) THEN
 					'timestamp with time zone'
 				ELSE

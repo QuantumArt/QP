@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -104,19 +104,13 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static long ToInt64(object value, long defaultValue)
         {
-            var result = defaultValue;
-            var rawResult = ToNullableInt64(value);
-
-            if (rawResult != null)
-            {
-                result = (long)rawResult;
-            }
-
-            return result;
+            var rawResult = ToNullableInt64(value, defaultValue);
+            return rawResult ?? defaultValue;
         }
 
+
         /// <summary>
-		/// Преобразует объект в значение типа Decimal
+        /// Преобразует объект в значение типа Decimal
         /// </summary>
         public static decimal ToDecimal(object value)
         {
@@ -128,60 +122,28 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static decimal ToDecimal(object value, decimal defaultValue)
         {
-            var result = defaultValue;
-            var rawResult = ToNullableDecimal(value);
-
-            if (rawResult != null)
-            {
-                result = (decimal)rawResult;
-            }
-
-            return result;
+            var rawResult = ToNullableDecimal(value, defaultValue);
+            return rawResult ?? defaultValue;
         }
 
         /// <summary>
         /// Преобразует объект в значение типа Double
         /// </summary>
-        public static double ToDouble(object value)
+        public static double? ToNullableDouble(object value)
         {
-            return ToDouble(value, 0);
+            return ToNullableDouble(value, null);
         }
 
         /// <summary>
         /// Преобразует объект в значение типа Double
         /// </summary>
-        public static double ToDouble(object value, double defaultValue)
+        public static double? ToNullableDouble(object value, double? defaultValue)
         {
-            var result = defaultValue;
-
-            if (!IsNullOrEmpty(value))
-            {
-                var processedValue = value.ToString().Trim();
-                if (string.Equals(processedValue, "true", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 1;
-                }
-
-                if (string.Equals(processedValue, "false", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 0;
-                }
-
-                try
-                {
-                    result = double.Parse(processedValue);
-                }
-                catch
-                {
-                    result = defaultValue;
-                }
-            }
-
-            return result;
+            return ParseValue(value, defaultValue, Double.Parse, Convert.ToDouble);
         }
 
         /// <summary>
-		/// Преобразует объект в значение типа Boolean
+        /// Преобразует объект в значение типа Boolean
         /// </summary>
         public static bool ToBoolean(object value)
         {
@@ -193,14 +155,8 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static bool ToBoolean(object value, bool defaultValue)
         {
-            var result = defaultValue;
-            var rawResult = ToNullableBoolean(value);
-            if (rawResult != null)
-            {
-                result = (bool)rawResult;
-            }
-
-            return result;
+            var rawResult = ToNullableBoolean(value, defaultValue);
+            return rawResult ?? defaultValue;
         }
 
         /// <summary>
@@ -216,14 +172,8 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static DateTime ToDateTime(object value, DateTime defaultValue)
         {
-            var result = defaultValue;
-            var rawResult = ToNullableDateTime(value);
-            if (rawResult != null)
-            {
-                result = (DateTime)rawResult;
-            }
-
-            return result;
+            var rawResult = ToNullableDateTime(value, defaultValue);
+            return rawResult ?? defaultValue;
         }
 
         /// <summary>
@@ -479,6 +429,41 @@ namespace Quantumart.QP8.Utils
             return number;
         }
 
+        private static T? ParseValue<T>(
+            object value,
+            T? defaultValue,
+            Func<string, T> parseFunc,
+            Func<object, T> convertFunc
+        ) where T : struct
+        {
+            switch (value)
+            {
+                case null:
+                    return null;
+                case decimal or int or byte or long:
+                    return convertFunc(value);
+            }
+
+            var processedValue = value.ToString()?.Trim();
+            if (string.Equals(processedValue, "true", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return (T)Convert.ChangeType(1, typeof(T));
+            }
+            if (string.Equals(processedValue, "false", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return (T)Convert.ChangeType(0, typeof(T));
+            }
+
+            try
+            {
+                return parseFunc(processedValue);
+            }
+            catch
+            {
+               return defaultValue;
+            }
+        }
+
         /// <summary>
         /// Преобразует объект в значение типа Nullable
         /// </summary>
@@ -492,48 +477,7 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static int? ToNullableInt32(object value, int? defaultValue)
         {
-            int? result;
-            if (!IsNullOrEmpty(value))
-            {
-                var processedValue = value.ToString().Trim();
-                if (string.Equals(processedValue, "true", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 1;
-                }
-
-                if (string.Equals(processedValue, "false", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 0;
-                }
-
-                try
-                {
-                    result = int.Parse(processedValue);
-                }
-                catch
-                {
-                    result = defaultValue;
-                }
-            }
-            else
-            {
-                result = null;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Преобразует значение типа Nullable в значение типа Nullable
-        /// </summary>
-        public static int? ToNullableInt32(decimal? value)
-        {
-            if (value == null)
-            {
-                return null;
-            }
-
-            return (int)(decimal)value;
+            return ParseValue(value, defaultValue, int.Parse, Convert.ToInt32);
         }
 
         /// <summary>
@@ -549,36 +493,9 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static long? ToNullableInt64(object value, long? defaultValue)
         {
-            long? result;
-            if (!IsNullOrEmpty(value))
-            {
-                var processedValue = value.ToString().Trim();
-                if (string.Equals(processedValue, "true", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 1;
-                }
-
-                if (string.Equals(processedValue, "false", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 0;
-                }
-
-                try
-                {
-                    result = long.Parse(processedValue);
-                }
-                catch
-                {
-                    result = defaultValue;
-                }
-            }
-            else
-            {
-                result = null;
-            }
-
-            return result;
+            return ParseValue(value, defaultValue, long.Parse, Convert.ToInt64);
         }
+
 
         /// <summary>
         /// Преобразует объект в значение типа Nullable
@@ -593,43 +510,7 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static decimal? ToNullableDecimal(object value, decimal? defaultValue)
         {
-            decimal? result;
-            if (!IsNullOrEmpty(value))
-            {
-                var processedValue = value.ToString().Trim();
-                if (string.Equals(processedValue, "true", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 1;
-                }
-
-                if (string.Equals(processedValue, "false", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return 0;
-                }
-
-                try
-                {
-                    result = decimal.Parse(processedValue);
-                }
-                catch
-                {
-                    result = defaultValue;
-                }
-            }
-            else
-            {
-                result = null;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Преобразует объект в значение типа Nullable
-        /// </summary>
-        public static double? ToNullableDouble(object value)
-        {
-            return IsNullOrEmpty(value) ? null : (double?)ToDouble(value);
+            return ParseValue(value, defaultValue, decimal.Parse, Convert.ToDecimal);
         }
 
         /// <summary>
@@ -645,50 +526,23 @@ namespace Quantumart.QP8.Utils
         /// </summary>
         public static bool? ToNullableBoolean(object value, bool? defaultValue)
         {
-            bool? result;
-            if (!IsNullOrEmpty(value))
-            {
-                var processedValue = value.ToString().Trim().ToLower();
-                if (processedValue == "true")
-                {
-                    result = true;
-                }
-                else if (processedValue == "false")
-                {
-                    result = false;
-                }
-                else if (processedValue == "1")
-                {
-                    result = true;
-                }
-                else if (processedValue == "0")
-                {
-                    result = false;
-                }
-                else
-                {
-                    try
-                    {
-                        result = bool.Parse(processedValue);
-                    }
-                    catch
-                    {
-                        result = defaultValue;
-                    }
-                }
-            }
-            else
-            {
-                result = null;
-            }
-
-            return result;
+            int? intDefaultValue = defaultValue.HasValue ? Convert.ToInt32(defaultValue.Value) : null;
+            var intValue = ParseValue<int>(value, intDefaultValue, int.Parse, Convert.ToInt32);
+            return intValue.HasValue ? Convert.ToBoolean(intValue) : null;
         }
 
         /// <summary>
         /// Преобразует объект в объект типа Nullable
         /// </summary>
-        public static DateTime? ToNullableDateTime(object value, DateTime? defaultValue = null)
+        public static DateTime? ToNullableDateTime(object value)
+        {
+            return ToNullableDateTime(value, null);
+        }
+
+        /// <summary>
+        /// Преобразует объект в объект типа Nullable
+        /// </summary>
+        public static DateTime? ToNullableDateTime(object value, DateTime? defaultValue)
         {
             DateTime? result;
             if (!IsNullOrEmpty(value))

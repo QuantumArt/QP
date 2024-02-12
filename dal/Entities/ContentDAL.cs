@@ -49,6 +49,8 @@ namespace Quantumart.QP8.DAL.Entities
         public bool ForReplication { get; set; }
         public string TraceImportScript { get; set; }
 
+        public bool UseNativeEfTypes { get; set; }
+
         public ICollection<ContainerDAL> Containers { get; set; }
         public ICollection<ContentWorkflowBindDAL> WorkflowBinding { get; set; }
         public ICollection<ContentPermissionDAL> AccessRules { get; set; }
@@ -123,6 +125,7 @@ namespace Quantumart.QP8.DAL.Entities
             builder.Property(x => x.UseDefaultFiltration).HasColumnName("USE_DEFAULT_FILTRATION");
             builder.Property(x => x.AdditionalContextClassName).HasColumnName("ADD_CONTEXT_CLASS_NAME");
             builder.Property(x => x.TraceImportScript).HasColumnName("TRACE_IMPORT_SCRIPT");
+            builder.Property(x => x.UseNativeEfTypes).HasColumnName("USE_NATIVE_EF_TYPES");
 
             builder.HasKey(x => x.Id);
 

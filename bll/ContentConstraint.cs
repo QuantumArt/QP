@@ -35,6 +35,9 @@ namespace Quantumart.QP8.BLL
             return fieldValues.AsEnumerable().Where(n => fieldIds.Contains(n.Field.Id)).ToList();
         }
 
-        public int CountDuplicates(int id) => ArticleRepository.CountDuplicates(this, null, id, false);
+        public int CountDuplicates(int id, bool useNative)
+        {
+            return ArticleRepository.CountDuplicates(this, null, id, false, useNative);
+        }
     }
 }

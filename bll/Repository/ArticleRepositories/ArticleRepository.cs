@@ -92,7 +92,9 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId, QPContext.IsLive));
+                var content = ContentRepository.GetById(contentId);
+                var data = GetData(id, contentId, QPContext.IsLive, false, content.UseNativeEfTypes);
+                var result = MapperFacade.ArticleRowMapper.GetBizObject(data);
                 if (result != null)
                 {
                     result.ContentId = contentId;
@@ -184,22 +186,56 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         {
             using (new QPConnectionScope())
             {
-                return Common.IsCountOverflow(QPConnectionScope.Current.DbConnection, contentId, includeArchive, countLimit);
+                var useNativeBool = ContentRepository.GetById(contentId).UseNativeEfTypes;
+                return Common.IsCountOverflow(
+                    QPConnectionScope.Current.DbConnection, contentId, includeArchive, countLimit, useNativeBool
+                );
             }
         }
 
-        internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, CustomFilterItem[] customFilter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
+        internal static IEnumerable<DataRow> GetList(
+            int contentId,
+            int[] selectedArticleIDs,
+            ListCommand cmd,
+            IList<ArticleSearchQueryParam> searchQueryParams,
+            IList<ArticleContextQueryParam> contextQueryParams,
+            CustomFilterItem[] customFilter,
+            ArticleFullTextSearchQueryParser ftsParser,
+            bool? onlyIds,
+            int[] filterIds,
+            out int totalRecords
+        )
         {
             using (new QPConnectionScope())
             {
                 var content = ContentRepository.GetById(contentId);
-                var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out var useMainTable);
+                var contextFilter = GetContextFilter(
+                    contextQueryParams,
+                    content.Fields.ToList(),
+                    out var useMainTable
+                );
                 var sqlParams = new List<DbParameter>();
                 var sqlConnection = QPConnectionScope.Current.DbConnection;
                 var dbType = DatabaseTypeHelper.ResolveDatabaseType(sqlConnection);
                 var filters = MapperFacade.CustomFilterMapper.GetDalList(customFilter?.ToList()).ToArray();
-                var filter = CommonCustomFilters.GetFilterQuery(sqlConnection, sqlParams, dbType, contentId, filters);
-                filter = FillFullTextSearchParams(contentId, filter, searchQueryParams, ftsParser, out var ftsOptions, out var extensionContentIds, out var contentReferences);
+                var filter = CommonCustomFilters.GetFilterQuery(
+                    sqlConnection,
+                    sqlParams,
+                    dbType,
+                    EntityTypeCode.Article,
+                    contentId,
+                    filters,
+                    content.UseNativeEfTypes
+                );
+                filter = FillFullTextSearchParams(
+                    contentId,
+                    filter,
+                    searchQueryParams,
+                    ftsParser,
+                    out var ftsOptions,
+                    out var extensionContentIds,
+                    out var contentReferences
+                );
 
                 var options = new ArticlePageOptions
                 {
@@ -239,7 +275,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 if (contentId != 0)
                 {
                    var content = ContentRepository.GetById(contentId);
-                   var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter);
+                   var data = GetData(
+                       ids,
+                       contentId,
+                       content.IsVirtual,
+                       excludeArchive,
+                       filter,
+                       false,
+                       content.UseNativeEfTypes
+                   );
                    result = InternalGetList(content, data, loadFieldValues, excludeArchive).ToArray();
                 }
             }
@@ -252,7 +296,6 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             {
                 return (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
             }
-
             return contentId;
         }
 
@@ -268,7 +311,16 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                 if (contentId != 0)
                 {
                     var content = ContentRepository.GetById(contentId);
-                    var data = GetData(ids, contentId, content.IsVirtual, excludeArchive, filter, true);
+                    var data = GetData(
+                        ids,
+                        contentId,
+                        content.IsVirtual,
+                        excludeArchive,
+                        filter,
+                        true,
+                        content.UseNativeEfTypes
+                    );
+
                     if (data != null)
                     {
                         result = data.AsEnumerable().Select(n => Converter.ToInt32(n["content_item_id"])).ToArray();
@@ -479,7 +531,15 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     filters.Add(CustomFilter.GetFalseFilter());
                 }
 
-                var customFilrer = CommonCustomFilters.GetFilterQuery(scope.DbConnection, sqlFilterParameters, scope.CurrentDbType, query.ParentEntityId, filters.ToArray());
+                var filter = CommonCustomFilters.GetFilterQuery(
+                        scope.DbConnection,
+                        sqlFilterParameters,
+                        scope.CurrentDbType,
+                        EntityTypeCode.Article,
+                        query.ParentEntityId,
+                        filters.ToArray(),
+                        fields[0].Content.UseNativeEfTypes
+                    );
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(query.ParentEntityId);
                 var extraFrom = GetExtraFromForRelations(fields);
@@ -491,7 +551,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
                     displayExpression,
                     query.SelectionMode,
                     PermissionLevel.List,
-                    customFilrer,
+                    filter,
                     useSecurity,
                     selection.ToArray(),
                     null,
@@ -620,11 +680,11 @@ cil.locked_by,
 
                 return rows.Select(dr =>
                 {
-                    var id = dr.Field<decimal>("id");
+                    var id = Convert.ToInt32(dr["id"]);
                     var result = new EntityTreeItem
                     {
                         Id = id.ToString(CultureInfo.InvariantCulture),
-                        ParentId = (int?)dr.Field<decimal?>("parentId"),
+                        ParentId = Converter.ToNullableInt32(dr["parentId"]),
                         Alias = Cleaner.RemoveAllHtmlTags(dr.Field<string>("title")),
                         HasChildren = dr.Field<bool>("has_children")
                     };
@@ -782,21 +842,39 @@ cil.locked_by,
             return orderExpression;
         }
 
-        internal static DataRow GetData(int id, int contentId, bool isLive, bool excludeArchive = false)
+        internal static DataRow GetData(int id, int contentId, bool isLive, bool excludeArchive, bool useNativeBool)
         {
             using (new QPConnectionScope())
             {
                 return id == 0
                     ? Common.GetDefaultArticleRow(QPContext.EFContext, QPConnectionScope.Current.DbConnection, contentId)
-                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive, excludeArchive);
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, isLive, excludeArchive, useNativeBool);
             }
         }
 
-        internal static DataTable GetData(IEnumerable<int> ids, int contentId, bool isVirtual, bool excludeArchive = false, string filter = "", bool returnOnlyIds = false)
+        internal static DataTable GetData(
+            IEnumerable<int> ids,
+            int contentId,
+            bool isVirtual,
+            bool excludeArchive,
+            string filter,
+            bool returnOnlyIds,
+            bool useNativeBool
+        )
         {
             using (new QPConnectionScope())
             {
-                return Common.GetArticleTable(QPConnectionScope.Current.DbConnection, ids, contentId, isVirtual, QPContext.IsLive, excludeArchive, filter, returnOnlyIds);
+                return Common.GetArticleTable(
+                    QPConnectionScope.Current.DbConnection,
+                    ids,
+                    contentId,
+                    isVirtual,
+                    QPContext.IsLive,
+                    excludeArchive,
+                    filter,
+                    returnOnlyIds,
+                    useNativeBool
+                );
             }
         }
 
@@ -917,7 +995,9 @@ cil.locked_by,
             {
                 var id = fieldValuesToTest[0].Article.Id;
                 var contentId = fieldValuesToTest[0].Article.Content.Id;
-                var filters = fieldValuesToTest.Select(GetSqlExpression).Union(Enumerable.Repeat("ARCHIVE = 0", 1));
+                var useNativeBool = fieldValuesToTest[0].Article.Content.UseNativeEfTypes;
+                var filter = useNativeBool ? "NOT ARCHIVE" : "ARCHIVE = 0";
+                var filters = fieldValuesToTest.Select(GetSqlExpression).Union(Enumerable.Repeat(filter, 1));
                 var condition = SqlFilterComposer.Compose(filters);
                 var parameters = fieldValuesToTest
                     .Where(n => !string.IsNullOrEmpty(n.Value))
@@ -943,7 +1023,12 @@ cil.locked_by,
             return true;
         }
 
-        internal static int CountDuplicates(ContentConstraint constraint, int[] restrictToIds, int exceptFieldId, bool includeArchive = false)
+        internal static int CountDuplicates(
+            ContentConstraint constraint,
+            int[] restrictToIds,
+            int exceptFieldId,
+            bool includeArchive,
+            bool useNativeBool)
         {
             if (restrictToIds != null && restrictToIds.Length == 0)
             {
@@ -953,8 +1038,13 @@ cil.locked_by,
             using (new QPConnectionScope())
             {
                 var fieldIds = constraint.Rules.Select(n => n.FieldId).Where(n => n != exceptFieldId).ToArray();
-                return Common.CountDuplicates(QPConnectionScope.Current.DbConnection,
-                    constraint.ContentId, fieldIds,restrictToIds, includeArchive
+                return Common.CountDuplicates(
+                    QPConnectionScope.Current.DbConnection,
+                    constraint.ContentId,
+                    fieldIds,
+                    restrictToIds,
+                    includeArchive,
+                    useNativeBool
                 );
             }
         }
@@ -991,20 +1081,24 @@ cil.locked_by,
         /// <param name="fieldId">ID базового поля связи</param>
         /// <param name="id">ID статьи</param>
         /// <returns>список связанных статей через запятую</returns>
-        internal static Dictionary<int, string> GetRelatedItems(IEnumerable<int> fieldIds, int? id, bool excludeArchive = false)
+        internal static Dictionary<int, string> GetRelatedItems(
+            IEnumerable<int> fieldIds, int? id, bool excludeArchive = false)
         {
             var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
                 new Common.FieldInfo()
                 {
                     ContentId = n.ContentId,
                     Name = n.Name,
-                    Id = n.Id
+                    Id = n.Id,
+                    UseNativeBool = n.Content.UseNativeEfTypes
                 }
             ).ToList();
 
             using (new QPConnectionScope())
             {
-                return Common.GetRelatedArticles(QPConnectionScope.Current.DbConnection, fiList, id, QPContext.IsLive, excludeArchive);
+                return Common.GetRelatedArticles(
+                    QPConnectionScope.Current.DbConnection, fiList, id, QPContext.IsLive, excludeArchive
+                );
             }
         }
 
@@ -1043,27 +1137,33 @@ cil.locked_by,
                 {
                     ContentId = field.ContentId,
                     Name = field.Name,
-                    Id = field.Id
+                    Id = field.Id,
+                    UseNativeBool = field.Content.UseNativeEfTypes
+
                 };
                 var dict = Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, new [] {fi}, ids, QPContext.IsLive, excludeArchive)[fieldId];
                 return dict.ToDictionary(n => n.Key, m => string.Join(",", m.Value));
             }
         }
 
-        internal static Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(IEnumerable<int> fieldIds, IEnumerable<int> ids, bool excludeArchive = false)
+        internal static Dictionary<int, Dictionary<int, List<int>>> GetRelatedItemsMultiple(
+            IEnumerable<int> fieldIds, IEnumerable<int> ids, bool excludeArchive = false)
         {
             var fiList = fieldIds.Select(FieldRepository.GetById).Select(n =>
                 new Common.FieldInfo()
                 {
                     ContentId = n.ContentId,
                     Name = n.Name,
-                    Id = n.Id
+                    Id = n.Id,
+                    UseNativeBool = n.Content.UseNativeEfTypes
                 }
             ).ToList();
 
-            using (new QPConnectionScope())
+            using (var scope = new QPConnectionScope())
             {
-                return Common.GetRelatedArticlesMultiple(QPConnectionScope.Current.DbConnection, fiList, ids, QPContext.IsLive, excludeArchive);
+                return Common.GetRelatedArticlesMultiple(
+                    scope.DbConnection, fiList, ids, QPContext.IsLive, excludeArchive
+                );
             }
         }
 
@@ -1366,15 +1466,15 @@ cil.locked_by,
 
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {
-            var treeName = ((IContentRepository)new ContentRepository()).GetTreeFieldName(contentId, 0);
-            if (string.IsNullOrEmpty(treeName))
-            {
-                return null;
-            }
-
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetArticleHierarchy(scope.DbConnection, contentId, treeName);
+                var treeName = ((IContentRepository)new ContentRepository()).GetTreeFieldName(contentId, 0);
+                if (string.IsNullOrEmpty(treeName))
+                {
+                    return null;
+                }
+                var content = ContentRepository.GetById(contentId);
+                return Common.GetArticleHierarchy(scope.DbConnection, contentId, treeName, content.UseNativeEfTypes);
             }
         }
 

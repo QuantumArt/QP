@@ -18,14 +18,16 @@ namespace Quantumart.QP8.BLL.Helpers
         private const string LockedByYouIcon = "locked.gif";
         private const string LockedNotByYouIcon = "locked_by_user.gif";
 
+
         internal static IEnumerable<SimpleDataRow> GetResult(List<DataRow> rows, List<Field> fieldList, bool? onlyIds)
         {
-            var articleIds = rows.Select(x => (int)x.Field<decimal>(FieldName.ContentItemId)).ToList();
+            var rawArticleIds = rows.Select(x => x[FieldName.ContentItemId]).ToList();
+            var articleIds = rawArticleIds.Select(Convert.ToInt32);
             if (onlyIds.HasValue && onlyIds.Value)
             {
-                foreach (var id in articleIds)
+                foreach (var id in rawArticleIds)
                 {
-                    var dr = new SimpleDataRow { { FieldName.ContentItemId, (decimal)id } };
+                    var dr = new SimpleDataRow { { FieldName.ContentItemId, id } };
                     yield return dr;
                 }
             }
@@ -77,7 +79,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     AddInvisibleIcon(dr, row);
                     AddScheduledIcon(dr, row);
 
-                    var currentArticleId = (int)row.Field<decimal>(FieldName.ContentItemId);
+                    var currentArticleId = Convert.ToInt32(row[FieldName.ContentItemId]);
                     var relationCounters = new Dictionary<int, int>();
                     foreach (var field in fieldList)
                     {

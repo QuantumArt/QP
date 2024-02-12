@@ -39,10 +39,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
                         Value = content.Id.ToString()
                     };
                 }
-
                 return null;
             }
         }
+
+        public bool UseNativeTypes => ContentDefaultFilter.GetContent()?.UseNativeEfTypes ?? false;
+
+        public string DefaultRelationFilter => UseNativeTypes ? BLL.Field.DefaultRelationNativeFilter : BLL.Field.DefaultRelationFilter;
 
         public IEnumerable<ListItem> SelectedDefaultFilterArticleListItems
         {

@@ -39,7 +39,7 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     FieldId = fieldId,
                     ContentId = contentId,
-                    ArticleData = dataRows.Select(r => Tuple.Create(Converter.ToInt32(r.Field<decimal>("ID")), r.Field<string>("DATA"))).ToList(),
+                    ArticleData = dataRows.Select(r => Tuple.Create(Converter.ToInt32(r["ID"]), r.Field<string>("DATA"))).ToList(),
                 };
 
                 HttpContext.Session.SetValue(HttpContextSession.RecreateDynamicImagesServiceProcessingContext, context);

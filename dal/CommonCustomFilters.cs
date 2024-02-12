@@ -30,8 +30,10 @@ namespace Quantumart.QP8.DAL
             DbConnection sqlConnection,
             List<DbParameter> parameters,
             DatabaseType dbType,
+            string entityTypeCode,
             int parentId,
-            CustomFilter[] filters)
+            CustomFilter[] filters,
+            bool useNativeEfTypes = false)
         {
             if (filters == null || filters.Length == 0)
             {
@@ -39,26 +41,51 @@ namespace Quantumart.QP8.DAL
             }
 
             var queries = filters
-                .Select((item, index) => GetFilterQuery(sqlConnection, parameters, dbType, parentId, item, index))
+                .Select((item, index) => GetFilterQuery(
+                    sqlConnection, parameters, dbType, entityTypeCode, parentId, item, index, useNativeEfTypes
+                ))
                 .Where(query => !string.IsNullOrEmpty(query))
                 .ToArray();
 
             return SqlFilterComposer.Compose(queries);
         }
 
-        private static string GetFilterQuery(DbConnection sqlConnection, List<DbParameter> parameters, DatabaseType dbType, int parentId, CustomFilter item, int index) => item.Filter switch
+        private static string GetFilterQuery(
+            DbConnection sqlConnection,
+            List<DbParameter> parameters,
+            DatabaseType dbType,
+            string entityTypeCode,
+            int parentId,
+            CustomFilter item,
+            int index,
+            bool useNativeEfTypes
+        )
         {
-            CustomFilter.ArchiveFilter => GetArchiveFilter(parameters, dbType, GetIntValue(item.Value)),
-            CustomFilter.VirtualTypeFilter => GetVirtualTypeFilter(GetIntValue(item.Value)),
-            CustomFilter.RelationFilter => GetRelationFilter(sqlConnection, GetIntValue(item.Value)),
-            CustomFilter.BackwardFilter => GetBackwardFilter(sqlConnection, parameters, dbType, item.Value),
-            CustomFilter.FieldFilter => GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.AllowNull, item.Value, index),
-            CustomFilter.M2MFilter => GetM2MFilter(parameters, dbType, item.Value, index),
-            CustomFilter.FalseFilter => GetFalseFilter(),
-            _ => throw new NotImplementedException($"filter {item.Filter} is not implemented")
-        };
+            switch (item.Filter)
+            {
+                case CustomFilter.ArchiveFilter:
+                    var useBool = useNativeEfTypes && entityTypeCode == EntityTypeCode.Article
+                        && dbType == DatabaseType.Postgres;
+                    object archiveValue = useBool ? GetBoolValue(item.Value) : GetIntValue(item.Value);
+                    return GetArchiveFilter(parameters, dbType, archiveValue);
+                case CustomFilter.VirtualTypeFilter:
+                    return GetVirtualTypeFilter(GetIntValue(item.Value));
+                case CustomFilter.RelationFilter:
+                    return GetRelationFilter(sqlConnection, GetIntValue(item.Value));
+                case CustomFilter.BackwardFilter:
+                    return GetBackwardFilter(sqlConnection, parameters, dbType, item.Value);
+                case CustomFilter.FieldFilter:
+                    return GetFieldFilter(sqlConnection, parameters, dbType, parentId, item.Field, item.AllowNull, item.Value, index);
+                case CustomFilter.M2MFilter:
+                    return GetM2MFilter(parameters, dbType, item.Value, index);
+                case CustomFilter.FalseFilter:
+                    return GetFalseFilter();
+                default:
+                    throw new NotImplementedException($"filter {item.Filter} is not implemented");
+            }
+        }
 
-        private static string GetArchiveFilter(List<DbParameter> parameters, DatabaseType dbType, int archive)
+        private static string GetArchiveFilter(List<DbParameter> parameters, DatabaseType dbType, object archive)
         {
             parameters.AddWithValue("@archive", archive, dbType);
             return "c.archive = @archive";
@@ -84,24 +111,27 @@ namespace Quantumart.QP8.DAL
                 throw new ArgumentException("array expected", nameof(value));
             }
 
-            var query = "SELECT ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @attributeId";
+            var query = "SELECT ca.ATTRIBUTE_NAME, c.USE_NATIVE_EF_TYPES " +
+                " FROM CONTENT_ATTRIBUTE ca " +
+                " INNER JOIN CONTENT c ON c.CONTENT_ID = ca.CONTENT_ID " +
+                " WHERE ATTRIBUTE_ID = @attributeId";
 
             using (var cmd = DbCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@attributeId", fieldId);
 
-                var field = cmd.ExecuteScalar();
-
-                if (DBNull.Value.Equals(field))
+                using (var reader = cmd.ExecuteReader())
                 {
+                    if (reader.Read() && !DBNull.Value.Equals(reader[0]))
+                    {
+                        parameters.AddWithValue("@currentArticleId", articleId, dbType);
+                        var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)reader[0]);
+                        var useNativeBool = (bool)reader[1];
+                        var archiveFilter = useNativeBool ? "not c.archive" : "c.archive = 0";
+                        return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND {archiveFilter}";
+                    }
                     return null;
-                }
-                else
-                {
-                    parameters.AddWithValue("@currentArticleId", articleId, dbType);
-                    var escapedField = SqlQuerySyntaxHelper.EscapeEntityName(dbType, (string)field);
-                    return $"(c.{escapedField} = @currentArticleId OR c.{escapedField} IS NULL) AND c.archive = 0";
                 }
             }
         }
@@ -194,7 +224,7 @@ namespace Quantumart.QP8.DAL
 
                     if (allowNull)
                     {
-                        parameters.AddWithValue(defaultParamName, ids.FirstOrDefault(), dbType);                        
+                        parameters.AddWithValue(defaultParamName, ids.FirstOrDefault(), dbType);
                     }
 
                     isAtomic = false;
@@ -260,6 +290,11 @@ namespace Quantumart.QP8.DAL
         }
 
         private static string GetFalseFilter() => "1 = 0";
+
+        private static bool GetBoolValue(object value)
+        {
+            return Convert.ToBoolean(value);
+        }
 
         private static int GetIntValue(object value)
         {
