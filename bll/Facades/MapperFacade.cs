@@ -1,7 +1,5 @@
 ﻿#pragma warning disable CS0618 // Type or member is obsolete
 
-using System.Collections.Generic;
-using System.Data;
 using AutoMapper;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Mappers.EntityPermissions;

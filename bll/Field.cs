@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -105,7 +105,10 @@ namespace Quantumart.QP8.BLL
 
         public static CustomFilter DefaultExternalRelationFilter = CustomFilter.GetArchiveFilter(0);
         public static readonly string DefaultRelationFilter = "c.archive = 0";
+        public static readonly string DefaultRelationNativeFilter = "not c.archive";
         public static readonly string ArchiveFilter = "c.archive = 1";
+        public static readonly string ArchiveNativeFilter = "c.archive";
+
 
         /// <summary>
         /// Разрешенные DataBase типы колонок полей
@@ -496,7 +499,17 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public string RelationFilter => SqlFilterComposer.Compose(UseRelationCondition ? "(" + RelationCondition + ")" : "", DefaultRelationFilter);
+        [ValidateNever]
+        public string RelationFilter
+        {
+            get
+            {
+                var useNative = RelatedToContent?.UseNativeEfTypes ?? false;
+                var defaultFilter = useNative ? DefaultRelationNativeFilter : DefaultRelationFilter;
+                return SqlFilterComposer.Compose(
+                    UseRelationCondition ? "(" + RelationCondition + ")" : "", defaultFilter);
+            }
+        }
 
         public List<CustomFilter> ExternalRelationFilter
         {
@@ -1600,14 +1613,14 @@ namespace Quantumart.QP8.BLL
             {
                 if (IsNew && !Constraint.IsComplex)
                 {
-                    if (_contentRepository.IsAnyArticle(ContentId))
+                    if (_contentRepository.CountArticles(ContentId) > 1)
                     {
                         errors.ErrorFor(f => IsUnique, FieldStrings.CannotCreateUniqueFieldBecauseOfExisting);
                     }
                 }
                 else
                 {
-                    var count = Constraint.CountDuplicates(0);
+                    var count = Constraint.CountDuplicates(0, Content.UseNativeEfTypes);
                     if (count > 0)
                     {
                         errors.ErrorFor(f => IsUnique, string.Format(FieldStrings.ExistingDataIsNotUnique, count));
@@ -3042,10 +3055,10 @@ namespace Quantumart.QP8.BLL
                 if (UseRelationCondition)
                 {
                     filter.Add(CustomFilter.GetRelationFilter(Id));
-                }  
+                }
             }
 
-            return MapperFacade.CustomFilterMapper.GetBizList(filter).ToArray();           
+            return MapperFacade.CustomFilterMapper.GetBizList(filter).ToArray();
         }
 
         public void ParseStringEnumJson(string json)

@@ -30,6 +30,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
         [JsonIgnore]
         public bool IsNew => EntityData.IsNew;
 
+        [ValidateNever]
+        [BindNever]
+        [JsonIgnore]
+        public bool IsPostgres => QPContext.DatabaseType == DatabaseType.Postgres;
+
         public override MainComponentType MainComponentType => MainComponentType.Editor;
 
         [ValidateNever]

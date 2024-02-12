@@ -85,7 +85,10 @@
     @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
     @Html.CheckBoxFieldFor(s => s.Data.UseTokens)
     @Html.CheckBoxFieldFor(s => s.Data.UseDpc)
-    @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
+    if (!Model.IsPostgres)
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
+    }
     @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
   }
 

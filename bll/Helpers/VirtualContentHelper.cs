@@ -1356,9 +1356,9 @@ namespace Quantumart.QP8.BLL.Helpers
             }
         }
 
-        private static void CreateFrontendViews(EntityObject newContent)
+        private static void CreateFrontendViews(Content newContent)
         {
-            VirtualContentRepository.CreateFrontendViews(newContent.Id);
+            VirtualContentRepository.CreateFrontendViews(newContent.Id, newContent.UseNativeEfTypes);
         }
 
         /// <summary>

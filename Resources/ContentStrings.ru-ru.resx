@@ -504,4 +504,7 @@
   <data name="TraceImportScript" xml:space="preserve">
     <value>Скрипт трассировки после импорта СSV</value>
   </data>
+  <data name="UseNativeEfTypes" xml:space="preserve">
+    <value>Использовать естественные типы EF в столбцах контентной таблицы</value>
+  </data>
 </root>

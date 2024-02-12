@@ -6,9 +6,9 @@ namespace Quantumart.QP8.BLL.ListItems
 {
     public class ArticleListItem
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
-        public decimal ParentId { get; set; }
+        public int ParentId { get; set; }
 
         public string Title { get; set; }
 

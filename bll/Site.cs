@@ -320,6 +320,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "ExternalDevelopment", ResourceType = typeof(SiteStrings))]
         public bool ExternalDevelopment { get; set; }
 
+        [Display(Name = "UseNativeEfTypes", ResourceType = typeof(SiteStrings))]
+        public bool UseNativeEfTypes { get; set; }
+
         private IEnumerable<QpPluginFieldValue> _qpPluginFieldValues;
         public IEnumerable<QpPluginFieldValue> QpPluginFieldValues
         {

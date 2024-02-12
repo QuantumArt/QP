@@ -92,6 +92,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CustomActionStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="ContentStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContentStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="SiteStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SiteStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -138,6 +148,14 @@
     <EmbeddedResource Update="CustomActionStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CustomActionStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ContentStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ContentStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SiteStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SiteStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

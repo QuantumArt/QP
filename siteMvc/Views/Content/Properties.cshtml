@@ -15,6 +15,10 @@
     @Html.CheckBoxFieldFor(s => s.Data.AutoArchive)
     @Html.CheckBoxFieldFor(s => s.Data.IsShared)
     @Html.CheckBoxFieldFor(s => s.Data.DisableChangingActions)
+    if (Model.IsPostgres)
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.UseNativeEfTypes)
+    }
   }
 
   using (Html.BeginFieldGroup(ContentStrings.Legend_FriendlyName))

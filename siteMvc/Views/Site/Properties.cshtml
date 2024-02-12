@@ -42,8 +42,11 @@
                                                               Model.BinBlock,
                                                               Model.OnScreenAssemblingParametersBlock
                                                             }))
-    @Html.CheckBoxFieldFor(s=>s.Data.ReplaceUrlsInDB)
-
+    @Html.CheckBoxFieldFor(s => s.Data.ReplaceUrlsInDB)
+    if (Model.IsPostgres)
+    {
+      @Html.CheckBoxFieldFor(s => s.Data.UseNativeEfTypes)
+    }
     @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
   }
 

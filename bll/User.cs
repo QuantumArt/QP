@@ -226,7 +226,7 @@ namespace Quantumart.QP8.BLL
                 var groupIDs = Groups.Select(g => g.Id);
                 var userInAdminDescGroups =
                     UserGroupRepository.GetAdministratorsHierarhy()
-                        .Select(r => Convert.ToInt32(r.Field<decimal>("CHILD")))
+                        .Select(r => Convert.ToInt32(r["CHILD"]))
                         .Intersect(groupIDs)
                         .Any();
                 if (userInAdminDescGroups)
