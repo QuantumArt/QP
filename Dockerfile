@@ -1,13 +1,15 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
-LABEL stage=intermediate
-
-RUN apt-get install -y \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash \
-    && apt-get install -y nodejs
-
-RUN	npm install gulp cross-env -g
-COPY package.json package-lock.json ./
+FROM node:16-bullseye as front-builder
+LABEL stage=intermediate-front
+WORKDIR /src
+RUN npm install gulp cross-env -g
+COPY package.json package-lock.json .babelrc .browserslistrc ./
 RUN npm ci
+
+COPY siteMvc ./siteMvc
+RUN npm run build
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+LABEL stage=intermediate-back
 
 WORKDIR /src
 COPY *.sln NuGet.config ./
@@ -15,7 +17,8 @@ ADD projectfiles.tar .
 RUN dotnet restore
 
 COPY . .
-RUN npm run build
+COPY --from=front-builder /src/siteMvc/Scripts/build ./siteMvc/Scripts/build
+COPY --from=front-builder /src/siteMvc/Static/build ./siteMvc/Static/build
 
 WORKDIR /src/siteMvc
 RUN dotnet publish "WebMvc.csproj" -c Release -o /app/out -f net6.0
