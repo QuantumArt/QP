@@ -60,7 +60,7 @@ export class BackendFilePreviewListView extends BackendFileNameListView {
             + '</div>',
             $('<div>').text(item.Name).html(),
             item.Modified, item.Size,
-            link, $('<div>').text(item.FullName).html(), item.Dimensions));
+            link, $('<div>').text(item.FullName).html(), item.Dimensions ? item.Dimensions : '&nbsp;'));
       });
     } else {
       html.cat($l.FileList.noRecords);
