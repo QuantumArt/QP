@@ -41,6 +41,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
                 FullName = file.Name,
                 Name = string.Concat(Typographer.CutShort(Path.GetFileNameWithoutExtension(file.Name), fileShortNameLength), Path.GetExtension(file.Name)),
                 Size = file.Size,
+                Dimensions = file.Dimensions,
                 Modified = file.Modified.ToLongTimeString(),
                 FileType = file.FileType
             };
@@ -62,6 +63,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
         /// Размер файла
         /// </summary>
         public string Size { get; set; }
+
+        /// <summary>
+        /// Разрешение изображения
+        /// </summary>
+        public string Dimensions { get; set; }
 
         /// <summary>
         /// Дата создания файла
