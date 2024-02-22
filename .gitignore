@@ -282,3 +282,5 @@ package/pack/qp8release
 /.env
 *.lutconfig
 QuantumArt.Tests/QP8.Integration.Tests/.runsettings
+**/*.dev.xml
+**/dev.env
