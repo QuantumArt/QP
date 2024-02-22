@@ -879,7 +879,7 @@ export class BackendEntityDataListBase extends Observable {
 
       const newValue = JSON.stringify(this._filter);
 
-      return oldValue !== newValue;
+      return oldValue !== '[]' && oldValue !== newValue;
     }
 
     return false;
