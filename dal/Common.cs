@@ -2738,10 +2738,10 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
             }
             else if (filter.IsManyToMany)
             {
-                fromBuilder.AppendLine($" inner join (select distinct linked_item_id from content_{filter.RelatedContentId}_united link_sec_{filter.FieldId} {withNoLock} ");
-                fromBuilder.AppendLine($" inner join item_link links_{filter.FieldId} {withNoLock} on link_sec_{filter.FieldId}.content_item_id = links_{filter.FieldId}.item_id and links_{filter.FieldId}.link_id = {filter.LinkId} ");
+                fromBuilder.AppendLine($" inner join (select distinct links_{filter.FieldId}.id from content_{filter.RelatedContentId}_united link_sec_{filter.FieldId} {withNoLock} ");
+                fromBuilder.AppendLine($" inner join item_link_{filter.LinkId}_united links_{filter.FieldId} {withNoLock} on link_sec_{filter.FieldId}.content_item_id = links_{filter.FieldId}.linked_id ");
                 fromBuilder.AppendLine($" inner join ({securitySql}) pi_{filter.FieldId} on link_sec_{filter.FieldId}.content_item_id = pi_{filter.FieldId}.content_item_id ");
-                fromBuilder.AppendLine($" ) as sec_items_{filter.FieldId} on c.content_item_id = sec_items_{filter.FieldId}.linked_item_id ");
+                fromBuilder.AppendLine($" ) as sec_items_{filter.FieldId} on c.content_item_id = sec_items_{filter.FieldId}.id ");
             }
             else
             {

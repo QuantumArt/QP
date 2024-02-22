@@ -412,8 +412,12 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
 
         private static IEnumerable<ArticleRelationSecurityParameter> GetRelationSecurityFilters(IEnumerable<Field> fields)
         {
-            return fields.Where(n => n.UseRelationSecurity && !n.IsClassifier && n.RelatedToContent.AllowItemsPermission || n.UseTypeSecurity).Select(n => new ArticleRelationSecurityParameter
+            return fields.Where(n =>
+                    n.UseRelationSecurity && !n.IsClassifier && n.RelatedToContent.AllowItemsPermission
+                    || n.UseTypeSecurity
+                ).Select(n => new ArticleRelationSecurityParameter
             {
+
                 FieldId = n.Id,
                 FieldName = n.Name,
                 IsManyToMany = n.ExactType == FieldExactTypes.M2MRelation,

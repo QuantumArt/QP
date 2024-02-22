@@ -91,7 +91,7 @@ BackendEntityObject.getSimpleEntityList = function (
       entities = data;
     }
   }, jqXHR => {
-    entities = [];
+    entities = null;
     $q.processGenericAjaxError(jqXHR);
   });
 
