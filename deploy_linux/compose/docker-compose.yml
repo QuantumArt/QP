@@ -1,6 +1,5 @@
 volumes:
   qp-temp-volume:
-  qp-library-volume:
 services:
   qp-configuration:
     container_name: qp-configuration
@@ -35,7 +34,7 @@ services:
           memory: 256MB
     volumes:
      - qp-temp-volume:/qptemp
-     - qp-library-volume:/qplibrary
+     - ${HOST_LIBRARY_PATH}:/qplibrary
   qp-storage:
     container_name: qp-storage-stable
     image: 'qpcms/qp-storage:${STORAGE_TAG}'
@@ -51,4 +50,4 @@ services:
         reservations:
           memory: 128MB
     volumes:
-     - qp-library-volume:/app/wwwroot
+     - ${HOST_LIBRARY_PATH}:/app/wwwroot

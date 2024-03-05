@@ -860,6 +860,10 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers
 
             var dbType = QPContext.DatabaseType;
             var fieldName = SqlQuerySyntaxHelper.EscapeEntityName(dbType, p.FieldColumn.ToLower());
+            if (dbType == DatabaseType.Postgres)
+            {
+                fieldName += "::int";
+            }
             return (bool)p.QueryParams[0]
                 ? $"({GetTableAlias(p)}.{fieldName} IS NULL)"
                 : $"({GetTableAlias(p)}.{fieldName} = {((bool)p.QueryParams[1] ? 1 : 0)})";
