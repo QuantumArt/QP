@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Validators.TextFieldTag;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -48,6 +49,17 @@ namespace Quantumart.QP8.BLL
             if (Field.Required && string.IsNullOrEmpty(Value))
             {
                 errors.Error(Field.FormName, Value, string.Format(ArticleStrings.MissingValue, Field.DisplayName));
+            }
+
+            if (QPContext.TextFieldTagValidation.Enabled
+                && Field.ExactType is FieldExactTypes.File
+                    or FieldExactTypes.Image
+                    or FieldExactTypes.String
+                    or FieldExactTypes.Textbox
+                    or FieldExactTypes.VisualEdit
+                && !string.IsNullOrWhiteSpace(Value))
+            {
+                TextFieldTagValidator.Validate(Field.FormName, Value, errors);
             }
 
             if (Field.ExactType == FieldExactTypes.String)

@@ -996,6 +996,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restricted tags &apos;{0}&apos;.
+        /// </summary>
+        public static string RestictedHtmlTag {
+            get {
+                return ResourceManager.GetString("RestictedHtmlTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restricted source domain &apos;{0}&apos; for tag &apos;{1}&apos;.
+        /// </summary>
+        public static string RestictedSourceInHtmlTag {
+            get {
+                return ResourceManager.GetString("RestictedSourceInHtmlTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Saturday.
         /// </summary>
         public static string Saturday {

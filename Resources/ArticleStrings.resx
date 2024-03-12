@@ -642,4 +642,10 @@
   <data name="CurrentStatus" xml:space="preserve">
     <value>Current status</value>
   </data>
+  <data name="RestictedHtmlTag" xml:space="preserve">
+    <value>Restricted tags '{0}'</value>
+  </data>
+  <data name="RestictedSourceInHtmlTag" xml:space="preserve">
+    <value>Restricted source domain '{0}' for tag '{1}'</value>
+  </data>
 </root>
