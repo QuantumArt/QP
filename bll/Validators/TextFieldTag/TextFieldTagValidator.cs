@@ -8,6 +8,8 @@ namespace Quantumart.QP8.BLL.Validators.TextFieldTag;
 
 public class TextFieldTagValidator
 {
+    private record TagInfo(string Name, string Contents);
+
     private static readonly Regex AllTagsRegex = new("<[^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TagNameRegex = new("<(?<TagName>[^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex SrcAttributeRegex = new("(formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Qoute>[\"'])?(?<Addresses>(?(Qoute)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -21,7 +23,7 @@ public class TextFieldTagValidator
         foreach (Match tag in tags)
         {
             string tagName = TagNameRegex.Match(tag.Value).Groups["TagName"].Value;
-            tagInfos.Add(new() { Contents = tag.Value, Name = tagName });
+            tagInfos.Add(new(tagName, tag.Value));
         }
 
         List<TagInfo> allowedTags = tagInfos.Where(x => QPContext.TextFieldTagValidation.AllowedTags.Any(y => y.Tag == x.Name)).ToList();
