@@ -8,9 +8,9 @@ namespace Quantumart.QP8.BLL.Validators.TextFieldTag;
 
 public class TextFieldTagValidator
 {
-    private static readonly Regex AllTagsRegex = new("<.*?>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex TagNameRegex = new("<(.+?)[\\s>/]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex SrcAttributeRegex = new("(src|srcset|href)=[\"'](.+?)[\"']", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex AllTagsRegex = new("<[^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex TagNameRegex = new("<([^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex SrcAttributeRegex = new("(srcset|src|href)([\\s=]+)([\"']?)([^\\s\"'>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public static void Validate(string formName, string value, RulesException<Article> errors)
     {
@@ -51,7 +51,7 @@ public class TextFieldTagValidator
                     continue;
                 }
 
-                Uri url = new(srcAttribute.Groups[2].Value);
+                Uri url = new(srcAttribute.Groups[4].Value);
 
                 if (!allowedDomains.Contains(url.Host))
                 {
