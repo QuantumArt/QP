@@ -6,5 +6,5 @@ public class TextFieldTagValidationSettings
 {
     public bool Enabled { get; set; }
     public bool LogValidationError { get; set; }
-    public List<HtmlTag> AllowedTags { get; set; }
+    public List<AllowedTag> AllowedTags { get; set; }
 }

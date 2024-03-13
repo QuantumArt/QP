@@ -107,7 +107,7 @@ namespace Quantumart.QP8.WebMvc
                     }
                 }
 
-                Configuration.Bind(nameof(TextFieldTagValidationSettings) ,QPContext.TextFieldTagValidation);
+                Configuration.Bind("TextFieldTags", QPContext.TextFieldTagValidation);
 
                 services.Configure<FormOptions>(Configuration.GetSection("Form"));
 

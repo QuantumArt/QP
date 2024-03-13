@@ -2,6 +2,6 @@
 
 public class TagInfo
 {
-    public string Tag { get; set; }
-    public string TagName { get; set; }
+    public string Contents { get; set; }
+    public string Name { get; set; }
 }

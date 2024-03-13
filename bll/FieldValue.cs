@@ -57,6 +57,7 @@ namespace Quantumart.QP8.BLL
                     or FieldExactTypes.String
                     or FieldExactTypes.Textbox
                     or FieldExactTypes.VisualEdit
+                && QPContext.TextFieldTagValidation.AllowedTags is { Count: > 0 }
                 && !string.IsNullOrWhiteSpace(Value))
             {
                 TextFieldTagValidator.Validate(Field.FormName, Value, errors);

@@ -11,7 +11,7 @@ public class TextFieldTagValidator
     private static readonly Regex AllTagsRegex = new("<[^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TagNameRegex = new("<(?<TagName>[^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex SrcAttributeRegex = new("(formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Qoute>[\"'])?(?<Addresses>(?(Qoute)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly string[] UrlSeparators = { " ", ",", ", ", ";", "; " };
+    private static readonly string[] UrlSeparators = { " ", ",", ";" };
 
     public static void Validate(string formName, string value, RulesException<Article> errors)
     {
@@ -21,30 +21,30 @@ public class TextFieldTagValidator
         foreach (Match tag in tags)
         {
             string tagName = TagNameRegex.Match(tag.Value).Groups["TagName"].Value;
-            tagInfos.Add(new() { Tag = tag.Value, TagName = tagName });
+            tagInfos.Add(new() { Contents = tag.Value, Name = tagName });
         }
 
-        List<TagInfo> allowedTags = tagInfos.Where(x => QPContext.TextFieldTagValidation.AllowedTags.Any(y => y.Tag == x.TagName)).ToList();
-        List<TagInfo> disallowedTags = tagInfos.Where(x => QPContext.TextFieldTagValidation.AllowedTags.All(y => y.Tag != x.TagName)).ToList();
+        List<TagInfo> allowedTags = tagInfos.Where(x => QPContext.TextFieldTagValidation.AllowedTags.Any(y => y.Tag == x.Name)).ToList();
+        List<TagInfo> disallowedTags = tagInfos.Where(x => QPContext.TextFieldTagValidation.AllowedTags.All(y => y.Tag != x.Name)).ToList();
 
         if (disallowedTags.Count > 0)
         {
-            errors.Error(formName, value, string.Format(ArticleStrings.RestictedHtmlTag, string.Join(",", disallowedTags.Select(x => x.TagName))));
+            errors.Error(formName, value, string.Format(ArticleStrings.RestictedHtmlTag, string.Join(",", disallowedTags.Select(x => x.Name))));
         }
 
         foreach (TagInfo tag in allowedTags)
         {
             List<string> allowedDomains = QPContext.TextFieldTagValidation.AllowedTags
-               .Where(x => x.Tag == tag.TagName)
+               .Where(x => x.Tag == tag.Name)
                .Select(x => x.AllowedDomains)
                .First();
 
-            if (allowedDomains is null)
+            if (allowedDomains is { Count: 0 })
             {
                 continue;
             }
 
-            MatchCollection srcAttributes = SrcAttributeRegex.Matches(tag.Tag);
+            MatchCollection srcAttributes = SrcAttributeRegex.Matches(tag.Contents);
             foreach (Match srcAttribute in srcAttributes)
             {
                 string[] addresses = srcAttribute.Groups["Addresses"].Value.Split(UrlSeparators, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -54,21 +54,21 @@ public class TextFieldTagValidator
                     Uri url;
                     try
                     {
-                        url = new(address);
+                        url = new(address, UriKind.RelativeOrAbsolute);
                     }
                     catch (UriFormatException)
                     {
                         continue;
                     }
 
-                    if (string.IsNullOrWhiteSpace(url.Host))
+                    if (!url.IsAbsoluteUri || string.IsNullOrWhiteSpace(url.Host))
                     {
                         continue;
                     }
 
                     if (!allowedDomains.Contains(url.Host))
                     {
-                        errors.Error(formName, value, string.Format(ArticleStrings.RestictedSourceInHtmlTag, url.Host, tag.TagName));
+                        errors.Error(formName, value, string.Format(ArticleStrings.RestictedSourceInHtmlTag, url.Host, tag.Name));
                     }
                 }
             }
