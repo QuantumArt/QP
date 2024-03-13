@@ -17,17 +17,23 @@
 
 #### Postgres
 
-Если используется пользователь, отличный от `postgres`, необходимо дать следующие права на базу:
+Если для работы QP8.CMS и сайтов на его основе используется пользователь PG, отличный от `postgres`, необходимо дать следующие права на базу:
 
 ``` sql
-GRANT CONNECT ON DATABASE
-GRANT USAGE ON SCHEMA public
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public 
-GRANT EXECUTE ON ALL ROUTINES IN SCHEMA public
+GRANT CONNECT, TEMP ON DATABASE;
+GRANT USAGE, CREATE ON SCHEMA qp
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA qp
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA qp
+GRANT EXECUTE ON ALL ROUTINES IN SCHEMA qp
+ALTER DEFAULT PRIVILEGES IN SCHEMA qp GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES
+ALTER DEFAULT PRIVILEGES IN SCHEMA qp GRANT USAGE, SELECT ON SEQUENCES 
+ALTER DEFAULT PRIVILEGES IN SCHEMA qp GRANT EXECUTE ON ROUTINES
 ```
 
-Также необходимо сменить владельца у [пользовательских таблиц и представлений](db/customer), выполнив хранимую процедуру `qp_change_contents_ownership`.
+Также необходимо сменить:
+
+* `search_path` на значение `qp,public` либо в свойствах роли пользователя для всех баз, либо в строке подключения для конкретной базы.
+* владельца у [пользовательских таблиц и представлений](db/customer), выполнив хранимую процедуру `qp_change_contents_ownership` (только для пользователя, под которым работает QP8.CMS).
 
 ## Разделы описания
 
