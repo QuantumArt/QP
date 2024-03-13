@@ -9,8 +9,9 @@ namespace Quantumart.QP8.BLL.Validators.TextFieldTag;
 public class TextFieldTagValidator
 {
     private static readonly Regex AllTagsRegex = new("<[^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex TagNameRegex = new("<([^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex SrcAttributeRegex = new("(srcset|src|href)([\\s=]+)([\"']?)([^\\s\"'>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex TagNameRegex = new("<(?<TagName>[^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex SrcAttributeRegex = new("(formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Qoute>[\"'])?(?<Addresses>(?(Qoute)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly string[] UrlSeparators = { " ", ",", ", ", ";", "; " };
 
     public static void Validate(string formName, string value, RulesException<Article> errors)
     {
@@ -19,8 +20,8 @@ public class TextFieldTagValidator
 
         foreach (Match tag in tags)
         {
-            string tagName = TagNameRegex.Match(tag.Value).Groups[1].Value;
-            tagInfos.Add(new() { Tag = tag.Value, TagName = tagName});
+            string tagName = TagNameRegex.Match(tag.Value).Groups["TagName"].Value;
+            tagInfos.Add(new() { Tag = tag.Value, TagName = tagName });
         }
 
         List<TagInfo> allowedTags = tagInfos.Where(x => QPContext.TextFieldTagValidation.AllowedTags.Any(y => y.Tag == x.TagName)).ToList();
@@ -46,16 +47,29 @@ public class TextFieldTagValidator
             MatchCollection srcAttributes = SrcAttributeRegex.Matches(tag.Tag);
             foreach (Match srcAttribute in srcAttributes)
             {
-                if (srcAttribute.Groups.Count == 0)
-                {
-                    continue;
-                }
+                string[] addresses = srcAttribute.Groups["Addresses"].Value.Split(UrlSeparators, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-                Uri url = new(srcAttribute.Groups[4].Value);
-
-                if (!allowedDomains.Contains(url.Host))
+                foreach (string address in addresses)
                 {
-                    errors.Error(formName, value, string.Format(ArticleStrings.RestictedSourceInHtmlTag, url.Host, tag.TagName));
+                    Uri url;
+                    try
+                    {
+                        url = new(address);
+                    }
+                    catch (UriFormatException)
+                    {
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(url.Host))
+                    {
+                        continue;
+                    }
+
+                    if (!allowedDomains.Contains(url.Host))
+                    {
+                        errors.Error(formName, value, string.Format(ArticleStrings.RestictedSourceInHtmlTag, url.Host, tag.TagName));
+                    }
                 }
             }
         }
