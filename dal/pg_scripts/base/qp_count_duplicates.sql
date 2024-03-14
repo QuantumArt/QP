@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS qp_count_duplicates(int, int[], int[], bool);
+
 CREATE OR REPLACE function qp_count_duplicates(
     content_id int,
     field_ids int[],
