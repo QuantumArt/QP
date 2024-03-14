@@ -10,6 +10,13 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.4.0
+
+* Добавлена поддержка нативных типов EF в контентных таблицах (#173019)
+* Обновлены библиотеки (#174238):
+  * Quantumart.AspNetCore до 6.0.15
+  * SixLabors.ImageSharp до 3.1.3
+
 ### Quantumart.QP8.BLL.3.3.12
 
 * Обновлена библиотека SqlClient до 4.8.6
