@@ -12,7 +12,7 @@ public class TextFieldTagValidator
 
     private static readonly Regex AllTagsRegex = new("<[^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TagNameRegex = new("<(?<TagName>[^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex SrcAttributeRegex = new("(formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Qoute>[\"'])?(?<Addresses>(?(Qoute)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex SrcAttributeRegex = new("(?:formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Quote>[\"'])?(?<Addresses>(?(Quote)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly string[] UrlSeparators = { " ", ",", ";" };
 
     public static void Validate(string formName, string value, RulesException<Article> errors)
