@@ -56,10 +56,11 @@ export class BackendFilePreviewListView extends BackendFileNameListView {
             + '<h5><ul><li title="{4}">{0}</li></ul></h5>'
             + '<span>{1}</span>'
             + '<span>{2}</span>'
+            + '<span>{5}</span>'
             + '</div>',
             $('<div>').text(item.Name).html(),
             item.Modified, item.Size,
-            link, $('<div>').text(item.FullName).html()));
+            link, $('<div>').text(item.FullName).html(), item.Dimensions ? item.Dimensions : '&nbsp;'));
       });
     } else {
       html.cat($l.FileList.noRecords);

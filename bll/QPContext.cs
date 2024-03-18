@@ -20,6 +20,7 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Validators.TextFieldTag;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
@@ -783,5 +784,7 @@ namespace Quantumart.QP8.BLL
                 _externalContextStorageKeys = new HashSet<string>(value.Keys);
             }
         }
+
+        public static TextFieldTagValidationSettings TextFieldTagValidation { get; set; } = new();
     }
 }
