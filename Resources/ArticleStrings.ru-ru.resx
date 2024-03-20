@@ -643,9 +643,9 @@
     <value>Неизвестен</value>
   </data>
   <data name="RestictedHtmlTag" xml:space="preserve">
-    <value>Запрещённые тэги '{0}'</value>
+    <value>Запрещённые теги '{0}'</value>
   </data>
   <data name="RestictedSourceInHtmlTag" xml:space="preserve">
-    <value>Запрещённый домен источника '{0}' у тэга '{1}'</value>
+    <value>Запрещённый домен источника '{0}' у тега '{1}'</value>
   </data>
 </root>
