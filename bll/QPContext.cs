@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading;
 using System.Transactions;
@@ -749,16 +750,16 @@ namespace Quantumart.QP8.BLL
             dbContext.SaveChanges();
         }
 
-        private static string GetUserIpAddress()
+        public static string GetUserIpAddress()
         {
-            string ipAddress = HttpContext.Request.Headers["X-Forwarded-For"];
+            IPAddress ip = HttpContext.Connection.RemoteIpAddress;
 
-            if (string.IsNullOrEmpty(ipAddress))
+            if (ip is null)
             {
-                ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+                return "Non TCP connection";
             }
 
-            return ipAddress;
+            return ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4().ToString() : ip.ToString();
         }
 
         public static void SetServiceProvider(IServiceProvider provider)

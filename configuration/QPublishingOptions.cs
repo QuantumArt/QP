@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.HttpOverrides;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Configuration
@@ -68,5 +69,7 @@ namespace Quantumart.QP8.Configuration
         public bool ForceHttpForImageResizing { get; set; }
 
         public string SessionEncryptionKeysPath { get; set; }
+
+        public string XForwardedForHeaderName { get; set; } = ForwardedHeadersDefaults.XForwardedForHeaderName;
     }
 }
