@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
@@ -57,10 +55,9 @@ namespace Quantumart.QP8.BLL
                     or FieldExactTypes.String
                     or FieldExactTypes.Textbox
                     or FieldExactTypes.VisualEdit
-                && QPContext.TextFieldTagValidation.AllowedTags is { Count: > 0 }
                 && !string.IsNullOrWhiteSpace(Value))
             {
-                TextFieldTagValidator.Validate(Field.FormName, Value, errors);
+                TextFieldTagValidator.Validate(this, errors);
             }
 
             if (Field.ExactType == FieldExactTypes.String)

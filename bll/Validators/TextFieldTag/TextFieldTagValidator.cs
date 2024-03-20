@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Validators.TextFieldTag;
@@ -15,10 +17,12 @@ public class TextFieldTagValidator
     private static readonly Regex SrcAttributeRegex = new("(?:formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Quote>[\"'])?(?<Addresses>(?(Quote)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly string[] UrlSeparators = { " ", ",", ";" };
 
-    public static void Validate(string formName, string value, RulesException<Article> errors)
+    private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
+    public static void Validate(FieldValue fieldValue, RulesException<Article> errors)
     {
         List<TagInfo> tagInfos = new();
-        MatchCollection tags = AllTagsRegex.Matches(value);
+        MatchCollection tags = AllTagsRegex.Matches(fieldValue.Value);
 
         foreach (Match tag in tags)
         {
@@ -31,7 +35,7 @@ public class TextFieldTagValidator
 
         if (disallowedTags.Count > 0)
         {
-            errors.Error(formName, value, string.Format(ArticleStrings.RestictedHtmlTag, string.Join(",", disallowedTags.Select(x => x.Name))));
+            AddError(fieldValue, string.Format(ArticleStrings.RestictedHtmlTag, string.Join(",", disallowedTags.Select(x => x.Name).Distinct())), errors);
         }
 
         foreach (TagInfo tag in allowedTags)
@@ -70,10 +74,30 @@ public class TextFieldTagValidator
 
                     if (!allowedDomains.Contains(url.Host))
                     {
-                        errors.Error(formName, value, string.Format(ArticleStrings.RestictedSourceInHtmlTag, url.Host, tag.Name));
+                        AddError(fieldValue, string.Format(ArticleStrings.RestictedSourceInHtmlTag, url.Host, tag.Name), errors);
                     }
                 }
             }
+        }
+    }
+
+    private static void AddError(FieldValue fieldValue, string error, RulesException<Article> errors)
+    {
+        errors.Error(fieldValue.Field.FormName, fieldValue.Value, error);
+
+        if (QPContext.TextFieldTagValidation.LogValidationError)
+        {
+            Logger.Warn()
+                .Message("Attempt to save malicious text in article. User Name: {User}\nIP: {IP}\nContent Id: {ContentId}\nContent Name: {ContentName}\nArticle Id: {ArticleId}\nField: {FieldName}\nData: {UserInput}\nValidation Error: {ValidationError}",
+                    QPContext.CurrentUserName,
+                    QPContext.GetUserIpAddress(),
+                    fieldValue.Article.ContentId,
+                    fieldValue.Article.DisplayContentName,
+                    fieldValue.Article.Id,
+                    fieldValue.Field.Name,
+                    fieldValue.Value,
+                    error)
+                .Write();
         }
     }
 }

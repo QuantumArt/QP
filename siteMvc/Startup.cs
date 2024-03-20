@@ -68,7 +68,6 @@ using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.FileSynchronization;
-using Quantumart.QP8.BLL.Validators.TextFieldTag;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -136,6 +135,7 @@ namespace Quantumart.QP8.WebMvc
                 services.Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedProtoHeaderName = "X-FORWARDED-PROTO";
+                    options.ForwardedForHeaderName = qpOptions.XForwardedForHeaderName;
 
                     options.ForwardedHeaders =
                         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
