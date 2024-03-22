@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -16,7 +14,6 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL.Entities;
 using UserTask = QA.Workflow.Models.UserTask;
 using UserTaskInfo = Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTasksInfo;
 
@@ -33,7 +30,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string WorkflowIdentityFieldName = "WorkflowID";
     private const string MainSchemaFieldName = "IsMainSchema";
     private const string SchemaIdFieldName = "SchemaId";
-    private const string NewWorkflowStatusName = "Процесс запущен";
+
 
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
@@ -70,8 +67,8 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 ProcessName = workflowName
             };
 
-            int schemaNameFieldId = GetValueFromQpConfig<int>(SchemaNameFieldIdSettingName);
-            int schemaFileFieldId = GetValueFromQpConfig<int>(SchemaFileFieldIdSettingName);
+            int schemaNameFieldId = DbRepository.GetAppSettings<int>(SchemaNameFieldIdSettingName, true);
+            int schemaFileFieldId = DbRepository.GetAppSettings<int>(SchemaFileFieldIdSettingName, true);
 
             int[] schemas = workflowFields.Single(f => f.Field.Name == WorkflowSchemaRelationFieldName).RelatedItems;
 
@@ -127,11 +124,11 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 list.Count == 0 ? "not found" : list.First().Text);
 
             int workflowContentId = GetContentIdForWorkflow(contentItemId, contentId);
-            int externalWorkflowContentId = GetValueFromQpConfig<int>(ContentIdSettingName);
+            int externalWorkflowContentId = DbRepository.GetAppSettings<int>(ContentIdSettingName, true);
 
             Content assignmentsContent = ContentRepository.GetById(externalWorkflowContentId);
             int fieldId = assignmentsContent.Fields.Single(f => f.Name == WorkflowContentRelationFieldName).Id;
-            Dictionary<int, string> workflowsToStart = ArticleRepository.GetRelatedItems(new int[1] { fieldId }, workflowContentId);
+            Dictionary<int, string> workflowsToStart = ArticleRepository.GetRelatedItems(new[] { fieldId }, workflowContentId);
 
             if (workflowsToStart.Count == 0)
             {
@@ -168,11 +165,18 @@ public class ExternalWorkflowService : IExternalWorkflowService
                     throw new InvalidOperationException("Process not started.");
                 }
 
-                SaveStartedWorkflowInfoToDb(result,
+                try
+                {
+                    ExternalWorkflowRepository.SaveStartedWorkflowInfoToDb(result,
                     workflow.WorkflowName,
                     list.Count == 0 ? contentItemId.ToString() : list.First().Text,
                     workflow.WorkflowId,
                     contentItemId);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Error while saving workflow process info to db");
+                }
             }
 
             return true;
@@ -189,64 +193,6 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
     }
 
-    private void SaveStartedWorkflowInfoToDb(string processId, string workflowName, string articleName, int workflowId, int contentItemId)
-    {
-        try
-        {
-            DateTime now = DateTime.Now;
-            string createdBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn;
-            ExternalWorkflowDAL workflowEntity = new()
-            {
-                Created = now,
-                CreatedBy = createdBy,
-                ProcessId = processId,
-                WorkflowName = workflowName,
-                ArticleName = articleName,
-            };
-
-            ExternalWorkflowDAL createdWorkflow = DefaultRepository.SimpleSave(workflowEntity);
-
-            if (createdWorkflow is not { Id: > 0 })
-            {
-                throw new InvalidOperationException("Unable to save process info to DB.");
-            }
-
-            ExternalWorkflowStatusDAL workflowStatus = new()
-            {
-                Created = now,
-                CreatedBy = createdBy,
-                Status = NewWorkflowStatusName,
-                ExternalWorkflowId = createdWorkflow.Id
-            };
-
-            ExternalWorkflowStatusDAL createWorkflowStatus = DefaultRepository.SimpleSave(workflowStatus);
-
-            if (createWorkflowStatus is not { Id: > 0 })
-            {
-                throw new InvalidOperationException("Unable to save process status to DB.");
-            }
-
-            ExternalWorkflowInProgressDAL workflowProgress = new()
-            {
-                ProcessId = createdWorkflow.Id,
-                WorkflowId = workflowId,
-                ArticleId = contentItemId,
-                CurrentStatus = createWorkflowStatus.Id,
-                LastModifiedBy = SpecialIds.AdminUserId
-            };
-
-            ExternalWorkflowInProgressDAL createdWorkflowProgress = DefaultRepository.SimpleSave(workflowProgress);
-
-            if (createdWorkflowProgress is not { Id: > 0 })
-            {
-                throw new InvalidOperationException("Unable to create process progress in DB.");
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Error while saving workflow process info to db");
-        }
-    }
 
     public async Task<int> GetTaskCount()
     {
@@ -288,19 +234,19 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 int contentItemId = GetVariable<int>(variables, ExternalWorkflowQpDpcSettings.ContentItemId);
                 int contentId = GetVariable<int>(variables, ExternalWorkflowQpDpcSettings.ContentId);
 
-                Content content = ContentRepository.GetById(contentId);
                 Article article = ArticleRepository.GetById(contentItemId);
+                var id = ExternalWorkflowRepository.GetId(userTask.ProcessId);
 
                 UserTaskData data = new()
                 {
+                    Id = id,
                     TaskId = userTask.Id,
                     ProcessId = userTask.ProcessId,
                     TaskName = userTask.Name,
-                    Id = contentItemId,
-                    ContentName = content.Name,
-                    ItemName = article.Name,
-                    ParentId = article.Parent.Id,
-                    SiteName = content.Site.Name
+                    ParentId = contentItemId,
+                    Name = article.Name,
+                    ContentName = article.Content.Name,
+                    SiteName = article.Content.Site.Name
                 };
 
                 taskInfo.Data.Add(data);
@@ -421,26 +367,10 @@ public class ExternalWorkflowService : IExternalWorkflowService
         return workflowContentId;
     }
 
-    private static T GetValueFromQpConfig<T>(string name)
-    {
-        AppSettingsDAL setting = QPContext.EFContext.AppSettingsSet
-           .FirstOrDefault(x => x.Key == name);
-
-        if (setting is null || string.IsNullOrWhiteSpace(setting.Value))
-        {
-            throw new InvalidOperationException($"Unable to find setting {name} in QP settings.");
-        }
-
-        TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-        return (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, setting.Value);
-    }
-
     public static bool IsExternalWorkflowEnabled()
     {
-        AppSettingsDAL externalWorkflowSetting = QPContext.EFContext.AppSettingsSet
-           .FirstOrDefault(x => x.Key == ExternalWorkflowQpDpcSettings.ExternalWorkflowSettingName);
-
-        return externalWorkflowSetting != null && bool.TryParse(externalWorkflowSetting.Value, out bool externalWorkflowEnabled) && externalWorkflowEnabled;
+        var result = DbRepository.GetAppSettings<string>(ExternalWorkflowQpDpcSettings.ExternalWorkflowSettingName);
+        return result != null && bool.TryParse(result, out var externalWorkflowEnabled) && externalWorkflowEnabled;
     }
 
     public async Task<string> GetUserTaskKey(string taskId)

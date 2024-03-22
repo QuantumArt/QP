@@ -82,7 +82,7 @@ export class Home {
       if ($userTasks.text().trim() !== '0') {
         $userTasks.append(listStr);
         $userTasks.find('a').on('click', () => {
-          executeAction('external_workflow_user_tasks', 'db', 1, customerCode, 0);
+          executeAction('list_article_external_workflow_tasks', 'db', 1, customerCode, 0);
         });
       }
 

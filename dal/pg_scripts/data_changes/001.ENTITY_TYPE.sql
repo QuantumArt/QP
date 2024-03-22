@@ -11,4 +11,8 @@ on conflict do nothing;
 
 update entity_type set TITLE_FIELD = 'ID', PARENT_ID_FIELD = 'PLUGIN_ID' where code = 'plugin_version';
 
+insert into entity_type(name, code, parent_id, source, id_field, parent_id_field, title_field, disabled)
+values ('Article External Workflow', 'article_external_workflow', (select id from entity_type where code = 'article'), 'EXTERNAL_WORKFLOW', 'ID', 'ARTICLE_ID', 'WORKFLOW_NAME', true)
+on conflict do nothing;
+
 --select * from ENTITY_TYPE

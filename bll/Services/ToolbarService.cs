@@ -32,7 +32,9 @@ namespace Quantumart.QP8.BLL.Services
             IEnumerable<ToolbarButton> result = allButtons.Where(b => legalActionCodes.Contains(b.ActionCode)).ToArray();
             if (actionCode.Equals(ActionCode.Articles) || actionCode.Equals(ActionCode.EditArticle))
             {
-                var content = ContentRepository.GetById(parentEntityId);
+                var content = (parentEntityId == 0) ?
+                    ArticleRepository.GetById(entityId).Content :
+                    ContentRepository.GetById(parentEntityId);
 
                 if (actionCode.Equals(ActionCode.Articles) && (!content.WorkflowBinding.IsAssigned || !content.WorkflowBinding.CurrentUserCanRemoveArticles))
                 {

@@ -5,3 +5,6 @@
   @Html.LabelForModel(Model.Message);
   @Html.HiddenFor(x => x.ForceFormSubmit);
 }
+<script>
+  $("#ForceFormSubmit").closest(".t-window-content").css("width", "400px").css("height", "200px");
+</script>

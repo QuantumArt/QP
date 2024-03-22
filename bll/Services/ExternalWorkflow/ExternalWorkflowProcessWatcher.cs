@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -11,8 +9,6 @@ using QA.Workflow.TaskWorker.Models;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
@@ -94,21 +90,13 @@ public class ExternalWorkflowProcessWatcher : IHostedService
         {
             _logger.LogTrace("Checking external workflow processes for customer code {CustomerCode}", tenant);
 
-            QpConnectionInfo cnnInfo = QPConfiguration.GetConnectionInfo(tenant);
+            QPContext.SetConnectionInfo(tenant);
 
-            if (cnnInfo == null)
-            {
-                throw new InvalidOperationException($"Unable find connection info fot tenant {tenant}");
-            }
-
-            QPContext.CurrentDbConnectionInfo = cnnInfo;
-            List<decimal> processes = QPContext.EFContext.ExternalWorkflowInProgressSet
-               .Select(w => w.ProcessId)
-               .ToList();
+            var processes = ExternalWorkflowRepository.GetProcessIds();
 
             _logger.LogTrace("For customer code {CustomerCode} was found {ProcessCount} processes", tenant, processes.Count);
 
-            foreach (decimal process in processes)
+            foreach (var process in processes)
             {
                 await CheckProcessAndStopIfDead(process, tenant);
             }
@@ -119,16 +107,14 @@ public class ExternalWorkflowProcessWatcher : IHostedService
         }
     }
 
-    private async Task CheckProcessAndStopIfDead(decimal process, string tenant)
+    private async Task CheckProcessAndStopIfDead(int process, string tenant)
     {
         try
         {
             _logger.LogTrace("Checking process {Process} for customer code {CustomerCode}", process, tenant);
 
-            ExternalWorkflowDAL processInfo = QPContext.EFContext.ExternalWorkflowSet
-               .Single(x => x.Id == process);
-
-            bool isAlive = await _processService.CheckProcessExistence(processInfo.ProcessId, tenant);
+            var processId = ExternalWorkflowRepository.GetProcessId(process);
+            bool isAlive = await _processService.CheckProcessExistence(processId, tenant);
 
             if (isAlive)
             {
@@ -153,34 +139,19 @@ public class ExternalWorkflowProcessWatcher : IHostedService
     {
         try
         {
-            ExternalWorkflowStatusDAL newStatus = new()
-            {
-                Created = DateTime.Now,
-                Status = DeadProcessStatusName,
-                ExternalWorkflowId = process,
-                CreatedBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn
-            };
-
-            ExternalWorkflowStatusDAL savedStatus = DefaultRepository.SimpleSave(newStatus);
-
-            if (savedStatus is not { Id: > 0 })
+            var result = ExternalWorkflowRepository.SaveStatus(process, DeadProcessStatusName);
+            if (result <= 0)
             {
                 _logger.LogError("Failed to save new status {Status} for process {ProcessId}",
                     DeadProcessStatusName,
                     process);
             }
-
-            ExternalWorkflowInProgressDAL inProcess = QPContext.EFContext.ExternalWorkflowInProgressSet
-               .SingleOrDefault(x => x.ProcessId == process);
-
-            if (inProcess != null)
-            {
-                DefaultRepository.Delete<ExternalWorkflowInProgressDAL>((int)inProcess.Id);
-            }
+            ExternalWorkflowRepository.DeleteProcess(process);
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error while changing process info in db");
         }
     }
+
 }

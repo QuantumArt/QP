@@ -10,10 +10,11 @@
       $('#@Model.MainComponentId').qpGrid({
         columns: [
           { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
-          { field: 'ItemName', title: '@ArticleStrings.Title', attributes: { 'class': 'title' } },
+          { field: 'Name', title: '@ArticleStrings.Title', attributes: { 'class': 'title' } },
           { field: 'ContentName', title: '@ContentStrings.Name' },
           { field: 'TaskName', title: '@ArticleStrings.Status' },
           { field: 'SiteName', title: '@SiteStrings.Name' },
+          { field: 'ParentId', title: 'ParentId', hidden: true },
           { field: 'AdditionalQueryParameters', title: 'QueryParameters', hidden: true }
         ],
         dataSource: {

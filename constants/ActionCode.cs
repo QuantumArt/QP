@@ -451,9 +451,9 @@ namespace Quantumart.QP8.Constants
         public const string UpdateActionPermissionChanges = "update_action_permission_changes";
         public const string RemoveActionPermissionChanges = "remove_action_permission_changes";
 
-        public const string ExternalWorkflowUserTasks = "external_workflow_user_tasks";
-        public const string GetExternalWorkflowUserTasks = "get_external_workflow_user_task";
-        public const string CompleteExternalWorkflowUserTask = "complete_external_workflow_user_task";
+        public const string ExternalWorkflowUserTasks = "list_article_external_workflow_tasks";
+        public const string GetExternalWorkflowUserTasks = "get_article_external_workflow_task";
+        public const string CompleteExternalWorkflowUserTask = "complete_article_external_workflow_task";
 
         public static IEnumerable<string> ArticleNonChangingActionCodes { get; } = new[]
         {
