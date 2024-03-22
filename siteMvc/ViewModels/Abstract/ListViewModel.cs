@@ -41,6 +41,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 
         public bool AutoLoad { get; set; }
 
+        public bool UseParentEntityId { get; set; }
+
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         protected ListViewModel()
         {
@@ -110,6 +112,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
                 result.articlesCountId = ArticlesCountId;
                 result.autoLoad = AutoLoad;
                 result.allowFilterSelectedEntities = AllowFilterSelectedEntities;
+                result.useParentEntityId = UseParentEntityId;
 
                 if (!IsTree)
                 {

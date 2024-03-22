@@ -136,7 +136,7 @@ export class BackendDocumentHost extends Observable {
       || entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_WORKFLOW_PERMISSION
-      || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FODER_TYPE_PERMISSION
+      || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FOLDER_TYPE_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_ACTION_PERMISSION)
     ) {

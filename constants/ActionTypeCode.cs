@@ -44,5 +44,6 @@
         public const string SelectChildArticles = "select_child_articles";
         public const string UnselectChildArticles = "unselect_child_articles";
         public const string AutoResize = "auto_resize";
+        public const string Complete = "complete";
     }
 }

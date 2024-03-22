@@ -7,10 +7,14 @@ public class UserTasksViewModel : ListViewModel
     public static UserTasksViewModel Create(int id, string tabId, int parentId)
     {
         var model = Create<UserTasksViewModel>(tabId, parentId);
+        model.UseParentEntityId = true;
         return model;
     }
 
     public override string EntityTypeCode => Constants.EntityTypeCode.Article;
+
+    public override string ContextMenuCode => "";
+
     public override string ActionCode => Constants.ActionCode.ExternalWorkflowUserTasks;
     public override bool AllowMultipleEntitySelection => false;
     public override bool LinkOpenNewTab => true;

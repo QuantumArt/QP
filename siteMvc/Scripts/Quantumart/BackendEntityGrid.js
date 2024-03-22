@@ -74,6 +74,7 @@ export class BackendEntityGrid extends Observable {
     this._deselectAllId = '';
     this._selectAllId = '';
     this._zIndex = 0;
+    this._useParentEntityId = false;
 
     this._gridGroupCodes = gridGroupCodes;
     this._gridElementId = gridElementId;
@@ -164,6 +165,10 @@ export class BackendEntityGrid extends Observable {
 
       if (options.zIndex) {
         this._zIndex = options.zIndex;
+      }
+
+      if (options.useParentEntityId) {
+        this._useParentEntityId = options.useParentEntityId;
       }
     }
 
@@ -891,7 +896,7 @@ export class BackendEntityGrid extends Observable {
         throw new Error($l.Common.ajaxDataReceivingErrorMessage);
       }
 
-      const entityId = this.getEntityId($row);
+      const entityId = (this._useParentEntityId) ? this.getParentEntityId($row) : this.getEntityId($row);
       let context = { ctrlKey };
 
       context = this.addAdditionalParametersToQuery($row, context);
@@ -918,7 +923,7 @@ export class BackendEntityGrid extends Observable {
         entityId,
         entityName,
         entities: action.ActionType.IsMultiple ? [{ Id: entityId, Name: entityName }] : null,
-        parentEntityId: this.getParentEntityId($row),
+        parentEntityId: (this._useParentEntityId) ? 0 : this.getParentEntityId($row),
         context
       });
 

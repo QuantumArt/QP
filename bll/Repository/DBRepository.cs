@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
@@ -60,6 +63,27 @@ namespace Quantumart.QP8.BLL.Repository
         public static IEnumerable<AppSettingsItem> GetAppSettings()
         {
             return QPContext.EFContext.AppSettingsSet.Select(n => new AppSettingsItem { Key = n.Key, Value = n.Value }).ToList();
+        }
+
+        public static T GetAppSettings<T>(string name, bool throwExceptions = false)
+        {
+            AppSettingsDAL setting = QPContext.EFContext.AppSettingsSet
+                .FirstOrDefault(x => x.Key == name);
+
+            if (setting is null || string.IsNullOrWhiteSpace(setting.Value))
+            {
+                if (throwExceptions)
+                {
+                    throw new InvalidOperationException($"Unable to find setting {name} in QP settings.");
+                }
+                else
+                {
+                    return default;
+                }
+            }
+
+            TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+            return (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, setting.Value);
         }
 
         internal static void SaveAppSettings(IEnumerable<AppSettingsItem> values)
