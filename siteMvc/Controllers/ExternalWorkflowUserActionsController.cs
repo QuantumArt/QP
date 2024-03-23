@@ -9,8 +9,10 @@ using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.ExternalWorkflowUserTask;
 using QP8.Infrastructure.Web.Responses;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTaskModels;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.Controllers;
 
@@ -25,14 +27,13 @@ public class ExternalWorkflowUserActionsController : AuthQpController
 
     [HttpGet]
     [ExceptionResult(ExceptionResultMode.UiAction)]
-    [ActionAuthorize(ActionCode.GetExternalWorkflowUserTasks)]
-    [BackendActionContext(ActionCode.GetExternalWorkflowUserTasks)]
-    public async Task<IActionResult> GetUserTask([FromQuery(Name = "TaskId")] string taskId)
+    [ActionAuthorize(ActionCode.GetExternalWorkflowUserTask)]
+    [BackendActionContext(ActionCode.GetExternalWorkflowUserTask)]
+    public async Task<IActionResult> GetUserTask(string tabId, int parentId, [FromQuery(Name = "TaskId")] string taskId)
     {
         AbstractUserTask userTask = await _externalWorkflowService.GetUserTaskHandler(taskId);
         UserTaskBase result = userTask.GetUserTaskForm();
-
-        return await JsonHtml(result.ViewName, GetViewModel(result.GetType()));
+        return await JsonHtml(result.ViewName, GetViewModel(tabId, parentId, result.GetType()));
     }
 
     [HttpPost]
@@ -51,13 +52,14 @@ public class ExternalWorkflowUserActionsController : AuthQpController
         return Json(new JSendResponse { Status = JSendStatus.Success });
     }
 
-    private static UserTaskBaseViewModel GetViewModel(Type taskType)
+    private static UserTaskBaseViewModel GetViewModel(string tabId, int parentId, Type taskType)
     {
+        var data = new ExternalWorkflowTask();
         // Replace it with an automapper or something before it turns into a mess.
         return taskType.Name switch
         {
-            nameof(FillArticleDto) => new FillArticleViewModel(),
-            nameof(ApprovalDto) => new ApproveViewModel(),
+            nameof(FillArticleDto) => EntityViewModel.Create<FillArticleViewModel>(data, tabId, parentId),
+            nameof(ApprovalDto) => EntityViewModel.Create<ApproveViewModel>(data, tabId, parentId),
             _ => throw new ArgumentException($"Unsupported user task type {taskType.Name}")
         };
     }

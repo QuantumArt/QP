@@ -5,6 +5,11 @@
   @Html.LabelForModel(Model.Message);
   @Html.HiddenFor(x => x.ForceFormSubmit);
 }
+
+@Html.PrepareInitScript(Model)
 <script>
-  $("#ForceFormSubmit").closest(".t-window-content").css("width", "400px").css("height", "200px");
+  @(Model.ContextObjectName).setHostLoadedCallback(function() {
+    $("#ForceFormSubmit").closest(".t-window-content").css("width", "400px").css("height", "200px");
+	});
 </script>
+@Html.RunInitScript(Model)

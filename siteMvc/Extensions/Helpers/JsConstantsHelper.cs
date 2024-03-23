@@ -175,7 +175,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE = \"{ActionCode.AddNewChildArticle}\"");
             constants.AppendLine($"window.ACTION_CODE_ADD_NEW_ADJACENT_FIELD = \"{ActionCode.AddNewAdjacentField}\"");
 
-            constants.AppendLine($"window.ACTION_CODE_EXTERNAL_WORKFLOW_TASKS = \"{ActionCode.ExternalWorkflowUserTasks}\"");
+            constants.AppendLine($"window.ACTION_CODE_EXTERNAL_WORKFLOW_TASKS = \"{ActionCode.ListExternalWorkflowUserTasks}\"");
             constants.AppendLine($"window.ACTION_CODE_COMPLETE_EXTERNAL_WORKFLOW_TASK = \"{ActionCode.CompleteExternalWorkflowUserTask}\"");
 
             constants.AppendLine();

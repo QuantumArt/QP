@@ -15,7 +15,7 @@ public class UserTasksViewModel : ListViewModel
 
     public override string ContextMenuCode => "";
 
-    public override string ActionCode => Constants.ActionCode.ExternalWorkflowUserTasks;
+    public override string ActionCode => Constants.ActionCode.ListExternalWorkflowUserTasks;
     public override bool AllowMultipleEntitySelection => false;
     public override bool LinkOpenNewTab => true;
     public override bool IsListDynamic => true;

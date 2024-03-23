@@ -141,8 +141,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ActionAuthorize(ActionCode.ExternalWorkflowUserTasks)]
-        [BackendActionContext(ActionCode.ExternalWorkflowUserTasks)]
+        [ActionAuthorize(ActionCode.ListExternalWorkflowUserTasks)]
+        [BackendActionContext(ActionCode.ListExternalWorkflowUserTasks)]
         public async Task<IActionResult> ExternalWorkflowUserTasks(string tabId, int parentId, int id)
         {
             UserTasksViewModel model = UserTasksViewModel.Create(id, tabId, parentId);
@@ -152,8 +152,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ActionAuthorize(ActionCode.ExternalWorkflowUserTasks)]
-        [BackendActionContext(ActionCode.ExternalWorkflowUserTasks)]
+        [ActionAuthorize(ActionCode.ListExternalWorkflowUserTasks)]
+        [BackendActionContext(ActionCode.ListExternalWorkflowUserTasks)]
         public async Task<IActionResult> _ExternalWorkflowUserTasks(string tabId,
             int parentId,
             int page,

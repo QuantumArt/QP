@@ -6,7 +6,7 @@ public class UserTaskBaseViewModel : EntityViewModel
 {
     public bool ForceFormSubmit { get; } = true;
 
-    public override string EntityTypeCode => Constants.EntityTypeCode.Content;
+    public override string EntityTypeCode => Constants.EntityTypeCode.ArticleExternalWorkflow;
 
-    public override string ActionCode => Constants.ActionCode.GetExternalWorkflowUserTasks;
+    public override string ActionCode => Constants.ActionCode.GetExternalWorkflowUserTask;
 }
