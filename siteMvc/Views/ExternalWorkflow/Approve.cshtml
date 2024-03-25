@@ -6,3 +6,11 @@
   @Html.CheckBoxFieldFor(x => x.Approved);
   @Html.HiddenFor(x => x.ForceFormSubmit);
 }
+
+@Html.PrepareInitScript(Model)
+<script>
+  @(Model.ContextObjectName).setInitializedCallback(function() {
+    $("#ForceFormSubmit").closest(".t-window-content").css("width", "@(Model.Width)px").css("height", "@(Model.Height)px");
+	});
+</script>
+@Html.RunInitScript(Model)

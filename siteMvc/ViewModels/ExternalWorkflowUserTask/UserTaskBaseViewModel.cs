@@ -4,6 +4,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ExternalWorkflowUserTask;
 
 public class UserTaskBaseViewModel : EntityViewModel
 {
+
+    public virtual int Width => 800;
+
+    public virtual int Height => 600;
+
     public bool ForceFormSubmit { get; } = true;
 
     public override string EntityTypeCode => Constants.EntityTypeCode.ArticleExternalWorkflow;
