@@ -21,6 +21,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
 
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
+
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+
+    <PackageReference Include="Minio" Version="6.0.2" />
     <PackageReference Include="Moq" Version="4.10.1" PrivateAssets="None" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" PrivateAssets="None" />
     <PackageReference Include="NLog" Version="4.7.15" />
