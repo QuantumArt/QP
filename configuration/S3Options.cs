@@ -8,5 +8,6 @@ public class S3Options
 
     public string SecretKey { get; set; }
 
-    public string BucketName { get; set; }
+    public string Bucket { get; set; }
+
 }

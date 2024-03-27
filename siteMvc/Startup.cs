@@ -44,6 +44,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Minio;
 using NLog;
 using NLog.Web;
 using QA.Configuration;
@@ -92,6 +93,13 @@ namespace Quantumart.QP8.WebMvc
                 Configuration.Bind("Properties", qpOptions);
                 services.AddSingleton(qpOptions);
                 QPConfiguration.Options = qpOptions;
+
+                var s3Options = new S3Options();
+                if (qpOptions.EnableS3)
+                {
+                    Configuration.Bind("S3", s3Options);
+                }
+                services.AddSingleton(s3Options);
 
                 if (!string.IsNullOrWhiteSpace(qpOptions.SessionEncryptionKeysPath))
                 {

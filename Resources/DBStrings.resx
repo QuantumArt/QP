@@ -198,4 +198,7 @@
   <data name="AllowNotifications" xml:space="preserve">
     <value>Allow push-notifications</value>
   </data>
+  <data name="UseS3" xml:space="preserve">
+    <value>Use S3</value>
+  </data>
 </root>

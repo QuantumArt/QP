@@ -33,6 +33,8 @@ namespace Quantumart.QP8.DAL.Entities
         public bool AutoOpenHome { get; set; }
         public bool UseCdc { get; set; }
 
+        public bool UseS3 { get; set; }
+
         public UserDAL LastModifiedByUser { get; set; }
     }
         public class DbDALConfiguration : IEntityTypeConfiguration<DbDAL>
@@ -41,6 +43,7 @@ namespace Quantumart.QP8.DAL.Entities
             {
                 builder.ToTable("DB");
 
+                builder.Property(x => x.UseS3).HasColumnName("USE_S3");
                 builder.Property(x => x.UseCdc).HasColumnName("USE_CDC");
 				builder.Property(x => x.UseDpc).HasColumnName("USE_DPC");
 				builder.Property(x => x.UseTokens).HasColumnName("USE_TOKENS");

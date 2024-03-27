@@ -139,6 +139,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SiteStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="DBStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DBStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

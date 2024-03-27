@@ -3,8 +3,9 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Minio;
+using Minio.DataModel.Args;
 using NLog;
 using NLog.Fluent;
 using Quantumart.QP8.BLL;
@@ -21,10 +22,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IBackendActionLogRepository _logger;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private readonly S3Options _options;
+        private readonly IMinioClient _client;
 
-        public UploadController(IBackendActionLogRepository logger)
+        public UploadController(IBackendActionLogRepository logger, S3Options options)
         {
             _logger = logger;
+            _options = options;
+            if (S3Enabled)
+            {
+                _client = new MinioClient()
+                    .WithEndpoint(_options.Endpoint)
+                    .WithCredentials(_options.AccessKey, _options.SecretKey)
+                    .Build();
+            }
         }
 
         private void LogError(string msg, string fileName, Exception ex = null)
@@ -60,12 +71,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Directory.CreateDirectory(destinationUrl);
             }
 
-            chunk = chunk ?? 0;
-            chunks = chunks ?? 1;
+            chunk ??= 0;
+            chunks ??= 1;
             PathSecurityResult securityResult;
 
             var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
             var destPath = Path.Combine(destinationUrl, name);
+            if (destPath.StartsWith("/"))
+            {
+                destPath = destPath.Replace("\\", "/");
+            }
+            var putObjectArgs = new PutObjectArgs()
+                .WithBucket(_options.Bucket)
+                .WithObject(destPath)
+                .WithContentType("application/octet-stream");
 
             if (chunk == 0 && chunks == 1)
             {
@@ -81,9 +100,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 try
                 {
-                    using (var fileStream = new FileStream(destPath, FileMode.Create))
+                    if (S3Enabled)
                     {
-                        await file.CopyToAsync(fileStream);
+                        var stream = new MemoryStream((int)file.Length);
+                        await file.CopyToAsync(stream);
+                        stream.Position = 0;
+
+                        await CheckAndCreateBucket();
+                        putObjectArgs.WithStreamData(stream).WithObjectSize(file.Length);
+                        await _client.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        using (var fileStream = new FileStream(destPath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -130,13 +162,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
                             return Json(new { message = errorMsg, isError = true });
                         }
 
-                        if (FileIO.Exists(destPath))
+                        if (S3Enabled)
                         {
-                            FileIO.SetAttributes(destPath, FileAttributes.Normal);
-                            FileIO.Delete(destPath);
+                            await CheckAndCreateBucket();
+                            putObjectArgs.WithFileName(tempPath);
+                            await _client.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            if (FileIO.Exists(destPath))
+                            {
+                                FileIO.SetAttributes(destPath, FileAttributes.Normal);
+                                FileIO.Delete(destPath);
+                            }
+
+                            FileIO.Move(tempPath, destPath);
                         }
 
-                        FileIO.Move(tempPath, destPath);
                         BackendActionContext.SetCurrent(actionCode, new[] { name }, securityResult.FolderId);
 
                         var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _logger);
@@ -158,6 +200,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             return Json(new { message = $"file{name} uploaded", isError = false });
+        }
+
+        private bool S3Enabled =>
+            !string.IsNullOrWhiteSpace(_options.Endpoint)
+            && DbRepository.Get().UseS3;
+
+        private async Task CheckAndCreateBucket()
+        {
+            var beArgs = new BucketExistsArgs()
+                .WithBucket(_options.Bucket);
+            bool found = await _client.BucketExistsAsync(beArgs).ConfigureAwait(false);
+            if (!found)
+            {
+                var mbArgs = new MakeBucketArgs()
+                    .WithBucket(_options.Bucket);
+                await _client.MakeBucketAsync(mbArgs).ConfigureAwait(false);
+            }
         }
     }
 }
