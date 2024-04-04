@@ -26,6 +26,7 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Utils;
 
@@ -661,12 +662,19 @@ namespace Quantumart.QP8.BLL
 
         public static string LogOut()
         {
+            string userSessionId = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Sid).Select(x => x.Value).FirstOrDefault();
+
             using (var tscope = QPConfiguration.OutOfTransaction())
             {
                 using (var scope = new QPConnectionScope())
                 {
                     var dbContext = EFContext;
-                    CloseUserSessions(CurrentUserId, dbContext, DateTime.Now);
+
+                    if (userSessionId != null && decimal.TryParse(userSessionId, out decimal sessionId))
+                    {
+                        CloseUserSessionBySessionId(sessionId, dbContext, DateTime.Now);
+                    }
+                    //CloseUserSessions(CurrentUserId, dbContext, DateTime.Now);
                     dbContext.SaveChanges();
 
                     CommonSecurity.ClearUserToken(scope.DbConnection, CurrentUserId, CurrentSessionId);
@@ -694,7 +702,7 @@ namespace Quantumart.QP8.BLL
             var currentDt = DateTime.Now;
 
             // закрыть открытые сессии пользователя
-            CloseUserSessions(user.Id, dbContext, currentDt);
+            //CloseUserSessions(user.Id, dbContext, currentDt);
 
             // Сохранить новую сессию
             var sessionsLog = new SessionsLog
@@ -729,6 +737,18 @@ namespace Quantumart.QP8.BLL
             {
                 us.EndTime = currentDt;
                 us.Sid = null;
+            }
+        }
+
+        private static void CloseUserSessionBySessionId(decimal sessionId, QPModelDataContext dbContext, DateTime currentDateTime)
+        {
+            SessionsLogDAL userSession = dbContext.SessionsLogSet
+                .FirstOrDefault(session => session.SessionId == sessionId && !session.EndTime.HasValue && !session.IsQP7);
+
+            if (userSession != null)
+            {
+                userSession.EndTime = currentDateTime;
+                userSession.Sid = null;
             }
         }
 
