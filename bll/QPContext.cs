@@ -674,7 +674,7 @@ namespace Quantumart.QP8.BLL
                     {
                         CloseUserSessionBySessionId(sessionId, dbContext, DateTime.Now);
                     }
-                    //CloseUserSessions(CurrentUserId, dbContext, DateTime.Now);
+
                     dbContext.SaveChanges();
 
                     CommonSecurity.ClearUserToken(scope.DbConnection, CurrentUserId, CurrentSessionId);
@@ -700,9 +700,6 @@ namespace Quantumart.QP8.BLL
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
             var currentDt = DateTime.Now;
-
-            // закрыть открытые сессии пользователя
-            //CloseUserSessions(user.Id, dbContext, currentDt);
 
             // Сохранить новую сессию
             var sessionsLog = new SessionsLog
