@@ -662,18 +662,12 @@ namespace Quantumart.QP8.BLL
 
         public static string LogOut()
         {
-            string userSessionId = HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Sid).Select(x => x.Value).FirstOrDefault();
-
             using (var tscope = QPConfiguration.OutOfTransaction())
             {
                 using (var scope = new QPConnectionScope())
                 {
                     var dbContext = EFContext;
-
-                    if (userSessionId != null && decimal.TryParse(userSessionId, out decimal sessionId))
-                    {
-                        CloseUserSessionBySessionId(sessionId, dbContext, DateTime.Now);
-                    }
+                    CloseSessionLogById(CurrentSessionId, dbContext, DateTime.Now);
 
                     dbContext.SaveChanges();
 
@@ -737,7 +731,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private static void CloseUserSessionBySessionId(decimal sessionId, QPModelDataContext dbContext, DateTime currentDateTime)
+        private static void CloseSessionLogById(int sessionId, QPModelDataContext dbContext, DateTime currentDateTime)
         {
             SessionsLogDAL userSession = dbContext.SessionsLogSet
                 .FirstOrDefault(session => session.SessionId == sessionId && !session.EndTime.HasValue && !session.IsQP7);
