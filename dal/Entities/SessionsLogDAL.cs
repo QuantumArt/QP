@@ -34,6 +34,7 @@ namespace Quantumart.QP8.DAL.Entities
         public string Sid { get; set; }
         public string VisualEditorUrl { get; set; }
         public bool IsQP7 { get; set; }
+        public DateTime LastUpdate { get; set; }
     }
         public class SessionsLogDALConfiguration : IEntityTypeConfiguration<SessionsLogDAL>
         {
@@ -54,11 +55,9 @@ namespace Quantumart.QP8.DAL.Entities
 				builder.Property(x => x.AutoLogged).HasColumnName("AUTO_LOGGED");
 				builder.Property(x => x.Sid).HasColumnName("sid");
 				builder.Property(x => x.VisualEditorUrl).HasColumnName("VISUAL_EDITOR_URL");
-
+                builder.Property(x => x.LastUpdate).HasColumnName("LAST_UPDATE");
 
                 builder.HasKey(x => x.SessionId);
-
-
             }
         }
 }

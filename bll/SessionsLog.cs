@@ -45,6 +45,8 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "IsQP7", ResourceType = typeof(AuditStrings))]
         public bool IsQP7 { get; set; }
 
+        public DateTime LastUpdate { get; set; }
+
         #region Caulculated
 
         [JsonConverter(typeof(DateTimeConverter))]

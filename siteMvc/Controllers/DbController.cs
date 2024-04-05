@@ -166,6 +166,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 };
             }
 
+            QPContext.TouchSessionLog();
+
             return JsonCamelCase(new JSendResponse
             {
                 Status = JSendStatus.Success,

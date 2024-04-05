@@ -704,7 +704,8 @@ namespace Quantumart.QP8.BLL
                 StartTime = currentDt,
                 Browser = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString().Left(255),
                 IP = GetUserIpAddress(),
-                ServerName = Environment.MachineName.Left(255)
+                ServerName = Environment.MachineName.Left(255),
+                LastUpdate = DateTime.Now
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
@@ -731,6 +732,18 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static void TouchSessionLog()
+        {
+            QPModelDataContext efContext = EFContext;
+            SessionsLogDAL sessionLog = efContext.SessionsLogSet.FirstOrDefault(x => x.SessionId == CurrentSessionId && !x.EndTime.HasValue && !x.IsQP7);
+
+            if (sessionLog != null)
+            {
+                sessionLog.LastUpdate = DateTime.Now;
+                efContext.SaveChanges();
+            }
+        }
+
         private static void CloseSessionLogById(int sessionId, QPModelDataContext dbContext, DateTime currentDateTime)
         {
             SessionsLogDAL userSession = dbContext.SessionsLogSet
@@ -753,7 +766,8 @@ namespace Quantumart.QP8.BLL
                 StartTime = DateTime.Now,
                 Browser = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString().Left(255),
                 IP = GetUserIpAddress(),
-                ServerName = Environment.MachineName.Left(255)
+                ServerName = Environment.MachineName.Left(255),
+                LastUpdate = DateTime.Now
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
