@@ -34,7 +34,7 @@ namespace Quantumart.QP8.DAL.Entities
         public string Sid { get; set; }
         public string VisualEditorUrl { get; set; }
         public bool IsQP7 { get; set; }
-        public DateTime LastUpdate { get; set; }
+        public DateTime? LastUpdate { get; set; }
     }
         public class SessionsLogDALConfiguration : IEntityTypeConfiguration<SessionsLogDAL>
         {
