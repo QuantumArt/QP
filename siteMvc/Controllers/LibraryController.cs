@@ -4,7 +4,6 @@ using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -19,6 +18,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
+using Minio;
+using Minio.DataModel.Args;
+using Minio.Exceptions;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -30,27 +35,33 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private readonly ILibraryService _libraryService;
 
-        public LibraryController(ILibraryService libraryService)
+        private readonly IDbService _dbService;
+        private readonly PathHelper _pathHelper;
+
+        public LibraryController(
+            ILibraryService libraryService,
+            IDbService dbService,
+            PathHelper pathHelper
+        )
         {
             _libraryService = libraryService;
+            _dbService = dbService;
+            _pathHelper = pathHelper;
         }
 
-        public class FilePropertiesOptions
+        private class FilePropertiesOptions
         {
             public bool IsVersion { get; set; }
 
-            public string NotSupportedMessage { get; set; }
-
-            public FilePropertiesOptions()
-            {
-                IsVersion = false;
-                NotSupportedMessage = LibraryStrings.OperationIsNotSupported;
-            }
+            public string NotSupportedMessage { get; set; } = LibraryStrings.OperationIsNotSupported;
         }
 
-        public JsonResult FullNameFileExists(string name) => Json(new { result = name != null && System.IO.File.Exists(name) });
+        public JsonResult FullNameFileExists(string name) => Json(new { result = name != null && _pathHelper.FileExists(name) });
 
-        public JsonResult FileExists(string path, string name) => Json(new { result = name != null && System.IO.File.Exists(Path.Combine(path, name)) });
+        public JsonResult FileExists(string path, string name) => Json(new
+        {
+            result = name != null && _pathHelper.FileExists(_pathHelper.CombinePath(path, name))
+        });
 
         public JsonResult ResolveFileName(string path, string name)
         {
@@ -61,7 +72,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public JsonResult CheckSecurity(string path)
         {
-            var result = PathInfo.CheckSecurity(path).Result && CheckFolderExistence(path);
+            var result = PathInfo.CheckSecurity(path, true, _pathHelper.Separator).Result && CheckFolderExistence(path);
             HttpContext.Session.SetValue($"upload_{path}", result);
             return Json(new { result });
         }
@@ -120,15 +131,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         public ActionResult DownloadFile(string id, string fileName)
-        {            
+        {
             var path = (string)TempData[id];
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                var dir = Path.GetDirectoryName(path);
-                var file = Path.GetFileName(path);
-                var readStream = new PhysicalFileProvider(dir).GetFileInfo(file).CreateReadStream();
-                return File(readStream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
+                if (_dbService.UseS3())
+                {
+
+                }
+                else
+                {
+                    var dir = Path.GetDirectoryName(path);
+                    var file = Path.GetFileName(path);
+                    var readStream = new PhysicalFileProvider(dir).GetFileInfo(file).CreateReadStream();
+                    return File(readStream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
+                }
             }
 
             return Json(null);
@@ -139,7 +157,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var path = PathInfo.ConvertToPath(model.TargetFileUrl);
             var ext = Path.GetExtension(path);
-            if (System.IO.File.Exists(path))
+            if (_pathHelper.FileExists(path))
             {
                 return Json(new { ok = false, message = string.Format(LibraryStrings.FileExistsTryAnother, path) });
             }
@@ -149,7 +167,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { ok = false, message = string.Format(LibraryStrings.ExtensionIsNotAllowed, ext) });
             }
 
-            if (!PathInfo.CheckSecurity(path).Result)
+            if (!PathInfo.CheckSecurity(path, true, _pathHelper.Separator).Result)
             {
                 return Json(new { ok = false, message = string.Format(LibraryStrings.AccessDenied, path, QPContext.CurrentUserName) });
             }
@@ -162,7 +180,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var sourcePath = PathInfo.ConvertToPath(model.SourceFileUrl);
             var targetPath = model.OverwriteFile ? sourcePath : PathInfo.ConvertToPath(model.TargetFileUrl);
-            if (!PathInfo.CheckSecurity(targetPath).Result)
+            if (!PathInfo.CheckSecurity(targetPath, true, _pathHelper.Separator).Result)
             {
                 return Json(new { ok = false, message = LibraryStrings.AccessDenied });
             }
@@ -181,7 +199,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             sourceTop = model.Top.HasValue ? (int)(model.Top.Value / model.Resize) : sourceTop;
             sourceLeft = model.Left.HasValue ? (int)(model.Left.Value / model.Resize) : sourceLeft;
 
-            if (System.IO.File.Exists(sourcePath))
+            if (_pathHelper.FileExists(sourcePath))
             {
                 using (var img = Image.Load(sourcePath))
                 {
@@ -192,7 +210,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                     // ReSharper disable once AssignNullToNotNullAttribute
                     Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
-                    if (System.IO.File.Exists(targetPath))
+                    if (_pathHelper.FileExists(targetPath))
                     {
                         System.IO.File.SetAttributes(targetPath, FileAttributes.Normal);
                         System.IO.File.Delete(targetPath);
@@ -229,18 +247,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { ok = false, message = string.Format(LibraryStrings.InvalidReduceRatio, ext) });
             }
 
-            if (!PathInfo.CheckSecurity(path).Result)
+            if (!PathInfo.CheckSecurity(path, true, _pathHelper.Separator).Result)
             {
                 return Json(new { ok = false, message = string.Format(LibraryStrings.AccessDenied, path, QPContext.CurrentUserName) });
             }
 
             var filename = Path.GetFileNameWithoutExtension(resizeParameters.FileName);
             var basePath = Path.GetDirectoryName(path);
-            var filenames = settings.ReduceSizes.Select(s => Path.Combine(basePath, string.Format(settings.ResizedImageTemplate, filename, s.Postfix, ext)));
+            var filenames = settings.ReduceSizes.Select(s => _pathHelper.CombinePath(basePath, string.Format(settings.ResizedImageTemplate, filename, s.Postfix, ext)));
 
             foreach (var file in filenames)
             {
-                if (System.IO.File.Exists(file))
+                if (_pathHelper.FileExists(file))
                 {
                     return Json(new { ok = false, message = string.Format(LibraryStrings.AutoResizedFileExists, file) });
                 }
@@ -262,7 +280,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             foreach (var size in resizeParameters.ReduceSizes)
             {
-                var newFile = Path.Combine(basePath, string.Format(resizeParameters.ResizedImageTemplate, filename, size.Postfix, ext));
+                var newFile = _pathHelper.CombinePath(basePath, string.Format(resizeParameters.ResizedImageTemplate, filename, size.Postfix, ext));
                 using (Image image = Image.Load(Path.Combine(path, resizeParameters.FileName)))
                 {
                     image.Mutate(x => x.Resize((int)(image.Width / size.ReduceRatio), (int) (image.Height / size.ReduceRatio)));
@@ -299,7 +317,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return string.Empty;
         }
 
-        private static string GetResolvingFileName(string path, string name)
+        private string GetResolvingFileName(string path, string name)
         {
             string result;
             var index = 0;
@@ -307,7 +325,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 index++;
                 result = MutateHelper.MutateFileName(name, index);
-            } while (System.IO.File.Exists(Path.Combine(path, result)));
+            } while (_pathHelper.FileExists(_pathHelper.CombinePath(path, result)));
 
             return result;
         }
@@ -332,13 +350,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private JsonResult GetTestFileDownloadResult(PathInfo info, string fileName, bool isVersion)
         {
-            if (!PathInfo.CheckSecurity(info.Path, false).Result)
+            if (!PathInfo.CheckSecurity(info.Path, false, _pathHelper.Separator).Result)
             {
                 return Json(new { proceed = false, msg = string.Format(LibraryStrings.AccessDenied, info.Path, QPContext.CurrentUserName) });
             }
             var normalizedFileName = isVersion ? Path.GetFileName(HttpUtility.UrlDecode(fileName)) : HttpUtility.UrlDecode(fileName);
             var path = info.GetPath(normalizedFileName);
-            return System.IO.File.Exists(path)
+            return _pathHelper.FileExists(path)
                 ? Json(new { proceed = true, key = SavePath(path) })
                 : Json(new { proceed = false, msg = string.Format(LibraryStrings.NotExists, normalizedFileName) });
         }
@@ -365,7 +383,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var message = string.Empty;
             int width = 0, height = 0;
 
-            if (System.IO.File.Exists(path))
+            if (_pathHelper.FileExists(path))
             {
                 url = pathInfo.GetUrl(normalizedFileName);
                 if (!GetImageSize(path, ref width, ref height))

@@ -26,9 +26,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class SiteController : AuthQpController
     {
         private readonly ISearchInArticlesService _searchInArticlesService;
+        private readonly PathHelper _pathHelper;
 
-        public SiteController(ISearchInArticlesService searchInArticlesService)
+        public SiteController(ISearchInArticlesService searchInArticlesService, PathHelper pathHelper)
         {
+            _pathHelper = pathHelper;
             _searchInArticlesService = searchInArticlesService ?? throw new ArgumentNullException(nameof(searchInArticlesService));
         }
 
@@ -226,7 +228,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(new
             {
                 success = true,
-                path = folder.PathInfo.Path,
+                path = _pathHelper.FixPath(folder.PathInfo.Path),
                 url = folder.PathInfo.Url,
                 libraryPath = folder.OsSpecificPath,
                 prefixUploadUrl = folder.PathInfo.BaseUploadUrl

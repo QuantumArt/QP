@@ -4,12 +4,15 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Minio;
 using Minio.DataModel.Args;
 using NLog;
 using NLog.Fluent;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -23,13 +26,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private readonly IBackendActionLogRepository _logger;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly S3Options _options;
-        private readonly IMinioClient _client;
+        private IMinioClient _client;
+        private readonly IDbService _dbService;
+        private readonly PathHelper _pathHelper;
 
-        public UploadController(IBackendActionLogRepository logger, S3Options options)
+        public UploadController(
+            IBackendActionLogRepository logger,
+            S3Options options,
+            IDbService dbService,
+            PathHelper pathHelper
+        )
         {
             _logger = logger;
             _options = options;
-            if (S3Enabled)
+            _dbService = dbService;
+            _pathHelper = pathHelper;
+            EnsureS3ClientCreated();
+        }
+
+        private void EnsureS3ClientCreated()
+        {
+            if (_dbService.UseS3())
             {
                 _client = new MinioClient()
                     .WithEndpoint(_options.Endpoint)
@@ -76,19 +93,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PathSecurityResult securityResult;
 
             var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
-            var destPath = Path.Combine(destinationUrl, name);
-            if (destPath.StartsWith("/"))
-            {
-                destPath = destPath.Replace("\\", "/");
-            }
+            var destPath = _pathHelper.CombinePath(destinationUrl, name);
+
+            new FileExtensionContentTypeProvider().TryGetContentType(destPath, out var contentType);
+
             var putObjectArgs = new PutObjectArgs()
                 .WithBucket(_options.Bucket)
                 .WithObject(destPath)
-                .WithContentType("application/octet-stream");
+                .WithContentType(contentType ?? "application/octet-stream");
 
             if (chunk == 0 && chunks == 1)
             {
-                securityResult = PathInfo.CheckSecurity(destinationUrl);
+                securityResult = PathInfo.CheckSecurity(destinationUrl, true, _pathHelper.Separator);
                 if (!securityResult.Result)
                 {
                     var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
@@ -100,7 +116,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 try
                 {
-                    if (S3Enabled)
+                    if (_dbService.UseS3())
                     {
                         var stream = new MemoryStream((int)file.Length);
                         await file.CopyToAsync(stream);
@@ -150,7 +166,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     var isTheLastChunk = chunk.Value == chunks.Value - 1;
                     if (isTheLastChunk)
                     {
-                        securityResult = PathInfo.CheckSecurity(destinationUrl);
+                        securityResult = PathInfo.CheckSecurity(destinationUrl, true, _pathHelper.Separator);
                         var actionCode = securityResult.IsSite ? ActionCode.UploadSiteFile : ActionCode.UploadContentFile;
 
                         if (!securityResult.Result)
@@ -162,11 +178,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
                             return Json(new { message = errorMsg, isError = true });
                         }
 
-                        if (S3Enabled)
+                        if (_dbService.UseS3())
                         {
-                            await CheckAndCreateBucket();
-                            putObjectArgs.WithFileName(tempPath);
-                            await _client.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
+                            using (var tempStream = new FileStream(tempPath, FileMode.Open, FileAccess.Read))
+                            {
+                                await CheckAndCreateBucket();
+                                putObjectArgs.WithStreamData(tempStream).WithObjectSize(tempStream.Length);
+                                await _client.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
+                            }
                         }
                         else
                         {
@@ -201,10 +220,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             return Json(new { message = $"file{name} uploaded", isError = false });
         }
-
-        private bool S3Enabled =>
-            !string.IsNullOrWhiteSpace(_options.Endpoint)
-            && DbRepository.Get().UseS3;
 
         private async Task CheckAndCreateBucket()
         {

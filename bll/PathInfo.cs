@@ -2,6 +2,7 @@ using System;
 using I = System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 
@@ -17,6 +18,8 @@ namespace Quantumart.QP8.BLL
         public string Url { get; set; }
 
         public string BaseUploadUrl { get; set; }
+
+        public PathHelper PathHelper { get; set; }
 
         public PathInfo GetSubPathInfo(string folderName)
         {
@@ -41,10 +44,19 @@ namespace Quantumart.QP8.BLL
             {
                 folderName = replacedName;
             }
-            return new PathInfo { Path = $@"{Path}{I.Path.DirectorySeparatorChar}{folderName}", Url = $@"{Url}{replacedName}/", BaseUploadUrl = BaseUploadUrl};
+            return new PathInfo
+            {
+                Path = FixPath($@"{Path}{I.Path.DirectorySeparatorChar}{folderName}"),
+                Url = $@"{Url}{replacedName}/",
+                BaseUploadUrl = BaseUploadUrl
+            };
         }
 
-        public string GetPath(string fileName) => I.Path.Combine(Path, ReplaceUp(fileName));
+        private string FixPath(string path) => PathHelper != null ? PathHelper.FixPath(path) : path;
+
+        private string CombinePath(string path, string name) => PathHelper != null ? PathHelper.CombinePath(path, name) : I.Path.Combine(path, name);
+
+        public string GetPath(string fileName) => CombinePath(Path, ReplaceUp(fileName));
 
         public string GetUrl(string fileName) => $"{Url}{ReplaceUp(fileName)}";
 
@@ -61,7 +73,8 @@ namespace Quantumart.QP8.BLL
             return new FolderFile(new I.FileInfo(path));
         }
 
-        public static PathSecurityResult CheckSecurity(string path, bool forModify = true) => PathSecurity.Check(path, forModify);
+        public static PathSecurityResult CheckSecurity(string path, bool forModify, char separator)
+            => PathSecurity.Check(path, forModify, separator);
 
         public static string ConvertToUrl(string path)
         {

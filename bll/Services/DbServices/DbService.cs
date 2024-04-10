@@ -4,11 +4,20 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.DbServices
 {
     public class DbService : IDbService
     {
+
+        private readonly S3Options _options;
+
+        public DbService(S3Options options)
+        {
+            _options = options;
+        }
+
         public Db GetDbSettings() => DbRepository.Get();
 
         public static Db ReadSettings() => DbRepository.Get();
@@ -20,6 +29,8 @@ namespace Quantumart.QP8.BLL.Services.DbServices
         public static string GetDbHash() => GehHash(GehHash(DbRepository.GetDbServerName()) + GehHash(DbRepository.GetDbName()));
 
         public static void ResetUserCache() => BackendActionCache.ResetForUser();
+
+        public bool UseS3() => !string.IsNullOrWhiteSpace(_options.Endpoint) && DbRepository.Get().UseS3;
 
         private static string GehHash(string value)
         {

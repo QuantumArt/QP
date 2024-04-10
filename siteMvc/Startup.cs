@@ -50,6 +50,7 @@ using NLog.Web;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.ArticleScheduler;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.CdcImport;
@@ -206,6 +207,7 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<AuthenticationHelper>()
                    .AddTransient<JsLanguageHelper>()
                    .AddTransient<JsConstantsHelper>()
+                   .AddTransient<PathHelper>()
                    .AddSingleton<ISearchGrammarParser, IronySearchGrammarParser>()
                    .AddTransient<IStopWordList, StopWordList>()
                    .AddTransient<IArticleSearchRepository, ArticleSearchRepository>()
