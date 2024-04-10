@@ -56,6 +56,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                     var repo = new NotificationPushRepository();
                     repo.PrepareNotifications(article, new[] { NotificationCode.Update });
                     Common.SetContentItemVisible(scope.DbConnection, articleId, true, article.LastModifiedBy);
+                    Common.UpdateContentModification(scope.DbConnection, article.ContentId);
                     repo.SendNotifications();
                 }
 
@@ -75,6 +76,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                     var repo = new NotificationPushRepository();
                     repo.PrepareNotifications(article, new[] { NotificationCode.Update });
                     Common.SetContentItemVisible(scope.DbConnection, articleId, false, article.LastModifiedBy);
+                    Common.UpdateContentModification(scope.DbConnection, article.ContentId);
                     repo.SendNotifications();
                 }
 
