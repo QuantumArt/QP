@@ -86,6 +86,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             var info = GetFilePathInfo(fieldId, entityId, isVersion);
+            info.PathHelper = _pathHelper;
             return GetTestFileDownloadResult(info, HttpUtility.UrlDecode(fileName), isVersion);
         }
 
@@ -109,6 +110,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { proceed = false, msg = string.Format(formatString, id) });
             }
 
+            pathInfo.PathHelper = _pathHelper;
             return GetTestFileDownloadResult(pathInfo, HttpUtility.UrlDecode(fileName), false);
         }
 
@@ -127,6 +129,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult GetLibraryImageProperties(int id, string fileName, string entityTypeCode)
         {
             var pathInfo = entityTypeCode == EntityTypeCode.ContentFile ? ContentFolderService.GetPathInfo(id) : SiteFolderService.GetPathInfo(id);
+            pathInfo.PathHelper = _pathHelper;
             return GetFileProperties(pathInfo, HttpUtility.UrlDecode(fileName), new FilePropertiesOptions());
         }
 
@@ -138,7 +141,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 if (_dbService.UseS3())
                 {
-
+                    var stream = _pathHelper.GetFile(path);
+                    return File(stream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
                 }
                 else
                 {
@@ -186,7 +190,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             int sourceWidth = 0, sourceHeight = 0, sourceTop = 0, sourceLeft = 0;
-            if (!GetImageSize(sourcePath, ref sourceWidth, ref sourceHeight))
+            try
+            {
+                var size = GetImageSize(sourcePath);
+                sourceWidth = size.Item1;
+                sourceHeight = size.Item2;
+            }
+            catch (Exception)
             {
                 return Json(new { ok = false, message = LibraryStrings.ExtensionIsNotAllowed });
             }
@@ -350,7 +360,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private JsonResult GetTestFileDownloadResult(PathInfo info, string fileName, bool isVersion)
         {
-            if (!PathInfo.CheckSecurity(info.Path, false, _pathHelper.Separator).Result)
+            if (!PathInfo.CheckSecurity(info.FixedPath, false, _pathHelper.Separator).Result)
             {
                 return Json(new { proceed = false, msg = string.Format(LibraryStrings.AccessDenied, info.Path, QPContext.CurrentUserName) });
             }
@@ -386,7 +396,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (_pathHelper.FileExists(path))
             {
                 url = pathInfo.GetUrl(normalizedFileName);
-                if (!GetImageSize(path, ref width, ref height))
+                try
+                {
+                    var size = GetImageSize(path);
+                    width = size.Item1;
+                    height = size.Item2;
+                }
+                catch (Exception)
                 {
                     message = string.Format(options.NotSupportedMessage, normalizedFileName);
                 }
@@ -403,29 +419,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(result);
         }
 
-        private static bool GetImageSize(string path, ref int width, ref int height)
+        private Tuple<int, int> GetImageSize(string path)
         {
             if (path.EndsWith(".svg"))
             {
-                width = DefaultSvgWidth;
-                height = DefaultSvgHeight;
-                return true;
+                return new Tuple<int, int>(DefaultSvgWidth, DefaultSvgHeight);
             }
 
-            try
-            {
-                using (var img = Image.Load(path))
-                {
-                    width = img.Width;
-                    height = img.Height;
-                    return true;
-                }
-            }
-            catch (OutOfMemoryException)
-            {
-            }
-
-            return false;
+            using var img = _pathHelper.LoadImage(path);
+            return new Tuple<int, int>(img.Width, img.Height);
         }
     }
 }

@@ -7,11 +7,14 @@ using Moq;
 using NUnit.Framework;
 using QP8.Integration.Tests.Infrastructure;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -69,7 +72,7 @@ namespace QP8.Integration.Tests
                     new ApplicationInfoRepository(),
                     new XmlDbUpdateActionCorrecterService(
                         new ArticleService(new ArticleRepository()),
-                        new ContentService(new ContentRepository()),
+                        new ContentService(new ContentRepository(), new PathHelper(new DbService(new S3Options()))),
                         new ModelExpressionProvider(new EmptyModelMetadataProvider())
                     ),
                     new XmlDbUpdateHttpContextProcessor(),

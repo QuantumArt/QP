@@ -236,6 +236,7 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
                    .AddTransient<IArticleService, A.ArticleService>()
                    .AddTransient<IContentService, ContentService>()
+                   .AddTransient<ISiteService, SiteService>()
                    .AddTransient<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                    .AddTransient<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
                    .AddTransient<INotificationService, NotificationService>()

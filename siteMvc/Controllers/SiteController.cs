@@ -26,11 +26,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class SiteController : AuthQpController
     {
         private readonly ISearchInArticlesService _searchInArticlesService;
+        private readonly ISiteService _siteService;
         private readonly PathHelper _pathHelper;
 
-        public SiteController(ISearchInArticlesService searchInArticlesService, PathHelper pathHelper)
+        public SiteController(ISearchInArticlesService searchInArticlesService, ISiteService siteService, PathHelper pathHelper)
         {
             _pathHelper = pathHelper;
+            _siteService = siteService;
             _searchInArticlesService = searchInArticlesService ?? throw new ArgumentNullException(nameof(searchInArticlesService));
         }
 
@@ -172,7 +174,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.SiteLibrary)]
         public async Task<ActionResult> Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
         {
-            var result = SiteService.Library(id, subFolder);
+            var result = _siteService.Library(id, subFolder);
             var model = LibraryViewModel.Create(result, tabId, id, filterFileTypeId, allowUpload, LibraryMode.Site);
             return await JsonHtml("Library", model);
         }
@@ -188,7 +190,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = SiteService.GetFileList(listCommand, gridParentId, searchQuery);
+            var serviceResult = _siteService.GetFileList(listCommand, gridParentId, searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -196,7 +198,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "folderId")]
         public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
         {
-            var serviceResult = SiteService.GetFileList(
+            var serviceResult = _siteService.GetFileList(
                 new ListCommand
                 {
                     PageSize = pageSize,
@@ -214,7 +216,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 success = true,
                 data = new ListResult<FileListItem>
                 {
-                    Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
+                    Data = serviceResult.Data.Select(
+                        f => FileListItem.Create(f, fileShortNameLength, _pathHelper, true)
+                    ).ToList(),
                     TotalRecords = serviceResult.TotalRecords
                 }
             });

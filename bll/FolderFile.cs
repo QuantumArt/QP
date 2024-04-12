@@ -34,6 +34,19 @@ namespace Quantumart.QP8.BLL
         {
         }
 
+        public FolderFile(Minio.DataModel.Item item, string path)
+        {
+
+            Name = item.Key.Replace(path, "");
+            OldName = Name;
+            Path = path;
+            Extension = System.IO.Path.GetExtension(Name);
+            Created = item.LastModifiedDateTime ?? DateTime.Now;
+            Modified = item.LastModifiedDateTime ?? DateTime.Now;
+            Length = (long)item.Size;
+            _Dimensions = "";
+        }
+
         public FolderFile(FileInfo info)
         {
             OldName = info.Name;
@@ -262,7 +275,7 @@ namespace Quantumart.QP8.BLL
 
         internal bool NameChanged => OldName != Name;
 
-        internal string FullName => Path + Name;
+        public string FullName => Path + Name;
 
         internal string OldFullName => Path + OldName;
 

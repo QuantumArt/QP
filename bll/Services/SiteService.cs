@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -18,8 +19,16 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public class SiteService
+    public class SiteService : ISiteService
     {
+
+        private readonly PathHelper _pathHelper;
+
+
+        public SiteService(PathHelper pathHelper)
+        {
+            _pathHelper = pathHelper;
+        }
 
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
@@ -201,12 +210,12 @@ namespace Quantumart.QP8.BLL.Services
 
         public static Site NewForSave() => new Site();
 
-        public static LibraryResult Library(int id, string subFolder)
+        public LibraryResult Library(int id, string subFolder)
         {
             if (!SiteRepository.Exists(id))
             {
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, id));
-            }            
+            }
 
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
@@ -220,16 +229,18 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public static ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
+        public ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
         {
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
             var folder = repository.GetById(parentFolderId);
+
             if (folder == null)
             {
                 throw new Exception(string.Format(LibraryStrings.SiteFolderNotExists, parentFolderId));
             }
 
+            folder.PathHelper = _pathHelper;
             return folder.GetFiles(command, filter);
         }
 

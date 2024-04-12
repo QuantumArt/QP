@@ -18,10 +18,13 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
     public class ContentService : IContentService
     {
         private readonly IContentRepository _contentRepository;
+        private readonly PathHelper _pathHelper;
 
-        public ContentService(IContentRepository contentRepository)
+
+        public ContentService(IContentRepository contentRepository, PathHelper pathHelper)
         {
             _contentRepository = contentRepository;
+            _pathHelper = pathHelper;
         }
 
         public static Content New(int siteId, int? groupId) => InternalNew(siteId, groupId);
@@ -281,7 +284,7 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
             return new LibraryResult { Folder = folder };
         }
 
-        public static ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
+        public ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
         {
             var factory = new ContentFolderFactory();
             var repository = factory.CreateRepository();
@@ -291,6 +294,7 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
                 throw new Exception(string.Format(LibraryStrings.ContentFolderNotExists, parentFolderId));
             }
 
+            folder.PathHelper = _pathHelper;
             return folder.GetFiles(command, filter);
         }
 

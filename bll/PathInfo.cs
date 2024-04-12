@@ -15,6 +15,8 @@ namespace Quantumart.QP8.BLL
     {
         public string Path { get; set; }
 
+        public string FixedPath => FixPath(Path);
+
         public string Url { get; set; }
 
         public string BaseUploadUrl { get; set; }

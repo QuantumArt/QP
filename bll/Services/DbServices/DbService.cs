@@ -32,6 +32,8 @@ namespace Quantumart.QP8.BLL.Services.DbServices
 
         public bool UseS3() => !string.IsNullOrWhiteSpace(_options.Endpoint) && DbRepository.Get().UseS3;
 
+        public S3Options S3Options => _options;
+
         private static string GehHash(string value)
         {
             var data = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(value));

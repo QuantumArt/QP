@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -22,6 +23,8 @@ namespace Quantumart.QP8.BLL
         private bool _hasChildren;
         private PathInfo _pathInfo;
         private FolderRepository _repository;
+
+        public PathHelper PathHelper { get; set; }
 
         protected abstract EntityObject GetParent();
 
@@ -218,14 +221,23 @@ namespace Quantumart.QP8.BLL
 
         internal ListResult<FolderFile> GetFiles(ListCommand command, LibraryFileFilter filter)
         {
-            var files = new I.DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
+            var filtered = Enumerable.Empty<FolderFile>();
             var sort = string.IsNullOrEmpty(command.SortExpression) ? "Name ASC" : command.SortExpression;
-            var typeFilter = filter.FileType.HasValue ? (Func<FolderFile, bool>)(f => f.FileType == filter.FileType.Value) : f => true;
-            var filtered = files
-                .Select(n => new FolderFile(n))
-                .Where(typeFilter)
-                .AsQueryable()
-                .OrderBy(sort);
+            if (PathHelper.UseS3)
+            {
+                var path = PathHelper.FixPath(PathInfo.Path);
+                filtered = PathHelper.GetFiles(path);
+            }
+            else
+            {
+                var files = new I.DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
+                var typeFilter = filter.FileType.HasValue ? (Func<FolderFile, bool>)(f => f.FileType == filter.FileType.Value) : f => true;
+                filtered = files
+                    .Select(n => new FolderFile(n))
+                    .Where(typeFilter)
+                    .AsQueryable()
+                    .OrderBy(sort);
+            }
 
             var filteredAndPaged = filtered
                 .Skip((command.StartPage - 1) * command.PageSize)

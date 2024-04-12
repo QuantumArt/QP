@@ -33,11 +33,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentController : AuthQpController
     {
-        private readonly IContentRepository _contentRepository;
+        private readonly IContentService _contentService;
+        private readonly PathHelper _pathHelper;
 
-        public ContentController(IContentRepository contentRepository)
+        public ContentController(IContentService contentService, PathHelper pathHelper)
         {
-            _contentRepository = contentRepository;
+            _contentService = contentService;
+            _pathHelper = pathHelper;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -323,7 +325,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             [ModelBinder(typeof(JsonStringModelBinder<LibraryFileFilter>))] LibraryFileFilter searchQuery)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ContentService.GetFileList(listCommand, gridParentId, searchQuery);
+            var serviceResult = _contentService.GetFileList(listCommand, gridParentId, searchQuery);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -332,7 +334,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult _FileList(
             int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
         {
-            var serviceResult = ContentService.GetFileList(
+            var serviceResult = _contentService.GetFileList(
                 new ListCommand
                 {
                     PageSize = pageSize,
@@ -351,7 +353,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 success = true,
                 data = new ListResult<FileListItem>
                 {
-                    Data = serviceResult.Data.Select(f => FileListItem.Create(f, fileShortNameLength)).ToList(),
+                    Data = serviceResult.Data.Select(
+                        f=> FileListItem.Create(f, fileShortNameLength, _pathHelper, true)
+                     ).ToList(),
                     TotalRecords = serviceResult.TotalRecords
                 }
             });
@@ -702,12 +706,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult GetContentFormScript(int contentId) => JsonCamelCase(new JSendResponse
         {
             Status = JSendStatus.Success,
-            Data = _contentRepository.GetById(contentId).FormScript
+            Data = _contentService.Get(contentId).FormScript
         });
 
         [ConnectionScope]
         public ActionResult GetTraceImportScript(int id) => Content(
-            _contentRepository.GetById(id).TraceImportScript, "text/javascript"
+            _contentService.Get(id).TraceImportScript, "text/javascript"
         );
     }
 }
