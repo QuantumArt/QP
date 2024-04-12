@@ -1,5 +1,6 @@
 using System;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -22,23 +23,27 @@ namespace Quantumart.QP8.BLL.Services
             return folder;
         }
 
-        public static FolderFile GetFile(int id, string fileName) => _GetPathInfo(id).GetFile(fileName);
+        public static FolderFile GetFile(int id, string fileName, PathHelper pathHelper)
+        {
+            var info = _GetPathInfo(id);
+            info.PathHelper = pathHelper;
+            return info.GetFile(fileName);        }
 
         public static string GetPath(int id, string fileName) => _GetPathInfo(id).GetPath(fileName);
 
         public static PathInfo GetPathInfo(int id) => _GetPathInfo(id);
 
-        public static void SaveFile(FolderFile file)
+        public static void SaveFile(FolderFile file, PathHelper pathHelper)
         {
             if (file == null)
             {
                 throw new ArgumentNullException(nameof(file));
             }
 
-            file.Rename();
+            file.Rename(pathHelper);
         }
 
-        public static MessageResult RemoveFiles(int id, string[] names)
+        public static MessageResult RemoveFiles(int id, string[] names, PathHelper pathHelper)
         {
             if (names == null)
             {
@@ -46,12 +51,13 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var info = _GetPathInfo(id);
+            info.PathHelper = pathHelper;
             foreach (var name in names)
             {
                 var file = info.GetFile(name);
                 if (file != null)
                 {
-                    file.Remove();
+                    file.Remove(pathHelper);
                 }
             }
 

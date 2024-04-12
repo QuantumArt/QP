@@ -1,4 +1,5 @@
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Library
@@ -10,20 +11,23 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
             IsSite = true;
         }
 
-        public static FileViewModel Create(FolderFile file, string tabId, int parentId, bool isSite)
+        public static FileViewModel Create(FolderFile file, string tabId, int parentId, bool isSite, PathHelper pathHelper)
         {
             var model = new FileViewModel
             {
                 File = file,
                 TabId = tabId,
                 ParentEntityId = parentId,
-                IsSite = isSite
+                IsSite = isSite,
+                PathHelper = pathHelper
             };
 
             return model;
         }
 
         public FolderFile File { get; set; }
+
+        public PathHelper PathHelper { get; set; }
 
         public bool IsSite { get; set; }
 
@@ -33,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
 
         public override void Validate()
         {
-            File.Validate();
+            File.Validate(PathHelper);
         }
 
         public override void DoCustomBinding()

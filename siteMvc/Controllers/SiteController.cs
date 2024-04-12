@@ -232,7 +232,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(new
             {
                 success = true,
-                path = _pathHelper.FixPath(folder.PathInfo.Path),
+                path = _pathHelper.FixPathSeparator(folder.PathInfo.Path),
                 url = folder.PathInfo.Url,
                 libraryPath = folder.OsSpecificPath,
                 prefixUploadUrl = folder.PathInfo.BaseUploadUrl

@@ -2,6 +2,7 @@ using System;
 using I = System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Minio.DataModel;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
@@ -54,7 +55,7 @@ namespace Quantumart.QP8.BLL
             };
         }
 
-        private string FixPath(string path) => PathHelper != null ? PathHelper.FixPath(path) : path;
+        private string FixPath(string path) => PathHelper != null ? PathHelper.FixPathSeparator(path) : path;
 
         private string CombinePath(string path, string name) => PathHelper != null ? PathHelper.CombinePath(path, name) : I.Path.Combine(path, name);
 
@@ -67,11 +68,15 @@ namespace Quantumart.QP8.BLL
         internal FolderFile GetFile(string fileName)
         {
             var path = GetPath(fileName);
-            if (!I.File.Exists(path))
+            if (!PathHelper.FileExists(path))
             {
                 throw new Exception(string.Format(LibraryStrings.FileNotExists, path));
             }
 
+            if (PathHelper.UseS3)
+            {
+                return PathHelper.GetS3File(path);
+            }
             return new FolderFile(new I.FileInfo(path));
         }
 

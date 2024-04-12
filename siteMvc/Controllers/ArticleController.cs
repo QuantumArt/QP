@@ -33,11 +33,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class ArticleController : AuthQpController
     {
         private readonly ArticleFullTextSearchQueryParser _parser;
+        private readonly PathHelper _pathHelper;
 
-        public ArticleController(IArticleService dbArticleService, ArticleFullTextSearchQueryParser parser, QPublishingOptions options)
+        public ArticleController(
+            IArticleService dbArticleService,
+            ArticleFullTextSearchQueryParser parser,
+            QPublishingOptions options,
+            PathHelper pathHelper
+        )
             : base(dbArticleService, options)
         {
             _parser = parser;
+            _pathHelper = pathHelper;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -315,6 +322,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 try
                 {
+                    model.Data.PathHelper = _pathHelper;
                     model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
 
                     // ReSharper disable once PossibleInvalidOperationException
@@ -392,6 +400,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 try
                 {
+                    model.Data.PathHelper = _pathHelper;
                     model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
 
                     // ReSharper disable once PossibleInvalidOperationException

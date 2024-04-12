@@ -19,7 +19,9 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -55,6 +57,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
 
+
         private int _parentContentId;
         private ArticleWorkflowDirection? _articleWorkflowDirection;
 
@@ -68,6 +71,7 @@ namespace Quantumart.QP8.BLL
             _isUpdatableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, false));
             _isRemovableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, true));
             _statusHistoryListItem = new InitPropertyValue<StatusHistoryListItem>(() => ArticleRepository.GetStatusHistoryItem(Id));
+            PathHelper = new PathHelper(new DbService(new S3Options()));
             PredefinedValues = new Dictionary<string, string>();
             VariationsErrorModel = new Dictionary<string, RulesException<Article>>();
             CancelSplit = false;
@@ -377,6 +381,11 @@ namespace Quantumart.QP8.BLL
             }
             set => _liveStatusTypeId = value;
         }
+
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public PathHelper PathHelper { get; set; }
 
         internal List<FieldValue> LoadLiveFieldValues(bool excludeArchive = false)
         {
@@ -1398,7 +1407,7 @@ namespace Quantumart.QP8.BLL
             {
                 foreach (var field in item.Field.GetDynamicImages())
                 {
-                    field.DynamicImage.CreateDynamicImage(item.Field.PathInfo.GetPath(item.Value), item.Value);
+                    field.DynamicImage.CreateDynamicImage(item.Field.PathInfo.GetPath(item.Value), item.Value, PathHelper);
                 }
             }
         }

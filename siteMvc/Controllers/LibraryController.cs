@@ -141,7 +141,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 if (_dbService.UseS3())
                 {
-                    var stream = _pathHelper.GetFile(path);
+                    var stream = _pathHelper.GetS3Stream(path);
                     return File(stream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
                 }
                 else
@@ -159,7 +159,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public JsonResult CheckForCrop([FromBody] CropViewModel model)
         {
-            var path = PathInfo.ConvertToPath(model.TargetFileUrl);
+            var path = _pathHelper.FixPathSeparator(PathInfo.ConvertToPath(model.TargetFileUrl));
             var ext = Path.GetExtension(path);
             if (_pathHelper.FileExists(path))
             {
@@ -182,8 +182,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public JsonResult Crop([FromBody] CropViewModel model)
         {
-            var sourcePath = PathInfo.ConvertToPath(model.SourceFileUrl);
-            var targetPath = model.OverwriteFile ? sourcePath : PathInfo.ConvertToPath(model.TargetFileUrl);
+            var sourcePath = _pathHelper.FixPathSeparator(PathInfo.ConvertToPath(model.SourceFileUrl));
+            var targetPath = model.OverwriteFile ? sourcePath : _pathHelper.FixPathSeparator(PathInfo.ConvertToPath(model.TargetFileUrl));
             if (!PathInfo.CheckSecurity(targetPath, true, _pathHelper.Separator).Result)
             {
                 return Json(new { ok = false, message = LibraryStrings.AccessDenied });
@@ -211,7 +211,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (_pathHelper.FileExists(sourcePath))
             {
-                using (var img = Image.Load(sourcePath))
+                using (var img = _pathHelper.LoadImage(sourcePath))
                 {
                     img.Mutate(n => n
                         .Crop(new Rectangle(sourceLeft, sourceTop, sourceWidth, sourceHeight))
@@ -219,13 +219,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     );
 
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
-                    if (_pathHelper.FileExists(targetPath))
+                    if (!_pathHelper.UseS3)
                     {
-                        System.IO.File.SetAttributes(targetPath, FileAttributes.Normal);
-                        System.IO.File.Delete(targetPath);
+                        Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                        if (_pathHelper.FileExists(targetPath))
+                        {
+                            System.IO.File.SetAttributes(targetPath, FileAttributes.Normal);
+                            System.IO.File.Delete(targetPath);
+                        }
                     }
-                    img.Save(targetPath);
+                    _pathHelper.SaveImage(img, targetPath);
                 }
             }
 
@@ -291,11 +294,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             foreach (var size in resizeParameters.ReduceSizes)
             {
                 var newFile = _pathHelper.CombinePath(basePath, string.Format(resizeParameters.ResizedImageTemplate, filename, size.Postfix, ext));
-                using (Image image = Image.Load(Path.Combine(path, resizeParameters.FileName)))
-                {
-                    image.Mutate(x => x.Resize((int)(image.Width / size.ReduceRatio), (int) (image.Height / size.ReduceRatio)));
-                    image.Save(newFile);
-                }
+                using var image = _pathHelper.LoadImage(_pathHelper.CombinePath(path, resizeParameters.FileName));
+                var width = (int)(image.Width / size.ReduceRatio);
+                var height = (int)(image.Height / size.ReduceRatio);
+                image.Mutate(x => x.Resize(width, height));
+                _pathHelper.SaveImage(image, newFile);
             }
 
             return Json(new { ok = true, message = string.Empty });
