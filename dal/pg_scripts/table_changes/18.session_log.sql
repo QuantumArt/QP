@@ -1,0 +1,1 @@
+ALTER TABLE sessions_log ADD COLUMN IF NOT EXISTS last_update timestamp with time zone;
