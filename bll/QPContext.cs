@@ -752,6 +752,7 @@ namespace Quantumart.QP8.BLL
             if (userSession != null)
             {
                 userSession.EndTime = currentDateTime;
+                userSession.LastUpdate = currentDateTime;
                 userSession.Sid = null;
             }
         }
