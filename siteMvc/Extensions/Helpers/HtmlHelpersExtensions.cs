@@ -926,6 +926,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     script.InnerHtml.AppendHtml($@"
                       $('#{inputId}').tDateTimePicker({{
                         format: '{CurrentDateFormat('g')}',
+                        timeFormat: '{CurrentDateFormat('t')}',
                         minValue: new Date(1899, 11, 31),
                         maxValue: new Date(2100, 0, 1),
                         startTimeValue: {ToJavaScriptDate(System.DateTime.Today)},
