@@ -225,8 +225,7 @@ namespace Quantumart.QP8.BLL
             var sort = string.IsNullOrEmpty(command.SortExpression) ? "Name ASC" : command.SortExpression;
             if (PathHelper.UseS3)
             {
-                var path = PathHelper.FixPathSeparator(PathInfo.Path);
-                filtered = PathHelper.GetS3Files(path);
+                filtered = PathHelper.GetS3Files(PathInfo.Path);
             }
             else
             {

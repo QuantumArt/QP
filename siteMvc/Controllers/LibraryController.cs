@@ -70,13 +70,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(new { result });
         }
 
-        public JsonResult CheckSecurity(string path)
-        {
-            var result = PathInfo.CheckSecurity(path, true, _pathHelper.Separator).Result && CheckFolderExistence(path);
-            HttpContext.Session.SetValue($"upload_{path}", result);
-            return Json(new { result });
-        }
-
         public JsonResult TestFieldValueDownload(string id, string fileName, bool isVersion, int? entityId)
         {
             var fieldId = Field.ParseFormName(id);
@@ -339,24 +332,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 index++;
                 result = MutateHelper.MutateFileName(name, index);
             } while (_pathHelper.FileExists(_pathHelper.CombinePath(path, result)));
-
-            return result;
-        }
-
-        private static bool CheckFolderExistence(string path)
-        {
-            var result = true;
-            if (!Directory.Exists(path))
-            {
-                try
-                {
-                    Directory.CreateDirectory(path);
-                }
-                catch
-                {
-                    result = false;
-                }
-            }
 
             return result;
         }

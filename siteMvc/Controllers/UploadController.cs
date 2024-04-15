@@ -83,9 +83,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 throw new ArgumentException("Folder Path is empty");
             }
 
-            if (!Directory.Exists(destinationUrl))
+            if (_pathHelper.UseS3)
             {
-                Directory.CreateDirectory(destinationUrl);
+                destinationUrl = _pathHelper.FixPathSeparator(destinationUrl);
+            }
+            else
+            {
+                if (!Directory.Exists(destinationUrl))
+                {
+                    Directory.CreateDirectory(destinationUrl);
+                }
             }
 
             chunk ??= 0;

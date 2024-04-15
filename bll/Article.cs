@@ -734,6 +734,7 @@ namespace Quantumart.QP8.BLL
                 previousArticle = ArticleRepository.GetById(Id);
                 Ensure.NotNull(previousArticle, string.Format(ArticleStrings.ArticleNotFound, Id));
 
+                previousArticle.PathHelper = PathHelper;
                 previousArticle.CreateVersion();
                 RemoveAggregates(this, previousArticle);
                 RemoveVariations();
@@ -744,6 +745,7 @@ namespace Quantumart.QP8.BLL
             OptimizeForHierarchy();
 
             var result = ArticleRepository.CreateOrUpdate(this);
+            result.PathHelper = PathHelper;
             var articleToPrepare = IsNew ? result : previousArticle;
             var codes = new List<string> { IsNew ? NotificationCode.Create : NotificationCode.Update };
             if (!IsNew && previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
@@ -1337,13 +1339,16 @@ namespace Quantumart.QP8.BLL
                 ArticleVersionRepository.Create(Id);
                 var newVersion = ArticleVersionRepository.GetLatest(Id);
 
-                Directory.CreateDirectory(BackupPath);
-                Directory.CreateDirectory(newVersion.PathInfo.Path);
+                if (!PathHelper.UseS3)
+                {
+                    Directory.CreateDirectory(BackupPath);
+                    Directory.CreateDirectory(newVersion.PathInfo.Path);
+                }
 
                 var count = ArticleVersionRepository.GetVersionsCount(Id);
                 if (count == Content.MaxNumOfStoredVersions)
                 {
-                    Folder.ForceDelete(earliestVersion.PathInfo.Path);
+                    PathHelper.RemoveFolder(earliestVersion.PathInfo.Path);
                 }
 
                 CopyArticleFiles(CopyFilesMode.ToVersionFolder, BackupPath, newVersion.PathInfo.Path);
@@ -1354,14 +1359,17 @@ namespace Quantumart.QP8.BLL
 
                 if (Directory.Exists(newVersion.PathInfo.Path) && !Directory.EnumerateFiles(newVersion.PathInfo.Path, "*.*", SearchOption.AllDirectories).Any())
                 {
-                    Folder.ForceDelete(newVersion.PathInfo.Path);
+                    PathHelper.RemoveFolder(newVersion.PathInfo.Path);
                 }
             }
         }
 
         internal void BackupFilesFromCurrentVersion()
         {
-            Directory.CreateDirectory(BackupPath);
+            if (!PathHelper.UseS3)
+            {
+                Directory.CreateDirectory(BackupPath);
+            }
             CopyArticleFiles(CopyFilesMode.ToBackupFolder, BackupPath);
         }
 
@@ -1557,22 +1565,31 @@ namespace Quantumart.QP8.BLL
                         return;
                     }
 
-                    if (File.Exists(dest))
+                    if (PathHelper.UseS3)
                     {
-                        File.SetAttributes(dest, FileAttributes.Normal);
-                    }
-
-                    if (File.Exists(src))
-                    {
-                        File.Copy(src, dest, true);
-                        File.SetAttributes(dest, FileAttributes.Normal);
+                        PathHelper.CopyS3File(src, dest);
                         destinations.Add(dest);
+                    }
+                    else
+                    {
+                        if (File.Exists(dest))
+                        {
+                            File.SetAttributes(dest, FileAttributes.Normal);
+                        }
+
+                        if (File.Exists(src))
+                        {
+                            File.Copy(src, dest, true);
+                            File.SetAttributes(dest, FileAttributes.Normal);
+                            destinations.Add(dest);
+                        }
                     }
                 }
 
                 foreach (var item in FieldValues)
                 {
-                    if (item.Field.UseVersionControl && (item.Field.Type.Name == FieldTypeName.Image || item.Field.Type.Name == FieldTypeName.File))
+                    if (item.Field.UseVersionControl && !string.IsNullOrEmpty(item.Value)
+                        && (item.Field.Type.Name == FieldTypeName.Image || item.Field.Type.Name == FieldTypeName.File))
                     {
                         if (mode == CopyFilesMode.ToBackupFolder)
                         {
@@ -1584,15 +1601,15 @@ namespace Quantumart.QP8.BLL
                         else if (mode == CopyFilesMode.ToVersionFolder)
                         {
                             // режем откуда, режем куда
-                            var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? string.Empty);
-                            var destination = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? string.Empty);
+                            var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
+                            var destination = Path.Combine(versionPath, Path.GetFileName(item.Value));
                             CopyFile(source, destination);
                         }
                         else if (mode == CopyFilesMode.FromVersionFolder)
                         {
                             // режем откуда, режем куда
-                            var source = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? string.Empty);
-                            var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? string.Empty);
+                            var source = Path.Combine(versionPath, Path.GetFileName(item.Value));
+                            var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
                             CopyFile(source, destination);
 
                             // режем откуда, не режем куда

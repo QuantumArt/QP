@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -101,22 +102,29 @@ public class PathHelper
     }
 
 
-    public IEnumerable<FolderFile> GetS3Files(string path)
+    public IEnumerable<FolderFile> GetS3Files(string path, bool recursive = false)
     {
         var result = new List<FolderFile>();
         if (_dbService.UseS3())
         {
+            path = FixPathSeparator(path);
             path = RemoveLeadingSeparator(path);
             path = AddTrailingSeparator(path);
 
             var listObjectArgs = new ListObjectsArgs()
                 .WithBucket(_options.Bucket)
                 .WithPrefix(path)
-                .WithRecursive(false)
+                .WithRecursive(recursive)
                 .WithVersions(true);
             var observable = _client.ListObjectsAsync(listObjectArgs);
             Task.Run(async () =>
-                await observable.Do(item => result.Add(new FolderFile(item, path))).LastOrDefaultAsync()
+                await observable.Do(item =>
+                {
+                    if (!item.IsDir)
+                    {
+                        result.Add(new FolderFile(item, path));
+                    }
+                }).LastOrDefaultAsync()
             ).Wait();
         }
         return result;
@@ -168,6 +176,19 @@ public class PathHelper
         Task.Run(async () => await _client.CopyObjectAsync(destArgs)).Wait();
     }
 
+    public void RemoveS3Files(IEnumerable<FolderFile> files)
+    {
+        var objectArgs = new RemoveObjectsArgs().WithBucket(_options.Bucket)
+            .WithObjects(files.Select(n => n.Path).ToArray());
+        Task.Run(async () => await _client.RemoveObjectsAsync(objectArgs)).Wait();
+    }
+
+    public void RemoveS3Folder(string path)
+    {
+        var files = GetS3Files(path);
+        RemoveS3Files(files);
+    }
+
     public void Rename(string path, string newPath)
     {
         if (UseS3)
@@ -193,6 +214,20 @@ public class PathHelper
             File.SetAttributes(path, FileAttributes.Normal);
             File.Delete(path);
         }
+    }
+
+    public void RemoveFolder(string path)
+    {
+
+        if (UseS3)
+        {
+            RemoveS3Folder(path);
+        }
+        else
+        {
+            Directory.Delete(path);
+        }
+
     }
 
 
