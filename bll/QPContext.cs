@@ -26,6 +26,7 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.DAL;
+using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Utils;
 
@@ -676,7 +677,8 @@ namespace Quantumart.QP8.BLL
                 using (var scope = new QPConnectionScope())
                 {
                     var dbContext = EFContext;
-                    CloseUserSessions(CurrentUserId, dbContext, DateTime.Now);
+                    CloseSessionLogById(CurrentSessionId, dbContext, DateTime.Now);
+
                     dbContext.SaveChanges();
 
                     CommonSecurity.ClearUserToken(scope.DbConnection, CurrentUserId, CurrentSessionId);
@@ -703,9 +705,6 @@ namespace Quantumart.QP8.BLL
             // сбросить sid и установить EndTime для всех сессий пользователя
             var currentDt = DateTime.Now;
 
-            // закрыть открытые сессии пользователя
-            CloseUserSessions(user.Id, dbContext, currentDt);
-
             // Сохранить новую сессию
             var sessionsLog = new SessionsLog
             {
@@ -715,7 +714,8 @@ namespace Quantumart.QP8.BLL
                 StartTime = currentDt,
                 Browser = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString().Left(255),
                 IP = GetUserIpAddress(),
-                ServerName = Environment.MachineName.Left(255)
+                ServerName = Environment.MachineName.Left(255),
+                LastUpdate = DateTime.Now
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
@@ -742,6 +742,31 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static void TouchSessionLog()
+        {
+            QPModelDataContext efContext = EFContext;
+            SessionsLogDAL sessionLog = efContext.SessionsLogSet.FirstOrDefault(x => x.SessionId == CurrentSessionId && !x.EndTime.HasValue && !x.IsQP7);
+
+            if (sessionLog != null)
+            {
+                sessionLog.LastUpdate = DateTime.Now;
+                efContext.SaveChanges();
+            }
+        }
+
+        private static void CloseSessionLogById(int sessionId, QPModelDataContext dbContext, DateTime currentDateTime)
+        {
+            SessionsLogDAL userSession = dbContext.SessionsLogSet
+                .FirstOrDefault(session => session.SessionId == sessionId && !session.EndTime.HasValue && !session.IsQP7);
+
+            if (userSession != null)
+            {
+                userSession.EndTime = currentDateTime;
+                userSession.LastUpdate = currentDateTime;
+                userSession.Sid = null;
+            }
+        }
+
         private static void CreateFailedSession(LogOnCredentials data, QPModelDataContext dbContext)
         {
             var sessionsLog = new SessionsLog
@@ -752,7 +777,8 @@ namespace Quantumart.QP8.BLL
                 StartTime = DateTime.Now,
                 Browser = HttpContext.Request.Headers[HeaderNames.UserAgent].ToString().Left(255),
                 IP = GetUserIpAddress(),
-                ServerName = Environment.MachineName.Left(255)
+                ServerName = Environment.MachineName.Left(255),
+                LastUpdate = DateTime.Now
             };
 
             var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
