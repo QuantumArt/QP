@@ -18,15 +18,22 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            using IDisposable logScope = NLog.ScopeContext.PushProperties(new Dictionary<string, object>()
+            if (QPContext.CurrentUserId != 0)
             {
-                { LoggingAttributeConstants.UserIdAttribute, QPContext.CurrentUserId },
-                { LoggingAttributeConstants.UserNameAttribute, QPContext.CurrentUserName },
-                { LoggingAttributeConstants.UserIpAttribute, QPContext.GetUserIpAddress() },
-                { LoggingAttributeConstants.UserGroupIdsAttribute, string.Join(",", QPContext.CurrentGroupIds) }
-            });
+                using IDisposable logScope = NLog.ScopeContext.PushProperties(new Dictionary<string, object>()
+                {
+                    { LoggingAttributeConstants.UserIdAttribute, QPContext.CurrentUserId },
+                    { LoggingAttributeConstants.UserNameAttribute, QPContext.CurrentUserName },
+                    { LoggingAttributeConstants.UserIpAttribute, QPContext.GetUserIpAddress() },
+                    { LoggingAttributeConstants.UserGroupIdsAttribute, string.Join(",", QPContext.CurrentGroupIds) }
+                });
 
-            await _next.Invoke(context);
+                await _next.Invoke(context);
+            }
+            else
+            {
+                await _next.Invoke(context);
+            }
         }
     }
 }
