@@ -32,6 +32,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Middleware
             }
             else
             {
+                using IDisposable logScope = NLog.ScopeContext.PushProperties(new Dictionary<string, object>()
+                {
+                    { LoggingAttributeConstants.UserIpAttribute, QPContext.GetUserIpAddress() }
+                });
+
                 await _next.Invoke(context);
             }
         }
