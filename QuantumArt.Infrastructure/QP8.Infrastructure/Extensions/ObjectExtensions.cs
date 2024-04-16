@@ -11,9 +11,9 @@ namespace QP8.Infrastructure.Extensions
 
         public static string ToJsonLog(this object entry, IContractResolver resolver) => entry.ToJson(Formatting.None, resolver);
 
-        public static string ToJson(this object entry, Formatting formatting = Formatting.Indented) => entry.ToJson(formatting, new CamelCasePropertyNamesContractResolver());
+        public static string ToJson(this object entry, Formatting formatting = Formatting.Indented) => entry.ToJson(formatting, new CamelCasePropertyNamesContractResolver(), StringEscapeHandling.EscapeHtml);
 
-        public static string ToJson(this object entry, Formatting formatting, IContractResolver resolver)
+        public static string ToJson(this object entry, Formatting formatting, IContractResolver resolver, StringEscapeHandling escapeHandling = StringEscapeHandling.Default)
         {
             if (entry == null)
             {
@@ -25,7 +25,8 @@ namespace QP8.Infrastructure.Extensions
                 Formatting = formatting,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 ContractResolver = resolver,
-                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
+                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+                StringEscapeHandling = escapeHandling
             });
         }
     }
