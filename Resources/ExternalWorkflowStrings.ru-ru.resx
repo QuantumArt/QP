@@ -68,4 +68,16 @@
   <data name="ApproveComment" xml:space="preserve">
     <value>Оставьте свой комментарий (не обязательно)</value>
   </data>
+  <data name="SuccessfullyPublished" xml:space="preserve">
+    <value>Рабочий процесс успешно опубликован</value>
+  </data>
+  <data name="PublishError" xml:space="preserve">
+    <value>Ошибка при публикации рабочего процесса</value>
+  </data>
+  <data name="SuccessfullyStarted" xml:space="preserve">
+    <value>Рабочий процесс успешно запущен</value>
+  </data>
+  <data name="StartError" xml:space="preserve">
+    <value>Ошибка при публикации запуске процесса</value>
+  </data>
 </root>

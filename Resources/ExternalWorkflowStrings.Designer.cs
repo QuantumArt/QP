@@ -85,5 +85,41 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("FillArticleMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while publishing workflow.
+        /// </summary>
+        public static string PublishError {
+            get {
+                return ResourceManager.GetString("PublishError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while starting workflow.
+        /// </summary>
+        public static string StartError {
+            get {
+                return ResourceManager.GetString("StartError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow successfully published.
+        /// </summary>
+        public static string SuccessfullyPublished {
+            get {
+                return ResourceManager.GetString("SuccessfullyPublished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow successfully started.
+        /// </summary>
+        public static string SuccessfullyStarted {
+            get {
+                return ResourceManager.GetString("SuccessfullyStarted", resourceCulture);
+            }
+        }
     }
 }

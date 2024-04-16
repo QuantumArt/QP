@@ -1,8 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 
@@ -27,7 +28,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             bool result = await _externalWorkflowService.PublishWorkflow(customerCode, contentItemId, siteId, token);
 
-            return result ? Ok() : new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            return result ? JsonMessageResult(MessageResult.Info(ExternalWorkflowStrings.SuccessfullyPublished)) : JsonMessageResult(MessageResult.Error(ExternalWorkflowStrings.PublishError));
         }
 
         [HttpPost("startWorkflow")]
@@ -41,7 +42,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 contentId,
                 token);
 
-            return result ? Ok() : new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            return result ? JsonMessageResult(MessageResult.Info(ExternalWorkflowStrings.SuccessfullyStarted)) : JsonMessageResult(MessageResult.Error(ExternalWorkflowStrings.StartError));
         }
     }
 }
