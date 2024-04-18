@@ -57,6 +57,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "EntityTypeName", ResourceType = typeof(AuditStrings))]
         public string EntityTypeName { get; set; }
 
+        public string UserIp { get; set; }
+        public IEnumerable<BackendActionLogUserGroup> UserGroups { get; set; }
+
         #endregion
 
         public static IEnumerable<BackendActionLog> CreateLogs(BackendActionContext actionContext, IBackendActionLogRepository repository)
@@ -77,7 +80,12 @@ namespace Quantumart.QP8.BLL
                     EntityTypeCode = actionContext.EntityTypeCode,
                     ParentEntityId = actionContext.ParentEntityId,
                     ExecutionTime = DateTime.Now,
-                    UserId = QPContext.CurrentUserId
+                    UserId = QPContext.CurrentUserId,
+                    UserIp = QPContext.GetUserIpAddress(),
+                    UserGroups = QPContext.CurrentGroupIds.Select(x => new BackendActionLogUserGroup()
+                    {
+                        GroupId = x
+                    }).ToList()
                 })
                 .ToArray();
         }

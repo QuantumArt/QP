@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,6 +33,10 @@ namespace Quantumart.QP8.DAL.Entities
         public Nullable<decimal> ParentEntityId { get; set; }
         public string EntityTitle { get; set; }
         public bool IsApi { get; set; }
+
+
+        public string UserIp { get; set; }
+        public IEnumerable<BackendActionLogUserGroupDAL> UserGroups { get; set; }
     }
         public class BackendActionLogDALConfiguration : IEntityTypeConfiguration<BackendActionLogDAL>
         {
@@ -54,7 +59,9 @@ namespace Quantumart.QP8.DAL.Entities
 
                 builder.HasKey(x => x.Id);
 
-
+                builder.HasMany(x => x.UserGroups)
+                    .WithOne(x => x.ActionLog)
+                    .HasForeignKey(x => x.BackendActionLogId);
             }
         }
 }

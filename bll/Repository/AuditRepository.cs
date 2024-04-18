@@ -76,8 +76,16 @@ namespace Quantumart.QP8.BLL.Repository
         public IEnumerable<BackendActionLog> Save(IEnumerable<BackendActionLog> logs)
         {
             IEnumerable<BackendActionLogDAL> toSave = MapperFacade.BackendActionLogMapper.GetDalList(logs.ToList());
-            var saved = DefaultRepository.SimpleSaveBulk(toSave);
-            return MapperFacade.BackendActionLogMapper.GetBizList(saved.ToList());
+            var saved = DefaultRepository.SimpleSaveBulk(toSave).ToList();
+
+            foreach (BackendActionLogDAL backendActionLogDAL in saved)
+            {
+                var groups = backendActionLogDAL.UserGroups.ToList();
+                groups.ForEach(x => x.BackendActionLogId = backendActionLogDAL.Id);
+                var savedGroups = DefaultRepository.SimpleSaveBulk(groups);
+                backendActionLogDAL.UserGroups = savedGroups;
+            }
+            return MapperFacade.BackendActionLogMapper.GetBizList(saved);
         }
 
         public IEnumerable<ListItem> GetEntityTitles(string entityTypeCode, int? parentEntityId, IEnumerable<int> entitiesIDs)
