@@ -52,7 +52,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 
     private int ClearSiteTempFolder(int numFiles, DirectoryInfo dirInfo, int siteId)
     {
-        if (dirInfo is { Exists: true } && numFiles > 0)
+        if (!_pathHelper.UseS3 && dirInfo is { Exists: true } && numFiles > 0)
         {
             var tempDirInfo = dirInfo.Parent?.GetDirectories("temp").FirstOrDefault();
             if (tempDirInfo is { Exists: true })
@@ -71,7 +71,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 
     private int ClearContentTempFolder(int numFiles, DirectoryInfo dirInfo, int contentId)
     {
-        if (dirInfo is { Exists: true } && numFiles > 0)
+        if (!_pathHelper.UseS3 && dirInfo is { Exists: true } && numFiles > 0)
         {
             var tempDirInfo = dirInfo.GetDirectories("_temp").FirstOrDefault();
             if (tempDirInfo is { Exists: true })
@@ -90,7 +90,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 
     private int RemoveEmptyVersionFolders(int numFiles, DirectoryInfo dirInfo, int contentId)
     {
-        if (dirInfo is { Exists: true } && numFiles > 0)
+        if (!_pathHelper.UseS3 && dirInfo is { Exists: true } && numFiles > 0)
         {
             var allVersionsDir = dirInfo.GetDirectories(ArticleVersion.RootFolder).FirstOrDefault();
             if (allVersionsDir is { Exists: true })
@@ -113,21 +113,43 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 
     private int SyncCurrentVersionFolder(int numFiles, DirectoryInfo dirInfo, int contentId)
     {
-        if (dirInfo is { Exists: true } && numFiles > 0)
+        if (numFiles > 0)
         {
-            var versionsDir = dirInfo.GetDirectories(ArticleVersion.RootFolder).FirstOrDefault();
-            if (versionsDir is { Exists: true })
+            if (_pathHelper.UseS3)
             {
-                var currentVersionDirInfo = versionsDir.GetDirectories("current").FirstOrDefault();
-                if (currentVersionDirInfo is { Exists: true })
+                var contentFiles = new HashSet<string>(GetContentFiles(dirInfo));
+                var path = dirInfo.ToString();
+                var prefix = _pathHelper.CombinePath(path, $"{ArticleVersion.RootFolder}/current");
+                var filesToDelete = _pathHelper.ListS3Files(prefix)
+                    .Where(n => !contentFiles.Contains(n.Name)).Take(numFiles).ToArray();
+
+                if (filesToDelete.Any())
                 {
-                    var contentFiles = GetContentFiles(dirInfo);
-                    var filesToDelete = GetFilesToDelete(currentVersionDirInfo, contentFiles);
-                    if (filesToDelete.Any())
+                    Logger.Info($"Found {filesToDelete.Length} files in current version folder " +
+                        $"for content {contentId}, but the number is limited to {numFiles}");
+                    _pathHelper.RemoveS3Files(filesToDelete);
+                    numFiles -= filesToDelete.Length;
+                }
+            }
+            else
+            {
+                if (dirInfo is { Exists: true })
+                {
+                    var versionsDir = dirInfo.GetDirectories(ArticleVersion.RootFolder).FirstOrDefault();
+                    if (versionsDir is { Exists: true })
                     {
-                        Logger.Info($"Found {filesToDelete.Length} files in current version folder " +
-                            $"for content {contentId}, but the number is limited to {numFiles}");
-                        numFiles = ProcessFiles(numFiles, filesToDelete);
+                        var currentVersionDirInfo = versionsDir.GetDirectories("current").FirstOrDefault();
+                        if (currentVersionDirInfo is { Exists: true })
+                        {
+                            var contentFiles = GetContentFiles(dirInfo);
+                            var filesToDelete = GetFilesToDelete(currentVersionDirInfo, contentFiles);
+                            if (filesToDelete.Any())
+                            {
+                                Logger.Info($"Found {filesToDelete.Length} files in current version folder " +
+                                    $"for content {contentId}, but the number is limited to {numFiles}");
+                                numFiles = ProcessFiles(numFiles, filesToDelete);
+                            }
+                        }
                     }
                 }
             }
@@ -149,14 +171,28 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 
     private string[] GetContentFiles(DirectoryInfo rootDirInfo)
     {
-        var dirs = rootDirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
-            .Where(n => n.Name != ArticleVersion.RootFolder && n.Name != "_temp").ToArray();
         var result = new List<string>();
-        foreach (var dir in dirs)
+        if (_pathHelper.UseS3)
         {
-            result.AddRange(dir.EnumerateFiles("*", SearchOption.AllDirectories).Select(n => n.Name));
+            var path = rootDirInfo.ToString();
+            var dirs = _pathHelper.ListS3Files(path, onlyDirs: true)
+                .Where(n => n.Name != ArticleVersion.RootFolder && n.Name != "_temp").ToArray();
+            foreach (var dir in dirs)
+            {
+                result.AddRange(_pathHelper.ListS3Files(dir.FullName, recursive: true).Select(n => n.Name).ToArray());
+            }
+            result.AddRange(_pathHelper.ListS3Files(path).Select(n => n.Name).ToArray());
         }
-        result.AddRange(rootDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Select(n => n.Name));
+        else
+        {
+            var dirs = rootDirInfo.GetDirectories("*", SearchOption.TopDirectoryOnly)
+                .Where(n => n.Name != ArticleVersion.RootFolder && n.Name != "_temp").ToArray();
+            foreach (var dir in dirs)
+            {
+                result.AddRange(dir.EnumerateFiles("*", SearchOption.AllDirectories).Select(n => n.Name));
+            }
+            result.AddRange(rootDirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Select(n => n.Name));
+        }
         return result.ToArray();
     }
 

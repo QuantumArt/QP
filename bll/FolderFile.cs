@@ -179,6 +179,8 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public long Length { get; set; }
 
+        public string Dimensions { get; set; }
+
 
         /// <summary>
         /// Дата создания файла

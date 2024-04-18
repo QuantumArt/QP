@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
@@ -57,6 +59,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
         /// Размеры изображения (только для картинок)
         /// </summary>
         [Display(Name = "Dimensions", ResourceType = typeof(LibraryStrings))]
+        [BindNever]
+        [ValidateNever]
         public string Dimensions
         {
             get

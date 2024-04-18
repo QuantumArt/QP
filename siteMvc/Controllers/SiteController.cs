@@ -191,12 +191,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = _siteService.GetFileList(listCommand, gridParentId, searchQuery);
+            foreach (var file in serviceResult.Data)
+            {
+                file.Dimensions = FileListItem.GetDimensions(file, _pathHelper);
+            }
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "folderId")]
-        public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
+        public JsonResult _FileList(
+            int folderId,
+            int? fileTypeId,
+            string fileNameFilter,
+            int pageSize,
+            int pageNumber,
+            bool loadDimensions,
+            int fileShortNameLength = 15
+        )
         {
             var serviceResult = _siteService.GetFileList(
                 new ListCommand
@@ -217,7 +229,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 data = new ListResult<FileListItem>
                 {
                     Data = serviceResult.Data.Select(
-                        f => FileListItem.Create(f, fileShortNameLength, _pathHelper, true)
+                        f => FileListItem.Create(f, fileShortNameLength, _pathHelper, loadDimensions)
                     ).ToList(),
                     TotalRecords = serviceResult.TotalRecords
                 }

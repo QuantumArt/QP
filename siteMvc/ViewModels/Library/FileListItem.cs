@@ -36,22 +36,25 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
             { FolderFileType.Unknown, "unknown_64.png" }
         };
 
-        public static FileListItem Create(FolderFile file, int fileShortNameLength, PathHelper pathHelper, bool loadDimensions)
+        public static string GetDimensions(FolderFile file, PathHelper pathHelper)
         {
             var dimensions = "";
-            if (loadDimensions)
+            try
             {
-                try
-                {
-                    using var image = pathHelper.LoadImage(file.FullName);
-                    dimensions = $"{image.Width}x{image.Height}";
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                using var image = pathHelper.LoadImage(file.FullName);
+                dimensions = $"{image.Width}x{image.Height}";
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
+            return dimensions;
+        }
+
+        public static FileListItem Create(FolderFile file, int fileShortNameLength, PathHelper pathHelper, bool loadDimensions)
+        {
+            var dimensions = loadDimensions ? GetDimensions(file, pathHelper) : String.Empty;
             var item = new FileListItem
             {
                 FullName = file.Name,
