@@ -21,11 +21,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class CopySiteController : AuthQpController
     {
         private readonly IMultistepActionService _multistepService;
+        private readonly ISiteService _siteService;
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public CopySiteController(CopySiteService multistepService)
+        public CopySiteController(CopySiteService multistepService, ISiteService siteService)
         {
             _multistepService = multistepService ?? throw new ArgumentNullException(nameof(multistepService));
+            _siteService = siteService;
         }
 
         [HttpPost]
@@ -79,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 try
                 {
-                    model.Data = SiteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
+                    model.Data = _siteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
                 }
                 catch (Exception ex)
                 {

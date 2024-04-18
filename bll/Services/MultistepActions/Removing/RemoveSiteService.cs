@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
@@ -8,6 +9,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public sealed class RemoveSiteService : RemovingServiceAbstract
     {
+        public RemoveSiteService(PathHelper pathHelper) : base(pathHelper)
+        {
+        }
+
         public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal)
         {
             var site = SiteRepository.GetById(siteId);

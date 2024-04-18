@@ -125,7 +125,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                model.Data = SiteService.Save(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);
+                model.Data = _siteService.Save(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSite });
             }
@@ -162,7 +162,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                model.Data = SiteService.Update(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);
+                model.Data = _siteService.Update(model.Data, model.ActiveVeCommandsIds, model.ActiveVeStyleIds);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
 

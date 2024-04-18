@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -85,6 +86,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         }
 
         public MultistepActionStepResult Step(int stage, int step)
+        {
+            var context = HttpContext.Session.GetValue<MultistepActionServiceContext>(ContextSessionKey);
+            var command = CreateCommand(context.CommandStates[stage]);
+            return command.Step(step);
+        }
+
+        public MultistepActionStepResult Step(int stage, int step, PathHelper pathHelper)
         {
             var context = HttpContext.Session.GetValue<MultistepActionServiceContext>(ContextSessionKey);
             var command = CreateCommand(context.CommandStates[stage]);

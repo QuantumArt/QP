@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -11,6 +12,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public sealed class ClearContentService : RemovingServiceAbstract
     {
+        public ClearContentService(PathHelper pathHelper) : base(pathHelper)
+        {
+        }
         public override MessageResult PreAction(int siteId, int contentId)
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
@@ -61,6 +65,5 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
             Commands.Add(new ClearContentCommand(siteId, contentId, contentName, itemCount));
             return base.Setup(siteId, contentId, boundToExternal);
         }
-
     }
 }

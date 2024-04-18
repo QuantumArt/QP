@@ -271,7 +271,7 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
 
         public static IEnumerable<ListItem> GetSiteContentGroupsForFilter(int siteId) => ContentRepository.GetGroupSimpleList(siteId);
 
-        public static LibraryResult Library(int id, string subFolder)
+        public static LibraryResult Library(int id, string subFolder, PathHelper pathHelper)
         {
             if (!ContentRepository.Exists(id))
             {
@@ -280,7 +280,7 @@ namespace Quantumart.QP8.BLL.Services.ContentServices
 
             var factory = new ContentFolderFactory();
             var repository = factory.CreateRepository();
-            var folder = repository.GetBySubFolder(id, subFolder);
+            var folder = repository.GetBySubFolder(id, subFolder, pathHelper);
             return new LibraryResult { Folder = folder };
         }
 

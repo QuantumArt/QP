@@ -15,10 +15,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class EntityObjectController : AuthQpController
     {
         private readonly ArticleFullTextSearchQueryParser _parser;
+        private readonly PathHelper _pathHelper;
 
-        public EntityObjectController(ArticleFullTextSearchQueryParser parser)
+        public EntityObjectController(ArticleFullTextSearchQueryParser parser, PathHelper pathHelper)
         {
             _parser = parser;
+            _pathHelper = pathHelper;
         }
 
         public JsonResult CheckExistence(string entityTypeCode, int entityId)
@@ -38,14 +40,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public JsonResult GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter)
         {
-            return Json(EntityObjectService.GetByTypeAndIdForTree(entityTypeCode, entityId, loadChilds, filter));
+            return Json(EntityObjectService.GetByTypeAndIdForTree(entityTypeCode, entityId, loadChilds, filter, _pathHelper));
         }
 
         [HttpPost]
         public JsonResult GetChildList([FromBody]ChildListQuery query)
         {
             query.Parser = _parser;
-            var data = EntityObjectService.GetEntityTreeItems(query);
+            var data = EntityObjectService.GetEntityTreeItems(query, _pathHelper);
             return Json(data);
         }
 

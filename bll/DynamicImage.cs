@@ -302,11 +302,11 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void DeleteDirectory()
+        public void DeleteDirectory(PathHelper pathHelper)
         {
             if (!IsNew)
             {
-                Folder.ForceDelete(PathInfo.Path);
+                pathHelper.RemoveFolder(PathInfo.Path);
             }
         }
 

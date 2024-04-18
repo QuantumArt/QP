@@ -1357,9 +1357,12 @@ namespace Quantumart.QP8.BLL
                     a.CopyArticleFiles(CopyFilesMode.ToVersionFolder, a.BackupPath, newVersion.PathInfo.Path);
                 }
 
-                if (Directory.Exists(newVersion.PathInfo.Path) && !Directory.EnumerateFiles(newVersion.PathInfo.Path, "*.*", SearchOption.AllDirectories).Any())
+                if (!PathHelper.UseS3)
                 {
-                    PathHelper.RemoveFolder(newVersion.PathInfo.Path);
+                    if (Directory.Exists(newVersion.PathInfo.Path) && !Directory.EnumerateFiles(newVersion.PathInfo.Path, "*.*", SearchOption.AllDirectories).Any())
+                    {
+                        PathHelper.RemoveFolder(newVersion.PathInfo.Path);
+                    }
                 }
             }
         }
@@ -1391,7 +1394,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal static void RemoveAllVersionFolders(Content content, int[] ids)
+        internal void RemoveAllVersionFolders(Content content, int[] ids)
         {
             foreach (var id in ArticleVersionRepository.GetIds(ids))
             {
@@ -1399,9 +1402,9 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal static void RemoveVersionFolder(Content content, int id)
+        internal void RemoveVersionFolder(Content content, int id)
         {
-            Folder.ForceDelete(content.GetVersionPathInfo(id).Path);
+            PathHelper.RemoveFolder(content.GetVersionPathInfo(id).Path);
         }
 
         internal void RemoveVersionFolder(int id)
@@ -1555,37 +1558,9 @@ namespace Quantumart.QP8.BLL
 
         private void CopyArticleFiles(CopyFilesMode mode, string currentVersionPath, string versionPath = "")
         {
-            var destinations = new HashSet<string>();
+            var copied = new HashSet<string>();
             if (Content.UseVersionControl)
             {
-                void CopyFile(string src, string dest)
-                {
-                    if (destinations.Contains(dest))
-                    {
-                        return;
-                    }
-
-                    if (PathHelper.UseS3)
-                    {
-                        PathHelper.CopyS3File(src, dest);
-                        destinations.Add(dest);
-                    }
-                    else
-                    {
-                        if (File.Exists(dest))
-                        {
-                            File.SetAttributes(dest, FileAttributes.Normal);
-                        }
-
-                        if (File.Exists(src))
-                        {
-                            File.Copy(src, dest, true);
-                            File.SetAttributes(dest, FileAttributes.Normal);
-                            destinations.Add(dest);
-                        }
-                    }
-                }
-
                 foreach (var item in FieldValues)
                 {
                     if (item.Field.UseVersionControl && !string.IsNullOrEmpty(item.Value)
@@ -1596,27 +1571,58 @@ namespace Quantumart.QP8.BLL
                             // не режем откуда, режем куда
                             var source = Path.Combine(item.Field.PathInfo.Path, item.Value);
                             var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
-                            CopyFile(source, destination);
+                            CopyFile(source, destination, copied);
                         }
                         else if (mode == CopyFilesMode.ToVersionFolder)
                         {
                             // режем откуда, режем куда
                             var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
                             var destination = Path.Combine(versionPath, Path.GetFileName(item.Value));
-                            CopyFile(source, destination);
+                            CopyFile(source, destination, copied);
                         }
                         else if (mode == CopyFilesMode.FromVersionFolder)
                         {
                             // режем откуда, режем куда
                             var source = Path.Combine(versionPath, Path.GetFileName(item.Value));
                             var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
-                            CopyFile(source, destination);
+                            CopyFile(source, destination, copied);
 
                             // режем откуда, не режем куда
                             destination = Path.Combine(item.Field.PathInfo.Path, item.Value);
-                            CopyFile(source, destination);
+                            CopyFile(source, destination, copied);
                         }
                     }
+                }
+            }
+        }
+
+        private void CopyFile(string src, string dest, HashSet<string> destinations)
+        {
+            if (destinations.Contains(dest))
+            {
+                return;
+            }
+
+            if (PathHelper.UseS3)
+            {
+                if (PathHelper.FileExists(src))
+                {
+                    PathHelper.CopyS3File(src, dest);
+                    destinations.Add(dest);
+                }
+            }
+            else
+            {
+                if (File.Exists(dest))
+                {
+                    File.SetAttributes(dest, FileAttributes.Normal);
+                }
+
+                if (File.Exists(src))
+                {
+                    File.Copy(src, dest, true);
+                    File.SetAttributes(dest, FileAttributes.Normal);
+                    destinations.Add(dest);
                 }
             }
         }

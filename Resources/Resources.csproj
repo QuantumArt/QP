@@ -84,6 +84,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SiteStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="FolderStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FolderStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -142,6 +147,10 @@
     <EmbeddedResource Update="DBStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>DBStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="FolderStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FolderStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

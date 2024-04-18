@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using NLog;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.API;
@@ -14,10 +15,12 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 {
     private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
     private readonly CommonSchedulerProperties _options;
+    private PathHelper _pathHelper;
 
-    public CleanSystemFoldersService(IOptions<CommonSchedulerProperties> options)
+    public CleanSystemFoldersService(IOptions<CommonSchedulerProperties> options, PathHelper pathHelper)
     {
         _options = options.Value;
+        _pathHelper = pathHelper;
     }
 
     public int CleanSystemFolders(string customerName, int numFiles)

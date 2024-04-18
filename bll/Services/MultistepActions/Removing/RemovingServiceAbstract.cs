@@ -1,9 +1,16 @@
 using System;
+using System.IO;
+using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public abstract class RemovingServiceAbstract : MultistepActionServiceAbstract
     {
+        private PathHelper _pathHelper;
+        protected RemovingServiceAbstract(PathHelper pathHelper)
+        {
+            _pathHelper = pathHelper;
+        }
         protected override string ContextSessionKey => "RemovingService.ProcessingContext";
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
@@ -13,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
                 case RemovingStageCommandTypes.ClearContent:
                     return new ClearContentCommand(state);
                 case RemovingStageCommandTypes.RemoveContent:
-                    return new RemoveContentCommand(state);
+                    return new RemoveContentCommand(state) { PathHelper = _pathHelper};
                 case RemovingStageCommandTypes.RemoveSite:
                     return new RemoveSiteCommand(state);
                 case RemovingStageCommandTypes.RemoveSiteArticles:

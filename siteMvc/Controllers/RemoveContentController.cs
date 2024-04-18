@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.Constants;
@@ -11,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class RemoveContentController : AuthQpController
     {
-        private readonly IMultistepActionService _service;
+        private readonly RemoveContentService _service;
 
         public RemoveContentController(RemoveContentService service)
         {

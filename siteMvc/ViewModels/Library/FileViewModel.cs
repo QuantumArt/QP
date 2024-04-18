@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+using SixLabors.ImageSharp;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Library
 {
@@ -47,5 +50,38 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
         public override string Id => File.Name;
 
         public override string Name => File.Name;
+
+
+        private string _dimensions;
+        /// <summary>
+        /// Размеры изображения (только для картинок)
+        /// </summary>
+        [Display(Name = "Dimensions", ResourceType = typeof(LibraryStrings))]
+        public string Dimensions
+        {
+            get
+            {
+                if (_dimensions == null)
+                {
+                    _dimensions = string.Empty;
+                    if (File.FileType == FolderFileType.Image)
+                    {
+                        try
+                        {
+                            using (var image = PathHelper.LoadImage(File.FullName))
+                            {
+                                _dimensions = string.Format("{0}x{1}", image.Width, image.Height);
+                            }
+                        }
+                        catch (UnknownImageFormatException)
+                        {
+                            _dimensions = string.Empty;
+                        }
+                    }
+                }
+                return _dimensions;
+            }
+        }
+
     }
 }

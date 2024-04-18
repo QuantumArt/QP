@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -74,31 +75,43 @@ namespace Quantumart.QP8.BLL.Services
 
         public static ContentFolder NewForSave(int contentId, int parentFolderId) => New(contentId, parentFolderId);
 
-        public static ContentFolder Save(ContentFolder folder)
+        public static ContentFolder Save(ContentFolder folder, PathHelper pathHelper)
         {
             if (folder == null)
             {
                 throw new ArgumentNullException(nameof(folder));
             }
 
-            return (ContentFolder)FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().Create(folder.ParentEntityId, folder.ParentId, folder.Name);
+            return (ContentFolder)FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().
+                Create(folder.ParentEntityId, folder.ParentId, folder.Name, pathHelper);
         }
 
         public static ContentFolder Read(int id) => (ContentFolder)GetById(id);
 
         public static ContentFolder ReadForUpdate(int id) => Read(id);
 
-        public static ContentFolder Update(ContentFolder folder)
+        public static ContentFolder Update(ContentFolder folder, PathHelper pathHelper)
         {
-            if (!folder.ParentId.HasValue)
+            var oldFolder = GetById(folder.Id);
+            if (!oldFolder.ParentId.HasValue)
             {
                 throw new ApplicationException(FolderStrings.CanUpdateRootFolder);
             }
 
-            return (ContentFolder)FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().Update(folder);
+            if (pathHelper.UseS3)
+            {
+                var files = pathHelper.ListS3Files(oldFolder.PathInfo.Path);
+                if (files.Any())
+                {
+                    throw new ApplicationException(FolderStrings.CannotRenameNonEmptyFolder);
+                }
+            }
+
+            return (ContentFolder)FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository()
+                .Update(folder, pathHelper);
         }
 
-        public static MessageResult Remove(int id)
+        public static MessageResult Remove(int id, PathHelper pathHelper)
         {
             var repository = FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository();
             var folder = repository.GetById(id);
@@ -112,14 +125,14 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ApplicationException(FolderStrings.CanDeleteRootFolder);
             }
 
-            repository.Delete(folder);
+            repository.Delete(folder, pathHelper);
             return null;
         }
 
-        public static MessageResult RemovePreAction(int id)
+        public static MessageResult RemovePreAction(int id, PathHelper pathHelper)
         {
             var folder = FolderFactory.Create(EntityTypeCode.ContentFolder).CreateRepository().GetById(id);
-            if (folder.IsEmpty)
+            if (folder.IsEmpty(pathHelper))
             {
                 return MessageResult.Confirm(string.Format(FolderStrings.FolderIsNotEmptyConfirm, folder.Name), new[] { id });
             }

@@ -314,7 +314,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ContentLibrary)]
         public async Task<ActionResult> Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
         {
-            var result = ContentService.Library(id, subFolder);
+            var result = ContentService.Library(id, subFolder, _pathHelper);
             var model = LibraryViewModel.Create(result, tabId, id, filterFileTypeId, allowUpload, LibraryMode.Content);
             return await JsonHtml("Library", model);
         }

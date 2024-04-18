@@ -58,7 +58,6 @@ namespace Quantumart.QP8.BLL
             Created = stat.LastModified;
             Modified = stat.LastModified;
             Length = stat.Size;
-            _Dimensions = "";
         }
 
 
@@ -180,35 +179,6 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public long Length { get; set; }
 
-        /// <summary>
-        /// Размеры изображения (только для картинок)
-        /// </summary>
-        [Display(Name = "Dimensions", ResourceType = typeof(LibraryStrings))]
-        public string Dimensions
-        {
-            get
-            {
-                if (_Dimensions == null)
-                {
-                    _Dimensions = string.Empty;
-                    if (FileType == FolderFileType.Image)
-                    {
-                        try
-                        {
-                            using (var image = Image.Load(FullName))
-                            {
-                                _Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
-                            }
-                        }
-                        catch (UnknownImageFormatException)
-                        {
-                            _Dimensions = string.Empty;
-                        }
-                    }
-                }
-                return _Dimensions;
-            }
-        }
 
         /// <summary>
         /// Дата создания файла

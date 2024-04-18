@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
-                model.Data = SiteFolderService.Save((SiteFolder)model.Data);
+                model.Data = SiteFolderService.Save((SiteFolder)model.Data, _pathHelper);
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSiteFolder });
             }
@@ -83,7 +83,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
-                model.Data = SiteFolderService.Update((SiteFolder)model.Data);
+                model.Data = SiteFolderService.Update((SiteFolder)model.Data, _pathHelper);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
 
@@ -92,7 +92,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public ActionResult RemovePreAction(int parentId, int id)
         {
-            return Json(SiteFolderService.RemovePreAction(id));
+            return Json(SiteFolderService.RemovePreAction(id, _pathHelper));
         }
 
         [HttpPost]
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult Remove(int id)
         {
-            var result = SiteFolderService.Remove(id);
+            var result = SiteFolderService.Remove(id, _pathHelper);
             return JsonMessageResult(result);
         }
 

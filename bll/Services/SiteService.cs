@@ -59,7 +59,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static Site ReadForUpdate(int id) => Read(id, false);
 
-        public static Site Save(Site item, int[] activeCommands, int[] activeStyles)
+        public Site Save(Site item, int[] activeCommands, int[] activeStyles)
         {
             if (item == null)
             {
@@ -75,12 +75,12 @@ namespace Quantumart.QP8.BLL.Services
             item.Id = result.Id;
             item.SaveVisualEditorStyles(activeStyles);
             item.SaveVisualEditorCommands(activeCommands);
-            item.CreateSiteFolders();
+            item.CreateSiteFolders(_pathHelper);
 
             return result;
         }
 
-        public static Site Update(Site item, int[] activeCommands, int[] activeStyles)
+        public Site Update(Site item, int[] activeCommands, int[] activeStyles)
         {
             if (item == null)
             {
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.BLL.Services
             var result = SiteRepository.Update(item);
             item.SaveVisualEditorCommands(activeCommands);
             item.SaveVisualEditorStyles(activeStyles);
-            item.CreateSiteFolders();
+            item.CreateSiteFolders(_pathHelper);
             return result;
         }
 
@@ -219,7 +219,7 @@ namespace Quantumart.QP8.BLL.Services
 
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
-            var folder = repository.GetBySubFolder(id, subFolder);
+            var folder = repository.GetBySubFolder(id, subFolder, _pathHelper);
             var contentFormScript = SiteRepository.GetById(id).ContentFormScript;
 
             return new LibraryResult
