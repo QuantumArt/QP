@@ -41,6 +41,8 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "EntityTitle", ResourceType = typeof(AuditStrings))]
         public string EntityTitle { get; set; }
 
+        public IEnumerable<BackendActionLogUserGroup> UserGroups { get; set; }
+
         #endregion
 
         #region Text Properties
@@ -57,9 +59,17 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "EntityTypeName", ResourceType = typeof(AuditStrings))]
         public string EntityTypeName { get; set; }
 
+        [Display(Name = "UserIp", ResourceType = typeof(AuditStrings))]
         public string UserIp { get; set; }
-        public IEnumerable<BackendActionLogUserGroup> UserGroups { get; set; }
 
+        [Display(Name = "UserGroups", ResourceType = typeof(AuditStrings))]
+        public string UserGroupNames
+        {
+            get
+            {
+                return UserGroups is null || !UserGroups.Any() ? AuditStrings.GroupsNotFound : string.Join(", ", UserGroups.Select(x => x.GroupName));
+            }
+        }
         #endregion
 
         public static IEnumerable<BackendActionLog> CreateLogs(BackendActionContext actionContext, IBackendActionLogRepository repository)

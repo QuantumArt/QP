@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Data;
+using System.Globalization;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
-using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -131,7 +131,11 @@ namespace Quantumart.QP8.BLL.Repository
                     (filter.userIDs ?? Enumerable.Empty<int>()).ToList(),
                     out totalRecords, cmd.StartRecord, cmd.PageSize);
 
-                return MapperFacade.BackendActionLogRowMapper.GetBizList(rows.ToList());
+                List<BackendActionLog> results = MapperFacade.BackendActionLogRowMapper.GetBizList(rows.ToList());
+
+                results = GetActionLogUserGroups(results);
+
+                return results;
             }
         }
 
@@ -224,6 +228,35 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 CommonSecurity.ClearUserToken(scope.DbConnection, userId, sessionId);
             }
+        }
+
+        private List<BackendActionLog> GetActionLogUserGroups(List<BackendActionLog> logs)
+        {
+            QPModelDataContext context = QPContext.EFContext;
+            List<BackendActionLogUserGroupDAL> backendActionLogUserGroups = context.BackendActionLogUserRoleSet.AsNoTracking()
+                .Where(x => logs.Select(r => r.Id)
+                    .Contains(x.BackendActionLogId))
+                .ToList();
+            List<BackendActionLogUserGroup> logUserGroups = MapperFacade.BackendActionLogUserGroupMapper.GetBizList(backendActionLogUserGroups);
+            List<UserGroupDAL> groups = context.UserGroupSet.AsNoTracking()
+                .Where(x => logUserGroups.Select(lug => lug.GroupId)
+                    .Distinct()
+                    .Contains(x.Id))
+                .ToList();
+
+            foreach (BackendActionLogUserGroup logUserGroup in logUserGroups)
+            {
+                UserGroupDAL group = groups.FirstOrDefault(x => x.Id == logUserGroup.GroupId);
+
+                logUserGroup.GroupName = group != null ? group.Name : logUserGroup.GroupId.ToString(CultureInfo.InvariantCulture);
+            }
+
+            foreach (BackendActionLog backendActionLog in logs)
+            {
+                backendActionLog.UserGroups = logUserGroups.Where(x => x.BackendActionLogId == backendActionLog.Id).ToList();
+            }
+
+            return logs;
         }
     }
 }

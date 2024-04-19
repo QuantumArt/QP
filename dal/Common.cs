@@ -1968,7 +1968,8 @@ where cd.content_item_id = cte.item_id and cd.attribute_id = @fieldId";
                 L.ENTITY_TITLE AS EntityTitle,
                 U.{Escape(dbType, "USER_ID")} as UserId,
                 U.{Escape(dbType, "LOGIN")} as UserLogin,
-                BA.NAME as ActionName"
+                BA.NAME as ActionName,
+                L.USER_IP as UserIp"
                 ,
                 $@"
                 BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.{Escape(dbType, "USER_ID")} = U.{Escape(dbType, "USER_ID")}

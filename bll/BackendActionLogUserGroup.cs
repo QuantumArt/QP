@@ -5,6 +5,7 @@ public class BackendActionLogUserGroup
     public int Id { get; set; }
     public int BackendActionLogId { get; set; }
     public decimal GroupId { get; set; }
+    public string GroupName { get; set; }
 
     public BackendActionLog ActionLog { get; set; }
 }
