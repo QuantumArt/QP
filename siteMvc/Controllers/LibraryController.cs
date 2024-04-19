@@ -404,7 +404,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return new Tuple<int, int>(DefaultSvgWidth, DefaultSvgHeight);
             }
 
-            using var img = _pathHelper.LoadImage(path);
+            var img = _pathHelper.IdentifyImage(path);
             return new Tuple<int, int>(img.Width, img.Height);
         }
     }

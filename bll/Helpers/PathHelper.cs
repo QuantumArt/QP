@@ -246,6 +246,15 @@ public class PathHelper
 
     }
 
+    public ImageInfo IdentifyImage(string path)
+    {
+        if (_dbService.UseS3())
+        {
+            using var stream = GetS3Stream(path);
+            return Image.Identify(stream);
+        }
+        return Image.Identify(path);
+    }
 
     public Image LoadImage(string path)
     {

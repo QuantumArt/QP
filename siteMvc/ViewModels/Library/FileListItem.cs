@@ -41,7 +41,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
             var dimensions = "";
             try
             {
-                using var image = pathHelper.LoadImage(file.FullName);
+                var image = pathHelper.IdentifyImage(file.FullName);
                 dimensions = $"{image.Width}x{image.Height}";
             }
             catch (Exception)

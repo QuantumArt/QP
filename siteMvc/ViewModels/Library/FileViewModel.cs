@@ -72,10 +72,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
                     {
                         try
                         {
-                            using (var image = PathHelper.LoadImage(File.FullName))
-                            {
-                                _dimensions = string.Format("{0}x{1}", image.Width, image.Height);
-                            }
+                            var image = PathHelper.IdentifyImage(File.FullName);
+                            _dimensions = string.Format("{0}x{1}", image.Width, image.Height);
                         }
                         catch (UnknownImageFormatException)
                         {
