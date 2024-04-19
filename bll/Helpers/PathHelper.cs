@@ -151,7 +151,7 @@ public class PathHelper
         return memoryStream;
     }
 
-    public void SetS3File(MemoryStream stream, string path)
+    public void SetS3File(Stream stream, string path)
     {
         new FileExtensionContentTypeProvider().TryGetContentType(path, out var contentType);
 
