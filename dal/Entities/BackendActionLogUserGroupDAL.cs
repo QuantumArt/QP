@@ -10,7 +10,6 @@ public class BackendActionLogUserGroupDAL
     public decimal GroupId { get; set; }
 
     public BackendActionLogDAL ActionLog { get; set; }
-    public UserGroupDAL UserGroup { get; set; }
 }
 
 public class BackendActionLogUserRoleDALConfiguration : IEntityTypeConfiguration<BackendActionLogUserGroupDAL>
@@ -26,11 +25,6 @@ public class BackendActionLogUserRoleDALConfiguration : IEntityTypeConfiguration
         builder.HasOne(x => x.ActionLog)
             .WithMany(x => x.UserGroups)
             .HasForeignKey(x => x.BackendActionLogId)
-            .IsRequired();
-
-        builder.HasOne(x => x.UserGroup)
-            .WithOne(x => x.BackendActionLogUserGroup)
-            .HasForeignKey<BackendActionLogUserGroupDAL>(x => x.GroupId)
             .IsRequired();
     }
 }

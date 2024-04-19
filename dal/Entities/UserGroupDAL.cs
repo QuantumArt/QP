@@ -44,7 +44,6 @@ namespace Quantumart.QP8.DAL.Entities
         public ICollection<UserUserGroupBindDAL> UserGroupBinds { get; set; } = new HashSet<UserUserGroupBindDAL>();
         public ICollection<GroupToGroupBindDAL> ParentGroupToGroupBinds { get; set; } = new HashSet<GroupToGroupBindDAL>();
         public ICollection<GroupToGroupBindDAL> ChildGroupToGroupBinds { get; set; } = new HashSet<GroupToGroupBindDAL>();
-        public BackendActionLogUserGroupDAL BackendActionLogUserGroup { get; set; }
 
         [NotMapped]
         public IEnumerable<UserDAL> Users => UserGroupBinds?.Select(x => x.User);
@@ -99,10 +98,6 @@ namespace Quantumart.QP8.DAL.Entities
             builder.HasMany(x => x.UserGroupBinds).WithOne(y => y.UserGroup).HasForeignKey(y => y.UserGroupId);
             builder.HasMany(x => x.ChildGroupToGroupBinds).WithOne(y => y.ParentGroup).HasForeignKey(y => y.ParentGroupId);
             builder.HasMany(x => x.ParentGroupToGroupBinds).WithOne(y => y.ChildGroup).HasForeignKey(y => y.ChildGroupId);
-
-            builder.HasOne(x => x.BackendActionLogUserGroup)
-                .WithOne(x => x.UserGroup)
-                .HasForeignKey<BackendActionLogUserGroupDAL>(x => x.GroupId);
         }
     }
 }

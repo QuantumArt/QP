@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Quantumart.QP8.BLL;
+﻿namespace Quantumart.QP8.BLL;
 
 public class BackendActionLogUserGroup
 {
@@ -9,5 +7,4 @@ public class BackendActionLogUserGroup
     public decimal GroupId { get; set; }
 
     public BackendActionLog ActionLog { get; set; }
-    public Group UserGroup { get; set; }
 }
