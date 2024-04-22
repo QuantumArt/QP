@@ -132,6 +132,7 @@ namespace Quantumart.QP8.DAL
         public DbSet<XmlDbUpdateActionsLogEntity> XML_DB_UPDATE_ACTIONS { get; set; }
         public DbSet<CdcLastExecutedLsn> CdcLastExecutedLsn { get; set; }
         public DbSet<SystemNotificationDAL> SystemNotificationSet { get; set; }
+        public DbSet<BackendActionLogUserGroupDAL> BackendActionLogUserRoleSet { get; set; }
 
 
         public static readonly string CountColumn = "ROWS_COUNT";

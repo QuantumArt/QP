@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,6 +33,8 @@ namespace Quantumart.QP8.DAL.Entities
         public Nullable<decimal> ParentEntityId { get; set; }
         public string EntityTitle { get; set; }
         public bool IsApi { get; set; }
+        public string UserIp { get; set; }
+        public IEnumerable<BackendActionLogUserGroupDAL> UserGroups { get; set; }
     }
         public class BackendActionLogDALConfiguration : IEntityTypeConfiguration<BackendActionLogDAL>
         {
@@ -40,21 +43,23 @@ namespace Quantumart.QP8.DAL.Entities
                 builder.ToTable("BACKEND_ACTION_LOG");
 
                 builder.Property(x => x.IsApi).HasColumnName("API");
-				builder.Property(x => x.EntityTitle).HasColumnName("ENTITY_TITLE");
-				builder.Property(x => x.ParentEntityId).HasColumnName("PARENT_ENTITY_ID");
-				builder.Property(x => x.EntityStringId).HasColumnName("ENTITY_STRING_ID");
-				builder.Property(x => x.EntityId).HasColumnName("ENTITY_ID");
-				builder.Property(x => x.EntityTypeCode).HasColumnName("ENTITY_TYPE_CODE");
-				builder.Property(x => x.ActionTypeCode).HasColumnName("ACTION_TYPE_CODE");
-				builder.Property(x => x.ActionCode).HasColumnName("ACTION_CODE");
-				builder.Property(x => x.ExecutionTime).HasColumnName("EXEC_TIME");
-				builder.Property(x => x.UserId).HasColumnName("USER_ID");
-				builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
-
+                builder.Property(x => x.EntityTitle).HasColumnName("ENTITY_TITLE");
+                builder.Property(x => x.ParentEntityId).HasColumnName("PARENT_ENTITY_ID");
+                builder.Property(x => x.EntityStringId).HasColumnName("ENTITY_STRING_ID");
+                builder.Property(x => x.EntityId).HasColumnName("ENTITY_ID");
+                builder.Property(x => x.EntityTypeCode).HasColumnName("ENTITY_TYPE_CODE");
+                builder.Property(x => x.ActionTypeCode).HasColumnName("ACTION_TYPE_CODE");
+                builder.Property(x => x.ActionCode).HasColumnName("ACTION_CODE");
+                builder.Property(x => x.ExecutionTime).HasColumnName("EXEC_TIME");
+                builder.Property(x => x.UserId).HasColumnName("USER_ID");
+                builder.Property(x => x.UserIp).HasColumnName("USER_IP");
+                builder.Property(x => x.Id).HasColumnName("ID").ValueGeneratedOnAdd();
 
                 builder.HasKey(x => x.Id);
 
-
+                builder.HasMany(x => x.UserGroups)
+                    .WithOne(x => x.ActionLog)
+                    .HasForeignKey(x => x.BackendActionLogId);
             }
         }
 }
