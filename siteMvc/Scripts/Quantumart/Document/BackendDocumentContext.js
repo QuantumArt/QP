@@ -268,7 +268,8 @@ export class BackendDocumentContext {
     } else if (this._mainComponentType === $e.MainComponentType.CustomActionHost) {
       if (hostOptions.eventArgsAdditionalData) {
         Object.assign(this._params, {
-          additionalParams: hostOptions.eventArgsAdditionalData.additionalParams
+          additionalParams: hostOptions.eventArgsAdditionalData.additionalParams,
+          additionalOptions: hostOptions.eventArgsAdditionalData.additionalOptions
         });
       }
 
