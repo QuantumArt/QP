@@ -70,6 +70,7 @@ using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.FileSynchronization;
+using Quantumart.QP8.WebMvc.Infrastructure.Middleware;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -390,6 +391,7 @@ namespace Quantumart.QP8.WebMvc
             app.UseForwardedHeaders();
             app.UseAuthentication();
             QPContext.SetServiceProvider(provider);
+            app.UseMiddleware<LoggingMiddleware>();
             RegisterMappings();
 
             app.Use(async (context, next) =>

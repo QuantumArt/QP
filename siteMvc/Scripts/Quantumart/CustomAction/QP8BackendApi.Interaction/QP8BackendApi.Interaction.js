@@ -55,7 +55,8 @@
     disabledFields: null, // идентификаторы полей который должны быть disable (массив имен полей)
     hideFields: null, // идентификаторы полей которые должны быть скрыты (массив имен полей)
     disabledActionCodes: null, // массив Action Code для которых кнопки на тулбаре будут скрыты
-    additionalParams: null // дополнительные параметры для выполнения Custom Action
+    additionalParams: null, // дополнительные параметры для выполнения Custom Action
+    additionalOptions: null // дополнительные опции для выполнения Custom Action
   };
 
   // class ArticleFormState.InitFieldValue (значение поля)

@@ -319,6 +319,11 @@ export class BackendCustomActionHost extends Observable {
     if (this._options.additionalParams) {
       resultUrl += `&${$.param(this._options.additionalParams)}`;
     }
+    if (this._options.additionalOptions && this._options.additionalOptions.previewPagePath) {
+      const urlArray = resultUrl.split('?');
+      urlArray[0] += (urlArray[0].endsWith('/') ? '' : '/') + this._options.additionalOptions.previewPagePath;
+      resultUrl = urlArray.join('?');
+    }
     return resultUrl;
   }
 
