@@ -1187,7 +1187,7 @@ namespace Quantumart.QP8.BLL
 
         private void InitDefaultValues()
         {
-            if (ExactType == FieldExactTypes.M2ORelation || string.IsNullOrEmpty(DefaultValue))
+            if (ExactType == FieldExactTypes.M2ORelation || string.IsNullOrEmpty(Default))
             {
                 return;
             }
