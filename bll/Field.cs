@@ -1,12 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -91,7 +88,7 @@ namespace Quantumart.QP8.BLL
         public const int StringSizeDefaultValue = 255;
         public static readonly string Prefix = "field_";
 
-        public static readonly ReadOnlyCollection<FieldExactTypes> UniqueFieldTypes = new ReadOnlyCollection<FieldExactTypes>(new List<FieldExactTypes>
+        public static readonly ReadOnlyCollection<FieldExactTypes> UniqueFieldTypes = new(new List<FieldExactTypes>
         {
             FieldExactTypes.String,
             FieldExactTypes.Numeric,
@@ -113,7 +110,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Разрешенные DataBase типы колонок полей
         /// </summary>
-        public static readonly ReadOnlyCollection<string> ValidFieldColumnDbTypeCollection = new ReadOnlyCollection<string>(new List<string>
+        public static readonly ReadOnlyCollection<string> ValidFieldColumnDbTypeCollection = new(new List<string>
         {
             ValidFieldColumnDbTypes.Numeric,
             ValidFieldColumnDbTypes.Int,
@@ -126,7 +123,7 @@ namespace Quantumart.QP8.BLL
             ValidFieldColumnDbTypes.Bit
         });
 
-        public static readonly ReadOnlyCollection<string> PgValidFieldColumnDbTypeCollection = new ReadOnlyCollection<string>(new List<string>
+        public static readonly ReadOnlyCollection<string> PgValidFieldColumnDbTypeCollection = new(new List<string>
         {
             ValidFieldColumnDbTypes.Numeric,
             ValidFieldColumnDbTypes.Int,
@@ -485,17 +482,13 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                switch (ExactType)
+                return ExactType switch
                 {
-                    case FieldExactTypes.M2MRelation:
-                        return RelationType.ManyToMany;
-                    case FieldExactTypes.M2ORelation:
-                        return RelationType.ManyToOne;
-                    case FieldExactTypes.O2MRelation:
-                        return RelationType.OneToMany;
-                    default:
-                        return RelationType.None;
-                }
+                    FieldExactTypes.M2MRelation => RelationType.ManyToMany,
+                    FieldExactTypes.M2ORelation => RelationType.ManyToOne,
+                    FieldExactTypes.O2MRelation => RelationType.OneToMany,
+                    _ => RelationType.None,
+                };
             }
         }
 
@@ -1126,7 +1119,7 @@ namespace Quantumart.QP8.BLL
 
         private VisualEditFieldParams GetVisualEditFieldParamsForInit() => IsNew ? VisualEditFieldParams.Create(Content.Site) : _fieldRepository.GetVisualEditFieldParams(Id);
 
-        private VisualEditorConfig GetVisualEditorConfigForInit() => new VisualEditorConfig(this);
+        private VisualEditorConfig GetVisualEditorConfigForInit() => new(this);
 
         public Field Init()
         {
@@ -1194,46 +1187,45 @@ namespace Quantumart.QP8.BLL
 
         private void InitDefaultValues()
         {
-            if (ExactType != FieldExactTypes.M2ORelation && !String.IsNullOrEmpty(DefaultValue))
+            if (ExactType == FieldExactTypes.M2ORelation || string.IsNullOrEmpty(Default))
             {
-                StringDefaultValue = DefaultValue;
-                NumericDefaultValue = Converter.ToNullableDouble(DefaultValue);
-                BooleanDefaultValue = Converter.ToBoolean(DefaultValue, false);
+                return;
+            }
 
-                if (ExactType == FieldExactTypes.String)
-                {
+            StringDefaultValue = DefaultValue;
+            NumericDefaultValue = Converter.ToNullableDouble(DefaultValue);
+            BooleanDefaultValue = Converter.ToBoolean(DefaultValue, false);
+
+            switch (ExactType)
+            {
+                case FieldExactTypes.String:
                     TextBoxDefaultValue = StringDefaultValue;
                     VisualEditDefaultValue = StringDefaultValue;
-                }
-                else if (ExactType == FieldExactTypes.Textbox || ExactType == FieldExactTypes.VisualEdit)
-                {
+                    break;
+                case FieldExactTypes.Textbox:
+                case FieldExactTypes.VisualEdit:
                     TextBoxDefaultValue = DefaultBlobValue;
                     VisualEditDefaultValue = DefaultBlobValue;
-                }
-                else if (ExactType == FieldExactTypes.Image || ExactType == FieldExactTypes.File)
-                {
+                    break;
+                case FieldExactTypes.Image:
+                case FieldExactTypes.File:
                     FileDefaultValue = DefaultValue;
-                }
-                else if (ExactType == FieldExactTypes.O2MRelation)
-                {
+                    break;
+                case FieldExactTypes.O2MRelation:
                     O2MDefaultValue = DefaultValue;
-                }
-                else if (ExactType == FieldExactTypes.Classifier)
-                {
+                    break;
+                case FieldExactTypes.Classifier:
                     ClassifierDefaultValue = Converter.ToNullableInt32(DefaultValue);
-                }
-                else if (ExactType == FieldExactTypes.Date)
-                {
+                    break;
+                case FieldExactTypes.Date:
                     DateDefaultValue = Converter.ToNullableDateTime(DefaultValue);
-                }
-                else if (ExactType == FieldExactTypes.DateTime)
-                {
+                    break;
+                case FieldExactTypes.DateTime:
                     DateTimeDefaultValue = Converter.ToNullableDateTime(DefaultValue);
-                }
-                else if (ExactType == FieldExactTypes.Time)
-                {
+                    break;
+                case FieldExactTypes.Time:
                     TimeDefaultValue = Converter.ToNullableDateTime(DefaultValue);
-                }
+                    break;
             }
         }
 
@@ -2408,8 +2400,8 @@ namespace Quantumart.QP8.BLL
                 // M2O-поле не может существовать без основного
                 O2MBackwardField?.Die();
 
-                var helper = new VirtualContentHelper();
-                var subContents = rebuildedSubContentViews?.ToArray() ?? new Content.TreeItem[]{ };
+                VirtualContentHelper helper = new();
+                var subContents = rebuildedSubContentViews?.ToArray() ?? Array.Empty<Content.TreeItem>();
                 var contents = helper.GetVirtualContentsToRebuild(subContents);
 
                 if (QPContext.DatabaseType == DatabaseType.Postgres)
@@ -3097,17 +3089,13 @@ namespace Quantumart.QP8.BLL
 
         public static FieldExactTypes CreateExactType(int typeId, int? linkId, bool isClassifier, bool isStringEnum)
         {
-            switch (typeId)
+            return typeId switch
             {
-                case FieldTypeCodes.String when isStringEnum:
-                    return FieldExactTypes.StringEnum;
-                case FieldTypeCodes.Numeric when isClassifier:
-                    return FieldExactTypes.Classifier;
-                case FieldTypeCodes.Relation when linkId.HasValue:
-                    return FieldExactTypes.M2MRelation;
-                default:
-                    return (FieldExactTypes)typeId;
-            }
+                FieldTypeCodes.String when isStringEnum => FieldExactTypes.StringEnum,
+                FieldTypeCodes.Numeric when isClassifier => FieldExactTypes.Classifier,
+                FieldTypeCodes.Relation when linkId.HasValue => FieldExactTypes.M2MRelation,
+                _ => (FieldExactTypes)typeId,
+            };
         }
 
         public override string ToString() => $"{Id,6}: {Name}";
