@@ -66,8 +66,6 @@ namespace Quantumart.QP8.Configuration
 
         public bool EnableLdapAuthentication { get; set; }
 
-        public bool EnableS3 { get; set; }
-
         public bool ForceHttpForImageResizing { get; set; }
 
         public string SessionEncryptionKeysPath { get; set; }

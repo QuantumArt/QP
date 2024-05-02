@@ -97,10 +97,7 @@ namespace Quantumart.QP8.WebMvc
                 QPConfiguration.Options = qpOptions;
 
                 var s3Options = new S3Options();
-                if (qpOptions.EnableS3)
-                {
-                    Configuration.Bind("S3", s3Options);
-                }
+                Configuration.Bind("S3", s3Options);
                 services.AddSingleton(s3Options);
 
                 if (!string.IsNullOrWhiteSpace(qpOptions.SessionEncryptionKeysPath))
