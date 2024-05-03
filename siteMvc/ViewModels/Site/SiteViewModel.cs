@@ -32,6 +32,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Site
         public readonly string LivePagesLocationBlock = "LivePagesLocationBlock";
         public readonly string StagePagesLocationBlock = "StagePagesLocationBlock";
         public readonly string OnScreenAssemblingParametersBlock = "OnScreenAssemblingParametersBlock";
+        public readonly string SiteModeBlock = "siteModeBlock";
 
         public string AggregationListItemsDataExternalCssItems { get; set; }
 
