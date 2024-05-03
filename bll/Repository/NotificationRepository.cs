@@ -9,16 +9,22 @@ using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
 using Quantumart.QPublishing.Database;
+using Quantumart.QPublishing.FileSystem;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class NotificationRepository
     {
+        public S3Options Options { get; set; }
         internal static Notification UpdateProperties(Notification notification) => DefaultRepository.Update<Notification, NotificationsDAL>(notification);
 
         public void SendNotification(string connectionString, int siteId, string code, int id, bool isLive)
         {
             var cnn = new DBConnector(connectionString) { CacheData = false };
+            if (Options != null && !string.IsNullOrWhiteSpace(Options.Endpoint))
+            {
+                cnn.FileSystem = new S3FileSystem(Options.Endpoint, Options.AccessKey, Options.SecretKey, Options.Bucket);
+            }
             QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
             cnn.SendNotification(siteId, code, id, string.Empty, isLive);
         }

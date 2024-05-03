@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Exceptions;
@@ -9,6 +8,7 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
@@ -16,63 +16,14 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public interface INotificationService
-    {
-        void SendNotification(string connectionString, int id, string code);
-
-        ListResult<NotificationListItem> GetNotificationsByContentId(ListCommand cmd, int parentId);
-
-        Notification NewNotificationProperties(int contentId);
-
-        Notification ReadNotificationProperties(int id);
-
-        Notification SaveNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl);
-
-        Notification UpdateNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl);
-
-        IEnumerable<ListItem> GetStatusesAsListItemsBySiteId(int siteId);
-
-        IEnumerable<ListItem> GetObjectFormatsAsListItemsByContentId(int contentId);
-
-        IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId);
-
-        IEnumerable<ListItem> GetRelationFieldsAsListItemsByContentId(int contentId);
-
-        MessageResult UnbindNotification(int notificationId);
-
-        MessageResult Remove(int id);
-
-        NotificationObjectFormat ReadNotificationTemplateFormat(int id);
-
-        PageTemplate ReadPageTemplateByObjectFormatId(int id);
-
-        NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item);
-
-        NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id);
-
-        Notification ReadNotificationPropertiesForUpdate(int id);
-
-        Notification NewNotificationPropertiesForUpdate(int parentId);
-
-        InitListResult InitList(int parentId);
-
-        MessageResult MultipleRemove(int[] ids);
-
-        MessageResult AssembleNotification(int id);
-
-        MessageResult AssembleNotificationPreAction(int id);
-
-        MessageResult MultipleAssembleNotificationPreAction(int[] ids);
-
-        MessageResult MultipleAssembleNotification(int[] ids);
-
-        bool IsSiteDotNetByObjectFormatId(int objectFormattId);
-
-        IEnumerable<ListItem> GetTemplates();
-    }
-
     public class NotificationService : INotificationService
     {
+        private IDbService _dbService;
+        public NotificationService(IDbService dbService)
+        {
+            _dbService = dbService;
+        }
+
         public MessageResult AssembleNotificationPreAction(int id)
         {
             var site = NotificationRepository.GetPropertiesById(id).Content.Site;
@@ -282,6 +233,10 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var repository = new NotificationRepository();
+            if (_dbService.UseS3())
+            {
+                repository.Options = _dbService.S3Options;
+            }
             var codes = code.Split(';');
             foreach (var currentCode in codes)
             {
