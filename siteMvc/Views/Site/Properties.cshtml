@@ -50,7 +50,7 @@
     }
     using (Html.BeginPanel(Model.SiteModeBlock, false, false, reverse: true))
     {
-	    @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
+      @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
     }
   }
 
