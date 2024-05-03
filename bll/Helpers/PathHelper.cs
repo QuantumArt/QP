@@ -197,7 +197,7 @@ public class PathHelper
 
     public void RemoveS3Folder(string path)
     {
-        var files = ListS3Files(path);
+        var files = ListS3Files(path, true);
         if (files.Any())
         {
             RemoveS3Files(files);

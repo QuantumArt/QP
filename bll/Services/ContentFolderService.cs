@@ -100,7 +100,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (pathHelper.UseS3)
             {
-                var files = pathHelper.ListS3Files(oldFolder.PathInfo.Path);
+                var files = pathHelper.ListS3Files(oldFolder.PathInfo.Path, true);
                 if (files.Any())
                 {
                     throw new ApplicationException(FolderStrings.CannotRenameNonEmptyFolder);
