@@ -163,28 +163,36 @@ public class PathHelper
             .WithObjectSize(stream.Length);
 
         Task.Run(async () => await _client.PutObjectAsync(putObjectArgs)).Wait();
+        _logger.Info($"File {path} saved to S3");
     }
 
     public void RemoveS3File(string path)
     {
-        var objectArgs = new RemoveObjectArgs().WithBucket(_options.Bucket).WithObject(FixPathSeparator(path));
+        var fixedPath = FixPathSeparator(path);
+        var objectArgs = new RemoveObjectArgs().WithBucket(_options.Bucket).WithObject(fixedPath);
         Task.Run(async () => await _client.RemoveObjectAsync(objectArgs)).Wait();
+        _logger.Info($"File {fixedPath} removed from S3");
     }
 
     public void CopyS3File(string path, string newPath)
     {
-        var sourceArgs = new CopySourceObjectArgs().WithBucket(_options.Bucket).WithObject(FixPathSeparator(path));
-        var destArgs = new CopyObjectArgs().WithBucket(_options.Bucket).WithObject(FixPathSeparator(newPath))
+        var fixedPath = FixPathSeparator(path);
+        var fixedNewPath = FixPathSeparator(newPath);
+        var sourceArgs = new CopySourceObjectArgs().WithBucket(_options.Bucket).WithObject(fixedPath);
+        var destArgs = new CopyObjectArgs().WithBucket(_options.Bucket).WithObject(fixedNewPath)
             .WithCopyObjectSource(sourceArgs);
 
         Task.Run(async () => await _client.CopyObjectAsync(destArgs)).Wait();
+        _logger.Info($"File {fixedNewPath} copied from file {fixedPath} in S3");
     }
 
     public void RemoveS3Files(IEnumerable<FolderFile> files)
     {
+        var fileNames = files.Select(n => n.FullName).ToArray();
         var objectArgs = new RemoveObjectsArgs().WithBucket(_options.Bucket)
-            .WithObjects(files.Select(n => n.FullName).ToArray());
+            .WithObjects(fileNames);
         Task.Run(async () => await _client.RemoveObjectsAsync(objectArgs)).Wait();
+        _logger.Info($"Files {string.Join(", ", fileNames)} removed from S3");
     }
 
     public void RemoveS3Folder(string path)

@@ -115,9 +115,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     if (_dbService.UseS3())
                     {
-                        var stream = new MemoryStream((int)file.Length);
-                        await file.CopyToAsync(stream);
-                        stream.Position = 0;
+                        await using var stream = file.OpenReadStream();
                         _pathHelper.SetS3File(stream, destPath);
                     }
                     else
