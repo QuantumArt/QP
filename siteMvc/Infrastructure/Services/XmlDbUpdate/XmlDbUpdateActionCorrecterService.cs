@@ -153,13 +153,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 }
             }
 
-            var entityTypeCode = action.BackendAction.EntityType.Code == EntityTypeCode.ArchiveArticle
-                ? EntityTypeCode.Article
-                : action.BackendAction.EntityType.Code;
-
-            entityTypeCode = action.BackendAction.EntityType.Code == EntityTypeCode.VirtualContent
-                ? EntityTypeCode.Content
-                : entityTypeCode;
+            string entityTypeCode = action.BackendAction.EntityType.Code switch
+            {
+                EntityTypeCode.ArchiveArticle => EntityTypeCode.Article,
+                EntityTypeCode.VirtualContent => EntityTypeCode.Content,
+                _ => action.BackendAction.EntityType.Code,
+            };
 
             action.Ids = CorrectIdsValue(entityTypeCode, action.Ids).ToArray();
             if (!string.IsNullOrEmpty(action.BackendAction.EntityType.ParentCode))
