@@ -151,14 +151,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 {
                     action = SubstituteArticleIdsFromGuids(action);
                 }
-                else if (XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
-                {
-                    action.UniqueId = new[] { Guid.NewGuid() };
-                    var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(
-                        _modelExpressionProvider, vm => vm.Data.UniqueId
-                    );
-                    action.Form[uniqueIdFieldName] = action.UniqueId.Single().ToString();
-                }
             }
 
             var entityTypeCode = action.BackendAction.EntityType.Code == EntityTypeCode.ArchiveArticle
