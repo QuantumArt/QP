@@ -123,7 +123,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         await file.CopyToAsync(fileStream);
                     }
 
-                    CreateLogs(name, securityResult);
+                    CreateLogs(name, destPath, securityResult);
                 }
                 catch (Exception ex)
                 {
@@ -181,7 +181,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                             FileIO.Move(tempPath, destPath!);
                         }
 
-                        CreateLogs(name, securityResult);
+                        CreateLogs(name, destPath, securityResult);
                     }
                 }
                 catch (Exception ex)
@@ -199,12 +199,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(new { message = $"file{name} uploaded", isError = false });
         }
 
-        private void CreateLogs(string name, PathSecurityResult securityResult)
+        private void CreateLogs(string name, string path, PathSecurityResult securityResult)
         {
-            var actionCode = securityResult.IsSite ? ActionCode.UploadSiteFile : ActionCode.UploadContentFile;
-            BackendActionContext.CreateLogs(
-                actionCode, new[] { name }, securityResult.FolderId, _logRepository, false
-            );
+            if (!path.StartsWith(QPConfiguration.TempDirectory))
+            {
+                var actionCode = securityResult.IsSite ? ActionCode.UploadSiteFile : ActionCode.UploadContentFile;
+                BackendActionContext.CreateLogs(
+                    actionCode, new[] { name }, securityResult.FolderId, _logRepository, false
+                );
+            }
         }
     }
 }

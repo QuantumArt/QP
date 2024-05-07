@@ -43,7 +43,7 @@ namespace Quantumart.QP8.BLL
             var result = new List<PathSecurityInfo>();
             foreach (var item in input)
             {
-                if (path.StartsWith(item.Path.TrimEnd(separator) + separator, CompareOption))
+                if (path.StartsWith(item.Path.Replace('\\', separator).TrimEnd(separator) + separator, CompareOption))
                 {
                     result.Add(item);
                 }
@@ -93,9 +93,9 @@ namespace Quantumart.QP8.BLL
             var typeCode = forModify ? ActionTypeCode.Update : ActionTypeCode.Read;
             var result = new PathSecurityResult();
             var pathToFind = path;
-            if (pathToFind[pathToFind.Length - 1].ToString() != separator.ToString())
+            if (pathToFind[^1].ToString() != separator.ToString())
             {
-                pathToFind = pathToFind + separator;
+                pathToFind += separator;
             }
 
             var site = FindFirst(pathToFind, SiteRepository.GetPaths(), separator);
