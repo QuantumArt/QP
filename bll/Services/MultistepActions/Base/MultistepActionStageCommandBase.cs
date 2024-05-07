@@ -5,6 +5,7 @@ using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -24,11 +25,14 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
 
         public int ItemsPerStep { get; private set; }
 
+        public S3Options S3Options { get; private set; }
+
         public List<MessageResult> Messages { get; }
 
         protected MultistepActionStageCommandBase()
         {
             Messages = HttpContext.Session.GetValue<List<MessageResult>>(HttpContextSession.MultistepActionStageCommandSettings) ?? new List<MessageResult>();
+            S3Options = new S3Options();
         }
 
         protected MultistepActionStageCommandBase(int contentId, int itemCount, int[] ids)
@@ -45,6 +49,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             Ids = state.Ids.ToArray();
             BoundToExternal = state.BoundToExternal;
             ItemsPerStep = state.ItemsPerStep;
+            S3Options = state.S3Options;
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
@@ -54,7 +59,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             Ids = Ids.ToList(),
             ExtensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(ContentId, Ids).ToList(),
             BoundToExternal = BoundToExternal,
-            ItemsPerStep = ItemsPerStep
+            ItemsPerStep = ItemsPerStep,
+            S3Options = S3Options
         };
 
         public MultistepStageSettings GetStageSettings() => new MultistepStageSettings

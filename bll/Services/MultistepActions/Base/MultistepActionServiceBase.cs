@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
@@ -18,7 +19,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             return result;
         }
 
-        protected MultistepActionServiceContext CreateContext(int parentId, int id, int[] ids, bool? boundToExternal)
+        protected MultistepActionServiceContext CreateContext(int parentId, int id, int[] ids, bool? boundToExternal, S3Options options)
         {
             var action = BackendActionService.GetByCode(ActionCode);
             var itemsPerStep = action.EntityLimit ?? 1;
@@ -29,7 +30,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
                 Ids = ids.ToList(),
                 ExtensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(parentId, ids).ToList(),
                 BoundToExternal = boundToExternal,
-                ItemsPerStep = itemsPerStep
+                ItemsPerStep = itemsPerStep,
+                S3Options = options
             };
 
             Command = (TCommand)CreateCommand(state);
@@ -38,7 +40,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             return result;
         }
 
-        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal) => CreateContext(parentId, id, new int[0], boundToExternal);
+        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal, S3Options options)
+        {
+            return CreateContext(parentId, id, new int[0], boundToExternal, options);
+        }
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
         {
@@ -49,20 +54,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
 
         protected override string ContextSessionKey => $"{GetType().Name}.Settings";
 
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, S3Options options)
         {
             if (HasAlreadyRun())
             {
                 throw new ApplicationException(MultistepActionStrings.ActionHasAlreadyRun);
             }
 
-            var context = CreateContext(parentId, id, ids, boundToExternal);
+            var context = CreateContext(parentId, id, ids, boundToExternal, options);
             HttpContext.Session.SetValue(ContextSessionKey, context);
 
             return CreateActionSettings(parentId, id);
         }
 
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, new int[0], boundToExternal);
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, S3Options options)
+        {
+            return Setup(parentId, id, new int[0], boundToExternal, options);
+        }
 
         public override void TearDown()
         {

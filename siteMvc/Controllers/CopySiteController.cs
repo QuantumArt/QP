@@ -8,6 +8,7 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.CopySite;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -58,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
-            var settings = _multistepService.Setup(parentId, id, boundToExternal);
+            var settings = _multistepService.Setup(parentId, id, boundToExternal, new S3Options());
             return Json(settings);
         }
 

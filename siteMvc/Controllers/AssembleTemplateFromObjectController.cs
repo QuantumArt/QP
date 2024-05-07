@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions.Assemble;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
@@ -28,7 +29,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public override ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
             var template = Service.ReadTemplateProperties(parentId);
-            var settings = Service.Setup(template.SiteId, template.Id, boundToExternal);
+            var settings = Service.Setup(template.SiteId, template.Id, boundToExternal, new S3Options());
             return Json(settings);
         }
     }

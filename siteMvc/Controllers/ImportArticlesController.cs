@@ -25,12 +25,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class ImportArticlesController : AuthQpController
     {
         private readonly IMultistepActionService _service;
+        private readonly PathHelper _pathHelper;
 
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public ImportArticlesController(ImportArticlesService service)
+        public ImportArticlesController(ImportArticlesService service, PathHelper pathHelper)
         {
             _service = service;
+            _pathHelper = pathHelper;
         }
 
         [HttpPost]
@@ -85,7 +87,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        {
+            return Json(_service.Setup(parentId, id, boundToExternal, _pathHelper.S3Options));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

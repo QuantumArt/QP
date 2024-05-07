@@ -39,7 +39,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                         dbLogService,
                         new ApplicationInfoRepository(),
                         new XmlDbUpdateActionCorrecterService(
-                            new ArticleService(new ArticleRepository()),
+                            new ArticleService(new ArticleRepository(), new PathHelper(new DbService(new S3Options()))),
                             new ContentService(new ContentRepository(), new PathHelper(new DbService(new S3Options()))),
                             modelExpressionProvider
                         ),

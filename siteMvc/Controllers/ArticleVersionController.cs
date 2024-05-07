@@ -110,7 +110,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, IFormCollection collection)
         {
             var version = ArticleVersionService.Read(id, parentId);
-            var article = ArticleService.ReadForUpdate(version.ArticleId, version.Article.ContentId);
+            var article = BLL.Services.ArticleServices.ArticleService.ReadForUpdate(version.ArticleId, version.Article.ContentId);
             version.Article = article;
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
 

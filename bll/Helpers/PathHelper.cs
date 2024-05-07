@@ -71,6 +71,8 @@ public class PathHelper
 
     public bool UseS3 => _dbService.UseS3();
 
+    public S3Options S3Options => UseS3 ? _options : new S3Options();
+
     public bool FileExists(string path)
     {
         if (_dbService.UseS3())

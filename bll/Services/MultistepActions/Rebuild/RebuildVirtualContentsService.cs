@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -11,7 +12,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
     public sealed class RebuildVirtualContentsService : MultistepActionServiceAbstract
     {
 
-        public override MultistepActionSettings Setup(int siteId, int contentId, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int siteId, int contentId, bool? boundToExternal, S3Options options)
         {
             var content = ContentRepository.GetById(contentId);
             if (content == null)
@@ -34,7 +35,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Rebuild
             rebuildUserQueryCommand.Setup();
             Commands.Add(rebuildUserQueryCommand);
 
-            return base.Setup(siteId, contentId, boundToExternal);
+            return base.Setup(siteId, contentId, boundToExternal, options);
         }
         protected override string ContextSessionKey => HttpContextSession.RebuildUserQueryProcessingContext;
 

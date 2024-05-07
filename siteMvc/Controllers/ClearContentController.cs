@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -28,7 +29,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ClearContent)]
         [BackendActionContext(ActionCode.ClearContent)]
         [BackendActionLog]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        {
+            return Json(_service.Setup(parentId, id, boundToExternal, new S3Options()));
+        }
 
         [HttpPost]
         [ConnectionScope]

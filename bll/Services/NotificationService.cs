@@ -218,32 +218,6 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public void SendNotification(string connectionString, int id, string code)
-        {
-            Site site;
-            using (new QPConnectionScope())
-            {
-                var article = ArticleRepository.GetById(id);
-                if (article == null)
-                {
-                    throw new ArgumentException(string.Format(ArticleStrings.ArticleNotFound, id));
-                }
-
-                site = article.Content.Site;
-            }
-
-            var repository = new NotificationRepository();
-            if (_dbService.UseS3())
-            {
-                repository.Options = _dbService.S3Options;
-            }
-            var codes = code.Split(';');
-            foreach (var currentCode in codes)
-            {
-                repository.SendNotification(connectionString, site.Id, currentCode, id, site.IsLive || site.AssembleFormatsInLive);
-            }
-        }
-
         public MessageResult UnbindNotification(int notificationId)
         {
             var notification = ReadNotificationProperties(notificationId);

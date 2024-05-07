@@ -43,7 +43,7 @@ namespace QP8.Integration.Tests
                 dbLogService.Object,
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(
-                    new ArticleService(new ArticleRepository()),
+                    new ArticleService(new ArticleRepository(), new PathHelper(new DbService(new S3Options()))),
                     new ContentService(new ContentRepository(), new PathHelper(new DbService(new S3Options()))),
                     new ModelExpressionProvider(new EmptyModelMetadataProvider())
                 ),
@@ -76,7 +76,7 @@ namespace QP8.Integration.Tests
                 dbLogService.Object,
                 new ApplicationInfoRepository(),
                 new XmlDbUpdateActionCorrecterService(
-                    new ArticleService(new ArticleRepository()),
+                    new ArticleService(new ArticleRepository(), new PathHelper(new DbService(new S3Options()))),
                     new ContentService(new ContentRepository(), new PathHelper(new DbService(new S3Options()))),
                     new ModelExpressionProvider(new EmptyModelMetadataProvider())
                 ),

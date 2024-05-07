@@ -6,8 +6,6 @@ namespace Quantumart.QP8.BLL.Services;
 
 public interface INotificationService
 {
-    void SendNotification(string connectionString, int id, string code);
-
     ListResult<NotificationListItem> GetNotificationsByContentId(ListCommand cmd, int parentId);
 
     Notification NewNotificationProperties(int contentId);

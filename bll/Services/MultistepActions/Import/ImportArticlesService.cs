@@ -41,7 +41,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         }
 
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, S3Options options)
         {
             var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             try
@@ -50,7 +50,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 var linesTotalCount = fileReader.RowsCount();
                 Commands.Add(new ImportArticlesCommand(parentId, id, linesTotalCount));
 
-                return base.Setup(parentId, id, boundToExternal);
+                return base.Setup(parentId, id, boundToExternal, options);
             }
             catch (Exception ex)
             {

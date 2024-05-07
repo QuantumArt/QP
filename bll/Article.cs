@@ -753,7 +753,7 @@ namespace Quantumart.QP8.BLL
                 codes.Add(NotificationCode.ChangeStatus);
             }
 
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(PathHelper.S3Options);
             repo.PrepareNotifications(articleToPrepare, codes.ToArray(), disableNotifications);
 
             if (!disableCopyFiles)

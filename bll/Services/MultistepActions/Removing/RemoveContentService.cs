@@ -4,6 +4,7 @@ using System.Data;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
@@ -15,7 +16,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         {
         }
 
-        public override MultistepActionSettings Setup(int siteId, int contentId, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int siteId, int contentId, bool? boundToExternal, S3Options options)
         {
             var content = ContentRepository.GetById(contentId);
             if (content == null)
@@ -46,7 +47,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 
             Commands.Add(new ClearContentCommand(siteId, contentId, contentName, itemCount));
             Commands.Add(new RemoveContentCommand(siteId, contentId, contentName));
-            return base.Setup(siteId, contentId, boundToExternal);
+            return base.Setup(siteId, contentId, boundToExternal, options);
         }
     }
 }

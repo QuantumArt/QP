@@ -24,8 +24,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IUserService _service;
 
-        public UserController(IUserService service, IArticleService dbArticleService, QPublishingOptions options)
-            : base(dbArticleService, options)
+        public UserController(IUserService service, IArticleService articleService, QPublishingOptions options)
+            : base(articleService, options)
         {
             _service = service;
         }
