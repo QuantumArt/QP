@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             _repository = filterContext.HttpContext.RequestServices.GetRequiredService<IBackendActionLogRepository>();
-            _logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _repository);
+            _logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _repository, false);
             base.OnActionExecuting(filterContext);
         }
 
@@ -32,7 +32,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (BackendActionContext.Current.IsChanged)
                 {
-                    _logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _repository);
+                    _logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _repository, false);
                 }
 
                 _logs = _repository.Save(_logs);

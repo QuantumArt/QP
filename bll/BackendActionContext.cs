@@ -68,6 +68,30 @@ namespace Quantumart.QP8.BLL
             Current = null;
         }
 
+        public static void CreateLogs(
+            string actionCode,
+            IEnumerable<int> ids,
+            int? parentId,
+            IBackendActionLogRepository repository,
+            bool isApi = false)
+        {
+            CreateLogs(actionCode, ids.Select(n => n.ToString()), parentId ?? 0, repository, isApi);
+        }
+
+
+        public static void CreateLogs(
+            string actionCode,
+            IEnumerable<string> ids,
+            int parentId,
+            IBackendActionLogRepository repository,
+            bool isApi)
+        {
+            SetCurrent(actionCode, ids, parentId);
+            var logs = BackendActionLog.CreateLogs(Current, repository, isApi);
+            repository.Save(logs);
+            ResetCurrent();
+        }
+
         private BackendActionContext(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
         {
             IsChanged = false;

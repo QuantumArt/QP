@@ -21,20 +21,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class UploadController : AuthQpController
     {
-        private readonly IBackendActionLogRepository _logger;
+        private readonly IBackendActionLogRepository _logRepository;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly S3Options _options;
         private readonly IDbService _dbService;
         private readonly PathHelper _pathHelper;
 
         public UploadController(
-            IBackendActionLogRepository logger,
+            IBackendActionLogRepository logRepository,
             S3Options options,
             IDbService dbService,
             PathHelper pathHelper
         )
         {
-            _logger = logger;
+            _logRepository = logRepository;
             _options = options;
             _dbService = dbService;
             _pathHelper = pathHelper;
@@ -181,13 +181,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                             FileIO.Move(tempPath, destPath!);
                         }
-
-                        BackendActionContext.SetCurrent(actionCode, new[] { name }, securityResult.FolderId);
-
-                        var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _logger);
-                        _logger.Save(logs);
-
-                        BackendActionContext.ResetCurrent();
+                        BackendActionContext.CreateLogs(
+                            actionCode, new[] { name }, securityResult.FolderId, _logRepository, false
+                        );
                     }
                 }
                 catch (Exception ex)
