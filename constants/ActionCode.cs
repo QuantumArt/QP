@@ -56,10 +56,9 @@ namespace Quantumart.QP8.Constants
         public const string UpdateArticleAndUp = "update_article_and_up";
         public const string MoveArticleToArchive = "move_to_archive_article";
         public const string MultipleMoveArticleToArchive = "multiple_move_to_archive_article";
+        public const string MultipleUpdateArticles = "multiple_update_article";
+        public const string MultipleSaveArticles = "multiple_save_article";
         public const string MultiplePublishArticles = "multiple_publish_articles";
-        public const string MultipleUpdateArticles = "multiple_update_articles";
-        public const string MultipleSaveArticles = "multiple_save_articles";
-
         public const string RestoreArticleFromArchive = "restore_from_archive_article";
         public const string MultipleRestoreArticleFromArchive = "multiple_restore_from_archive_article";
         public const string RefreshArticle = "refresh_article";

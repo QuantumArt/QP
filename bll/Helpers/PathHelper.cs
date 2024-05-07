@@ -217,6 +217,20 @@ public class PathHelper
         }
     }
 
+    public void Copy(string path, string newPath)
+    {
+        if (UseS3)
+        {
+            CopyS3File(path, newPath);
+        }
+        else
+        {
+            File.SetAttributes(path, FileAttributes.Normal);
+            File.Copy(path, newPath, true);
+            File.SetAttributes(newPath, FileAttributes.Normal);
+        }
+    }
+
     public void Remove(string path)
     {
         if (UseS3)

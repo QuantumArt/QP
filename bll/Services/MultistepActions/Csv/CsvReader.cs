@@ -48,8 +48,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private IEnumerable<Line> _csvLines;
         private JObject _jObject;
         private Dictionary<int, Field> _traceFields;
+        private PathHelper _pathHelper;
+        private IBackendActionLogRepository _logRepository;
 
-        public CsvReader(int siteId, int contentId, ImportSettings settings)
+        public CsvReader(int siteId, int contentId, ImportSettings settings, PathHelper pathHelper)
         {
             _siteId = siteId;
             _contentId = contentId;
@@ -60,6 +62,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _notificationRepository = new() { IgnoreInternal = false };
             _traceFields = GetTraceFields(contentId);
             _jObject = InitJObject(_traceFields);
+            _pathHelper = pathHelper;
+            _logRepository = new AuditRepository();
         }
 
         public string GetTraceResult()
@@ -167,6 +171,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             foreach (NotificationArticles notificationArticles in notificationList)
             {
+                var code = notificationArticles.NotificationCode == NotificationCode.Create ?
+                    ActionCode.MultipleSaveArticles : ActionCode.MultipleUpdateArticles;
+                BackendActionContext.CreateLogs(code, notificationArticles.ArticleIds, _contentId, _logRepository);
                 try
                 {
                     _notificationRepository.PrepareNotifications(_contentId, notificationArticles.ArticleIds.ToArray(), notificationArticles.NotificationCode);
@@ -575,12 +582,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             if (_importSettings.CreateVersions)
             {
+                var versionsToDelete = ArticleVersionRepository.GetVersionsToDelete(idsList);
                 ArticleVersionRepository.Create(idsList);
+                var content = ContentRepository.GetById(_contentId);
+                DeleteVersionFolders(versionsToDelete.Keys.ToArray(), content);
+                CreateVersionFolders(idsList, content);
             }
 
             var articlesInDb = _traceFields.Any() ?
                 ArticleRepository.GetList(idsList, true).ToDictionary(n => n.Id, m => m) : new Dictionary<int, Article>();
-
 
             InsertArticleValues(idsList, existingArticles.GetBaseArticles(), updateArticles: true);
 
@@ -634,6 +644,36 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, updateArticles: true);
             return existingArticles;
+        }
+
+        private void CreateVersionFolders(int[] idsList, Content content)
+        {
+            var newVersions = ArticleVersionRepository.GetLatestVersions(idsList);
+            var files = ArticleVersionRepository.GetFilesForVersions(newVersions.Keys.ToArray());
+            var currentVersionFolder = content.GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+            foreach (var newVersion in newVersions.Keys)
+            {
+                var versionFolder = content.GetVersionPathInfo(newVersion).Path;
+                if (files.TryGetValue(newVersion, out var versionFiles))
+                {
+                    foreach (var file in versionFiles)
+                    {
+                        var fileName = Path.GetFileName(file);
+                        var src = _pathHelper.CombinePath(currentVersionFolder, fileName);
+                        var dest = _pathHelper.CombinePath(versionFolder, file);
+                        _pathHelper.Copy(src, dest);
+                    }
+                };
+            }
+        }
+
+        private void DeleteVersionFolders(int[] versions, Content content)
+        {
+            foreach (var version in versions)
+            {
+                var versionFolder = content.GetVersionPathInfo(version).Path;
+                _pathHelper.RemoveFolder(versionFolder);
+            }
         }
 
         private void RegisterTraceFieldValues(Article newArticle, Article oldArticle)

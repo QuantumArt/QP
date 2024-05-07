@@ -779,5 +779,74 @@ WHERE content_item_id = {contentItemId}
                  cmd.ExecuteNonQuery();
              }
          }
+
+         public static Dictionary<int, int> GetVersionsToDelete(DbConnection connection, int[] ids)
+         {
+             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+             string sql = $@"
+                select content_item_version_id, content_id from (
+                    select civ.content_item_version_id, civ.content_item_id, ci.content_id, c.max_num_of_stored_versions as max_num,
+                    row_number() over(partition by civ.content_item_id order by civ.content_item_version_id desc) as num
+                    from content_item_version civ {WithNoLock(dbType)}
+                    inner join content_item ci {WithNoLock(dbType)} on ci.CONTENT_ITEM_ID = civ.CONTENT_ITEM_ID
+                    inner join content c {WithNoLock(dbType)} on c.CONTENT_ID = ci.CONTENT_ID
+                    where ci.content_item_id in (select id from {IdList(dbType, "@ids")})
+                ) r where num >= max_num";
+
+             using var cmd = DbCommandFactory.Create(sql, connection);
+             cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+             return GetDataTableForCommand(cmd).AsEnumerable().ToDictionary(
+                 k => Convert.ToInt32(k["content_item_version_id"]),
+                 v => Convert.ToInt32(v["content_id"])
+             );
+         }
+
+         public static Dictionary<int, int> GetLatestVersions(DbConnection connection, int[] ids)
+         {
+             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+             string sql = $@"
+                select content_item_version_id, content_id from (
+                    select civ.content_item_version_id, civ.content_item_id, ci.content_id,
+                    row_number() over(partition by civ.content_item_id order by civ.content_item_version_id desc) as num
+                    from content_item_version civ {WithNoLock(dbType)}
+                    inner join content_item ci {WithNoLock(dbType)} on ci.CONTENT_ITEM_ID = civ.CONTENT_ITEM_ID
+                    where ci.content_item_id in (select id from {IdList(dbType, "@ids")})
+                ) r where num = 1";
+
+             using var cmd = DbCommandFactory.Create(sql, connection);
+             cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+             return GetDataTableForCommand(cmd).AsEnumerable().ToDictionary(
+                 k => Convert.ToInt32(k["content_item_version_id"]),
+                 v => Convert.ToInt32(v["content_id"])
+             );
+         }
+
+         public static Dictionary<int, List<string>> GetFilesForVersions(DbConnection connection, int[] ids)
+         {
+             var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
+             var result = new Dictionary<int, List<string>>();
+             string sql = $@"
+                select vcd.data, civ.content_item_version_id
+                from content_item_version civ {WithNoLock(dbType)}
+                inner join version_content_data vcd {WithNoLock(dbType)} on vcd.content_item_version_id = civ.content_item_version_id
+                inner join content_attribute ca {WithNoLock(dbType)} on ca.attribute_id = vcd.attribute_id
+                where civ.content_item_version_id in (select id from {IdList(dbType, "@ids")})
+                and vcd.data is not null and ca.attribute_type_id in (7, 8)";
+
+             using var cmd = DbCommandFactory.Create(sql, connection);
+             cmd.Parameters.Add(SqlQuerySyntaxHelper.GetIdsDatatableParam("@ids", ids, dbType));
+             var rows = GetDataTableForCommand(cmd).AsEnumerable();
+             foreach (var row in rows)
+             {
+                 var id = Convert.ToInt32(row["content_item_version_id"]);
+                 if (!result.ContainsKey(id))
+                 {
+                     result.Add(id, new List<string>());
+                 }
+                 result[id].Add(row["data"].ToString());
+             }
+
+             return result;
+         }
     }
 }

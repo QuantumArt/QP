@@ -331,11 +331,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 return Json(new { proceed = false, msg = string.Format(LibraryStrings.AccessDenied, info.Path, QPContext.CurrentUserName) });
             }
-            var normalizedFileName = isVersion ? Path.GetFileName(HttpUtility.UrlDecode(fileName)) : HttpUtility.UrlDecode(fileName);
-            var path = info.GetPath(normalizedFileName);
+            var path = info.GetPath(fileName);
             return _pathHelper.FileExists(path)
                 ? Json(new { proceed = true, key = SavePath(path) })
-                : Json(new { proceed = false, msg = string.Format(LibraryStrings.NotExists, normalizedFileName) });
+                : Json(new { proceed = false, msg = string.Format(LibraryStrings.NotExists, fileName) });
         }
 
         private string SavePath(string path)
