@@ -132,7 +132,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                if (_dbService.UseS3())
+                if (_dbService.UseS3() && !path.StartsWith(QPConfiguration.TempDirectory))
                 {
                     var stream = _pathHelper.GetS3Stream(path);
                     return File(stream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));

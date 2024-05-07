@@ -75,7 +75,7 @@ public class PathHelper
 
     public bool FileExists(string path)
     {
-        if (_dbService.UseS3())
+        if (_dbService.UseS3() && !path.StartsWith(QPConfiguration.TempDirectory))
         {
             try
             {
@@ -90,7 +90,7 @@ public class PathHelper
                 return false;
             }
         }
-        return System.IO.File.Exists(path);
+        return File.Exists(path);
     }
 
     public FolderFile GetS3File(string path)
