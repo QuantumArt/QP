@@ -96,7 +96,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        [BackendActionLog]
         public async Task<ActionResult> SetupWithParams(int parentId, int id, IFormCollection collection)
         {
             var model = new ImportViewModel() { ContentId = id };

@@ -97,6 +97,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
             var destPath = _pathHelper.CombinePath(destinationUrl, name);
 
+
             if (chunk == 0 && chunks == 1)
             {
                 securityResult = PathInfo.CheckSecurity(destinationUrl, true, _pathHelper.Separator);
@@ -121,6 +122,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         await using var fileStream = new FileStream(destPath, FileMode.Create);
                         await file.CopyToAsync(fileStream);
                     }
+
+                    CreateLogs(name, securityResult);
                 }
                 catch (Exception ex)
                 {
@@ -153,8 +156,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     if (isTheLastChunk)
                     {
                         securityResult = PathInfo.CheckSecurity(destinationUrl, true, _pathHelper.Separator);
-                        var actionCode = securityResult.IsSite ? ActionCode.UploadSiteFile : ActionCode.UploadContentFile;
-
                         if (!securityResult.Result)
                         {
                             var errorMsg = string.Format(PlUploadStrings.ServerError, name, destinationUrl, $"Access to the folder (ID = {securityResult.FolderId}) denied");
@@ -179,9 +180,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                             FileIO.Move(tempPath, destPath!);
                         }
-                        BackendActionContext.CreateLogs(
-                            actionCode, new[] { name }, securityResult.FolderId, _logRepository, false
-                        );
+
+                        CreateLogs(name, securityResult);
                     }
                 }
                 catch (Exception ex)
@@ -197,6 +197,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             return Json(new { message = $"file{name} uploaded", isError = false });
+        }
+
+        private void CreateLogs(string name, PathSecurityResult securityResult)
+        {
+            var actionCode = securityResult.IsSite ? ActionCode.UploadSiteFile : ActionCode.UploadContentFile;
+            BackendActionContext.CreateLogs(
+                actionCode, new[] { name }, securityResult.FolderId, _logRepository, false
+            );
         }
     }
 }
