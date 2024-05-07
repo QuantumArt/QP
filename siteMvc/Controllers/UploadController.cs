@@ -24,7 +24,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private readonly IBackendActionLogRepository _logRepository;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly S3Options _options;
-        private readonly IDbService _dbService;
         private readonly PathHelper _pathHelper;
 
         public UploadController(
@@ -36,14 +35,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             _logRepository = logRepository;
             _options = options;
-            _dbService = dbService;
             _pathHelper = pathHelper;
             EnsureS3ClientCreated();
         }
 
         private void EnsureS3ClientCreated()
         {
-            if (_dbService.UseS3())
+            if (_pathHelper.UseS3)
             {
                 new MinioClient()
                     .WithEndpoint(_options.Endpoint)
@@ -80,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 throw new ArgumentException("Folder Path is empty");
             }
 
-            if (_pathHelper.UseS3)
+            if (_pathHelper.UseS3 && !destinationUrl.StartsWith(QPConfiguration.TempDirectory))
             {
                 destinationUrl = _pathHelper.FixPathSeparator(destinationUrl);
             }
@@ -113,7 +111,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 try
                 {
-                    if (_dbService.UseS3())
+                    if (_pathHelper.UseS3 && !destPath.StartsWith(QPConfiguration.TempDirectory))
                     {
                         await using var stream = file.OpenReadStream();
                         _pathHelper.SetS3File(stream, destPath);
@@ -166,7 +164,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                             return Json(new { message = errorMsg, isError = true });
                         }
 
-                        if (_dbService.UseS3())
+                        if (_pathHelper.UseS3)
                         {
                             await using var tempStream = new FileStream(tempPath, FileMode.Open, FileAccess.Read);
                             _pathHelper.SetS3File(tempStream, destPath);

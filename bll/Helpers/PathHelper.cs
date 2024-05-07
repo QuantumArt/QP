@@ -28,7 +28,7 @@ public class PathHelper
     {
         _dbService = dbService;
         _options = dbService.S3Options;
-        if (_dbService.UseS3())
+        if (UseS3)
         {
             _client = new MinioClient()
                 .WithEndpoint(_options.Endpoint)
@@ -40,7 +40,7 @@ public class PathHelper
     public string CombinePath(string path, string name)
     {
         var result = Path.Combine(path, name);
-        if (_dbService.UseS3())
+        if (UseS3 && !path.StartsWith(QPConfiguration.TempDirectory))
         {
             result = result.Replace(@"\", @"/");
         }
@@ -50,7 +50,7 @@ public class PathHelper
     public string FixPathSeparator(string path)
     {
         var result = path;
-        if (_dbService.UseS3())
+        if (UseS3)
         {
             result = result.Replace(@"\", @"/");
         }
@@ -67,7 +67,7 @@ public class PathHelper
         return path.EndsWith('/') ? path : path + '/';
     }
 
-    public char Separator => _dbService.UseS3() ? '/' : Path.DirectorySeparatorChar;
+    public char Separator => UseS3 ? '/' : Path.DirectorySeparatorChar;
 
     public bool UseS3 => _dbService.UseS3();
 
@@ -75,7 +75,7 @@ public class PathHelper
 
     public bool FileExists(string path)
     {
-        if (_dbService.UseS3() && !path.StartsWith(QPConfiguration.TempDirectory))
+        if (UseS3 && !path.StartsWith(QPConfiguration.TempDirectory))
         {
             try
             {
@@ -104,7 +104,7 @@ public class PathHelper
     public IEnumerable<FolderFile> ListS3Files(string path, bool recursive = false, bool onlyDirs = false, string pattern = null)
     {
         var result = new List<FolderFile>();
-        if (_dbService.UseS3())
+        if (UseS3)
         {
             path = FixPathSeparator(path);
             path = RemoveLeadingSeparator(path);
@@ -255,7 +255,7 @@ public class PathHelper
 
     public ImageInfo IdentifyImage(string path)
     {
-        if (_dbService.UseS3())
+        if (UseS3)
         {
             using var stream = GetS3Stream(path);
             return Image.Identify(stream);
@@ -265,7 +265,7 @@ public class PathHelper
 
     public Image LoadImage(string path)
     {
-        if (_dbService.UseS3())
+        if (UseS3)
         {
             using var stream = GetS3Stream(path);
             return Image.Load(stream);
@@ -275,7 +275,7 @@ public class PathHelper
 
     public void SaveImage(Image image, string path, IImageEncoder encoder = null)
     {
-        if (_dbService.UseS3())
+        if (UseS3)
         {
             using var stream = new MemoryStream();
             image.Save(stream, encoder ?? image.DetectEncoder(path));

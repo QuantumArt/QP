@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -18,34 +17,24 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
-using Minio;
-using Minio.DataModel.Args;
-using Minio.Exceptions;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class LibraryController : AuthQpController
     {
-        private const string ContentDispositionTemplate = "attachment; filename=\"{0}\"; filename*=UTF-8''{0}";
         private const int DefaultSvgWidth = 800;
         private const int DefaultSvgHeight = 600;
 
         private readonly ILibraryService _libraryService;
-
-        private readonly IDbService _dbService;
         private readonly PathHelper _pathHelper;
 
         public LibraryController(
             ILibraryService libraryService,
-            IDbService dbService,
             PathHelper pathHelper
         )
         {
             _libraryService = libraryService;
-            _dbService = dbService;
             _pathHelper = pathHelper;
         }
 
@@ -132,14 +121,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                if (_dbService.UseS3() && !path.StartsWith(QPConfiguration.TempDirectory))
+                if (_pathHelper.UseS3 && !path.StartsWith(QPConfiguration.TempDirectory))
                 {
                     var stream = _pathHelper.GetS3Stream(path);
                     return File(stream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
                 }
                 else
                 {
-                    var dir = Path.GetDirectoryName(path);
+                    var dir = Path.GetDirectoryName(path) ?? string.Empty;
                     var file = Path.GetFileName(path);
                     var readStream = new PhysicalFileProvider(dir).GetFileInfo(file).CreateReadStream();
                     return File(readStream, MimeTypes.OctetStream, HttpUtility.UrlDecode(fileName));
@@ -182,7 +171,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return Json(new { ok = false, message = LibraryStrings.AccessDenied });
             }
 
-            int sourceWidth = 0, sourceHeight = 0, sourceTop = 0, sourceLeft = 0;
+            int sourceWidth, sourceHeight, sourceTop = 0, sourceLeft = 0;
             try
             {
                 var size = GetImageSize(sourcePath);
@@ -351,17 +340,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private string SavePath(string path)
         {
-            using (var rnd = RandomNumberGenerator.Create())
-            {
-                var key = rnd.Next().ToString();
-                TempData[key] = path;
-                return key;
-            }
+            using var rnd = RandomNumberGenerator.Create();
+            var key = rnd.Next().ToString();
+            TempData[key] = path;
+            return key;
         }
 
         private static PathInfo GetFilePathInfo(int fieldId, int? entityId, bool isVersion) => !isVersion
             ? FieldService.GetPathInfo(fieldId, entityId)
-            : ArticleVersionService.GetPathInfo(fieldId, (int)entityId);
+            : ArticleVersionService.GetPathInfo(fieldId, entityId ?? 0);
 
         private JsonResult GetFileProperties(PathInfo pathInfo, string fileName, FilePropertiesOptions options)
         {
