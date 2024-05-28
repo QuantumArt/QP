@@ -42,9 +42,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
             var stringEntityIDs = new List<string>();
 
-            if (int.TryParse(valueProvider.GetValue(_entitySingleIdParamName).FirstValue, out int entityId))
+            var value = valueProvider.GetValue(_entitySingleIdParamName).FirstValue;
+            if (!string.IsNullOrWhiteSpace(value))
             {
-                stringEntityIDs.Add(entityId.ToString());
+                stringEntityIDs.Add(value);
             }
             else
             {
