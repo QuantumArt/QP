@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Web;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -55,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services
             info.PathHelper = pathHelper;
             foreach (var name in names)
             {
-                var file = info.GetFile(name);
+                var file = info.GetFile(HttpUtility.UrlDecode(name));
                 if (file != null)
                 {
                     file.Remove(pathHelper);

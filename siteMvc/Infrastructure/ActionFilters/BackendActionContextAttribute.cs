@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -51,9 +52,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (filterContext.ActionArguments.ContainsKey(_entityMultiIdParamName))
                 {
-                    if (filterContext.ActionArguments[_entityMultiIdParamName] is SelectedItemsViewModel selModel)
+                    var multiArgs = filterContext.ActionArguments[_entityMultiIdParamName];
+                    switch (multiArgs)
                     {
-                        stringEntityIDs.AddRange(selModel.Ids.Select(id => id.ToString()));
+                        case SelectedItemsViewModel selModel:
+                            stringEntityIDs.AddRange(selModel.Ids.Select(id => id.ToString()));
+                            break;
+                        case SelectedStringItemsViewModel selStringModel:
+                            stringEntityIDs.AddRange(selStringModel.Ids.Select(id => HttpUtility.UrlDecode(id)));
+                            break;
                     }
                 }
             }
