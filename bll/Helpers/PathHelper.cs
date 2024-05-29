@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,11 +10,14 @@ using Microsoft.AspNetCore.StaticFiles;
 using Minio;
 using Minio.DataModel.Args;
 using NLog;
+using NLog.Fluent;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Configuration;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Formats;
+using System.Reflection;
+using Minio.DataModel.Response;
 
 namespace Quantumart.QP8.BLL.Helpers;
 
@@ -23,6 +27,11 @@ public class PathHelper
     private readonly IMinioClient _client;
     private readonly S3Options _options;
     private static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+    private readonly PropertyInfo _responseField = typeof(GenericResponse)
+        .GetProperty("ResponseContent", BindingFlags.Instance | BindingFlags.NonPublic);
+    private readonly PropertyInfo _codeField = typeof(GenericResponse)
+        .GetProperty("ResponseStatusCode", BindingFlags.Instance | BindingFlags.NonPublic);
+
 
     public PathHelper(IDbService dbService)
     {
@@ -95,14 +104,26 @@ public class PathHelper
 
     public FolderFile GetS3File(string path)
     {
+        VerifyS3BucketExists();
         var args = new StatObjectArgs().WithBucket(_options.Bucket).WithObject(FixPathSeparator(path));
         var stat = Task.Run(async () => await _client.StatObjectAsync(args)).Result;
         return new FolderFile(stat);
     }
 
+    public void VerifyS3BucketExists()
+    {
+        var args = new BucketExistsArgs().WithBucket(_options.Bucket);
+        var result = Task.Run(async () => await _client.BucketExistsAsync(args)).Result;
+        if (!result)
+        {
+            throw new ApplicationException($"Bucket {_options.Bucket} does not exist");
+        }
+    }
+
 
     public IEnumerable<FolderFile> ListS3Files(string path, bool recursive = false, bool onlyDirs = false, string pattern = null)
     {
+        VerifyS3BucketExists();
         var result = new List<FolderFile>();
         if (UseS3)
         {
@@ -116,25 +137,34 @@ public class PathHelper
                 .WithRecursive(recursive)
                 .WithVersions(true);
             var observable = _client.ListObjectsAsync(listObjectArgs);
-            Task.Run(async () =>
-                await observable.Do(item =>
-                {
-                    if (!item.IsDir && !onlyDirs || item.IsDir && onlyDirs)
+            try
+            {
+                Task.Run(async () =>
+                    await observable.Do(item =>
                     {
-                        var file = new FolderFile(item, path);
-                        if (string.IsNullOrWhiteSpace(pattern) || file.Name.Contains(pattern))
+                        if (!item.IsDir && !onlyDirs || item.IsDir && onlyDirs)
                         {
-                            result.Add(file);
+                            var file = new FolderFile(item, path);
+                            if (string.IsNullOrWhiteSpace(pattern) || file.Name.Contains(pattern))
+                            {
+                                result.Add(file);
+                            }
                         }
-                    }
-                }).LastOrDefaultAsync()
-            ).Wait();
+                    }).LastOrDefaultAsync()
+                ).Wait();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                throw new ApplicationException($"Cannot receive file list for path {path} in bucket {_options.Bucket}");
+            }
         }
         return result;
     }
 
     public MemoryStream GetS3Stream(string path)
     {
+        VerifyS3BucketExists();
         MemoryStream memoryStream = new MemoryStream();
         GetObjectArgs getObjectArgs = new GetObjectArgs()
             .WithBucket(_options.Bucket)
@@ -152,6 +182,7 @@ public class PathHelper
 
     public void SetS3File(Stream stream, string path)
     {
+        VerifyS3BucketExists();
         new FileExtensionContentTypeProvider().TryGetContentType(path, out var contentType);
 
         var putObjectArgs = new PutObjectArgs()
@@ -161,12 +192,23 @@ public class PathHelper
             .WithStreamData(stream)
             .WithObjectSize(stream.Length);
 
-        Task.Run(async () => await _client.PutObjectAsync(putObjectArgs)).Wait();
+        var result = Task.Run(async () => await _client.PutObjectAsync(putObjectArgs)).Result;
+        if (result.Etag == null)
+        {
+            _logger.ForErrorEvent()
+                .Message($"Error while saving file {path} to S3")
+                .Property("code", _codeField?.GetValue(result))
+                .Property("response", _responseField?.GetValue(result))
+                .Log();
+
+            throw new ApplicationException($"Error while saving file to S3");
+        }
         _logger.Info($"File {path} saved to S3");
     }
 
     public void RemoveS3File(string path)
     {
+        VerifyS3BucketExists();
         var fixedPath = FixPathSeparator(path);
         var objectArgs = new RemoveObjectArgs().WithBucket(_options.Bucket).WithObject(fixedPath);
         Task.Run(async () => await _client.RemoveObjectAsync(objectArgs)).Wait();
@@ -175,6 +217,7 @@ public class PathHelper
 
     public void CopyS3File(string path, string newPath)
     {
+        VerifyS3BucketExists();
         var fixedPath = FixPathSeparator(path);
         var fixedNewPath = FixPathSeparator(newPath);
         var sourceArgs = new CopySourceObjectArgs().WithBucket(_options.Bucket).WithObject(fixedPath);
@@ -187,6 +230,7 @@ public class PathHelper
 
     public void RemoveS3Files(IEnumerable<FolderFile> files)
     {
+        VerifyS3BucketExists();
         var fileNames = files.Select(n => n.FullName).ToArray();
         var objectArgs = new RemoveObjectsArgs().WithBucket(_options.Bucket)
             .WithObjects(fileNames);
@@ -196,6 +240,7 @@ public class PathHelper
 
     public void RemoveS3Folder(string path)
     {
+        VerifyS3BucketExists();
         var files = ListS3Files(path, true);
         if (files.Any())
         {
@@ -205,6 +250,7 @@ public class PathHelper
 
     public void Rename(string path, string newPath)
     {
+        VerifyS3BucketExists();
         if (UseS3)
         {
             CopyS3File(path, newPath);

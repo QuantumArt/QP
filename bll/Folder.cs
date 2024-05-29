@@ -7,6 +7,7 @@ using System.Linq.Dynamic;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using NLog;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -24,6 +25,7 @@ namespace Quantumart.QP8.BLL
         private bool _hasChildren;
         private PathInfo _pathInfo;
         private FolderRepository _repository;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public PathHelper PathHelper { get; set; }
 
@@ -181,8 +183,16 @@ namespace Quantumart.QP8.BLL
                 IEnumerable<string> namesToCreateInDb;
                 if (pathHelper.UseS3)
                 {
-                    namesToCreateInDb = pathHelper.ListS3Files(PathInfo.Path, onlyDirs: true)
-                        .Select(n => n.Name.Left(n.Name.Length - 1));
+                    try
+                    {
+                        namesToCreateInDb = pathHelper.ListS3Files(PathInfo.Path, onlyDirs: true)
+                            .Select(n => n.Name.Left(n.Name.Length - 1));
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                        namesToCreateInDb = Array.Empty<string>();
+                    }
                 }
                 else
                 {

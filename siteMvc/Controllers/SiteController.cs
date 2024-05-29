@@ -179,6 +179,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await JsonHtml("Library", model);
         }
 
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "gridParentId")]
         public ActionResult _Files(
             string tabId,
