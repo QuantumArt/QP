@@ -8,5 +8,7 @@ namespace Quantumart.QP8.BLL.Services.API
         InsertData[] BatchUpdate(IEnumerable<Article> articles, bool createVersions = false);
 
         InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool createVersions = false);
+
+        InsertData[] BatchUpdate(BatchUpdateModel model);
     }
 }

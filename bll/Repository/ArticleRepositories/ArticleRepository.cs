@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,6 +14,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -1651,50 +1653,92 @@ cil.locked_by,
 
         #region BatchUpdate
 
-        internal static InsertData[] BatchUpdate(ArticleData[] articles, bool formatArticleData, bool createVersions)
+        internal static InsertData[] BatchUpdate(BatchUpdateModel model)
         {
-            if (articles.Any())
+            if (model.Articles.Any())
             {
-                using (var scope = new QPConnectionScope())
-                using (var transaction = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted))
+                using var scope = new QPConnectionScope();
+                if (model.CreateTransactionScope)
                 {
-                    if (formatArticleData)
-                    {
-                        FormatArticleData(scope.DbConnection, articles);
-                    }
-
-                    var rows = CommonBatchUpdate.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
-                    var relations = MapperFacade.DataRowMapper.Map<RelationData>(rows);
-
-                    var links = GetArticleLinks(articles, relations);
-                    articles = UpdateArticleRelations(articles, relations);
-
-                    rows = CommonBatchUpdate.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
-                    var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
-
-                    if (createVersions)
-                    {
-                        var updatedIds = articles.Select(a => a.Id)
-                            .Except(insertData.Select(a => a.OriginalArticleId))
-                            .ToArray();
-
-                        Common.CreateArticleVersions(scope.DbConnection, QPContext.CurrentUserId, updatedIds);
-                    }
-
-                    links = UpdateLinkIds(links, insertData);
-                    articles = UpdateArticleIds(articles, insertData);
-
-                    CommonBatchUpdate.UpdateNotForReplication(scope.DbConnection, articles.Select(n => n.Id).ToArray(), QPContext.CurrentUserId);
-                    CommonBatchUpdate.BatchUpdate(scope.DbConnection, GetBatchDataTable(articles), QPContext.CurrentUserId);
-                    CommonBatchUpdate.ReplicateItems(scope.DbConnection, GetArticleIds(articles), GetFieldIds(articles));
-                    Common.UpdateM2MValues(scope.DbConnection, GetLinksXml(links));
-
+                    using var transaction = QPConfiguration.CreateTransactionScope(IsolationLevel.ReadCommitted);
+                    var insertData = BatchUpdateInternal(model, scope);
                     transaction.Complete();
                     return insertData;
                 }
+                return BatchUpdateInternal(model, scope);
             }
 
             return new InsertData[0];
+        }
+
+        private static InsertData[] BatchUpdateInternal(BatchUpdateModel model, QPConnectionScope scope)
+        {
+            if (model.FormatArticleData)
+            {
+                FormatArticleData(scope.DbConnection, model.Articles);
+            }
+
+            var rows = CommonBatchUpdate.GetRelations(scope.DbConnection, GetBatchDataTable(model.Articles));
+            var relations = MapperFacade.DataRowMapper.Map<RelationData>(rows);
+
+            var links = GetArticleLinks(model.Articles, relations);
+            model.Articles = UpdateArticleRelations(model.Articles, relations);
+
+            rows = CommonBatchUpdate.BatchInsert(scope.DbConnection, GetBatchDataTable(model.Articles), true, QPContext.CurrentUserId);
+            var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
+
+            if (model.CreateVersions)
+            {
+                var updatedIds = model.Articles.Select(a => a.Id)
+                    .Except(insertData.Select(a => a.OriginalArticleId))
+                    .ToArray();
+
+                var versionsToDelete = ArticleVersionRepository.GetVersionsToDelete(updatedIds);
+                var contents = versionsToDelete.Values.Distinct().ToDictionary(k => k, v => ContentRepository.GetById(v));
+                DeleteVersionFolders(versionsToDelete, contents, model.PathHelper);
+                Common.CreateArticleVersions(scope.DbConnection, QPContext.CurrentUserId, updatedIds);
+                var newVersions = ArticleVersionRepository.GetLatestVersions(updatedIds);
+                CreateVersionFolders(newVersions, contents, model.PathHelper);
+            }
+
+            links = UpdateLinkIds(links, insertData);
+            model.Articles = UpdateArticleIds(model.Articles, insertData);
+
+            CommonBatchUpdate.UpdateNotForReplication(scope.DbConnection, model.Articles.Select(n => n.Id).ToArray(), QPContext.CurrentUserId);
+            CommonBatchUpdate.BatchUpdate(scope.DbConnection, GetBatchDataTable(model.Articles), QPContext.CurrentUserId);
+            CommonBatchUpdate.ReplicateItems(scope.DbConnection, GetArticleIds(model.Articles), GetFieldIds(model.Articles));
+            Common.UpdateM2MValues(scope.DbConnection, GetLinksXml(links));
+
+            return insertData;
+        }
+
+        private static void DeleteVersionFolders(Dictionary<int, int> versions, Dictionary<int, Content> contents, PathHelper pathHelper)
+        {
+            foreach (var version in versions)
+            {
+                var versionFolder = contents[version.Value].GetVersionPathInfo(version.Key).Path;
+                pathHelper.RemoveFolder(versionFolder);
+            }
+        }
+
+        private static void CreateVersionFolders(Dictionary<int, int> versions, Dictionary<int, Content> contents, PathHelper pathHelper)
+        {
+            var files = ArticleVersionRepository.GetFilesForVersions(versions.Keys.ToArray());
+            foreach (var version in versions)
+            {
+                var versionFolder = contents[version.Value].GetVersionPathInfo(version.Key).Path;
+                var currentVersionFolder = contents[version.Value].GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+                if (files.TryGetValue(version.Key, out var versionFiles))
+                {
+                    foreach (var file in versionFiles)
+                    {
+                        var fileName = Path.GetFileName(file);
+                        var src = pathHelper.CombinePath(currentVersionFolder, fileName);
+                        var dest = pathHelper.CombinePath(versionFolder, file);
+                        pathHelper.Copy(src, dest);
+                    }
+                };
+            }
         }
 
         private static void FormatArticleData(DbConnection cnn, ArticleData[] articles)

@@ -323,18 +323,32 @@ namespace Quantumart.QP8.BLL.Services.API
                 }).ToList()
             });
 
-            return BatchUpdate(articlesData, false, createVersions);
+            return BatchUpdate(new BatchUpdateModel
+            {
+                Articles = articlesData.ToArray(),
+                CreateVersions = createVersions,
+                PathHelper = new PathHelper(new DbServices.DbService(S3Options))
+            });
         }
 
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool createVersions = false) => BatchUpdate(articles, true, createVersions);
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool createVersions = false)
+        {
+            return BatchUpdate(new BatchUpdateModel
+            {
+                Articles = articles.ToArray(),
+                CreateVersions = createVersions,
+                PathHelper = new PathHelper(new DbServices.DbService(S3Options))
+            });
+        }
 
-        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData, bool createVersions)
+        public InsertData[] BatchUpdate(BatchUpdateModel model)
         {
             using (new QPConnectionScope(ConnectionInfo))
             {
-                var arr = articles.ToArray();
+                var arr = model.Articles.ToArray();
                 QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleRepository.BatchUpdate(arr, formatArticleData, createVersions);
+                model.PathHelper ??= new PathHelper(new DbServices.DbService(S3Options));
+                var result = ArticleRepository.BatchUpdate(model);
                 CreateLogs(arr, result);
                 QPContext.CurrentUserId = 0;
                 return result;
