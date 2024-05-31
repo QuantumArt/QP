@@ -1739,7 +1739,12 @@ cil.locked_by,
                     {
                         if (!currentVersionFolders.TryGetValue(file.Key, out var currentVersionFolder))
                         {
-                            currentVersionFolder = contents[file.Key].GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+                            if (!contents.TryGetValue(file.Key, out var content))
+                            {
+                                content = ContentRepository.GetById(file.Key);
+                                contents.Add(file.Key, content);
+                            }
+                            currentVersionFolder = content.GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
                             currentVersionFolders.Add(file.Key, currentVersionFolder);
                         }
                         var fileName = Path.GetFileName(file.Value);
