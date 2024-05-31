@@ -19,6 +19,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public RemoveContentController(RemoveContentService service, PathHelper pathHelper)
         {
             _service = service;
+            _pathHelper = pathHelper;
         }
 
         [HttpPost]
