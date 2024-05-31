@@ -1355,6 +1355,7 @@ namespace Quantumart.QP8.BLL
                 CopyArticleFiles(CopyFilesMode.ToVersionFolder, BackupPath, newVersion.PathInfo.Path);
                 foreach (var a in AggregatedArticles)
                 {
+                    a.PathHelper = PathHelper;
                     a.CopyArticleFiles(CopyFilesMode.ToVersionFolder, a.BackupPath, newVersion.PathInfo.Path);
                 }
 
@@ -1383,6 +1384,7 @@ namespace Quantumart.QP8.BLL
             CopyArticleFiles(CopyFilesMode.FromVersionFolder, BackupPath, versionPath);
             foreach (var a in AggregatedArticles)
             {
+                a.PathHelper = PathHelper;
                 a.CopyArticleFiles(CopyFilesMode.FromVersionFolder, a.BackupPath, versionPath);
             }
         }
