@@ -251,6 +251,14 @@ public class PathHelper
     public void Rename(string path, string newPath)
     {
         VerifyS3BucketExists();
+        if (!FileExists(path))
+        {
+            _logger.ForWarnEvent()
+                .Message("Cannot rename non-existing file")
+                .Property(nameof(path), path)
+                .Log();
+            return;
+        }
         if (UseS3)
         {
             CopyS3File(path, newPath);
@@ -265,6 +273,14 @@ public class PathHelper
 
     public void Copy(string path, string newPath)
     {
+        if (!FileExists(path))
+        {
+            _logger.ForWarnEvent()
+                .Message("Cannot copy non-existing file")
+                .Property(nameof(path), path)
+                .Log();
+            return;
+        }
         if (UseS3)
         {
             CopyS3File(path, newPath);
@@ -279,6 +295,14 @@ public class PathHelper
 
     public void Remove(string path)
     {
+        if (!FileExists(path))
+        {
+            _logger.ForWarnEvent()
+                .Message("Cannot remove non-existing file")
+                .Property(nameof(path), path)
+                .Log();
+            return;
+        }
         if (UseS3)
         {
             RemoveS3File(path);
