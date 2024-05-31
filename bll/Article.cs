@@ -779,6 +779,7 @@ namespace Quantumart.QP8.BLL
 
                 foreach (var a in AggregatedArticles)
                 {
+                    a.PathHelper = PathHelper;
                     a.AggregateToRootArticle(result);
 
                     var liveArticle = liveArticles.FirstOrDefault(i => i.ContentId == a.ContentId && a.IsNew);

@@ -1725,10 +1725,10 @@ cil.locked_by,
         private static void CreateVersionFolders(Dictionary<int, int> versions, Dictionary<int, Content> contents, PathHelper pathHelper)
         {
             var files = ArticleVersionRepository.GetFilesForVersions(versions.Keys.ToArray());
+            var currentVersionFolders = new Dictionary<int, string>();
             foreach (var version in versions)
             {
                 var versionFolder = contents[version.Value].GetVersionPathInfo(version.Key).Path;
-                var currentVersionFolder = contents[version.Value].GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
                 if (!pathHelper.UseS3)
                 {
                     Directory.CreateDirectory(versionFolder);
@@ -1737,9 +1737,14 @@ cil.locked_by,
                 {
                     foreach (var file in versionFiles)
                     {
-                        var fileName = Path.GetFileName(file);
+                        if (!currentVersionFolders.TryGetValue(file.Key, out var currentVersionFolder))
+                        {
+                            currentVersionFolder = contents[file.Key].GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+                            currentVersionFolders.Add(file.Key, currentVersionFolder);
+                        }
+                        var fileName = Path.GetFileName(file.Value);
                         var src = pathHelper.CombinePath(currentVersionFolder, fileName);
-                        var dest = pathHelper.CombinePath(versionFolder, file);
+                        var dest = pathHelper.CombinePath(versionFolder, file.Value);
                         if (pathHelper.FileExists(src))
                         {
                             pathHelper.Copy(src, dest);

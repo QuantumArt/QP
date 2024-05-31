@@ -821,12 +821,12 @@ WHERE content_item_id = {contentItemId}
              );
          }
 
-         public static Dictionary<int, List<string>> GetFilesForVersions(DbConnection connection, int[] ids)
+         public static Dictionary<int, Dictionary<int, string>> GetFilesForVersions(DbConnection connection, int[] ids)
          {
              var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-             var result = new Dictionary<int, List<string>>();
+             var result = new Dictionary<int, Dictionary<int, string>>();
              string sql = $@"
-                select vcd.data, civ.content_item_version_id
+                select vcd.data, ca.content_id, civ.content_item_version_id
                 from content_item_version civ {WithNoLock(dbType)}
                 inner join version_content_data vcd {WithNoLock(dbType)} on vcd.content_item_version_id = civ.content_item_version_id
                 inner join content_attribute ca {WithNoLock(dbType)} on ca.attribute_id = vcd.attribute_id
@@ -839,11 +839,12 @@ WHERE content_item_id = {contentItemId}
              foreach (var row in rows)
              {
                  var id = Convert.ToInt32(row["content_item_version_id"]);
+                 var contentId = Convert.ToInt32(row["content_id"]);
                  if (!result.ContainsKey(id))
                  {
-                     result.Add(id, new List<string>());
+                     result.Add(id, new Dictionary<int, string>());
                  }
-                 result[id].Add(row["data"].ToString());
+                 result[id].Add(contentId, row["data"].ToString());
              }
 
              return result;

@@ -650,7 +650,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             var newVersions = ArticleVersionRepository.GetLatestVersions(idsList);
             var files = ArticleVersionRepository.GetFilesForVersions(newVersions.Keys.ToArray());
-            var currentVersionFolder = content.GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+            var currentVersionFolders = new Dictionary<int, string> {{
+                content.Id,
+                content.GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path
+            }};
 
             foreach (var newVersion in newVersions.Keys)
             {
@@ -661,11 +664,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     {
                         Directory.CreateDirectory(versionFolder);
                     }
-                    foreach (var file in versionFiles)
+                    foreach (var filePair in versionFiles)
                     {
-                        var fileName = Path.GetFileName(file);
+                        if (!currentVersionFolders.TryGetValue(filePair.Key, out var currentVersionFolder))
+                        {
+                            currentVersionFolder = ContentRepository.GetById(filePair.Key).GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+                            currentVersionFolders.Add(filePair.Key, currentVersionFolder);
+                        }
+                        var fileName = Path.GetFileName(filePair.Value);
                         var src = _pathHelper.CombinePath(currentVersionFolder, fileName);
-                        var dest = _pathHelper.CombinePath(versionFolder, file);
+                        var dest = _pathHelper.CombinePath(versionFolder, filePair.Value);
                         if (_pathHelper.FileExists(src))
                         {
                             _pathHelper.Copy(src, dest);
