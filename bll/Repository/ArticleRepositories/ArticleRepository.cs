@@ -1698,7 +1698,8 @@ cil.locked_by,
                 DeleteVersionFolders(versionsToDelete, contents, model.PathHelper);
                 Common.CreateArticleVersions(scope.DbConnection, QPContext.CurrentUserId, updatedIds);
                 var newVersions = ArticleVersionRepository.GetLatestVersions(updatedIds);
-                CreateVersionFolders(newVersions, contents, model.PathHelper);
+                var newContents = newVersions.Values.Distinct().ToDictionary(k => k, v => ContentRepository.GetById(v));
+                CreateVersionFolders(newVersions, newContents, model.PathHelper);
             }
 
             links = UpdateLinkIds(links, insertData);
