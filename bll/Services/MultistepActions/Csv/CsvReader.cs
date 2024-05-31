@@ -651,17 +651,25 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var newVersions = ArticleVersionRepository.GetLatestVersions(idsList);
             var files = ArticleVersionRepository.GetFilesForVersions(newVersions.Keys.ToArray());
             var currentVersionFolder = content.GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+
             foreach (var newVersion in newVersions.Keys)
             {
                 var versionFolder = content.GetVersionPathInfo(newVersion).Path;
                 if (files.TryGetValue(newVersion, out var versionFiles))
                 {
+                    if (!_pathHelper.UseS3)
+                    {
+                        Directory.CreateDirectory(versionFolder);
+                    }
                     foreach (var file in versionFiles)
                     {
                         var fileName = Path.GetFileName(file);
                         var src = _pathHelper.CombinePath(currentVersionFolder, fileName);
                         var dest = _pathHelper.CombinePath(versionFolder, file);
-                        _pathHelper.Copy(src, dest);
+                        if (_pathHelper.FileExists(src))
+                        {
+                            _pathHelper.Copy(src, dest);
+                        }
                     }
                 };
             }

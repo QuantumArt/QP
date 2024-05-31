@@ -1729,6 +1729,10 @@ cil.locked_by,
             {
                 var versionFolder = contents[version.Value].GetVersionPathInfo(version.Key).Path;
                 var currentVersionFolder = contents[version.Value].GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
+                if (!pathHelper.UseS3)
+                {
+                    Directory.CreateDirectory(versionFolder);
+                }
                 if (files.TryGetValue(version.Key, out var versionFiles))
                 {
                     foreach (var file in versionFiles)
@@ -1736,7 +1740,10 @@ cil.locked_by,
                         var fileName = Path.GetFileName(file);
                         var src = pathHelper.CombinePath(currentVersionFolder, fileName);
                         var dest = pathHelper.CombinePath(versionFolder, file);
-                        pathHelper.Copy(src, dest);
+                        if (pathHelper.FileExists(src))
+                        {
+                            pathHelper.Copy(src, dest);
+                        }
                     }
                 };
             }
