@@ -54,6 +54,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var info = _GetPathInfo(id);
+            info.PathHelper = pathHelper;
             foreach (var name in names)
             {
                 var file = info.GetFile(HttpUtility.UrlDecode(name));
