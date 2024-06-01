@@ -92,7 +92,7 @@ public class PathHelper
                     .WithBucket(_options.Bucket)
                     .WithObject(FixPathSeparator(path));
                 var statObject = Task.Run(async () => await _client.StatObjectAsync(statObjectArgs)).Result;
-                return true;
+                return statObject.ETag != null && statObject.Size != 0;
             }
             catch (Exception)
             {
