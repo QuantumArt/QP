@@ -821,10 +821,10 @@ WHERE content_item_id = {contentItemId}
              );
          }
 
-         public static Dictionary<int, Dictionary<int, string>> GetFilesForVersions(DbConnection connection, int[] ids)
+         public static Dictionary<int, Dictionary<string, int>> GetFilesForVersions(DbConnection connection, int[] ids)
          {
              var dbType = DatabaseTypeHelper.ResolveDatabaseType(connection);
-             var result = new Dictionary<int, Dictionary<int, string>>();
+             var result = new Dictionary<int, Dictionary<string, int>>();
              string sql = $@"
                 select vcd.data, ca.content_id, civ.content_item_version_id
                 from content_item_version civ {WithNoLock(dbType)}
@@ -842,11 +842,10 @@ WHERE content_item_id = {contentItemId}
                  var contentId = Convert.ToInt32(row["content_id"]);
                  if (!result.ContainsKey(id))
                  {
-                     result.Add(id, new Dictionary<int, string>());
+                     result.Add(id, new Dictionary<string, int>());
                  }
-                 result[id].Add(contentId, row["data"].ToString());
+                 result[id].Add(row["data"].ToString() ?? "", contentId);
              }
-
              return result;
          }
     }

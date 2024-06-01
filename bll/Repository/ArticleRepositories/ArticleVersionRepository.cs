@@ -220,7 +220,7 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
             }
         }
 
-        internal static Dictionary<int, Dictionary<int, string>> GetFilesForVersions(int[] ids)
+        internal static Dictionary<int, Dictionary<string, int>> GetFilesForVersions(int[] ids)
         {
             using (new QPConnectionScope())
             {

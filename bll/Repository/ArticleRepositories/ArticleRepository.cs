@@ -1737,19 +1737,19 @@ cil.locked_by,
                 {
                     foreach (var file in versionFiles)
                     {
-                        if (!currentVersionFolders.TryGetValue(file.Key, out var currentVersionFolder))
+                        if (!currentVersionFolders.TryGetValue(file.Value, out var currentVersionFolder))
                         {
-                            if (!contents.TryGetValue(file.Key, out var content))
+                            if (!contents.TryGetValue(file.Value, out var content))
                             {
-                                content = ContentRepository.GetById(file.Key);
-                                contents.Add(file.Key, content);
+                                content = ContentRepository.GetById(file.Value);
+                                contents.Add(file.Value, content);
                             }
                             currentVersionFolder = content.GetVersionPathInfo(ArticleVersion.CurrentVersionId).Path;
-                            currentVersionFolders.Add(file.Key, currentVersionFolder);
+                            currentVersionFolders.Add(file.Value, currentVersionFolder);
                         }
-                        var fileName = Path.GetFileName(file.Value);
+                        var fileName = Path.GetFileName(file.Key);
                         var src = pathHelper.CombinePath(currentVersionFolder, fileName);
-                        var dest = pathHelper.CombinePath(versionFolder, file.Value);
+                        var dest = pathHelper.CombinePath(versionFolder, file.Key);
                         if (pathHelper.FileExists(src))
                         {
                             pathHelper.Copy(src, dest);
