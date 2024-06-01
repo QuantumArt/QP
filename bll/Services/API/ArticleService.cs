@@ -326,16 +326,16 @@ namespace Quantumart.QP8.BLL.Services.API
             return BatchUpdate(new BatchUpdateModel
             {
                 Articles = articlesData.ToArray(),
-                CreateVersions = createVersions,
-                PathHelper = new PathHelper(new DbServices.DbService(S3Options))
+                CreateVersions = createVersions
             });
         }
 
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool createVersions = false)
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articlesData, bool createVersions = false)
         {
             return BatchUpdate(new BatchUpdateModel
             {
-                Articles = articles.ToArray(),
+                Articles = articlesData.ToArray(),
+                FormatArticleData = true,
                 CreateVersions = createVersions
             });
         }
