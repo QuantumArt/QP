@@ -10,7 +10,7 @@ public class BatchUpdateModel
 
     public bool CreateVersions { get; set; }
 
-    public bool CreateTransactionScope { get; set; }
+    public bool CreateTransactionScope { get; set; } = true;
 
     public PathHelper PathHelper { get; set; }
 }
