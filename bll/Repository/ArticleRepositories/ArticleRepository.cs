@@ -1728,13 +1728,13 @@ cil.locked_by,
             var currentVersionFolders = new Dictionary<int, string>();
             foreach (var version in versions)
             {
-                var versionFolder = contents[version.Value].GetVersionPathInfo(version.Key).Path;
-                if (!pathHelper.UseS3)
-                {
-                    Directory.CreateDirectory(versionFolder);
-                }
                 if (files.TryGetValue(version.Key, out var versionFiles))
                 {
+                    var versionFolder = contents[version.Value].GetVersionPathInfo(version.Key).Path;
+                    if (!pathHelper.UseS3)
+                    {
+                        Directory.CreateDirectory(versionFolder);
+                    }
                     foreach (var file in versionFiles)
                     {
                         if (!currentVersionFolders.TryGetValue(file.Value, out var currentVersionFolder))
