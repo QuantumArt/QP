@@ -414,21 +414,29 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                         ? content.Fields.Union(content.AggregatedContents.SelectMany(s => s.Fields))
                         : content.Fields;
 
-                    var fieldMapping = fields
-                        .Select(n => new { Key = n.Id, Value = CorrectIdValue(EntityTypeCode.Field, n.Id) })
-                        .Where(n => n.Key != n.Value)
-                        .ToList();
-
-                    foreach (var map in fieldMapping)
-                    {
-                        xaml = xaml.Replace($"field_{map.Key}", $"field_{map.Value}");
-                    }
-
+                    xaml = ReplaceFieldIdsInXaml(fields, xaml);
                     form[key] = new StringValues(xaml);
                 }
             }
         }
 
+        private string ReplaceFieldIdsInXaml(IEnumerable<Field> fields, string xaml)
+        {
+            if (_idsToReplace.TryGetValue(EntityTypeCode.Field, out var value))
+            {
+                var replacedFields = value.ToDictionary(n => n.Value, n => n.Key);
+
+                foreach (var field in fields)
+                {
+                    if (replacedFields.TryGetValue(field.Id, out var id))
+                    {
+                        xaml = xaml.Replace($"field_{id}", $"field_{field.Id}");
+                    }
+                }
+            }
+
+            return xaml;
+        }
 
         private void CorrectFormValue(string entityTypeCode, Dictionary<string, StringValues> form, string formKey, string jsonKey)
         {
