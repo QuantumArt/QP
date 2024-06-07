@@ -363,7 +363,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
-                throw new Exception(string.Format(ContentStrings.ContentNotFound, articleToRemove.Id));
+                throw new Exception(string.Format(ContentStrings.ContentNotFound, articleToRemove.ContentId));
             }
 
             if (articleToRemove.LockedByAnyoneElse)
@@ -421,14 +421,14 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             }
 
             var content = ContentRepository.GetById(contentId);
-            if (!content.IsArticleChangingActionsAllowed(boundToExternal))
-            {
-                return MessageResult.Error(ContentStrings.ArticleChangingIsProhibited);
-            }
-
             if (content == null)
             {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, contentId));
+            }
+
+            if (!content.IsArticleChangingActionsAllowed(boundToExternal))
+            {
+                return MessageResult.Error(ContentStrings.ArticleChangingIsProhibited);
             }
 
             if (!content.AllowItemsPermission && !SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Remove))

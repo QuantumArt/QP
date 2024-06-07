@@ -14,7 +14,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
         public int[] FailedIds { get; set; }
 
-        private MessageResult(string actionMessageType, string message, int[] failedIds)
+        protected MessageResult(string actionMessageType, string message, int[] failedIds)
         {
             Type = actionMessageType;
             Text = message;

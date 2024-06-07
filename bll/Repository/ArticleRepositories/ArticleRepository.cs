@@ -1653,7 +1653,7 @@ cil.locked_by,
 
         #region BatchUpdate
 
-        internal static InsertData[] BatchUpdate(BatchUpdateModel model)
+        internal static BatchUpdateResult BatchUpdate(BatchUpdateModel model)
         {
             if (model.Articles.Any())
             {
@@ -1668,10 +1668,10 @@ cil.locked_by,
                 return BatchUpdateInternal(model, scope);
             }
 
-            return new InsertData[0];
+            return new BatchUpdateResult();
         }
 
-        private static InsertData[] BatchUpdateInternal(BatchUpdateModel model, QPConnectionScope scope)
+        private static BatchUpdateResult BatchUpdateInternal(BatchUpdateModel model, QPConnectionScope scope)
         {
             if (model.FormatArticleData)
             {
@@ -1710,7 +1710,7 @@ cil.locked_by,
             CommonBatchUpdate.ReplicateItems(scope.DbConnection, GetArticleIds(model.Articles), GetFieldIds(model.Articles));
             Common.UpdateM2MValues(scope.DbConnection, GetLinksXml(links));
 
-            return insertData;
+            return new BatchUpdateResult { InsertData = insertData};
         }
 
         private static void DeleteVersionFolders(Dictionary<int, int> versions, Dictionary<int, Content> contents, PathHelper pathHelper)

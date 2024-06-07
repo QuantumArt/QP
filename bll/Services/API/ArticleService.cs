@@ -326,8 +326,9 @@ namespace Quantumart.QP8.BLL.Services.API
             return BatchUpdate(new BatchUpdateModel
             {
                 Articles = articlesData.ToArray(),
+                CheckSecurity = false,
                 CreateVersions = createVersions
-            });
+            }).InsertData;
         }
 
         public InsertData[] BatchUpdate(IEnumerable<ArticleData> articlesData, bool createVersions = false)
@@ -336,22 +337,65 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 Articles = articlesData.ToArray(),
                 FormatArticleData = true,
+                CheckSecurity = false,
                 CreateVersions = createVersions
-            });
+            }).InsertData;
         }
 
-        public InsertData[] BatchUpdate(BatchUpdateModel model)
+        public BatchUpdateResult BatchUpdate(BatchUpdateModel model)
         {
             using (new QPConnectionScope(ConnectionInfo))
             {
+                if (model.CheckSecurity && !CheckBatchUpdateModelSecurity(model, out var checkResult))
+                {
+                    return checkResult;
+                }
+
                 var arr = model.Articles.ToArray();
                 QPContext.CurrentUserId = TestedUserId;
                 model.PathHelper ??= new PathHelper(new DbServices.DbService(S3Options));
                 var result = ArticleRepository.BatchUpdate(model);
-                CreateLogs(arr, result);
+                CreateLogs(arr, result.InsertData);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
+        }
+
+        private static bool CheckBatchUpdateModelSecurity(BatchUpdateModel model, out BatchUpdateResult result)
+        {
+            var contentIds = model.Articles.Select(n => n.ContentId).Distinct().ToArray();
+            foreach (var contentId in contentIds)
+            {
+                var content = ContentRepository.GetById(contentId);
+                if (content == null)
+                {
+                    result = BatchUpdateResult.Error(string.Format(ContentStrings.ContentNotFound, contentId));
+                    return false;
+                }
+                var contentForCheck = content.BaseAggregationContent ?? content;
+                if (!contentForCheck.IsArticleChangingActionsAllowed(false))
+                {
+                    result = BatchUpdateResult.Error(ContentStrings.ArticleChangingIsProhibited + $"(Id = {contentId})");
+                    return false;
+                }
+
+                if (!contentForCheck.AllowItemsPermission && !SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update))
+                {
+                    result = BatchUpdateResult.Error(ContentStrings.CannotUpdateBecauseOfSecurity + $"(Id = {contentId})");
+                    return false;
+                }
+                var disableSecurityCheck = !content.AllowItemsPermission;
+                var ids = model.Articles.Where(n => n.ContentId == contentId).Select(n => n.Id).ToArray();
+                var checkResult = CheckIdResult<Article>.CreateForUpdate(contentId, ids, disableSecurityCheck).GetServiceResult();
+                if (checkResult is { FailedIds: not null } && checkResult.FailedIds.Any())
+                {
+                    result = BatchUpdateResult.Error(checkResult.Text, checkResult.FailedIds);
+                    return false;
+                }
+            }
+
+            result = null;
+            return true;
         }
 
         private void CreateLogs(IEnumerable<ArticleData> articles, InsertData[] result)
