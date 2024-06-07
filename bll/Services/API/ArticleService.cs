@@ -346,16 +346,14 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionInfo))
             {
+                QPContext.CurrentUserId = TestedUserId;
                 if (model.CheckSecurity && !CheckBatchUpdateModelSecurity(model, out var checkResult))
                 {
                     return checkResult;
                 }
-
-                var arr = model.Articles.ToArray();
-                QPContext.CurrentUserId = TestedUserId;
                 model.PathHelper ??= new PathHelper(new DbServices.DbService(S3Options));
                 var result = ArticleRepository.BatchUpdate(model);
-                CreateLogs(arr, result.InsertData);
+                CreateLogs(model.Articles, result.InsertData);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
