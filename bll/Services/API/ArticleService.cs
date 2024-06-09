@@ -373,13 +373,13 @@ namespace Quantumart.QP8.BLL.Services.API
                 var contentForCheck = content.BaseAggregationContent ?? content;
                 if (!contentForCheck.IsArticleChangingActionsAllowed(false))
                 {
-                    result = BatchUpdateResult.Error(ContentStrings.ArticleChangingIsProhibited + $"(Id = {contentId})");
+                    result = BatchUpdateResult.Error(ContentStrings.ArticleChangingIsProhibited + $" (Id = {contentId})");
                     return false;
                 }
 
                 if (!contentForCheck.AllowItemsPermission && !SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update))
                 {
-                    result = BatchUpdateResult.Error(ContentStrings.CannotUpdateBecauseOfSecurity + $"(Id = {contentId})");
+                    result = BatchUpdateResult.Error(ContentStrings.CannotUpdateBecauseOfSecurity + $" (Id = {contentId})");
                     return false;
                 }
                 var disableSecurityCheck = !content.AllowItemsPermission;
