@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -49,6 +48,12 @@ namespace Quantumart.QP8.BLL.Services
                     break;
                 case EntityTypeCode.ArticleVersion:
                     result = result.ResolveStatusesForArticleVersion(entityId, boundToExternal);
+                    break;
+                case EntityTypeCode.Site:
+                    result = result.ResolveStatusesForSite(entityId);
+                    break;
+                case EntityTypeCode.Notification:
+                    result = result.ResolveStatusesForNotification(entityId);
                     break;
             }
 
