@@ -93,10 +93,13 @@ namespace Quantumart.QP8.BLL.Helpers
         public static IEnumerable<BackendActionStatus> ResolveStatusesForContentGroup(this IEnumerable<BackendActionStatus> statuses, int entityId)
         {
             var group = ContentRepository.GetGroupById(entityId);
-            if (group.IsDefault)
+            if (group is not null && group.IsDefault)
             {
                 var status = statuses.SingleOrDefault(n => n.Code == ActionCode.ContentGroupProperties);
-                status.Visible = false;
+                if (status is not null)
+                {
+                    status.Visible = false;
+                }
             }
 
             return statuses;
@@ -153,10 +156,13 @@ namespace Quantumart.QP8.BLL.Helpers
         public static IEnumerable<BackendActionStatus> ResolveStatusesForSite(this IEnumerable<BackendActionStatus> statuses, int entityId)
         {
             var site = SiteRepository.GetById(entityId);
-            if (site.ExternalDevelopment)
+            if (site is not null && site.ExternalDevelopment)
             {
                 var status = statuses.SingleOrDefault(n => n.Code == ActionCode.AssembleSite);
-                status.Visible = false;
+                if (status is not null)
+                {
+                    status.Visible = false;
+                }
             }
 
             return statuses;
@@ -164,11 +170,14 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static IEnumerable<BackendActionStatus> ResolveStatusesForNotification(this IEnumerable<BackendActionStatus> statuses, int entityId)
         {
-            var site = NotificationRepository.GetPropertiesById(entityId).Content.Site;
-            if (site.ExternalDevelopment)
+            var site = NotificationRepository.GetPropertiesById(entityId)?.Content?.Site;
+            if (site is not null && site.ExternalDevelopment)
             {
                 var status = statuses.SingleOrDefault(n => n.Code == ActionCode.AssembleNotification);
-                status.Visible = false;
+                if (status is not null)
+                {
+                    status.Visible = false;
+                }
             }
 
             return statuses;
