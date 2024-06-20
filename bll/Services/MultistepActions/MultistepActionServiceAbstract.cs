@@ -93,13 +93,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
             return command.Step(step);
         }
 
-        public MultistepActionStepResult Step(int stage, int step, PathHelper pathHelper)
-        {
-            var context = HttpContext.Session.GetValue<MultistepActionServiceContext>(ContextSessionKey);
-            var command = CreateCommand(context.CommandStates[stage]);
-            return command.Step(step);
-        }
-
         public virtual void TearDown()
         {
             HttpContext.Session.Remove(ContextSessionKey);

@@ -16,6 +16,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         public ClearContentService(PathHelper pathHelper) : base(pathHelper)
         {
         }
+
         public override MessageResult PreAction(int siteId, int contentId)
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
