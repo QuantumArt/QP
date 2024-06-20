@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;

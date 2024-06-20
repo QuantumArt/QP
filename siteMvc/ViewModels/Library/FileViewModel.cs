@@ -84,6 +84,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
                 return _dimensions;
             }
         }
-
     }
 }

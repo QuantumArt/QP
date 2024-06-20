@@ -10,7 +10,6 @@ using NLog.Fluent;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -29,7 +28,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public UploadController(
             IBackendActionLogRepository logRepository,
             S3Options options,
-            IDbService dbService,
             PathHelper pathHelper
         )
         {

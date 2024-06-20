@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +15,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class SiteFolderController : AuthQpController
     {
-        private PathHelper _pathHelper;
+        private readonly PathHelper _pathHelper;
 
         public SiteFolderController(PathHelper pathHelper)
         {
             _pathHelper = pathHelper;
         }
-
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewSiteFolder)]

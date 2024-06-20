@@ -5,14 +5,14 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ThumbnailController : AuthQpController
     {
-        private PathHelper _pathHelper;
+        private readonly PathHelper _pathHelper;
+
         public ThumbnailController(PathHelper pathHelper)
         {
             _pathHelper = pathHelper;
