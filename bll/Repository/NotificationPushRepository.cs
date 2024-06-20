@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Repository
     internal class NotificationPushRepository
     {
 
-        private static ILogger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private int ContentId { get; set; }
 
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         public bool IgnoreInternal { get; set; }
 
-        private S3Options _options;
+        private readonly S3Options _options;
 
         internal NotificationPushRepository() : this(new S3Options())
         {
@@ -51,16 +51,16 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal NotificationPushRepository(S3Options options)
         {
-            Articles = new Article[0];
-            Notifications = new Notification[0];
+            Articles = Array.Empty<Article>();
+            Notifications = Array.Empty<Notification>();
             _options = options;
         }
 
         internal void PrepareNotifications(Article article, string[] codes, bool disableNotifications = false)
         {
-            Notifications = new Notification[0];
-            ArticleIds = new int[0];
-            Articles = new Article[0];
+            Notifications = Array.Empty<Notification>();
+            ArticleIds = Array.Empty<int>();
+            Articles = Array.Empty<Article>();
             ValidateCodes(codes);
             Codes = codes.Distinct().ToArray();
             if (!disableNotifications)
@@ -78,9 +78,9 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal void PrepareNotifications(int contentId, int[] articleIds, string[] codes, bool disableNotifications = false)
         {
-            Notifications = new Notification[0];
-            ArticleIds = new int[0];
-            Articles = new Article[0];
+            Notifications = Array.Empty<Notification>();
+            ArticleIds = Array.Empty<int>();
+            Articles = Array.Empty<Article>();
             ValidateCodes(codes);
             Codes = codes.Distinct().ToArray();
             if (!disableNotifications)

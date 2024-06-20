@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using Minio;
 using Minio.DataModel.Args;
 using NLog;
-using NLog.Fluent;
 using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.Configuration;
 using SixLabors.ImageSharp;
@@ -31,7 +29,6 @@ public class PathHelper
         .GetProperty("ResponseContent", BindingFlags.Instance | BindingFlags.NonPublic);
     private readonly PropertyInfo _codeField = typeof(GenericResponse)
         .GetProperty("ResponseStatusCode", BindingFlags.Instance | BindingFlags.NonPublic);
-
 
     public PathHelper(IDbService dbService)
     {
@@ -119,7 +116,6 @@ public class PathHelper
             throw new ApplicationException($"Bucket {_options.Bucket} does not exist");
         }
     }
-
 
     public IEnumerable<FolderFile> ListS3Files(string path, bool recursive = false, bool onlyDirs = false, string pattern = null)
     {
@@ -334,7 +330,6 @@ public class PathHelper
                 directory.Delete(true);
             }
         }
-
     }
 
     public ImageInfo IdentifyImage(string path)

@@ -8,8 +8,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
-using Quantumart.QPublishing.Database;
-using Quantumart.QPublishing.FileSystem;
 
 namespace Quantumart.QP8.BLL.Repository
 {

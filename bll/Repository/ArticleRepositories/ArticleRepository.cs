@@ -1755,7 +1755,7 @@ cil.locked_by,
                             pathHelper.Copy(src, dest);
                         }
                     }
-                };
+                }
             }
         }
 

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -14,7 +12,7 @@ namespace Quantumart.QP8.BLL.Repository
             var folder = GetRoot(parentEntityId);
             if (folder == null)
             {
-                folder = CreateRoot(parentEntityId, pathHelper,true);
+                folder = CreateRoot(parentEntityId, pathHelper, true);
             }
             else
             {
