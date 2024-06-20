@@ -2,7 +2,6 @@ using System;
 using I = System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Minio.DataModel;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;

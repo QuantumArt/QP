@@ -14,7 +14,7 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 * Добавлена поддержка MinIO (#174303)
 * Обновлена библиотека Quantumart.AspNetCore до 6.1.0
-* Создание версий файлов при BatchUpdate (#174736)
+* Добавлено создание версий файлов при BatchUpdate (#174736)
 * Добавлена запись в лог аудита при операциях со статьями (#174933)
 
 ### Quantumart.QP8.BLL.3.4.0

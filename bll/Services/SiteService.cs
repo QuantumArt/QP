@@ -21,9 +21,7 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class SiteService : ISiteService
     {
-
         private readonly PathHelper _pathHelper;
-
 
         public SiteService(PathHelper pathHelper)
         {

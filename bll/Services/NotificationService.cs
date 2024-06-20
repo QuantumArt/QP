@@ -18,12 +18,6 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class NotificationService : INotificationService
     {
-        private IDbService _dbService;
-        public NotificationService(IDbService dbService)
-        {
-            _dbService = dbService;
-        }
-
         public MessageResult AssembleNotificationPreAction(int id)
         {
             var site = NotificationRepository.GetPropertiesById(id).Content.Site;

@@ -166,7 +166,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создаем недостающие в БД папки на основании файловой системы
         /// </summary>
-        internal void CreateChildren(PathHelper pathHelper, bool stopResursion = false)
+        internal void CreateChildren(PathHelper pathHelper)
         {
             if (Children != null)
             {

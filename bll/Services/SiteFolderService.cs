@@ -29,7 +29,8 @@ namespace Quantumart.QP8.BLL.Services
         {
             var info = _GetPathInfo(id);
             info.PathHelper = pathHelper;
-            return info.GetFile(fileName);        }
+            return info.GetFile(fileName);
+        }
 
         public static string GetPath(int id, string fileName) => _GetPathInfo(id).GetPath(fileName);
 

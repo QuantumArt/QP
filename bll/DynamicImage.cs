@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Npgsql.Internal.TypeHandlers.GeometricHandlers;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Resources;
@@ -14,7 +13,6 @@ using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Webp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 namespace Quantumart.QP8.BLL

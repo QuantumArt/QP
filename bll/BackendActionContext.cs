@@ -78,7 +78,6 @@ namespace Quantumart.QP8.BLL
             CreateLogs(actionCode, ids.Select(n => n.ToString()), parentId ?? 0, repository, isApi);
         }
 
-
         public static void CreateLogs(
             string actionCode,
             IEnumerable<string> ids,

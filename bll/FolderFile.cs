@@ -38,7 +38,6 @@ namespace Quantumart.QP8.BLL
 
         public FolderFile(Item item, string path)
         {
-
             Name = item.Key.Replace(path, "");
             OldName = Name;
             Path = path;
@@ -59,7 +58,6 @@ namespace Quantumart.QP8.BLL
             Modified = stat.LastModified;
             Length = stat.Size;
         }
-
 
         public FolderFile(FileInfo info)
         {
@@ -180,7 +178,6 @@ namespace Quantumart.QP8.BLL
         public long Length { get; set; }
 
         public string Dimensions { get; set; }
-
 
         /// <summary>
         /// Дата создания файла
