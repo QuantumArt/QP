@@ -245,7 +245,6 @@ namespace Quantumart.QP8.BLL
                 .AsQueryable()
                 .OrderBy(sort);
 
-
             var filteredAndPaged = filtered
                 .Skip((command.StartPage - 1) * command.PageSize)
                 .Take(command.PageSize)
