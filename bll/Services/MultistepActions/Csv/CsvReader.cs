@@ -46,10 +46,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private ExtendedArticleList _articlesListFromCsv;
         private List<string> _uniqueValuesList;
         private IEnumerable<Line> _csvLines;
-        private JObject _jObject;
-        private Dictionary<int, Field> _traceFields;
-        private PathHelper _pathHelper;
-        private IBackendActionLogRepository _logRepository;
+        private readonly JObject _jObject;
+        private readonly Dictionary<int, Field> _traceFields;
+        private readonly PathHelper _pathHelper;
+        private readonly IBackendActionLogRepository _logRepository;
 
         public CsvReader(int siteId, int contentId, ImportSettings settings, PathHelper pathHelper)
         {
@@ -679,7 +679,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                             _pathHelper.Copy(src, dest);
                         }
                     }
-                };
+                }
             }
         }
 

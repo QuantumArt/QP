@@ -1,12 +1,11 @@
 using System;
-using System.IO;
 using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public abstract class RemovingServiceAbstract : MultistepActionServiceAbstract
     {
-        private PathHelper _pathHelper;
+        private readonly PathHelper _pathHelper;
         protected RemovingServiceAbstract(PathHelper pathHelper)
         {
             _pathHelper = pathHelper;

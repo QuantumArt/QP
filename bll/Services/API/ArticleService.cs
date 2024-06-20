@@ -181,7 +181,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 article.PathHelper = pathHelper;
                 var result = article.Persist(disableNotifications);
                 var code = article.Id == 0 ? ActionCode.SaveArticle : ActionCode.UpdateArticle;
-                BackendActionContext.CreateLogs(code, new []{ result.Id }, result.ContentId, _logRepo, true);
+                BackendActionContext.CreateLogs(code, new[] { result.Id }, result.ContentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -201,7 +201,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 var service = new ArticleServices.ArticleService(pathHelper);
                 var contentId = articleToRemove.ContentId;
                 var result = service.Remove(contentId, articleId, false, true, false);
-                BackendActionContext.CreateLogs(ActionCode.RemoveArticle, new []{ articleId }, contentId, _logRepo, true);
+                BackendActionContext.CreateLogs(ActionCode.RemoveArticle, new[] { articleId }, contentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }

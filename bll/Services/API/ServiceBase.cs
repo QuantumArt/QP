@@ -11,7 +11,6 @@ namespace Quantumart.QP8.BLL.Services.API
     {
         private bool _userTested;
 
-
         protected ServiceBase(int userId)
             : this(QPContext.CurrentDbConnectionInfo, userId)
         {

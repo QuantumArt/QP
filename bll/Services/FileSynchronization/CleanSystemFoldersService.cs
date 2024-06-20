@@ -15,7 +15,7 @@ public class CleanSystemFoldersService : ICleanSystemFoldersService
 {
     private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
     private readonly CommonSchedulerProperties _options;
-    private PathHelper _pathHelper;
+    private readonly PathHelper _pathHelper;
 
     public CleanSystemFoldersService(IOptions<CommonSchedulerProperties> options, PathHelper pathHelper)
     {

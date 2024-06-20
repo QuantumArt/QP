@@ -10,7 +10,6 @@ namespace Quantumart.QP8.BLL.Services.DbServices
 {
     public class DbService : IDbService
     {
-
         private readonly S3Options _options;
 
         public DbService(S3Options options)
