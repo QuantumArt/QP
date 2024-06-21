@@ -10,6 +10,10 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.5.1
+
+* Обновлена библиотека QA.Validation.Xaml.Extensions до 1.4.3  (#175116)
+
 ### Quantumart.QP8.BLL.3.5.0
 
 * Добавлена поддержка MinIO (#174303)
