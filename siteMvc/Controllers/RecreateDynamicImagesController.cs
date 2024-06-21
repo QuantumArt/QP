@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -11,10 +12,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class RecreateDynamicImagesController : AuthQpController
     {
         private readonly IRecreateDynamicImagesService _service;
+        private readonly PathHelper _pathHelper;
 
-        public RecreateDynamicImagesController(IRecreateDynamicImagesService service)
+        public RecreateDynamicImagesController(IRecreateDynamicImagesService service, PathHelper pathHelper)
         {
             _service = service;
+            _pathHelper = pathHelper;
         }
 
         [HttpPost]
@@ -32,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult Step([FromBody] MultiStepActionViewModel model)
         {
-            return Json(_service.Step(model.Step));
+            return Json(_service.Step(model.Step, _pathHelper));
         }
 
         [HttpPost]

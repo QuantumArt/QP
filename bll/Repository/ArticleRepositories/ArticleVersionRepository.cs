@@ -203,5 +203,29 @@ namespace Quantumart.QP8.BLL.Repository.ArticleRepositories
         /// <param name="fieldId">ID поля</param>
         /// <returns>строка связанных ID через запятую</returns>
         internal static string GetRelatedItems(int versionId, int fieldId) => GetLinkedItems(versionId, fieldId);
+
+        internal static Dictionary<int, int> GetVersionsToDelete(int[] ids)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetVersionsToDelete(QPConnectionScope.Current.DbConnection, ids);
+            }
+        }
+
+        internal static Dictionary<int, int> GetLatestVersions(int[] ids)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetLatestVersions(QPConnectionScope.Current.DbConnection, ids);
+            }
+        }
+
+        internal static Dictionary<int, Dictionary<string, int>> GetFilesForVersions(int[] ids)
+        {
+            using (new QPConnectionScope())
+            {
+                return Common.GetFilesForVersions(QPConnectionScope.Current.DbConnection, ids);
+            }
+        }
     }
 }

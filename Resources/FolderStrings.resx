@@ -147,4 +147,7 @@
   <data name="NameNotEntered" xml:space="preserve">
     <value>Please enter folder name</value>
   </data>
+  <data name="CannotRenameNonEmptyFolder" xml:space="preserve">
+    <value>Cannot rename non-empty folder</value>>
+  </data>
 </root>

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
@@ -14,6 +16,8 @@ namespace Quantumart.QP8.BLL.Services.API
 {
     public class ArticleService : ServiceBase, IBatchUpdateService
     {
+        private readonly IBackendActionLogRepository _logRepo = new AuditRepository();
+
         public ArticleService(int userId)
             : base(userId)
         {
@@ -36,6 +40,8 @@ namespace Quantumart.QP8.BLL.Services.API
                 return Article.CreateNewForSave(contentId);
             }
         }
+
+        public S3Options S3Options { get; set; } = new();
 
         public Article Read(int id, bool forceLoadFieldValues = false, bool excludeArchive = false)
         {
@@ -157,7 +163,10 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleServices.ArticleService.Copy(article.Id, true, false);
+                var pathHelper = new PathHelper(new DbServices.DbService(S3Options));
+                var service = new ArticleServices.ArticleService(pathHelper);
+                var result = service.Copy(article.Id, true, false);
+                BackendActionContext.CreateLogs(ActionCode.CreateLikeArticle, new[] { article.Id }, article.ContentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -168,7 +177,11 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
+                var pathHelper = new PathHelper(new DbServices.DbService(S3Options));
+                article.PathHelper = pathHelper;
                 var result = article.Persist(disableNotifications);
+                var code = article.Id == 0 ? ActionCode.SaveArticle : ActionCode.UpdateArticle;
+                BackendActionContext.CreateLogs(code, new[] { result.Id }, result.ContentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -184,9 +197,11 @@ namespace Quantumart.QP8.BLL.Services.API
                 {
                     throw new ApplicationException(string.Format(ArticleStrings.ArticleNotFound, articleId));
                 }
-
-                var result = ArticleServices.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
-
+                var pathHelper = new PathHelper(new DbServices.DbService(S3Options));
+                var service = new ArticleServices.ArticleService(pathHelper);
+                var contentId = articleToRemove.ContentId;
+                var result = service.Remove(contentId, articleId, false, true, false);
+                BackendActionContext.CreateLogs(ActionCode.RemoveArticle, new[] { articleId }, contentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -197,7 +212,10 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleServices.ArticleService.Remove(contentId, articleIds, false, true, false);
+                var pathHelper = new PathHelper(new DbServices.DbService(S3Options));
+                var service = new ArticleServices.ArticleService(pathHelper);
+                var result = service.Remove(contentId, articleIds, false, true, false);
+                BackendActionContext.CreateLogs(ActionCode.MultipleRemoveArticle, articleIds, contentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -218,10 +236,13 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
+                var pathHelper = new PathHelper(new DbServices.DbService(S3Options));
+                var service = new ArticleServices.ArticleService(pathHelper);
                 var result = flag
-                    ? ArticleServices.ArticleService.MoveToArchive(contentId, articleIds, true, false)
-                    : ArticleServices.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
-
+                    ? service.MoveToArchive(contentId, articleIds, true, false)
+                    : service.RestoreFromArchive(contentId, articleIds, true, false);
+                var code = flag ? ActionCode.MultipleMoveArticleToArchive : ActionCode.MultipleRestoreArticleFromArchive;
+                BackendActionContext.CreateLogs(code, articleIds, contentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -242,7 +263,10 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleServices.ArticleService.Publish(contentId, articleIds, true, false);
+                var pathHelper = new PathHelper(new DbServices.DbService(S3Options));
+                var service = new ArticleServices.ArticleService(pathHelper);
+                var result = service.Publish(contentId, articleIds, true, false);
+                BackendActionContext.CreateLogs(ActionCode.MultiplePublishArticles, articleIds, contentId, _logRepo, true);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -299,19 +323,100 @@ namespace Quantumart.QP8.BLL.Services.API
                 }).ToList()
             });
 
-            return BatchUpdate(articlesData, false, createVersions);
+            return BatchUpdate(new BatchUpdateModel
+            {
+                Articles = articlesData.ToArray(),
+                CheckSecurity = false,
+                CreateVersions = createVersions
+            }).InsertData;
         }
 
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool createVersions = false) => BatchUpdate(articles, true, createVersions);
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articlesData, bool createVersions = false)
+        {
+            return BatchUpdate(new BatchUpdateModel
+            {
+                Articles = articlesData.ToArray(),
+                FormatArticleData = true,
+                CheckSecurity = false,
+                CreateVersions = createVersions
+            }).InsertData;
+        }
 
-        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData, bool createVersions)
+        public BatchUpdateResult BatchUpdate(BatchUpdateModel model)
         {
             using (new QPConnectionScope(ConnectionInfo))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData, createVersions);
+                if (model.CheckSecurity && !CheckBatchUpdateModelSecurity(model, out var checkResult))
+                {
+                    return checkResult;
+                }
+                model.PathHelper ??= new PathHelper(new DbServices.DbService(S3Options));
+                var result = ArticleRepository.BatchUpdate(model);
+                CreateLogs(model.Articles, result.InsertData);
                 QPContext.CurrentUserId = 0;
                 return result;
+            }
+        }
+
+        private static bool CheckBatchUpdateModelSecurity(BatchUpdateModel model, out BatchUpdateResult result)
+        {
+            var contentIds = model.Articles.Select(n => n.ContentId).Distinct().ToArray();
+            foreach (var contentId in contentIds)
+            {
+                var content = ContentRepository.GetById(contentId);
+                if (content == null)
+                {
+                    result = BatchUpdateResult.Error(string.Format(ContentStrings.ContentNotFound, contentId));
+                    return false;
+                }
+                var contentForCheck = content.BaseAggregationContent ?? content;
+                if (!contentForCheck.IsArticleChangingActionsAllowed(false))
+                {
+                    result = BatchUpdateResult.Error(ContentStrings.ArticleChangingIsProhibited + $" (Id = {contentId})");
+                    return false;
+                }
+
+                if (!contentForCheck.AllowItemsPermission && !SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update))
+                {
+                    result = BatchUpdateResult.Error(ContentStrings.CannotUpdateBecauseOfSecurity + $" (Id = {contentId})");
+                    return false;
+                }
+                var disableSecurityCheck = !content.AllowItemsPermission;
+                var ids = model.Articles.Where(n => n.ContentId == contentId).Select(n => n.Id).ToArray();
+                var checkResult = CheckIdResult<Article>.CreateForUpdate(contentId, ids, disableSecurityCheck).GetServiceResult();
+                if (checkResult is { FailedIds: not null } && checkResult.FailedIds.Any())
+                {
+                    result = BatchUpdateResult.Error(checkResult.Text, checkResult.FailedIds);
+                    return false;
+                }
+            }
+
+            result = null;
+            return true;
+        }
+
+        private void CreateLogs(IEnumerable<ArticleData> articles, InsertData[] result)
+        {
+            var originalIds = new HashSet<int>(result.Select(n => n.OriginalArticleId).ToArray());
+            var insertedIds = result.GroupBy(n => n.ContentId)
+                .ToDictionary(
+                    n => n.Key,
+                    m => m.Select(e => e.CreatedArticleId).ToArray()
+                );
+            var updatedIds = articles.Where(n => !originalIds.Contains(n.Id))
+                .GroupBy(n => n.ContentId)
+                .ToDictionary(
+                    n => n.Key,
+                    m => m.Select(e => e.Id).ToArray()
+                );
+            foreach (var key in insertedIds.Keys)
+            {
+                BackendActionContext.CreateLogs(ActionCode.MultipleSaveArticles, insertedIds[key], key, _logRepo, true);
+            }
+            foreach (var key in updatedIds.Keys)
+            {
+                BackendActionContext.CreateLogs(ActionCode.MultipleUpdateArticles, updatedIds[key], key, _logRepo, true);
             }
         }
 

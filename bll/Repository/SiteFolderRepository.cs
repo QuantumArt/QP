@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -55,9 +56,9 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId)
+        public override IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId, PathHelper pathHelper)
         {
-            var newId = Synchronize(parentEntityId, parentId);
+            var newId = Synchronize(parentEntityId, parentId, pathHelper);
             return GetChildrenFromDb(parentEntityId, newId);
         }
 

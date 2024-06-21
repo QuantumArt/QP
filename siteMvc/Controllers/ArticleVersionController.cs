@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.Constants;
@@ -20,6 +21,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ArticleVersionController : AuthQpController
     {
+        private readonly PathHelper _pathHelper;
+
+        public ArticleVersionController(PathHelper pathHelper)
+        {
+            _pathHelper = pathHelper;
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticleVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
@@ -102,7 +110,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, IFormCollection collection)
         {
             var version = ArticleVersionService.Read(id, parentId);
-            var article = ArticleService.ReadForUpdate(version.ArticleId, version.Article.ContentId);
+            var article = BLL.Services.ArticleServices.ArticleService.ReadForUpdate(version.ArticleId, version.Article.ContentId);
             version.Article = article;
             var model = ArticleVersionViewModel.Create(version, tabId, parentId, boundToExternal);
 
@@ -110,6 +118,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
+                model.Data.Article.PathHelper = _pathHelper;
                 model.Data.Article = ArticleVersionService.Restore(model.Data, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
                 return Redirect("Properties", new
                 {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
@@ -36,12 +37,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         {
             SetupWithParams(parentId, 0, ids, settingsParams as ExportSettings);
         }
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal) => Setup(parentId, id, null, boundToExternal);
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, S3Options options)
+        {
+            return Setup(parentId, id, null, boundToExternal, options);
+        }
 
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => Setup(parentId, id, null, boundToExternal, isArchive);
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => Setup(parentId, id, ids, null, false);
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive, S3Options options)
+        {
+            return Setup(parentId, id, null, boundToExternal, isArchive, options);
+        }
 
-        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive)
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, S3Options options)
+        {
+            return Setup(parentId, id, ids, null, false, options);
+        }
+
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive, S3Options options)
         {
             var contentId = ids != null && ids.Any() ? parentId : id;
             var content = ContentRepository.GetById(contentId);
@@ -53,7 +64,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             var articleIds = GetArticleIds(ids, content.Id, isArchive);
             var articleExtensionContentIds = GetArticleExtensionContentIds(articleIds, content.Id, isArchive);
             Commands.Add(new ExportArticlesCommand(content.SiteId, content.Id, articleIds.Length, articleIds, articleExtensionContentIds));
-            return base.Setup(content.SiteId, content.Id, boundToExternal);
+            return base.Setup(content.SiteId, content.Id, boundToExternal, options);
         }
 
         protected override string ContextSessionKey { get; } = HttpContextSession.ExportContextSessionKey;

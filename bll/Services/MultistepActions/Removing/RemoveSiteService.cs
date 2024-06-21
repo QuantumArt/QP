@@ -1,14 +1,20 @@
 using System;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
     public sealed class RemoveSiteService : RemovingServiceAbstract
     {
-        public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal)
+        public RemoveSiteService(PathHelper pathHelper) : base(pathHelper)
+        {
+        }
+
+        public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal, S3Options options)
         {
             var site = SiteRepository.GetById(siteId);
             if (site == null)
@@ -43,7 +49,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
             Commands.Add(new RemoveSiteContentsCommand(siteId, site.Name, contentCount));
             Commands.Add(new RemoveSiteCommand(siteId, site.Name));
 
-            return base.Setup(dbId, siteId, boundToExternal);
+            return base.Setup(dbId, siteId, boundToExternal, options);
         }
     }
 }

@@ -3,6 +3,7 @@ using Quantumart.QP8.ArticleScheduler.Onetime;
 using Quantumart.QP8.ArticleScheduler.Publishing;
 using Quantumart.QP8.ArticleScheduler.Recurring;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Unity;
 
 namespace Quantumart.QP8.ArticleScheduler
@@ -20,6 +21,7 @@ namespace Quantumart.QP8.ArticleScheduler
                 .RegisterType<IArticleOnetimeSchedulerService, ArticleSchedulerService>()
                 .RegisterType<IArticlePublishingSchedulerService, ArticleSchedulerService>()
                 .RegisterType<IArticleRecurringSchedulerService, ArticleSchedulerService>()
+                .RegisterType<IDbService, DbService>()
              ;
         }
 

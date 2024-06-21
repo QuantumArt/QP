@@ -8,6 +8,7 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -48,7 +49,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        public ActionResult Setup(int parentId, int id, bool? boundToExternal) => Json(_service.Setup(parentId, id, boundToExternal));
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        {
+            return Json(_service.Setup(parentId, id, boundToExternal, new S3Options()));
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

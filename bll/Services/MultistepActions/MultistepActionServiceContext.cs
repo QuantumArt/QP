@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions
 {
@@ -36,5 +37,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         public bool? BoundToExternal { get; set; }
 
         public int ItemsPerStep { get; set; }
+
+        public S3Options S3Options { get; set; }
     }
 }

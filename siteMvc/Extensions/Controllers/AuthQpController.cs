@@ -12,8 +12,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
         }
 
-        protected AuthQpController(IArticleService dbArticleService, QPublishingOptions options)
-            : base(dbArticleService, options)
+        protected AuthQpController(IArticleService articleService, QPublishingOptions options)
+            : base(articleService, options)
         {
         }
     }

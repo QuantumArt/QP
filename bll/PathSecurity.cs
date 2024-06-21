@@ -30,20 +30,20 @@ namespace Quantumart.QP8.BLL
     {
         private static readonly StringComparison CompareOption = StringComparison.InvariantCultureIgnoreCase;
 
-        private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input) => FindMatched(path, input).FirstOrDefault();
+        private static PathSecurityInfo FindFirst(string path, List<PathSecurityInfo> input, char separator)
+            => FindMatched(path, input, separator).FirstOrDefault();
 
-        private static PathSecurityInfo FindLongest(string path, List<PathSecurityInfo> input)
+        private static PathSecurityInfo FindLongest(string path, List<PathSecurityInfo> input, char separator)
         {
-            return FindMatched(path, input).OrderByDescending(n => n.Path.Length).FirstOrDefault();
+            return FindMatched(path, input, separator).OrderByDescending(n => n.Path.Length).FirstOrDefault();
         }
 
-        private static List<PathSecurityInfo> FindMatched(string path, List<PathSecurityInfo> input)
+        private static List<PathSecurityInfo> FindMatched(string path, List<PathSecurityInfo> input, char separator)
         {
             var result = new List<PathSecurityInfo>();
-            var sep = System.IO.Path.DirectorySeparatorChar;
             foreach (var item in input)
             {
-                if (path.StartsWith(item.Path.TrimEnd(sep) + sep, CompareOption))
+                if (path.StartsWith(item.Path.Replace('\\', separator).TrimEnd(separator) + separator, CompareOption))
                 {
                     result.Add(item);
                 }
@@ -52,11 +52,11 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        private static PathSecurityResult CheckContentFolder(string pathToFind, int contentId, string requestedTypeCode)
+        private static PathSecurityResult CheckContentFolder(string pathToFind, int contentId, string requestedTypeCode, char separator)
         {
             var result = new PathSecurityResult();
             var factory = new ContentFolderFactory();
-            var contentFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(contentId));
+            var contentFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(contentId), separator);
             if (contentFolder != null)
             {
                 result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.ContentFolder, contentFolder.Id, requestedTypeCode);
@@ -70,11 +70,11 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        private static PathSecurityResult CheckSiteFolder(string pathToFind, int siteId, string requestedTypeCode)
+        private static PathSecurityResult CheckSiteFolder(string pathToFind, int siteId, string requestedTypeCode, char separator)
         {
             var result = new PathSecurityResult();
             var factory = new SiteFolderFactory();
-            var siteFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(siteId));
+            var siteFolder = FindLongest(pathToFind, factory.CreateRepository().GetPaths(siteId), separator);
             if (siteFolder != null)
             {
                 result.Result = SecurityRepository.IsEntityAccessible(EntityTypeCode.SiteFolder, siteFolder.Id, requestedTypeCode);
@@ -88,44 +88,43 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        public static PathSecurityResult Check(string path, bool forModify)
+        public static PathSecurityResult Check(string path, bool forModify, char separator)
         {
-            var sep = System.IO.Path.DirectorySeparatorChar;
             var typeCode = forModify ? ActionTypeCode.Update : ActionTypeCode.Read;
             var result = new PathSecurityResult();
             var pathToFind = path;
-            if (pathToFind[pathToFind.Length - 1].ToString() != sep.ToString())
+            if (pathToFind[^1].ToString() != separator.ToString())
             {
-                pathToFind = pathToFind + sep;
+                pathToFind += separator;
             }
 
-            var site = FindFirst(pathToFind, SiteRepository.GetPaths());
+            var site = FindFirst(pathToFind, SiteRepository.GetPaths(), separator);
             if (site == null)
             {
                 result.Result = pathToFind.StartsWith(QPConfiguration.TempDirectory);
                 return result;
             }
 
-            var images = $@"{sep}images";
+            var images = $@"{separator}images";
             pathToFind = pathToFind.Replace(site.Path, string.Empty);
             if (pathToFind.StartsWith(images, CompareOption))
             {
                 result.IsSite = true;
                 pathToFind = pathToFind.Replace(images, string.Empty);
 
-                var checksiteFolderResult = CheckSiteFolder(pathToFind, site.Id, typeCode);
+                var checksiteFolderResult = CheckSiteFolder(pathToFind, site.Id, typeCode, separator);
                 result.Result = checksiteFolderResult.Result;
                 result.FolderId = checksiteFolderResult.FolderId;
                 return result;
             }
 
-            var contents = new Regex($@"^\{sep}contents\{sep}([\d]+)");
+            var contents = new Regex($@"^\{separator}contents\{separator}([\d]+)");
             var match = contents.Match(pathToFind);
             if (match.Success)
             {
                 var contentId = int.Parse(match.Groups[1].Value);
                 pathToFind = pathToFind.Replace(match.Value, string.Empty);
-                return CheckContentFolder(pathToFind, contentId, typeCode);
+                return CheckContentFolder(pathToFind, contentId, typeCode, separator);
             }
 
             return result;

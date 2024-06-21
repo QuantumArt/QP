@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions
@@ -17,13 +19,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
         MessageResult PreAction(int parentId, int id, int[] ids);
 
-        MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal);
+        MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, S3Options options);
 
-        MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal);
+        MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, S3Options options);
 
-        MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive);
+        MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive, S3Options options);
 
-        MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive);
+        MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive, S3Options options);
 
         MultistepActionStepResult Step(int stage, int step);
 
@@ -57,22 +59,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
         public virtual MessageResult PreAction(int parentId, int id, int[] ids) => null;
 
-        public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
+        public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, S3Options options)
         {
             if (HasAlreadyRun())
             {
                 throw new ApplicationException(MultistepActionStrings.ActionHasAlreadyRun);
             }
 
-            var context = CreateContext(parentId, id, boundToExternal);
+            var context = CreateContext(parentId, id, boundToExternal, options);
             HttpContext.Session.SetValue(ContextSessionKey, context);
             return CreateActionSettings(parentId, id);
         }
-        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal) => throw new NotImplementedException();
+        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, S3Options options) => throw new NotImplementedException();
 
-        public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive) => throw new NotImplementedException();
+        public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, bool isArchive, S3Options options) => throw new NotImplementedException();
 
-        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive) => throw new NotImplementedException();
+        public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal, bool isArchive, S3Options options) => throw new NotImplementedException();
 
         public virtual void SetupWithParams(int parentId, int[] ids, IMultistepActionParams settingsParams)
         {
@@ -106,7 +108,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
             return result;
         }
 
-        protected virtual MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
+        protected virtual MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal, S3Options options)
         {
             var result = new MultistepActionServiceContext();
             foreach (var cmd in Commands)

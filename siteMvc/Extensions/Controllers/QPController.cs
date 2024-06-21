@@ -29,7 +29,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
     public abstract class QPController : Controller
     {
-        protected IArticleService DbArticleService;
+        protected IArticleService ArticleService;
 
         protected QPublishingOptions Options;
 
@@ -37,10 +37,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
         }
 
-        protected QPController(IArticleService dbArticleService, QPublishingOptions options)
+        protected QPController(IArticleService articleService, QPublishingOptions options)
             : this()
         {
-            DbArticleService = dbArticleService;
+            ArticleService = articleService;
             Options = options;
         }
 
@@ -311,7 +311,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             if (validatedFormIds.Length > 0 &&
                 validatedFormIds.Length <= Options.RelationCountLimit)
             {
-                var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
+                var substitutedGuids = ArticleService.GetArticleGuidsByIds(validatedFormIds)
                     .Where(g => g != Guid.Empty)
                     .Select(g => g.ToString())
                     .ToArray();

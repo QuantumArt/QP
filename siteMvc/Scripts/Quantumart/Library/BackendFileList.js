@@ -55,6 +55,7 @@ export class BackendFileList extends Observable {
       this._currentDataQueryOptions.pageSize = window.FILE_LIST_NAME_PAGE_SIZE;
     } else if (this._viewMode === window.FILE_LIST_MODE_PREVIEW_LIST) {
       this._currentDataQueryOptions.pageSize = window.FILE_LIST_PREVIEW_PAGE_SIZE;
+      this._loadDimensions = true;
     }
   }
 
@@ -75,6 +76,7 @@ export class BackendFileList extends Observable {
   _pagerComponent = null;
   _listViewComponent = null;
   _zIndex = 0;
+  _loadDimensions = false;
 
   _onAllSelectorClicked() {
     this._listViewComponent.selectAll(jQuery(this._allSelectorElement).is(':checked'));
@@ -114,7 +116,8 @@ export class BackendFileList extends Observable {
         pageNumber: this._currentDataQueryOptions.pageNumber,
         fileTypeId: this._currentDataQueryOptions.fileTypeId,
         fileNameFilter: this._currentDataQueryOptions.fileNameFilter,
-        fileShortNameLength: this._listViewComponent.shortNameLength
+        fileShortNameLength: this._listViewComponent.shortNameLength,
+        loadDimensions: this._loadDimensions
       },
       false,
       false,

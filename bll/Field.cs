@@ -17,9 +17,11 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
@@ -151,6 +153,7 @@ namespace Quantumart.QP8.BLL
             RebuildVirtualContents = true;
             FieldTitleCount = 1;
             StringEnumItems = Enumerable.Empty<StringEnumItem>();
+            PathHelper = new PathHelper(new DbService(new S3Options()));
         }
 
         public static Field Create(Content content, IFieldRepository fieldRepository, IContentRepository contentRepository)
@@ -933,6 +936,11 @@ namespace Quantumart.QP8.BLL
 
         [Display(Name = "UseForVariations", ResourceType = typeof(FieldStrings))]
         public bool UseForVariations { get; set; }
+
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public PathHelper PathHelper { get; set; }
 
         [ValidateNever]
         [BindNever]
@@ -2380,7 +2388,7 @@ namespace Quantumart.QP8.BLL
                 }
 
                 // Удалить директорию динамического изображения
-                DynamicImage?.DeleteDirectory();
+                DynamicImage?.DeleteDirectory(PathHelper);
 
                 // Удалить ограничения уникальности
                 if (IsUnique && !Constraint.IsNew)

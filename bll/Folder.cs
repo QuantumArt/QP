@@ -7,10 +7,13 @@ using System.Linq.Dynamic;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using NLog;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
@@ -22,6 +25,9 @@ namespace Quantumart.QP8.BLL
         private bool _hasChildren;
         private PathInfo _pathInfo;
         private FolderRepository _repository;
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
+        public PathHelper PathHelper { get; set; }
 
         protected abstract EntityObject GetParent();
 
@@ -66,19 +72,23 @@ namespace Quantumart.QP8.BLL
         [ValidateNever]
         public override EntityObject Parent => _parent ?? (_parent = GetParent());
 
-        [BindNever]
-        [ValidateNever]
-        public bool IsEmpty
+        public bool IsEmpty(PathHelper pathHelper)
         {
-            get
+            if (IsNew)
             {
-                if (IsNew)
-                {
-                    return true;
-                }
-
-                return IsNew || !I.Directory.Exists(PathInfo.Path) || I.Directory.EnumerateFileSystemEntries(PathInfo.Path, "*", I.SearchOption.AllDirectories).Any();
+                return true;
             }
+
+            var result = IsNew;
+            if (!result)
+            {
+                result = pathHelper.UseS3 ?
+                    pathHelper.ListS3Files(PathInfo.Path, true).Any() :
+                    I.Directory.Exists(PathInfo.Path) && I.Directory.EnumerateFileSystemEntries(
+                        PathInfo.Path, "*", I.SearchOption.AllDirectories
+                    ).Any();
+            }
+            return result;
         }
 
         /// <summary>
@@ -153,56 +163,56 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal void RemoveFromFs()
-        {
-            if (I.Directory.Exists(PathInfo.Path))
-            {
-                ForceDelete(PathInfo.Path);
-            }
-        }
-
         /// <summary>
         /// Создаем недостающие в БД папки на основании файловой системы
         /// </summary>
-        internal void CreateChildren(bool stopResursion = false)
+        internal void CreateChildren(PathHelper pathHelper)
         {
             if (Children != null)
             {
-                CreateInFs();
-                foreach (var child in Children)
+                if (!pathHelper.UseS3)
                 {
-                    ((Folder)child).CreateInFs();
+                    CreateInFs();
+                    foreach (var child in Children)
+                    {
+                        ((Folder)child).CreateInFs();
+                    }
                 }
 
                 var childrenNames = Children.Select(n => n.Name.ToLowerInvariant()).ToList();
-                var namesToCreateInDb = new I.DirectoryInfo(PathInfo.Path)
-                    .EnumerateDirectories()
-                    .Select(n => n.Name)
-                    .Where(n => !childrenNames.Contains(n.ToLowerInvariant()) && !IsSpecialName(n));
+                IEnumerable<string> namesToCreateInDb;
+                if (pathHelper.UseS3)
+                {
+                    try
+                    {
+                        namesToCreateInDb = pathHelper.ListS3Files(PathInfo.Path, onlyDirs: true)
+                            .Select(n => n.Name.Left(n.Name.Length - 1));
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                        namesToCreateInDb = Array.Empty<string>();
+                    }
+                }
+                else
+                {
+                    namesToCreateInDb = new I.DirectoryInfo(PathInfo.Path)
+                        .EnumerateDirectories()
+                        .Select(n => n.Name);
+                }
+
+                namesToCreateInDb = namesToCreateInDb
+                    .Where(n => !childrenNames.Contains(n.ToLowerInvariant()) && !IsSpecialName(n)).ToArray();
 
                 foreach (var name in namesToCreateInDb)
                 {
-                    Repository.Create(ParentEntityId, Id, name, true);
+                    Repository.Create(ParentEntityId, Id, name, pathHelper, true);
                 }
             }
         }
 
         internal static bool IsSpecialName(string name) => name == ArticleVersion.RootFolder || name.StartsWith(Field.Prefix);
 
-        public static void ForceDelete(string path)
-        {
-            if (I.Directory.Exists(path))
-            {
-                var directory = new I.DirectoryInfo(path) { Attributes = I.FileAttributes.Normal };
-
-                foreach (var info in directory.EnumerateFileSystemInfos("*", I.SearchOption.AllDirectories))
-                {
-                    info.Attributes = I.FileAttributes.Normal;
-                }
-
-                directory.Delete(true);
-            }
-        }
 
         protected override RulesException ValidateUnique(RulesException errors)
         {
@@ -218,12 +228,20 @@ namespace Quantumart.QP8.BLL
 
         internal ListResult<FolderFile> GetFiles(ListCommand command, LibraryFileFilter filter)
         {
-            var files = new I.DirectoryInfo(PathInfo.Path).EnumerateFiles(filter.Mask);
+            IEnumerable<FolderFile> list;
             var sort = string.IsNullOrEmpty(command.SortExpression) ? "Name ASC" : command.SortExpression;
+            if (PathHelper.UseS3)
+            {
+                list = PathHelper.ListS3Files(PathInfo.Path, pattern: filter.Mask.Replace("*", ""));
+            }
+            else
+            {
+                list = new I.DirectoryInfo(PathInfo.Path)
+                    .EnumerateFiles(filter.Mask).Select(n => new FolderFile(n));
+            }
+
             var typeFilter = filter.FileType.HasValue ? (Func<FolderFile, bool>)(f => f.FileType == filter.FileType.Value) : f => true;
-            var filtered = files
-                .Select(n => new FolderFile(n))
-                .Where(typeFilter)
+            var filtered = list.Where(typeFilter)
                 .AsQueryable()
                 .OrderBy(sort);
 
@@ -237,7 +255,7 @@ namespace Quantumart.QP8.BLL
 
         internal static PathInfo GetPathInfo(FolderFactory factory, int id) => factory.CreateRepository().GetById(id)?.PathInfo;
 
-        internal Folder TraverseTree(string subFolder)
+        internal Folder TraverseTree(string subFolder, PathHelper pathHelper)
         {
             var currentFolder = this;
             if (!string.IsNullOrEmpty(subFolder))
@@ -248,7 +266,7 @@ namespace Quantumart.QP8.BLL
                 {
                     if (!string.IsNullOrEmpty(name))
                     {
-                        currentFolder = Repository.GetChildByName(id, name) ?? Repository.Create(ParentEntityId, id, name);
+                        currentFolder = Repository.GetChildByName(id, name) ?? Repository.Create(ParentEntityId, id, name, pathHelper);
                         id = currentFolder.Id;
                     }
                 }
