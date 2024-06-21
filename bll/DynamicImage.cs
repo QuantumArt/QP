@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.Resources;
 using SixLabors.ImageSharp;
@@ -12,7 +13,6 @@ using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Webp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 namespace Quantumart.QP8.BLL
@@ -96,7 +96,12 @@ namespace Quantumart.QP8.BLL
             {
                 fileNameParts[fileNameParts.Length - 1] = Type;
             }
-            return string.Join(".", fileNameParts);
+            var result = string.Join(".", fileNameParts);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                result = result.Replace(@"/", @"\");
+            }
+            return result;
         }
 
         private Size GetDesiredImageSize(Size currentSize)
@@ -222,33 +227,35 @@ namespace Quantumart.QP8.BLL
             return string.Format("{0}/{1}", SubFolder, GetDesiredFileName(baseFileName));
         }
 
-        public void CreateDynamicImage(string baseImagePath, string imageValue)
+        public void CreateDynamicImage(string baseImagePath, string imageValue, PathHelper pathHelper)
         {
-            if (File.Exists(baseImagePath))
+            if (pathHelper.FileExists(baseImagePath))
             {
                 var desiredFileName = GetDesiredFileName(imageValue);
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    desiredFileName = desiredFileName.Replace(@"/", @"\");
-                }
+
                 if (!imageValue.ToUpper().EndsWith(SVG_EXTENSION))
                 {
-                    using (var image = Image.Load(baseImagePath))
+                    using var image = pathHelper.LoadImage(baseImagePath);
+                    var desiredSize = GetDesiredImageSize(new Size(image.Width, image.Height));
+                    image.Mutate(x => x.Resize(desiredSize.Width, desiredSize.Height));
+                    var resultPath = pathHelper.CombinePath(PathInfo.Path, desiredFileName);
+                    if (!pathHelper.UseS3)
                     {
-                        var desiredSize = GetDesiredImageSize(new Size(image.Width, image.Height));
-                        image.Mutate(x => x.Resize(desiredSize.Width, desiredSize.Height));
-                        var resultPath = Path.Combine(PathInfo.Path, desiredFileName);
                         Directory.CreateDirectory(Path.GetDirectoryName(resultPath));
-                        using (var fs = File.OpenWrite(resultPath))
-                        {
-                            image.Save(fs, Encoder);
-                        }
                     }
+                    pathHelper.SaveImage(image, resultPath, Encoder);
                 }
                 else
                 {
                     var xmlDocument = new XmlDocument();
-                    xmlDocument.Load(baseImagePath);
+                    if (!pathHelper.UseS3)
+                    {
+                        xmlDocument.Load(baseImagePath);
+                    }
+                    else
+                    {
+                        xmlDocument.Load(pathHelper.GetS3Stream(baseImagePath));
+                    }
                     var documentElement = xmlDocument.DocumentElement;
                     var width = 0;
                     var height = 0;
@@ -278,16 +285,26 @@ namespace Quantumart.QP8.BLL
                     heightAttr.Value = desiredImageSize.Height.ToString();
 
                     var filename = Path.Combine(PathInfo.Path, desiredFileName);
-                    xmlDocument.Save(filename);
+                    if (!pathHelper.UseS3)
+                    {
+                        xmlDocument.Save(filename);
+                    }
+                    else
+                    {
+                        using var stream = new MemoryStream();
+                        xmlDocument.Save(stream);
+                        stream.Position = 0;
+                        pathHelper.SetS3File(stream, filename);
+                    }
                 }
             }
         }
 
-        public void DeleteDirectory()
+        public void DeleteDirectory(PathHelper pathHelper)
         {
             if (!IsNew)
             {
-                Folder.ForceDelete(PathInfo.Path);
+                pathHelper.RemoveFolder(PathInfo.Path);
             }
         }
 

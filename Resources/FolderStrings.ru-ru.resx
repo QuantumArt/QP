@@ -147,4 +147,7 @@
   <data name="NameNotEntered" xml:space="preserve">
     <value>Пожалуйста, введите имя папки</value>
   </data>
+  <data name="CannotRenameNonEmptyFolder" xml:space="preserve">
+    <value>Невозможно переименовать непустую папку</value>
+  </data>
 </root>

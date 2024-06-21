@@ -8,9 +8,9 @@
     @Html.TextBoxFieldFor(s => s.File.Name)
     @Html.DisplayFieldFor(s => s.File.FileTypeName)
     @Html.DisplayFieldFor(s => s.File.Size)
-    if (!string.IsNullOrEmpty(Model.File.Dimensions))
+    if (!string.IsNullOrEmpty(Model.Dimensions))
     {
-        @Html.DisplayFieldFor(s => s.File.Dimensions)
+        @Html.DisplayFieldFor(s => s.Dimensions)
     }
 
     @Html.DisplayFieldFor(s => s.File.Created)

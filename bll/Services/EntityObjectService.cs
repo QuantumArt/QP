@@ -10,6 +10,7 @@ using Quantumart.QP8.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
 
 // ReSharper disable PossibleInvalidOperationException
 // ReSharper disable PossibleMultipleEnumeration
@@ -33,7 +34,7 @@ namespace Quantumart.QP8.BLL.Services
         /// <param name="loadChilds">признак, разрешающий загрузку дочерних сущностей</param>
         /// <param name="filter">фильтр</param>
         /// <returns>сущность</returns>
-        public static EntityTreeItem GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter)
+        public static EntityTreeItem GetByTypeAndIdForTree(string entityTypeCode, int entityId, bool loadChilds, string filter, PathHelper pathHelper)
         {
             if (entityTypeCode == EntityTypeCode.Article)
             {
@@ -49,13 +50,17 @@ namespace Quantumart.QP8.BLL.Services
                     return Mapper.Map<Folder, EntityTreeItem>(folder);
                 }
 
-                return Mapper.Map<Folder, EntityTreeItem>(folderRepository.GetSelfAndChildrenWithSync(folder.ParentEntityId, folder.Id));
+                var resultFolder = folderRepository.GetSelfAndChildrenWithSync(folder.ParentEntityId, folder.Id, pathHelper);
+                return Mapper.Map<Folder, EntityTreeItem>(resultFolder);
             }
 
             return null;
         }
 
-        public static IList<EntityTreeItem> GetEntityTreeItems(ChildListQuery query) => ArticleTreeFactory.Create(query).Process();
+        public static IList<EntityTreeItem> GetEntityTreeItems(ChildListQuery query, PathHelper pathHelper)
+        {
+            return ArticleTreeFactory.Create(query, pathHelper).Process();
+        }
 
         /// <summary>
         /// Возвращает упрощенный список сущностей

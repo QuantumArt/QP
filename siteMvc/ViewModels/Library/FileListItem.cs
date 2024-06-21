@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Library
@@ -34,14 +36,31 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Library
             { FolderFileType.Unknown, "unknown_64.png" }
         };
 
-        public static FileListItem Create(FolderFile file, int fileShortNameLength)
+        public static string GetDimensions(FolderFile file, PathHelper pathHelper)
         {
+            var dimensions = "";
+            try
+            {
+                var image = pathHelper.IdentifyImage(file.FullName);
+                dimensions = $"{image.Width}x{image.Height}";
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return dimensions;
+        }
+
+        public static FileListItem Create(FolderFile file, int fileShortNameLength, PathHelper pathHelper, bool loadDimensions)
+        {
+            var dimensions = loadDimensions ? GetDimensions(file, pathHelper) : String.Empty;
             var item = new FileListItem
             {
                 FullName = file.Name,
                 Name = string.Concat(Typographer.CutShort(Path.GetFileNameWithoutExtension(file.Name), fileShortNameLength), Path.GetExtension(file.Name)),
                 Size = file.Size,
-                Dimensions = file.Dimensions,
+                Dimensions = dimensions,
                 Modified = file.Modified.ToLongTimeString(),
                 FileType = file.FileType
             };

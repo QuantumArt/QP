@@ -72,7 +72,11 @@ namespace Quantumart.QP8.BLL
         }
         #endregion
 
-        public static IEnumerable<BackendActionLog> CreateLogs(BackendActionContext actionContext, IBackendActionLogRepository repository)
+        public static IEnumerable<BackendActionLog> CreateLogs(
+            BackendActionContext actionContext,
+            IBackendActionLogRepository repository,
+            bool isApi
+        )
         {
             var ids = actionContext.Entities.Where(ent => ent.Id.HasValue).Select(ent => ent.Id.Value).ToArray();
             var titles = repository.GetEntityTitles(actionContext.EntityTypeCode, actionContext.ParentEntityId, ids).ToDictionary(n => n.Value, m => m.Text);
@@ -89,6 +93,7 @@ namespace Quantumart.QP8.BLL
                     ActionTypeCode = actionContext.ActionTypeCode,
                     EntityTypeCode = actionContext.EntityTypeCode,
                     ParentEntityId = actionContext.ParentEntityId,
+                    IsApi = isApi,
                     ExecutionTime = DateTime.Now,
                     UserId = QPContext.CurrentUserId,
                     UserIp = QPContext.GetUserIpAddress(),

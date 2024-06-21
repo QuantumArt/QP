@@ -10,6 +10,13 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.5.0
+
+* Добавлена поддержка MinIO (#174303)
+* Обновлена библиотека Quantumart.AspNetCore до 6.1.0
+* Добавлено создание версий файлов при BatchUpdate (#174736)
+* Добавлена запись в лог аудита при операциях со статьями (#174933)
+
 ### Quantumart.QP8.BLL.3.4.0
 
 * Добавлена поддержка нативных типов EF в контентных таблицах (#173019)

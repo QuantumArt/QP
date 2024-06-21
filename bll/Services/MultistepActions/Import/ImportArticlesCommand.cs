@@ -7,7 +7,9 @@ using NLog.Fluent;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -27,22 +29,26 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public int ItemCount { get; set; }
 
+        public S3Options S3Options { get; set; }
+
         public ImportArticlesCommand(MultistepActionStageCommandState state)
-            : this(state.ParentId, state.Id, 0)
+            : this(state.ParentId, state.Id, 0, state.S3Options)
         {
         }
 
-        public ImportArticlesCommand(int siteId, int contentId, int itemCount)
+        public ImportArticlesCommand(int siteId, int contentId, int itemCount, S3Options options)
         {
             SiteId = siteId;
             ContentId = contentId;
             ItemCount = itemCount;
+            S3Options = options;
         }
 
         public MultistepActionStageCommandState GetState() => new MultistepActionStageCommandState
         {
             ParentId = SiteId,
-            Id = ContentId
+            Id = ContentId,
+            S3Options = S3Options
         };
 
         public MultistepActionStepResult Step(int step)
@@ -50,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             Ensure.NotNull(settings);
 
-            var reader = new CsvReader(SiteId, ContentId, settings);
+            var reader = new CsvReader(SiteId, ContentId, settings, new PathHelper(new DbService(S3Options)));
             var result = new MultistepActionStepResult();
 
             using (new QPConnectionScope())

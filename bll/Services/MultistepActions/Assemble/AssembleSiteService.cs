@@ -1,6 +1,7 @@
 using System;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
@@ -19,7 +20,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
             return null;
         }
 
-        public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int dbId, int siteId, bool? boundToExternal, S3Options options)
         {
             var site = GetSite(siteId);
 
@@ -43,7 +44,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                 Commands.Add(pagesCommand);
             }
 
-            return base.Setup(dbId, siteId, boundToExternal);
+            return base.Setup(dbId, siteId, boundToExternal, options);
         }
 
         protected override string ContextSessionKey => "BuildSiteService.ProcessingContext";

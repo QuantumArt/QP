@@ -8,20 +8,13 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
-using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class NotificationRepository
     {
+        public S3Options Options { get; set; }
         internal static Notification UpdateProperties(Notification notification) => DefaultRepository.Update<Notification, NotificationsDAL>(notification);
-
-        public void SendNotification(string connectionString, int siteId, string code, int id, bool isLive)
-        {
-            var cnn = new DBConnector(connectionString) { CacheData = false };
-            QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
-            cnn.SendNotification(siteId, code, id, string.Empty, isLive);
-        }
 
         public void ClearEmailField(int fieldId)
         {

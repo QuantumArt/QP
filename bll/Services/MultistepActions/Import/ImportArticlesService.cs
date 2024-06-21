@@ -41,16 +41,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         }
 
-        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal, S3Options options)
         {
             var settings = HttpContext.Session.GetValue<ImportSettings>(HttpContextSession.ImportSettingsSessionKey);
             try
             {
                 var fileReader = new FileReader(settings);
                 var linesTotalCount = fileReader.RowsCount();
-                Commands.Add(new ImportArticlesCommand(parentId, id, linesTotalCount));
+                Commands.Add(new ImportArticlesCommand(parentId, id, linesTotalCount, options));
 
-                return base.Setup(parentId, id, boundToExternal);
+                return base.Setup(parentId, id, boundToExternal, options);
             }
             catch (Exception ex)
             {

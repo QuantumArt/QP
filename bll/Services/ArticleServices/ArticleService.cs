@@ -12,7 +12,6 @@ using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 
@@ -21,10 +20,17 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
     public class ArticleService : IArticleService
     {
         private readonly IArticleRepository _articleRepository;
+        private readonly PathHelper _pathHelper;
 
-        public ArticleService(IArticleRepository articleRepository)
+        public ArticleService(IArticleRepository articleRepository, PathHelper pathHelper)
         {
             _articleRepository = articleRepository;
+            _pathHelper = pathHelper;
+        }
+
+        internal ArticleService(PathHelper pathHelper)
+        {
+            _pathHelper = pathHelper;
         }
 
         public int GetArticleIdByGuid(string rawGuid)
@@ -239,9 +245,9 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
 
         public static Article ReadForUpdate(int id, int contentId) => Read(id, contentId, false);
 
-        public static CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications) => Copy(ArticleRepository.GetById(id), boundToExternal, disableNotifications, null);
+        public CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications) => Copy(ArticleRepository.GetById(id), boundToExternal, disableNotifications, null);
 
-        public static CopyResult Copy(Article article, bool? boundToExternal, bool disableNotifications, Guid? guidForSubstitution)
+        public CopyResult Copy(Article article, bool? boundToExternal, bool disableNotifications, Guid? guidForSubstitution)
         {
             var result = new CopyResult();
             Ensure.NotNull(article, string.Format(ArticleStrings.ArticleNotFound, article.Id));
@@ -284,7 +290,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
                 result.Id = article.Id;
                 article.CopyAggregates(previousAggregatedArticles);
 
-                var repo = new NotificationPushRepository();
+                var repo = new NotificationPushRepository(_pathHelper.S3Options);
                 repo.PrepareNotifications(article, new[] { NotificationCode.Create }, disableNotifications);
                 repo.SendNotifications();
             }
@@ -305,20 +311,21 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
 
         public static Article NewForSave(int contentId) => Article.CreateNewForSave(contentId);
 
-        public static Article Create(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
+        public Article Create(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
             Ensure.NotNull(article);
             Ensure.Not<ActionNotAllowedException>(article.IsAggregated, ArticleStrings.OperationIsNotAllowedForAggregated);
             Ensure.That<ActionNotAllowedException>(article.IsArticleChangingActionsAllowed(boundToExternal), ContentStrings.ArticleChangingIsProhibited);
+            article.PathHelper = _pathHelper;
             return article.Persist(disableNotifications);
         }
 
-        public static Article Update(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
+        public Article Update(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
             Ensure.NotNull(article);
             Ensure.Not<ActionNotAllowedException>(article.IsAggregated, ArticleStrings.OperationIsNotAllowedForAggregated);
             Ensure.That<ActionNotAllowedException>(article.IsArticleChangingActionsAllowed(boundToExternal), ContentStrings.ArticleChangingIsProhibited);
-
+            article.PathHelper = _pathHelper;
             var result = article.Persist(disableNotifications);
             if (!string.IsNullOrWhiteSpace(backendActionCode) && backendActionCode.Equals(ActionCode.UpdateArticleAndUp, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -328,13 +335,13 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return result;
         }
 
-        public static MessageResult Remove(int contentId, int id, bool fromArchive, bool? boundToExternal, bool disableNotifications)
+        public MessageResult Remove(int contentId, int id, bool fromArchive, bool? boundToExternal, bool disableNotifications)
         {
             var articleToRemove = ArticleRepository.GetById(id);
             return Remove(contentId, articleToRemove, fromArchive, boundToExternal, disableNotifications);
         }
 
-        public static MessageResult Remove(int contentId, Article articleToRemove, bool fromArchive, bool? boundToExternal, bool disableNotifications)
+        public MessageResult Remove(int contentId, Article articleToRemove, bool fromArchive, bool? boundToExternal, bool disableNotifications)
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
             {
@@ -354,7 +361,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
-                throw new Exception(string.Format(ContentStrings.ContentNotFound, articleToRemove.Id));
+                throw new Exception(string.Format(ContentStrings.ContentNotFound, articleToRemove.ContentId));
             }
 
             if (articleToRemove.LockedByAnyoneElse)
@@ -381,7 +388,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
 
             var isUpdate = content.AutoArchive && !fromArchive;
             var code = isUpdate ? NotificationCode.Update : NotificationCode.Delete;
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(articleToRemove, new[] { code }, disableNotifications);
             if (isUpdate)
             {
@@ -399,7 +406,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return null;
         }
 
-        public static MessageResult RemoveInternal(int contentId, int[] ids, bool fromArchive, bool? boundToExternal, bool disableNotifications)
+        public MessageResult RemoveInternal(int contentId, int[] ids, bool fromArchive, bool? boundToExternal, bool disableNotifications)
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
             {
@@ -412,14 +419,14 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             }
 
             var content = ContentRepository.GetById(contentId);
-            if (!content.IsArticleChangingActionsAllowed(boundToExternal))
-            {
-                return MessageResult.Error(ContentStrings.ArticleChangingIsProhibited);
-            }
-
             if (content == null)
             {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, contentId));
+            }
+
+            if (!content.IsArticleChangingActionsAllowed(boundToExternal))
+            {
+                return MessageResult.Error(ContentStrings.ArticleChangingIsProhibited);
             }
 
             if (!content.AllowItemsPermission && !SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Remove))
@@ -435,7 +442,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
 
             var isUpdate = content.AutoArchive && !fromArchive;
             var code = isUpdate ? NotificationCode.Update : NotificationCode.Delete;
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(contentId, idsToNotify, code, disableNotifications);
 
             if (content.AutoArchive && !fromArchive)
@@ -459,9 +466,9 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return result.GetServiceResult();
         }
 
-        public static MessageResult Remove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal, bool disableNotifications) => RemoveInternal(contentId, ids, fromArchive, boundToExternal, disableNotifications);
+        public MessageResult Remove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal, bool disableNotifications) => RemoveInternal(contentId, ids, fromArchive, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepRemove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal) => RemoveInternal(contentId, ids, fromArchive, boundToExternal, false);
+        public MessageResult MultistepRemove(int contentId, int[] ids, bool fromArchive, bool? boundToExternal) => RemoveInternal(contentId, ids, fromArchive, boundToExternal, false);
 
         public static void Cancel(int id)
         {
@@ -488,7 +495,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             }
         }
 
-        private static MessageResult PublishInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
+        private MessageResult PublishInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
         {
             if (ids == null)
             {
@@ -516,7 +523,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             var idsToProceed = result.ValidItems.Cast<Article>().SelectMany(a => a.SelfAndChildIds).ToArray();
             var idsToNotify = result.ValidItems.Cast<Article>().Select(n => n.Id).ToArray();
 
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(contentId, idsToNotify, new[] { NotificationCode.Update, NotificationCode.ChangeStatus }, disableNotifications);
             ArticleRepository.Publish(idsToProceed);
             repo.SendNotifications();
@@ -524,17 +531,17 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return result.GetServiceResult();
         }
 
-        public static MessageResult Publish(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => PublishInternal(contentId, ids, boundToExternal, disableNotifications);
+        public MessageResult Publish(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => PublishInternal(contentId, ids, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepPublish(int contentId, int[] ids, bool? boundToExternal) => PublishInternal(contentId, ids, boundToExternal, false);
+        public MessageResult MultistepPublish(int contentId, int[] ids, bool? boundToExternal) => PublishInternal(contentId, ids, boundToExternal, false);
 
-        public static MessageResult MoveToArchive(int id, bool? boundToExternal, bool disableNotifications)
+        public MessageResult MoveToArchive(int id, bool? boundToExternal, bool disableNotifications)
         {
             var articleToArchive = ArticleRepository.GetById(id);
             return MoveToArchive(articleToArchive, boundToExternal, disableNotifications);
         }
 
-        public static MessageResult MoveToArchive(Article articleToArchive, bool? boundToExternal, bool disableNotifications)
+        public MessageResult MoveToArchive(Article articleToArchive, bool? boundToExternal, bool disableNotifications)
         {
             if (articleToArchive == null)
             {
@@ -572,7 +579,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             }
 
             var idsToProceed = articleToArchive.SelfAndChildIds;
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(articleToArchive, new[] { NotificationCode.Update }, disableNotifications);
 
             ArticleRepository.SetArchiveFlag(idsToProceed, true);
@@ -581,7 +588,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return null;
         }
 
-        public static MessageResult MoveToArchiveInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
+        public MessageResult MoveToArchiveInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
         {
             if (ids == null)
             {
@@ -609,7 +616,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             var idsToProceed = result.ValidItems.Cast<Article>().SelectMany(a => a.SelfAndChildIds).ToArray();
             var idsToNotify = result.ValidItems.Cast<Article>().Select(n => n.Id).ToArray();
 
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(contentId, idsToNotify, new[] { NotificationCode.Update }, disableNotifications);
             ArticleRepository.SetArchiveFlag(idsToProceed, true);
             repo.SendNotifications();
@@ -617,17 +624,17 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return result.GetServiceResult();
         }
 
-        public static MessageResult MoveToArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => MoveToArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
+        public MessageResult MoveToArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => MoveToArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepMoveToArchive(int contentId, int[] ids, bool? boundToExternal) => MoveToArchiveInternal(contentId, ids, boundToExternal, false);
+        public MessageResult MultistepMoveToArchive(int contentId, int[] ids, bool? boundToExternal) => MoveToArchiveInternal(contentId, ids, boundToExternal, false);
 
-        public static MessageResult RestoreFromArchive(int id, bool? boundToExternal, bool disableNotifications)
+        public MessageResult RestoreFromArchive(int id, bool? boundToExternal, bool disableNotifications)
         {
             var articleToRestore = ArticleRepository.GetById(id);
             return RestoreFromArchive(articleToRestore, boundToExternal, disableNotifications);
         }
 
-        public static MessageResult RestoreFromArchive(Article articleToRestore, bool? boundToExternal, bool disableNotifications)
+        public MessageResult RestoreFromArchive(Article articleToRestore, bool? boundToExternal, bool disableNotifications)
         {
             if (articleToRestore == null)
             {
@@ -655,7 +662,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             }
 
             var idsToProceed = articleToRestore.SelfAndChildIds;
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(articleToRestore, new[] { NotificationCode.Update }, disableNotifications);
 
             ArticleRepository.SetArchiveFlag(idsToProceed, false);
@@ -664,7 +671,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return null;
         }
 
-        private static MessageResult RestoreFromArchiveInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
+        private MessageResult RestoreFromArchiveInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
         {
             if (ids == null)
             {
@@ -693,7 +700,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             var idsToProceed = result.ValidItems.Cast<Article>().SelectMany(a => a.SelfAndChildIds).ToArray();
             var idsToNotify = result.ValidItems.Cast<Article>().Select(n => n.Id).ToArray();
 
-            var repo = new NotificationPushRepository();
+            var repo = new NotificationPushRepository(_pathHelper.S3Options);
             repo.PrepareNotifications(contentId, idsToNotify, new[] { NotificationCode.Update }, disableNotifications);
             ArticleRepository.SetArchiveFlag(idsToProceed, false);
             repo.SendNotifications();
@@ -701,9 +708,9 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             return result.GetServiceResult();
         }
 
-        public static MessageResult RestoreFromArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => RestoreFromArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
+        public MessageResult RestoreFromArchive(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications) => RestoreFromArchiveInternal(contentId, ids, boundToExternal, disableNotifications);
 
-        public static MessageResult MultistepRestoreFromArchive(int contentId, int[] ids, bool? boundToExternal) => RestoreFromArchiveInternal(contentId, ids, boundToExternal, false);
+        public MessageResult MultistepRestoreFromArchive(int contentId, int[] ids, bool? boundToExternal) => RestoreFromArchiveInternal(contentId, ids, boundToExternal, false);
 
         public static MessageResult RemovePreAction(int parentId, int id) => ConfirmHasChildren(id, true);
 

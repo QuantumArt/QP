@@ -1,4 +1,5 @@
 using System;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.Resources;
 
@@ -14,6 +15,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
         public int SiteId { get; }
 
         public string ContentName { get; }
+
+        public PathHelper PathHelper { get; set; }
 
         public RemoveContentCommand(MultistepActionStageCommandState state)
             : this(state.ParentId, state.Id, null)
@@ -49,6 +52,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, ContentId));
             }
 
+            content.PathHelper = PathHelper;
             content.DieWithoutValidation();
             return new MultistepActionStepResult { ProcessedItemsCount = 1 };
         }

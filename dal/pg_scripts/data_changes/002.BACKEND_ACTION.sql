@@ -130,3 +130,13 @@ insert into backend_action(type_id, entity_type_id, name, code)
         'Auto Resize Content File', 'auto_resize_content_file')
 on conflict do nothing;
 
+insert into backend_action (type_id, entity_type_id, name, code)
+values ((select id from action_type where code = 'multiple_save'), (select id from entity_type where code = 'article'),
+       'Multiple Save Articles', 'multiple_save_article')
+on conflict do nothing;
+
+
+insert into backend_action (type_id, entity_type_id, name, code)
+values ((select id from action_type where code = 'multiple_update'), (select id from entity_type where code = 'article'),
+       'Multiple Update Articles', 'multiple_update_article')
+on conflict do nothing;

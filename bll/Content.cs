@@ -15,8 +15,9 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Repository.FieldRepositories;
-using Quantumart.QP8.BLL.Services.ContentServices;
+using Quantumart.QP8.BLL.Services.DbServices;
 using Quantumart.QP8.BLL.Validators;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
@@ -267,6 +268,7 @@ namespace Quantumart.QP8.BLL
             MaxNumOfStoredVersions = DefaultLimitOfStoredVersions;
             UseDefaultFiltration = true;
             ForReplication = true;
+            PathHelper = new PathHelper(new DbService(new S3Options()));
             _virtualJoinFieldNodes = new InitPropertyValue<IEnumerable<VirtualFieldNode>>(() =>
             {
                 if (!IsNew && VirtualType == Constants.VirtualType.Join)
@@ -658,6 +660,11 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "UserQueryAlternative", ResourceType = typeof(ContentStrings))]
         public string UserQueryAlternative { get; set; }
 
+        [JsonIgnore]
+        [BindNever]
+        [ValidateNever]
+        public PathHelper PathHelper { get; set; }
+
         public override void DoCustomBinding()
         {
 
@@ -860,7 +867,7 @@ namespace Quantumart.QP8.BLL
                 result = ContentRepository.Update(this);
                 if (!result.UseVersionControl)
                 {
-                    Folder.ForceDelete(result.RootVersionsLibrary.Path);
+                    PathHelper.RemoveFolder(result.RootVersionsLibrary.Path);
                 }
             }
 
@@ -937,12 +944,15 @@ namespace Quantumart.QP8.BLL
 
         internal void CreateContentFolders()
         {
-            Directory.CreateDirectory(PathInfo.Path);
+            if (!PathHelper.UseS3)
+            {
+                Directory.CreateDirectory(PathInfo.Path);
+            }
         }
 
         internal void DeleteContentFolders()
         {
-            Folder.ForceDelete(PathInfo.Path);
+            PathHelper.RemoveFolder(PathInfo.Path);
         }
 
         internal void MutateNames()

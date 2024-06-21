@@ -8,6 +8,7 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.CopySite;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -21,11 +22,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class CopySiteController : AuthQpController
     {
         private readonly IMultistepActionService _multistepService;
+        private readonly ISiteService _siteService;
         private const string FolderForTemplate = "MultistepSettingsTemplates";
 
-        public CopySiteController(CopySiteService multistepService)
+        public CopySiteController(CopySiteService multistepService, ISiteService siteService)
         {
             _multistepService = multistepService ?? throw new ArgumentNullException(nameof(multistepService));
+            _siteService = siteService;
         }
 
         [HttpPost]
@@ -56,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
-            var settings = _multistepService.Setup(parentId, id, boundToExternal);
+            var settings = _multistepService.Setup(parentId, id, boundToExternal, new S3Options());
             return Json(settings);
         }
 
@@ -79,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 try
                 {
-                    model.Data = SiteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
+                    model.Data = _siteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
                 }
                 catch (Exception ex)
                 {

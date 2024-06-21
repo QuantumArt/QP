@@ -8,6 +8,7 @@ using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -56,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ExportSelectedArchiveArticles)]
         public ActionResult Setup(int parentId, [FromBody] SelectedItemsViewModel model, bool? boundToExternal)
         {
-            return Json(_service.Setup(parentId, 0, model.Ids, boundToExternal, true));
+            return Json(_service.Setup(parentId, 0, model.Ids, boundToExternal, true, new S3Options()));
         }
 
         [HttpPost]

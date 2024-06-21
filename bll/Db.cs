@@ -27,6 +27,9 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "UseCDC", ResourceType = typeof(DBStrings))]
         public bool UseCdc { get; set; }
 
+        [Display(Name = "UseS3", ResourceType = typeof(DBStrings))]
+        public bool UseS3 { get; set; }
+
         [Display(Name = "AutoLoadHome", ResourceType = typeof(DBStrings))]
         public bool AutoOpenHome { get; set; }
 
