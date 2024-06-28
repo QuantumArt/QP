@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -18,8 +19,14 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public class SiteService
+    public class SiteService : ISiteService
     {
+        private readonly PathHelper _pathHelper;
+
+        public SiteService(PathHelper pathHelper)
+        {
+            _pathHelper = pathHelper;
+        }
 
         private static HttpContext HttpContext => new HttpContextAccessor().HttpContext;
 
@@ -50,7 +57,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static Site ReadForUpdate(int id) => Read(id, false);
 
-        public static Site Save(Site item, int[] activeCommands, int[] activeStyles)
+        public Site Save(Site item, int[] activeCommands, int[] activeStyles)
         {
             if (item == null)
             {
@@ -66,12 +73,12 @@ namespace Quantumart.QP8.BLL.Services
             item.Id = result.Id;
             item.SaveVisualEditorStyles(activeStyles);
             item.SaveVisualEditorCommands(activeCommands);
-            item.CreateSiteFolders();
+            item.CreateSiteFolders(_pathHelper);
 
             return result;
         }
 
-        public static Site Update(Site item, int[] activeCommands, int[] activeStyles)
+        public Site Update(Site item, int[] activeCommands, int[] activeStyles)
         {
             if (item == null)
             {
@@ -86,7 +93,7 @@ namespace Quantumart.QP8.BLL.Services
             var result = SiteRepository.Update(item);
             item.SaveVisualEditorCommands(activeCommands);
             item.SaveVisualEditorStyles(activeStyles);
-            item.CreateSiteFolders();
+            item.CreateSiteFolders(_pathHelper);
             return result;
         }
 
@@ -201,16 +208,16 @@ namespace Quantumart.QP8.BLL.Services
 
         public static Site NewForSave() => new Site();
 
-        public static LibraryResult Library(int id, string subFolder)
+        public LibraryResult Library(int id, string subFolder)
         {
             if (!SiteRepository.Exists(id))
             {
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, id));
-            }            
+            }
 
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
-            var folder = repository.GetBySubFolder(id, subFolder);
+            var folder = repository.GetBySubFolder(id, subFolder, _pathHelper);
             var contentFormScript = SiteRepository.GetById(id).ContentFormScript;
 
             return new LibraryResult
@@ -220,16 +227,18 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public static ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
+        public ListResult<FolderFile> GetFileList(ListCommand command, int parentFolderId, LibraryFileFilter filter)
         {
             var factory = new SiteFolderFactory();
             var repository = factory.CreateRepository();
             var folder = repository.GetById(parentFolderId);
+
             if (folder == null)
             {
                 throw new Exception(string.Format(LibraryStrings.SiteFolderNotExists, parentFolderId));
             }
 
+            folder.PathHelper = _pathHelper;
             return folder.GetFiles(command, filter);
         }
 

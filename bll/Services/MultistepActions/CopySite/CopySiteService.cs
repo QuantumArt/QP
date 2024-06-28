@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
@@ -16,7 +17,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             HttpContext.Session.SetValue(CopySiteContextSessionKey, settingsParams);
         }
 
-        public override MultistepActionSettings Setup(int parentId, int siteId, bool? boundToExternal)
+        public override MultistepActionSettings Setup(int parentId, int siteId, bool? boundToExternal, S3Options options)
         {
             var site = SiteRepository.GetById(siteId);
             if (site == null)
@@ -51,7 +52,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             Commands.Add(new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount));
             Commands.Add(new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles));
 
-            return base.Setup(parentId, siteId, boundToExternal);
+            return base.Setup(parentId, siteId, boundToExternal, options);
         }
 
         protected string CopySiteContextSessionKey => HttpContextSession.CopySiteServiceSettings;

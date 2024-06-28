@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
+using Minio.DataModel;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Converters;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
@@ -32,6 +34,29 @@ namespace Quantumart.QP8.BLL
 
         public FolderFile()
         {
+        }
+
+        public FolderFile(Item item, string path)
+        {
+            Name = item.Key.Replace(path, "");
+            OldName = Name;
+            Path = path;
+            Extension = System.IO.Path.GetExtension(Name);
+            Created = item.LastModifiedDateTime ?? DateTime.Now;
+            Modified = item.LastModifiedDateTime ?? DateTime.Now;
+            Length = (long)item.Size;
+            _Dimensions = "";
+        }
+
+        public FolderFile(ObjectStat stat)
+        {
+            Name = System.IO.Path.GetFileName(stat.ObjectName);
+            OldName = Name;
+            Path = System.IO.Path.GetDirectoryName(stat.ObjectName);
+            Extension = System.IO.Path.GetExtension(Name);
+            Created = stat.LastModified;
+            Modified = stat.LastModified;
+            Length = stat.Size;
         }
 
         public FolderFile(FileInfo info)
@@ -152,35 +177,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public long Length { get; set; }
 
-        /// <summary>
-        /// Размеры изображения (только для картинок)
-        /// </summary>
-        [Display(Name = "Dimensions", ResourceType = typeof(LibraryStrings))]
-        public string Dimensions
-        {
-            get
-            {
-                if (_Dimensions == null)
-                {
-                    _Dimensions = string.Empty;
-                    if (FileType == FolderFileType.Image)
-                    {
-                        try
-                        {
-                            using (var image = Image.Load(FullName))
-                            {
-                                _Dimensions = string.Format("{0}x{1}", image.Width, image.Height);
-                            }
-                        }
-                        catch (UnknownImageFormatException)
-                        {
-                            _Dimensions = string.Empty;
-                        }
-                    }
-                }
-                return _Dimensions;
-            }
-        }
+        public string Dimensions { get; set; }
 
         /// <summary>
         /// Дата создания файла
@@ -262,15 +259,15 @@ namespace Quantumart.QP8.BLL
 
         internal bool NameChanged => OldName != Name;
 
-        internal string FullName => Path + Name;
+        public string FullName => System.IO.Path.Combine(Path, Name);
 
-        internal string OldFullName => Path + OldName;
+        internal string OldFullName => System.IO.Path.Combine(Path, OldName);
 
-        public void Validate()
+        public void Validate(PathHelper pathHelper)
         {
             var errors = new RulesException<FolderFile>();
 
-            if (NameChanged && File.Exists(FullName))
+            if (NameChanged && pathHelper.FileExists(FullName))
             {
                 errors.ErrorFor(s => s.Name, string.Format(LibraryStrings.FileExists, FullName));
             }
@@ -281,21 +278,19 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal void Rename()
+        internal void Rename(PathHelper pathHelper)
         {
             if (NameChanged)
             {
-                File.SetAttributes(OldFullName, FileAttributes.Normal);
-                File.Move(OldFullName, FullName);
+                pathHelper.Rename(OldFullName, FullName);
             }
         }
 
-        internal void Remove()
+        internal void Remove(PathHelper pathHelper)
         {
-            if (File.Exists(FullName))
+            if (pathHelper.FileExists(FullName))
             {
-                File.SetAttributes(FullName, FileAttributes.Normal);
-                File.Delete(FullName);
+                pathHelper.Remove(FullName);
             }
         }
     }

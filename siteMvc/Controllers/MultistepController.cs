@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
@@ -11,10 +12,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class MultistepController : AuthQpController
     {
         private readonly Func<string, IMultistepActionService> _getService;
+        private readonly PathHelper _pathHelper;
 
-        public MultistepController(Func<string, IMultistepActionService> getService)
+        public MultistepController(Func<string, IMultistepActionService> getService, PathHelper pathHelper)
         {
             _getService = getService;
+            _pathHelper = pathHelper;
         }
 
         [HttpPost]
@@ -33,7 +36,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult Setup(string command, int parentId, [FromBody] SelectedItemsViewModel model, bool? boundToExternal)
         {
-            return Json(_getService(command).Setup(parentId, 0, model.Ids, boundToExternal));
+            return Json(_getService(command).Setup(parentId, 0, model.Ids, boundToExternal, _pathHelper.S3Options));
         }
 
         [HttpPost]

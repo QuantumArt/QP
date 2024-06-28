@@ -6252,6 +6252,9 @@
   <phrase key="update site file">
     <translation languageId="2">Обновление файла сайта</translation>
   </phrase>
+  <phrase key="upload site file">
+    <translation languageId="2">Загрузка файла сайта</translation>
+  </phrase>
   <phrase key="multiple remove content files">
     <translation languageId="2">Множественное удаление файлов контента</translation>
   </phrase>
@@ -6269,6 +6272,9 @@
   </phrase>
   <phrase key="update content file">
     <translation languageId="2">Обновление файла контента</translation>
+  </phrase>
+  <phrase key="upload content file">
+    <translation languageId="2">Загрузка файла контента</translation>
   </phrase>
   <phrase key="update notification">
     <translation languageId="2">Обновление уведомления</translation>
@@ -6332,6 +6338,12 @@
   </phrase>
   <phrase key="multiple move articles to archive">
     <translation languageId="2">Множественный перенос статей в архив</translation>
+  </phrase>
+  <phrase key="multiple update articles">
+    <translation languageId="2">Множественное обновление статей</translation>
+  </phrase>
+  <phrase key="multiple save articles">
+    <translation languageId="2">Множественное создание статей</translation>
   </phrase>
   <phrase key="save article and up">
     <translation languageId="2">Сохранение статьи и возврат</translation>

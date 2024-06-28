@@ -1,8 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -15,6 +15,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentFolderController : AuthQpController
     {
+        private readonly PathHelper _pathHelper;
+
+        public ContentFolderController(PathHelper pathHelper)
+        {
+            _pathHelper = pathHelper;
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewContentFolder)]
         [BackendActionContext(ActionCode.AddNewContentFolder)]
@@ -40,7 +47,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
-                model.Data = ContentFolderService.Save((ContentFolder)model.Data);
+                model.Data = ContentFolderService.Save((ContentFolder)model.Data, _pathHelper);
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveSiteFolder });
             }
@@ -75,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                model.Data = ContentFolderService.Update((ContentFolder)model.Data);
+                model.Data = ContentFolderService.Update((ContentFolder)model.Data, _pathHelper);
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
@@ -83,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await JsonHtml("FolderProperties", model);
         }
 
-        public ActionResult RemovePreAction(int parentId, int id) => Json(ContentFolderService.RemovePreAction(id));
+        public ActionResult RemovePreAction(int parentId, int id) => Json(ContentFolderService.RemovePreAction(id, _pathHelper));
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -94,7 +101,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult Remove(int id)
         {
-            var result = ContentFolderService.Remove(id);
+            var result = ContentFolderService.Remove(id, _pathHelper);
             return JsonMessageResult(result);
         }
 
@@ -104,8 +111,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ContentFileProperties)]
         public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, string successfulActionCode)
         {
-            var file = ContentFolderService.GetFile(parentId, id);
-            var model = FileViewModel.Create(file, tabId, parentId, false);
+            var file = ContentFolderService.GetFile(parentId, id, _pathHelper);
+            var model = FileViewModel.Create(file, tabId, parentId, false, _pathHelper);
             model.SuccesfulActionCode = successfulActionCode;
             return await JsonHtml("FileProperties", model);
         }
@@ -118,12 +125,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public async Task<ActionResult> FileProperties(string tabId, int parentId, string id, IFormCollection collection)
         {
-            var file = ContentFolderService.GetFile(parentId, id);
-            var model = FileViewModel.Create(file, tabId, parentId, false);
+            var file = ContentFolderService.GetFile(parentId, id, _pathHelper);
+            var model = FileViewModel.Create(file, tabId, parentId, false, _pathHelper);
             await TryUpdateModelAsync(model);
             if (ModelState.IsValid)
             {
-                ContentFolderService.SaveFile(model.File);
+                ContentFolderService.SaveFile(model.File, _pathHelper);
                 return Redirect("FileProperties", new { tabId, parentId, id = model.Id, successfulActionCode = ActionCode.UpdateContentFile });
             }
 
@@ -138,7 +145,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult MultipleRemoveFiles(int parentId, [FromBody] SelectedStringItemsViewModel model)
         {
-            var result = ContentFolderService.RemoveFiles(parentId, model.Ids);
+            var result = ContentFolderService.RemoveFiles(parentId, model.Ids, _pathHelper);
             return Json(result);
         }
 
@@ -151,7 +158,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult RemoveFile(int parentId, string id)
         {
             string[] ids = { id };
-            var result = ContentFolderService.RemoveFiles(parentId, ids);
+            var result = ContentFolderService.RemoveFiles(parentId, ids, _pathHelper);
             return Json(result);
         }
     }

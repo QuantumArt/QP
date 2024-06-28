@@ -103,4 +103,13 @@ if not exists(select * from BACKEND_ACTION where code = 'auto_resize_content_fil
     insert into [BACKEND_ACTION] (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE)
     values (dbo.qp_action_type_id('auto_resize'), dbo.qp_entity_type_id('content_file'), 'Auto Resize Content File', 'auto_resize_content_file')
 
+if not exists (select * from BACKEND_ACTION where code = 'multiple_update_article')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE)
+    VALUES(dbo.qp_action_type_id('multiple_update'), dbo.qp_entity_type_id('article'), 'Multiple Update Articles', 'multiple_update_article')
+
+if not exists (select * from BACKEND_ACTION where code = 'multiple_save_article')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE)
+    VALUES(dbo.qp_action_type_id('multiple_save'), dbo.qp_entity_type_id('article'), 'Multiple Save Articles', 'multiple_save_article')
+
+
 GO

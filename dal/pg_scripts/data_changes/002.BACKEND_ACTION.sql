@@ -130,6 +130,16 @@ insert into backend_action(type_id, entity_type_id, name, code)
         'Auto Resize Content File', 'auto_resize_content_file')
 on conflict do nothing;
 
+insert into backend_action (type_id, entity_type_id, name, code)
+values ((select id from action_type where code = 'multiple_save'), (select id from entity_type where code = 'article'),
+       'Multiple Save Articles', 'multiple_save_article')
+on conflict do nothing;
+
+insert into backend_action (type_id, entity_type_id, name, code)
+values ((select id from action_type where code = 'multiple_update'), (select id from entity_type where code = 'article'),
+       'Multiple Update Articles', 'multiple_update_article')
+on conflict do nothing;
+
 insert into backend_action (name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface)
 values('External Workflow User Tasks', 'User Tasks', 'list_article_external_workflow_tasks', (select id from action_type where code = 'list'),
        (select id from entity_type where code = 'home'), '~/Home/ExternalWorkflowUserTasks/', true)

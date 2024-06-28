@@ -1,34 +1,41 @@
 using System;
 using System.Collections.Generic;
 using Quantumart.QP8.BLL.Factories.FolderFactory;
+using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     public abstract class FolderRepository
     {
-        private Folder GetOrCreateRoot(int parentEntityId)
+        private Folder GetOrCreateRoot(int parentEntityId, PathHelper pathHelper)
         {
             var folder = GetRoot(parentEntityId);
             if (folder == null)
             {
-                folder = CreateRoot(parentEntityId, true);
+                folder = CreateRoot(parentEntityId, pathHelper, true);
             }
             else
             {
-                folder.CreateInFs();
+                if (!pathHelper.UseS3)
+                {
+                    folder.CreateInFs();
+                }
             }
 
             return folder;
         }
 
-        private Folder CreateRoot(int parentEntityId, bool asAdmin = false) => Create(parentEntityId, null, string.Empty, asAdmin);
+        private Folder CreateRoot(int parentEntityId, PathHelper pathHelper, bool asAdmin = false)
+        {
+            return Create(parentEntityId, null, string.Empty, pathHelper, asAdmin);
+        }
 
-        private Folder Get(int parentEntityId, int? parentId)
+        private Folder Get(int parentEntityId, int? parentId, PathHelper pathHelper)
         {
             Folder folder;
             if (parentId == null)
             {
-                folder = GetOrCreateRoot(parentEntityId);
+                folder = GetOrCreateRoot(parentEntityId, pathHelper);
             }
             else
             {
@@ -39,23 +46,26 @@ namespace Quantumart.QP8.BLL.Repository
                 }
             }
 
-            folder.CreateInFs();
+            if (!pathHelper.UseS3)
+            {
+                folder.CreateInFs();
+            }
             folder.AutoLoadChildren = true;
             return folder;
         }
 
-        protected int Synchronize(int parentEntityId, int? parentId)
+        protected int Synchronize(int parentEntityId, int? parentId, PathHelper pathHelper)
         {
-            var folder = Get(parentEntityId, parentId);
+            var folder = Get(parentEntityId, parentId, pathHelper);
             folder.LoadAllChildren = true;
-            folder.CreateChildren();
+            folder.CreateChildren(pathHelper);
             return folder.Id;
         }
 
-        public Folder GetSelfAndChildrenWithSync(int parentEntityId, int? parentId)
+        public Folder GetSelfAndChildrenWithSync(int parentEntityId, int? parentId, PathHelper pathHelper)
         {
-            Synchronize(parentEntityId, parentId);
-            var folder = Get(parentEntityId, parentId);
+            Synchronize(parentEntityId, parentId, pathHelper);
+            var folder = Get(parentEntityId, parentId, pathHelper);
             return folder;
         }
 
@@ -132,8 +142,9 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         /// <param name="parentEntityId">ID родительской сущности (сайта или контента)</param>
         /// <param name="parentId">ID папки</param>
+        /// <param name="pathHelper"></param>
         /// <returns>список дочерних папок</returns>
-        public abstract IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId);
+        public abstract IEnumerable<Folder> GetChildrenWithSync(int parentEntityId, int? parentId, PathHelper pathHelper);
 
         /// <summary>
         /// Получает информацию, необходимую для проверки security путей
@@ -147,8 +158,12 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         /// <param name="parentEntityId">ID родительской сущности (сайта или контента)</param>
         /// <param name="subFolder">относительный путь от корня библиотеки (сайта или контента)</param>
+        /// <param name="pathHelper"></param>
         /// <returns>папка</returns>
-        public Folder GetBySubFolder(int parentEntityId, string subFolder) => GetOrCreateRoot(parentEntityId).TraverseTree(subFolder);
+        public Folder GetBySubFolder(int parentEntityId, string subFolder, PathHelper pathHelper)
+        {
+            return GetOrCreateRoot(parentEntityId, pathHelper).TraverseTree(subFolder, pathHelper);
+        }
 
         /// <summary>
         /// Создание новой папки (в БД и в файловой системе)
@@ -156,9 +171,10 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="parentEntityId">ID родительской сущности(сайта или контента)</param>
         /// <param name="parentId">ID родительской папки</param>
         /// <param name="name">имя папки</param>
+        /// <param name="pathHelper"></param>
         /// <param name="asAdmin">признак, создавать ли папку от имени админа (необходимо для фонового создания папок)</param>
         /// <returns></returns>
-        public Folder Create(int parentEntityId, int? parentId, string name, bool asAdmin = false)
+        public Folder Create(int parentEntityId, int? parentId, string name, PathHelper pathHelper, bool asAdmin = false)
         {
             var folder = Factory.CreateFolder();
             folder.ParentEntityId = parentEntityId;
@@ -166,22 +182,28 @@ namespace Quantumart.QP8.BLL.Repository
             folder.Name = name;
             folder.ComputePath();
             folder.CreateInDb(asAdmin);
-            folder.CreateInFs();
+            if (!pathHelper.UseS3)
+            {
+                folder.CreateInFs();
+            }
             return folder;
         }
 
-        public Folder Update(Folder folder)
+        public Folder Update(Folder folder, PathHelper pathHelper)
         {
             folder.ComputePath();
             var updated = UpdateInDb(folder);
-            folder.Move();
+            if (!pathHelper.UseS3)
+            {
+                folder.Move();
+            }
             return updated;
         }
 
-        public void Delete(Folder folder)
+        public void Delete(Folder folder, PathHelper pathHelper)
         {
             DeleteFromDb(folder);
-            folder.RemoveFromFs();
+            pathHelper.RemoveFolder(folder.PathInfo.Path);
         }
     }
 }

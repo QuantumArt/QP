@@ -40,14 +40,18 @@
                                                               Model.LivePagesLocationBlock,
                                                               Model.StagePagesLocationBlock,
                                                               Model.BinBlock,
-                                                              Model.OnScreenAssemblingParametersBlock
+                                                              Model.OnScreenAssemblingParametersBlock,
+                                                              Model.SiteModeBlock
                                                             }))
     @Html.CheckBoxFieldFor(s => s.Data.ReplaceUrlsInDB)
     if (Model.IsPostgres)
     {
       @Html.CheckBoxFieldFor(s => s.Data.UseNativeEfTypes)
     }
-    @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
+    using (Html.BeginPanel(Model.SiteModeBlock, false, false, reverse: true))
+    {
+      @Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
+    }
   }
 
   using (Html.BeginPanel(Model.AssemblingParametersBlock, false, false, reverse: true))

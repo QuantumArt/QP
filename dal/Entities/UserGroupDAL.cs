@@ -98,7 +98,6 @@ namespace Quantumart.QP8.DAL.Entities
             builder.HasMany(x => x.UserGroupBinds).WithOne(y => y.UserGroup).HasForeignKey(y => y.UserGroupId);
             builder.HasMany(x => x.ChildGroupToGroupBinds).WithOne(y => y.ParentGroup).HasForeignKey(y => y.ParentGroupId);
             builder.HasMany(x => x.ParentGroupToGroupBinds).WithOne(y => y.ChildGroup).HasForeignKey(y => y.ChildGroupId);
-
         }
     }
 }

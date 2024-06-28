@@ -41,6 +41,8 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "EntityTitle", ResourceType = typeof(AuditStrings))]
         public string EntityTitle { get; set; }
 
+        public IEnumerable<BackendActionLogUserGroup> UserGroups { get; set; }
+
         #endregion
 
         #region Text Properties
@@ -57,9 +59,24 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "EntityTypeName", ResourceType = typeof(AuditStrings))]
         public string EntityTypeName { get; set; }
 
+        [Display(Name = "UserIp", ResourceType = typeof(AuditStrings))]
+        public string UserIp { get; set; }
+
+        [Display(Name = "UserGroups", ResourceType = typeof(AuditStrings))]
+        public string UserGroupNames
+        {
+            get
+            {
+                return UserGroups is null || !UserGroups.Any() ? AuditStrings.GroupsNotFound : string.Join(", ", UserGroups.Select(x => x.GroupName));
+            }
+        }
         #endregion
 
-        public static IEnumerable<BackendActionLog> CreateLogs(BackendActionContext actionContext, IBackendActionLogRepository repository)
+        public static IEnumerable<BackendActionLog> CreateLogs(
+            BackendActionContext actionContext,
+            IBackendActionLogRepository repository,
+            bool isApi
+        )
         {
             var ids = actionContext.Entities.Where(ent => ent.Id.HasValue).Select(ent => ent.Id.Value).ToArray();
             var titles = repository.GetEntityTitles(actionContext.EntityTypeCode, actionContext.ParentEntityId, ids).ToDictionary(n => n.Value, m => m.Text);
@@ -76,8 +93,14 @@ namespace Quantumart.QP8.BLL
                     ActionTypeCode = actionContext.ActionTypeCode,
                     EntityTypeCode = actionContext.EntityTypeCode,
                     ParentEntityId = actionContext.ParentEntityId,
+                    IsApi = isApi,
                     ExecutionTime = DateTime.Now,
-                    UserId = QPContext.CurrentUserId
+                    UserId = QPContext.CurrentUserId,
+                    UserIp = QPContext.GetUserIpAddress(),
+                    UserGroups = QPContext.CurrentGroupIds.Select(x => new BackendActionLogUserGroup()
+                    {
+                        GroupId = x
+                    }).ToList()
                 })
                 .ToArray();
         }

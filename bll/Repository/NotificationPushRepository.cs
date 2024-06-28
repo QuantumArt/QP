@@ -14,13 +14,14 @@ using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
 using Quantumart.QP8.Configuration;
+using Quantumart.QPublishing.FileSystem;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class NotificationPushRepository
     {
 
-        private static ILogger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private int ContentId { get; set; }
 
@@ -42,27 +43,24 @@ namespace Quantumart.QP8.BLL.Repository
 
         public bool IgnoreInternal { get; set; }
 
-        internal NotificationPushRepository()
+        private readonly S3Options _options;
+
+        internal NotificationPushRepository() : this(new S3Options())
         {
-            Articles = new Article[0];
-            Notifications = new Notification[0];
         }
 
-        internal void SendNotificationOneWay(string connectionString, int id, string code)
+        internal NotificationPushRepository(S3Options options)
         {
-            Task.Run(() => Notify(connectionString, id, code, IgnoreInternal));
-        }
-
-        internal void SendNotification(string connectionString, int id, string code)
-        {
-            Task.Run(() => Notify(connectionString, id, code, IgnoreInternal)).Wait();
+            Articles = Array.Empty<Article>();
+            Notifications = Array.Empty<Notification>();
+            _options = options;
         }
 
         internal void PrepareNotifications(Article article, string[] codes, bool disableNotifications = false)
         {
-            Notifications = new Notification[0];
-            ArticleIds = new int[0];
-            Articles = new Article[0];
+            Notifications = Array.Empty<Notification>();
+            ArticleIds = Array.Empty<int>();
+            Articles = Array.Empty<Article>();
             ValidateCodes(codes);
             Codes = codes.Distinct().ToArray();
             if (!disableNotifications)
@@ -80,9 +78,9 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal void PrepareNotifications(int contentId, int[] articleIds, string[] codes, bool disableNotifications = false)
         {
-            Notifications = new Notification[0];
-            ArticleIds = new int[0];
-            Articles = new Article[0];
+            Notifications = Array.Empty<Notification>();
+            ArticleIds = Array.Empty<int>();
+            Articles = Array.Empty<Article>();
             ValidateCodes(codes);
             Codes = codes.Distinct().ToArray();
             if (!disableNotifications)
@@ -136,13 +134,10 @@ namespace Quantumart.QP8.BLL.Repository
 
             foreach (var item in ArticleIds)
             {
+                var task = Task.Run(() => Notify(ConnectionString, item, string.Join(";", Codes), IgnoreInternal));
                 if (waitFor)
                 {
-                    SendNotification(ConnectionString, item, string.Join(";", Codes));
-                }
-                else
-                {
-                    SendNotificationOneWay(ConnectionString, item, string.Join(";", Codes));
+                   task.Wait();
                 }
             }
         }
@@ -239,6 +234,11 @@ namespace Quantumart.QP8.BLL.Repository
                 ExternalConnection = QPContext.CurrentConnectionScope.DbConnection
             };
 
+            if (_options != null && !string.IsNullOrWhiteSpace(_options.Endpoint))
+            {
+                dbConnector.FileSystem = new S3FileSystem(_options.Endpoint, _options.AccessKey, _options.SecretKey, _options.Bucket);
+            }
+
             QPConfiguration.SetAppSettings(dbConnector.DbConnectorSettings);
 
             try
@@ -256,7 +256,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
+        private void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
             using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
@@ -268,6 +268,11 @@ namespace Quantumart.QP8.BLL.Repository
                     ExternalExceptionHandler = HandleException,
                     ThrowNotificationExceptions = false
                 };
+
+                if (_options != null && !string.IsNullOrWhiteSpace(_options.Endpoint))
+                {
+                    cnn.FileSystem = new S3FileSystem(_options.Endpoint, _options.AccessKey, _options.SecretKey, _options.Bucket);
+                }
 
                 QPConfiguration.SetAppSettings(cnn.DbConnectorSettings);
 

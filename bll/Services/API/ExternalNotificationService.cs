@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
@@ -10,7 +11,7 @@ namespace Quantumart.QP8.BLL.Services.API
 
 		public ExternalNotificationService()
 		{
-			_notificationPushRepository = new NotificationPushRepository();
+			_notificationPushRepository = new NotificationPushRepository(new S3Options());
 		}
 
 		public void PrepareNotifications(int contentId, IEnumerable<int> articleIds, IEnumerable<string> codes)

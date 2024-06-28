@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Transactions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.Configuration;
@@ -19,11 +20,13 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
     {
         private readonly string _connectionString;
         private readonly DatabaseType _dbType;
+        private readonly PathHelper _pathHelper;
 
-        public ArticleSchedulerService(string connectionString, DatabaseType dbType)
+        public ArticleSchedulerService(string connectionString, DatabaseType dbType, PathHelper pathHelper)
         {
             _connectionString = connectionString;
             _dbType = dbType;
+            _pathHelper = pathHelper;
         }
 
         public IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
@@ -53,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                 if (article != null && !article.Visible)
                 {
                     article.LoadFieldValues();
-                    var repo = new NotificationPushRepository();
+                    var repo = new NotificationPushRepository(_pathHelper.S3Options);
                     repo.PrepareNotifications(article, new[] { NotificationCode.Update });
                     Common.SetContentItemVisible(scope.DbConnection, articleId, true, article.LastModifiedBy);
                     Common.UpdateContentModification(scope.DbConnection, article.ContentId);
@@ -73,7 +76,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                 if (article != null && article.Visible)
                 {
                     article.LoadFieldValues();
-                    var repo = new NotificationPushRepository();
+                    var repo = new NotificationPushRepository(_pathHelper.S3Options);
                     repo.PrepareNotifications(article, new[] { NotificationCode.Update });
                     Common.SetContentItemVisible(scope.DbConnection, articleId, false, article.LastModifiedBy);
                     Common.UpdateContentModification(scope.DbConnection, article.ContentId);
@@ -149,7 +152,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                             article.LoadFieldValues();
                             QPContext.IsLive = false;
 
-                            var repo = new NotificationPushRepository();
+                            var repo = new NotificationPushRepository(_pathHelper.S3Options);
                             repo.PrepareNotifications(article, new[] { NotificationCode.DelayedPublication });
                             Common.MergeArticle(scope.DbConnection, schedule.ArticleId, article.LastModifiedBy);
                             repo.SendNotifications();

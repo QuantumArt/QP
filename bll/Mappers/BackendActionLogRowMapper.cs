@@ -22,7 +22,8 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.EntityTitle, opt => opt.MapFrom(row => row.Field<string>("EntityTitle")))
                 .ForMember(biz => biz.UserId, opt => opt.MapFrom(row => Converter.ToNullableInt32(row.Field<decimal?>("UserId"))))
                 .ForMember(biz => biz.IsApi, opt => opt.MapFrom(row => row.Field<bool>("IsApi")))
-                .ForMember(biz => biz.UserLogin, opt => opt.MapFrom(row => row.Field<string>("UserLogin")));
+                .ForMember(biz => biz.UserLogin, opt => opt.MapFrom(row => row.Field<string>("UserLogin")))
+                .ForMember(biz => biz.UserIp, opt => opt.MapFrom(row => row.Field<string>("UserIp")));
         }
     }
 }

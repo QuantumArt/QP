@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 
 namespace Quantumart.QP8.BLL.Factories
@@ -19,7 +20,7 @@ namespace Quantumart.QP8.BLL.Factories
         /// <summary>
         /// Фабрика для запроса на отображение дерева в QP
         /// </summary>
-        public static ITreeProcessor Create(ChildListQuery query)
+        public static ITreeProcessor Create(ChildListQuery query, PathHelper pathHelper)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -87,7 +88,7 @@ namespace Quantumart.QP8.BLL.Factories
 
                 if (query.EntityTypeCode == EntityTypeCode.SiteFolder || query.EntityTypeCode == EntityTypeCode.ContentFolder)
                 {
-                    return new SiteFolderProcessor(query.ParentEntityId, query.EntityTypeCode, query.ReturnSelf, query.EntityId);
+                    return new SiteFolderProcessor(query.ParentEntityId, query.EntityTypeCode, query.ReturnSelf, query.EntityId, pathHelper);
                 }
 
                 if (query.EntityTypeCode == EntityTypeCode.UserGroup)

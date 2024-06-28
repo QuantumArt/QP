@@ -21,8 +21,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class FieldController : AuthQpController
     {
-        public FieldController(IArticleService dbArticleService, QPublishingOptions options)
-            : base(dbArticleService, options)
+        public FieldController(IArticleService articleService, QPublishingOptions options)
+            : base(articleService, options)
         {
         }
 

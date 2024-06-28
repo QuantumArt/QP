@@ -788,7 +788,7 @@ namespace Quantumart.QP8.BLL
 
         public static string GetUserIpAddress()
         {
-            IPAddress ip = HttpContext.Connection.RemoteIpAddress;
+            IPAddress ip = HttpContext?.Connection.RemoteIpAddress;
 
             if (ip is null)
             {

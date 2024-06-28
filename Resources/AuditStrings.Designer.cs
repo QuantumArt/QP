@@ -293,5 +293,32 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UserLogin", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to User IP.
+        /// </summary>
+        public static string UserIp {
+            get {
+                return ResourceManager.GetString("UserIp", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to User Groups.
+        /// </summary>
+        public static string UserGroups {
+            get {
+                return ResourceManager.GetString("UserGroups", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Groups Not Found.
+        /// </summary>
+        public static string GroupsNotFound {
+            get {
+                return ResourceManager.GetString("GroupsNotFound", resourceCulture);
+            }
+        }
     }
 }

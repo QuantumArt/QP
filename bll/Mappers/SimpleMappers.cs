@@ -1,5 +1,4 @@
-﻿using Quantumart.QP8.DAL;
-using Quantumart.QP8.DAL.Entities;
+﻿using Quantumart.QP8.DAL.Entities;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -31,8 +30,6 @@ namespace Quantumart.QP8.BLL.Mappers
     {
     }
 
-
-
     internal class EntityPermissionLevelMapper : GenericMapper<EntityPermissionLevel, PermissionLevelDAL>
     {
     }
@@ -58,6 +55,10 @@ namespace Quantumart.QP8.BLL.Mappers
     }
 
     internal class DbMapper : GenericMapper<Db, DbDAL>
+    {
+    }
+
+    internal class BackendActionLogUserGroupMapper : GenericMapper<BackendActionLogUserGroup, BackendActionLogUserGroupDAL>
     {
     }
 }

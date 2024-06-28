@@ -60,7 +60,7 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public MultistepActionStepResult Step(int step)
+        public MultistepActionStepResult Step(int step, PathHelper pathHelper)
         {
             var context = HttpContext.Session.GetValue<RecreateDynamicImagesContext>(HttpContextSession.RecreateDynamicImagesServiceProcessingContext);
             var currentProcessedImages = new HashSet<string>(context.ProcessedImages);
@@ -85,7 +85,7 @@ namespace Quantumart.QP8.BLL.Services
 
                         if (!currentProcessedImages.Contains(dfs.Item2))
                         {
-                            dimg.CreateDynamicImage(baseImagePathInfo.GetPath(dfs.Item2), dfs.Item2);
+                            dimg.CreateDynamicImage(baseImagePathInfo.GetPath(dfs.Item2), dfs.Item2, pathHelper);
                             currentProcessedImages.Add(dfs.Item2);
                             context.ProcessedImages.Add(dfs.Item2);
                         }

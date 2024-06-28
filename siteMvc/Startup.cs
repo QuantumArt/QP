@@ -49,6 +49,7 @@ using NLog.Web;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.ArticleScheduler;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories.SearchParsers;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.CdcImport;
@@ -94,6 +95,10 @@ namespace Quantumart.QP8.WebMvc
                 Configuration.Bind("Properties", qpOptions);
                 services.AddSingleton(qpOptions);
                 QPConfiguration.Options = qpOptions;
+
+                var s3Options = new S3Options();
+                Configuration.Bind("S3", s3Options);
+                services.AddSingleton(s3Options);
 
                 if (!string.IsNullOrWhiteSpace(qpOptions.SessionEncryptionKeysPath))
                 {
@@ -200,6 +205,7 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<AuthenticationHelper>()
                    .AddTransient<JsLanguageHelper>()
                    .AddTransient<JsConstantsHelper>()
+                   .AddTransient<PathHelper>()
                    .AddSingleton<ISearchGrammarParser, IronySearchGrammarParser>()
                    .AddTransient<IStopWordList, StopWordList>()
                    .AddTransient<IArticleSearchRepository, ArticleSearchRepository>()
@@ -228,6 +234,7 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
                    .AddTransient<IArticleService, A.ArticleService>()
                    .AddTransient<IContentService, ContentService>()
+                   .AddTransient<ISiteService, SiteService>()
                    .AddTransient<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                    .AddTransient<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()
                    .AddTransient<INotificationService, NotificationService>()

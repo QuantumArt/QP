@@ -89,6 +89,7 @@
     {
       @Html.CheckBoxFieldFor(s => s.Data.UseCdc)
     }
+    @Html.CheckBoxFieldFor(s => s.Data.UseS3)
     @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
   }
 

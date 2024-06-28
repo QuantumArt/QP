@@ -195,4 +195,13 @@
   <data name="ActionName" xml:space="preserve">
     <value>Action Name</value>
   </data>
+  <data name="UserIp" xml:space="preserve">
+    <value>User IP</value>
+  </data>
+  <data name="UserGroups" xml:space="preserve">
+    <value>User groups</value>
+  </data>
+  <data name="GroupsNotFound" xml:space="preserve">
+    <value>Information not found</value>
+  </data>
 </root>

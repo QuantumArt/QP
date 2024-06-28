@@ -136,7 +136,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _LockedArticles(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ArticleService.ListLocked(listCommand);
+            var serviceResult = BLL.Services.ArticleServices.ArticleService.ListLocked(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -183,7 +183,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _ArticlesForApproval(string tabId, int parentId, int page, int pageSize, string orderBy)
         {
             var listCommand = GetListCommand(page, pageSize, orderBy);
-            var serviceResult = ArticleService.ArticlesForApproval(listCommand);
+            var serviceResult = BLL.Services.ArticleServices.ArticleService.ArticlesForApproval(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
         }
 
@@ -195,7 +195,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult UnlockArticles([FromBody] SelectedItemsViewModel selModel)
         {
-            ArticleService.UnlockArticles(selModel.Ids);
+            BLL.Services.ArticleServices.ArticleService.UnlockArticles(selModel.Ids);
             return Json(null);
         }
 

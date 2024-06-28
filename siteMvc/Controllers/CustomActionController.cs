@@ -30,12 +30,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly ICustomActionService _service;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IBackendActionLogRepository _logRepository;
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        public CustomActionController(ICustomActionService service, IServiceProvider serviceProvider)
+        public CustomActionController(
+            ICustomActionService service,
+            IServiceProvider serviceProvider,
+            IBackendActionLogRepository logRepository
+        )
         {
             _service = service;
             _serviceProvider = serviceProvider;
+            _logRepository = logRepository;
         }
 
         [HttpPost]
@@ -122,7 +128,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (model.Level >= PermissionLevel.Modify)
                 {
-                    CreateLogs(model.ActionCode, model.Ids, model.ParentEntityId);
+                    BackendActionContext.CreateLogs(model.ActionCode, model.Ids, model.ParentEntityId, _logRepository);
                 }
 
                 return Content(result);
@@ -131,16 +137,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 return JsonMessageResult(MessageResult.Error(ex.Message));
             }
-        }
-
-        private void CreateLogs(string actionCode, int[] ids, int? parentEntityId)
-        {
-            var backendLog = _serviceProvider.GetRequiredService<IBackendActionLogRepository>();
-            BackendActionContext.SetCurrent(actionCode, ids.Select(n => n.ToString()), parentEntityId);
-
-            var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, backendLog);
-            backendLog.Save(logs);
-            BackendActionContext.ResetCurrent();
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

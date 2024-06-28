@@ -570,9 +570,9 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создает директории внутри сайта
         /// </summary>
-        internal void CreateSiteFolders()
+        internal void CreateSiteFolders(PathHelper pathHelper)
         {
-            CreateSiteFolders(true, true);
+            CreateSiteFolders(true, true, pathHelper);
         }
 
         /// <summary>
@@ -604,7 +604,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создает директории внутри сайта
         /// </summary>
-        private void CreateSiteFolders(bool isLive, bool isStage)
+        private void CreateSiteFolders(bool isLive, bool isStage, PathHelper pathHelper = null)
         {
             if (!ExternalDevelopment)
             {
@@ -619,7 +619,10 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            SitePathRepository.CreateUploadDirectories(UploadDir);
+            if (pathHelper == null)
+            {
+                SitePathRepository.CreateUploadDirectories(UploadDir);
+            }
 
             if (!ExternalDevelopment && IsDotNet)
             {
