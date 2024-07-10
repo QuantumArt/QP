@@ -33,8 +33,7 @@ BEGIN
   end
 
   insert into item_link_async select * from item_to_item ii where l_item_id in (select id from @ids)
-  and link_id in (select link_id from content_attribute where content_id in (select content_id from @ids2))
-  and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id)
+  and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id and ila.link_id = ii.link_id)	
 
 END
 GO
