@@ -15,7 +15,7 @@ public class TextFieldTagValidator
     private static readonly Regex AllTagsRegex = new("<[^/][^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex TagNameRegex = new("<(?<TagName>[^\\s>/]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex SrcAttributeRegex = new("(?:formaction|codebase|cite|background|srcset|src|href|action|longdesc|profile|usemap|data|classid|icon|manifest|poster|archive)(?:[\\s=]+)(?<Quote>[\"'])?(?<Addresses>(?(Quote)[^\"']+|[^\\s>]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex EventAttributeRegex = new("on[a-zA-Z][^\\s=]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex EventAttributeRegex = new("(?:\\s)(?<Event>on[a-zA-Z][^\\s=]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly string[] UrlSeparators = { " ", ",", ";" };
 
     private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
@@ -57,7 +57,7 @@ public class TextFieldTagValidator
 
                 if (eventAttributes.Any())
                 {
-                    AddError(fieldValue, string.Format(ArticleStrings.RestrictedEventAttribute, string.Join(',', eventAttributes.Select(x => x.Value).Distinct()), tag.Name), errors);
+                    AddError(fieldValue, string.Format(ArticleStrings.RestrictedEventAttribute, string.Join(',', eventAttributes.Select(x => x.Groups["Event"].Value).Distinct()), tag.Name), errors);
                 }
             }
 
