@@ -13,8 +13,9 @@
 
 ### Актуальная версия
 
+* Добавлен отключаемый запрет на сохранение [атрибутов событий](https://www.w3schools.com/tags/ref_eventattributes.asp) в html-тегах в текстовых полях
 * Увеличена ширина выпадающего списка в toolbar-е
-* Обновлена библиотека QA.Validation.Xaml.Extensions до 1.4.3  (#175116):
+* Обновлена библиотека QA.Validation.Xaml.Extensions до 1.4.3 (#175116):
   * Добавлено условие валидации IsEven 
   * Поправлена работа условий валидации GreaterThan и LessThan
 

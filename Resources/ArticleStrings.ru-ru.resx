@@ -648,4 +648,7 @@
   <data name="RestictedSourceInHtmlTag" xml:space="preserve">
     <value>Запрещённый домен источника '{0}' у тега '{1}'</value>
   </data>
+  <data name="RestrictedEventAttribute" xml:space="preserve">
+    <value>Запрещенные атрибуты событий '{0}' для тега '{1}'</value>
+  </data>
 </root>

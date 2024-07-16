@@ -648,4 +648,7 @@
   <data name="RestictedSourceInHtmlTag" xml:space="preserve">
     <value>Restricted source domain '{0}' for tag '{1}'</value>
   </data>
+  <data name="RestrictedEventAttribute" xml:space="preserve">
+    <value>Restriced event attributes '{0}' for tag '{1}'</value>
+  </data>
 </root>
