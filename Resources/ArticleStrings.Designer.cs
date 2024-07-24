@@ -1014,6 +1014,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restricted event attributes &apos;{0}&apos; for tag &apos;{1}&apos;.
+        /// </summary>
+        public static string RestrictedEventAttribute {
+            get {
+                return ResourceManager.GetString("RestrictedEventAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Saturday.
         /// </summary>
         public static string Saturday {
