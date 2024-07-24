@@ -10,10 +10,9 @@ BEGIN
   declare @idsWithLinks Table (id numeric, link_id numeric)
 
   insert into @idsWithLinks
-  select i.id, ca.link_id from @ids i
+  select i.id, iti.link_id from @ids i
   inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = i.ID and (SPLITTED = 1 or @force_merge = 1)
-  inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-  inner join CONTENT_ATTRIBUTE ca on ca.CONTENT_ID = c.CONTENT_ID and link_id is not null
+  inner join item_to_item iti on iti.l_item_id = ci.content_item_id
 
   declare @newIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit, linked_attribute_id numeric null, linked_has_data bit, linked_splitted bit, linked_has_async bit null)
   declare @oldIds table (id numeric, link_id numeric, linked_item_id numeric, splitted bit)
