@@ -32,8 +32,7 @@ DECLARE
 		END LOOP;
 
   		insert into item_link_async select * from item_to_item ii where l_item_id = ANY(ids)
-  		and link_id in (select link_id from content_attribute ca where ca.content_id = ANY(content_ids))
-  		and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id);
+  		and not exists (select * from item_link_async ila where ila.item_id = ii.l_item_id and ila.link_id = ii.link_id);
 
 	END
 $$;

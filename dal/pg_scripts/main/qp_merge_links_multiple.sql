@@ -15,16 +15,15 @@ AS $BODY$
 		cross_ids item_link[];
 	BEGIN
 	    ids := coalesce(ids, ARRAY[]::int[]);
-		IF array_length(ids, 1) = 0 THEN
+		IF coalesce(array_length(ids, 1), 0) = 0 THEN
 			RETURN;
 		END IF;
 
-		ids_with_links := array_agg(row(i.id, ca.link_id)) from (select unnest(ids) as id) i
+		ids_with_links := array_agg(row(i.id, iti.link_id)) from (select unnest(ids) as id) i
   		inner join content_item ci on ci.CONTENT_ITEM_ID = i.id and (ci.SPLITTED or force_merge)
-  		inner join content c on ci.CONTENT_ID = c.CONTENT_ID
-  		inner join CONTENT_ATTRIBUTE ca on ca.CONTENT_ID = c.CONTENT_ID and link_id is not null;
+	  	inner join item_to_item iti on iti.l_item_id = ci.content_item_id; 
 		ids_with_links := coalesce(ids_with_links, ARRAY[]::link[]);
-		IF array_length(ids_with_links, 1) = 0 THEN
+		IF coalesce(array_length(ids_with_links, 1), 0) = 0 THEN
 			RETURN;
 		END IF;
 
