@@ -16,6 +16,9 @@ AS $BODY$
 	    m2o_data value[];
 	    m2m_xml xml;
 	    val value;
+	    old_splitted boolean;
+	    new_splitted boolean;
+	   	last_modified_by int;
 
     BEGIN
         create temp table item as
@@ -57,6 +60,11 @@ AS $BODY$
             update content_item set not_for_replication = true where not not_for_replication
             and content_item_id in (select item.id from item) ;
 
+            select ci.splitted
+			from content_item ci 
+			into old_splitted
+			where ci.content_item_id = main_id;
+
             with result as (
                 update content_item ci
                     set modified = now(), last_modified_by = i.last_modified_by,
@@ -72,6 +80,22 @@ AS $BODY$
             )
             select result.content_item_id, result.splitted, result.modified
             into main_id, splitted, modified from result;
+
+            last_modified_by := i.last_modified_by from item i;
+        
+            select ci.splitted
+			from content_item ci 
+			into new_splitted
+			where ci.content_item_id = main_id;
+					
+			if not old_splitted and new_splitted then 
+	           	call qp_split_articles(ARRAY[main_id], last_modified_by);
+	        end if;
+	         
+	        if old_splitted and not new_splitted then 
+	        	call qp_merge_articles(ARRAY[main_id], last_modified_by, true);
+	        end if;
+	
         end if;
 
         drop table item;

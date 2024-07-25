@@ -76,7 +76,7 @@ AS $BODY$
 			end as value from content_data cd
 			inner join content_attribute ca on cd.attribute_id = ca.attribute_id
 			where content_item_id in (%s) and cd.attribute_id in (%s)
-			order by 1,2
+			order by content_item_id, ca.attribute_name
 			'') AS final_result(%s)) pt where pt.content_item_id = base.content_item_id;';
 
 			cross_tab := FORMAT(cross_tab, table_name, upd, sel, array_to_string(ids, ', '), array_to_string(attr_ids, ', '), res);
