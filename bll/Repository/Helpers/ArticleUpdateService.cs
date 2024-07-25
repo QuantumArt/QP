@@ -147,15 +147,15 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                                         INSERT INTO @Ids
                                         SELECT @ItemId
 
-			                            IF @OldSplitted = 0 AND @splitted = 1
+                                        IF @OldSplitted = 0 AND @splitted = 1
                                         BEGIN
-	           	                            EXEC qp_split_articles @Ids, {lastModifiedParamName}
-	                                    END
-			                            ELSE IF @OldSplitted = 1 AND @splitted = 0
+                                            EXEC qp_split_articles @Ids, {lastModifiedParamName}
+                                        END
+                                        ELSE IF @OldSplitted = 1 AND @splitted = 0
                                         BEGIN
-	           	                            EXEC qp_merge_articles @Ids, {lastModifiedParamName}, 1
-	                                    END");
-                            }
+                                            EXEC qp_merge_articles @Ids, {lastModifiedParamName}, 1
+                                        END");
+            }
 
             Parameters.Add(new SqlParameter(statusParamName, SqlDbType.Int) { Value = Article.StatusTypeId });
             Parameters.Add(new SqlParameter(visibleParamName, SqlDbType.Bit) { Value = Article.Visible });
