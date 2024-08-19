@@ -651,4 +651,7 @@
   <data name="RestrictedEventAttribute" xml:space="preserve">
     <value>Запрещенные атрибуты событий '{0}' для тега '{1}'</value>
   </data>
+  <data name="JavaScriptInjectionError" xml:space="preserve">
+    <value>JS инъекция текстами '{0}' в теге '{1}'</value>
+  </data>
 </root>

@@ -681,6 +681,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to JS injection with texts &apos;{0}&apos; in tag &apos;{1}&apos;.
+        /// </summary>
+        public static string JavaScriptInjectionError {
+            get {
+                return ResourceManager.GetString("JavaScriptInjectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last comment.
         /// </summary>
         public static string LastComment {
