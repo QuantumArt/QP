@@ -247,6 +247,7 @@ namespace Quantumart.QP8.BLL.Helpers
                             vField.TypeId = FieldTypeCodes.DateTime;
                             break;
                         case ValidFieldColumnDbTypes.Bit:
+                        case ValidFieldColumnDbTypes.Boolean:
                             vField.TypeId = FieldTypeCodes.Boolean;
                             break;
                         case ValidFieldColumnDbTypes.Ntext:

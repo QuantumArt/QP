@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.Constants
+namespace Quantumart.QP8.Constants
 {
     /// <summary>
     /// Допустимые DataBase типы колонок полей
@@ -18,5 +18,6 @@
         public const string TimeStampWithTimeZone = "timestamp with time zone";
         public const string Text = "text";
         public const string CharVarying = "character varying";
+        public const string Boolean = "boolean";
     }
 }
