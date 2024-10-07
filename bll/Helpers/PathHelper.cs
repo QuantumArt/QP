@@ -246,7 +246,6 @@ public class PathHelper
 
     public void Rename(string path, string newPath)
     {
-        VerifyS3BucketExists();
         if (!FileExists(path))
         {
             _logger.ForWarnEvent()
