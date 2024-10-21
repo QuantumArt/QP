@@ -201,11 +201,11 @@ namespace Quantumart.QP8.DAL
                 }
                 else if (value is string stringValue)
                 {
-                    if (int.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out intValue))
+                    if (int.TryParse(stringValue, out intValue))
                     {
                         parameters.AddWithValue(paramName, intValue, dbType);
                     }
-                    else if (long.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out longValue))
+                    else if (long.TryParse(stringValue, out longValue))
                     {
                         parameters.AddWithValue(paramName, longValue, dbType);
                     }
@@ -329,7 +329,7 @@ namespace Quantumart.QP8.DAL
         {
             if (value is string stringValue)
             {
-                if (int.TryParse(stringValue, NumberStyles.Number, CultureInfo.InvariantCulture, out int parsedResult))
+                if (int.TryParse(stringValue, out var parsedResult))
                 {
                     id = parsedResult;
                     return true;
@@ -367,10 +367,10 @@ namespace Quantumart.QP8.DAL
             {
                 ids = stringValue
                     .Split(',', StringSplitOptions.RemoveEmptyEntries & StringSplitOptions.TrimEntries)
-                    .Select(number => int.TryParse(number, NumberStyles.Number, CultureInfo.InvariantCulture, out int id) ? id : 0)
+                    .Select(number => int.TryParse(number, out var id) ? id : 0)
                     .ToArray();
 
-                if (!ids.Any(number => number == 0))
+                if (ids.All(number => number != 0))
                 {
                     return true;
                 }
