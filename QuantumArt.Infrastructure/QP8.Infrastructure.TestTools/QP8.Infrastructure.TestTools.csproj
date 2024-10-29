@@ -7,7 +7,7 @@
     <Company>Quantum Art</Company>
     <Product>QP8.Framework</Product>
     <Description>QP tests infrastructure</Description>
-    <Copyright>Copyright © 2007-2017 Quantum Art</Copyright>
+    <Copyright>Copyright © 2007-2024 Quantum Art</Copyright>
     <PackageReleaseNotes>Update to new projects structure.</PackageReleaseNotes>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/QuantumArt/QP</PackageProjectUrl>
