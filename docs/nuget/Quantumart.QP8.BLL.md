@@ -10,6 +10,10 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.5.2
+
+* Обновление Quantumart.AspNetCore до 6.1.2 (#176358)
+
 ### Quantumart.QP8.BLL.3.5.1
 
 * Обновлена библиотека QA.Validation.Xaml.Extensions до 1.4.3  (#175116)
