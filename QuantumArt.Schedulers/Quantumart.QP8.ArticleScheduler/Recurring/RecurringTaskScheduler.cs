@@ -61,11 +61,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleWithinShowRange = _recurringService.ShowArticle(task.ArticleId);
                 if (articleWithinShowRange != null && !articleWithinShowRange.Visible)
                 {
-                    Logger.Info()
+                    Logger.ForInfoEvent()
                         .Message(
                             "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
                             articleWithinShowRange.Id, articleWithinShowRange.Name, _customer.CustomerName)
-                        .Write();
+                        .Log();
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison == 0)
@@ -73,11 +73,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleOutOfShowRange = _recurringService.HideArticle(task.ArticleId);
                 if (articleOutOfShowRange != null && articleOutOfShowRange.Visible)
                 {
-                    Logger.Info()
+                    Logger.ForInfoEvent()
                         .Message(
                             "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
                             articleOutOfShowRange.Id, articleOutOfShowRange.Name, _customer.CustomerName)
-                        .Write();
+                        .Log();
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison > 0)
@@ -85,11 +85,11 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 var articleOutOfShowAndTaskRanges = _recurringService.HideAndCloseSchedule(task.Id);
                 if (articleOutOfShowAndTaskRanges != null && articleOutOfShowAndTaskRanges.Visible)
                 {
-                    Logger.Info()
+                    Logger.ForInfoEvent()
                         .Message(
                             "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
                             articleOutOfShowAndTaskRanges.Id, articleOutOfShowAndTaskRanges.Name, _customer.CustomerName)
-                        .Write();
+                        .Log();
                 }
             }
         }

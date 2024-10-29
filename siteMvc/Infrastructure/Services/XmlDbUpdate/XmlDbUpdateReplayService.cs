@@ -165,10 +165,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
-                    Logger.Warn()
+                    Logger.ForWarnEvent()
                         .Message("XmlDbUpdateAction conflict: Current action already applied and exist at database")
                         .Property("logEntry", logEntry)
-                        .Write();
+                        .Log();
 
                     if (_throwActionReplayed)
                     {
@@ -182,14 +182,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 }
 
                 var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
-                Logger.Debug()
+                Logger.ForDebugEvent()
                     .Message("-> Begin replaying action [{hash}]: -> {xml}", logEntry.Hash, xmlActionStringLog)
-                    .Write();
+                    .Log();
 
                 var replayedAction = ReplayAction(action, backendUrl);
-                Logger.Debug()
+                Logger.ForDebugEvent()
                     .Message("End replaying action [{hash}]: -> {xml}", logEntry.Hash, xmlActionStringLog)
-                    .Write();
+                    .Log();
 
                 logEntry.Ids = string.Join(",", replayedAction.Ids);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, currentDbVersion, backendUrl, true).ToNormalizedString(SaveOptions.DisableFormatting, true);

@@ -12,7 +12,7 @@ public class BatchUpdateResult : MessageResult
     {
     }
 
-    public static BatchUpdateResult Error(string message, int[] failedIds = null) => new BatchUpdateResult(ActionMessageType.Error, message, failedIds);
+    public static BatchUpdateResult CreateError(string message, int[] failedIds = null) => new BatchUpdateResult(ActionMessageType.Error, message, failedIds);
 
     public BatchUpdateResult(string actionMessageType, string message, int[] failedIds)
         : base(actionMessageType, message, failedIds)

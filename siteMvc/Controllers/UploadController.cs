@@ -50,12 +50,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private void LogError(string msg, string fileName, Exception ex = null)
         {
-            var msgBuilder = Logger.Error().Message(msg).Property("fileName", fileName);
+            var msgBuilder = Logger.ForErrorEvent()
+                .Message(msg)
+                .Property("fileName", fileName);
+
             if (ex != null)
             {
                 msgBuilder.Exception(ex);
             }
-            msgBuilder.Write();
+            msgBuilder.Log();
         }
 
         [HttpPost]

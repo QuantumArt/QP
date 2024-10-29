@@ -34,9 +34,9 @@
   </Target>
   <ItemGroup>
     <PackageReference Include="Irony" Version="1.1.0" PrivateAssets="None" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.12" PrivateAssets="None" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.35" PrivateAssets="None" />
     <PackageReference Include="Minio" Version="6.0.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" PrivateAssets="None" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.29" PrivateAssets="None" />
     <PackageReference Include="AutoMapper" Version="8.0.0" PrivateAssets="None" />
     <PackageReference Include="QA.Validation.Xaml.Extensions" Version="1.4.3" PrivateAssets="None" />
   </ItemGroup>

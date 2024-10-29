@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
+using NLog;
 using NLog.Fluent;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
@@ -940,7 +941,7 @@ namespace Quantumart.QP8.BLL
                 catch (Exception exp)
                 {
                     var str = string.Format(ArticleStrings.CustomValidationFailed, exp.Message);
-                    CurrentLogger.Error().Exception(exp).Message(str).Write();
+                    CurrentLogger.ForErrorEvent().Exception(exp).Message(str).Log();
                     errors.ErrorForModel(str);
                 }
             }

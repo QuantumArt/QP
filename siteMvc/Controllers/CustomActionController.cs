@@ -51,9 +51,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             try
             {
                 customActionToExecute = _service.PrepareForExecuting(tabId, parentId, query);
-                Logger.Debug()
+                Logger.ForDebugEvent()
                     .Message("Executing custom action url: {url}", customActionToExecute.CustomAction.FullUrl)
-                    .Write();
+                    .Log();
 
                 if (!customActionToExecute.IsActionAccessible)
                 {
@@ -98,9 +98,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(model.Url);
 
-            Logger.Debug()
+            Logger.ForDebugEvent()
                 .Message("Proxying custom action url: {url}", urlToProcess)
-                .Write();
+                .Log();
 
             var parts = urlToProcess.Split("?".ToCharArray(), 2);
             var request = WebRequest.Create(parts[0]);
