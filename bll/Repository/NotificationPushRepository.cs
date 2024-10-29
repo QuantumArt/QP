@@ -383,7 +383,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void HandleException(Exception ex)
         {
-            Logger.Error().Exception(ex).Message("Notification service error").Write();
+            Logger.ForErrorEvent().Exception(ex).Message("Notification service error").Log();
         }
     }
 }

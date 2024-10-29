@@ -181,12 +181,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
                 catch (Exception e)
                 {
-                    Logger.Error()
+                    Logger.ForErrorEvent()
                        .Exception(e)
                        .Message("Error while sending notifications for articles {Articles} with code {Code}",
                             string.Join(", ", notificationArticles.ArticleIds),
                             notificationArticles.NotificationCode)
-                       .Write();
+                       .Log();
                 }
             }
         }

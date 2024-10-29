@@ -27,11 +27,11 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             if (ShouldProcessTask(task, currentTime))
             {
                 var article = _publishingService.PublishAndCloseSchedule(task.Id);
-                Logger.Info()
+                Logger.ForInfoEvent()
                     .Message(
                         "Article [{id}: {name}] has been published on customer code: {customerCode}",
                     article.Id, article.Name, _customer.CustomerName)
-                    .Write();
+                    .Log();
             }
         }
 
@@ -41,13 +41,13 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             var pubTask = ((PublishingTask)task);
             if (!result && !forMonitoring)
             {
-                Logger.Info()
+                Logger.ForInfoEvent()
                     .Message(
                         "Article [{id}] has been skipped for processing on customer code: {customerCode}." +
                         " {currentDateTime} < {publishingDateTime}. ",
                         pubTask.ArticleId, _customer.CustomerName,
                         dateTimeToCheck, pubTask.PublishingDateTime)
-                    .Write();
+                    .Log();
             }
 
             return result;

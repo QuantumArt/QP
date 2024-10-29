@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Web;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -14,7 +16,7 @@ namespace Quantumart.QP8.WebMvc
     {
         public static void Main(string[] args)
         {
-            NLog.LogManager.LoadConfiguration("NLog.config");
+            LogManager.Setup().LoadConfigurationFromFile("NLog.config");
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             BuildWebHost(args).Run();
         }

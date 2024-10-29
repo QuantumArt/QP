@@ -75,11 +75,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                         ImportAction = (CsvImportMode)settings.ImportAction
                     };
 
-                    ImportLogger.Trace()
+                    ImportLogger.ForTraceEvent()
                        .Message("Import articles step: {step}.", step)
                        .Property("result", logData)
                        .Property("customerCode", QPContext.CurrentCustomerCode)
-                       .Write();
+                       .Log();
 
                     result.ProcessedItemsCount = processedItemsCount;
                     result.TraceResult = reader.GetTraceResult();

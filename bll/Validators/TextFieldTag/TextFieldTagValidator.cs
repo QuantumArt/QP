@@ -150,7 +150,7 @@ public class TextFieldTagValidator
 
         if (QPContext.TextFieldTagValidation.LogValidationError)
         {
-            Logger.Warn()
+            Logger.ForWarnEvent()
                 .Message("Attempt to save malicious text in article. User Name: {User}\nIP: {IP}\nContent Id: {ContentId}\nContent Name: {ContentName}\nArticle Id: {ArticleId}\nField: {FieldName}\nData: {UserInput}\nValidation Error: {ValidationError}",
                     QPContext.CurrentUserName,
                     QPContext.GetUserIpAddress(),
@@ -160,7 +160,7 @@ public class TextFieldTagValidator
                     fieldValue.Field.Name,
                     fieldValue.Value,
                     error)
-                .Write();
+                .Log();
         }
     }
 }

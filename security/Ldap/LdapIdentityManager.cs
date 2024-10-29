@@ -104,12 +104,12 @@ public class LdapIdentityManager : ILdapIdentityManager
                 }
             }
 
-            Logger.Trace()
+            Logger.ForTraceEvent()
                .Message("LDAP query")
                .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
                .Property("filter", filter)
                .Property("resultCount", entries.Count)
-               .Write();
+               .Log();
 
             return entries;
         });
@@ -220,12 +220,12 @@ public class LdapIdentityManager : ILdapIdentityManager
             }
         }
 
-        Logger.Trace()
+        Logger.ForTraceEvent()
            .Message("LDAP query by login")
            .Property("baseSearchDistinguishedName", _ldapSetting.Value.BaseSearchDistinguishedName)
            .Property("filter", filter)
            .Property("resultCount", entries.Count)
-           .Write();
+           .Log();
 
         return entries.FirstOrDefault();
     }

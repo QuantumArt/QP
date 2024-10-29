@@ -696,11 +696,11 @@ WHERE content_item_id = {contentItemId}
                  }
                  catch (Exception ex)
                  {
-                     Logger.Error()
+                     Logger.ForErrorEvent()
                          .Exception(ex)
                          .Message("Cannot resolve IP Address: {ip}", ip)
                          .Property("customerCode", customerCode)
-                         .Write();
+                         .Log();
                  }
              }
 
