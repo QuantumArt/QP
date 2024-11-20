@@ -3461,7 +3461,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
             var dbType = GetDbType(connection);
             var contentDataColumn = isBlob && dbType == DatabaseType.SqlServer ? "BLOB_DATA" : "DATA";
-            var attributeDefValueColumn = "COALESCE(a.DEFAULT_BLOB_VALUE, a.DEFAULT_VALUE)";
+            var attributeDefValueColumn = isBlob && dbType == DatabaseType.SqlServer ? "a.DEFAULT_BLOB_VALUE" : "a.DEFAULT_VALUE";
             var contentItemsIds = string.Join(",", idsForStep);
             var sql = $@"UPDATE content_data
                 SET {contentDataColumn} = (SELECT {attributeDefValueColumn} FROM content_attribute a WHERE attribute_id = @attr_id)
