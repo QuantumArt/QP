@@ -43,12 +43,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await base.New(tabId, parentId);
         }
 
-        [HttpPost, Record]
+        [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewActionPermission)]
         [BackendActionContext(ActionCode.AddNewActionPermission)]
         [BackendActionLog]
+        [Record]
         public override async Task<ActionResult> New(string tabId, int parentId, IFormCollection collection)
         {
             return await base.New(tabId, parentId, collection);
@@ -62,34 +63,37 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await base.Properties(tabId, parentId, id, successfulActionCode);
         }
 
-        [HttpPost, Record(ActionCode.ActionPermissionProperties)]
+        [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateActionPermission)]
         [BackendActionContext(ActionCode.UpdateActionPermission)]
         [BackendActionLog]
+        [Record(ActionCode.ActionPermissionProperties)]
         public override async Task<ActionResult> Properties(string tabId, int parentId, int id, IFormCollection collection)
         {
             return await base.Properties(tabId, parentId, id, collection);
         }
 
-        [HttpPost, Record]
+        [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveActionPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveActionPermission)]
         [BackendActionLog]
+        [Record]
         public override ActionResult MultipleRemove(int parentId, [FromBody] SelectedItemsViewModel model)
         {
             return base.MultipleRemove(parentId, model);
         }
 
-        [HttpPost, Record]
+        [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveActionPermission)]
         [BackendActionContext(ActionCode.RemoveActionPermission)]
         [BackendActionLog]
+        [Record]
         public override ActionResult Remove(int parentId, int id) => base.Remove(parentId, id);
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -106,18 +110,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateActionPermissionChanges)]
         [BackendActionContext(ActionCode.UpdateActionPermissionChanges)]
         [BackendActionLog]
+        [Record(ActionCode.ChangeActionPermission)]
         public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, IFormCollection collection)
         {
-            return await base.Change(tabId, parentId, userId, groupId, collection);
+            var result = await base.Change(tabId, parentId, userId, groupId, collection);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
-        [ActionAuthorize(ActionCode.RemoveEntityTypePermissionChanges)]
-        [BackendActionContext(ActionCode.RemoveEntityTypePermissionChanges)]
+        [ActionAuthorize(ActionCode.RemoveActionPermissionChanges)]
+        [BackendActionContext(ActionCode.RemoveActionPermissionChanges)]
         [BackendActionLog]
-        public override ActionResult RemoveForNode(int parentId, int? userId, int? groupId) => base.RemoveForNode(parentId, userId, groupId);
+        [Record]
+        public override ActionResult RemoveForNode(int parentId, int? userId, int? groupId)
+        {
+            var result = base.RemoveForNode(parentId, userId, groupId);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
+        }
 
         protected override string ControllerName => "ActionPermission";
     }

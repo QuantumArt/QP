@@ -59,6 +59,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ChildId = GetChildIdByCode(action),
                 ChildIds = GetChildIdsByCode(action),
                 ChildLinkIds = GetChildLinkIdsByCode(action),
+                UserId = GetUserId(action),
+                GroupId = GetGroupId(action),
                 CustomActionCode = GetCustomActionCodeByCode(action),
                 Form = GetActionFields(action),
                 Executed = GetExecuted(action, lcid),
@@ -142,6 +144,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.AddNewTemplateObject:
                     result.Add(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.DefaultFormatId);
                     break;
+                case ActionCode.RemoveEntityTypePermissionChanges:
+                case ActionCode.RemoveActionPermissionChanges:
+                case ActionCode.MultipleRemoveChildContentPermissions:
+                case ActionCode.RemoveAllChildContentPermissions:
+                case ActionCode.RemoveChildContentPermission:
+                case ActionCode.MultipleRemoveChildArticlePermissions:
+                case ActionCode.RemoveAllChildArticlePermissions:
+                case ActionCode.RemoveChildArticlePermission:
+                case ActionCode.ChangeEntityTypePermission:
+                case ActionCode.ChangeActionPermission:
+                    if (action.UserId != 0)
+                    {
+                        result.Add(XmlDbUpdateXDocumentConstants.UserIdAttribute, action.UserId);
+                    }
+
+                    if (action.GroupId != 0)
+                    {
+                        result.Add(XmlDbUpdateXDocumentConstants.GroupIdAttribute, action.GroupId);
+                    }
+                    break;
             }
 
             return result.Where(r => r.Value != null).Select(r => new XAttribute(r.Key, r.Value));
@@ -192,6 +214,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static int GetLcid(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionLcidAttribute).GetValueOrDefault<int>();
 
         private static int GetBackwardId(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionNewBackwardIdAttribute).GetValueOrDefault<int>();
+
+        private static int GetUserId(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.UserIdAttribute).GetValueOrDefault<int>();
+
+        private static int GetGroupId(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.GroupIdAttribute).GetValueOrDefault<int>();
 
         private static string GetVirtualFieldIds(XElement action) => action.Attribute(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute).GetValueOrDefault<string>();
 

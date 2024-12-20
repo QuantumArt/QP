@@ -55,5 +55,9 @@
         internal const string FieldElement = "field";
 
         internal const string FieldNameAttribute = "name";
+
+        internal const string UserIdAttribute = "userId";
+
+        internal const string GroupIdAttribute = "groupId";
     }
 }
