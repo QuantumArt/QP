@@ -199,7 +199,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public override ActionResult MultipleRemoveAsChild(int parentId, [FromBody] SelectedItemsViewModel model, int? userId, int? groupId)
         {
-            return base.MultipleRemoveAsChild(parentId, model, userId, groupId);
+            var result = base.MultipleRemoveAsChild(parentId, model, userId, groupId);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
         }
 
         [HttpPost]
@@ -209,7 +211,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RemoveAllChildContentPermissions)]
         [BackendActionLog]
         [Record]
-        public override ActionResult AllRemoveAsChild(int parentId, int? userId, int? groupId) => base.AllRemoveAsChild(parentId, userId, groupId);
+        public override ActionResult AllRemoveAsChild(int parentId, int? userId, int? groupId)
+        {
+            var result = base.AllRemoveAsChild(parentId, userId, groupId);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
+        }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -218,7 +225,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RemoveChildContentPermission)]
         [BackendActionLog]
         [Record]
-        public override ActionResult RemoveAsChild(int parentId, int id, int? userId, int? groupId) => base.RemoveAsChild(parentId, id, userId, groupId);
+        public override ActionResult RemoveAsChild(int parentId, int id, int? userId, int? groupId)
+        {
+            var result = base.RemoveAsChild(parentId, id, userId, groupId);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
+        }
 
         protected override string SaveChildPermissionAction => ActionCode.SaveChildContentPermission;
 

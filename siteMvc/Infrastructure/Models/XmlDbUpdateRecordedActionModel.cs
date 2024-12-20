@@ -71,5 +71,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Models
         public int NotificationFormatId { get; set; }
 
         public int DefaultFormatId { get; set; }
+
+        public int UserId { get; set; }
+
+        public int GroupId { get; set; }
     }
 }

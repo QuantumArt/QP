@@ -98,7 +98,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.RemoveEntityTypePermission)]
         [BackendActionLog]
         [Record]
-        public override ActionResult Remove(int parentId, int id) => base.Remove(parentId, id);
+        public override ActionResult Remove(int parentId, int id)
+        {
+            return base.Remove(parentId, id);
+        }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeEntityTypePermission)]
@@ -114,18 +117,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.UpdateEntityTypePermissionChanges)]
         [BackendActionContext(ActionCode.UpdateEntityTypePermissionChanges)]
         [BackendActionLog]
+        [Record(ActionCode.ChangeEntityTypePermission)]
         public override async Task<ActionResult> Change(string tabId, int parentId, int? userId, int? groupId, IFormCollection collection)
         {
-            return await base.Change(tabId, parentId, userId, groupId, collection);
+            var result = await base.Change(tabId, parentId, userId, groupId, collection);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
-        [ActionAuthorize(ActionCode.RemoveActionPermissionChanges)]
-        [BackendActionContext(ActionCode.RemoveActionPermissionChanges)]
+        [ActionAuthorize(ActionCode.RemoveEntityTypePermissionChanges)]
+        [BackendActionContext(ActionCode.RemoveEntityTypePermissionChanges)]
         [BackendActionLog]
-        public override ActionResult RemoveForNode(int parentId, int? userId, int? groupId) => base.RemoveForNode(parentId, userId, groupId);
+        [Record]
+        public override ActionResult RemoveForNode(int parentId, int? userId, int? groupId)
+        {
+            var result = base.RemoveForNode(parentId, userId, groupId);
+            PersistUserAndGroupIds(userId, groupId);
+            return result;
+        }
 
         protected override string ControllerName => "EntityTypePermission";
     }

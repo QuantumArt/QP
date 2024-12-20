@@ -298,6 +298,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
+        protected void PersistUserAndGroupIds(int? userId, int? groupId)
+        {
+            if (userId.HasValue)
+            {
+                PersistToHttpContext(HttpContextItems.UserId, userId.Value);
+            }
+
+            if (groupId.HasValue)
+            {
+                PersistToHttpContext(HttpContextItems.GroupId, groupId.Value);
+            }
+        }
+
         protected void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
         {
             string formIdsValue = HttpContext.Request.Form[formIdsKey].ToString();

@@ -55,5 +55,7 @@ namespace Quantumart.QP8.Constants.Mvc
         public const string NewChildFieldIds = "NEW_CHILD_FIELD_IDS";
         public const string NewVirtualFieldIds = "NEW_VIRTUAL_FIELD_IDS";
         public const string NotificationFormatId = "NOTIFICATION_FORMAT_ID";
+        public const string UserId = "USER_ID";
+        public const string GroupId = "GROUP_ID";
     }
 }
