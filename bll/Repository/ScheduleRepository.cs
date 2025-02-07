@@ -40,12 +40,10 @@ namespace Quantumart.QP8.BLL.Repository
                 if (itemPersisted)
                 {
                     var originalItem = GetDalById(originalId);
-                    hasChanges = DetectChanges(originalItem, dalItem);
-                    if (hasChanges)
+                    if (originalItem != null && DetectChanges(originalItem, dalItem))
                     {
                         DefaultRepository.Delete<ArticleScheduleDAL>(originalId);
                     }
-
                 }
 
                 var needToPersist = dalItem.FreqType != ScheduleFreqTypes.None && hasChanges;
