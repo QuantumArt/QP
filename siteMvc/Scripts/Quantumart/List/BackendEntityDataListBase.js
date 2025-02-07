@@ -851,7 +851,7 @@ export class BackendEntityDataListBase extends Observable {
         $q.alertError($l.EntityDataList.typesDoesNotMatchMessage);
       } else if (storage.parentEntityId !== this._parentEntityId) {
         $q.alertError($l.EntityDataList.parentsDoesNotMatchMessage);
-      } else if (storage.filter === this._filter) {
+      } else if (JSON.stringify(storage.filter) === JSON.stringify(this._filter)) {
         this._loadSelectedItems(storage.entities);
       } else {
         $q.alertError($l.EntityDataList.filtersDoesNotMatchMessage);
