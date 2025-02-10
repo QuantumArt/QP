@@ -844,7 +844,7 @@ WHERE content_item_id = {contentItemId}
                  {
                      result.Add(id, new Dictionary<string, int>());
                  }
-                 result[id].Add(row["data"].ToString() ?? "", contentId);
+                 _ = result[id].TryAdd(row["data"].ToString() ?? "", contentId);
              }
              return result;
          }
