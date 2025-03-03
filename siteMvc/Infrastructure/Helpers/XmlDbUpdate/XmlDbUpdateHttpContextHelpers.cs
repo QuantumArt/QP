@@ -49,6 +49,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 NewRulesIds = GetContextData<string>(httpContext, HttpContextItems.NewRulesIds),
                 NotificationFormatId = GetContextData<int>(httpContext, HttpContextItems.NotificationFormatId),
                 DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId),
+                UserId = GetContextData<int>(httpContext, HttpContextItems.UserId),
+                GroupId = GetContextData<int>(httpContext, HttpContextItems.GroupId),
             };
 
             if (!ignoreForm && httpContext.Request.HasFormContentType)
@@ -254,6 +256,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                         AddListItem(action.Form, HttpContextFormConstants.DataForceRulesIds, action.ChildIds);
                     }
 
+                    break;
+                case ActionCode.RemoveEntityTypePermissionChanges:
+                case ActionCode.RemoveActionPermissionChanges:
+                case ActionCode.MultipleRemoveChildContentPermissions:
+                case ActionCode.RemoveAllChildContentPermissions:
+                case ActionCode.RemoveChildContentPermission:
+                case ActionCode.MultipleRemoveChildArticlePermissions:
+                case ActionCode.RemoveAllChildArticlePermissions:
+                case ActionCode.RemoveChildArticlePermission:
+                case ActionCode.ChangeEntityTypePermission:
+                case ActionCode.ChangeActionPermission:
+
+                    if (action.UserId != 0)
+                    {
+                        action.Form.Add(HttpContextFormConstants.UserId, action.UserId.ToString());
+                    }
+                    if (action.GroupId != 0)
+                    {
+                        action.Form.Add(HttpContextFormConstants.GroupId, action.GroupId.ToString());
+                    }
                     break;
             }
             httpRequest.Method = "POST";

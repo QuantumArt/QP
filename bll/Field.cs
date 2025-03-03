@@ -136,7 +136,8 @@ namespace Quantumart.QP8.BLL
             ValidFieldColumnDbTypes.Text,
             ValidFieldColumnDbTypes.SmallInt,
             ValidFieldColumnDbTypes.TinyInt,
-            ValidFieldColumnDbTypes.Bit
+            ValidFieldColumnDbTypes.Bit,
+            ValidFieldColumnDbTypes.Boolean
         });
 
         public Field()

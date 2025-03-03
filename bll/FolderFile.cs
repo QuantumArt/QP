@@ -45,7 +45,6 @@ namespace Quantumart.QP8.BLL
             Created = item.LastModifiedDateTime ?? DateTime.Now;
             Modified = item.LastModifiedDateTime ?? DateTime.Now;
             Length = (long)item.Size;
-            _Dimensions = "";
         }
 
         public FolderFile(ObjectStat stat)
@@ -73,8 +72,6 @@ namespace Quantumart.QP8.BLL
         #endregion
 
         #region private
-
-        private string _Dimensions;
 
         /// <summary>
         /// Словарь типов файлов по расширениям

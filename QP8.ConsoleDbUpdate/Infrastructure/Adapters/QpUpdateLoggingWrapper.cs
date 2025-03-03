@@ -35,7 +35,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 
         public void Debug(object message, Exception exception)
         {
-            Logger.Debug().Exception(exception).Message(message.ToString()).Write();
+            Logger.ForDebugEvent()
+                .Exception(exception)
+                .Message(message.ToString())
+                .Log();
         }
 
         public void DebugFormat(string format, params object[] args)
@@ -65,7 +68,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            Logger.Info().Exception(exception).Message(message.ToString()).Write();
+            Logger.ForInfoEvent()
+                .Exception(exception)
+                .Message(message.ToString())
+                .Log();
         }
 
         public void InfoFormat(string format, params object[] args)
@@ -102,7 +108,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            Logger.Warn().Exception(exception).Message(message.ToString()).Write();
+            Logger.ForWarnEvent()
+                .Exception(exception)
+                .Message(message.ToString())
+                .Log();
         }
 
         public void WarnFormat(string format, params object[] args)
@@ -138,7 +147,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.Error.WriteLine($@"Exceptions:{Environment.NewLine}{exception.Dump()}");
                 Console.ResetColor();
             }
-            Logger.Error().Exception(exception).Message(message.ToString()).Write();
+            Logger.ForErrorEvent()
+                .Exception(exception)
+                .Message(message.ToString())
+                .Log();
         }
 
         public void ErrorFormat(string format, params object[] args)
@@ -175,7 +187,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                 Console.ResetColor();
             }
 
-            Logger.Fatal().Exception(exception).Message(message.ToString()).Write();
+            Logger.ForFatalEvent()
+                .Exception(exception)
+                .Message(message.ToString())
+                .Log();
         }
 
         public void FatalFormat(string format, params object[] args)

@@ -141,7 +141,20 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             }
             else
             {
+                sqlResult.AppendLine($"DECLARE @OldSplitted bit; SELECT @OldSplitted = splitted FROM content_item WHERE content_item_id = {ContentItemId};");
                 sqlResult.AppendLine($"UPDATE content_item SET modified = getdate(), last_modified_by = {lastModifiedParamName}, STATUS_TYPE_ID = {statusParamName}, VISIBLE = {visibleParamName}, ARCHIVE = {archiveParamName}, SCHEDULE_NEW_VERSION_PUBLICATION = {delayedParamName}, PERMANENT_LOCK = {permanentLockParamName}, UNIQUE_ID = {uniqueIdParamName}, CANCEL_SPLIT = {cancelSplitParamName} WHERE content_item_id = {ContentItemId};SELECT {SplittedParamName} = splitted FROM content_item WHERE content_item_id = {ContentItemId};");
+                sqlResult.AppendLine($@"DECLARE @Ids [Ids]
+                                        INSERT INTO @Ids
+                                        SELECT @ItemId
+
+                                        IF @OldSplitted = 0 AND @splitted = 1
+                                        BEGIN
+                                            EXEC qp_split_articles @Ids, {lastModifiedParamName}
+                                        END
+                                        ELSE IF @OldSplitted = 1 AND @splitted = 0
+                                        BEGIN
+                                            EXEC qp_merge_articles @Ids, {lastModifiedParamName}, 1
+                                        END");
             }
 
             Parameters.Add(new SqlParameter(statusParamName, SqlDbType.Int) { Value = Article.StatusTypeId });

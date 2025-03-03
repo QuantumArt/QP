@@ -681,6 +681,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to JS injection with texts &apos;{0}&apos; in tag &apos;{1}&apos;.
+        /// </summary>
+        public static string JavaScriptInjectionError {
+            get {
+                return ResourceManager.GetString("JavaScriptInjectionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last comment.
         /// </summary>
         public static string LastComment {
@@ -1010,6 +1019,15 @@ namespace Quantumart.QP8.Resources {
         public static string RestictedSourceInHtmlTag {
             get {
                 return ResourceManager.GetString("RestictedSourceInHtmlTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restricted event attributes &apos;{0}&apos; for tag &apos;{1}&apos;.
+        /// </summary>
+        public static string RestrictedEventAttribute {
+            get {
+                return ResourceManager.GetString("RestrictedEventAttribute", resourceCulture);
             }
         }
         

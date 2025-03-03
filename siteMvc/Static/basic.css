@@ -1559,7 +1559,7 @@ input[type="text"].readonly, textarea.readonly
   z-index: 9999999;
   margin: 0;
   padding: 2px 0;
-  width: 185px;
+  width: 200px;
   display: none;
   border: solid 1px #9ba7b7;
   background: #e0e5ea url('QP8/toolbar/background.png') repeat-y;

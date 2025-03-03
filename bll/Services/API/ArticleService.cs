@@ -367,19 +367,19 @@ namespace Quantumart.QP8.BLL.Services.API
                 var content = ContentRepository.GetById(contentId);
                 if (content == null)
                 {
-                    result = BatchUpdateResult.Error(string.Format(ContentStrings.ContentNotFound, contentId));
+                    result = BatchUpdateResult.CreateError(string.Format(ContentStrings.ContentNotFound, contentId));
                     return false;
                 }
                 var contentForCheck = content.BaseAggregationContent ?? content;
                 if (!contentForCheck.IsArticleChangingActionsAllowed(false))
                 {
-                    result = BatchUpdateResult.Error(ContentStrings.ArticleChangingIsProhibited + $" (Id = {contentId})");
+                    result = BatchUpdateResult.CreateError(ContentStrings.ArticleChangingIsProhibited + $" (Id = {contentId})");
                     return false;
                 }
 
                 if (!contentForCheck.AllowItemsPermission && !SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update))
                 {
-                    result = BatchUpdateResult.Error(ContentStrings.CannotUpdateBecauseOfSecurity + $" (Id = {contentId})");
+                    result = BatchUpdateResult.CreateError(ContentStrings.CannotUpdateBecauseOfSecurity + $" (Id = {contentId})");
                     return false;
                 }
                 var disableSecurityCheck = !content.AllowItemsPermission;
@@ -387,7 +387,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 var checkResult = CheckIdResult<Article>.CreateForUpdate(contentId, ids, disableSecurityCheck).GetServiceResult();
                 if (checkResult is { FailedIds: not null } && checkResult.FailedIds.Any())
                 {
-                    result = BatchUpdateResult.Error(checkResult.Text, checkResult.FailedIds);
+                    result = BatchUpdateResult.CreateError(checkResult.Text, checkResult.FailedIds);
                     return false;
                 }
             }

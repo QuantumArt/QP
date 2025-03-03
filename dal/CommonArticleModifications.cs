@@ -34,11 +34,11 @@ namespace Quantumart.QP8.DAL
                 }
                 catch (PostgresException ex)
                 {
-                    Logger.Error()
+                    Logger.ForErrorEvent()
                         .Exception(ex)
                         .Message("Error while persisting article with xml: {xml}\n Query: {sql}", xml, sql)
                         .Property("customerCode", customerCode)
-                        .Write();
+                        .Log();
 
                     throw;
                 }
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.DAL
                 sql = $@"
 			SELECT {fieldSelects} FROM crosstab('
 			select 0::numeric as content_item_id, lower(ca.attribute_name),
-			case when ca.attribute_type_id in (9, 10) then coalesce(ca.default_value, ca.default_blob_value)
+			case when ca.attribute_type_id in (9, 10) then ca.default_blob_value
 			else qp_correct_data(ca.default_value::text, ca.attribute_type_id, ca.attribute_size, ca.default_value)::text
 			end as value from content_attribute ca
 			inner join content c on ca.content_id = c.content_id

@@ -723,11 +723,11 @@ namespace Quantumart.QP8.BLL
             dbContext.SaveChanges();
             sessionsLog = MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
 
-            Logger.Trace()
+            Logger.ForTraceEvent()
                 .Message("User successfully authenticated")
                 .Property("sessionsLog", sessionsLog)
                 .Property("customerCode", QPContext.CurrentCustomerCode)
-                .Write();
+                .Log();
 
             return sessionsLog.SessionId;
         }

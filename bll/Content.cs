@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
+using NLog;
 using QA.Validation.Xaml;
 using NLog.Fluent;
 using Quantumart.QP8.BLL.Helpers;
@@ -216,30 +217,42 @@ namespace Quantumart.QP8.BLL
         public const int MaxLimitOfStoredVersions = 30;
         public const int DefaultLimitOfStoredVersions = 10;
 
-        internal static ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
+        internal static ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new(new List<UserQueryColumn>
         {
-            new UserQueryColumn { ColumnName = FieldName.ContentItemId, DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.StatusTypeId, DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Visible, DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Archive, DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Created, DbType = "datetime" },
-            new UserQueryColumn { ColumnName = FieldName.Modified, DbType = "datetime" },
-            new UserQueryColumn { ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0 }
+            new() { ColumnName = FieldName.ContentItemId, DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.StatusTypeId, DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Visible, DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Archive, DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Created, DbType = "datetime" },
+            new() { ColumnName = FieldName.Modified, DbType = "datetime" },
+            new() { ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0 }
         });
 
-
-        internal static ReadOnlyCollection<UserQueryColumn> PgSystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
+        internal static ReadOnlyCollection<UserQueryColumn> PgSystemMandatoryColumns = new(new List<UserQueryColumn>
         {
-            new UserQueryColumn { ColumnName = FieldName.ContentItemId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.StatusTypeId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Visible.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Archive.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
-            new UserQueryColumn { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp with time zone" },
-            new UserQueryColumn { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp with time zone" },
-            new UserQueryColumn { ColumnName = FieldName.LastModifiedBy.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 }
+            new() { ColumnName = FieldName.ContentItemId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.StatusTypeId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Visible.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Archive.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new() { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new() { ColumnName = FieldName.LastModifiedBy.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 }
         });
 
-        internal static ReadOnlyCollection<UserQueryColumn> UserQueryMandatoryColumns => QPContext.DatabaseType == DatabaseType.Postgres ? PgSystemMandatoryColumns : SystemMandatoryColumns;
+        internal static ReadOnlyCollection<UserQueryColumn> NativePgSystemMandatoryColumns = new(new List<UserQueryColumn>
+        {
+            new() { ColumnName = FieldName.ContentItemId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.StatusTypeId.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 },
+            new() { ColumnName = FieldName.Visible.ToLowerInvariant(), DbType = "boolean" },
+            new() { ColumnName = FieldName.Archive.ToLowerInvariant(), DbType = "boolean" },
+            new() { ColumnName = FieldName.Created.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new() { ColumnName = FieldName.Modified.ToLowerInvariant(), DbType = "timestamp with time zone" },
+            new() { ColumnName = FieldName.LastModifiedBy.ToLowerInvariant(), DbType = "numeric", NumericScale = 0 }
+        });
+
+        internal static ReadOnlyCollection<UserQueryColumn> GetUserQueryMandatoryColumns(bool useNativeEfTypes) => QPContext.DatabaseType == DatabaseType.Postgres
+                ? (useNativeEfTypes ? NativePgSystemMandatoryColumns : PgSystemMandatoryColumns)
+                : SystemMandatoryColumns;
 
         private Site _site;
         private IEnumerable<Field> _fields;
@@ -757,7 +770,10 @@ namespace Quantumart.QP8.BLL
                 catch (Exception exp)
                 {
                     var message = exp.InnerException != null ? exp.InnerException.Message : exp.Message;
-                    CurrentLogger.Error().Exception(exp).Message($"Testing XAML validator for content {Id} failed").Write();
+                    CurrentLogger.ForErrorEvent()
+                        .Exception(exp)
+                        .Message($"Testing XAML validator for content {Id} failed")
+                        .Log();
                     errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {message}");
 
                 }
@@ -1143,7 +1159,7 @@ namespace Quantumart.QP8.BLL
 
                         // проверить на наличие обязательных полей
                         var userQueryViewUniqColumns = userQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
-                        var expectedMandatoryColumns = UserQueryMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
+                        var expectedMandatoryColumns = GetUserQueryMandatoryColumns(UseNativeEfTypes).Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
                         if (expectedMandatoryColumns.Any())
                         {
                             errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.NotAllMandatoryColumnsInUserQuery, string.Join(", ", expectedMandatoryColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
@@ -1163,7 +1179,7 @@ namespace Quantumart.QP8.BLL
                                 .Select(c => string.Format(ContentStrings.UserQueryColumnTypeChanged, c.ColumnName, c.TableName, c.TableDbType, c.DbType))
                                 .ToList();
 
-                        var customUserQueryColumns = userQueryViewAllColumns.Except(UserQueryMandatoryColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
+                        var customUserQueryColumns = userQueryViewAllColumns.Except(GetUserQueryMandatoryColumns(UseNativeEfTypes), UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
                         var changedTypeColumnMessages = GetChangedTypeColumnMessage(customUserQueryColumns).ToList();
                         if (changedTypeColumnMessages.Any())
                         {
@@ -1224,7 +1240,7 @@ namespace Quantumart.QP8.BLL
             {
                 // получить схему view (кроме системных полей)
                 var viewName = $"content_{Id}";
-                var viewColumns = VirtualContentRepository.GetViewSchema(viewName).Where(c => !UserQueryMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer)).ToList();
+                var viewColumns = VirtualContentRepository.GetViewSchema(viewName).Where(c => !GetUserQueryMandatoryColumns(UseNativeEfTypes).Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer)).ToList();
 
                 // спец. обработка колонки content_id из union-контентов
                 foreach (var c in viewColumns)

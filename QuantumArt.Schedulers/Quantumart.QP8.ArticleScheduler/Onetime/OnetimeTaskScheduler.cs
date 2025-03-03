@@ -52,11 +52,11 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
                 var article = _onetimeService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {
-                    Logger.Info()
+                    Logger.ForInfoEvent()
                         .Message(
                         "Article [{id}: {name}] has been hidden on customer code: {customerCode}",
                         article.Id, article.Name, _customer.CustomerName)
-                        .Write();
+                        .Log();
 
                 }
             }
@@ -69,11 +69,11 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 
                 if (article != null && !article.Visible)
                 {
-                    Logger.Info()
+                    Logger.ForInfoEvent()
                         .Message(
                             "Article [{id}: {name}] has been shown on customer code: {customerCode}",
                             article.Id, article.Name, _customer.CustomerName)
-                        .Write();
+                        .Log();
                 }
             }
         }

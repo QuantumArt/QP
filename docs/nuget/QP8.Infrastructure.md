@@ -11,13 +11,17 @@ Cлужебные пакеты, которые используются в [Quan
 
 ## История версий
 
+### QP8.Infrastructure.*.2.3.8
+
+* Обновление Quantumart.AspNetCore до 6.1.2 (#176358)
+
 ### QP8.Infrastructure.*.2.3.7
 
-* Обновление  Quantumart.AspNetCore до 6.0.15 (#174238)
+* Обновление Quantumart.AspNetCore до 6.0.15 (#174238)
 
 ### QP8.Infrastructure.*.2.3.6
 
-* Обновление  Quantumart.AspNetCore до 6.0.13 (#173717)
+* Обновление Quantumart.AspNetCore до 6.0.13 (#173717)
 
 ### QP8.Infrastructure.*.2.3.5
 

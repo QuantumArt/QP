@@ -50,13 +50,13 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
             var qpUsers = UserRepository.GetNtUsers();
 
-            Logger.Trace()
+            Logger.ForTraceEvent()
                .Message("Found users and groups")
                .Property("qpGroups", qpGroups.Select(g => g.Id).ToArray())
                .Property("qpUsers", qpUsers.Select(u => u.Id).ToArray())
                .Property("adGroups", adGroups.Select(g => g.ReferencedPath).ToArray())
                .Property("adUsers", adUsers.Select(u => u.ReferencedPath).ToArray())
-               .Write();
+               .Log();
 
             AddUsers(adUsers, adGroups, qpUsers, qpGroups);
             UpdateUsers(qpUsers, adUsers, adGroups, qpGroups);

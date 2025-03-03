@@ -63,7 +63,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             var url = filterContext.HttpContext.Request.GetDisplayUrl();
 
             var logMessage = "Exception has been thrown while requesting the following URL: {url}";
-            var logBuilder = _logger.Error().Exception(filterContext.Exception);
+            var logBuilder = _logger.ForErrorEvent()
+                .Exception(filterContext.Exception);
 
             if (filterContext.Exception is PostgresException pgex)
             {
@@ -76,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             }
 
             logBuilder.Property("customerCode", QPContext.CurrentCustomerCode);
-            logBuilder.Write();
+            logBuilder.Log();
 
 
             filterContext.ExceptionHandled = true;

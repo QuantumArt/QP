@@ -47,7 +47,10 @@ namespace Quantumart.QP8.ArticleScheduler
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error().Exception(ex).Message("There was an error while starting the service job").Write();
+                        Logger.ForErrorEvent()
+                            .Exception(ex)
+                            .Message("There was an error while starting the service job")
+                            .Log();
                     }
                 } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_props.RecurrentTimeout));
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
@@ -66,7 +69,10 @@ namespace Quantumart.QP8.ArticleScheduler
             }
             catch (Exception ex)
             {
-                Logger.Error().Exception(ex).Message("There was an error while stopping the service").Write();
+                Logger.ForErrorEvent()
+                    .Exception(ex)
+                    .Message("There was an error while stopping the service")
+                    .Log();
                 failed = true;
             }
             finally

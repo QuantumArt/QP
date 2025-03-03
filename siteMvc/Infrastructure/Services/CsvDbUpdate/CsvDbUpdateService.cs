@@ -96,9 +96,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                         var msg = "Ignore related article CIID: {relatedArticleId}. " +
                             "Can't find any related article at csv data or db. " +
                             "FID: {fieldId}, CID: {contentId}, CIID: {articleId}";
-                        Logger.Warn()
+                        Logger.ForWarnEvent()
                             .Message(msg,-relatedId, articleField.Id, articleField.Id, -article.Id)
-                            .Write();
+                            .Log();
                     }
 
                     articleField.ArticleIds = result.ToArray();

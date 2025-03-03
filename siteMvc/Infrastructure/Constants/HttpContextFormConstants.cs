@@ -42,6 +42,8 @@
         public const string ContentDefaultFilterContentId = "ContentDefaultFilter.ContentId";
         public const string WorkflowsWorkflowRulesDisplay = "WorkflowsWorkflowRulesDisplay";
         public const string AggregationListItemsVeCommandsDisplay = "AggregationListItemsVeCommandsDisplay";
+        public const string UserId = "userId";
+        public const string GroupId = "groupId";
 
         public const string DataId = "Data.Id";
         public const string DataUserId = "Data.UserId";

@@ -3461,7 +3461,7 @@ COALESCE(u.LOGIN, ug.GROUP_NAME, a.ATTRIBUTE_NAME) as Receiver";
         {
             var dbType = GetDbType(connection);
             var contentDataColumn = isBlob && dbType == DatabaseType.SqlServer ? "BLOB_DATA" : "DATA";
-            var attributeDefValueColumn = "COALESCE(a.DEFAULT_BLOB_VALUE, a.DEFAULT_VALUE)";
+            var attributeDefValueColumn = "CASE WHEN a.attribute_type_id in (9, 10) THEN a.default_blob_value ELSE a.default_value END AS def_value";
             var contentItemsIds = string.Join(",", idsForStep);
             var sql = $@"UPDATE content_data
                 SET {contentDataColumn} = (SELECT {attributeDefValueColumn} FROM content_attribute a WHERE attribute_id = @attr_id)
