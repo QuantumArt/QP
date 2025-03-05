@@ -8,8 +8,8 @@ namespace Quantumart.QP8.BLL.Repository;
 
 public class ExternalWorkflowRepository
 {
-
     private const string NewWorkflowStatusName = "Процесс запущен";
+
     public static void UpdateStatus(string processId, string newStatus)
     {
         ExternalWorkflowDAL workflow = QPContext.EFContext.ExternalWorkflowSet.Single(w => w.ProcessId == processId);
@@ -30,10 +30,9 @@ public class ExternalWorkflowRepository
         }
 
         ExternalWorkflowInProgressDAL progress = QPContext.EFContext.ExternalWorkflowInProgressSet
-            .Single(p => p.ProcessId == workflow.Id);
+            .Single(p => p.ExternalWorkflowId == workflow.Id);
 
         progress.CurrentStatus = savedStatus.Id;
-        progress.LastModifiedBy = SpecialIds.AdminUserId;
 
         ExternalWorkflowInProgressDAL savedProgress = DefaultRepository.SimpleUpdate(progress);
 
@@ -42,7 +41,6 @@ public class ExternalWorkflowRepository
             throw new InvalidOperationException("Unable to update process current status");
         }
     }
-
 
     public static void SaveStartedWorkflowInfoToDb(string processId, string workflowName, string articleName, int workflowId, int contentItemId)
     {
@@ -55,6 +53,8 @@ public class ExternalWorkflowRepository
                 ProcessId = processId,
                 WorkflowName = workflowName,
                 ArticleName = articleName,
+                ArticleId = contentItemId,
+                WorkflowId = workflowId,
             };
 
             ExternalWorkflowDAL createdWorkflow = DefaultRepository.SimpleSave(workflowEntity);
@@ -81,11 +81,8 @@ public class ExternalWorkflowRepository
 
             ExternalWorkflowInProgressDAL workflowProgress = new()
             {
-                ProcessId = createdWorkflow.Id,
-                WorkflowId = workflowId,
-                ArticleId = contentItemId,
-                CurrentStatus = createWorkflowStatus.Id,
-                LastModifiedBy = SpecialIds.AdminUserId
+                ExternalWorkflowId = createdWorkflow.Id,
+                CurrentStatus = createWorkflowStatus.Id
             };
 
             ExternalWorkflowInProgressDAL createdWorkflowProgress = DefaultRepository.SimpleSave(workflowProgress);
@@ -100,7 +97,7 @@ public class ExternalWorkflowRepository
     public static void DeleteProcess(decimal process)
     {
         ExternalWorkflowInProgressDAL inProcess = QPContext.EFContext.ExternalWorkflowInProgressSet
-            .SingleOrDefault(x => x.ProcessId == process);
+            .SingleOrDefault(x => x.ExternalWorkflowId == process);
 
         if (inProcess != null)
         {
@@ -134,6 +131,6 @@ public class ExternalWorkflowRepository
 
     public static List<int> GetProcessIds()
     {
-        return QPContext.EFContext.ExternalWorkflowInProgressSet.Select(x => (int)x.ProcessId).ToList();
+        return QPContext.EFContext.ExternalWorkflowInProgressSet.Select(x => (int)x.ExternalWorkflowId).ToList();
     }
 }

@@ -111,7 +111,7 @@ on conflict do nothing;
 
 insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
 values ((select id from backend_action where code = 'get_article_external_workflow_task'), (select id from backend_action where code = 'complete_article_external_workflow_task'),
-        'Complete', 'workflow.gif', NULL, 1)
+        'Complete', 'check.png', NULL, 1)
 on conflict do nothing;
 
 insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
@@ -121,6 +121,6 @@ on conflict do nothing;
 
 insert into action_toolbar_button(parent_action_id, action_id, name, icon, icon_disabled, "order")
 values ((select id from backend_action where code = 'list_article_external_workflow_tasks'), (select id from backend_action where code = 'get_article_external_workflow_task'),
-        'Complete', 'workflow.gif', NULL, 2)
+        'Complete', 'check.png', NULL, 2)
 on conflict do nothing;
 
