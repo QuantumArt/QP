@@ -32,7 +32,7 @@ public class ExternalWorkflowRepository
         ExternalWorkflowInProgressDAL progress = QPContext.EFContext.ExternalWorkflowInProgressSet
             .Single(p => p.ExternalWorkflowId == workflow.Id);
 
-        progress.CurrentStatus = savedStatus.Id;
+        progress.CurrentStatusId = savedStatus.Id;
 
         ExternalWorkflowInProgressDAL savedProgress = DefaultRepository.SimpleUpdate(progress);
 
@@ -82,7 +82,7 @@ public class ExternalWorkflowRepository
             ExternalWorkflowInProgressDAL workflowProgress = new()
             {
                 ExternalWorkflowId = createdWorkflow.Id,
-                CurrentStatus = createWorkflowStatus.Id
+                CurrentStatusId = createWorkflowStatus.Id
             };
 
             ExternalWorkflowInProgressDAL createdWorkflowProgress = DefaultRepository.SimpleSave(workflowProgress);

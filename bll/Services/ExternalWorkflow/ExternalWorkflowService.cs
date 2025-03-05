@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using QA.Workflow.Integration.QP.Models;
 using QA.Workflow.Interfaces;
 using QA.Workflow.Models;
@@ -30,7 +31,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string WorkflowIdentityFieldName = "WorkflowID";
     private const string MainSchemaFieldName = "IsMainSchema";
     private const string SchemaIdFieldName = "SchemaId";
-
+    private const string ManuallyStoppingProcessStatus = "Остановка процесса по причине запуска нового процесса";
 
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
@@ -136,6 +137,13 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
                 return true;
             }
+
+            List<string> processesToStop = await GetActiveProcessIdsByContentItemId(customerCode,
+                contentId,
+                contentItemId,
+                token);
+
+            await StopProcesses(customerCode, processesToStop, token);
 
             foreach (string workflowToStart in workflowsToStart.Values)
             {
@@ -401,4 +409,40 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
     public async Task<Dictionary<string, object>> GetTaskVariables(string taskId) =>
         await _workflowUserTaskService.GetTaskVariables(taskId);
+
+    private async Task<List<string>> GetActiveProcessIdsByContentItemId(string customerCode, int contentId, int contentItemId, CancellationToken token)
+    {
+        _logger.LogTrace("Retrieving active process instances ids for customer code {CustomerCode} with content id {ContentId} and content item id {ContentItemId}",
+            customerCode,
+            contentId,
+            contentItemId);
+
+        Dictionary<string, object> variables = new()
+        {
+            { "ContentId", contentId },
+            { "ContentItemId", contentItemId }
+        };
+
+        List<string> processIds = await _workflowProcessService.GetProcessInstancesIdsByVariables(string.Empty, customerCode, variables);
+
+        _logger.LogTrace("Found active process instances with ids: {ProcessIds}", string.Join(", ", processIds));
+
+        return processIds;
+    }
+
+    private async Task StopProcesses(string customerCode, List<string> processesIds, CancellationToken token)
+    {
+        foreach (string processesId in processesIds)
+        {
+            _logger.LogTrace("Stopping process with Id {ProcessId}", processesId);
+
+            ExternalWorkflowRepository.UpdateStatus(processesId, ManuallyStoppingProcessStatus);
+
+            _logger.LogTrace("For process with id {ProcessId} was set status {Status}", processesId, ManuallyStoppingProcessStatus);
+
+            await _workflowProcessService.DeleteProcessInstanceById(processesId, customerCode);
+
+            _logger.LogTrace("Process with id {ProcessId} was stopped", processesId);
+        }
+    }
 }
