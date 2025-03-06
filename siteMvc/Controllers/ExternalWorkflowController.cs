@@ -31,6 +31,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return result ? JsonMessageResult(MessageResult.Info(ExternalWorkflowStrings.SuccessfullyPublished)) : JsonMessageResult(MessageResult.Error(ExternalWorkflowStrings.PublishError));
         }
 
+        [CustomActionLocalize]
         [HttpPost("startWorkflow")]
         public async Task<IActionResult> StartWorkflow([FromForm]string customerCode,
             [FromForm(Name = "content_item_id")]int contentItemId,

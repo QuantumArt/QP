@@ -1,15 +1,14 @@
 using System;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.WebUtilities;
 using NLog;
-using NLog.Fluent;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL;
@@ -97,6 +96,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Proxy([FromBody] ProxyViewModel model)
         {
             var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(model.Url);
+
+            urlToProcess = QueryHelpers.AddQueryString(urlToProcess, "current-culture", CultureInfo.CurrentCulture.Name);
+            urlToProcess = QueryHelpers.AddQueryString(urlToProcess, "current-ui-culture", CultureInfo.CurrentCulture.Name);
 
             Logger.ForDebugEvent()
                 .Message("Proxying custom action url: {url}", urlToProcess)
