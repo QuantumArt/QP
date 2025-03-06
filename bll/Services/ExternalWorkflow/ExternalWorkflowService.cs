@@ -32,6 +32,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string MainSchemaFieldName = "IsMainSchema";
     private const string SchemaIdFieldName = "SchemaId";
     private const string ManuallyStoppingProcessStatus = "Остановка процесса по причине запуска нового процесса";
+    private const string ExternalWorkflowEnabledParameterName = "EXTERNAL_WORKFLOW";
 
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
@@ -59,6 +60,16 @@ public class ExternalWorkflowService : IExternalWorkflowService
     {
         try
         {
+            _logger.LogInformation("Publishing workflow schema for customer {CustomerCode} from article {ArticleId} on site {SiteId}",
+                customerCode,
+                contentItemId,
+                siteId);
+
+            if (!IsExternalWorkflowEnabled())
+            {
+                throw new InvalidOperationException("External workflow is not enabled");
+            }
+
             Article workflow = ArticleRepository.GetById(contentItemId);
             List<FieldValue> workflowFields = workflow.LoadFieldValues();
             string workflowName = workflowFields.Single(f => f.Field.Name == WorkflowIdentityFieldName).Value;
@@ -110,6 +121,11 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 contentItemId,
                 contentId,
                 customerCode);
+
+            if (!IsExternalWorkflowEnabled())
+            {
+                throw new InvalidOperationException("External workflow is not enabled");
+            }
 
             QPContext.IsAdmin = true;
 
