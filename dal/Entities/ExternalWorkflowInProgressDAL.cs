@@ -7,7 +7,7 @@ public class ExternalWorkflowInProgressDAL
 {
     public decimal Id { get; set; }
     public decimal ExternalWorkflowId { get; set; }
-    public decimal CurrentStatus { get; set; }
+    public decimal CurrentStatusId { get; set; }
 }
 
 public class ExternalWorkflowInProgressDALConfiguration : IEntityTypeConfiguration<ExternalWorkflowInProgressDAL>
@@ -18,7 +18,7 @@ public class ExternalWorkflowInProgressDALConfiguration : IEntityTypeConfigurati
 
         builder.Property(x => x.Id).HasColumnName("ID");
         builder.Property(x => x.ExternalWorkflowId).HasColumnName("EXTERNAL_WORKFLOW_ID");
-        builder.Property(x => x.CurrentStatus).HasColumnName("CURRENT_STATUS");
+        builder.Property(x => x.CurrentStatusId).HasColumnName("CURRENT_STATUS");
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();

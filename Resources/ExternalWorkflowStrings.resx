@@ -80,4 +80,58 @@
   <data name="StartError" xml:space="preserve">
     <value>Error while starting workflow</value>
   </data>
+  <data name="WorkflowDisabled" xml:space="preserve">
+    <value>External workflow disabled</value>
+  </data>
+  <data name="WorkflowNameNotFound" xml:space="preserve">
+    <value>Workflow name not found in QP article</value>
+  </data>
+  <data name="SchemaNameFieldNotSpecifiedInSettings" xml:space="preserve">
+    <value>Field id for schema name not specified in settings</value>
+  </data>
+  <data name="SchemaFileFieldNotScepifiedInSettings" xml:space="preserve">
+    <value>Field id for schema file not specified in settings</value>
+  </data>
+  <data name="NoSchemasAttachedToArticle" xml:space="preserve">
+    <value>No related articles with schema files was found</value>
+  </data>
+  <data name="SchemaNameNotSpecified" xml:space="preserve">
+    <value>Schema name not specified</value>
+  </data>
+  <data name="SchemaFileNotSpecified" xml:space="preserve">
+    <value>Schema file name not specified</value>
+  </data>
+  <data name="SchemaFileNotFoundTemplate" xml:space="preserve">
+    <value>Schema file was not found on disk by path {0}</value>
+  </data>
+  <data name="UnableToGetContentIdByClassifier" xml:space="preserve">
+    <value>Unable to get content id by classifier field</value>
+  </data>
+  <data name="WorkflowContentIdNotSpecifiedInSettings" xml:space="preserve">
+    <value>Workflow content id not specified in settings</value>
+  </data>
+  <data name="WorkflowToContentRelationFieldNotFound" xml:space="preserve">
+    <value>Workflow to content relation field with name ContentId not found</value>
+  </data>
+  <data name="WorkflowToStartNotFoundTemplate" xml:space="preserve">
+    <value>Unable to find assigned workflow for content {0}</value>
+  </data>
+  <data name="ProcessNotStarted" xml:space="preserve">
+    <value>Process not started</value>
+  </data>
+  <data name="WorkflowAssignmentFieldNotFound" xml:space="preserve">
+    <value>Field with name "Workflow" not found in workflow assignments content</value>
+  </data>
+  <data name="WorkflowNoSetToAssignment" xml:space="preserve">
+    <value>Workflow article not set for assignment</value>
+  </data>
+  <data name="IsMainSchemaFieldNotFound" xml:space="preserve">
+    <value>Field with name IsMainSchema not found in workflow schemas content</value>
+  </data>
+  <data name="SchemaIdFieldNotFound" xml:space="preserve">
+    <value>Field with name SchemaId not found in workflow schemas content</value>
+  </data>
+  <data name="DefinitionNameNotFound" xml:space="preserve">
+    <value>Schema with IsMainSchema field active not found or schema id is empty</value>
+  </data>
 </root>

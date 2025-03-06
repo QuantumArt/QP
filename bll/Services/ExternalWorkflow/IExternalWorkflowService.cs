@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using UserTaskInfo =  Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTasksInfo;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
 public interface IExternalWorkflowService
 {
-    Task<bool> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token);
+    Task<ExternalWorkflowActionResult> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token);
 
-    Task<bool> StartProcess(string customerCode,
+    Task<ExternalWorkflowActionResult> StartProcess(string customerCode,
         int contentItemId,
         int contentId,
         CancellationToken token);
