@@ -15,6 +15,7 @@ using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 using UserTask = QA.Workflow.Models.UserTask;
 using UserTaskInfo = Quantumart.QP8.BLL.Services.ExternalWorkflow.Models.UserTasksInfo;
 
@@ -32,7 +33,6 @@ public class ExternalWorkflowService : IExternalWorkflowService
     private const string MainSchemaFieldName = "IsMainSchema";
     private const string SchemaIdFieldName = "SchemaId";
     private const string ManuallyStoppingProcessStatus = "Остановка процесса по причине запуска нового процесса";
-    private const string ExternalWorkflowEnabledParameterName = "EXTERNAL_WORKFLOW";
 
     private readonly IWorkflowDeploymentService _deploymentService;
     private readonly ILogger<ExternalWorkflowService> _logger;
@@ -56,7 +56,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<bool> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token)
+    public async Task<ExternalWorkflowActionResult> PublishWorkflow(string customerCode, int contentItemId, int siteId, CancellationToken token)
     {
         try
         {
@@ -67,53 +67,94 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
             if (!IsExternalWorkflowEnabled())
             {
-                throw new InvalidOperationException("External workflow is not enabled");
+                throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.WorkflowDisabled);
             }
 
             Article workflow = ArticleRepository.GetById(contentItemId);
             List<FieldValue> workflowFields = workflow.LoadFieldValues();
-            string workflowName = workflowFields.Single(f => f.Field.Name == WorkflowIdentityFieldName).Value;
+            string workflowName = workflowFields.SingleOrDefault(f => f.Field.Name == WorkflowIdentityFieldName)?.Value;
+
+            if (string.IsNullOrEmpty(workflowName))
+            {
+                throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.WorkflowNameNotFound);
+            }
+
             Deployment deployment = new()
             {
                 TenantId = customerCode,
                 ProcessName = workflowName
             };
 
-            int schemaNameFieldId = DbRepository.GetAppSettings<int>(SchemaNameFieldIdSettingName, true);
-            int schemaFileFieldId = DbRepository.GetAppSettings<int>(SchemaFileFieldIdSettingName, true);
+            int schemaNameFieldId = DbRepository.GetAppSettings<int>(SchemaNameFieldIdSettingName);
 
-            int[] schemas = workflowFields.Single(f => f.Field.Name == WorkflowSchemaRelationFieldName).RelatedItems;
+            if (schemaNameFieldId == 0)
+            {
+                throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.SchemaNameFieldNotSpecifiedInSettings);
+            }
+
+            int schemaFileFieldId = DbRepository.GetAppSettings<int>(SchemaFileFieldIdSettingName);
+
+            if (schemaFileFieldId == 0)
+            {
+                throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.SchemaFileFieldNotScepifiedInSettings);
+            }
+
+            int[] schemas = workflowFields
+                .SingleOrDefault(f => f.Field.Name == WorkflowSchemaRelationFieldName)?
+                .RelatedItems ?? Array.Empty<int>();
+
+            if (schemas.Length == 0)
+            {
+                throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.NoSchemasAttachedToArticle);
+            }
 
             foreach (int schema in schemas)
             {
                 Article workflowSchema = ArticleRepository.GetById(schema);
                 List<FieldValue> schemaFields = workflowSchema.LoadFieldValues();
-                string schemaName = schemaFields.Single(f => f.Field.Id == schemaNameFieldId).Value;
-                FieldValue schemaFileField = schemaFields.Single(f => f.Field.Id == schemaFileFieldId);
+                string schemaName = schemaFields.SingleOrDefault(f => f.Field.Id == schemaNameFieldId)?.Value;
+
+                if (string.IsNullOrWhiteSpace(schemaName))
+                {
+                    throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.SchemaNameNotSpecified);
+                }
+
+                FieldValue schemaFileField = schemaFields.SingleOrDefault(f => f.Field.Id == schemaFileFieldId);
+
+                if (schemaFileField == null || string.IsNullOrWhiteSpace(schemaFileField.Value))
+                {
+                    throw new ExternalWorkflowPublishException(ExternalWorkflowStrings.SchemaNameNotSpecified);
+                }
+
                 string filePath = Path.Combine(schemaFileField.Field.PathInfo.Path, schemaFileField.Value);
 
                 if (!File.Exists(filePath))
                 {
-                    throw new ArgumentException($"Unable to locate file in path {filePath}", filePath);
+                    throw new ExternalWorkflowPublishException(string.Format(ExternalWorkflowStrings.SchemaFileNotFoundTemplate, filePath));
                 }
 
                 byte[] fileBytes = await File.ReadAllBytesAsync(filePath, token);
 
-                deployment.Files.Add(new() { Name = schemaName, FileName = Path.GetFileName(filePath), FileBytes = fileBytes});
+                deployment.Files.Add(new() { Name = schemaName, FileName = Path.GetFileName(filePath), FileBytes = fileBytes });
             }
+
             bool result = await _deploymentService.CreateDeployment(deployment);
 
-            return result;
+            return new() { Success = result, Message = result ? ExternalWorkflowStrings.SuccessfullyPublished : ExternalWorkflowStrings.PublishError };
+        }
+        catch (ExternalWorkflowPublishException ex)
+        {
+            return new() { Success = false, Message = ex.Message };
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error while publishing workflow");
 
-            return false;
+            return new() { Success = false, Message = ExternalWorkflowStrings.PublishError };
         }
     }
 
-    public async Task<bool> StartProcess(string customerCode, int contentItemId, int contentId, CancellationToken token)
+    public async Task<ExternalWorkflowActionResult> StartProcess(string customerCode, int contentItemId, int contentId, CancellationToken token)
     {
         try
         {
@@ -124,7 +165,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
             if (!IsExternalWorkflowEnabled())
             {
-                throw new InvalidOperationException("External workflow is not enabled");
+                throw new ExternalWorkflowStartException(ExternalWorkflowStrings.WorkflowDisabled);
             }
 
             QPContext.IsAdmin = true;
@@ -141,17 +182,26 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 list.Count == 0 ? "not found" : list.First().Text);
 
             int workflowContentId = GetContentIdForWorkflow(contentItemId, contentId);
-            int externalWorkflowContentId = DbRepository.GetAppSettings<int>(ContentIdSettingName, true);
+            int externalWorkflowContentId = DbRepository.GetAppSettings<int>(ContentIdSettingName);
+
+            if (externalWorkflowContentId == 0)
+            {
+                throw new ExternalWorkflowStartException(ExternalWorkflowStrings.WorkflowContentIdNotSpecifiedInSettings);
+            }
 
             Content assignmentsContent = ContentRepository.GetById(externalWorkflowContentId);
-            int fieldId = assignmentsContent.Fields.Single(f => f.Name == WorkflowContentRelationFieldName).Id;
+            int fieldId = assignmentsContent.Fields.SingleOrDefault(f => f.Name == WorkflowContentRelationFieldName)?.Id ?? -1;
+
+            if (fieldId == -1)
+            {
+                throw new ExternalWorkflowStartException(ExternalWorkflowStrings.WorkflowToContentRelationFieldNotFound);
+            }
+
             Dictionary<int, string> workflowsToStart = ArticleRepository.GetRelatedItems(new[] { fieldId }, workflowContentId);
 
-            if (workflowsToStart.Count == 0)
+            if (workflowsToStart.All(x => string.IsNullOrWhiteSpace(x.Value)))
             {
-                _logger.LogWarning("Unable to find assigned workflow for content {Content}", workflowContentId);
-
-                return true;
+                throw new ExternalWorkflowStartException(string.Format(ExternalWorkflowStrings.WorkflowToStartNotFoundTemplate, workflowContentId));
             }
 
             List<string> processesToStop = await GetActiveProcessIdsByContentItemId(customerCode,
@@ -186,16 +236,16 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
-                    throw new InvalidOperationException("Process not started");
+                    throw new ExternalWorkflowStartException(ExternalWorkflowStrings.ProcessNotStarted);
                 }
 
                 try
                 {
                     ExternalWorkflowRepository.SaveStartedWorkflowInfoToDb(result,
-                    workflow.WorkflowName,
-                    list.Count == 0 ? contentItemId.ToString() : list.First().Text,
-                    workflow.WorkflowId,
-                    contentItemId);
+                        workflow.WorkflowName,
+                        list.Count == 0 ? contentItemId.ToString() : list.First().Text,
+                        workflow.WorkflowId,
+                        contentItemId);
                 }
                 catch (Exception e)
                 {
@@ -203,13 +253,17 @@ public class ExternalWorkflowService : IExternalWorkflowService
                 }
             }
 
-            return true;
+            return new() { Success = true, Message = ExternalWorkflowStrings.SuccessfullyStarted };
+        }
+        catch (ExternalWorkflowStartException ex)
+        {
+            return new() { Success = false, Message = ex.Message };
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Failed to start process");
 
-            return false;
+            return new() { Success = false, Message = ExternalWorkflowStrings.StartError };
         }
         finally
         {
@@ -244,7 +298,9 @@ public class ExternalWorkflowService : IExternalWorkflowService
         try
         {
             UserInfo userInfo = GetUserInfo();
-            List<UserTask> userTasks = await _workflowUserTaskService.GetUserTasks(userInfo.Login, userInfo.Roles, QPContext.CurrentCustomerCode);
+            List<UserTask> userTasks = await _workflowUserTaskService.GetUserTasks(userInfo.Login,
+                userInfo.Roles,
+                QPContext.CurrentCustomerCode);
 
             UserTaskInfo taskInfo = new()
             {
@@ -332,35 +388,63 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
 
         Article assignedWorkflow = ArticleRepository.GetById(workflowArticleId);
-        int workflowId = assignedWorkflow.FieldValues
-           .Single(f => f.Field.Name == AssignmentToWorkflowRelationFieldName)
-           .RelatedItems
-           .Single();
+        FieldValue workflowField = assignedWorkflow.FieldValues
+           .SingleOrDefault(f => f.Field.Name == AssignmentToWorkflowRelationFieldName);
+
+        if (workflowField is null)
+        {
+            throw new ExternalWorkflowStartException(ExternalWorkflowStrings.WorkflowAssignmentFieldNotFound);
+        }
+
+        int workflowId = workflowField.RelatedItems.SingleOrDefault(-1);
+
+        if (workflowId == -1)
+        {
+            throw new ExternalWorkflowStartException(ExternalWorkflowStrings.WorkflowNoSetToAssignment);
+        }
 
         Article workflowInfo = ArticleRepository.GetById(workflowId);
         int[] schemas = workflowInfo.FieldValues
-           .Single(f => f.Field.Name == WorkflowSchemaRelationFieldName)
-           .RelatedItems;
+            .SingleOrDefault(f => f.Field.Name == WorkflowSchemaRelationFieldName)?
+            .RelatedItems ?? Array.Empty<int>();
+
+        if (schemas.Length == 0)
+        {
+            throw new ExternalWorkflowStartException(ExternalWorkflowStrings.NoSchemasAttachedToArticle);
+        }
 
         string definitionName = string.Empty;
 
         foreach (int schema in schemas)
         {
             Article schemaArticle = ArticleRepository.GetById(schema);
-            string isMain = schemaArticle.FieldValues.Single(f => f.Field.Name == MainSchemaFieldName).Value;
+            FieldValue isMainField = schemaArticle.FieldValues.SingleOrDefault(f => f.Field.Name == MainSchemaFieldName);
 
-            if (isMain == "0")
+            if (isMainField is null)
+            {
+                throw new ExternalWorkflowStartException(ExternalWorkflowStrings.IsMainSchemaFieldNotFound);
+            }
+
+            if (isMainField.Value == "0")
             {
                 continue;
             }
 
-            definitionName = schemaArticle.FieldValues.Single(f => f.Field.Name == SchemaIdFieldName).Value;
+            FieldValue definitionNameField = schemaArticle.FieldValues.SingleOrDefault(f => f.Field.Name == SchemaIdFieldName);
+
+            if (definitionNameField is null)
+            {
+                throw new ExternalWorkflowStartException(ExternalWorkflowStrings.SchemaIdFieldNotFound);
+            }
+
+            definitionName = definitionNameField.Value;
+
             break;
         }
 
         if (string.IsNullOrWhiteSpace(definitionName))
         {
-            throw new InvalidOperationException("Unable to retrieve process key from QP.");
+            throw new ExternalWorkflowStartException(ExternalWorkflowStrings.DefinitionNameNotFound);
         }
 
         return new()
@@ -380,12 +464,13 @@ public class ExternalWorkflowService : IExternalWorkflowService
         {
             return contentId;
         }
-        Article article = ArticleRepository.GetById(contentItemId);
-        string actualContentId = article.FieldValues.Single(f => f.Field.ExactType == FieldExactTypes.Classifier).Value;
 
-        if (!int.TryParse(actualContentId, out int workflowContentId))
+        Article article = ArticleRepository.GetById(contentItemId);
+        string actualContentId = article.FieldValues.SingleOrDefault(f => f.Field.ExactType == FieldExactTypes.Classifier)?.Value;
+
+        if (string.IsNullOrWhiteSpace(actualContentId) || !int.TryParse(actualContentId, out int workflowContentId))
         {
-            throw new InvalidOperationException("Unable to get content id by classifier field");
+            throw new ExternalWorkflowStartException(ExternalWorkflowStrings.UnableToGetContentIdByClassifier);
         }
 
         return workflowContentId;

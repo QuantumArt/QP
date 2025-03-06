@@ -48,55 +48,61 @@ public class ExternalWorkflowRepository
         }
     }
 
-    public static void SaveStartedWorkflowInfoToDb(string processId, string workflowName, string articleName, int workflowId, int contentItemId)
+    public static void SaveStartedWorkflowInfoToDb(string processId,
+        string workflowName,
+        string articleName,
+        int workflowId,
+        int contentItemId
+    )
     {
-            DateTime now = DateTime.Now;
-            string createdBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn;
-            ExternalWorkflowDAL workflowEntity = new()
-            {
-                Created = now,
-                CreatedBy = createdBy,
-                ProcessId = processId,
-                WorkflowName = workflowName,
-                ArticleName = articleName,
-                ArticleId = contentItemId,
-                WorkflowId = workflowId,
-            };
+        DateTime now = DateTime.Now;
+        string createdBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn;
 
-            ExternalWorkflowDAL createdWorkflow = DefaultRepository.SimpleSave(workflowEntity);
+        ExternalWorkflowDAL workflowEntity = new()
+        {
+            Created = now,
+            CreatedBy = createdBy,
+            ProcessId = processId,
+            WorkflowName = workflowName,
+            ArticleName = articleName,
+            ArticleId = contentItemId,
+            WorkflowId = workflowId,
+        };
 
-            if (createdWorkflow is not { Id: > 0 })
-            {
-                throw new InvalidOperationException("Unable to save process info to DB.");
-            }
+        ExternalWorkflowDAL createdWorkflow = DefaultRepository.SimpleSave(workflowEntity);
 
-            ExternalWorkflowStatusDAL workflowStatus = new()
-            {
-                Created = now,
-                CreatedBy = createdBy,
-                Status = NewWorkflowStatusName,
-                ExternalWorkflowId = createdWorkflow.Id
-            };
+        if (createdWorkflow is not { Id: > 0 })
+        {
+            throw new InvalidOperationException("Unable to save process info to DB.");
+        }
 
-            ExternalWorkflowStatusDAL createWorkflowStatus = DefaultRepository.SimpleSave(workflowStatus);
+        ExternalWorkflowStatusDAL workflowStatus = new()
+        {
+            Created = now,
+            CreatedBy = createdBy,
+            Status = NewWorkflowStatusName,
+            ExternalWorkflowId = createdWorkflow.Id
+        };
 
-            if (createWorkflowStatus is not { Id: > 0 })
-            {
-                throw new InvalidOperationException("Unable to save process status to DB.");
-            }
+        ExternalWorkflowStatusDAL createWorkflowStatus = DefaultRepository.SimpleSave(workflowStatus);
 
-            ExternalWorkflowInProgressDAL workflowProgress = new()
-            {
-                ExternalWorkflowId = createdWorkflow.Id,
-                CurrentStatusId = createWorkflowStatus.Id
-            };
+        if (createWorkflowStatus is not { Id: > 0 })
+        {
+            throw new InvalidOperationException("Unable to save process status to DB.");
+        }
 
-            ExternalWorkflowInProgressDAL createdWorkflowProgress = DefaultRepository.SimpleSave(workflowProgress);
+        ExternalWorkflowInProgressDAL workflowProgress = new()
+        {
+            ExternalWorkflowId = createdWorkflow.Id,
+            CurrentStatusId = createWorkflowStatus.Id
+        };
 
-            if (createdWorkflowProgress is not { Id: > 0 })
-            {
-                throw new InvalidOperationException("Unable to create process progress in DB.");
-            }
+        ExternalWorkflowInProgressDAL createdWorkflowProgress = DefaultRepository.SimpleSave(workflowProgress);
+
+        if (createdWorkflowProgress is not { Id: > 0 })
+        {
+            throw new InvalidOperationException("Unable to create process progress in DB.");
+        }
     }
 
 

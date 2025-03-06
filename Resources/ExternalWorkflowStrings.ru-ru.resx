@@ -80,4 +80,58 @@
   <data name="StartError" xml:space="preserve">
     <value>Ошибка при публикации запуске процесса</value>
   </data>
+  <data name="WorkflowDisabled" xml:space="preserve">
+    <value>Внешний workflow отключен</value>
+  </data>
+  <data name="WorkflowNameNotFound" xml:space="preserve">
+    <value>Название workflow не найдено в статье QP</value>
+  </data>
+  <data name="SchemaNameFieldNotSpecifiedInSettings" xml:space="preserve">
+    <value>Id поля имени схемы не указано в настройках</value>
+  </data>
+  <data name="SchemaFileFieldNotScepifiedInSettings" xml:space="preserve">
+    <value>Id поля файла схемы не указано в настройках</value>
+  </data>
+  <data name="NoSchemasAttachedToArticle" xml:space="preserve">
+    <value>Не найдено связанных статей со схемами</value>
+  </data>
+  <data name="SchemaNameNotSpecified" xml:space="preserve">
+    <value>Не указано имя схемы</value>
+  </data>
+  <data name="SchemaFileNotSpecified" xml:space="preserve">
+    <value>Имя файла схемы не указано</value>
+  </data>
+  <data name="SchemaFileNotFoundTemplate" xml:space="preserve">
+    <value>Файл схемы не был найден на диске по пути {0}</value>
+  </data>
+  <data name="UnableToGetContentIdByClassifier" xml:space="preserve">
+    <value>Не удалось найти Id контента по полю классификатора</value>
+  </data>
+  <data name="WorkflowContentIdNotSpecifiedInSettings" xml:space="preserve">
+    <value>Id контента workflow не указан в настройках</value>
+  </data>
+  <data name="WorkflowToContentRelationFieldNotFound" xml:space="preserve">
+    <value>Поле связи workflow с контентом не надено, имя поля ContentId</value>
+  </data>
+  <data name="WorkflowToStartNotFoundTemplate" xml:space="preserve">
+    <value>Не удалось найти workflow назначенный для контента {0}</value>
+  </data>
+  <data name="ProcessNotStarted" xml:space="preserve">
+    <value>Процесс не запущен</value>
+  </data>
+  <data name="WorkflowAssignmentFieldNotFound" xml:space="preserve">
+    <value>Поле с названием Workflow не найдено в контенте назначений Workflow</value>
+  </data>
+  <data name="WorkflowNoSetToAssignment" xml:space="preserve">
+    <value>В назначении workflow не привязан workflow</value>
+  </data>
+  <data name="IsMainSchemaFieldNotFound" xml:space="preserve">
+    <value>Поле с названием IsMainSchema не надено в контенте схем workflow</value>
+  </data>
+  <data name="SchemaIdFieldNotFound" xml:space="preserve">
+    <value>Поле с именем SchemaId не найдено в контенте схем workflow</value>
+  </data>
+  <data name="DefinitionNameNotFound" xml:space="preserve">
+    <value>Не найдена схема с признаком "Главная" или в поле Id схемы не задано значение</value>
+  </data>
 </root>

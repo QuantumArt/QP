@@ -78,6 +78,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Schema with IsMainSchema field active not found or schema id is empty.
+        /// </summary>
+        public static string DefinitionNameNotFound {
+            get {
+                return ResourceManager.GetString("DefinitionNameNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure that you fill all article/product data?.
         /// </summary>
         public static string FillArticleMessage {
@@ -87,11 +96,92 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Field with name IsMainSchema not found in workflow schemas content.
+        /// </summary>
+        public static string IsMainSchemaFieldNotFound {
+            get {
+                return ResourceManager.GetString("IsMainSchemaFieldNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No related articles with schema files was found.
+        /// </summary>
+        public static string NoSchemasAttachedToArticle {
+            get {
+                return ResourceManager.GetString("NoSchemasAttachedToArticle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process not started.
+        /// </summary>
+        public static string ProcessNotStarted {
+            get {
+                return ResourceManager.GetString("ProcessNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error while publishing workflow.
         /// </summary>
         public static string PublishError {
             get {
                 return ResourceManager.GetString("PublishError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field id for schema file not specified in settings.
+        /// </summary>
+        public static string SchemaFileFieldNotScepifiedInSettings {
+            get {
+                return ResourceManager.GetString("SchemaFileFieldNotScepifiedInSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schema file was not found on disk by path {0}.
+        /// </summary>
+        public static string SchemaFileNotFoundTemplate {
+            get {
+                return ResourceManager.GetString("SchemaFileNotFoundTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schema file name not specified.
+        /// </summary>
+        public static string SchemaFileNotSpecified {
+            get {
+                return ResourceManager.GetString("SchemaFileNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field with name SchemaId not found in workflow schemas content.
+        /// </summary>
+        public static string SchemaIdFieldNotFound {
+            get {
+                return ResourceManager.GetString("SchemaIdFieldNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field id for schema name not specified in settings.
+        /// </summary>
+        public static string SchemaNameFieldNotSpecifiedInSettings {
+            get {
+                return ResourceManager.GetString("SchemaNameFieldNotSpecifiedInSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schema name not specified.
+        /// </summary>
+        public static string SchemaNameNotSpecified {
+            get {
+                return ResourceManager.GetString("SchemaNameNotSpecified", resourceCulture);
             }
         }
         
@@ -119,6 +209,78 @@ namespace Quantumart.QP8.Resources {
         public static string SuccessfullyStarted {
             get {
                 return ResourceManager.GetString("SuccessfullyStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to get content id by classifier field.
+        /// </summary>
+        public static string UnableToGetContentIdByClassifier {
+            get {
+                return ResourceManager.GetString("UnableToGetContentIdByClassifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field with name &quot;Workflow&quot; not found in workflow assignments content.
+        /// </summary>
+        public static string WorkflowAssignmentFieldNotFound {
+            get {
+                return ResourceManager.GetString("WorkflowAssignmentFieldNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow content id not specified in settings.
+        /// </summary>
+        public static string WorkflowContentIdNotSpecifiedInSettings {
+            get {
+                return ResourceManager.GetString("WorkflowContentIdNotSpecifiedInSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External workflow disabled.
+        /// </summary>
+        public static string WorkflowDisabled {
+            get {
+                return ResourceManager.GetString("WorkflowDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow name not found in QP article.
+        /// </summary>
+        public static string WorkflowNameNotFound {
+            get {
+                return ResourceManager.GetString("WorkflowNameNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow article not set for assignment.
+        /// </summary>
+        public static string WorkflowNoSetToAssignment {
+            get {
+                return ResourceManager.GetString("WorkflowNoSetToAssignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow to content relation field with name ContentId not found.
+        /// </summary>
+        public static string WorkflowToContentRelationFieldNotFound {
+            get {
+                return ResourceManager.GetString("WorkflowToContentRelationFieldNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find assigned workflow for content {0}.
+        /// </summary>
+        public static string WorkflowToStartNotFoundTemplate {
+            get {
+                return ResourceManager.GetString("WorkflowToStartNotFoundTemplate", resourceCulture);
             }
         }
     }
