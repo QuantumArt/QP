@@ -8,7 +8,6 @@ using QA.Workflow.Interfaces;
 using QA.Workflow.TaskWorker.Models;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
-using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.ExternalWorkflow;
 
@@ -153,5 +152,4 @@ public class ExternalWorkflowProcessWatcher : IHostedService
             _logger.LogError(e, "Error while changing process info in db");
         }
     }
-
 }

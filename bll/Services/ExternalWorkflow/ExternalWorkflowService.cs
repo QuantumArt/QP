@@ -6,10 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using QA.Workflow.Integration.QP.Models;
 using QA.Workflow.Interfaces;
 using QA.Workflow.Models;
+using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleRepositories;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -83,7 +83,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
                 if (!File.Exists(filePath))
                 {
-                    throw new ArgumentException("Unable to locate file in path {Path}", filePath);
+                    throw new ArgumentException($"Unable to locate file in path {filePath}", filePath);
                 }
 
                 byte[] fileBytes = await File.ReadAllBytesAsync(filePath, token);
@@ -96,7 +96,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while publishing workflow.");
+            _logger.LogError(e, "Error while publishing workflow");
 
             return false;
         }
@@ -170,7 +170,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
-                    throw new InvalidOperationException("Process not started.");
+                    throw new InvalidOperationException("Process not started");
                 }
 
                 try
@@ -191,7 +191,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Failed to start process.");
+            _logger.LogError(e, "Failed to start process");
 
             return false;
         }
@@ -217,7 +217,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while loading user tasks count.");
+            _logger.LogError(e, "Error while loading user tasks count");
 
             return 0;
         }
@@ -264,7 +264,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while loading user tasks list.");
+            _logger.LogError(e, "Error while loading user tasks list");
 
             throw;
         }
@@ -284,7 +284,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
     {
         if (!variables.TryGetValue(name, out object variable))
         {
-            throw new InvalidOperationException($"Unable to find variable {name} in task variables.");
+            throw new InvalidOperationException($"Unable to find variable {name} in task variables");
         }
 
         return (T)Convert.ChangeType(variable, typeof(T));
@@ -312,7 +312,7 @@ public class ExternalWorkflowService : IExternalWorkflowService
     {
         if (!int.TryParse(workflow, out int workflowArticleId))
         {
-            throw new InvalidOperationException("Unable to parse workflow assignment article id to int.");
+            throw new InvalidOperationException("Unable to parse workflow assignment article id to int");
         }
 
         Article assignedWorkflow = ArticleRepository.GetById(workflowArticleId);
@@ -436,9 +436,15 @@ public class ExternalWorkflowService : IExternalWorkflowService
         {
             _logger.LogTrace("Stopping process with Id {ProcessId}", processesId);
 
-            ExternalWorkflowRepository.UpdateStatus(processesId, ManuallyStoppingProcessStatus);
-
-            _logger.LogTrace("For process with id {ProcessId} was set status {Status}", processesId, ManuallyStoppingProcessStatus);
+            try
+            {
+                ExternalWorkflowRepository.UpdateStatus(processesId, ManuallyStoppingProcessStatus);
+                _logger.LogTrace("For process with id {ProcessId} was set status {Status}", processesId, ManuallyStoppingProcessStatus);
+            }
+            catch (ExternalWorkflowNotFoundInDbException e)
+            {
+                _logger.LogWarning(e, "Workflow with process id {ProcessId} was not found in database, but it will be stopped anyway", processesId);
+            }
 
             await _workflowProcessService.DeleteProcessInstanceById(processesId, customerCode);
 

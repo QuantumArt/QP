@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,9 +14,6 @@ public class ExternalWorkflowDAL
     public string WorkflowName { get; set; }
     public decimal ArticleId { get; set; }
     public decimal WorkflowId { get; set; }
-
-    public ICollection<ExternalWorkflowStatusDAL> Statuses { get; set; } = new HashSet<ExternalWorkflowStatusDAL>();
-    public ICollection<ExternalWorkflowInProgressDAL> InProgressWorkflows { get; set; } = new HashSet<ExternalWorkflowInProgressDAL>();
 }
 
 public class ExternalWorkflowDALConfiguration : IEntityTypeConfiguration<ExternalWorkflowDAL>
@@ -37,8 +33,5 @@ public class ExternalWorkflowDALConfiguration : IEntityTypeConfiguration<Externa
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-
-        builder.HasMany(x => x.Statuses).WithOne(x => x.ExternalWorkflow);
-        builder.HasMany(x => x.InProgressWorkflows).WithOne(x => x.ExternalWorkflow);
     }
 }

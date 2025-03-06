@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL.Entities;
 
@@ -12,7 +13,12 @@ public class ExternalWorkflowRepository
 
     public static void UpdateStatus(string processId, string newStatus)
     {
-        ExternalWorkflowDAL workflow = QPContext.EFContext.ExternalWorkflowSet.Single(w => w.ProcessId == processId);
+        ExternalWorkflowDAL workflow = QPContext.EFContext.ExternalWorkflowSet.SingleOrDefault(w => w.ProcessId == processId);
+
+        if (workflow == null)
+        {
+            throw new ExternalWorkflowNotFoundInDbException($"Workflow with process id {processId} not found in database");
+        }
 
         ExternalWorkflowStatusDAL status = new()
         {
