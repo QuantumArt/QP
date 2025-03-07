@@ -12,4 +12,10 @@ GO
 
 
 update entity_type set TITLE_FIELD = 'ID', PARENT_ID_FIELD = 'PLUGIN_ID' where code = 'plugin_version'
+
 --select * from ENTITY_TYPE
+
+if not exists(select * from ENTITY_TYPE where CODE = 'article_external_workflow')
+    insert into ENTITY_TYPE(NAME, CODE, PARENT_ID, SOURCE, ID_FIELD, PARENT_ID_FIELD, TITLE_FIELD, DISABLED)
+    values ('Article External Workflow', 'article_external_workflow', dbo.qp_entity_type_id('article'), 'EXTERNAL_WORKFLOW', 'ID', 'ARTICLE_ID', 'WORKFLOW_NAME', 1)
+GO

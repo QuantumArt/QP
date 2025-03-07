@@ -61,3 +61,7 @@ if not exists(select * from CONTEXT_MENU_ITEM where action_id = dbo.qp_action_id
 if not exists(select * from CONTEXT_MENU_ITEM where action_id = dbo.qp_action_id('auto_resize_site_file'))
     insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
     values(dbo.qp_context_menu_id('site_file'), dbo.qp_action_id('auto_resize_site_file'), 'Auto Resize', 51, 'crop.gif')
+
+if not exists(select * from CONTEXT_MENU_ITEM where action_id = dbo.qp_action_id('list_article_external_workflow_tasks'))
+    insert into CONTEXT_MENU_ITEM (CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER])
+    values(dbo.qp_context_menu_id('db'), dbo.qp_action_id('list_article_external_workflow_tasks'), 'External Workflow User Tasks', 65)
