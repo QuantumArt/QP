@@ -56,7 +56,7 @@ public class ExternalWorkflowRepository
     )
     {
         DateTime now = DateTime.Now;
-        string createdBy = UserRepository.GetById(SpecialIds.AdminUserId).LogOn;
+        string createdBy = UserRepository.GetById(QPContext.CurrentUserId).LogOn;
 
         ExternalWorkflowDAL workflowEntity = new()
         {

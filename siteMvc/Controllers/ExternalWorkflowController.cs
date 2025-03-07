@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _externalWorkflowService = externalWorkflowService;
         }
 
-        [CustomActionLocalize]
+        [CustomActionAuthorize]
         [HttpPost("publishWorkflow")]
         public async Task<IActionResult> PublishWorkflow([FromForm]string customerCode,
             [FromForm(Name = "content_item_id")]int contentItemId,
@@ -32,7 +32,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result.Success ? MessageResult.Info(result.Message) : MessageResult.Error(result.Message));
         }
 
-        [CustomActionLocalize]
+        [CustomActionAuthorize]
         [HttpPost("startWorkflow")]
         public async Task<IActionResult> StartWorkflow([FromForm]string customerCode,
             [FromForm(Name = "content_item_id")]int contentItemId,

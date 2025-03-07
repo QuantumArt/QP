@@ -97,9 +97,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(model.Url);
 
-            urlToProcess = QueryHelpers.AddQueryString(urlToProcess, "current-culture", CultureInfo.CurrentCulture.Name);
-            urlToProcess = QueryHelpers.AddQueryString(urlToProcess, "current-ui-culture", CultureInfo.CurrentCulture.Name);
-
             Logger.ForDebugEvent()
                 .Message("Proxying custom action url: {url}", urlToProcess)
                 .Log();
