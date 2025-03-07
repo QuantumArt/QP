@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS external_workflow_in_progress (
     external_workflow_id numeric(18, 0) NOT NULL,
     current_status numeric(18, 0) NOT NULL,
     constraint pk_external_workflow_in_progress primary key (id),
-    constraint uq_external_workflow_in_progress_process_id unique (external_workflow_id),
-    constraint fk_external_workflow_in_progress_process_id foreign key (external_workflow_id) references external_workflow (id),
+    constraint uq_external_workflow_in_progress_external_workflow_id unique (external_workflow_id),
+    constraint fk_external_workflow_in_progress_external_workflow_id foreign key (external_workflow_id) references external_workflow (id),
     constraint fk_external_workflow_in_progress_current_status foreign key (current_status) references external_workflow_status (id)
 );
 
