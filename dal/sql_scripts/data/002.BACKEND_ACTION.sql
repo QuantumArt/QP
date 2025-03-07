@@ -125,6 +125,6 @@ if not exists (select * from BACKEND_ACTION where code = 'complete_article_exter
 
 if not exists (select * from BACKEND_ACTION where code = 'get_article_external_workflow_task')
     INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME, CONTROLLER_ACTION_URL, IS_INTERFACE, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT)
-    VALUES(dbo.qp_action_type_id('complete'), dbo.qp_entity_type_id('article_external_workflow'), 'Get External Workflow User Task', 'get_article_external_workflow_task', 'Get User Task', '~/Home/ExternalWorkflowUserTasks/', 1, 1 800, 600)
+    VALUES(dbo.qp_action_type_id('complete'), dbo.qp_entity_type_id('article_external_workflow'), 'Get External Workflow User Task', 'get_article_external_workflow_task', 'Get User Task', '~/Home/ExternalWorkflowUserTasks/', 1, 1, 800, 600)
 
 GO
