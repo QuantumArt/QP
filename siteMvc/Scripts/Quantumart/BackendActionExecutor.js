@@ -64,18 +64,14 @@ export class BackendActionExecutor extends Observable {
           if (actionUrl) {
             let postParams = {};
             const forcedForm = this.getFormWithForceSubmit();
-            if (forcedForm)
-            {
+            if (forcedForm) {
               const form = new FormData(forcedForm);
-              Array.from(form.entries()).forEach((input) => {
-                if (!postParams[input[0]])
-                {
+              Array.from(form.entries()).forEach(input => {
+                if (!postParams[input[0]]) {
                   postParams[input[0]] = input[1];
                 }
               });
-            }
-            else
-            {
+            } else {
               postParams = {
                 IDs: entityIDs,
                 actionCode,
@@ -169,7 +165,7 @@ export class BackendActionExecutor extends Observable {
   }
 
   getFormWithForceSubmit() {
-    const forms = document.getElementsByName("ForceFormSubmit");
+    const forms = document.getElementsByName('ForceFormSubmit');
     if (!forms || forms.length === 0) {
       return null;
     }
@@ -804,12 +800,9 @@ export class BackendActionParameters {
       this._parentEntityId = options.eventArgs.get_parentEntityId();
       this._entityTypeCode = options.eventArgs.get_entityTypeCode();
       this._previousAction = options.eventArgs.get_previousAction();
-      if (options.eventArgs.get_context())
-      {
+      if (options.eventArgs.get_context()) {
         this._context = options.eventArgs.get_context();
-      }
-      else
-      {
+      } else {
         this._context = options.context;
       }
       this._forceOpenWindow = options.eventArgs.get_isWindow();

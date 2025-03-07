@@ -372,10 +372,12 @@ export class BackendDocumentHost extends Observable {
     this._eventArgsAdditionalData = value;
   }
 
+  // eslint-disable-next-line camelcase
   get_context() {
     return this._context;
   }
 
+  // eslint-disable-next-line camelcase
   set_context(value) {
     this._context = value;
   }

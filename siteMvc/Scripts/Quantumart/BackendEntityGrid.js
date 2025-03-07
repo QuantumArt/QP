@@ -869,22 +869,22 @@ export class BackendEntityGrid extends Observable {
   }
 
   addAdditionalParametersToQuery(row, context) {
+    const newContext = context;
     const parameters = this.getAdditionalQueryParameters(row);
-    if (!parameters)
-      return context;
-
-    for (const parameter of parameters) {
-      const item = this.getItemByName(row, parameter);
-
-      if (item)
-      {
-        context.additionalUrlParameters = {
-          [parameter]: item
-        }
-      }
+    if (!parameters) {
+      return newContext;
     }
 
-    return context;
+    parameters.forEach(parameter => {
+      const item = this.getItemByName(row, parameter);
+      if (item) {
+        newContext.additionalUrlParameters = {
+          [parameter]: item
+        };
+      }
+    });
+
+    return newContext;
   }
 
   executeAction(row, actionCode, followLink, ctrlKey) {
@@ -896,7 +896,7 @@ export class BackendEntityGrid extends Observable {
         throw new Error($l.Common.ajaxDataReceivingErrorMessage);
       }
 
-      const entityId = (this._useParentEntityId) ? this.getParentEntityId($row) : this.getEntityId($row);
+      const entityId = this._useParentEntityId ? this.getParentEntityId($row) : this.getEntityId($row);
       let context = { ctrlKey };
 
       context = this.addAdditionalParametersToQuery($row, context);
@@ -923,7 +923,7 @@ export class BackendEntityGrid extends Observable {
         entityId,
         entityName,
         entities: action.ActionType.IsMultiple ? [{ Id: entityId, Name: entityName }] : null,
-        parentEntityId: (this._useParentEntityId) ? 0 : this.getParentEntityId($row),
+        parentEntityId: this._useParentEntityId ? 0 : this.getParentEntityId($row),
         context
       });
 
@@ -945,10 +945,6 @@ export class BackendEntityGrid extends Observable {
         this.notify(window.EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING, eventArgs);
       }
     }
-  }
-
-  addFieldsToParams(rowElement) {
-
   }
 
   _executePostSelectActions() {
@@ -983,15 +979,13 @@ export class BackendEntityGrid extends Observable {
   }
 
   addAdditionalParametersToSelectedEntityContext(context) {
-    if (this._selectedEntitiesIDs.length > 1)
-    {
+    if (this._selectedEntitiesIDs.length > 1) {
       return context;
     }
 
     const row = this.getRowByEntityId(this._selectedEntitiesIDs[0]);
     const $row = this.getRow(row);
-    context = this.addAdditionalParametersToQuery($row, context);
-    return context;
+    return this.addAdditionalParametersToQuery($row, context);
   }
 
   _isAllRowsSelectedInCurrentPage() {
