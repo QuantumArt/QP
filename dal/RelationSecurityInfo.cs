@@ -29,7 +29,7 @@ namespace Quantumart.QP8.DAL
             throw new ApplicationException("Security mapping not exists:" + contentId);
         }
 
-        public bool IsEmpty => Data == null;
+        public bool IsEmpty => Data == null || ContentData.Count == 0;
 
         public void AddContentInItemMapping(int contentId, Dictionary<int, int[]> initValues)
         {
