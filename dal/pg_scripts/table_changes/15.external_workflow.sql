@@ -1,4 +1,4 @@
-﻿CREATE SEQUENCE IF NOT EXISTS external_workflow_seq start 1;
+CREATE SEQUENCE IF NOT EXISTS external_workflow_seq start 1;
 
 CREATE TABLE IF NOT EXISTS external_workflow (
     id numeric(18,0) NOT NULL DEFAULT nextval('external_workflow_seq'::regclass),
