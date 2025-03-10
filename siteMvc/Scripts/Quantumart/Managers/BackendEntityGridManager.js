@@ -206,6 +206,8 @@ export class BackendEntityGridManager extends Observable {
         } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION) {
           this.refreshGridGroup(window.ACTION_CODE_CHILD_ARTICLE_PERMISSIONS);
         }
+      } else if (actionCode === window.ACTION_CODE_COMPLETE_EXTERNAL_WORKFLOW_TASK) {
+        this.refreshGridGroup(window.ACTION_CODE_EXTERNAL_WORKFLOW_TASKS);
       }
     }
   }

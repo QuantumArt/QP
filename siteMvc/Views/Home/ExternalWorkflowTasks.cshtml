@@ -1,0 +1,32 @@
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Resources
+@model Quantumart.QP8.WebMvc.ViewModels.HomePage.UserTasksViewModel;
+
+@using (Html.BeginDocumentPadding())
+{
+  <div id="@Model.MainComponentId"></div>
+  <script>
+    $(function () {
+      $('#@Model.MainComponentId').qpGrid({
+        columns: [
+          { field: 'Id', title: '@EntityObjectStrings.ID', attributes: { 'class': 'id' }, width: 50 },
+          { field: 'Name', title: '@ArticleStrings.Title', attributes: { 'class': 'title' } },
+          { field: 'ContentName', title: '@ContentStrings.Name' },
+          { field: 'TaskName', title: '@ArticleStrings.Status' },
+          { field: 'SiteName', title: '@SiteStrings.Name' },
+          { field: 'ParentId', title: 'ParentId', hidden: true },
+          { field: 'AdditionalQueryParameters', title: 'QueryParameters', hidden: true }
+        ],
+        dataSource: {
+          transport: {
+            read: {
+              url: "@Url.Action(Model.DataBindingActionName, Model.DataBindingControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId } )",
+            },
+          },
+          pageSize: @Default.GridPageSize,
+        },
+      });
+    });
+  </script>
+}
+@Html.PrepareAndRunInitScript(Model)

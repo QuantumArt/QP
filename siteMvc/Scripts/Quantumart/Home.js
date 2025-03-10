@@ -9,7 +9,8 @@ export class Home {
     lockedElementId,
     approvalElementId,
     loggedAsElementId,
-    customerCode
+    customerCode,
+    externalUserTaskElementId
   ) {
     const initialize = function () {
       // eslint-disable-next-line max-params
@@ -66,6 +67,7 @@ export class Home {
       const $locked = $(`#${lockedElementId}`);
       const $loggedAs = $(`#${loggedAsElementId}`);
       const $approval = $(`#${approvalElementId}`);
+      const $userTasks = $(`#${externalUserTaskElementId}`);
       const temp = ' (<a class="js" href="javascript:void(0)">{0}</a>) ';
       const listStr = String.format(temp, $l.Home.list);
       const profileStr = String.format(temp, $l.Home.profile);
@@ -74,6 +76,13 @@ export class Home {
         $locked.append(listStr);
         $locked.find('a').on('click', () => {
           executeAction('list_locked_article', 'db', 1, customerCode, 0);
+        });
+      }
+
+      if ($userTasks.text().trim() !== '0') {
+        $userTasks.append(listStr);
+        $userTasks.find('a').on('click', () => {
+          executeAction('list_article_external_workflow_tasks', 'db', 1, customerCode, 0);
         });
       }
 
@@ -96,6 +105,7 @@ export class Home {
       $(`#${lockedElementId}`).find('a').off('click');
       $(`#${loggedAsElementId}`).find('a').off('click');
       $(`#${approvalElementId}`).find('a').off('click');
+      $(`#${externalUserTaskElementId}`).find('a').off('click');
     };
 
     return {

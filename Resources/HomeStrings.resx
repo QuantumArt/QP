@@ -123,6 +123,9 @@
   <data name="ApprovalCount" xml:space="preserve">
     <value>Number of articles waiting for your approval</value>
   </data>
+  <data name="ExternalUserTaskCount" xml:space="preserve">
+    <value>Number of tasks waiting for your actions</value>
+  </data>
   <data name="DBName" xml:space="preserve">
     <value>DB name</value>
   </data>

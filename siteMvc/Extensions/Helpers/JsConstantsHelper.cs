@@ -64,9 +64,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION = \"{EntityTypeCode.ArticlePermission}\"");
             constants.AppendLine($"window.ENTITY_TYPE_CODE_SITE_PERMISSION = \"{EntityTypeCode.SitePermission}\"");
             constants.AppendLine($"window.ENTITY_TYPE_CODE_WORKFLOW_PERMISSION = \"{EntityTypeCode.WorkflowPermission}\"");
-            constants.AppendLine($"window.ENTITY_TYPE_CODE_SITE_FODER_TYPE_PERMISSION = \"{EntityTypeCode.SiteFolderPermission}\"");
+            constants.AppendLine($"window.ENTITY_TYPE_CODE_SITE_FOLDER_TYPE_PERMISSION = \"{EntityTypeCode.SiteFolderPermission}\"");
             constants.AppendLine($"window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION = \"{EntityTypeCode.EntityTypePermission}\"");
             constants.AppendLine($"window.ENTITY_TYPE_CODE_ACTION_PERMISSION = \"{EntityTypeCode.ActionPermission}\"");
+            constants.AppendLine($"window.ENTITY_TYPE_CODE_ARTICLE_EXTERNAL_WORKFLOW = \"{EntityTypeCode.ArticleExternalWorkflow}\"");
             constants.AppendLine();
 
             // Константы типов действий
@@ -102,6 +103,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             constants.AppendLine($"window.ACTION_TYPE_CODE_MULTIPLE_UNLOCK = \"{ActionTypeCode.MultipleUnlock}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_SEARCH = \"{ActionTypeCode.Search}\"");
             constants.AppendLine($"window.ACTION_TYPE_CODE_DESELECT_ALL = \"{ActionTypeCode.DeselectAll}\"");
+            constants.AppendLine($"window.ACTION_TYPE_CODE_COMPLETE = \"{ActionTypeCode.Complete}\"");
             constants.AppendLine($"window.ACTION_TYPE_SIMPLE_UPDATE = \"{ActionTypeCode.SimpleUpdate}\"");
             constants.AppendLine($"window.ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE = \"{ActionTypeCode.ChildEntityPermissionSave}\"");
             constants.AppendLine($"window.ACTION_TYPE_CHILD_ENTITY_MULTIPLE_REMOVE = \"{ActionTypeCode.MultipleChildEntityPermissionRemove}\"");
@@ -172,6 +174,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             constants.AppendLine($"window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE = \"{ActionCode.AddNewChildArticle}\"");
             constants.AppendLine($"window.ACTION_CODE_ADD_NEW_ADJACENT_FIELD = \"{ActionCode.AddNewAdjacentField}\"");
+
+            constants.AppendLine($"window.ACTION_CODE_EXTERNAL_WORKFLOW_TASKS = \"{ActionCode.ListExternalWorkflowUserTasks}\"");
+            constants.AppendLine($"window.ACTION_CODE_COMPLETE_EXTERNAL_WORKFLOW_TASK = \"{ActionCode.CompleteExternalWorkflowUserTask}\"");
+
             constants.AppendLine();
 
             // Коды типов представлений

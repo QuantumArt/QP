@@ -111,7 +111,8 @@ export class BackendPopupWindowManager extends Observable {
               break;
             }
           }
-        } else if (!$o.checkEntityExistence(entityTypeCode, entityId)) {
+        } else if (entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_EXTERNAL_WORKFLOW
+          || !$o.checkEntityExistence(entityTypeCode, entityId)) {
           popupWindow.closeWindow();
         }
       }
@@ -119,7 +120,9 @@ export class BackendPopupWindowManager extends Observable {
   }
 
   onActionExecuted(eventArgs) {
-    if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()) {
+    if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()
+      || eventArgs.get_actionTypeCode() === window.ACTION_TYPE_CODE_COMPLETE
+    ) {
       this.closeNotExistentPopupWindows();
     }
   }

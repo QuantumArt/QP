@@ -10,6 +10,7 @@
     "jsx": "react",
     "lib": [
       "dom",
+      "DOM.Iterable",
       "es5",
       "es2015.promise",
       "scripthost"

@@ -55,5 +55,6 @@
         public const string PageObjectFormatVersion = "page_object_format_version";
         public const string TemplateObjectFormatVersion = "template_object_format_version";
         public const string ContentLink = "content_link";
+        public const string ArticleExternalWorkflow = "article_external_workflow";
     }
 }

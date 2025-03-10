@@ -50,6 +50,7 @@ export class BackendEntityGrid extends Observable {
     this._keyColumnName = 'Id';
     this._titleColumnName = 'Name';
     this._parentKeyColumnName = 'ParentId';
+    this._additionalQueryParameters = 'AdditionalQueryParameters';
     this._linkOpenNewTab = false;
     /** @type {number[]} */
     this._startingEntitiesIDs = [];
@@ -73,6 +74,7 @@ export class BackendEntityGrid extends Observable {
     this._deselectAllId = '';
     this._selectAllId = '';
     this._zIndex = 0;
+    this._useParentEntityId = false;
 
     this._gridGroupCodes = gridGroupCodes;
     this._gridElementId = gridElementId;
@@ -163,6 +165,10 @@ export class BackendEntityGrid extends Observable {
 
       if (options.zIndex) {
         this._zIndex = options.zIndex;
+      }
+
+      if (options.useParentEntityId) {
+        this._useParentEntityId = options.useParentEntityId;
       }
     }
 
@@ -706,6 +712,11 @@ export class BackendEntityGrid extends Observable {
     return dataItem && dataItem[this._keyColumnName] ? dataItem[this._keyColumnName] : 0;
   }
 
+  getAdditionalQueryParameters(rowElem) {
+    const dataItem = this.getDataItem(this.getRow(rowElem));
+    return dataItem && dataItem[this._additionalQueryParameters] ? dataItem[this._additionalQueryParameters] : null;
+  }
+
   getEntityName(rowElem) {
     const dataItem = this.getDataItem(this.getRow(rowElem));
     return dataItem && dataItem[this._titleColumnName] ? dataItem[this._titleColumnName] : '';
@@ -722,6 +733,11 @@ export class BackendEntityGrid extends Observable {
       filter: this._filter,
       fieldId: this._treeFieldId
     });
+  }
+
+  getItemByName(rowElem, name) {
+    const dataItem = this.getDataItem(this.getRow(rowElem));
+    return dataItem && dataItem[name] ? dataItem[name] : null;
   }
 
   checkExistEntityInCurrentPage(entityId) {
@@ -852,6 +868,25 @@ export class BackendEntityGrid extends Observable {
     return $(this._gridElement).hasClass(this.GRID_BUSY_CLASS_NAME);
   }
 
+  addAdditionalParametersToQuery(row, context) {
+    const newContext = context;
+    const parameters = this.getAdditionalQueryParameters(row);
+    if (!parameters) {
+      return newContext;
+    }
+
+    parameters.forEach(parameter => {
+      const item = this.getItemByName(row, parameter);
+      if (item) {
+        newContext.additionalUrlParameters = {
+          [parameter]: item
+        };
+      }
+    });
+
+    return newContext;
+  }
+
   executeAction(row, actionCode, followLink, ctrlKey) {
     const $row = this.getRow(row);
     if ($row) {
@@ -861,8 +896,11 @@ export class BackendEntityGrid extends Observable {
         throw new Error($l.Common.ajaxDataReceivingErrorMessage);
       }
 
-      const entityId = this.getEntityId($row);
-      const context = { ctrlKey };
+      const entityId = this._useParentEntityId ? this.getParentEntityId($row) : this.getEntityId($row);
+      let context = { ctrlKey };
+
+      context = this.addAdditionalParametersToQuery($row, context);
+
       if (actionCode === window.ACTION_CODE_ADD_NEW_CHILD_ARTICLE) {
         context.additionalUrlParameters = {
           fieldId: this._treeFieldId,
@@ -885,7 +923,7 @@ export class BackendEntityGrid extends Observable {
         entityId,
         entityName,
         entities: action.ActionType.IsMultiple ? [{ Id: entityId, Name: entityName }] : null,
-        parentEntityId: this.getParentEntityId($row),
+        parentEntityId: this._useParentEntityId ? 0 : this.getParentEntityId($row),
         context
       });
 
@@ -925,18 +963,29 @@ export class BackendEntityGrid extends Observable {
     eventArgs.set_entityTypeCode(this._entityTypeCode);
     eventArgs.set_entities(this.getSelectedEntities());
     eventArgs.set_parentEntityId(this._parentEntityId);
-
+    let context = {};
     if (this._allowFilterSelectedEntities && !this._hostIsWindow) {
-      eventArgs.set_context({
+      context = {
         dataQueryParams: this.createDataQueryParams(),
         url: this._gridComponent.dataSource.transport.options.read.url
-      });
+      };
     }
-
+    context = this.addAdditionalParametersToSelectedEntityContext(context);
+    eventArgs.set_context(context);
     this.notify(window.EVENT_TYPE_ENTITY_GRID_ENTITY_SELECTED, eventArgs);
 
     this._refreshHeaderCheckbox();
     this._refreshCancelSelection();
+  }
+
+  addAdditionalParametersToSelectedEntityContext(context) {
+    if (this._selectedEntitiesIDs.length > 1) {
+      return context;
+    }
+
+    const row = this.getRowByEntityId(this._selectedEntitiesIDs[0]);
+    const $row = this.getRow(row);
+    return this.addAdditionalParametersToQuery($row, context);
   }
 
   _isAllRowsSelectedInCurrentPage() {

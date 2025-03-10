@@ -571,3 +571,40 @@
 | ti_plugin_field_value | Вызывается при вставке записей в таблицу PLUGIN_FIELD_VALUE. Выполняет вставку или обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#таблицы-плагинов-для-сайтов-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#таблицы-плагинов-для-контентов-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#таблицы-плагинов-для-полей-контентов-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) заполнена у вставляемой записи. Реализован для всех поддерживаемых типов БД |
 | td_plugin_field_value | Вызывается при удалении записей из таблицы PLUGIN_FIELD_VALUE. Выполняет удаление или обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#таблицы-плагинов-для-сайтов-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#таблицы-плагинов-для-контентов-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#таблицы-плагинов-для-полей-контентов-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) была заполнена у удаляемой записи. Реализован для всех поддерживаемых типов БД |
 | tu_plugin_field_value | Вызывается при обновлении записей в таблице PLUGIN_FIELD_VALUE. Выполняет обновление записей в пользовательских таблицах: [Таблица PLUGIN_SITE_N](customer#таблицы-плагинов-для-сайтов-plugin_site_n), [Таблица PLUGIN_CONTENT_N](customer#таблицы-плагинов-для-контентов-plugin_content_n), [Таблица PLUGIN_CONTENT_ATTRIBUTE_N](customer#таблицы-плагинов-для-полей-контентов-plugin_content_attribute_n) в зависимости от того какая из колонок (SITE_ID, CONTENT_ID, CONTENT_ATTTRIBUTE_ID) была обновлена. Реализован для всех поддерживаемых типов БД |
+
+## Таблица EXTERNAL_WORKFLOW
+
+Хранит информацию о запущенных и завершенных процессах
+
+| Имя поля      | Описание |
+|---------------|----------|
+| ID            | Идентификатор процесса |
+| CREATED       | Дата запуска процесса |
+| CREATED_BY    | Имя пользователя, запустившего процесс |
+| PROCESS_ID    | Идентификатор процесса во внешней системе управления процессами (Camunda) |
+| ARTICLE_NAME  | Название статьи, для которой запущен процесс |
+| WORKFLOW_NAME | Название процесса |
+| ARTICLE_ID    | Id статьи для которой запущен процесс |
+| WORKFLOW_ID   | Id статьи запущенного Workflow |
+
+## Таблица EXTERNAL_WORKFLOW_IN_PROGRESS
+
+Хранит информацию о состоянии запущенных процессов. Если процесс завершается, то из этой таблицы удаляется соответствующая строка.
+
+| Имя поля       | Описание |
+|----------------|----------|
+| ID | Идентификатор запущенного процесса |
+| EXTERNAL_WORKFLOW_ID | ID связанного процесса ([Таблица EXTERNAL_WORKFLOW](#таблица-external_workflow)) |
+| CURRENT_STATUS | ID текущего статуса ([Таблица EXTERNAL_WORKFLOW_STATUS](#таблица-external_workflow_status)) |
+
+## Таблица EXTERNAL_WORKFLOW_STATUS
+
+Хранит историю изменений статуса процесса
+
+| Имя поля       | Описание |
+|----------------|----------|
+| ID | Идентификатор статуса |
+| EXTERNAL_WORKFLOW_ID | ID процесса ([Таблица EXTERNAL_WORKFLOW](#таблица-external_workflow)) |
+| STATUS | Текстовое описание статуса процесса |
+| CREATED | Дата добавления статуса |
+| CREATED_BY | Пользователь, добавивший статус |

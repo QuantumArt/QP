@@ -1,12 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using QA.Validation.Xaml.Extensions.Rules;
-using QP8.Infrastructure.Web.Enums;
 using QP8.Infrastructure.Web.Responses;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleServices;
 using Quantumart.QP8.BLL.Services.DbServices;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow;
+using Quantumart.QP8.BLL.Services.ExternalWorkflow.Models;
 using Quantumart.QP8.CommonScheduler;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -29,12 +31,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private QuartzService _quartzService;
 
-        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper, QPublishingOptions options, QuartzService quartzService)
+        private readonly IServiceProvider _serviceProvider;
+
+        public HomeController(JsLanguageHelper languageHelper, JsConstantsHelper constantsHelper, QPublishingOptions options, QuartzService quartzService,
+            IServiceProvider serviceProvider)
         {
             _languageHelper = languageHelper;
             _constantsHelper = constantsHelper;
             _options = options;
             _quartzService = quartzService;
+            _serviceProvider = serviceProvider;
         }
 
         [DisableBrowserCache]
@@ -46,7 +52,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public async Task<ActionResult> Home(string tabId, int parentId)
         {
-            var model = HomeViewModel.Create(tabId, parentId, DbService.Home());
+            IExternalWorkflowService workflow = _serviceProvider.GetService<IExternalWorkflowService>();
+
+            var model = HomeViewModel.Create(tabId, parentId, DbService.Home(), workflow == null ? 0 : await workflow.GetTaskCount());
             return await JsonHtml("Home", model);
         }
 
@@ -130,6 +138,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var listCommand = GetListCommand(page, pageSize, orderBy);
             var serviceResult = BLL.Services.ArticleServices.ArticleService.ListLocked(listCommand);
             return new TelerikResult(serviceResult.Data, serviceResult.TotalRecords);
+        }
+
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ListExternalWorkflowUserTasks)]
+        [BackendActionContext(ActionCode.ListExternalWorkflowUserTasks)]
+        public async Task<IActionResult> ExternalWorkflowUserTasks(string tabId, int parentId, int id)
+        {
+            UserTasksViewModel model = UserTasksViewModel.Create(id, tabId, parentId);
+            model.DataBindingActionName = "_ExternalWorkflowUserTasks";
+
+            return await JsonHtml("ExternalWorkflowTasks", model);
+        }
+
+        [HttpPost]
+        [ActionAuthorize(ActionCode.ListExternalWorkflowUserTasks)]
+        [BackendActionContext(ActionCode.ListExternalWorkflowUserTasks)]
+        public async Task<IActionResult> _ExternalWorkflowUserTasks(string tabId,
+            int parentId,
+            int page,
+            int pageSize,
+            string orderBy)
+        {
+            IExternalWorkflowService workflowService = _serviceProvider.GetService<IExternalWorkflowService>();
+            UserTasksInfo tasks = await workflowService.GetUserTasks(page, pageSize);
+
+            return new TelerikResult(tasks.Data, tasks.TotalCount);
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]

@@ -79,3 +79,15 @@ if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.
 if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('compare_plugin_version_with_current') and NAME = 'Refresh')
     insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
     values (dbo.qp_action_id('compare_plugin_version_with_current'), dbo.qp_action_id('refresh_plugin_version'), 'Refresh', 'refresh.gif', NULL, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('get_article_external_workflow_task') and NAME = 'Complete')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('get_article_external_workflow_task'), dbo.qp_action_id('complete_article_external_workflow_task'), 'Complete', 'check.png', NULL, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_article_external_workflow_tasks') and NAME = 'Refresh')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_article_external_workflow_tasks'), dbo.qp_action_id('refresh_article_external_workflow_tasks'), 'Refresh', 'refresh.gif', NULL, 1)
+
+if not exists (select * From ACTION_TOOLBAR_BUTTON where PARENT_ACTION_ID = dbo.qp_action_id('list_article_external_workflow_tasks') and NAME = 'Complete')
+    insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER])
+    values (dbo.qp_action_id('list_article_external_workflow_tasks'), dbo.qp_action_id('get_article_external_workflow_task'), 'Complete', 'check.png', NULL, 2)

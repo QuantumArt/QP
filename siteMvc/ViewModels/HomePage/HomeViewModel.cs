@@ -11,13 +11,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
     public sealed class HomeViewModel : AreaViewModel
     {
-        public static HomeViewModel Create(string tabId, int parentId, HomeResult result)
+        public static HomeViewModel Create(string tabId, int parentId, HomeResult result, int taskCount)
         {
             var model = Create<HomeViewModel>(tabId, parentId);
             model.Sites = result.Sites;
             model.CurrentUser = result.CurrentUser;
             model.LockedCount = result.LockedCount;
             model.ApprovalCount = result.ApprovalCount;
+            model.ExternalUserTaskCount = taskCount;
             return model;
         }
 
@@ -35,6 +36,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         [Display(Name = "ApprovalCount", ResourceType = typeof(HomeStrings))]
         public int ApprovalCount { get; set; }
+
+        [Display(Name = "ExternalUserTaskCount", ResourceType = typeof(HomeStrings))]
+        public int ExternalUserTaskCount { get; set; }
 
         public IEnumerable<ListItem> Sites { get; set; }
 
@@ -55,6 +59,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
         public string ApprovalElementId => UniqueId("approvalElement");
 
         public string LoggedAsElementId => UniqueId("loggedAsElement");
+
+        public string ExternalUserTaskElementId => UniqueId("externalUserTaskElement");
 
         public string CustomerCode => QPContext.CurrentCustomerCode;
     }

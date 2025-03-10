@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FillArticleMessage" xml:space="preserve">
+    <value>Are you sure that you fill all article/product data?</value>
+  </data>
+  <data name="ApprovedRequest" xml:space="preserve">
+    <value>Do you approve?</value>
+  </data>
+  <data name="ApproveComment" xml:space="preserve">
+    <value>Leave your comment (optional)</value>
+  </data>
+  <data name="SuccessfullyPublished" xml:space="preserve">
+    <value>Workflow successfully published</value>
+  </data>
+  <data name="PublishError" xml:space="preserve">
+    <value>Error while publishing workflow</value>
+  </data>
+  <data name="SuccessfullyStarted" xml:space="preserve">
+    <value>Workflow successfully started</value>
+  </data>
+  <data name="StartError" xml:space="preserve">
+    <value>Error while starting workflow</value>
+  </data>
+  <data name="WorkflowDisabled" xml:space="preserve">
+    <value>External workflow disabled</value>
+  </data>
+  <data name="WorkflowNameNotFound" xml:space="preserve">
+    <value>Workflow name not found in QP article</value>
+  </data>
+  <data name="SchemaNameFieldNotSpecifiedInSettings" xml:space="preserve">
+    <value>Field id for schema name not specified in settings</value>
+  </data>
+  <data name="SchemaFileFieldNotScepifiedInSettings" xml:space="preserve">
+    <value>Field id for schema file not specified in settings</value>
+  </data>
+  <data name="NoSchemasAttachedToArticle" xml:space="preserve">
+    <value>No related articles with schema files was found</value>
+  </data>
+  <data name="SchemaNameNotSpecified" xml:space="preserve">
+    <value>Schema name not specified</value>
+  </data>
+  <data name="SchemaFileNotSpecified" xml:space="preserve">
+    <value>Schema file name not specified</value>
+  </data>
+  <data name="SchemaFileNotFoundTemplate" xml:space="preserve">
+    <value>Schema file was not found on disk by path {0}</value>
+  </data>
+  <data name="UnableToGetContentIdByClassifier" xml:space="preserve">
+    <value>Unable to get content id by classifier field</value>
+  </data>
+  <data name="WorkflowContentIdNotSpecifiedInSettings" xml:space="preserve">
+    <value>Workflow content id not specified in settings</value>
+  </data>
+  <data name="WorkflowToContentRelationFieldNotFound" xml:space="preserve">
+    <value>Workflow to content relation field with name ContentId not found</value>
+  </data>
+  <data name="WorkflowToStartNotFoundTemplate" xml:space="preserve">
+    <value>Unable to find assigned workflow for content {0}</value>
+  </data>
+  <data name="ProcessNotStarted" xml:space="preserve">
+    <value>Process not started</value>
+  </data>
+  <data name="WorkflowAssignmentFieldNotFound" xml:space="preserve">
+    <value>Field with name "Workflow" not found in workflow assignments content</value>
+  </data>
+  <data name="WorkflowNoSetToAssignment" xml:space="preserve">
+    <value>Workflow article not set for assignment</value>
+  </data>
+  <data name="IsMainSchemaFieldNotFound" xml:space="preserve">
+    <value>Field with name IsMainSchema not found in workflow schemas content</value>
+  </data>
+  <data name="SchemaIdFieldNotFound" xml:space="preserve">
+    <value>Field with name SchemaId not found in workflow schemas content</value>
+  </data>
+  <data name="DefinitionNameNotFound" xml:space="preserve">
+    <value>Schema with IsMainSchema field active not found or schema id is empty</value>
+  </data>
+</root>

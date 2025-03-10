@@ -8,3 +8,7 @@ on conflict do nothing;
 insert into action_type(name, code, required_permission_level_id, items_affected)
     values ('Multiple Save', 'multiple_save', 2, 255)
 on conflict do nothing;
+
+insert into action_type(name, code, required_permission_level_id, items_affected)
+values ('Complete', 'complete', 2, 1)
+on conflict do nothing;

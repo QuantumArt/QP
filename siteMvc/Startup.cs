@@ -70,6 +70,7 @@ using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.FileSynchronization;
 using Quantumart.QP8.WebMvc.Infrastructure.Middleware;
+using Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -284,6 +285,8 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<TarantoolCdcImportService>()
                    .AddTransient<IDbService, DbService>()
                     ;
+
+            services.RegisterExternalWorkflow(Configuration);
 
                 if (qpOptions.EnableLdapAuthentication)
                 {

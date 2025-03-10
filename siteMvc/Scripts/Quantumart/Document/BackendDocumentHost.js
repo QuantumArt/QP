@@ -136,7 +136,7 @@ export class BackendDocumentHost extends Observable {
       || entityTypeCode === window.ENTITY_TYPE_CODE_CONTENT_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_ARTICLE_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_WORKFLOW_PERMISSION
-      || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FODER_TYPE_PERMISSION
+      || entityTypeCode === window.ENTITY_TYPE_CODE_SITE_FOLDER_TYPE_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_ENTITY_TYPE_PERMISSION
       || entityTypeCode === window.ENTITY_TYPE_CODE_ACTION_PERMISSION)
     ) {
@@ -194,6 +194,7 @@ export class BackendDocumentHost extends Observable {
     this._actionCode = '';
     this._actionTypeCode = '';
     this._isCustomAction = false;
+    this._context = null;
 
     this._useCustomActionToolbar = false;
     this._isContextBlockVisible = false;
@@ -369,6 +370,16 @@ export class BackendDocumentHost extends Observable {
   // eslint-disable-next-line camelcase
   set_eventArgsAdditionalData(value) {
     this._eventArgsAdditionalData = value;
+  }
+
+  // eslint-disable-next-line camelcase
+  get_context() {
+    return this._context;
+  }
+
+  // eslint-disable-next-line camelcase
+  set_context(value) {
+    this._context = value;
   }
 
   /** @abstract */
@@ -547,6 +558,7 @@ export class BackendDocumentHost extends Observable {
       this.set_actionCode(eventArgs.get_actionCode());
       this.set_actionTypeCode(eventArgs.get_actionTypeCode());
       this.set_eventArgsAdditionalData(eventArgs.get_additionalData());
+      this.set_context(eventArgs.get_context());
       if (saveCallerContext) {
         this._callerContext = eventArgs.get_callerContext();
       }
@@ -566,6 +578,7 @@ export class BackendDocumentHost extends Observable {
     eventArgs.set_actionCode(this.get_actionCode());
     eventArgs.set_actionTypeCode(this.get_actionTypeCode());
     eventArgs.set_additionalData(this.get_eventArgsAdditionalData());
+    eventArgs.set_context(this.get_context());
     return eventArgs;
   }
 
@@ -864,6 +877,7 @@ export class BackendDocumentHost extends Observable {
         entities,
         entityId,
         entityName,
+        context: this.get_context(),
         // @ts-ignore FIXME
         forceOpenWindow: this.isWindow
       });
@@ -1349,6 +1363,7 @@ export class BackendDocumentHost extends Observable {
   onSelectionChanged(eventArgs) {
     const selectedEntities = eventArgs.get_entities().slice();
     this._selectedEntities = selectedEntities;
+    this._context = eventArgs._context;
     this.saveSelectionContext(eventArgs);
     this._saveSelectedEntitiesContext(eventArgs);
     this.refreshPanels();

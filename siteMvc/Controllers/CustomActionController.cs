@@ -1,15 +1,14 @@
 using System;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.WebUtilities;
 using NLog;
-using NLog.Fluent;
 using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL;

@@ -111,5 +111,20 @@ if not exists (select * from BACKEND_ACTION where code = 'multiple_save_article'
     INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE)
     VALUES(dbo.qp_action_type_id('multiple_save'), dbo.qp_entity_type_id('article'), 'Multiple Save Articles', 'multiple_save_article')
 
+if not exists (select * from BACKEND_ACTION where code = 'list_article_external_workflow_tasks')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME, CONTROLLER_ACTION_URL, IS_INTERFACE)
+    VALUES(dbo.qp_action_type_id('list'), dbo.qp_entity_type_id('db'), 'External Workflow User Tasks', 'list_article_external_workflow_tasks', 'User Tasks', '~/Home/ExternalWorkflowUserTasks/', 1)
+
+if not exists (select * from BACKEND_ACTION where code = 'refresh_article_external_workflow_tasks')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME)
+    VALUES(dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('db'), 'Refresh External Workflow User Tasks', 'refresh_article_external_workflow_tasks', 'Refresh User Tasks')
+
+if not exists (select * from BACKEND_ACTION where code = 'complete_article_external_workflow_task')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME, CONTROLLER_ACTION_URL)
+    VALUES(dbo.qp_action_type_id('complete'), dbo.qp_entity_type_id('article_external_workflow'), 'Complete External Workflow User Task', 'complete_article_external_workflow_task', 'Complete User Task', '~/ExternalWorkflowUserActions/CompleteUserTask/')
+
+if not exists (select * from BACKEND_ACTION where code = 'get_article_external_workflow_task')
+    INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME, CONTROLLER_ACTION_URL, IS_INTERFACE, IS_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT)
+    VALUES(dbo.qp_action_type_id('complete'), dbo.qp_entity_type_id('article_external_workflow'), 'Get External Workflow User Task', 'get_article_external_workflow_task', 'Get User Task', '~/Home/ExternalWorkflowUserTasks/', 1, 1, 800, 600)
 
 GO

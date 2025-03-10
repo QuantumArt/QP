@@ -6702,6 +6702,12 @@
   <phrase key="Auto Resize">
     <translation languageId="2">Автоматическое уменьшение</translation>
   </phrase>
+  <phrase key="External Workflow User Tasks">
+    <translation languageId="2">Пользовательские задачи внешних workflow</translation>
+  </phrase>
+  <phrase key="User Tasks">
+    <translation languageId="2">Пользовательские задачи</translation>
+  </phrase>
   <phrase key="Scheduled Tasks">
     <translation languageId="2">Задачи по расписанию</translation>
   </phrase>
@@ -6725,5 +6731,8 @@
   </phrase>
   <phrase key="Synchronizing users with Active Directory">
     <translation languageId="2">Синхронизация пользователей с Active Directory</translation>
+  </phrase>
+  <phrase key="Complete">
+    <translation languageId="2">Завершить</translation>
   </phrase>
 </translations>

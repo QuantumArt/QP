@@ -553,6 +553,16 @@ namespace Quantumart.QP8.BLL
             set => SetValueToStorage(_currentDbConnectionInfo, value, HttpContextItems.CurrentDbConnectionStringKey);
         }
 
+        public static void SetConnectionInfo(string customerCode)
+        {
+            QpConnectionInfo cnnInfo = QPConfiguration.GetConnectionInfo(customerCode);
+            if (cnnInfo == null)
+            {
+                throw new InvalidOperationException($"Unable to find customer code {customerCode}");
+            }
+            CurrentDbConnectionInfo = cnnInfo;
+        }
+
         public static bool CheckCustomerCode(string customerCode)
         {
             return QPConfiguration.GetCustomerCodes().Contains(customerCode);

@@ -447,6 +447,13 @@ export class BackendPopupWindow extends BackendDocumentHost {
       actions,
       resizable: this._allowResize,
       draggable: this._allowDrag,
+      effects: {
+        list: [{ name: 'toggle' }, {
+          name: 'property', properties: ['opacity']
+        }],
+        openDuration: 'fast',
+        closeDuration: 'fast'
+      },
       onOpen: this._backendBrowserHistoryManager.handleModalWindowOpen,
       onClose: this._backendBrowserHistoryManager.handleModalWindowClose
     }).data('tWindow').center();

@@ -177,4 +177,7 @@
   <data name="NoScheduledTasks" xml:space="preserve">
     <value>Нет задач по расписанию</value>
   </data>
+  <data name="ExternalUserTaskCount" xml:space="preserve">
+    <value>Количество задач требующий Ваших действий</value>
+  </data>
 </root>

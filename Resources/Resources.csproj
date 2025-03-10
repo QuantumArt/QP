@@ -10,6 +10,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="translations.xml" />
+    <EmbeddedResource Update="ExternalWorkflowStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExternalWorkflowStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ExternalWorkflowStrings.ru-ru.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExternalWorkflow.ru-ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -63,6 +71,16 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>EntityObjectStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ExternalWorkflowStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExternalWorkflowStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ExternalWorkflowStrings.ru-ru.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExternalWorkflowStrings.ru-ru.resx</DependentUpon>
     </Compile>
     <Compile Update="NotificationStrings.Designer.cs">
       <DesignTime>True</DesignTime>
