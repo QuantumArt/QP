@@ -142,12 +142,12 @@ on conflict do nothing;
 
 insert into backend_action (name, short_name, code, type_id, entity_type_id, controller_action_url, is_interface)
 values('External Workflow User Tasks', 'User Tasks', 'list_article_external_workflow_tasks', (select id from action_type where code = 'list'),
-       (select id from entity_type where code = 'home'), '~/Home/ExternalWorkflowUserTasks/', true)
+       (select id from entity_type where code = 'db'), '~/Home/ExternalWorkflowUserTasks/', true)
 on conflict do nothing;
 
 insert into backend_action (name, short_name, code, type_id, entity_type_id)
 values('Refresh External Workflow User Tasks', 'Refresh User Tasks', 'refresh_article_external_workflow_tasks', (select id from action_type where code = 'refresh'),
-       (select id from entity_type where code = 'home'))
+       (select id from entity_type where code = 'db'))
 on conflict do nothing;
 
 insert into backend_action (name, short_name, code, type_id, entity_type_id, controller_action_url)

@@ -113,11 +113,11 @@ if not exists (select * from BACKEND_ACTION where code = 'multiple_save_article'
 
 if not exists (select * from BACKEND_ACTION where code = 'list_article_external_workflow_tasks')
     INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME, CONTROLLER_ACTION_URL, IS_INTERFACE)
-    VALUES(dbo.qp_action_type_id('list'), dbo.qp_entity_type_id('home'), 'External Workflow User Tasks', 'list_article_external_workflow_tasks', 'User Tasks', '~/Home/ExternalWorkflowUserTasks/', 1)
+    VALUES(dbo.qp_action_type_id('list'), dbo.qp_entity_type_id('db'), 'External Workflow User Tasks', 'list_article_external_workflow_tasks', 'User Tasks', '~/Home/ExternalWorkflowUserTasks/', 1)
 
 if not exists (select * from BACKEND_ACTION where code = 'refresh_article_external_workflow_tasks')
     INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME)
-    VALUES(dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('home'), 'Refresh External Workflow User Tasks', 'refresh_article_external_workflow_tasks', 'Refresh User Tasks')
+    VALUES(dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('db'), 'Refresh External Workflow User Tasks', 'refresh_article_external_workflow_tasks', 'Refresh User Tasks')
 
 if not exists (select * from BACKEND_ACTION where code = 'complete_article_external_workflow_task')
     INSERT INTO BACKEND_ACTION (TYPE_ID, ENTITY_TYPE_ID, NAME, CODE, SHORT_NAME, CONTROLLER_ACTION_URL)
