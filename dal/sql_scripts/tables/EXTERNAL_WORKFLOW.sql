@@ -1,4 +1,4 @@
-﻿IF NOT EXISTS(select * from sys.tables where name = 'EXTERNAL_WORKFLOW')
+IF NOT EXISTS(select * from sys.tables where name = 'EXTERNAL_WORKFLOW')
 BEGIN
     CREATE TABLE dbo.EXTERNAL_WORKFLOW(
         ID numeric(18, 0) IDENTITY(1,1),
