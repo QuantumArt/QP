@@ -282,8 +282,10 @@ public class ExternalWorkflowService : IExternalWorkflowService
             }
 
             UserInfo userInfo = GetUserInfo();
+            List<UserTask> userTasks = await _workflowUserTaskService.GetUserTasks(userInfo.Login, userInfo.Roles, QPContext.CurrentCustomerCode);
+            Dictionary<string, int> dbWorkflows = ExternalWorkflowRepository.GetExistingWorkflowIdsByProcessIds(userTasks.Select(x => x.ProcessId).Distinct().ToArray());
 
-            return await _workflowUserTaskService.GetUserTasksCount(userInfo.Login, userInfo.Roles, QPContext.CurrentCustomerCode);
+            return userTasks.Count(x => dbWorkflows.ContainsKey(x.ProcessId));
         }
         catch (Exception e)
         {
@@ -301,25 +303,32 @@ public class ExternalWorkflowService : IExternalWorkflowService
             List<UserTask> userTasks = await _workflowUserTaskService.GetUserTasks(userInfo.Login,
                 userInfo.Roles,
                 QPContext.CurrentCustomerCode);
+            Dictionary<string, int> dbWorkflows = ExternalWorkflowRepository.GetExistingWorkflowIdsByProcessIds(userTasks.Select(x => x.ProcessId).Distinct().ToArray());
+            List<UserTask> nonExistedTasks = userTasks.Where(x => !dbWorkflows.ContainsKey(x.ProcessId)).ToList();
+
+            if (nonExistedTasks.Any())
+            {
+                _logger.LogWarning("Camunda contains processes with ids [{ProcessIds}] not presented in database", string.Join(", ", nonExistedTasks.Select(x => x.ProcessId)));
+            }
+
+            userTasks = userTasks.Where(x => dbWorkflows.ContainsKey(x.ProcessId)).ToList();
 
             UserTaskInfo taskInfo = new()
             {
                 TotalCount = userTasks.Count
             };
+
             userTasks = userTasks.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             foreach (UserTask userTask in userTasks)
             {
                 Dictionary<string, object> variables = await _workflowUserTaskService.GetTaskVariables(userTask.Id);
                 int contentItemId = GetVariable<int>(variables, ExternalWorkflowQpDpcSettings.ContentItemId);
-                int contentId = GetVariable<int>(variables, ExternalWorkflowQpDpcSettings.ContentId);
-
                 Article article = ArticleRepository.GetById(contentItemId);
-                var id = ExternalWorkflowRepository.GetId(userTask.ProcessId);
 
                 UserTaskData data = new()
                 {
-                    Id = id,
+                    Id = dbWorkflows[userTask.ProcessId],
                     TaskId = userTask.Id,
                     ProcessId = userTask.ProcessId,
                     TaskName = userTask.Name,

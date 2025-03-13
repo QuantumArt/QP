@@ -145,4 +145,11 @@ public class ExternalWorkflowRepository
     {
         return QPContext.EFContext.ExternalWorkflowInProgressSet.Select(x => (int)x.ExternalWorkflowId).ToList();
     }
+
+    public static Dictionary<string, int> GetExistingWorkflowIdsByProcessIds(string[] processesIds)
+    {
+        return QPContext.EFContext.ExternalWorkflowSet
+            .Where(x => processesIds.Contains(x.ProcessId))
+            .ToDictionary(x => x.ProcessId, x => (int)x.Id);
+    }
 }
