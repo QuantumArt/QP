@@ -44,6 +44,7 @@ export class BackendPopupWindow extends BackendDocumentHost {
     this._showMaximizeButton = true;
     this._zIndex = 0;
     this._isMultiOpen = false;
+    this._closeWithoutCheck = false;
 
     const $currentWindow = $(window);
     const currentWindowWidth = $currentWindow.width();
@@ -318,6 +319,16 @@ export class BackendPopupWindow extends BackendDocumentHost {
     this._selectionContext = value;
   }
 
+  // eslint-disable-next-line camelcase
+  set_closeWithoutCheck(value) {
+    this._closeWithoutCheck = value;
+  }
+
+  // eslint-disable-next-line camelcase
+  get_closeWithoutCheck() {
+    return this._closeWithoutCheck;
+  }
+
   initialize() {
     this._initSelectedEntities();
     const action = this.getCurrentAction();
@@ -526,7 +537,7 @@ export class BackendPopupWindow extends BackendDocumentHost {
   closeWindow() {
     if (this._isMultiOpen) {
       $c.closePopupWindow(this._popupWindowComponent);
-    } else if (this.allowClose()) {
+    } else if (this.get_closeWithoutCheck() || this.allowClose()) {
       this.markMainComponentAsBusy();
       this.cancel();
       this.onDocumentUnloaded();
