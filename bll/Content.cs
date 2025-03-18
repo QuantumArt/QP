@@ -1200,6 +1200,12 @@ namespace Quantumart.QP8.BLL
                             errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", diffTypeColumnMessage));
                         }
 
+                        // привести пользовательские поля в запросе к нижнему регистру
+                        if (customUserQueryColumns.Any())
+                        {
+                            UserQuery = ConvertQueryColumnsToLowercase(UserQuery, customUserQueryColumns);
+                        }
+
                         // если UserQueryAlternative задан
                         if (!string.IsNullOrWhiteSpace(UserQueryAlternative))
                         {
@@ -1225,10 +1231,31 @@ namespace Quantumart.QP8.BLL
                             {
                                 errors.ErrorFor(c => c.UserQueryAlternative, ContentStrings.UserQueryAlternative + ": " + string.Join("; ", diffTypeColumnMessage));
                             }
+
+                            // привести пользовательские поля в запросе к нижнему регистру
+                            if (customUserQueryColumns.Any())
+                            {
+                                UserQueryAlternative = ConvertQueryColumnsToLowercase(UserQueryAlternative, customUserQueryColumns);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Привести указанные поля в запросе к нижнему регистру
+        /// </summary>
+        /// <param name="query">Строка запроса</param>
+        /// <param name="columns">Поля запроса</param>
+        /// <returns>Возвращает строку запроса с измененными полями</returns>
+        private static string ConvertQueryColumnsToLowercase(string query, List<UserQueryColumn> columns)
+        {
+            foreach (UserQueryColumn column in columns)
+            {
+                query = query.Replace(column.ColumnName, column.ColumnName.ToLower());
+            }
+            return query;
         }
 
         /// <summary>
