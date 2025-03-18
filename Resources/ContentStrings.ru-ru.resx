@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -379,7 +379,7 @@
     <value>Не все обязательные поля указаны в запросе.  Не указаны {0}.</value>
   </data>
   <data name="UserQueryAndAltColumnsMismatch" xml:space="preserve">
-    <value>Наборы колонок и/или типы колонок возвращаемые запросом и запросом для United View несовпадают</value>
+    <value>Наборы колонок и/или типы колонок возвращаемые запросом и запросом для United View не совпадают</value>
   </data>
   <data name="InvalidColumnsInUserQuery" xml:space="preserve">
     <value>Контент содержит поля имеющие недопустимые типы: {0}</value>

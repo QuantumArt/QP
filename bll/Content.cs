@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 using NLog;
 using QA.Validation.Xaml;
-using NLog.Fluent;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ContentRepositories;
@@ -404,7 +403,7 @@ namespace Quantumart.QP8.BLL
 
         public string AltQuery { get; set; }
 
-        [Display(Name="TraceImportScript", ResourceType = typeof(ContentStrings))]
+        [Display(Name = "TraceImportScript", ResourceType = typeof(ContentStrings))]
         public string TraceImportScript { get; set; }
 
         public int SiteId { get; set; }
@@ -1211,7 +1210,7 @@ namespace Quantumart.QP8.BLL
                         {
                             var userAltQueryViewAllColumns = VirtualContentRepository.GetQuerySchema(UserQueryAlternative).ToList();
 
-                            // проверить запросы на соответсвие полей
+                            // проверить запросы на соответствие полей
                             var userAltQueryViewUniqColumns = userAltQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer).ToList();
                             if (userQueryViewUniqColumns.Count != userAltQueryViewUniqColumns.Count || userQueryViewUniqColumns.Except(userAltQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).Any())
                             {
