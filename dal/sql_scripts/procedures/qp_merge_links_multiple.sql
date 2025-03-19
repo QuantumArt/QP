@@ -10,7 +10,7 @@ BEGIN
   declare @idsWithLinks Table (id numeric, link_id numeric)
 
   insert into @idsWithLinks
-  select i.id, iti.link_id from @ids i
+  select distinct i.id, iti.link_id from @ids i
   inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = i.ID and (SPLITTED = 1 or @force_merge = 1)
   inner join item_to_item iti on iti.l_item_id = ci.content_item_id
 
