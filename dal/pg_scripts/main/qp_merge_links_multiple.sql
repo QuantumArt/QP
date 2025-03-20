@@ -19,7 +19,7 @@ AS $BODY$
 			RETURN;
 		END IF;
 
-		ids_with_links := array_agg(row(i.id, iti.link_id)) from (select unnest(ids) as id) i
+		ids_with_links := array_agg(distinct row(i.id, iti.link_id)) from (select unnest(ids) as id) i
   		inner join content_item ci on ci.CONTENT_ITEM_ID = i.id and (ci.SPLITTED or force_merge)
 	  	inner join item_to_item iti on iti.l_item_id = ci.content_item_id; 
 		ids_with_links := coalesce(ids_with_links, ARRAY[]::link[]);
