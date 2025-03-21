@@ -44,6 +44,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Web;
 using QA.Configuration;
@@ -69,6 +70,8 @@ using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.FileSynchronization;
+using Quantumart.QP8.BLL.Services.KeyCloak;
+using Quantumart.QP8.Configuration.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Middleware;
 using Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
 
@@ -286,9 +289,9 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<IDbService, DbService>()
                     ;
 
-            services.RegisterExternalWorkflow(Configuration);
+                services.RegisterExternalWorkflow(Configuration);
 
-                if (qpOptions.EnableLdapAuthentication)
+                if (qpOptions.AuthenticationType == AuthenticationType.ActiveDirectory)
                 {
                     services.AddOptions<LdapSettings>()
                        .Bind(Configuration.GetSection("Ldap"))
@@ -300,6 +303,17 @@ namespace Quantumart.QP8.WebMvc
                     services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
                     services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
                     services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                }
+                else if (qpOptions.AuthenticationType == AuthenticationType.KeyCloak)
+                {
+                    KeyCloakSettings settings = new();
+                    Configuration.GetSection("KeyCloak").Bind(settings);
+                    services.AddSingleton(Options.Create(settings));
+                    services.AddSingleton<IKeyCloakSyncService, KeyCloakService>();
+                    services.AddSingleton<IKeyCloakApiHelper, KeyCloakApiHelper>();
+                    services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
+                    services.AddHttpClient("KeyCloak", client => client.BaseAddress = new(settings.ApiUrl));
+                    services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
                 }
                 else
                 {

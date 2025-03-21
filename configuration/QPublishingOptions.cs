@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.HttpOverrides;
+using Quantumart.QP8.Configuration.Enums;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Configuration
@@ -64,7 +65,7 @@ namespace Quantumart.QP8.Configuration
 
         public bool EnableCommonScheduler { get; set; }
 
-        public bool EnableLdapAuthentication { get; set; }
+        public AuthenticationType AuthenticationType { get; set; } = AuthenticationType.Integrated;
 
         public bool ForceHttpForImageResizing { get; set; }
 

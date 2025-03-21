@@ -6,13 +6,12 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.Security.Ldap;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
+using Quantumart.QP8.Configuration.Enums;
 
 namespace Quantumart.QP8.BLL
 {
     public class LogOnCredentials
-    {       
+    {
         private string _userName;
 
         [Display(Name = "UserName", ResourceType = typeof(LogOnStrings))]
@@ -35,7 +34,7 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         public QpUser User { get; set; }
-        
+
         public void Validate(ILdapIdentityManager ldapIdentityManagers)
         {
             var errors = new RulesException<LogOnCredentials>();
@@ -64,8 +63,8 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_CustomerCodeNotExist);
                     throw errors;
                 }
-                      
-                if (QPConfiguration.Options.EnableLdapAuthentication)
+
+                if (QPConfiguration.Options.AuthenticationType == AuthenticationType.ActiveDirectory)
                 {
                     var parts = UserName.Split('\\');
                     if (parts.Length == 2 && String.IsNullOrEmpty(NtUserName))
@@ -92,14 +91,14 @@ namespace Quantumart.QP8.BLL
                                     errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_NotFound);
                                     break;
                                 case SignInStatus.PasswordExpired:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_PasswordExpired);                                    
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_PasswordExpired);
                                     break;
                                 case SignInStatus.AccountExpired:
                                 case SignInStatus.IsLockedOut:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_IsLockedOut);                                    
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_IsLockedOut);
                                     break;
                                 case SignInStatus.OperationError:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_OperationError);                                    
+                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_OperationError);
                                     break;
                                 case SignInStatus.NotInitialized:
                                 case SignInStatus.Succeeded:
@@ -107,10 +106,10 @@ namespace Quantumart.QP8.BLL
                                     break;
                             }
                             throw errors;
-                        }                        
+                        }
                     }
                 }
-                
+
                 var errorCode = QpAuthenticationErrorNumber.NoErrors;
                 User = QPContext.Authenticate(this, ref errorCode, out var message);
 
