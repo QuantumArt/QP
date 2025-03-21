@@ -8,7 +8,7 @@ using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.KeyCloak;
 
-public class KeyCloakService : IKeyCloakSyncService
+public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
 {
     private readonly IKeyCloakApiHelper _apiHelper;
     private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
@@ -25,7 +25,7 @@ public class KeyCloakService : IKeyCloakSyncService
 
     public async Task<List<KeyCloakGroup>> GetGroups(List<string> groupNames)
     {
-        List<KeyCloakGroup> result = new List<KeyCloakGroup>();
+        List<KeyCloakGroup> result = new();
 
         foreach (string groupName in groupNames)
         {
@@ -66,6 +66,8 @@ public class KeyCloakService : IKeyCloakSyncService
 
         return result;
     }
+
+    public Task<bool> CheckUserAuth(string code) => _apiHelper.CheckAuthorization(code);
 
     private static KeyCloakGroup RetrieveGroup(KeyCloakGroup group, string groupName)
     {

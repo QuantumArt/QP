@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
@@ -86,6 +87,36 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
             _logger.ForErrorEvent()
                 .Message("Error while getting data from KeyCloak")
                 .Exception(ex)
+                .Log();
+
+            throw;
+        }
+    }
+
+    public async Task<bool> CheckAuthorization(string code)
+    {
+        try
+        {
+            using HttpClient client = _clientFactory.CreateClient("KeyCloak");
+
+            client.DefaultRequestHeaders.Authorization = new("Basic", Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{_settings.AuthClientId}:{_settings.AuthClientSecret}")));
+
+            FormUrlEncodedContent content = new(new Dictionary<string, string>
+            {
+                { "grant_type", "authorization_code" },
+                { "code", code },
+                { "redirect_uri", "http://localhost:5400/KeyCloakCallback" }
+            });
+
+            HttpResponseMessage response = await client.PostAsync(string.Format(TokenEndpointFormat, _settings.Realm), content);
+
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception e)
+        {
+            _logger.ForErrorEvent()
+                .Message("Error while checking authorization")
+                .Exception(e)
                 .Log();
 
             throw;

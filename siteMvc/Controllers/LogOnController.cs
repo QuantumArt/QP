@@ -1,12 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Threading;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Options;
+using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.KeyCloak;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
@@ -24,12 +30,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private AuthenticationHelper _helper;
         private ModelExpressionProvider _provider;
         private readonly ILdapIdentityManager _ldapIdentityManager;
+        private readonly KeyCloakSettings _keyCloakSettings;
+        private readonly IKeycloakAuthService _keycloakAuthService;
 
-        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, ILdapIdentityManager ldapIdentityManager)
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, ILdapIdentityManager ldapIdentityManager, IOptions<KeyCloakSettings> keyCloakSettings,
+            IKeycloakAuthService keycloakAuthService
+        )
         {
             _helper = helper;
             _provider = provider;
             _ldapIdentityManager = ldapIdentityManager;
+            _keycloakAuthService = keycloakAuthService;
+            _keyCloakSettings = keyCloakSettings.Value;
         }
 
         [DisableBrowserCache]
@@ -58,6 +70,36 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public async Task<ActionResult> JsonIndex(bool? useAutoLogin, [FromBody] LogOnCredentials data, string returnUrl)
         {
             return await PostIndex(useAutoLogin, data, returnUrl);
+        }
+
+        [HttpGet]
+        public ActionResult KeyCloakSSO()
+        {
+            const string responseType = "code";
+            const string scope = "openid profile email";
+
+            Guid state = Guid.NewGuid();
+            HttpContext.Session.SetValue("KeyCloakState", state);
+
+            string authorizationUrl = $"https://kc01.dev.qsupport.ru/realms/{_keyCloakSettings.Realm}/protocol/openid-connect/auth?response_type={responseType}&client_id={_keyCloakSettings.AuthClientId}&redirect_uri=http://localhost:5400/LogOn/KeyCloakCallback&scope={scope}&state={state}";
+
+            return Redirect(authorizationUrl);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> KeyCloakCallback([FromQuery]string state, [FromQuery]string session_state, [FromQuery]string iss, [FromQuery]string code)
+        {
+            string storedState = HttpContext.Session.GetString("KeyCloakState");
+
+            if (string.IsNullOrEmpty(storedState) || storedState.Equals(state, StringComparison.InvariantCultureIgnoreCase))
+            {
+                // FillViewBagData();
+                // return await LogOnView(data);
+            }
+
+            bool result = await _keycloakAuthService.CheckUserAuth(code);
+
+            return RedirectToAction("Index", "Home");
         }
 
         private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)

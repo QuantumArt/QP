@@ -314,6 +314,7 @@ namespace Quantumart.QP8.WebMvc
                     services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
                     services.AddHttpClient("KeyCloak", client => client.BaseAddress = new(settings.ApiUrl));
                     services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                    services.AddSingleton<IKeycloakAuthService, KeyCloakService>();
                 }
                 else
                 {
