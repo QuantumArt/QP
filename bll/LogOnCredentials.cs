@@ -6,6 +6,7 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.Security.Ldap;
 using System;
 using System.ComponentModel.DataAnnotations;
+using Quantumart.QP8.BLL.Services.KeyCloak;
 using Quantumart.QP8.Configuration.Enums;
 
 namespace Quantumart.QP8.BLL
@@ -13,6 +14,7 @@ namespace Quantumart.QP8.BLL
     public class LogOnCredentials
     {
         private string _userName;
+        private readonly RulesException<LogOnCredentials> _errors = new();
 
         [Display(Name = "UserName", ResourceType = typeof(LogOnStrings))]
         public string UserName
@@ -37,31 +39,30 @@ namespace Quantumart.QP8.BLL
 
         public void Validate(ILdapIdentityManager ldapIdentityManagers)
         {
-            var errors = new RulesException<LogOnCredentials>();
             if (!UseAutoLogin)
             {
                 if (string.IsNullOrEmpty(UserName))
                 {
-                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_NotEnteredLogin);
+                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_NotEnteredLogin);
                 }
 
                 if (string.IsNullOrEmpty(Password))
                 {
-                    errors.ErrorFor(n => n.Password, LogOnStrings.ErrorMessage_NotEnteredPassword);
+                    _errors.ErrorFor(n => n.Password, LogOnStrings.ErrorMessage_NotEnteredPassword);
                 }
             }
 
             if (string.IsNullOrEmpty(CustomerCode))
             {
-                errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_NotEnteredCustomerCode);
+                _errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_NotEnteredCustomerCode);
             }
 
-            if (errors.IsEmpty)
+            if (_errors.IsEmpty)
             {
                 if (!QPContext.CheckCustomerCode(CustomerCode))
                 {
-                    errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_CustomerCodeNotExist);
-                    throw errors;
+                    _errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_CustomerCodeNotExist);
+                    throw _errors;
                 }
 
                 if (QPConfiguration.Options.AuthenticationType == AuthenticationType.ActiveDirectory)
@@ -72,8 +73,8 @@ namespace Quantumart.QP8.BLL
                         var domain = parts[0];
                         if (!string.Equals(ldapIdentityManagers.CurrentDomain, domain, StringComparison.OrdinalIgnoreCase))
                         {
-                            errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_DomainNotFound);
-                            throw errors;
+                            _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_DomainNotFound);
+                            throw _errors;
                         }
                         var userName = parts[1];
                         var signInResult = ldapIdentityManagers.PasswordSignIn(userName, Password);
@@ -88,24 +89,24 @@ namespace Quantumart.QP8.BLL
                             switch (signInResult.Status)
                             {
                                 case SignInStatus.NotFound:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_NotFound);
+                                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_NotFound);
                                     break;
                                 case SignInStatus.PasswordExpired:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_PasswordExpired);
+                                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_PasswordExpired);
                                     break;
                                 case SignInStatus.AccountExpired:
                                 case SignInStatus.IsLockedOut:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_IsLockedOut);
+                                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_IsLockedOut);
                                     break;
                                 case SignInStatus.OperationError:
-                                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_OperationError);
+                                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_Ldap_OperationError);
                                     break;
                                 case SignInStatus.NotInitialized:
                                 case SignInStatus.Succeeded:
                                 default:
                                     break;
                             }
-                            throw errors;
+                            throw _errors;
                         }
                     }
                 }
@@ -115,34 +116,39 @@ namespace Quantumart.QP8.BLL
 
                 if (errorCode == QpAuthenticationErrorNumber.AccountNotExist)
                 {
-                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountNotExist);
+                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountNotExist);
                 }
                 else if (errorCode == QpAuthenticationErrorNumber.AccountBlocked)
                 {
-                    errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountBlocked);
+                    _errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountBlocked);
                 }
                 else if (errorCode == QpAuthenticationErrorNumber.WrongPassword)
                 {
-                    errors.ErrorFor(n => n.Password, LogOnStrings.ErrorMessage_WrongPassword);
+                    _errors.ErrorFor(n => n.Password, LogOnStrings.ErrorMessage_WrongPassword);
                 }
                 else if (errorCode == QpAuthenticationErrorNumber.WindowsAccountNotAssociatedQpUser)
                 {
-                    errors.ErrorForModel(LogOnStrings.ErrorMessage_WindowsAccountNotAssociatedQPUser);
+                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_WindowsAccountNotAssociatedQPUser);
                 }
                 else if (errorCode == QpAuthenticationErrorNumber.AutoLoginDisabled)
                 {
-                    errors.ErrorForModel(LogOnStrings.ErrorMessage_AutoLoginDisabled);
+                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_AutoLoginDisabled);
                 }
                 else if (errorCode != QpAuthenticationErrorNumber.NoErrors)
                 {
-                    errors.ErrorForModel(LogOnStrings.ErrorMessage_UnknownAuthenticationError + ": " + message);
+                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_UnknownAuthenticationError + ": " + message);
                 }
             }
 
-            if (!errors.IsEmpty)
+            if (!_errors.IsEmpty)
             {
-                throw errors;
+                throw _errors;
             }
+        }
+
+        public void ValidateKeyCloak(IKeycloakAuthService keycloakAuthService, string state, string originalState, string code, string error)
+        {
+
         }
     }
 }

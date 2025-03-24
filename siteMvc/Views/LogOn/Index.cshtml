@@ -45,12 +45,11 @@
             <dt class="label"></dt>
             <dd class="field">
               <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" />
-              <a href="/LogOn/KeyCloakSSO">SSO</a>
+              <input type="submit" id="SSO" name="SSO" value="SSO" onclick="form.action='/LogOn/KeyCloakSSO';" />
               @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
             </dd>
           </dl>
         </div>
-
       }
     </div>
   </div>

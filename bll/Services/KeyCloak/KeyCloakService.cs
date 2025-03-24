@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using NLog;
@@ -16,6 +18,9 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
 
     private const string GroupPathTemplate = "admin/realms/{0}/groups?search={1}";
     private const string UsersInGroupPathTemplate = "admin/realms/{0}/groups/{1}/members";
+    private const string AuthenticateUrlTemplate = "{0}/realms/{1}/protocol/openid-connect/auth?response_type={2}&client_id={3}&redirect_uri={4}&scope={5}&state={6}&code_challenge={7}&code_challenge_method=S256";
+    private const string ResponseType = "code";
+    private const string Scope = "openid";
 
     public KeyCloakService(IKeyCloakApiHelper apiHelper, IOptions<KeyCloakSettings> settings)
     {
@@ -67,7 +72,38 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
         return result;
     }
 
-    public Task<bool> CheckUserAuth(string code) => _apiHelper.CheckAuthorization(code);
+    public Task<bool> CheckUserAuth(string code, string verifier) => _apiHelper.CheckAuthorization(code, verifier);
+
+    public string GenerateCodeVerifier(int length = 32)
+    {
+        byte[] randomBytes = new byte[length];
+        using RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomBytes);
+        return Base64UrlEncode(randomBytes);
+    }
+
+    public string GenerateCodeChallenge(string codeVerifier)
+    {
+        byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(codeVerifier));
+        return Base64UrlEncode(hash);
+    }
+
+    public string GetAuthenticateUrl(string state, string challenge) =>
+        string.Format(AuthenticateUrlTemplate,
+            _settings.ApiUrl,
+            _settings.Realm,
+            ResponseType,
+            _settings.AuthClientId,
+            _settings.RedirectUrl,
+            Scope,
+            state,
+            challenge);
+
+    private static string Base64UrlEncode(byte[] data) =>
+        Convert.ToBase64String(data)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .TrimEnd('=');
 
     private static KeyCloakGroup RetrieveGroup(KeyCloakGroup group, string groupName)
     {

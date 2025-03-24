@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -30,18 +32,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private AuthenticationHelper _helper;
         private ModelExpressionProvider _provider;
         private readonly ILdapIdentityManager _ldapIdentityManager;
-        private readonly KeyCloakSettings _keyCloakSettings;
         private readonly IKeycloakAuthService _keycloakAuthService;
 
-        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, ILdapIdentityManager ldapIdentityManager, IOptions<KeyCloakSettings> keyCloakSettings,
-            IKeycloakAuthService keycloakAuthService
-        )
+        public LogOnController(AuthenticationHelper helper, ModelExpressionProvider provider, ILdapIdentityManager ldapIdentityManager, IKeycloakAuthService keycloakAuthService)
         {
             _helper = helper;
             _provider = provider;
             _ldapIdentityManager = ldapIdentityManager;
             _keycloakAuthService = keycloakAuthService;
-            _keyCloakSettings = keyCloakSettings.Value;
         }
 
         [DisableBrowserCache]
@@ -72,23 +70,42 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await PostIndex(useAutoLogin, data, returnUrl);
         }
 
-        [HttpGet]
-        public ActionResult KeyCloakSSO()
+        [HttpPost]
+        [DisableBrowserCache]
+        public ActionResult KeyCloakSSO(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
-            const string responseType = "code";
-            const string scope = "openid profile email";
-
             Guid state = Guid.NewGuid();
-            HttpContext.Session.SetValue("KeyCloakState", state);
+            string verifier = _keycloakAuthService.GenerateCodeVerifier();
+            string challenge = _keycloakAuthService.GenerateCodeChallenge(verifier);
 
-            string authorizationUrl = $"https://kc01.dev.qsupport.ru/realms/{_keyCloakSettings.Realm}/protocol/openid-connect/auth?response_type={responseType}&client_id={_keyCloakSettings.AuthClientId}&redirect_uri=http://localhost:5400/LogOn/KeyCloakCallback&scope={scope}&state={state}";
+            HttpContext.Session.SetValue("KeyCloakState", state.ToString());
+            HttpContext.Session.SetValue("KeyCloakChallenge", verifier);
+            HttpContext.Session.SetValue("KeyCloakCustomerCode", data.CustomerCode);
+            HttpContext.Session.SetValue("KeyCloakReturnUrl", returnUrl);
 
-            return Redirect(authorizationUrl);
+            return Redirect(_keycloakAuthService.GetAuthenticateUrl(state.ToString(), challenge));
         }
 
         [HttpGet]
-        public async Task<IActionResult> KeyCloakCallback([FromQuery]string state, [FromQuery]string session_state, [FromQuery]string iss, [FromQuery]string code)
+        public async Task<IActionResult> KeyCloakCallback([FromQuery]string state, [FromQuery]string code, [FromQuery] string error)
         {
+            LogOnCredentials data = new();
+
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                //ToDo handle error
+            }
+
+            if (string.IsNullOrWhiteSpace(state))
+            {
+                //ToDo handle mission state
+            }
+
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                //ToDo handle missing code
+            }
+
             string storedState = HttpContext.Session.GetString("KeyCloakState");
 
             if (string.IsNullOrEmpty(storedState) || storedState.Equals(state, StringComparison.InvariantCultureIgnoreCase))
@@ -97,7 +114,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 // return await LogOnView(data);
             }
 
-            bool result = await _keycloakAuthService.CheckUserAuth(code);
+            string verifier = HttpContext.Session.GetString("KeyCloakChallenge");
+            verifier = verifier.Trim('"');
+
+            bool result = await _keycloakAuthService.CheckUserAuth(code, verifier);
 
             return RedirectToAction("Index", "Home");
         }
@@ -105,7 +125,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
             data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
-            data.NtUserName = GetCurrentUser();
+            data.NtUserName = string.IsNullOrWhiteSpace(data.NtUserName) ? GetCurrentUser() : data.NtUserName;
 
             try
             {

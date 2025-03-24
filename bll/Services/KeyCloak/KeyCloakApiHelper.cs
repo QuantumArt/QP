@@ -32,11 +32,11 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
             return _token.Token;
         }
 
-        FormUrlEncodedContent content = new(new[]
+        FormUrlEncodedContent content = new(new Dictionary<string, string>
         {
-            new KeyValuePair<string, string>("grant_type", "client_credentials"),
-            new KeyValuePair<string, string>("client_id", _settings.ClientId),
-            new KeyValuePair<string, string>("client_secret", _settings.ClientSecret)
+            { "grant_type", "client_credentials" },
+            { "client_id", _settings.ClientId },
+            { "client_secret", _settings.ClientSecret }
         });
 
         try
@@ -93,22 +93,29 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
         }
     }
 
-    public async Task<bool> CheckAuthorization(string code)
+    public async Task<bool> CheckAuthorization(string code, string verifier)
     {
         try
         {
             using HttpClient client = _clientFactory.CreateClient("KeyCloak");
 
-            client.DefaultRequestHeaders.Authorization = new("Basic", Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{_settings.AuthClientId}:{_settings.AuthClientSecret}")));
-
             FormUrlEncodedContent content = new(new Dictionary<string, string>
             {
                 { "grant_type", "authorization_code" },
                 { "code", code },
-                { "redirect_uri", "http://localhost:5400/KeyCloakCallback" }
+                { "code_verifier", verifier },
+                { "client_id", _settings.AuthClientId },
+                { "redirect_uri", "http://localhost:5400/LogOn/KeyCloakCallback" }
             });
 
             HttpResponseMessage response = await client.PostAsync(string.Format(TokenEndpointFormat, _settings.Realm), content);
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            _logger.ForInfoEvent()
+                .Message("")
+                .Property("Status", response.StatusCode)
+                .Property("Body", responseBody)
+                .Log();
 
             return response.IsSuccessStatusCode;
         }
