@@ -73,8 +73,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [DisableBrowserCache]
-        public ActionResult KeyCloakSSO(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
+        public async Task<IActionResult> KeyCloakSso(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
+            if (!await data.CheckSsoEnabled(_keycloakAuthService))
+            {
+                data.UseAutoLogin = true;
+                return await PostIndex(true, data, returnUrl);
+            }
+
             Guid state = Guid.NewGuid();
             string verifier = _keycloakAuthService.GenerateCodeVerifier();
             string challenge = _keycloakAuthService.GenerateCodeChallenge(verifier);
@@ -88,7 +94,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> KeyCloakCallback([FromQuery]string state, [FromQuery]string code, [FromQuery] string error)
+        public async Task<IActionResult> SsoCallback([FromQuery]string state, [FromQuery]string code, [FromQuery] string error)
         {
             LogOnCredentials data = new()
             {
@@ -98,7 +104,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string returnUrl = HttpContext.Session.GetValue<string>("KeyCloakReturnUrl");
             string storedState = HttpContext.Session.GetValue<string>("KeyCloakState");
             string verifier = HttpContext.Session.GetValue<string>("KeyCloakChallenge");
-            await data.ValidateKeyCloak(_keycloakAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
+            await data.ValidateSso(_keycloakAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
 
             return await PostIndex(true, data, returnUrl);
         }

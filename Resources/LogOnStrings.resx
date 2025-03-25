@@ -192,10 +192,13 @@
   <data name="ErrorMessage_Ldap_DomainNotFound" xml:space="preserve">
     <value>Domain name not found!</value>
   </data>
-  <data name="ErrorMessage_KeyCloak_DefaultMessage" xml:space="preserve">
-    <value>Unable to authenticate with KeyCloak, please contact your system administrator.</value>
+  <data name="ErrorMessage_SSO_DefaultMessage" xml:space="preserve">
+    <value>Unable to authenticate with SSO, please contact your system administrator.</value>
   </data>
-  <data name="ErrorMessage_KeyCloak_Retry" xml:space="preserve">
-    <value>Error while authenticating with KeyCloak, please try again.</value>
+  <data name="ErrorMessage_SSO_Retry" xml:space="preserve">
+    <value>Error while authenticating with SSO, please try again.</value>
+  </data>
+  <data name="ErrorMessage_SSO_Disabled" xml:space="preserve">
+    <value>SSO disabled for this customer code</value>
   </data>
 </root>

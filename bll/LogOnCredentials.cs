@@ -6,7 +6,9 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.Security.Ldap;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using Quantumart.QP8.BLL.Services.KeyCloak;
 using Quantumart.QP8.Configuration.Enums;
@@ -38,6 +40,8 @@ namespace Quantumart.QP8.BLL
 
         [BindNever]
         public QpUser User { get; set; }
+
+        public RulesException<LogOnCredentials> Errors { get; set; }
 
         public void Validate(ILdapIdentityManager ldapIdentityManagers)
         {
@@ -148,7 +152,25 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public async Task ValidateKeyCloak(IKeycloakAuthService keycloakAuthService,
+        public async Task<bool> CheckSsoEnabled(IKeycloakAuthService keycloakAuthService)
+        {
+            QPContext.CurrentCustomerCode = CustomerCode;
+            string ssoEnabledString = await QPContext.EFContext.AppSettingsSet
+                .Where(x => x.Key == keycloakAuthService.GetEnabledSettingName())
+                .Select(x => x.Value)
+                .FirstOrDefaultAsync();
+
+            if (bool.TryParse(ssoEnabledString, out bool ssoEnabled) && ssoEnabled)
+            {
+                return true;
+            }
+
+            _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_Disabled);
+
+            return false;
+        }
+
+        public async Task ValidateSso(IKeycloakAuthService keycloakAuthService,
             Logger logger,
             string state,
             string originalState,
@@ -156,6 +178,11 @@ namespace Quantumart.QP8.BLL
             string error,
             string verifier)
         {
+            if (!await CheckSsoEnabled(keycloakAuthService))
+            {
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(error))
             {
                 logger.ForErrorEvent()
@@ -163,7 +190,7 @@ namespace Quantumart.QP8.BLL
                     .Property("Error", error)
                     .Log();
 
-                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_DefaultMessage);
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_DefaultMessage);
 
                 return;
             }
@@ -176,7 +203,7 @@ namespace Quantumart.QP8.BLL
                     .Property("SavedState", originalState)
                     .Log();
 
-                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_Retry);
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_Retry);
 
                 return;
             }
@@ -187,7 +214,7 @@ namespace Quantumart.QP8.BLL
                     .Message("KeyCloak authentication code is empty")
                     .Log();
 
-                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_Retry);
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_Retry);
 
                 return;
             }
@@ -198,7 +225,7 @@ namespace Quantumart.QP8.BLL
                     .Message("Verification code is empty")
                     .Log();
 
-                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_Retry);
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_Retry);
 
                 return;
             }
@@ -214,7 +241,7 @@ namespace Quantumart.QP8.BLL
                         .Property("Error", result.Error)
                         .Log();
 
-                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_DefaultMessage);
+                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_DefaultMessage);
                 }
                 else
                 {
@@ -230,7 +257,7 @@ namespace Quantumart.QP8.BLL
                     .Message("Error while authenticating KeyCloak")
                     .Log();
 
-                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_DefaultMessage);
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_DefaultMessage);
             }
         }
     }

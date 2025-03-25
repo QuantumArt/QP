@@ -203,7 +203,6 @@ namespace Quantumart.QP8.WebMvc
 
                 services.AddAuthorization(options => { options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode")); });
 
-                // servicesn
                 services
                    .AddTransient<AuthenticationHelper>()
                    .AddTransient<JsLanguageHelper>()
@@ -307,12 +306,12 @@ namespace Quantumart.QP8.WebMvc
                 else if (qpOptions.AuthenticationType == AuthenticationType.KeyCloak)
                 {
                     KeyCloakSettings settings = new();
-                    Configuration.GetSection("KeyCloak").Bind(settings);
+                    Configuration.GetSection(KeyCloakSettings.ConfigurationSectionName).Bind(settings);
                     services.AddSingleton(Options.Create(settings));
                     services.AddSingleton<IKeyCloakSyncService, KeyCloakService>();
                     services.AddSingleton<IKeyCloakApiHelper, KeyCloakApiHelper>();
                     services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
-                    services.AddHttpClient("KeyCloak", client => client.BaseAddress = new(settings.ApiUrl));
+                    services.AddHttpClient(KeyCloakSettings.HttpClientName, client => client.BaseAddress = new(settings.ApiUrl));
                     services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
                     services.AddSingleton<IKeycloakAuthService, KeyCloakService>();
                 }

@@ -79,7 +79,7 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
 
         KeyCloakAuth authInfo = new()
         {
-            IsSuccess = result.IsSuccess,
+            IsSuccess = result.IsSuccess
         };
 
         if (!result.IsSuccess)
@@ -131,6 +131,8 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
             Scope,
             state,
             challenge);
+
+    public string GetEnabledSettingName() => _settings.EnableSettingName;
 
     private static string Base64UrlEncode(byte[] data) =>
         Convert.ToBase64String(data)

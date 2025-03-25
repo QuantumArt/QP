@@ -41,7 +41,7 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
 
         try
         {
-            using HttpClient client = _clientFactory.CreateClient("KeyCloak");
+            using HttpClient client = _clientFactory.CreateClient(KeyCloakSettings.HttpClientName);
             HttpResponseMessage response = await client.PostAsync(string.Format(TokenEndpointFormat, _settings.Realm), content);
             response.EnsureSuccessStatusCode();
 
@@ -73,7 +73,7 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
         {
             string accessToken = await GetTokenAsync();
 
-            using HttpClient client = _clientFactory.CreateClient("KeyCloak");
+            using HttpClient client = _clientFactory.CreateClient(KeyCloakSettings.HttpClientName);
             client.DefaultRequestHeaders.Authorization = new("Bearer", accessToken);
 
             HttpResponseMessage response = await client.GetAsync(apiUrl);
@@ -106,7 +106,7 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
                 { "redirect_uri", _settings.RedirectUrl }
             });
 
-            using HttpClient client = _clientFactory.CreateClient("KeyCloak");
+            using HttpClient client = _clientFactory.CreateClient(KeyCloakSettings.HttpClientName);
             HttpResponseMessage response = await client.PostAsync(string.Format(TokenEndpointFormat, _settings.Realm), content);
             string responseBody = await response.Content.ReadAsStringAsync();
 

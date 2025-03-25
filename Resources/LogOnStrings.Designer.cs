@@ -114,24 +114,6 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to authenticate with KeyCloak, please contact your system administrator..
-        /// </summary>
-        public static string ErrorMessage_KeyCloak_DefaultMessage {
-            get {
-                return ResourceManager.GetString("ErrorMessage_KeyCloak_DefaultMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error while authenticating with KeyCloak, please try again..
-        /// </summary>
-        public static string ErrorMessage_KeyCloak_Retry {
-            get {
-                return ResourceManager.GetString("ErrorMessage_KeyCloak_Retry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Domain name not found!.
         /// </summary>
         public static string ErrorMessage_Ldap_DomainNotFound {
@@ -209,6 +191,33 @@ namespace Quantumart.QP8.Resources {
         public static string ErrorMessage_SessionExpired {
             get {
                 return ResourceManager.GetString("ErrorMessage_SessionExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to authenticate with SSO, please contact your system administrator..
+        /// </summary>
+        public static string ErrorMessage_SSO_DefaultMessage {
+            get {
+                return ResourceManager.GetString("ErrorMessage_SSO_DefaultMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SSO disabled for this customer code.
+        /// </summary>
+        public static string ErrorMessage_SSO_Disabled {
+            get {
+                return ResourceManager.GetString("ErrorMessage_SSO_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while authenticating with SSO, please try again..
+        /// </summary>
+        public static string ErrorMessage_SSO_Retry {
+            get {
+                return ResourceManager.GetString("ErrorMessage_SSO_Retry", resourceCulture);
             }
         }
         

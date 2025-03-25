@@ -11,4 +11,6 @@ public interface IKeycloakAuthService
     string GenerateCodeChallenge(string codeVerifier);
 
     string GetAuthenticateUrl(string state, string challenge);
+
+    string GetEnabledSettingName();
 }
