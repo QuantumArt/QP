@@ -6,6 +6,8 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.Security.Ldap;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using NLog;
 using Quantumart.QP8.BLL.Services.KeyCloak;
 using Quantumart.QP8.Configuration.Enums;
 
@@ -146,9 +148,90 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void ValidateKeyCloak(IKeycloakAuthService keycloakAuthService, string state, string originalState, string code, string error)
+        public async Task ValidateKeyCloak(IKeycloakAuthService keycloakAuthService,
+            Logger logger,
+            string state,
+            string originalState,
+            string code,
+            string error,
+            string verifier)
         {
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                logger.ForErrorEvent()
+                    .Message("Unable to authenticate with KeyCloak")
+                    .Property("Error", error)
+                    .Log();
 
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_DefaultMessage);
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(state) || !state.Equals(originalState, StringComparison.OrdinalIgnoreCase))
+            {
+                logger.ForErrorEvent()
+                    .Message("Request state does not match with saved one")
+                    .Property("ReceivedState", state)
+                    .Property("SavedState", originalState)
+                    .Log();
+
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_Retry);
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                logger.ForErrorEvent()
+                    .Message("KeyCloak authentication code is empty")
+                    .Log();
+
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_Retry);
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(verifier))
+            {
+                logger.ForErrorEvent()
+                    .Message("Verification code is empty")
+                    .Log();
+
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_Retry);
+
+                return;
+            }
+
+            try
+            {
+                KeyCloakAuth result = await keycloakAuthService.CheckUserAuth(code, verifier);
+
+                if (!result.IsSuccess)
+                {
+                    logger.ForErrorEvent()
+                        .Message("Failed to authenticate user with KeyCloak")
+                        .Property("Error", result.Error)
+                        .Log();
+
+                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_DefaultMessage);
+                }
+                else
+                {
+                    UserName = result.UserName;
+                    NtUserName = result.UserName;
+                    UseAutoLogin = true;
+                }
+            }
+            catch (Exception e)
+            {
+                logger.ForErrorEvent()
+                    .Exception(e)
+                    .Message("Error while authenticating KeyCloak")
+                    .Log();
+
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_KeyCloak_DefaultMessage);
+            }
         }
     }
 }

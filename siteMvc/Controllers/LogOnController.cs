@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
+using NLog;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.KeyCloak;
@@ -89,37 +90,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpGet]
         public async Task<IActionResult> KeyCloakCallback([FromQuery]string state, [FromQuery]string code, [FromQuery] string error)
         {
-            LogOnCredentials data = new();
-
-            if (!string.IsNullOrWhiteSpace(error))
+            LogOnCredentials data = new()
             {
-                //ToDo handle error
-            }
+                CustomerCode = HttpContext.Session.GetValue<string>("KeyCloakCustomerCode")
+            };
 
-            if (string.IsNullOrWhiteSpace(state))
-            {
-                //ToDo handle mission state
-            }
+            string returnUrl = HttpContext.Session.GetValue<string>("KeyCloakReturnUrl");
+            string storedState = HttpContext.Session.GetValue<string>("KeyCloakState");
+            string verifier = HttpContext.Session.GetValue<string>("KeyCloakChallenge");
+            await data.ValidateKeyCloak(_keycloakAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
 
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                //ToDo handle missing code
-            }
-
-            string storedState = HttpContext.Session.GetString("KeyCloakState");
-
-            if (string.IsNullOrEmpty(storedState) || storedState.Equals(state, StringComparison.InvariantCultureIgnoreCase))
-            {
-                // FillViewBagData();
-                // return await LogOnView(data);
-            }
-
-            string verifier = HttpContext.Session.GetString("KeyCloakChallenge");
-            verifier = verifier.Trim('"');
-
-            bool result = await _keycloakAuthService.CheckUserAuth(code, verifier);
-
-            return RedirectToAction("Index", "Home");
+            return await PostIndex(true, data, returnUrl);
         }
 
         private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)

@@ -192,4 +192,10 @@
   <data name="ErrorMessage_Ldap_DomainNotFound" xml:space="preserve">
     <value>Domain name not found!</value>
   </data>
+  <data name="ErrorMessage_KeyCloak_DefaultMessage" xml:space="preserve">
+    <value>Unable to authenticate with KeyCloak, please contact your system administrator.</value>
+  </data>
+  <data name="ErrorMessage_KeyCloak_Retry" xml:space="preserve">
+    <value>Error while authenticating with KeyCloak, please try again.</value>
+  </data>
 </root>

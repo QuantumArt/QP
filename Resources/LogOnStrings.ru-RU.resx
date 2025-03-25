@@ -179,4 +179,10 @@
   <data name="VersionsAreDifferent" xml:space="preserve">
     <value>Версия базы данных ({0}) не совпадает с версией бэкенда ({1})</value>
   </data>
+  <data name="ErrorMessage_KeyCloak_DefaultMessage" xml:space="preserve">
+    <value>Не удалось войти через KeyCloak, пожалуйста. обратитесь к Вашему системному администратору.</value>
+  </data>
+  <data name="ErrorMessage_KeyCloak_Retry" xml:space="preserve">
+    <value>Ошибка при входе через KeyCloak, пожалуйста, повторите попытку.</value>
+  </data>
 </root>

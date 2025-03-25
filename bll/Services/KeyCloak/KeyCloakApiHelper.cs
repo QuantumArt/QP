@@ -93,31 +93,28 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
         }
     }
 
-    public async Task<bool> CheckAuthorization(string code, string verifier)
+    public async Task<KeyCloakAuthResult> CheckAuthorization(string code, string verifier)
     {
         try
         {
-            using HttpClient client = _clientFactory.CreateClient("KeyCloak");
-
             FormUrlEncodedContent content = new(new Dictionary<string, string>
             {
                 { "grant_type", "authorization_code" },
                 { "code", code },
                 { "code_verifier", verifier },
                 { "client_id", _settings.AuthClientId },
-                { "redirect_uri", "http://localhost:5400/LogOn/KeyCloakCallback" }
+                { "redirect_uri", _settings.RedirectUrl }
             });
 
+            using HttpClient client = _clientFactory.CreateClient("KeyCloak");
             HttpResponseMessage response = await client.PostAsync(string.Format(TokenEndpointFormat, _settings.Realm), content);
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            _logger.ForInfoEvent()
-                .Message("")
-                .Property("Status", response.StatusCode)
-                .Property("Body", responseBody)
-                .Log();
-
-            return response.IsSuccessStatusCode;
+            return new()
+            {
+                Response = JsonSerializer.Deserialize<JsonElement>(responseBody),
+                IsSuccess = response.IsSuccessStatusCode
+            };
         }
         catch (Exception e)
         {
@@ -126,7 +123,7 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
                 .Exception(e)
                 .Log();
 
-            throw;
+            return new();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using NLog;
 using Quantumart.QP8.Configuration;
 
@@ -72,7 +73,39 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
         return result;
     }
 
-    public Task<bool> CheckUserAuth(string code, string verifier) => _apiHelper.CheckAuthorization(code, verifier);
+    public async Task<KeyCloakAuth> CheckUserAuth(string code, string verifier)
+    {
+        KeyCloakAuthResult result = await _apiHelper.CheckAuthorization(code, verifier);
+
+        KeyCloakAuth authInfo = new()
+        {
+            IsSuccess = result.IsSuccess,
+        };
+
+        if (!result.IsSuccess)
+        {
+            authInfo.Error = result.Response.GetProperty("error").GetString();
+        }
+        else
+        {
+            string idToken = result.Response.GetProperty("id_token").GetString();
+            JsonWebTokenHandler handler = new();
+            JsonWebToken token = handler.ReadJsonWebToken(idToken);
+
+            if (token.TryGetPayloadValue("preferred_username", out string username))
+            {
+                authInfo.UserName = username;
+            }
+            else
+            {
+                authInfo.IsSuccess = false;
+                authInfo.Error = "Username not found in id token";
+            }
+        }
+
+        return authInfo;
+    }
+
 
     public string GenerateCodeVerifier(int length = 32)
     {

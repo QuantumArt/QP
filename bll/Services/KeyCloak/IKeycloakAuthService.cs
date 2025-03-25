@@ -4,7 +4,7 @@ namespace Quantumart.QP8.BLL.Services.KeyCloak;
 
 public interface IKeycloakAuthService
 {
-    Task<bool> CheckUserAuth(string code, string verifier);
+    Task<KeyCloakAuth> CheckUserAuth(string code, string verifier);
 
     string GenerateCodeVerifier(int length = 32);
 
