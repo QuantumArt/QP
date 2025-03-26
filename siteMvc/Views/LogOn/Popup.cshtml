@@ -37,6 +37,7 @@
           <dt class="label"></dt>
           <dd class="field">
             <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login"/>
+            <input type="submit" id="SSO" name="SSO" value="SSO" onclick="form.action='/LogOn/KeyCloakSso'; this.form.submit();" />
             <img id="authLoading" src="@Url.Content(@"~/Static/build/QP8/icons/ajax_loaders/circle_ball.gif")" alt="loading..."/>
             <br/>
             @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
