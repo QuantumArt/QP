@@ -138,6 +138,10 @@ namespace Quantumart.QP8.BLL
                 {
                     _errors.ErrorForModel(LogOnStrings.ErrorMessage_AutoLoginDisabled);
                 }
+                else if (errorCode == QpAuthenticationErrorNumber.IntegratedAccountsDisabled)
+                {
+                    _errors.ErrorForModel(LogOnStrings.ErrorMessage_IntegratedAccountsDisabled);
+                }
                 else if (errorCode != QpAuthenticationErrorNumber.NoErrors)
                 {
                     _errors.ErrorForModel(LogOnStrings.ErrorMessage_UnknownAuthenticationError + ": " + message);

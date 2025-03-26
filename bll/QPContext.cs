@@ -573,6 +573,13 @@ namespace Quantumart.QP8.BLL
             QpUser resultUser = null;
             message = string.Empty;
 
+            if (!data.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.DisableInternalAccounts)
+            {
+                errorCode = QpAuthenticationErrorNumber.IntegratedAccountsDisabled;
+
+                return resultUser;
+            }
+
             var sqlCn = QPConfiguration.GetConnectionInfo(data.CustomerCode);
 
             using (var dbContext = CreateDbContext(sqlCn))

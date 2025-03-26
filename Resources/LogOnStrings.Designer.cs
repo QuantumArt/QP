@@ -114,6 +114,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Integrated accounts disabled.
+        /// </summary>
+        public static string ErrorMessage_IntegratedAccountsDisabled {
+            get {
+                return ResourceManager.GetString("ErrorMessage_IntegratedAccountsDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Domain name not found!.
         /// </summary>
         public static string ErrorMessage_Ldap_DomainNotFound {

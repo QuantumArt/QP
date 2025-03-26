@@ -201,4 +201,7 @@
   <data name="ErrorMessage_SSO_Disabled" xml:space="preserve">
     <value>SSO disabled for this customer code</value>
   </data>
+  <data name="ErrorMessage_IntegratedAccountsDisabled" xml:space="preserve">
+    <value>Integrated accounts disabled</value>
+  </data>
 </root>

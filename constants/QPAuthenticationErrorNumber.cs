@@ -12,5 +12,6 @@
         public static readonly int WrongPassword = 3;
         public static readonly int WindowsAccountNotAssociatedQpUser = 5;
         public static readonly int AutoLoginDisabled = 6;
+        public static readonly int IntegratedAccountsDisabled = 7;
     }
 }
