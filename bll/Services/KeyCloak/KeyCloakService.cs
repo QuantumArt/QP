@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using NLog;
@@ -132,7 +133,31 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
             state,
             challenge);
 
-    public string GetEnabledSettingName() => _settings.EnableSettingName;
+    public async Task<bool> CheckSsoEnabled(string customerCode)
+    {
+        try
+        {
+            QPContext.CurrentCustomerCode = customerCode;
+
+            string ssoEnabledString = await QPContext.EFContext.AppSettingsSet
+                .Where(x => x.Key == _settings.EnableSettingName)
+                .Select(x => x.Value)
+                .FirstOrDefaultAsync();
+
+            return bool.TryParse(ssoEnabledString, out bool ssoEnabled) && ssoEnabled;
+        }
+        catch (Exception ex)
+        {
+            _logger.ForErrorEvent()
+                .Exception(ex)
+                .Message("Error while checking SSO enabled")
+                .Property("CustomerCode", customerCode)
+                .Log();
+
+            return false;
+        }
+
+    }
 
     private static string Base64UrlEncode(byte[] data) =>
         Convert.ToBase64String(data)

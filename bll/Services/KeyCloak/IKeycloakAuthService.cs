@@ -12,5 +12,5 @@ public interface IKeycloakAuthService
 
     string GetAuthenticateUrl(string state, string challenge);
 
-    string GetEnabledSettingName();
+    Task<bool> CheckSsoEnabled(string customerCode);
 }

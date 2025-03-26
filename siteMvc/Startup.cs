@@ -302,6 +302,7 @@ namespace Quantumart.QP8.WebMvc
                     services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
                     services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
                     services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                    services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
                 }
                 else if (qpOptions.AuthenticationType == AuthenticationType.KeyCloak)
                 {
@@ -319,6 +320,7 @@ namespace Quantumart.QP8.WebMvc
                 {
                     services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
                     services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+                    services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
                 }
 
                 RegisterMultistepActionServices(services);

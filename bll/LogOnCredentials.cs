@@ -154,20 +154,14 @@ namespace Quantumart.QP8.BLL
 
         public async Task<bool> CheckSsoEnabled(IKeycloakAuthService keycloakAuthService)
         {
-            QPContext.CurrentCustomerCode = CustomerCode;
-            string ssoEnabledString = await QPContext.EFContext.AppSettingsSet
-                .Where(x => x.Key == keycloakAuthService.GetEnabledSettingName())
-                .Select(x => x.Value)
-                .FirstOrDefaultAsync();
+            bool result = await keycloakAuthService.CheckSsoEnabled(CustomerCode);
 
-            if (bool.TryParse(ssoEnabledString, out bool ssoEnabled) && ssoEnabled)
+            if (!result)
             {
-                return true;
+                _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_Disabled);
             }
 
-            _errors.ErrorForModel(LogOnStrings.ErrorMessage_SSO_Disabled);
-
-            return false;
+            return result;
         }
 
         public async Task ValidateSso(IKeycloakAuthService keycloakAuthService,
