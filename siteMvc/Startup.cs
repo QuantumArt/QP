@@ -290,31 +290,50 @@ namespace Quantumart.QP8.WebMvc
 
                 services.RegisterExternalWorkflow(Configuration);
 
-                if (qpOptions.AuthenticationType == AuthenticationType.ActiveDirectory)
+                if (qpOptions.ExternalAuthentication.Enabled)
                 {
-                    services.AddOptions<LdapSettings>()
-                       .Bind(Configuration.GetSection("Ldap"))
-                       .ValidateDataAnnotations()
-                       .ValidateOnStart();
+                    switch (qpOptions.ExternalAuthentication.ExternalAuthenticationType)
+                    {
+                        case ExternalAuthenticationType.ActiveDirectory:
+                            services.AddOptions<LdapSettings>()
+                                .Bind(Configuration.GetSection("Ldap"))
+                                .ValidateDataAnnotations()
+                                .ValidateOnStart();
 
-                    services.AddSingleton<LdapConnectionFactory>();
-                    services.AddSingleton<LdapHelper>();
-                    services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
-                    services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
-                    services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
-                    services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
-                }
-                else if (qpOptions.AuthenticationType == AuthenticationType.KeyCloak)
-                {
-                    KeyCloakSettings settings = new();
-                    Configuration.GetSection(KeyCloakSettings.ConfigurationSectionName).Bind(settings);
-                    services.AddSingleton(Options.Create(settings));
-                    services.AddSingleton<IKeyCloakSyncService, KeyCloakService>();
-                    services.AddSingleton<IKeyCloakApiHelper, KeyCloakApiHelper>();
-                    services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
-                    services.AddHttpClient(KeyCloakSettings.HttpClientName, client => client.BaseAddress = new(settings.ApiUrl));
-                    services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
-                    services.AddSingleton<IKeycloakAuthService, KeyCloakService>();
+                            services.AddSingleton<LdapConnectionFactory>();
+                            services.AddSingleton<LdapHelper>();
+                            services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
+                            services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
+                            services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                            services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
+
+                            break;
+                        case ExternalAuthenticationType.KeyCloak:
+                            KeyCloakSettings settings = new();
+                            Configuration.GetSection(KeyCloakSettings.ConfigurationSectionName).Bind(settings);
+                            services.AddSingleton(Options.Create(settings));
+                            services.AddSingleton<IKeyCloakSyncService, KeyCloakService>();
+                            services.AddSingleton<IKeyCloakApiHelper, KeyCloakApiHelper>();
+                            services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
+                            services.AddHttpClient(KeyCloakSettings.HttpClientName, client => client.BaseAddress = new(settings.ApiUrl));
+                            services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                            services.AddSingleton<IKeycloakAuthService, KeyCloakService>();
+
+                            break;
+                        default:
+                            services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                            services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+                            services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
+
+                            if (qpOptions.ExternalAuthentication.DisableInternalAccounts)
+                            {
+                                _logger.ForWarnEvent()
+                                    .Message("Internal accounts disabled and none of external authentication is selected. You would not be able to log in at all!")
+                                    .Log();
+                            }
+
+                            break;
+                    }
                 }
                 else
                 {

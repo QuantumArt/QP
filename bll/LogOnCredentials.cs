@@ -6,9 +6,7 @@ using Quantumart.QP8.Security;
 using Quantumart.QP8.Security.Ldap;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using NLog;
 using Quantumart.QP8.BLL.Services.KeyCloak;
 using Quantumart.QP8.Configuration.Enums;
@@ -71,7 +69,7 @@ namespace Quantumart.QP8.BLL
                     throw _errors;
                 }
 
-                if (QPConfiguration.Options.AuthenticationType == AuthenticationType.ActiveDirectory)
+                if (QPConfiguration.Options.ExternalAuthentication.ExternalAuthenticationType == ExternalAuthenticationType.ActiveDirectory)
                 {
                     var parts = UserName.Split('\\');
                     if (parts.Length == 2 && String.IsNullOrEmpty(NtUserName))

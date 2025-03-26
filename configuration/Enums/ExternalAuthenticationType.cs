@@ -1,8 +1,8 @@
 namespace Quantumart.QP8.Configuration.Enums;
 
-public enum AuthenticationType
+public enum ExternalAuthenticationType
 {
-    Integrated,
+    None = 0,
     ActiveDirectory,
     KeyCloak
 }
