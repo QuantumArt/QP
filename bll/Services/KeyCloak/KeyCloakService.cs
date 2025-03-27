@@ -122,16 +122,22 @@ public class KeyCloakService : IKeyCloakSyncService, ISsoAuthService
         return Base64UrlEncode(hash);
     }
 
-    public string GetAuthenticateUrl(string state, string challenge) =>
-        string.Format(AuthenticateUrlTemplate,
+    public string GetAuthenticateUrl(string state, string challenge)
+    {
+        Uri redirectBase = new(_settings.RedirectUrl);
+        Uri redirectUri = new(redirectBase, "LogOn/SsoCallback");
+
+        return string.Format(AuthenticateUrlTemplate,
             _settings.ApiUrl,
             _settings.Realm,
             ResponseType,
             _settings.AuthClientId,
-            _settings.RedirectUrl,
+            redirectUri,
             Scope,
             state,
             challenge);
+    }
+
 
     public async Task<bool> CheckSsoEnabled(string customerCode)
     {
