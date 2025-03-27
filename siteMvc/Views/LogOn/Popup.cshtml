@@ -18,13 +18,11 @@
             </p>
           </div>
         }
-
         @if (!Model.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.AllowLoginWithCredentials)
         {
           @Html.TextBoxFieldFor(p => p.UserName)
           @Html.PasswordFieldFor(p => p.Password)
         }
-
         @if (ViewBag.AllowSelectCustomerCode)
         {
           @Html.SelectFieldFor(p => p.CustomerCode, (IEnumerable<QPSelectListItem>)ViewBag.CustomerCodes)
@@ -33,7 +31,6 @@
         {
           @Html.TextBoxFieldFor(p => p.CustomerCode)
         }
-
         <dl class="row">
           <dt class="label"></dt>
           <dd class="field">
@@ -50,7 +47,6 @@
             @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
           </dd>
         </dl>
-
         @Html.HiddenFor(p => p.UseAutoLogin)
       </div>
     }

@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 
 namespace Quantumart.QP8.BLL.Services.KeyCloak;
 
-public interface IKeycloakAuthService
+public interface ISsoAuthService
 {
-    Task<KeyCloakAuth> CheckUserAuth(string code, string verifier);
+    Task<SsoAuthResult> CheckUserAuth(string code, string verifier);
 
     string GenerateCodeVerifier(int length = 32);
 

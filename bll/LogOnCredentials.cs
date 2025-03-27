@@ -154,9 +154,9 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public async Task<bool> CheckSsoEnabled(IKeycloakAuthService keycloakAuthService)
+        public async Task<bool> CheckSsoEnabled(ISsoAuthService ssoAuthService)
         {
-            bool result = await keycloakAuthService.CheckSsoEnabled(CustomerCode);
+            bool result = await ssoAuthService.CheckSsoEnabled(CustomerCode);
 
             if (!result)
             {
@@ -166,7 +166,7 @@ namespace Quantumart.QP8.BLL
             return result;
         }
 
-        public async Task ValidateSso(IKeycloakAuthService keycloakAuthService,
+        public async Task ValidateSso(ISsoAuthService ssoAuthService,
             Logger logger,
             string state,
             string originalState,
@@ -174,7 +174,7 @@ namespace Quantumart.QP8.BLL
             string error,
             string verifier)
         {
-            if (!await CheckSsoEnabled(keycloakAuthService))
+            if (!await CheckSsoEnabled(ssoAuthService))
             {
                 return;
             }
@@ -228,7 +228,7 @@ namespace Quantumart.QP8.BLL
 
             try
             {
-                KeyCloakAuth result = await keycloakAuthService.CheckUserAuth(code, verifier);
+                SsoAuthResult result = await ssoAuthService.CheckUserAuth(code, verifier);
 
                 if (!result.IsSuccess)
                 {

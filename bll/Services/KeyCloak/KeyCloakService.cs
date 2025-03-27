@@ -12,7 +12,7 @@ using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.BLL.Services.KeyCloak;
 
-public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
+public class KeyCloakService : IKeyCloakSyncService, ISsoAuthService
 {
     private readonly IKeyCloakApiHelper _apiHelper;
     private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
@@ -74,18 +74,18 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
         return result;
     }
 
-    public async Task<KeyCloakAuth> CheckUserAuth(string code, string verifier)
+    public async Task<SsoAuthResult> CheckUserAuth(string code, string verifier)
     {
         KeyCloakAuthResult result = await _apiHelper.CheckAuthorization(code, verifier);
 
-        KeyCloakAuth authInfo = new()
+        SsoAuthResult authResultInfo = new()
         {
             IsSuccess = result.IsSuccess
         };
 
         if (!result.IsSuccess)
         {
-            authInfo.Error = result.Response.GetProperty("error").GetString();
+            authResultInfo.Error = result.Response.GetProperty("error").GetString();
         }
         else
         {
@@ -95,16 +95,16 @@ public class KeyCloakService : IKeyCloakSyncService, IKeycloakAuthService
 
             if (token.TryGetPayloadValue("preferred_username", out string username))
             {
-                authInfo.UserName = username;
+                authResultInfo.UserName = username;
             }
             else
             {
-                authInfo.IsSuccess = false;
-                authInfo.Error = "Username not found in id token";
+                authResultInfo.IsSuccess = false;
+                authResultInfo.Error = "Username not found in id token";
             }
         }
 
-        return authInfo;
+        return authResultInfo;
     }
 
 

@@ -305,7 +305,7 @@ namespace Quantumart.QP8.WebMvc
                             services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
                             services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
                             services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
-                            services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
+                            services.AddSingleton<ISsoAuthService, KeyCloakAuthServiceDummy>();
 
                             break;
                         case ExternalAuthenticationType.KeyCloak:
@@ -317,13 +317,13 @@ namespace Quantumart.QP8.WebMvc
                             services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
                             services.AddHttpClient(KeyCloakSettings.HttpClientName, client => client.BaseAddress = new(settings.ApiUrl));
                             services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
-                            services.AddSingleton<IKeycloakAuthService, KeyCloakService>();
+                            services.AddSingleton<ISsoAuthService, KeyCloakService>();
 
                             break;
                         default:
                             services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
                             services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
-                            services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
+                            services.AddSingleton<ISsoAuthService, KeyCloakAuthServiceDummy>();
 
                             if (qpOptions.ExternalAuthentication.DisableInternalAccounts)
                             {
@@ -339,7 +339,7 @@ namespace Quantumart.QP8.WebMvc
                 {
                     services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
                     services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
-                    services.AddSingleton<IKeycloakAuthService, KeyCloakAuthServiceDummy>();
+                    services.AddSingleton<ISsoAuthService, KeyCloakAuthServiceDummy>();
                 }
 
                 RegisterMultistepActionServices(services);
