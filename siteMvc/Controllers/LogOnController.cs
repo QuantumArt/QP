@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -71,9 +72,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return await PostIndex(useAutoLogin, data, returnUrl);
         }
 
+        [HttpGet]
+        [DisableBrowserCache]
+        public async Task<IActionResult> KeyCloakSsoJs(bool? useAutoLogin, string customerCode, string returnUrl)
+        {
+            LogOnCredentials data = new()
+            {
+                CustomerCode = customerCode
+            };
+
+            return await KeyCloakSsoInternal(useAutoLogin, data, returnUrl, true);
+        }
+
         [HttpPost]
         [DisableBrowserCache]
-        public async Task<IActionResult> KeyCloakSso(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
+        public async Task<IActionResult> KeyCloakSso(bool? useAutoLogin, LogOnCredentials data, string returnUrl) => await KeyCloakSsoInternal(useAutoLogin, data, returnUrl);
+
+        private async Task<IActionResult> KeyCloakSsoInternal(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isFrame = false)
         {
             if (!await data.CheckSsoEnabled(_ssoAuthService))
             {
@@ -89,6 +104,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             HttpContext.Session.SetValue("KeyCloakChallenge", verifier);
             HttpContext.Session.SetValue("KeyCloakCustomerCode", data.CustomerCode);
             HttpContext.Session.SetValue("KeyCloakReturnUrl", returnUrl);
+            HttpContext.Session.SetValue("KeyCloakFrame", isFrame);
 
             return Redirect(_ssoAuthService.GetAuthenticateUrl(state.ToString(), challenge));
         }
@@ -104,12 +120,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string returnUrl = HttpContext.Session.GetValue<string>("KeyCloakReturnUrl");
             string storedState = HttpContext.Session.GetValue<string>("KeyCloakState");
             string verifier = HttpContext.Session.GetValue<string>("KeyCloakChallenge");
+            bool isFrame = HttpContext.Session.GetValue<bool>("KeyCloakFrame");
             await data.ValidateSso(_ssoAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
 
-            return await PostIndex(true, data, returnUrl);
+            return await PostIndex(true, data, returnUrl, isFrame);
         }
 
-        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isFrame = false)
         {
             data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
             data.NtUserName = string.IsNullOrWhiteSpace(data.NtUserName) ? GetCurrentUser() : data.NtUserName;
@@ -134,6 +151,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         isAuthenticated = true,
                         userName = data.User.Name
                     });
+                }
+
+                if (isFrame)
+                {
+                    return Content("<script>window.parent.postMessage(JSON.stringify({result: true}), 'http://localhost:5400');</script>", "text/html");
                 }
 
                 if (!string.IsNullOrEmpty(returnUrl))

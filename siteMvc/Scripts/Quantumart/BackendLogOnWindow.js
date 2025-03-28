@@ -9,17 +9,21 @@ export class BackendLogOnWindow extends Observable {
   _windowComponent = null;
   _isAuthenticated = null;
   _userName = null;
+  _ssoCurrentCustomerCode = null;
+  _ssoSelectedCustomerCode = null;
 
   FORM_SELECTOR = 'form#auth';
   LOADING_SELECTOR = '#authLoading';
   USERNAME_SELECTOR = '#UserName';
   PASSWORD_SELECTOR = '#Password';
   CUSTOMERCODE_SELECTOR = '#CustomerCode';
+  SSO_SELECTOR = '#SSO';
   Z_INDEX = 50000;
   AJAX_EVENT = 'AjaxEvent';
 
   _onLogonHandler = null;
   _onCloseWindowHandler = null;
+  _onSsoHandler = null;
 
   _getServerContent(data) {
     if (data.success) {
@@ -109,12 +113,46 @@ export class BackendLogOnWindow extends Observable {
       );
     };
 
+    this._onSsoHandler = function (event) {
+      that._disableWindow();
+      event.preventDefault();
+      this._ssoCurrentCustomerCode = that._getCurrentCustomerCode();
+      this._ssoSelectedCustomerCode = $('[name="CustomerCode"]').val();
+      const newUrl = '/LogOn/KeyCloakSsoJs?useAutoLogin=true&customerCode=' + encodeURIComponent(this._ssoSelectedCustomerCode) + '&returnUrl=/';
+      const iframe = document.createElement('iframe');
+      iframe.src = newUrl;
+      iframe.style.width = '100%';
+      iframe.style.height = '500px';
+      iframe.id = 'ssoIframe';
+      that._windowComponent.element.appendChild(iframe);
+    }
+
     this._onCloseWindowHandler = function () {
       that._triggerDeferredCallbacks(that._isAuthenticated);
       that.dispose();
     };
 
     jQuery(this._windowComponent.element).bind('close', this._onCloseWindowHandler);
+  }
+
+  _addSsoIframeListener(event) {
+    if (event.origin === 'http://localhost:5400') {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('Получено сообщение:', data);
+        if (data.result)
+        {
+          this._closeWindow();
+          const needRefresh = this._ssoSelectedCustomerCode !== this._ssoCurrentCustomerCode;
+
+          if (needRefresh) {
+            location.reload();
+          }
+        }
+      } catch (error) {
+        console.error('Ошибка при разборе JSON:', error);
+      }
+    }
   }
 
   _updateWindow(serverContent) {
@@ -187,11 +225,14 @@ export class BackendLogOnWindow extends Observable {
   _attachEvents() {
     $(this.FORM_SELECTOR).submit(this._onLogonHandler);
     $(this.FORM_SELECTOR).find('a').click(this._onLogonHandler);
+    $(this.SSO_SELECTOR).click(this._onSsoHandler);
+    window.addEventListener('message', this._addSsoIframeListener.bind(this));
   }
 
   _detachEvents() {
     $(this.FORM_SELECTOR).off();
     $(this.FORM_SELECTOR).find('a').off();
+    $(this.SSO_SELECTOR).off();
   }
 
   _triggerDeferredCallbacks(isAuthenticated) {
