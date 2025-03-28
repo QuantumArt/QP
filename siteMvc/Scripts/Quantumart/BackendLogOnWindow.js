@@ -24,6 +24,7 @@ export class BackendLogOnWindow extends Observable {
   _onLogonHandler = null;
   _onCloseWindowHandler = null;
   _onSsoHandler = null;
+  _addSsoIframeListener = null;
 
   _getServerContent(data) {
     if (data.success) {
@@ -127,32 +128,37 @@ export class BackendLogOnWindow extends Observable {
       that._windowComponent.element.appendChild(iframe);
     }
 
+    this._addSsoIframeListener = function (event) {
+      if (event.origin === 'http://localhost:5400') {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.result)
+          {
+            that._isAuthenticated = true;
+            that._closeWindow();
+            const needRefresh = that._ssoSelectedCustomerCode !== that._ssoCurrentCustomerCode;
+
+            if (needRefresh) {
+              location.reload();
+            }
+          }
+          else {
+            that._updateWindow("Unable to authenticate with SSO");
+            $("#ssoIframe").remove();
+          }
+        } catch (error) {
+          that._updateWindow("Unable to authenticate with SSO");
+          $("#ssoIframe").remove();
+        }
+      }
+    }
+
     this._onCloseWindowHandler = function () {
       that._triggerDeferredCallbacks(that._isAuthenticated);
       that.dispose();
     };
 
     jQuery(this._windowComponent.element).bind('close', this._onCloseWindowHandler);
-  }
-
-  _addSsoIframeListener(event) {
-    if (event.origin === 'http://localhost:5400') {
-      try {
-        const data = JSON.parse(event.data);
-        console.log('Получено сообщение:', data);
-        if (data.result)
-        {
-          this._closeWindow();
-          const needRefresh = this._ssoSelectedCustomerCode !== this._ssoCurrentCustomerCode;
-
-          if (needRefresh) {
-            location.reload();
-          }
-        }
-      } catch (error) {
-        console.error('Ошибка при разборе JSON:', error);
-      }
-    }
   }
 
   _updateWindow(serverContent) {

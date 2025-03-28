@@ -167,7 +167,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             FillViewBagData();
-            return await LogOnView(data);
+            return await LogOnView(data, isFrame);
         }
 
         [DisableBrowserCache]
@@ -193,8 +193,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private bool IsWindowsAuthentication() => HttpContext.User.Identity is WindowsIdentity;
 
-        private async Task<ActionResult> LogOnView(LogOnCredentials data)
+        private async Task<ActionResult> LogOnView(LogOnCredentials data, bool isFrame = false)
         {
+            if (isFrame)
+            {
+                return Content("<script>window.parent.postMessage(JSON.stringify({result: false}), 'http://localhost:5400');</script>", "text/html");
+            }
+
             if (Request.IsAjaxRequest())
             {
                 return await JsonHtml("Popup", data);
