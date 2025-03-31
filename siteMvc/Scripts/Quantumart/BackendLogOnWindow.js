@@ -24,7 +24,6 @@ export class BackendLogOnWindow extends Observable {
   _onLogonHandler = null;
   _onCloseWindowHandler = null;
   _onSsoHandler = null;
-  _addSsoIframeListener = null;
 
   _getServerContent(data) {
     if (data.success) {
@@ -120,20 +119,14 @@ export class BackendLogOnWindow extends Observable {
       this._ssoCurrentCustomerCode = that._getCurrentCustomerCode();
       this._ssoSelectedCustomerCode = $('[name="CustomerCode"]').val();
       const newUrl = '/LogOn/KeyCloakSsoJs?useAutoLogin=true&customerCode=' + encodeURIComponent(this._ssoSelectedCustomerCode) + '&returnUrl=/';
-      const iframe = document.createElement('iframe');
-      iframe.src = newUrl;
-      iframe.style.width = '100%';
-      iframe.style.height = '500px';
-      iframe.id = 'ssoIframe';
-      that._windowComponent.element.appendChild(iframe);
-    }
-
-    this._addSsoIframeListener = function (event) {
-      if (event.origin === 'http://localhost:5400') {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.result)
-          {
+      window.open(newUrl);
+      let lastMessage = localStorage.getItem('keyCloakResult');
+      setInterval(() => {
+        const newMessage = localStorage.getItem('keyCloakResult');
+        if (newMessage !== lastMessage) {
+          console.log('Received message:', newMessage);
+          lastMessage = newMessage;
+          if (lastMessage === 'OK') {
             that._isAuthenticated = true;
             that._closeWindow();
             const needRefresh = that._ssoSelectedCustomerCode !== that._ssoCurrentCustomerCode;
@@ -141,16 +134,13 @@ export class BackendLogOnWindow extends Observable {
             if (needRefresh) {
               location.reload();
             }
+          } else {
+            //ToDo get and show error
+            that._updateWindow(newMessage);
           }
-          else {
-            that._updateWindow("Unable to authenticate with SSO");
-            $("#ssoIframe").remove();
-          }
-        } catch (error) {
-          that._updateWindow("Unable to authenticate with SSO");
-          $("#ssoIframe").remove();
+          localStorage.removeItem('keyCloakResult');
         }
-      }
+      }, 100);
     }
 
     this._onCloseWindowHandler = function () {
@@ -232,7 +222,6 @@ export class BackendLogOnWindow extends Observable {
     $(this.FORM_SELECTOR).submit(this._onLogonHandler);
     $(this.FORM_SELECTOR).find('a').click(this._onLogonHandler);
     $(this.SSO_SELECTOR).click(this._onSsoHandler);
-    window.addEventListener('message', this._addSsoIframeListener.bind(this));
   }
 
   _detachEvents() {

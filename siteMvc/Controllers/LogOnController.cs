@@ -74,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpGet]
         [DisableBrowserCache]
-        public async Task<IActionResult> KeyCloakSsoJs(bool? useAutoLogin, string customerCode, string returnUrl)
+        public async Task<IActionResult> KeyCloakSsoPopup(bool? useAutoLogin, string customerCode, string returnUrl)
         {
             LogOnCredentials data = new()
             {
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [DisableBrowserCache]
         public async Task<IActionResult> KeyCloakSso(bool? useAutoLogin, LogOnCredentials data, string returnUrl) => await KeyCloakSsoInternal(useAutoLogin, data, returnUrl);
 
-        private async Task<IActionResult> KeyCloakSsoInternal(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isFrame = false)
+        private async Task<IActionResult> KeyCloakSsoInternal(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isPopup = false)
         {
             if (!await data.CheckSsoEnabled(_ssoAuthService))
             {
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             HttpContext.Session.SetValue("KeyCloakChallenge", verifier);
             HttpContext.Session.SetValue("KeyCloakCustomerCode", data.CustomerCode);
             HttpContext.Session.SetValue("KeyCloakReturnUrl", returnUrl);
-            HttpContext.Session.SetValue("KeyCloakFrame", isFrame);
+            HttpContext.Session.SetValue("KeyCloakPopup", isPopup);
 
             return Redirect(_ssoAuthService.GetAuthenticateUrl(state.ToString(), challenge));
         }
@@ -120,13 +120,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             string returnUrl = HttpContext.Session.GetValue<string>("KeyCloakReturnUrl");
             string storedState = HttpContext.Session.GetValue<string>("KeyCloakState");
             string verifier = HttpContext.Session.GetValue<string>("KeyCloakChallenge");
-            bool isFrame = HttpContext.Session.GetValue<bool>("KeyCloakFrame");
+            bool isPopup = HttpContext.Session.GetValue<bool>("KeyCloakPopup");
             await data.ValidateSso(_ssoAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
 
-            return await PostIndex(true, data, returnUrl, isFrame);
+            return await PostIndex(true, data, returnUrl, isPopup);
         }
 
-        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isFrame = false)
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isPopup = false)
         {
             data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
             data.NtUserName = string.IsNullOrWhiteSpace(data.NtUserName) ? GetCurrentUser() : data.NtUserName;
@@ -153,9 +153,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     });
                 }
 
-                if (isFrame)
+                if (isPopup)
                 {
-                    return Content("<script>window.parent.postMessage(JSON.stringify({result: true}), 'http://localhost:5400');</script>", "text/html");
+                    return Content("<script>localStorage.setItem('keyCloakResult', 'OK'); window.close();</script>", "text/html");
                 }
 
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -167,7 +167,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             FillViewBagData();
-            return await LogOnView(data, isFrame);
+            return await LogOnView(data, isPopup);
         }
 
         [DisableBrowserCache]
@@ -193,11 +193,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private bool IsWindowsAuthentication() => HttpContext.User.Identity is WindowsIdentity;
 
-        private async Task<ActionResult> LogOnView(LogOnCredentials data, bool isFrame = false)
+        private async Task<ActionResult> LogOnView(LogOnCredentials data, bool isPopup = false)
         {
-            if (isFrame)
+            if (isPopup)
             {
-                return Content("<script>window.parent.postMessage(JSON.stringify({result: false}), 'http://localhost:5400');</script>", "text/html");
+                return Content("<script>localStorage.setItem('keyCloakResult', 'Whoops!'); window.close();</script>", "text/html");
             }
 
             if (Request.IsAjaxRequest())
