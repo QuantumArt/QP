@@ -590,7 +590,7 @@ namespace Quantumart.QP8.BLL
                     using (var cn = CreateDbConnection(sqlCn))
                     {
                         cn.Open();
-                        var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin, false);
+                        var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin || data.IsSso, false);
                         user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     }
 

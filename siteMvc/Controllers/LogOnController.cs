@@ -121,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             data.IsPopup = isPopup;
             await data.ValidateSso(_ssoAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
 
-            return await PostIndex(true, data, returnUrl);
+            return await PostIndex(false, data, returnUrl);
         }
 
         private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
@@ -209,6 +209,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 return await JsonHtml("Popup", data);
             }
+
             return View("Index", data);
         }
     }

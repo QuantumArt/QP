@@ -17,7 +17,7 @@
 <body>
   <div id="page" class="loginFormLayout">
     <div id="content" class="content">
-      @using (Html.BeginForm())
+      @using (Html.BeginForm("Index", "LogOn"))
       {
         <div class="formLayout">
           @if (Model.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.ShowAutoLoginMessage)
