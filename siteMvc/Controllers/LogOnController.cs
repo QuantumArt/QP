@@ -155,7 +155,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (isPopup)
                 {
-                    return Content("<script>localStorage.setItem('keyCloakResult', 'OK'); window.close();</script>", "text/html");
+                    dynamic result = new ExpandoObject();
+                    result.success = true;
+                    result.userName = data.User.Name;
+                    result.isAuthenticated = true;
+                    return Content($"<script>localStorage.setItem('keyCloakResult', '{JsonSerializer.Serialize(result)}'); window.close();</script>", "text/html");
                 }
 
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -197,7 +201,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             if (isPopup)
             {
-                return Content("<script>localStorage.setItem('keyCloakResult', 'Whoops!'); window.close();</script>", "text/html");
+                object result = (await JsonHtmlEscaped("Popup", data)).Value;
+                string script = $"<script>localStorage.setItem('keyCloakResult', '{JsonSerializer.Serialize(result)}'); window.close();</script>";
+                return Content(script, "text/html");
             }
 
             if (Request.IsAjaxRequest())

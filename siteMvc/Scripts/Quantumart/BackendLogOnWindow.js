@@ -116,31 +116,32 @@ export class BackendLogOnWindow extends Observable {
     this._onSsoHandler = function (event) {
       that._disableWindow();
       event.preventDefault();
-      this._ssoCurrentCustomerCode = that._getCurrentCustomerCode();
-      this._ssoSelectedCustomerCode = $('[name="CustomerCode"]').val();
-      const newUrl = '/LogOn/KeyCloakSsoJs?useAutoLogin=true&customerCode=' + encodeURIComponent(this._ssoSelectedCustomerCode) + '&returnUrl=/';
+      const currentUserName = that._getCurrentUserName();
+      const currentCustomerCode = that._getCurrentCustomerCode();
+      const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
+      const newUrl = '/LogOn/KeyCloakSsoPopup?useAutoLogin=true&customerCode=' + encodeURIComponent(customerCode) + '&returnUrl=/';
       window.open(newUrl);
       let lastMessage = localStorage.getItem('keyCloakResult');
       setInterval(() => {
         const newMessage = localStorage.getItem('keyCloakResult');
         if (newMessage !== lastMessage) {
-          console.log('Received message:', newMessage);
           lastMessage = newMessage;
-          if (lastMessage === 'OK') {
+          const data = JSON.parse(lastMessage);
+          if (data.isAuthenticated) {
             that._isAuthenticated = true;
             that._closeWindow();
-            const needRefresh = that._ssoSelectedCustomerCode !== that._ssoCurrentCustomerCode;
+            const needRefresh = data.userName !== currentUserName || customerCode !== currentCustomerCode;
 
             if (needRefresh) {
               location.reload();
             }
           } else {
-            //ToDo get and show error
-            that._updateWindow(newMessage);
+            const content = that._getServerContent(data);
+            that._updateWindow(content);
           }
           localStorage.removeItem('keyCloakResult');
         }
-      }, 100);
+      }, 1000);
     }
 
     this._onCloseWindowHandler = function () {

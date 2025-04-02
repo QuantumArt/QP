@@ -40,7 +40,6 @@
             }
             @if (QPConfiguration.Options.ExternalAuthentication.ShowSsoButton)
             {
-              @* <input type="submit" id="SSO" name="SSO" value="SSO" onclick="form.action='/LogOn/KeyCloakSsoJs';"/> *@
               <input type="submit" id="SSO" name="SSO" value="SSO" />
             }
             <img id="authLoading" src="@Url.Content(@"~/Static/build/QP8/icons/ajax_loaders/circle_ball.gif")" alt="loading..."/>
