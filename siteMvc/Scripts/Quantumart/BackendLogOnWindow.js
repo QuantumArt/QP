@@ -118,8 +118,7 @@ export class BackendLogOnWindow extends Observable {
       const currentUserName = that._getCurrentUserName();
       const currentCustomerCode = that._getCurrentCustomerCode();
       const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
-      let newUrl = `/LogOn/KeyCloakSsoPopup`;
-      newUrl = `${newUrl}?useAutoLogin=true&customerCode=${encodeURIComponent(customerCode)}&returnUrl=/`;
+      const newUrl = `/LogOn/KeyCloakSsoPopup?customerCode=${encodeURIComponent(customerCode)}`;
       window.open(newUrl);
       let lastMessage = localStorage.getItem('keyCloakResult');
       that._intervalId = setInterval(() => {
