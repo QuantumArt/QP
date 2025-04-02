@@ -201,6 +201,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             if (isPopup)
             {
+                data.UseAutoLogin = false;
                 object result = (await JsonHtmlEscaped("Popup", data)).Value;
                 string script = $"<script>localStorage.setItem('keyCloakResult', '{JsonSerializer.Serialize(result)}'); window.close();</script>";
                 return Content(script, "text/html");
