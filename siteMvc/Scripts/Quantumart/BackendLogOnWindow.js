@@ -24,6 +24,7 @@ export class BackendLogOnWindow extends Observable {
   _onLogonHandler = null;
   _onCloseWindowHandler = null;
   _onSsoHandler = null;
+  _intervalId = null;
 
   _getServerContent(data) {
     if (data.success) {
@@ -122,7 +123,7 @@ export class BackendLogOnWindow extends Observable {
       const newUrl = '/LogOn/KeyCloakSsoPopup?useAutoLogin=true&customerCode=' + encodeURIComponent(customerCode) + '&returnUrl=/';
       window.open(newUrl);
       let lastMessage = localStorage.getItem('keyCloakResult');
-      setInterval(() => {
+      that._intervalId = setInterval(() => {
         const newMessage = localStorage.getItem('keyCloakResult');
         if (newMessage !== lastMessage) {
           lastMessage = newMessage;
@@ -140,6 +141,7 @@ export class BackendLogOnWindow extends Observable {
             that._updateWindow(content);
           }
           localStorage.removeItem('keyCloakResult');
+          lastMessage = null;
         }
       }, 1000);
     }
@@ -156,6 +158,9 @@ export class BackendLogOnWindow extends Observable {
     this._detachEvents();
     this._windowComponent.content(serverContent);
     this._attachEvents();
+    if (this._intervalId !== null) {
+      clearInterval(this._intervalId);
+    }
     this._enableWindow();
   }
 
@@ -217,6 +222,9 @@ export class BackendLogOnWindow extends Observable {
 
   _closeWindow() {
     this._windowComponent.close();
+    if (this._intervalId !== null) {
+      clearInterval(this._intervalId);
+    }
   }
 
   _attachEvents() {

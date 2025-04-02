@@ -93,7 +93,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (!await data.CheckSsoEnabled(_ssoAuthService))
             {
                 data.UseAutoLogin = true;
-                return await PostIndex(true, data, returnUrl);
+                return await PostIndex(true, data, returnUrl, isPopup);
             }
 
             Guid state = Guid.NewGuid();
