@@ -1,18 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Security.Principal;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Options;
 using NLog;
 using QP8.Infrastructure.Web.Extensions;
 using Quantumart.QP8.BLL;
@@ -78,22 +72,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             LogOnCredentials data = new()
             {
-                CustomerCode = customerCode
+                CustomerCode = customerCode,
+                IsPopup = true
             };
 
-            return await KeyCloakSsoInternal(useAutoLogin, data, returnUrl, true);
+            return await KeyCloakSsoInternal(useAutoLogin, data, returnUrl);
         }
 
         [HttpPost]
         [DisableBrowserCache]
         public async Task<IActionResult> KeyCloakSso(bool? useAutoLogin, LogOnCredentials data, string returnUrl) => await KeyCloakSsoInternal(useAutoLogin, data, returnUrl);
 
-        private async Task<IActionResult> KeyCloakSsoInternal(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isPopup = false)
+        private async Task<IActionResult> KeyCloakSsoInternal(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
+            data.IsSso = true;
+
             if (!await data.CheckSsoEnabled(_ssoAuthService))
             {
-                data.UseAutoLogin = true;
-                return await PostIndex(true, data, returnUrl, isPopup);
+                return await PostIndex(useAutoLogin, data, returnUrl);
             }
 
             Guid state = Guid.NewGuid();
@@ -104,7 +100,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             HttpContext.Session.SetValue("KeyCloakChallenge", verifier);
             HttpContext.Session.SetValue("KeyCloakCustomerCode", data.CustomerCode);
             HttpContext.Session.SetValue("KeyCloakReturnUrl", returnUrl);
-            HttpContext.Session.SetValue("KeyCloakPopup", isPopup);
+            HttpContext.Session.SetValue("KeyCloakPopup", data.IsPopup);
 
             return Redirect(_ssoAuthService.GetAuthenticateUrl(state.ToString(), challenge));
         }
@@ -114,19 +110,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             LogOnCredentials data = new()
             {
-                CustomerCode = HttpContext.Session.GetValue<string>("KeyCloakCustomerCode")
+                CustomerCode = HttpContext.Session.GetValue<string>("KeyCloakCustomerCode"),
+                IsSso = true
             };
 
             string returnUrl = HttpContext.Session.GetValue<string>("KeyCloakReturnUrl");
             string storedState = HttpContext.Session.GetValue<string>("KeyCloakState");
             string verifier = HttpContext.Session.GetValue<string>("KeyCloakChallenge");
             bool isPopup = HttpContext.Session.GetValue<bool>("KeyCloakPopup");
+            data.IsPopup = isPopup;
             await data.ValidateSso(_ssoAuthService, LogManager.GetCurrentClassLogger(), state, storedState, code, error, verifier);
 
-            return await PostIndex(true, data, returnUrl, isPopup);
+            return await PostIndex(true, data, returnUrl);
         }
 
-        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl, bool isPopup = false)
+        private async Task<ActionResult> PostIndex(bool? useAutoLogin, LogOnCredentials data, string returnUrl)
         {
             data.UseAutoLogin = useAutoLogin ?? IsWindowsAuthentication();
             data.NtUserName = string.IsNullOrWhiteSpace(data.NtUserName) ? GetCurrentUser() : data.NtUserName;
@@ -153,7 +151,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     });
                 }
 
-                if (isPopup)
+                if (data.IsPopup && data.IsSso)
                 {
                     dynamic result = new ExpandoObject();
                     result.success = true;
@@ -171,7 +169,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             FillViewBagData();
-            return await LogOnView(data, isPopup);
+            return await LogOnView(data);
         }
 
         [DisableBrowserCache]
@@ -197,9 +195,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private bool IsWindowsAuthentication() => HttpContext.User.Identity is WindowsIdentity;
 
-        private async Task<ActionResult> LogOnView(LogOnCredentials data, bool isPopup = false)
+        private async Task<ActionResult> LogOnView(LogOnCredentials data)
         {
-            if (isPopup)
+            if (data.IsPopup && data.IsSso)
             {
                 data.UseAutoLogin = false;
                 object result = (await JsonHtmlEscaped("Popup", data)).Value;

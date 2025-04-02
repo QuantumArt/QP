@@ -37,13 +37,17 @@ namespace Quantumart.QP8.BLL
         public string NtUserName { get; set; }
 
         [BindNever]
-        public QpUser User { get; set; }
+        public bool IsSso { get; set; }
 
-        public RulesException<LogOnCredentials> Errors { get; set; }
+        [BindNever]
+        public bool IsPopup { get; set; }
+
+        [BindNever]
+        public QpUser User { get; set; }
 
         public void Validate(ILdapIdentityManager ldapIdentityManagers)
         {
-            if (!UseAutoLogin)
+            if (!UseAutoLogin && !IsSso)
             {
                 if (string.IsNullOrEmpty(UserName))
                 {
