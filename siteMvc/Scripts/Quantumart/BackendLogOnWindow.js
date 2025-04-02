@@ -9,8 +9,6 @@ export class BackendLogOnWindow extends Observable {
   _windowComponent = null;
   _isAuthenticated = null;
   _userName = null;
-  _ssoCurrentCustomerCode = null;
-  _ssoSelectedCustomerCode = null;
 
   FORM_SELECTOR = 'form#auth';
   LOADING_SELECTOR = '#authLoading';
@@ -120,7 +118,8 @@ export class BackendLogOnWindow extends Observable {
       const currentUserName = that._getCurrentUserName();
       const currentCustomerCode = that._getCurrentCustomerCode();
       const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
-      const newUrl = '/LogOn/KeyCloakSsoPopup?useAutoLogin=true&customerCode=' + encodeURIComponent(customerCode) + '&returnUrl=/';
+      let newUrl = `/LogOn/KeyCloakSsoPopup`;
+      newUrl = `${newUrl}?useAutoLogin=true&customerCode=${encodeURIComponent(customerCode)}&returnUrl=/`;
       window.open(newUrl);
       let lastMessage = localStorage.getItem('keyCloakResult');
       that._intervalId = setInterval(() => {
@@ -144,7 +143,7 @@ export class BackendLogOnWindow extends Observable {
           lastMessage = null;
         }
       }, 1000);
-    }
+    };
 
     this._onCloseWindowHandler = function () {
       that._triggerDeferredCallbacks(that._isAuthenticated);
