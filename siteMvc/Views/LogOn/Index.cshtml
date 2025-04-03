@@ -63,24 +63,26 @@
 
   <script src="@Url.Content("~/Scripts/build/vendors-logon.js?sha=" + version)"></script>
   <script src="@Url.Content("~/Scripts/build/app-logon.js?sha=" + version)"></script>
-  <script>var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: @Model.UseAutoLogin.ToString().ToLowerInvariant() });</script>
   <script>
+    const login = new Quantumart.QP8.BackendLogin({useSavedCustomerCode: @Model.UseAutoLogin.ToString().ToLowerInvariant()});
+
     function UpdateActionUrl(button) {
-      const form = button.form;
-      let actionUrl = form.action;
+      let actionUrl = button.form.action;
       const parts = actionUrl.split('?');
+      const urlParts = window.location.href.split('?');
       let query = [];
+
       if (parts.length > 1) {
         query = parts[1].split('&');
       }
-      const url = window.location.href;
-      const urlParts = url.split('?');
+
       if (urlParts.length > 1) {
         const queryParts = urlParts[1].split('&');
         queryParts.forEach((part) => query.push(part));
-        if (query.length > 0) {
-          actionUrl = parts[0] + '?' + query.join('&');
-        }
+      }
+
+      if (query.length > 0) {
+        actionUrl = parts[0] + '?' + query.join('&');
       }
 
       button.form.action = actionUrl;
