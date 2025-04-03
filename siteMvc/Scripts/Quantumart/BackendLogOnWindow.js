@@ -298,7 +298,19 @@ export class BackendLogOnWindow extends Observable {
       resultUrl = urlForTest.left(urlForTest.length - 1);
     }
 
-    return url.replace(window.location.href, '/').toUpperCase().indexOf(resultUrl) === 0;
+    if (url.replace(window.location.href, '/').toUpperCase().indexOf(resultUrl) === 0) {
+      return true;
+    }
+
+    const urlBase = this.getBaseUrl(url);
+    const locationBase = this.getBaseUrl(window.location.href);
+    return urlBase.toUpperCase() === locationBase.toUpperCase()
+      && url.replace(urlBase, '/').toUpperCase().indexOf(resultUrl) === 0;
+  }
+
+  getBaseUrl(url) {
+    const pathArray = url.split('/');
+    return `${pathArray[0]}//${pathArray[2]}/`;
   }
 
   dispose() {
