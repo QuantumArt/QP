@@ -1,3 +1,5 @@
+using System;
+
 namespace Quantumart.QP8.Configuration;
 
 public class KeyCloakSettings
@@ -12,4 +14,6 @@ public class KeyCloakSettings
     public string AuthClientId { get; set; }
     public string RedirectUrl { get; set; }
     public string EnableSettingName { get; set; } = "KEYCLOAK_ENABLED";
+
+    public string RedirectAddress => new Uri(new Uri(RedirectUrl), "LogOn/SsoCallback").AbsoluteUri;
 }

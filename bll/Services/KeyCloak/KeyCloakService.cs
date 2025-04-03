@@ -107,7 +107,6 @@ public class KeyCloakService : IKeyCloakSyncService, ISsoAuthService
         return authResultInfo;
     }
 
-
     public string GenerateCodeVerifier(int length = 32)
     {
         byte[] randomBytes = new byte[length];
@@ -124,15 +123,12 @@ public class KeyCloakService : IKeyCloakSyncService, ISsoAuthService
 
     public string GetAuthenticateUrl(string state, string challenge)
     {
-        Uri redirectBase = new(_settings.RedirectUrl);
-        Uri redirectUri = new(redirectBase, "LogOn/SsoCallback");
-
         return string.Format(AuthenticateUrlTemplate,
             _settings.ApiUrl,
             _settings.Realm,
             ResponseType,
             _settings.AuthClientId,
-            redirectUri,
+            _settings.RedirectAddress,
             Scope,
             state,
             challenge);

@@ -103,7 +103,7 @@ public class KeyCloakApiHelper : IKeyCloakApiHelper
                 { "code", code },
                 { "code_verifier", verifier },
                 { "client_id", _settings.AuthClientId },
-                { "redirect_uri", new Uri(new Uri(_settings.RedirectUrl), "LogOn/SsoCallback").AbsoluteUri }
+                { "redirect_uri", _settings.RedirectAddress }
             });
 
             using HttpClient client = _clientFactory.CreateClient(KeyCloakSettings.HttpClientName);
