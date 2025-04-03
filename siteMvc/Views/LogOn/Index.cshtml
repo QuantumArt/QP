@@ -47,11 +47,11 @@
             <dd class="field">
               @if (QPConfiguration.Options.ExternalAuthentication.AllowLoginWithCredentials)
               {
-                <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" />
+                <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" onclick="UpdateActionUrl(this);" />
               }
               @if (QPConfiguration.Options.ExternalAuthentication.ShowSsoButton)
               {
-                <input type="submit" id="SSO" name="SSO" value="SSO" onclick="form.action='/LogOn/KeyCloakSSO';" />
+                <input type="submit" id="SSO" name="SSO" value="SSO" onclick="form.action='/LogOn/KeyCloakSSO'; UpdateActionUrl(this);" />
               }
               @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
             </dd>
@@ -64,4 +64,27 @@
   <script src="@Url.Content("~/Scripts/build/vendors-logon.js?sha=" + version)"></script>
   <script src="@Url.Content("~/Scripts/build/app-logon.js?sha=" + version)"></script>
   <script>var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: @Model.UseAutoLogin.ToString().ToLowerInvariant() });</script>
+  <script>
+    function UpdateActionUrl(button) {
+      const form = button.form;
+      let actionUrl = form.action;
+      const parts = actionUrl.split('?');
+      let query = [];
+      if (parts.length > 1) {
+        query = parts[1].split('&');
+      }
+      const url = window.location.href;
+      const urlParts = url.split('?');
+      if (urlParts.length > 1) {
+        const queryParts = urlParts[1].split('&');
+        queryParts.forEach((part) => query.push(part));
+        if (query.length > 0) {
+          actionUrl = parts[0] + '?' + query.join('&');
+        }
+      }
+
+      button.form.action = actionUrl;
+      button.form.submit();
+    }
+  </script>
 </body>
