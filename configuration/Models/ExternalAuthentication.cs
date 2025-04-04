@@ -5,15 +5,15 @@ namespace Quantumart.QP8.Configuration.Models;
 public class ExternalAuthentication
 {
     public bool Enabled { get; set; }
-    public ExternalAuthenticationType ExternalAuthenticationType { get; set; } = ExternalAuthenticationType.None;
+    public ExternalAuthenticationType Type { get; set; } = ExternalAuthenticationType.None;
     public bool DisableInternalAccounts { get; set; }
 
     public bool AllowLoginWithCredentials => !Enabled
        || (Enabled
            && (!DisableInternalAccounts
-               || ExternalAuthenticationType == ExternalAuthenticationType.ActiveDirectory));
+               || Type == ExternalAuthenticationType.ActiveDirectory));
 
-    public bool ShowSsoButton => Enabled && ExternalAuthenticationType == ExternalAuthenticationType.KeyCloak;
+    public bool ShowSsoButton => Enabled && Type == ExternalAuthenticationType.KeyCloak;
 
-    public bool ShowAutoLoginMessage => Enabled && ExternalAuthenticationType == ExternalAuthenticationType.ActiveDirectory;
+    public bool ShowAutoLoginMessage => Enabled && Type == ExternalAuthenticationType.ActiveDirectory;
 }

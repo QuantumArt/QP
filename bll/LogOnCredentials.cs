@@ -73,7 +73,7 @@ namespace Quantumart.QP8.BLL
                     throw _errors;
                 }
 
-                if (QPConfiguration.Options.ExternalAuthentication.ExternalAuthenticationType == ExternalAuthenticationType.ActiveDirectory)
+                if (QPConfiguration.Options.ExternalAuthentication.Type == ExternalAuthenticationType.ActiveDirectory)
                 {
                     var parts = UserName.Split('\\');
                     if (parts.Length == 2 && String.IsNullOrEmpty(NtUserName))

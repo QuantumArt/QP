@@ -573,7 +573,9 @@ namespace Quantumart.QP8.BLL
             QpUser resultUser = null;
             message = string.Empty;
 
-            if (!data.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.DisableInternalAccounts)
+            if ((!data.UseAutoLogin || !data.IsSso)
+                && QPConfiguration.Options.ExternalAuthentication.Enabled
+                && QPConfiguration.Options.ExternalAuthentication.DisableInternalAccounts)
             {
                 errorCode = QpAuthenticationErrorNumber.IntegratedAccountsDisabled;
 

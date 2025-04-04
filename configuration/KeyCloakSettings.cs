@@ -15,5 +15,5 @@ public class KeyCloakSettings
     public string RedirectUrl { get; set; }
     public string EnableSettingName { get; set; } = "KEYCLOAK_ENABLED";
 
-    public string RedirectAddress => new Uri(new Uri(RedirectUrl), "LogOn/SsoCallback").AbsoluteUri;
+    public string RedirectAddress => new Uri(new(RedirectUrl), "LogOn/SsoCallback").AbsoluteUri;
 }

@@ -292,7 +292,7 @@ namespace Quantumart.QP8.WebMvc
 
                 if (qpOptions.ExternalAuthentication.Enabled)
                 {
-                    switch (qpOptions.ExternalAuthentication.ExternalAuthenticationType)
+                    switch (qpOptions.ExternalAuthentication.Type)
                     {
                         case ExternalAuthenticationType.ActiveDirectory:
                             services.AddOptions<LdapSettings>()
