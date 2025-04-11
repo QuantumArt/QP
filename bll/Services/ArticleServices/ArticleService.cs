@@ -505,9 +505,9 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
 
         private bool AllowRemoveAggregatedArticle(Article article)
         {
-            IEnumerable<string> values = article.FieldValues.Where(x => x.Field.Aggregated).Select(x => x.Value);
+            IEnumerable<int[]> values = article.FieldValues.Where(x => x.Field.Aggregated).Select(x => x.RelatedItems);
 
-            return values.All(string.IsNullOrWhiteSpace);
+            return values.All(x => x.Length == 0);
         }
 
         private MessageResult PublishInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
