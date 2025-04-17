@@ -345,7 +345,10 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
             {
-                return MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated);
+                if (!AllowRemoveAggregatedArticle(articleToRemove))
+                {
+                    return MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated);
+                }
             }
 
             if (articleToRemove == null)
@@ -410,7 +413,12 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
         {
             if (ContentRepository.IsAnyAggregatedFields(contentId))
             {
-                return MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated);
+                List<Article> articles = ArticleRepository.GetByIds(ids);
+
+                if (articles.Any(x => !AllowRemoveAggregatedArticle(x)))
+                {
+                    return MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated);
+                }
             }
 
             if (ids == null)
@@ -493,6 +501,13 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             {
                 EntityObjectRepository.CaptureLock(article);
             }
+        }
+
+        private bool AllowRemoveAggregatedArticle(Article article)
+        {
+            IEnumerable<int[]> values = article.FieldValues.Where(x => x.Field.Aggregated).Select(x => x.RelatedItems);
+
+            return values.All(x => x.Length == 0);
         }
 
         private MessageResult PublishInternal(int contentId, int[] ids, bool? boundToExternal, bool disableNotifications)
