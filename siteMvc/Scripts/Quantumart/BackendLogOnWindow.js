@@ -18,6 +18,7 @@ export class BackendLogOnWindow extends Observable {
   SSO_SELECTOR = '#SSO';
   Z_INDEX = 50000;
   AJAX_EVENT = 'AjaxEvent';
+  KEYCLOAK_RESPONSE_CHECK_INTERVAL = 1000;
 
   _onLogonHandler = null;
   _onCloseWindowHandler = null;
@@ -141,7 +142,7 @@ export class BackendLogOnWindow extends Observable {
           localStorage.removeItem('keyCloakResult');
           lastMessage = null;
         }
-      }, 1000);
+      }, this.KEYCLOAK_RESPONSE_CHECK_INTERVAL);
     };
 
     this._onCloseWindowHandler = function () {
