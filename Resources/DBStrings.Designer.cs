@@ -231,15 +231,6 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turn on users synchronization with Active Directory.
-        /// </summary>
-        public static string UseAdSyncService {
-            get {
-                return ResourceManager.GetString("UseAdSyncService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Use CDC for system notifications.
         /// </summary>
         public static string UseCDC {
@@ -254,6 +245,15 @@ namespace Quantumart.QP8.Resources {
         public static string UseDPC {
             get {
                 return ResourceManager.GetString("UseDPC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn on users synchronization with external system.
+        /// </summary>
+        public static string UseExternalUsersSyncService {
+            get {
+                return ResourceManager.GetString("UseExternalUsersSyncService", resourceCulture);
             }
         }
         

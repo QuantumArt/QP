@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UseAdSyncService" xml:space="preserve">
-    <value>Включить синхронизацию пользователей с Active Directory</value>
+  <data name="UseExternalUsersSyncService" xml:space="preserve">
+    <value>Включить синхронизацию пользователей с внешней системой</value>
   </data>
   <data name="OverrideRecordsFile" xml:space="preserve">
     <value>Очистить файл, если он существует</value>

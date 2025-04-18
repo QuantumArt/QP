@@ -15,11 +15,15 @@ export class BackendLogOnWindow extends Observable {
   USERNAME_SELECTOR = '#UserName';
   PASSWORD_SELECTOR = '#Password';
   CUSTOMERCODE_SELECTOR = '#CustomerCode';
+  SSO_SELECTOR = '#SSO';
   Z_INDEX = 50000;
   AJAX_EVENT = 'AjaxEvent';
+  KEYCLOAK_RESPONSE_CHECK_INTERVAL = 1000;
 
   _onLogonHandler = null;
   _onCloseWindowHandler = null;
+  _onSsoHandler = null;
+  _intervalId = null;
 
   _getServerContent(data) {
     if (data.success) {
@@ -109,6 +113,38 @@ export class BackendLogOnWindow extends Observable {
       );
     };
 
+    this._onSsoHandler = function (event) {
+      that._disableWindow();
+      event.preventDefault();
+      const currentUserName = that._getCurrentUserName();
+      const currentCustomerCode = that._getCurrentCustomerCode();
+      const customerCode = $(that.CUSTOMERCODE_SELECTOR).val();
+      const newUrl = `/LogOn/KeyCloakSsoPopup?customerCode=${encodeURIComponent(customerCode)}`;
+      window.open(newUrl);
+      let lastMessage = localStorage.getItem('keyCloakResult');
+      that._intervalId = setInterval(() => {
+        const newMessage = localStorage.getItem('keyCloakResult');
+        if (newMessage !== lastMessage) {
+          lastMessage = newMessage;
+          const data = JSON.parse(lastMessage);
+          if (data.isAuthenticated) {
+            that._isAuthenticated = true;
+            that._closeWindow();
+            const needRefresh = data.userName !== currentUserName || customerCode !== currentCustomerCode;
+
+            if (needRefresh) {
+              location.reload();
+            }
+          } else {
+            const content = that._getServerContent(data);
+            that._updateWindow(content);
+          }
+          localStorage.removeItem('keyCloakResult');
+          lastMessage = null;
+        }
+      }, this.KEYCLOAK_RESPONSE_CHECK_INTERVAL);
+    };
+
     this._onCloseWindowHandler = function () {
       that._triggerDeferredCallbacks(that._isAuthenticated);
       that.dispose();
@@ -121,6 +157,9 @@ export class BackendLogOnWindow extends Observable {
     this._detachEvents();
     this._windowComponent.content(serverContent);
     this._attachEvents();
+    if (this._intervalId !== null) {
+      clearInterval(this._intervalId);
+    }
     this._enableWindow();
   }
 
@@ -182,16 +221,21 @@ export class BackendLogOnWindow extends Observable {
 
   _closeWindow() {
     this._windowComponent.close();
+    if (this._intervalId !== null) {
+      clearInterval(this._intervalId);
+    }
   }
 
   _attachEvents() {
     $(this.FORM_SELECTOR).submit(this._onLogonHandler);
     $(this.FORM_SELECTOR).find('a').click(this._onLogonHandler);
+    $(this.SSO_SELECTOR).click(this._onSsoHandler);
   }
 
   _detachEvents() {
     $(this.FORM_SELECTOR).off();
     $(this.FORM_SELECTOR).find('a').off();
+    $(this.SSO_SELECTOR).off();
   }
 
   _triggerDeferredCallbacks(isAuthenticated) {
@@ -255,7 +299,19 @@ export class BackendLogOnWindow extends Observable {
       resultUrl = urlForTest.left(urlForTest.length - 1);
     }
 
-    return url.replace(window.location.href, '/').toUpperCase().indexOf(resultUrl) === 0;
+    if (url.replace(window.location.href, '/').toUpperCase().indexOf(resultUrl) === 0) {
+      return true;
+    }
+
+    const urlBase = this.getBaseUrl(url);
+    const locationBase = this.getBaseUrl(window.location.href);
+    return urlBase.toUpperCase() === locationBase.toUpperCase()
+      && url.replace(urlBase, '/').toUpperCase().indexOf(resultUrl) === 0;
+  }
+
+  getBaseUrl(url) {
+    const pathArray = url.split('/');
+    return `${pathArray[0]}//${pathArray[2]}/`;
   }
 
   dispose() {

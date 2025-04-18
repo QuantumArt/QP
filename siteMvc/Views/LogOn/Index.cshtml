@@ -1,4 +1,5 @@
-﻿@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.Configuration
+@using Quantumart.QP8.Resources
 @using Quantumart.QP8.Utils
 @model Quantumart.QP8.BLL.LogOnCredentials
 
@@ -16,10 +17,10 @@
 <body>
   <div id="page" class="loginFormLayout">
     <div id="content" class="content">
-      @using (Html.BeginForm())
+      @using (Html.BeginForm("Index", "LogOn"))
       {
         <div class="formLayout">
-          @if (Model.UseAutoLogin)
+          @if (Model.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.ShowAutoLoginMessage)
           {
             <div>
               <p>@LogOnStrings.InfoMessage_Welcome</p>
@@ -27,7 +28,7 @@
             </div>
           }
 
-          @if (!Model.UseAutoLogin)
+          @if (!Model.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.AllowLoginWithCredentials)
           {
             <p>@LogOnStrings.InfoMessage_Welcome</p>
             @Html.TextBoxFieldFor(p => p.UserName)
@@ -44,7 +45,14 @@
           <dl class="row">
             <dt class="label"></dt>
             <dd class="field">
-              <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" />
+              @if (QPConfiguration.Options.ExternalAuthentication.AllowLoginWithCredentials)
+              {
+                <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" onclick="UpdateActionUrl(this);" />
+              }
+              @if (QPConfiguration.Options.ExternalAuthentication.ShowSsoButton)
+              {
+                <input type="submit" id="SSO" name="SSO" value="SSO" onclick="form.action='/LogOn/KeyCloakSSO'; UpdateActionUrl(this);" />
+              }
               @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
             </dd>
           </dl>
@@ -55,5 +63,30 @@
 
   <script src="@Url.Content("~/Scripts/build/vendors-logon.js?sha=" + version)"></script>
   <script src="@Url.Content("~/Scripts/build/app-logon.js?sha=" + version)"></script>
-  <script>var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: @Model.UseAutoLogin.ToString().ToLowerInvariant() });</script>
+  <script>
+    const login = new Quantumart.QP8.BackendLogin({useSavedCustomerCode: @Model.UseAutoLogin.ToString().ToLowerInvariant()});
+
+    function UpdateActionUrl(button) {
+      let actionUrl = button.form.action;
+      const parts = actionUrl.split('?');
+      const urlParts = window.location.href.split('?');
+      let query = [];
+
+      if (parts.length > 1) {
+        query = parts[1].split('&');
+      }
+
+      if (urlParts.length > 1) {
+        const queryParts = urlParts[1].split('&');
+        queryParts.forEach((part) => query.push(part));
+      }
+
+      if (query.length > 0) {
+        actionUrl = parts[0] + '?' + query.join('&');
+      }
+
+      button.form.action = actionUrl;
+      button.form.submit();
+    }
+  </script>
 </body>

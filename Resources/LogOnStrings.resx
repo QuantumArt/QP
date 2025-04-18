@@ -192,4 +192,16 @@
   <data name="ErrorMessage_Ldap_DomainNotFound" xml:space="preserve">
     <value>Domain name not found!</value>
   </data>
+  <data name="ErrorMessage_SSO_DefaultMessage" xml:space="preserve">
+    <value>Unable to authenticate with SSO, please contact your system administrator.</value>
+  </data>
+  <data name="ErrorMessage_SSO_Retry" xml:space="preserve">
+    <value>Error while authenticating with SSO, please try again.</value>
+  </data>
+  <data name="ErrorMessage_SSO_Disabled" xml:space="preserve">
+    <value>SSO disabled for this customer code</value>
+  </data>
+  <data name="ErrorMessage_IntegratedAccountsDisabled" xml:space="preserve">
+    <value>Integrated accounts disabled</value>
+  </data>
 </root>

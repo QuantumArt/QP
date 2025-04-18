@@ -179,4 +179,16 @@
   <data name="VersionsAreDifferent" xml:space="preserve">
     <value>Версия базы данных ({0}) не совпадает с версией бэкенда ({1})</value>
   </data>
+  <data name="ErrorMessage_SSO_DefaultMessage" xml:space="preserve">
+    <value>Не удалось войти через SSO, пожалуйста. обратитесь к Вашему системному администратору.</value>
+  </data>
+  <data name="ErrorMessage_SSO_Retry" xml:space="preserve">
+    <value>Ошибка при входе через SSO, пожалуйста, повторите попытку.</value>
+  </data>
+  <data name="ErrorMessage_SSO_Disabled" xml:space="preserve">
+    <value>SSO отключено для этого выбранного кода клиента</value>
+  </data>
+  <data name="ErrorMessage_IntegratedAccountsDisabled" xml:space="preserve">
+    <value>Встроенные учётные записи отключены</value>
+  </data>
 </root>

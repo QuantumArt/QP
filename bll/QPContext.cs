@@ -573,6 +573,15 @@ namespace Quantumart.QP8.BLL
             QpUser resultUser = null;
             message = string.Empty;
 
+            if ((!data.UseAutoLogin || !data.IsSso)
+                && QPConfiguration.Options.ExternalAuthentication.Enabled
+                && QPConfiguration.Options.ExternalAuthentication.DisableInternalAccounts)
+            {
+                errorCode = QpAuthenticationErrorNumber.IntegratedAccountsDisabled;
+
+                return resultUser;
+            }
+
             var sqlCn = QPConfiguration.GetConnectionInfo(data.CustomerCode);
 
             using (var dbContext = CreateDbContext(sqlCn))
@@ -583,7 +592,7 @@ namespace Quantumart.QP8.BLL
                     using (var cn = CreateDbConnection(sqlCn))
                     {
                         cn.Open();
-                        var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin, false);
+                        var dbUser = Common.Authenticate(cn, data.UserName, data.Password, data.UseAutoLogin || data.IsSso, false);
                         user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     }
 

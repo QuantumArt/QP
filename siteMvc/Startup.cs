@@ -44,6 +44,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Web;
 using QA.Configuration;
@@ -69,6 +70,8 @@ using DbService = Quantumart.QP8.BLL.Services.DbServices.DbService;
 using Quantumart.QP8.Security.Ldap;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.FileSynchronization;
+using Quantumart.QP8.BLL.Services.KeyCloak;
+using Quantumart.QP8.Configuration.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Middleware;
 using Quantumart.QP8.WebMvc.Extensions.ServiceCollections;
 
@@ -200,7 +203,6 @@ namespace Quantumart.QP8.WebMvc
 
                 services.AddAuthorization(options => { options.AddPolicy("CustomerCodeSelected", policy => policy.RequireClaim("CustomerCode")); });
 
-                // servicesn
                 services
                    .AddTransient<AuthenticationHelper>()
                    .AddTransient<JsLanguageHelper>()
@@ -286,25 +288,58 @@ namespace Quantumart.QP8.WebMvc
                    .AddTransient<IDbService, DbService>()
                     ;
 
-            services.RegisterExternalWorkflow(Configuration);
+                services.RegisterExternalWorkflow(Configuration);
 
-                if (qpOptions.EnableLdapAuthentication)
+                if (qpOptions.ExternalAuthentication.Enabled)
                 {
-                    services.AddOptions<LdapSettings>()
-                       .Bind(Configuration.GetSection("Ldap"))
-                       .ValidateDataAnnotations()
-                       .ValidateOnStart();
+                    switch (qpOptions.ExternalAuthentication.Type)
+                    {
+                        case ExternalAuthenticationType.ActiveDirectory:
+                            services.AddOptions<LdapSettings>()
+                                .Bind(Configuration.GetSection("Ldap"))
+                                .ValidateDataAnnotations()
+                                .ValidateOnStart();
 
-                    services.AddSingleton<LdapConnectionFactory>();
-                    services.AddSingleton<LdapHelper>();
-                    services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
-                    services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
-                    services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                            services.AddSingleton<LdapConnectionFactory>();
+                            services.AddSingleton<LdapHelper>();
+                            services.AddScoped<ILdapIdentityManager, LdapIdentityManager>();
+                            services.AddScoped<IActiveDirectoryRepository, ActiveDirectoryRepository>();
+                            services.AddScoped<IUserSynchronizationService, UserSynchronizationService>();
+                            services.AddSingleton<ISsoAuthService, KeyCloakAuthServiceDummy>();
+
+                            break;
+                        case ExternalAuthenticationType.KeyCloak:
+                            KeyCloakSettings settings = new();
+                            Configuration.GetSection(KeyCloakSettings.ConfigurationSectionName).Bind(settings);
+                            services.AddSingleton(Options.Create(settings));
+                            services.AddSingleton<IKeyCloakSyncService, KeyCloakService>();
+                            services.AddSingleton<IKeyCloakApiHelper, KeyCloakApiHelper>();
+                            services.AddSingleton<IUserSynchronizationService, KeyCloakUserSynchronizationService>();
+                            services.AddHttpClient(KeyCloakSettings.HttpClientName, client => client.BaseAddress = new(settings.ApiUrl));
+                            services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                            services.AddSingleton<ISsoAuthService, KeyCloakService>();
+
+                            break;
+                        default:
+                            services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
+                            services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+                            services.AddSingleton<ISsoAuthService, KeyCloakAuthServiceDummy>();
+
+                            if (qpOptions.ExternalAuthentication.DisableInternalAccounts)
+                            {
+                                _logger.ForWarnEvent()
+                                    .Message("Internal accounts disabled and none of external authentication is selected. You would not be able to log in at all!")
+                                    .Log();
+                            }
+
+                            break;
+                    }
                 }
                 else
                 {
                     services.AddSingleton<ILdapIdentityManager, StubIdentityManager>();
                     services.AddSingleton<IUserSynchronizationService, UserSynchronisationServiceDummy>();
+                    services.AddSingleton<ISsoAuthService, KeyCloakAuthServiceDummy>();
                 }
 
                 RegisterMultistepActionServices(services);

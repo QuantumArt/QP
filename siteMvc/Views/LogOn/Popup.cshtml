@@ -1,4 +1,5 @@
-﻿@using Quantumart.QP8.Resources
+﻿@using Quantumart.QP8.Configuration
+@using Quantumart.QP8.Resources
 @model Quantumart.QP8.BLL.LogOnCredentials
 
 <div id="page" class="loginFormLayout">
@@ -10,20 +11,18 @@
         {
           <div>
             <p>
-              @if (Model.UseAutoLogin)
+              @if (Model.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.ShowAutoLoginMessage)
               {
                 @Html.Raw(string.Format(LogOnStrings.InfoMessage_AutoLogin, Model.NtUserName, ViewBag.AutoLoginLinkQuery))
               }
             </p>
           </div>
         }
-
-        @if (!Model.UseAutoLogin)
+        @if (!Model.UseAutoLogin && QPConfiguration.Options.ExternalAuthentication.AllowLoginWithCredentials)
         {
           @Html.TextBoxFieldFor(p => p.UserName)
           @Html.PasswordFieldFor(p => p.Password)
         }
-
         @if (ViewBag.AllowSelectCustomerCode)
         {
           @Html.SelectFieldFor(p => p.CustomerCode, (IEnumerable<QPSelectListItem>)ViewBag.CustomerCodes)
@@ -32,17 +31,22 @@
         {
           @Html.TextBoxFieldFor(p => p.CustomerCode)
         }
-
         <dl class="row">
           <dt class="label"></dt>
           <dd class="field">
-            <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login"/>
+            @if (QPConfiguration.Options.ExternalAuthentication.AllowLoginWithCredentials)
+            {
+              <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login"/>
+            }
+            @if (QPConfiguration.Options.ExternalAuthentication.ShowSsoButton)
+            {
+              <input type="submit" id="SSO" name="SSO" value="SSO" />
+            }
             <img id="authLoading" src="@Url.Content(@"~/Static/build/QP8/icons/ajax_loaders/circle_ball.gif")" alt="loading..."/>
             <br/>
             @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
           </dd>
         </dl>
-
         @Html.HiddenFor(p => p.UseAutoLogin)
       </div>
     }

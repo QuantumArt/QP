@@ -3,35 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using NLog;
-using NLog.Fluent;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 using Quantumart.QP8.BLL.Services.API;
 
 namespace Quantumart.QP8.BLL.Services.UserSynchronization
 {
-    public class UserSynchronizationService : IUserSynchronizationService
+    public class UserSynchronizationService : UserSynchronizationServiceBase
     {
-        private const string DefaultMail = "undefined@domain.com";
-        private const string DefaultValue = "undefined";
-
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly int _languageId;
         private readonly IActiveDirectoryRepository _activeDirectory;
-        private readonly CommonSchedulerProperties _settings;
 
         public UserSynchronizationService(IOptions<CommonSchedulerProperties> options, IActiveDirectoryRepository activeDirectoryRepository)
+        : base(options, LogManager.GetCurrentClassLogger())
         {
-            _languageId = options.Value.DefaultLanguageId;
             _activeDirectory = activeDirectoryRepository;
-            _settings = options.Value;
         }
 
-        public bool NeedSynchronization() => DbRepository.Get().UseAdSyncService;
+        public override bool NeedSynchronization() => DbRepository.Get().UseAdSyncService;
 
-        public void Synchronize()
+        public override void Synchronize()
         {
-            QPContext.CurrentUserId = _settings.DefaultUserId;
+            QPContext.CurrentUserId = Settings.DefaultUserId;
             var qpGroups = UserGroupRepository.GetNtGroups().ToList();
 
             if (qpGroups.Count == 0)
@@ -165,9 +157,9 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             LogOn = user.AccountName,
             NtLogOn = user.AccountName,
             Password = UserRepository.GeneratePassword(),
-            LanguageId = _languageId,
+            LanguageId = Settings.DefaultLanguageId,
             AutoLogOn = true,
-            Groups = new UserGroup[0]
+            Groups = Array.Empty<UserGroup>()
         };
 
         private static void MapUser(ActiveDirectoryUser adUser, ref User qpUser)

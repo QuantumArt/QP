@@ -15,7 +15,7 @@ namespace Quantumart.QP8.BLL
         [Display(Name = "RecordActionsIntoFile", ResourceType = typeof(DBStrings))]
         public bool RecordActions { get; set; }
 
-        [Display(Name = "UseAdSyncService", ResourceType = typeof(DBStrings))]
+        [Display(Name = "UseExternalUsersSyncService", ResourceType = typeof(DBStrings))]
         public bool UseAdSyncService { get; set; }
 
         [Display(Name = "UseDPC", ResourceType = typeof(DBStrings))]
