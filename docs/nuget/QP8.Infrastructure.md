@@ -2,7 +2,7 @@
 
 ## Назначение
 
-Cлужебные пакеты, которые используются в [Quantumart.QP8.BLL](Quantumart.QP8.BLL) Для последней версии актуальны только `QP8.Infrastructure` и `QP8.Infrastructure.Web`.
+Cлужебные пакеты, которые используются в [Quantumart.QP8.BLL](Quantumart.QP8.BLL.md) Для последней версии актуальны только `QP8.Infrastructure` и `QP8.Infrastructure.Web`.
 
 ## Репозитории
 
