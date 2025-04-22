@@ -36,7 +36,7 @@
 | qp_get_aggregated_ids | Возвращает список агрегированных статей для статьи. Реализовано только в Postgres (в SQL Server используется ad-hoc запрос). |
 | qp_get_article_relation_columns | Возвращает связи O2M, ссылающиеся на тот же контент. Не используется в QP8 |
 | qp_get_article_title_func | Возвращает заголовок статьи. Доступна во всех типах подерживаемых БД. |
-| qp_get_article_tsvector | Получение tsvector для [таблицы CONTENT_ITEM](main#таблица-content_item) на основе данных из [таблицы CONTENT_DATA](main#таблица-content_data). Доступна только в Postgres |
+| qp_get_article_tsvector | Получение tsvector для [таблицы CONTENT_ITEM](main.md#таблица-content_item) на основе данных из [таблицы CONTENT_DATA](main.md#таблица-content_data). Доступна только в Postgres |
 | qp_get_base_field | Получение базового поля для виртуального (с учетом статьи). В SQL Server реализована одноимённой процедурой. |
 | qp_get_content_id | Возвращает ID контента по имени и ID сайта. Не используется |
 | qp_get_data | Вспомогательная функция, возвращающая значение поля для статьи. Не используется в QP8 |
@@ -69,7 +69,7 @@
 | qp_link_ids | Возвращает список идентификаторов связанных статей для M2M. Доступна во всех типах подерживаемых БД. |
 | qp_link_titles | Возвращает список заголовков связанных статей для M2M. Доступна во всех типах подерживаемых БД. |
 | qp_m2o_titles | Возвращает список заголовков связанных статей для M2O. Доступна во всех типах подерживаемых БД. |
-| qp_mass_update_content_item | Массовое создание или обновление записей в [таблице CONTENT_ITEM](main#таблица-content_item) через Quantumart.dll. Реализована только в Postgres (в SQL Server испольузется ad-hoc запрос) |
+| qp_mass_update_content_item | Массовое создание или обновление записей в [таблице CONTENT_ITEM](main.md#таблица-content_item) через Quantumart.dll. Реализована только в Postgres (в SQL Server испольузется ad-hoc запрос) |
 | qp_persist_article | Сохраняет или обновляет статью по XML. Реализована только в Postgres (в SQL Server испольузется ad-hoc запрос) |
 | qp_pluralize | Возвращает имя сущности во множественном числе. Не используется в новой версии QP8 |
 | qp_select_data_field | Вспомогательная функция, которая выбирает актуальное поле DATA или BLOB_DATA в соответствии с типом поля контента. Не используется в новой версии QP8  |

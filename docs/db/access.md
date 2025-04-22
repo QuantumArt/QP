@@ -57,7 +57,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| SITE_ID | ID родительского сайта ([Таблица SITE](main#таблица-site)) |
+| SITE_ID | ID родительского сайта ([Таблица SITE](main.md#таблица-site)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -74,7 +74,7 @@
 | Имя поля    | Описание |
 |-------------|----------|
 | ACTION_ACCESS_ID | Идентификатор правила. Генерируется автоматически |
-| ACTION_ID | Идентификатор действия, для которого создается правило доступа ([Таблица BACKEND_ACTION](structure#таблица-backend_action)) |
+| ACTION_ID | Идентификатор действия, для которого создается правило доступа ([Таблица BACKEND_ACTION](structure.md#таблица-backend_action)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -88,7 +88,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| CONTENT_ID | Идентификатор контента, для которого создается правило доступа ([Таблица CONTENT](main#таблица-content)) |
+| CONTENT_ID | Идентификатор контента, для которого создается правило доступа ([Таблица CONTENT](main.md#таблица-content)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -105,7 +105,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| CONTENT_ITEM_ID | Идентификатор статьи, для которой создается правило доступа ([Таблица CONTENT_ITEM](main#таблица-content_item)) |
+| CONTENT_ITEM_ID | Идентификатор статьи, для которой создается правило доступа ([Таблица CONTENT_ITEM](main.md#таблица-content_item)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -127,7 +127,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| content_FOLDER_ID | Идентификатор папки контента, для которой создается правило доступа ([Таблица CONTENT_FOLDER](extra#таблица-content_folder)) |
+| content_FOLDER_ID | Идентификатор папки контента, для которой создается правило доступа ([Таблица CONTENT_FOLDER](extra.md#таблица-content_folder)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -142,7 +142,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| FOLDER_ID | Идентификатор папки сайта, для которой создается правило доступа ([Таблица FOLDER](extra#таблица-folder)) |
+| FOLDER_ID | Идентификатор папки сайта, для которой создается правило доступа ([Таблица FOLDER](extra.md#таблица-folder)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -157,7 +157,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| WORKFLOW_ID | Идентификатор Workflow, для которого создается правило доступа ([Таблица WORKFLOW](extra#таблица-workflow)) |
+| WORKFLOW_ID | Идентификатор Workflow, для которого создается правило доступа ([Таблица WORKFLOW](extra.md#таблица-workflow)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -173,7 +173,7 @@
 | Имя поля    | Описание |
 |-------------|----------|
 | ENTITY_TYPE_ACCESS_ID | Идентификатор правила. Генерируется автоматически |
-| ENTITY_TYPE_ID | Идентификатор типа сущности, для которого создается правило доступа ([Таблица ENTITY_TYPE](structure#таблица-entity-type)) |
+| ENTITY_TYPE_ID | Идентификатор типа сущности, для которого создается правило доступа ([Таблица ENTITY_TYPE](structure.md#таблица-entity-type)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -187,7 +187,7 @@
 
 | Имя поля    | Описание |
 |-------------|----------|
-| TAB_ID | Идентификатор вкладки, для которой создается правило доступа ([Таблица TABS](structure#таблица-tabs)) |
+| TAB_ID | Идентификатор вкладки, для которой создается правило доступа ([Таблица TABS](structure.md#таблица-tabs)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | GROUP_ID | Идентификатор группы ([Таблица USER_GROUP](#таблица-user_group)) |
 | PERMISSION_LEVEL_ID | Идентификатор уровня доступа ([Таблица PERMISSION_LEVEL](#таблица-permission_level)) |
@@ -199,8 +199,8 @@
 | Имя поля    | Описание |
 |-------------|----------|
 | USER_ID | ID пользователя ([Таблица USERS](#таблица-users)) |
-| CONTENT_ID | ID контента, из которого берется фильтр ([Таблица CONTENT](main#таблица-content)) |
-| CONTENT_ITEM_ID | ID статьи для фильтрации ([Таблица CONTENT_ITEM](main#таблица-content_item)) |
+| CONTENT_ID | ID контента, из которого берется фильтр ([Таблица CONTENT](main.md#таблица-content)) |
+| CONTENT_ITEM_ID | ID статьи для фильтрации ([Таблица CONTENT_ITEM](main.md#таблица-content_item)) |
 
 ## Таблица USER_TO_PANEL
 
@@ -209,7 +209,7 @@
 | Имя поля    | Описание |
 |-------------|----------|
 | user_id | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
-| panel_id | Идентификатор панели ([Таблица TODAY_PANELS](structure#таблица-today_panels) |
+| panel_id | Идентификатор панели ([Таблица TODAY_PANELS](structure.md#таблица-today_panels) |
 | panel_block_no | Номерколонки |
 | panel_order | Порядок в колонке |
 | panel_height | Высота |
@@ -235,13 +235,13 @@
 |-------------|----------|
 | STATUS_HISTORY_ID | Уникальный идентификатор записи |
 | STATUS_HISTORY_DATE | Дата возникновения события |
-| CONTENT_ITEM_ID | Идентификатор статьи ([Таблица CONTENT_ITEM](main#таблица-content_item)) |
-| STATUS_TYPE_ID | Идентификатор статуса ([Таблица STATUS_TYPE](extra#таблица-status_type)) |
+| CONTENT_ITEM_ID | Идентификатор статьи ([Таблица CONTENT_ITEM](main.md#таблица-content_item)) |
+| STATUS_TYPE_ID | Идентификатор статуса ([Таблица STATUS_TYPE](extra.md#таблица-status_type)) |
 | USER_ID | Идентификатор пользователя ([Таблица USERS](#таблица-users)) |
 | DESCRIPTION | Описание |
 | CREATED | Дата создания записи о событии |
-| SYSTEM_STATUS_TYPE_ID | Идентификатор системного статуса ([Таблица SYSTEM_STATUS_TYPE](structure#таблица-system_status_type)) |
-| content_item_version_id | Идентификатор версии статьи ([Таблица CONTENT_ITEM_VERSION](extra#таблица-content_item_version)) |
+| SYSTEM_STATUS_TYPE_ID | Идентификатор системного статуса ([Таблица SYSTEM_STATUS_TYPE](structure.md#таблица-system_status_type)) |
+| content_item_version_id | Идентификатор версии статьи ([Таблица CONTENT_ITEM_VERSION](extra.md#таблица-content_item_version)) |
 | ARCHIVE | Значение флага ARCHIVE статьи на момент события |
 | VISIBLE | Значение флага VISIBLE статьи на момент события |
 
@@ -379,7 +379,7 @@
 
 ## Таблица ACCESS_TOKEN
 
-Таблица дополнительной аутентификации по токену, которая для своей работы должна быть включена настройкой USE_TOKENS ([см. Таблица DB](structure#таблица-db))
+Таблица дополнительной аутентификации по токену, которая для своей работы должна быть включена настройкой USE_TOKENS ([см. Таблица DB](structure.md#таблица-db))
 
 | Имя поля       | Описание |
 |----------------|----------|
