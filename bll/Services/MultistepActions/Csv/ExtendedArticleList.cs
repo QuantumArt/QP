@@ -28,6 +28,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return this.Select(a => a.BaseArticle.Id).ToList();
         }
 
+        public List<int> GetExistingBaseArticleIds()
+        {
+            return this.Where(a => a.BaseArticle.Id > 0).Select(a => a.BaseArticle.Id).ToList();
+        }
+
         public List<Article> GetAggregatedArticles(Field field)
         {
             return this.Select(a => a.Extensions[field]).ToList();

@@ -503,7 +503,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             var uniqueField = FieldRepository.GetById(_importSettings.UniqueContentFieldId);
             if (uniqueField == null)
             {
-                var existingIds = GetExistingArticleIds(articlesList.GetBaseArticleIds());
+                var existingIds = GetExistingArticleIds(articlesList.GetExistingBaseArticleIds());
                 existingArticles = articlesList.Filter(a => !onlyExisting ^ existingIds.Contains(a.Id));
             }
             else
