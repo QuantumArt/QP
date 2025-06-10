@@ -673,7 +673,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         }
                         var fileName = Path.GetFileName(filePair.Key);
                         var src = _pathHelper.CombinePath(currentVersionFolder, fileName);
-                        var dest = _pathHelper.CombinePath(versionFolder, filePair.Key);
+                        var dest = _pathHelper.CombinePath(versionFolder, fileName);
                         if (_pathHelper.FileExists(src))
                         {
                             _pathHelper.Copy(src, dest);
