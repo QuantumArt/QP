@@ -157,9 +157,10 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void UpdateValue(string value)
+        public void UpdateValue(string value, FieldExactTypes? typeToOverride = null)
         {
-            if (Field.ExactType == FieldExactTypes.M2MRelation || Field.ExactType == FieldExactTypes.M2ORelation)
+            var resultType = typeToOverride ?? Field.ExactType;
+            if (resultType is FieldExactTypes.M2MRelation or FieldExactTypes.M2ORelation)
             {
                 var currentItems = RelatedItems;
                 var newItems = Converter.ToIdArray(value);
@@ -168,7 +169,7 @@ namespace Quantumart.QP8.BLL
                 NewRelatedItems = newItems.Except(currentItems).ToArray();
             }
             else if (!string.IsNullOrEmpty(value) &&
-                (Field.ExactType == FieldExactTypes.Numeric || Field.ExactType == FieldExactTypes.O2MRelation)
+                resultType is FieldExactTypes.Numeric or FieldExactTypes.O2MRelation
                 && decimal.TryParse(value, out var parsed)
             )
             {
