@@ -10,9 +10,13 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
+### Quantumart.QP8.BLL.3.5.4
+
+* В класс FieldVaule добавлена возможность переопределения типов (для DPC)
+
 ### Quantumart.QP8.BLL.3.5.3
 
-* В класс Field добавлена возможность клонирования (для DPC)
+* В класс Field добавлена возможность клонирования
 
 ### Quantumart.QP8.BLL.3.5.2
 
