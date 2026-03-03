@@ -2,7 +2,7 @@ import { ActionLogFilterBase } from './ActionLogFilterBase';
 import { RelationFieldSearch } from '../Search/BackendArticleSearchBlock/RelationFieldSearch';
 
 export class ActionLogUserFilter extends ActionLogFilterBase {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor(filterContainer) {
     super(filterContainer);
   }

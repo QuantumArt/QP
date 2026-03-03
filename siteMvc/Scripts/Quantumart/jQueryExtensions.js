@@ -249,7 +249,7 @@
         }
 
         attr = 'backgroundColor';
-      } while (elem = elem.parentNode);
+      } while ((elem = elem.parentNode));
 
       return $._getRGB(color);
     }

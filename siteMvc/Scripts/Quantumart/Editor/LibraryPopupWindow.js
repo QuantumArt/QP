@@ -21,7 +21,7 @@ export class LibraryPopupWindow {
     entities: [],
     isMultiOpen: true,
     contentId: 0
-  }
+  };
   _eventArgs = null;
   _selectPopupWindowComponent = null;
 

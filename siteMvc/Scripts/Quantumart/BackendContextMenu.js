@@ -560,7 +560,7 @@ BackendContextMenu.getContextMenuByCode = function (
 
 
 export class BackendContextMenuEventArgs extends Sys.EventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }
@@ -587,7 +587,7 @@ export class BackendContextMenuEventArgs extends Sys.EventArgs {
 
 
 export class BackendContextMenuItemEventArgs extends BackendContextMenuEventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }

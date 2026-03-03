@@ -3,7 +3,7 @@ import { BackendFileNameListView } from './BackendFileNameListView';
 import { $q } from '../Utils';
 
 export class BackendFilePreviewListView extends BackendFileNameListView {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor(fileListContentElement, contextMenuCode, selectMode, zIndex) {
     super(fileListContentElement, contextMenuCode, selectMode, zIndex);
   }

@@ -2,7 +2,7 @@ import { ActionLogFilterBase } from './ActionLogFilterBase';
 import { $q } from '../Utils';
 
 export class ActionLogTextFilter extends ActionLogFilterBase {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor(filterContainer) {
     super(filterContainer);
   }

@@ -243,7 +243,7 @@ export class BackendViewToolbar extends BackendToolbar {
 
 
 export class BackendViewToolbarButtonEventArgs extends BackendToolbarButtonEventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }
@@ -260,7 +260,7 @@ BackendViewToolbarButtonEventArgs
 
 
 export class BackendViewToolbarDropDownListEventArgs extends BackendToolbarDropDownListEventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }

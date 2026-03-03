@@ -736,7 +736,7 @@ BackendEditingArea.destroyInstance = function () {
 };
 
 export class BackendEditingAreaEventArgs extends BackendEventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }

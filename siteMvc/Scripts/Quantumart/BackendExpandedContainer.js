@@ -1,7 +1,7 @@
 import { $q } from './Utils';
 
 export class BackendExpandedContainer {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     // empty constructor
   }
