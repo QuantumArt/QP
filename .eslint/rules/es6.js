@@ -10,11 +10,8 @@ module.exports = {
     es6: true
   },
   parserOptions: {
-    ecmaVersion: 6,
-    sourceType: 'module',
-    ecmaFeatures: {
-      experimentalObjectRestSpread: true
-    }
+    ecmaVersion: 2022,
+    sourceType: 'module'
   },
   rules: {
     // require braces in arrow function body
@@ -23,7 +20,7 @@ module.exports = {
     // require parens in arrow function arguments
     'arrow-parens': ['error', 'as-needed', { requireForBlockBody: false }],
 
-    // require space before/after arrow function’s arrow
+    // require space before/after arrow function's arrow
     'arrow-spacing': 'error',
 
     // verify calls of super() in constructors

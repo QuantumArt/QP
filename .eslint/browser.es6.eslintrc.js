@@ -9,8 +9,9 @@ module.exports = {
     './browser.es5.eslintrc',
     './rules/es6'
   ].map(require.resolve),
-  parser: 'babel-eslint',
   parserOptions: {
+    ecmaVersion: 2022,
+    sourceType: 'module',
     ecmaFeatures: {
       impliedStrict: true
     }

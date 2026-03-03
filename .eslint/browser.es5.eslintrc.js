@@ -7,7 +7,8 @@
 module.exports = {
   env: {
     browser: true,
-    jquery: true
+    jquery: true,
+    es2022: true
   },
   extends: [
     './rules/best-practices',
@@ -18,7 +19,7 @@ module.exports = {
   ].map(require.resolve),
   parser: 'espree',
   parserOptions: {
-    ecmaVersion: 5,
+    ecmaVersion: 2022,
     sourceType: 'script',
     ecmaFeatures: {
       impliedStrict: true
