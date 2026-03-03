@@ -3,7 +3,7 @@ LABEL stage=intermediate-front
 WORKDIR /src
 RUN npm install gulp cross-env -g
 COPY package.json package-lock.json .browserslistrc ./
-RUN npm ci
+RUN npm ci --install-strategy=nested
 
 COPY siteMvc ./siteMvc
 RUN npm run build
