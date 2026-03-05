@@ -2,7 +2,7 @@ import { ActionLogFilterBase } from './ActionLogFilterBase';
 import { DateOrTimeRangeFieldSearch } from '../Search/BackendArticleSearchBlock/DateOrTimeRangeFieldSearch';
 
 export class ActionLogDatetimeFilter extends ActionLogFilterBase {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor(filterContainer) {
     super(filterContainer);
   }

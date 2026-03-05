@@ -2,7 +2,7 @@ import { GlobalCache } from '../Cache';
 import { $q } from '../Utils';
 
 export class BackendEntityType {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     // empty constructor
   }

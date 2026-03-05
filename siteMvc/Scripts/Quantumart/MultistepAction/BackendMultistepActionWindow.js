@@ -437,7 +437,7 @@ export class BackendMultistepActionWindow extends Observable {
 
 
 export class BackendMultistepActionWindowEventArgs extends Sys.EventArgs {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }

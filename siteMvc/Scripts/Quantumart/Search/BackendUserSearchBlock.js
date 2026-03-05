@@ -2,7 +2,7 @@ import { BackendSearchBlockBase, BackendSearchBlockEventArgs } from './BackendSe
 import { $q } from '../Utils';
 
 export class BackendUserSearchBlock extends BackendSearchBlockBase {
-  // eslint-disable-next-line no-useless-constructor, FIXME
+  // eslint-disable-next-line no-useless-constructor
   constructor(
     searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
     super(

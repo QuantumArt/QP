@@ -1,28 +1,31 @@
 /* eslint-env node */
 
-import fs from 'fs';
-import del from 'del';
-import gulp from 'gulp';
-import chalk from 'chalk';
-import bs from 'browser-sync';
-import { argv } from 'yargs';
-import loadPlugins from 'gulp-load-plugins';
-import es6Promise from 'es6-promise';
-import notifier from 'node-notifier';
-import webpack from 'webpack';
-import imagemin from 'gulp-imagemin';
-import nodeSass from 'node-sass';
-import gulpSass from 'gulp-sass';
-import log from 'fancy-log';
-import PluginError from 'plugin-error';
-import through from 'through2';
+const fs = require('fs');
+const path = require('path');
+const del = require('del');
+const gulp = require('gulp');
+const chalk = require('chalk');
+const bs = require('browser-sync').create();
+const { argv } = require('yargs');
+const loadPlugins = require('gulp-load-plugins');
+const notifier = require('node-notifier');
+const webpack = require('webpack');
+const gulpSass = require('gulp-sass');
+const sass = require('sass');
+const log = require('fancy-log');
+const PluginError = require('plugin-error');
+const through = require('through2');
+const terser = require('gulp-terser');
+const sharp = require('sharp');
+const glob = require('glob');
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
+const cssnano = require('cssnano');
 
-
-es6Promise.polyfill();
-const $ = loadPlugins(); // eslint-disable-line id-length, no-shadow
+const $ = loadPlugins();
+const sassCompiler = gulpSass(sass);
 
 const project = JSON.parse(fs.readFileSync('../package.json'));
-const sass = gulpSass(nodeSass);
 const custom = {
   project,
   config: {
@@ -189,38 +192,32 @@ custom.reportError = function (error) {
   this.emit('end');
 };
 
-gulp.task('assets:vendorsjs', () => {
-  return gulp.src(custom.paths.vendorsjs, { base: './' })
+gulp.task('assets:vendorsjs', function() {
+  return gulp.src(custom.paths.vendorsjs, { base: './', sourcemaps: true, allowEmpty: true })
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: false }))
-  .pipe($.sourcemaps.identityMap())
   .pipe($.rename({ suffix: '.min' }))
-  .pipe(custom.isProduction() ? $.uglify({
+  .pipe(custom.isProduction() ? terser({
     compress: {
       sequences: false
     }
   }) : through.obj())
   .pipe($.concat('vendors.js'))
-  .pipe($.sourcemaps.write(''))
-  .pipe(gulp.dest(custom.destPaths.scripts))
+  .pipe(gulp.dest(custom.destPaths.scripts, { sourcemaps: '.' }))
   .pipe($.size({ title: 'assets:vendorsjs', showFiles: true }))
   .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true }));
 });
 
-gulp.task('assets-logon:vendorsjs', () => {
-  return gulp.src(custom.paths.vendorsjsLogon, { base: './' })
+gulp.task('assets-logon:vendorsjs', function() {
+  return gulp.src(custom.paths.vendorsjsLogon, { base: './', sourcemaps: true, allowEmpty: true })
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: false }))
-  .pipe($.sourcemaps.identityMap())
   .pipe($.rename({ suffix: '.min' }))
-  .pipe(custom.isProduction() ? $.uglify({
+  .pipe(custom.isProduction() ? terser({
     compress: {
       sequences: false
     }
   }) : through.obj())
   .pipe($.concat('vendors-logon.js'))
-  .pipe($.sourcemaps.write(''))
-  .pipe(gulp.dest(custom.destPaths.scripts))
+  .pipe(gulp.dest(custom.destPaths.scripts, { sourcemaps: '.' }))
   .pipe($.size({ title: 'assets-logon:vendorsjs', showFiles: true }))
   .pipe($.notify({
     title: 'Part task was completed',
@@ -229,8 +226,8 @@ gulp.task('assets-logon:vendorsjs', () => {
   }));
 });
 
-gulp.task('webpack:qpjs', (done) => {
-  webpack(require('./webpack.config.js'), (err, stats) => {
+gulp.task('webpack:qpjs', function(done) {
+  webpack(require('./webpack.config.js'), function(err, stats) {
     if (err) {
       throw new PluginError('webpack:qpjs', err);
     }
@@ -240,86 +237,127 @@ gulp.task('webpack:qpjs', (done) => {
   done();
 });
 
-gulp.task('assets:js', gulp.series('assets:vendorsjs', 'webpack:qpjs', () => {
+gulp.task('assets:js', gulp.series('assets:vendorsjs', 'webpack:qpjs', function() {
   return gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true }));
 }));
 
-gulp.task('assets-logon:js', gulp.series('assets-logon:vendorsjs', 'webpack:qpjs', () => 
-{
+gulp.task('assets-logon:js', gulp.series('assets-logon:vendorsjs', 'webpack:qpjs', function() {
   return gulp.src(custom.destPaths.scripts)
   .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:js task complete', onLast: true }));
 }));
 
-gulp.task('assets:img', () => {
-  return gulp.src(custom.paths.images)
-  .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe(imagemin(
-    [
-      imagemin.gifsicle({interlaced: true}),
-      imagemin.mozjpeg({quality: 75, progressive: true}),
-      imagemin.optipng({optimizationLevel: 3})
-    ], {verbose: true})
-  )
-  .pipe(gulp.dest(custom.destPaths.images))
-  .pipe($.notify({ title: 'Task was completed', message: 'assets:img task complete', onLast: true }))
+gulp.task('assets:img', async function() {
+  const imageFiles = glob.sync('Static/**/*.{jpg,jpeg,png,gif}', {
+    ignore: ['Static/ckeditor/**', 'Static/codemirror/**', 'Static/build/**']
+  });
+
+  for (const file of imageFiles) {
+    const outputPath = path.join(custom.destPaths.images, path.relative('Static', file));
+    const outputDir = path.dirname(outputPath);
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const ext = path.extname(file).toLowerCase();
+
+    try {
+      if (ext === '.jpg' || ext === '.jpeg') {
+        await sharp(file).jpeg({ quality: 75, progressive: true }).toFile(outputPath);
+      } else if (ext === '.png') {
+        await sharp(file).png({ compressionLevel: 9 }).toFile(outputPath);
+      } else if (ext === '.gif') {
+        // Sharp doesn't optimize GIF well, copy as-is
+        fs.copyFileSync(file, outputPath);
+      }
+    } catch (err) {
+      log('[assets:img]', `Warning: Could not process ${file}: ${err.message}`);
+      // Copy file as-is on error
+      fs.copyFileSync(file, outputPath);
+    }
+  }
+
+  // Handle SVG files - just copy them
+  const svgFiles = glob.sync('Static/**/*.svg', {
+    ignore: ['Static/ckeditor/**', 'Static/codemirror/**', 'Static/build/**']
+  });
+
+  for (const file of svgFiles) {
+    const outputPath = path.join(custom.destPaths.images, path.relative('Static', file));
+    const outputDir = path.dirname(outputPath);
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    fs.copyFileSync(file, outputPath);
+  }
+
+  log('[assets:img]', 'Image optimization completed');
+  notifier.notify({ title: 'Task was completed', message: 'assets:img task complete' });
 });
 
-gulp.task('assets:css', () => {
-  return gulp.src(custom.paths.styles)
+gulp.task('assets:css', function() {
+  const postcssPlugins = [
+    autoprefixer(),
+    cssnano({ preset: ['default', { zindex: false }] })
+  ];
+
+  return gulp.src(custom.paths.styles, { sourcemaps: true, allowEmpty: true })
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: false }))
-  .pipe($.sourcemaps.identityMap())
-  .pipe(sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
+  .pipe(sassCompiler({ precision: 10 }).on('error', sassCompiler.logError))
   .pipe($.replace(/url\('/g, 'url(\'images/'))
-  .pipe($.autoprefixer())
-  .pipe($.cssnano({ zindex: false }))
+  .pipe(postcss(postcssPlugins))
   .pipe($.concat('app.css'))
-  .pipe($.sourcemaps.write(''))
-  .pipe(gulp.dest(custom.destPaths.styles))
+  .pipe(gulp.dest(custom.destPaths.styles, { sourcemaps: '.' }))
   .pipe(bs.stream({ match: '**/*.css' }))
   .pipe($.size({ title: 'assets:css', showFiles: true }))
-  .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true }))
+  .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true }));
 });
 
-gulp.task('assets-logon:css', () => {
-  return gulp.src(custom.paths.stylesLogon)
+gulp.task('assets-logon:css', function() {
+  const postcssPlugins = [
+    autoprefixer(),
+    cssnano({ preset: ['default', { zindex: false }] })
+  ];
+
+  return gulp.src(custom.paths.stylesLogon, { sourcemaps: true, allowEmpty: true })
   .pipe($.plumber({ errorHandler: custom.reportError }))
-  .pipe($.sourcemaps.init({ loadMaps: false }))
-  .pipe($.sourcemaps.identityMap())
-  .pipe(sass({ precision: 10 }).on('error', /* $.sass.logError */bs.notify))
+  .pipe(sassCompiler({ precision: 10 }).on('error', sassCompiler.logError))
   .pipe($.replace(/url\('/g, 'url(\'images/'))
-  .pipe($.autoprefixer())
-  .pipe($.cssnano({ zindex: false }))
+  .pipe(postcss(postcssPlugins))
   .pipe($.concat('app-logon.css'))
-  .pipe($.sourcemaps.write(''))
-  .pipe(gulp.dest(custom.destPaths.styles))
+  .pipe(gulp.dest(custom.destPaths.styles, { sourcemaps: '.' }))
   .pipe(bs.stream({ match: '**/*.css' }))
   .pipe($.size({ title: 'assets-logon:css', showFiles: true }))
-  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:css task complete', onLast: true }))
+  .pipe($.notify({ title: 'Task was completed', message: 'assets-logon:css task complete', onLast: true }));
 });
 
-gulp.task('clean', () => { 
-  return del(custom.paths.clean)
+gulp.task('clean', function() {
+  return del(custom.paths.clean);
 });
 
-gulp.task('browserSync', () => {
-  return bs.init([custom.paths.styles], {
-    proxy: 'http://localhost:90/Backend'
-  });
+gulp.task('browserSync', function(done) {
+  bs.init({
+    proxy: 'http://localhost:90/Backend',
+    files: custom.paths.styles
+  }, done);
 });
 
-gulp.task('watch', () => {
-  const reportOnChange = ev => global.console.log(
-    `File ${ev.path} was ${ev.type},
-    ${chalk.underline.bgCyan('running tasks...')}`
-  );
+gulp.task('watch', function() {
+  const reportOnChange = function(filePath) {
+    global.console.log(
+      `File ${filePath} was changed,
+      ${chalk.underline.bgCyan('running tasks...')}`
+    );
+  };
 
-  return gulp.watch(custom.paths.styles, ['assets:css']).on('change', reportOnChange);
+  return gulp.watch(custom.paths.styles, gulp.series('assets:css')).on('change', reportOnChange);
 });
 
 gulp.task('serve', gulp.series('watch', 'browserSync'));
-gulp.task('start', gulp.series('clean', (done) => {
+gulp.task('start', gulp.series('clean', function(done) {
   const welcomeMsg = `\nGulp tasks were started in ${chalk.blue.underline.yellow(custom.config.environment)} mode.\n`;
 
   global.console.log(welcomeMsg);

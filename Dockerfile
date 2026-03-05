@@ -1,9 +1,9 @@
-FROM node:16-bullseye as front-builder
+FROM node:24-bullseye as front-builder
 LABEL stage=intermediate-front
 WORKDIR /src
 RUN npm install gulp cross-env -g
-COPY package.json package-lock.json .babelrc .browserslistrc ./
-RUN npm ci
+COPY package.json package-lock.json .browserslistrc ./
+RUN npm ci --install-strategy=nested
 
 COPY siteMvc ./siteMvc
 RUN npm run build

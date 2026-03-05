@@ -11,7 +11,7 @@ module.exports = {
     'no-await-in-loop': 'error',
 
     // disallow assignment operators in conditional statements
-    'no-cond-assign': ['error', 'always'],
+    'no-cond-assign': ['error', 'except-parens'],
 
     // disallow the use of console
     'no-console': 'warn',
@@ -47,7 +47,12 @@ module.exports = {
     'no-extra-boolean-cast': 'error',
 
     // disallow unnecessary parentheses
-    'no-extra-parens': ['error', 'all', { nestedBinaryExpressions: false, returnAssign: false }],
+    'no-extra-parens': ['error', 'all', {
+      nestedBinaryExpressions: false,
+      returnAssign: false,
+      enforceForNewInMemberExpressions: false,
+      conditionalAssign: false
+    }],
 
     // disallow unnecessary semicolons
     'no-extra-semi': 'error',
