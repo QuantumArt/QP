@@ -111,18 +111,17 @@ custom.paths = {
     'Scripts/telerik/telerik.splitter.js',
 
     'Static/ckeditor/ckeditor.js',
-    'Static/jsoneditor/dist/jsoneditor.js',
-    'Static/codemirror/lib/codemirror.js',
-    'Static/codemirror/mode/clike/clike.js',
-    'Static/codemirror/mode/sql/sql.js',
-    'Static/codemirror/mode/xml/xml.js',
-    'Static/codemirror/mode/css/css.js',
-    'Static/codemirror/mode/vb/vb.js',
-    'Static/codemirror/mode/javascript/javascript.js',
-    'Static/codemirror/mode/htmlmixed/htmlmixed.js',
-    'Static/codemirror/mode/htmlembedded/htmlembedded.js',
-    'Static/codemirror/addon/mode/multiplex.js',
-    'Static/jsoneditor/dist/jsoneditor.js',
+    '../node_modules/jsoneditor/dist/jsoneditor.js',
+    '../node_modules/codemirror/lib/codemirror.js',
+    '../node_modules/codemirror/mode/clike/clike.js',
+    '../node_modules/codemirror/mode/sql/sql.js',
+    '../node_modules/codemirror/mode/xml/xml.js',
+    '../node_modules/codemirror/mode/css/css.js',
+    '../node_modules/codemirror/mode/vb/vb.js',
+    '../node_modules/codemirror/mode/javascript/javascript.js',
+    '../node_modules/codemirror/mode/htmlmixed/htmlmixed.js',
+    '../node_modules/codemirror/mode/htmlembedded/htmlembedded.js',
+    '../node_modules/codemirror/addon/mode/multiplex.js',
 
     'Scripts/PlUpload/moxie.js',
     'Scripts/PlUpload/plupload.dev.js'
@@ -142,9 +141,9 @@ custom.paths = {
     'Static/imgareaselect.css',
     'Static/jquery.jeegoocontext.qp8.css',
     'Static/telerik.qp8.css',
-    'Static/codemirror/lib/codemirror.css',
+    '../node_modules/codemirror/lib/codemirror.css',
     'Static/codemirrorTheme.css',
-    'Static/jsoneditor/dist/jsoneditor.css',
+    '../node_modules/jsoneditor/dist/jsoneditor.css',
     'Static/QpCodemirror.css',
     'Static/custom/**/*.{scss,css}',
 
@@ -157,7 +156,6 @@ custom.paths = {
   images: [
     'Static/**/*.{jpg,jpeg,png,gif,svg}',
     '!Static/ckeditor/**/*.{jpg,jpeg,png,gif,svg}',
-    '!Static/codemirror/**/*.{jpg,jpeg,png,gif,svg}',
     '!Static/build/**/*.{jpg,jpeg,png,gif,svg}'
   ],
   clean: [
@@ -298,6 +296,11 @@ gulp.task('assets:img', async function() {
   notifier.notify({ title: 'Task was completed', message: 'assets:img task complete' });
 });
 
+gulp.task('assets:jsoneditor-img', function() {
+  return gulp.src('../node_modules/jsoneditor/dist/img/**/*')
+    .pipe(gulp.dest(`${custom.destPaths.images}/img`));
+});
+
 gulp.task('assets:css', function() {
   const postcssPlugins = [
     autoprefixer(),
@@ -365,7 +368,7 @@ gulp.task('start', gulp.series('clean', function(done) {
   done();
 }));
 
-module.exports.default = gulp.series('start', 'assets:js', 'assets-logon:js', 'assets:css', 'assets-logon:css', 'assets:img');
+module.exports.default = gulp.series('start', 'assets:js', 'assets-logon:js', 'assets:css', 'assets-logon:css', 'assets:img', 'assets:jsoneditor-img');
 
 // Install Steps:
 // 1. Install external node js and npm from official site
