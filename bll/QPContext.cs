@@ -68,7 +68,7 @@ namespace Quantumart.QP8.BLL
                     _mapperConfiguration = new MapperConfiguration(cfg =>
                     {
                         cfg.AddMaps(typeof(DefaultProfile));
-                    });
+                    }, QPModelDataContext.MyLoggerFactory);
                 }
                 return _mapperConfiguration;
             }

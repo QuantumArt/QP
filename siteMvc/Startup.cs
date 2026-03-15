@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Web;
+using NLog.Extensions.Logging;
 using QA.Configuration;
 using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.ArticleScheduler;
@@ -390,7 +391,7 @@ namespace Quantumart.QP8.WebMvc
             var configuration = new MapperConfiguration(cfg =>
             {
                 ViewModelMapper.CreateAllMappings(cfg);
-            });
+            }, new LoggerFactory([new NLogLoggerProvider()]));
             IMapper mapper = configuration.CreateMapper();
             services.AddSingleton(mapper);
         }
@@ -451,7 +452,7 @@ namespace Quantumart.QP8.WebMvc
 
             app.UseSession();
 
-            app.UseMvc(RegisterRoutes);            
+            app.UseMvc(RegisterRoutes);
         }
 
         private static void RegisterRoutes(IRouteBuilder routes)
