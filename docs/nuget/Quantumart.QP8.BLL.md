@@ -10,6 +10,10 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x для .NET8
 
+### Quantumart.QP8.BLL.3.6.3
+
+* Библиотека AutoMapper обновлена до 16.1.1
+
 ### Quantumart.QP8.BLL.3.6.2
 
 * В класс FieldValue добавлена возможность переопределения типов (для DPC)

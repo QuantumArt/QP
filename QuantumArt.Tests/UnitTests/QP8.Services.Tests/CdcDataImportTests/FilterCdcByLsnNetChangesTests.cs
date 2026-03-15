@@ -5,6 +5,8 @@ using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using AutoMapper;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using QP8.Infrastructure.TestTools.AutoFixture.Specimens;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.NotificationSender;
@@ -27,7 +29,7 @@ namespace QP8.Services.Tests.CdcDataImportTests
             {
                 cfg.CreateMap<CdcTableTypeModel, CdcTableTypeModel>();
                 cfg.CreateMap<CdcEntityModel, CdcEntityModel>();
-            });
+            }, new LoggerFactory([new NLogLoggerProvider()]));
             config.AssertConfigurationIsValid();
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
