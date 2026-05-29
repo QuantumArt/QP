@@ -688,10 +688,20 @@ namespace Quantumart.QP8.BLL.Repository.ContentRepositories
 
         internal static void CopyAccess(int oldId, int newId)
         {
-            using (new QPConnectionScope())
-            {
-                Common.CopyContentAccess(QPConnectionScope.Current.DbConnection, oldId, newId, QPContext.CurrentUserId);
-            }
+            using var scope = new QPConnectionScope();
+            Common.CopyContentAccess(QPConnectionScope.Current.DbConnection, oldId, newId, QPContext.CurrentUserId);
+        }
+
+        internal static void CopyAccessForGroup(int oldId, int newId)
+        {
+            using var scope = new QPConnectionScope();
+            Common.CopyContentAccessForGroup(QPConnectionScope.Current.DbConnection, oldId, newId, QPContext.CurrentUserId);
+        }
+
+        internal static void CopyAccessForUser(int oldId, int newId)
+        {
+            using var scope = new QPConnectionScope();
+            Common.CopyContentAccessForUser(QPConnectionScope.Current.DbConnection, oldId, newId, QPContext.CurrentUserId);
         }
 
         public static IEnumerable<Content> GetRelatedM2MContents(Content content)

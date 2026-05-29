@@ -56,9 +56,9 @@ namespace Quantumart.QP8.DAL.Entities
 
                 builder.HasOne(x => x.EntityType).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.EntityTypeId);
     			builder.HasOne(x => x.Group).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.GroupId);
-    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.LastModifiedBy);
+    			builder.HasOne(x => x.LastModifiedByUser).WithMany(y => y.ENTITY_TYPE_ACCESS1).HasForeignKey(x => x.LastModifiedBy);
     			builder.HasOne(x => x.PermissionLevel).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.PermissionLevelId);
-    			builder.HasOne(x => x.User).WithMany(y => y.ENTITY_TYPE_ACCESS1).HasForeignKey(x => x.UserId);
+    			builder.HasOne(x => x.User).WithMany(y => y.ENTITY_TYPE_ACCESS).HasForeignKey(x => x.UserId);
 
             }
         }
