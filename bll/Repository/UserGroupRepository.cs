@@ -5,6 +5,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.Entities;
 using Quantumart.QP8.Utils;
@@ -205,19 +207,16 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var entities = QPContext.EFContext;
 
-            var userGroupDal = entities
-                .UserGroupSet
-                .AsNoTracking()
-                .Include(x => x.ParentGroupToGroupBinds)
-                .Include(x => x.UserGroupBinds)
-                .Include(x => x.SiteAccess)
-                .Include(x => x.ContentAccess)
-                .Include(x => x.ArticleAccess)
-                .Include(x => x.FolderAccess)
-                .Include(x => x.ENTITY_TYPE_ACCESS)
-                .Include(x => x.ACTION_ACCESS)
+            var userGroupDal = entities.UserGroupSet
+                .Include(p => p.UserGroupBinds)
+                .Include(p => p.ParentGroupToGroupBinds)
                 .Single(x => x.Id == group.Id);
+            entities.Entry(userGroupDal).Collection(p => p.SiteAccess).Load();
+            entities.Entry(userGroupDal).Collection(p => p.FolderAccess).Load();
+            entities.Entry(userGroupDal).Collection(p => p.ENTITY_TYPE_ACCESS).Load();
+            entities.Entry(userGroupDal).Collection(p => p.ACTION_ACCESS).Load();
 
+            entities.Entry(userGroupDal).State = EntityState.Detached;
             userGroupDal.Id = 0;
             userGroupDal.Name = group.Name;
             userGroupDal.Created = userGroupDal.Modified = DateTime.Now;
@@ -227,38 +226,42 @@ namespace Quantumart.QP8.BLL.Repository
 
             foreach (var sitePermissionDAL in userGroupDal.SiteAccess)
             {
+                entities.Entry(sitePermissionDAL).State = EntityState.Detached;
+                sitePermissionDAL.Created = sitePermissionDAL.Modified = DateTime.Now;
                 sitePermissionDAL.Id = 0;
-            }
-
-            foreach (var contentPermissionDAL in userGroupDal.ContentAccess)
-            {
-                contentPermissionDAL.Id = 0;
-            }
-
-            foreach (var articlePermissionDAL in userGroupDal.ArticleAccess)
-            {
-                articlePermissionDAL.Id = 0;
             }
 
             foreach (var folderPermissionDAL in userGroupDal.FolderAccess)
             {
+                entities.Entry(folderPermissionDAL).State = EntityState.Detached;
+                folderPermissionDAL.Created = folderPermissionDAL.Modified = DateTime.Now;
                 folderPermissionDAL.Id = 0;
             }
 
             foreach (var entityTypePermissionDAL in userGroupDal.ENTITY_TYPE_ACCESS)
             {
+                entities.Entry(entityTypePermissionDAL).State = EntityState.Detached;
+                entityTypePermissionDAL.Created = entityTypePermissionDAL.Modified = DateTime.Now;
                 entityTypePermissionDAL.Id = 0;
             }
 
             foreach (var actionPermissionDAL in userGroupDal.ACTION_ACCESS)
             {
+                entities.Entry(actionPermissionDAL).State = EntityState.Detached;
+                actionPermissionDAL.Created = actionPermissionDAL.Modified = DateTime.Now;
                 actionPermissionDAL.Id = 0;
             }
 
             var newUserGroupEntityEntry = entities.UserGroupSet.Add(userGroupDal);
             entities.SaveChanges();
             var newUserGroup = newUserGroupEntityEntry.Entity;
-            return (int)newUserGroup.Id;
+            var result = (int)newUserGroup.Id;
+            ContentRepository.CopyAccessForGroup(group.Id, result);
+            ArticleRepository.CopyAccessForGroup(group.Id, result);
+
+            return result;
+
+
 
             // using (var scope = new QPConnectionScope())
             // {

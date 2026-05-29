@@ -1545,7 +1545,7 @@ namespace Quantumart.QP8.BLL
                 var parentId = Converter.ToInt32(FieldValues.Single(n => n.Field.Name == treeField.Name).Value, 0);
                 if (parentId != 0)
                 {
-                    ArticleRepository.CopyPermissions(parentId, Id);
+                    ArticleRepository.CopyAccess(parentId, Id);
                 }
             }
         }

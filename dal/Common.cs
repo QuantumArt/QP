@@ -1219,16 +1219,72 @@ where subq.RowNum <= {maxNumberOfRecords + 1} ";
 
         }
 
-        public static void CopyArticleAccess(DbConnection sqlConnection, int sourceId, int destinationId, int userId)
+        public static void CopyContentAccessForGroup(DbConnection connection, int sourceId, int destinationId, int userId)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.AppendFormat("DELETE FROM content_item_access WHERE content_item_id = {0};", sourceId);
-            sqlBuilder.Append("INSERT INTO content_item_access");
-            sqlBuilder.AppendFormat(" SELECT {0}, user_id, group_id, permission_level_id, GETDATE(), GETDATE(), {1} FROM content_item_access", destinationId, userId);
-            sqlBuilder.AppendFormat(" WHERE content_item_id = {0}", sourceId);
+            var dbType = GetDbType(connection);
+            var sql = $@"
+                DELETE FROM content_access WHERE group_id = {destinationId};
+                INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, created, modified, last_modified_by, propagate_to_items, hide)
+                SELECT content_id, user_id, {destinationId}, permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId}, propagate_to_items, hide FROM content_access
+                WHERE group_id = {sourceId}
+            ";
 
-            ExecuteSql(sqlConnection, sqlBuilder.ToString());
+            ExecuteSql(connection, sql);
         }
+
+        public static void CopyContentAccessForUser(DbConnection connection, int sourceId, int destinationId, int userId)
+        {
+            var dbType = GetDbType(connection);
+            var sql = $@"
+                DELETE FROM content_access WHERE user_id = {destinationId};
+                INSERT INTO content_access (content_id, user_id, group_id, permission_level_id, created, modified, last_modified_by, propagate_to_items, hide)
+                SELECT content_id, {destinationId}, group_id, permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId}, propagate_to_items, hide FROM content_access
+                WHERE user_id = {sourceId}
+            ";
+
+            ExecuteSql(connection, sql);
+        }
+
+
+        public static void CopyArticleAccess(DbConnection connection, int sourceId, int destinationId, int userId)
+        {
+            var dbType = GetDbType(connection);
+            var sql = $@"
+                DELETE FROM content_item_access WHERE content_item_id = {destinationId};
+                INSERT INTO content_item_access (content_item_id, user_id, group_id, permission_level_id, created, modified, last_modified_by)
+                SELECT {destinationId}, user_id, group_id, permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId} FROM content_item_access
+                WHERE content_item_id = {sourceId}
+            ";
+
+            ExecuteSql(connection, sql);
+        }
+
+        public static void CopyArticleAccessForGroup(DbConnection connection, int sourceId, int destinationId, int userId)
+        {
+            var dbType = GetDbType(connection);
+            var sql = $@"
+                DELETE FROM content_item_access WHERE group_id = {destinationId};
+                INSERT INTO content_item_access (content_item_id, user_id, group_id, permission_level_id, created, modified, last_modified_by)
+                SELECT content_item_id, user_id, {destinationId}, permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId} FROM content_item_access
+                WHERE group_id = {sourceId}
+            ";
+
+            ExecuteSql(connection, sql);
+        }
+
+        public static void CopyArticleAccessForUser(DbConnection connection, int sourceId, int destinationId, int userId)
+        {
+            var dbType = GetDbType(connection);
+            var sql = $@"
+                DELETE FROM content_item_access WHERE user_id = {destinationId};
+                INSERT INTO content_item_access (content_item_id, user_id, group_id, permission_level_id, created, modified, last_modified_by)
+                SELECT content_item_id, {destinationId}, group_id , permission_level_id, {Now(dbType)}, {Now(dbType)}, {userId} FROM content_item_access
+                WHERE user_id = {sourceId}
+            ";
+
+            ExecuteSql(connection, sql);
+        }
+
 
         public static void UpdateContentFieldsOrder(DbConnection connection, int currentOrder, int newOrder, int contentId)
         {

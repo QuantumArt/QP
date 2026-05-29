@@ -153,8 +153,8 @@ namespace Quantumart.QP8.DAL.Entities
             builder.HasOne(x => x.LastModifiedByUser).WithMany().HasForeignKey(x => x.LastModifiedBy);
             builder.HasMany(x => x.ACTION_ACCESS).WithOne(y => y.User).HasForeignKey(y => y.UserId);
             builder.HasMany(x => x.ACTION_ACCESS_1).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
-            builder.HasMany(x => x.ENTITY_TYPE_ACCESS).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
-            builder.HasMany(x => x.ENTITY_TYPE_ACCESS1).WithOne(y => y.User).HasForeignKey(y => y.UserId);
+            builder.HasMany(x => x.ENTITY_TYPE_ACCESS).WithOne(y => y.User).HasForeignKey(y => y.UserId);
+            builder.HasMany(x => x.ENTITY_TYPE_ACCESS1).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.VE_PLUGIN).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.VE_COMMAND).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);
             builder.HasMany(x => x.VE_STYLE).WithOne(y => y.LastModifiedByUser).HasForeignKey(y => y.LastModifiedBy);

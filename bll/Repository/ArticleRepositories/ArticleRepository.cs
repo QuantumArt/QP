@@ -1415,11 +1415,24 @@ cil.locked_by,
             return CommonSecurity.CheckLockedBy(scope.DbConnection, ids, QPContext.CurrentUserId, QPContext.IsAdmin || QPContext.CanUnlockItems);
         }
 
-        internal static void CopyPermissions(int fromId, int toId)
+        internal static void CopyAccess(int fromId, int toId)
         {
             using var scope = new QPConnectionScope();
             Common.CopyArticleAccess(scope.DbConnection, fromId, toId, QPContext.CurrentUserId);
         }
+
+        internal static void CopyAccessForGroup(int fromId, int toId)
+        {
+            using var scope = new QPConnectionScope();
+            Common.CopyArticleAccessForGroup(scope.DbConnection, fromId, toId, QPContext.CurrentUserId);
+        }
+
+        internal static void CopyAccessForUser(int fromId, int toId)
+        {
+            using var scope = new QPConnectionScope();
+            Common.CopyArticleAccessForUser(scope.DbConnection, fromId, toId, QPContext.CurrentUserId);
+        }
+
 
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {

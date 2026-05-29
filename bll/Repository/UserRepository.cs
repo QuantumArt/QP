@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository.ArticleRepositories;
+using Quantumart.QP8.BLL.Repository.ContentRepositories;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -290,53 +292,56 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var entities = QPContext.EFContext;
 
-            var userDal = entities
-                .UserSet
-                .AsNoTracking()
-                .Include(x => x.UserGroupBinds)
-                .Include(x => x.SiteAccess)
-                .Include(x => x.ContentAccess)
-                .Include(x => x.AccessRules)
-                .Include(x => x.FolderAccess)
-                .Include(x => x.ENTITY_TYPE_ACCESS)
-                .Include(x => x.ACTION_ACCESS)
+            var userDal = entities.UserSet
+                .Include(x =>x.UserGroupBinds)
                 .Include(x => x.DefaultFilter)
-                .First(x => x.Id == user.Id);
+                .Single(x => x.Id == user.Id);
 
+            entities.Entry(userDal).Collection(x => x.SiteAccess).Load();
+            entities.Entry(userDal).Collection(x => x.AccessRules).Load();
+            entities.Entry(userDal).Collection(x => x.FolderAccess).Load();
+            entities.Entry(userDal).Collection(x => x.ENTITY_TYPE_ACCESS).Load();
+            entities.Entry(userDal).Collection(x => x.ACTION_ACCESS).Load();
 
+            entities.Entry(userDal).State = EntityState.Detached;
             userDal.Id = 0;
             userDal.PASSWORD = GeneratePassword();
             userDal.Created = userDal.Modified = DateTime.Now;
             userDal.LastModifiedBy = currentUserId;
             userDal.BuiltIn = false;
             userDal.LogOn = user.LogOn;
-            foreach (var contentPermissionDAL in userDal.ContentAccess)
-            {
-                contentPermissionDAL.Id = 0;
-            }
 
             foreach (var sitePermissionDAL in userDal.SiteAccess)
             {
+                entities.Entry(sitePermissionDAL).State = EntityState.Detached;
+                sitePermissionDAL.Created = sitePermissionDAL.Modified = DateTime.Now;
                 sitePermissionDAL.Id = 0;
             }
 
             foreach (var userDalAccessRule in userDal.AccessRules)
             {
+                entities.Entry(userDalAccessRule).State = EntityState.Detached;
+                userDalAccessRule.Created = userDalAccessRule.Modified = DateTime.Now;
                 userDalAccessRule.Id = 0;
             }
 
             foreach (var folderPermissionDAL in userDal.FolderAccess)
             {
+                entities.Entry(folderPermissionDAL).State = EntityState.Detached;
+                folderPermissionDAL.Created = folderPermissionDAL.Modified = DateTime.Now;
                 folderPermissionDAL.Id = 0;
             }
 
             foreach (var entityTypePermissionDAL in userDal.ENTITY_TYPE_ACCESS)
             {
+                entities.Entry(entityTypePermissionDAL).State = EntityState.Detached;
+                entityTypePermissionDAL.Created = entityTypePermissionDAL.Modified = DateTime.Now;
                 entityTypePermissionDAL.Id = 0;
             }
 
             foreach (var actionPermissionDAL in userDal.ACTION_ACCESS)
             {
+                entities.Entry(actionPermissionDAL).State = EntityState.Detached;
                 actionPermissionDAL.Id = 0;
             }
 
@@ -354,7 +359,12 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             var newUser = newUserEntityEntry.Entity;
-            return (int)newUser.Id;
+            var result = (int)newUser.Id;
+
+            ContentRepository.CopyAccessForUser(user.Id, result);
+            ArticleRepository.CopyAccessForUser(user.Id, result);
+
+            return result;
 
         }
 
