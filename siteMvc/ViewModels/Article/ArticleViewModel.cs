@@ -73,6 +73,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public bool IsReadOnly => Data.ViewType != ArticleViewType.Normal && Data.ViewType != ArticleViewType.PreviewVersion || Data.IsAggregated || IsChangingActionsProhibited;
 
+        public bool CanChangeSchedule => Data.ActualWorkflowBinding.CurrentUserCanPublishArticles;
+
         public bool IsChangingActionsProhibited => !Data.IsArticleChangingActionsAllowed(BoundToExternal);
 
         public bool ShowLockInfo => (Data.ViewType == ArticleViewType.Normal || Data.ViewType == ArticleViewType.LockedByOtherUser) && !Data.IsAggregated && !IsChangingActionsProhibited;

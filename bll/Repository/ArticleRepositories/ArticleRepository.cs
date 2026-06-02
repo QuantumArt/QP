@@ -925,11 +925,15 @@ cil.locked_by,
             article = articleUpdater.Update();
             article.Schedule = schedule;
             article.CollaborativePublishedArticle = colaborativeArticles;
-            ScheduleRepository.UpdateSchedule(article);
-            ScheduleRepository.CopyScheduleToChildDelays(article);
-            if (article.CollaborativePublishedArticle == 0)
+
+            if (article.ActualWorkflowBinding.CurrentUserCanPublishArticles)
             {
-                ClearChildDelaysForChild(article.Id);
+                ScheduleRepository.UpdateSchedule(article);
+                ScheduleRepository.CopyScheduleToChildDelays(article);
+                if (article.CollaborativePublishedArticle == 0)
+                {
+                    ClearChildDelaysForChild(article.Id);
+                }
             }
             return article;
         }

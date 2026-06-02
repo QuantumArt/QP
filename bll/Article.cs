@@ -1760,9 +1760,11 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            Visible = Schedule.IsVisible || Delayed;
-
-            Schedule.DoCustomBinding();
+            if (ActualWorkflowBinding.CurrentUserCanPublishArticles)
+            {
+                Visible = Schedule.IsVisible || Delayed;
+                Schedule.DoCustomBinding();
+            }
         }
 
     }
