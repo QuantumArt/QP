@@ -54,7 +54,10 @@
 
   if (!Model.IsReadOnly)
   {
-    <partial name="Schedule" model="@Model" />
+    if (Model.CanChangeSchedule)
+    {
+      <partial name="Schedule" model="@Model" />
+    }
     <partial name="Workflow" model="@Model" />
   }
 
