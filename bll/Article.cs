@@ -212,7 +212,7 @@ namespace Quantumart.QP8.BLL
 
         public bool IsUpdatableWithWorkflow => ActualWorkflowBinding.CurrentUserCanUpdateArticles;
 
-        public bool IsPublishableWithWorkflow => ActualWorkflowBinding.CurrentUserCanPublishArticles && !WorkflowBinding.IsAssigned;
+        public bool IsPublishableWithWorkflow => ActualWorkflowBinding.CurrentUserCanPublishArticles;
 
         public bool IsRemovableWithWorkflow => ActualWorkflowBinding.CurrentUserCanRemoveArticles;
 

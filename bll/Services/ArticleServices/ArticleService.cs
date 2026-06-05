@@ -583,7 +583,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
                 return MessageResult.Error(ArticleStrings.CannotUpdateBecauseOfSecurity);
             }
 
-            if (!articleToArchive.IsUpdatableWithWorkflow)
+            if (!articleToArchive.IsUpdatableWithWorkflow || articleToArchive.HasMaxStatus && !articleToArchive.IsPublishableWithWorkflow)
             {
                 return MessageResult.Error(ArticleStrings.CannotRemoveBecauseOfWorkflow);
             }
@@ -659,6 +659,11 @@ namespace Quantumart.QP8.BLL.Services.ArticleServices
             if (articleToRestore.IsAggregated)
             {
                 return MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated);
+            }
+
+            if (!articleToRestore.IsUpdatableWithWorkflow || articleToRestore.HasMaxStatus && !articleToRestore.IsPublishableWithWorkflow)
+            {
+                return MessageResult.Error(ArticleStrings.CannotRemoveBecauseOfWorkflow);
             }
 
             if (!articleToRestore.IsUpdatableWithRelationSecurity)
