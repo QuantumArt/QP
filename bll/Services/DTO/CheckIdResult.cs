@@ -187,7 +187,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
                 foreach (var article in list)
                 {
-                    var canAffectLive = article.HasMaxStatus && (!allowSplitted || !article.Splitted);
+                    var canAffectLive = article.HasMaxStatus || article.Splitted && !allowSplitted;
 
                     if (article.LockedByAnyoneElse && !QPContext.CanUnlockItems)
                     {
