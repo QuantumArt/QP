@@ -10,6 +10,10 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x для .NET8
 
+### Quantumart.QP8.BLL.3.6.4
+
+* Исправлена проверка действий в ArticleService c учётом Workflow
+
 ### Quantumart.QP8.BLL.3.6.3
 
 * Библиотека AutoMapper обновлена до 16.1.1
@@ -27,6 +31,10 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 * Переход на .NET 8 (#176363)
 
 ## Quantumart.QP8.BLL 3.x
+
+### Quantumart.QP8.BLL.3.5.5
+
+* Исправлена проверка действий в ArticleService c учётом Workflow
 
 ### Quantumart.QP8.BLL.3.5.4
 
