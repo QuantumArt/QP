@@ -170,7 +170,7 @@ namespace Quantumart.QP8.BLL.Services.DTO
             return result;
         }
 
-        public static CheckIdResult<Article> CreateForUpdate(int contentId, int[] ids, bool disableSecurityCheck)
+        public static CheckIdResult<Article> CreateForUpdate(int contentId, int[] ids, bool disableSecurityCheck, bool allowSplit = false)
         {
             var result = new CheckIdResult<Article>();
             var list = EntityObjectRepository.GetList(EntityTypeCode.Article, ids).Cast<Article>();
@@ -195,7 +195,8 @@ namespace Quantumart.QP8.BLL.Services.DTO
                     {
                         result._NotAccessedIds.Add(article.Id);
                     }
-                    else if (!article.IsUpdatableWithWorkflow)
+                    else if (allowSplit && !article.IsUpdatableWithWorkflow ||
+                             !allowSplit && !article.Splitted && article.HasMaxStatus && !article.IsPublishableWithWorkflow)
                     {
                         result._BlockedByWorkflowIds.Add(article.Id);
                     }
