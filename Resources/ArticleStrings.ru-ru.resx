@@ -283,7 +283,7 @@
     <value>Невозможно удалить статью из контента, потому что Вы не являетесь участником workflow или у вас недостаточно прав доступа по worfklow</value>
   </data>
   <data name="CannotUpdateBecauseOfWorkflow" xml:space="preserve">
-    <value>Невозможно обновить статью, потому что Вы не являетесь участником workflow</value>
+    <value>Невозможно обновить статью, потому что Вы не являетесь участником workflow или у вас недостаточно прав доступа по worfklow</value>
   </data>
   <data name="CannotAddBecauseOfSecurity" xml:space="preserve">
     <value>Невозможно добавить новую статью в контент, потому что у Вас недостаточно прав доступа</value>

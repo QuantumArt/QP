@@ -231,7 +231,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot remove article from the content because you are not a member of workflow or have no enough permissions with workflow.
+        ///   Looks up a localized string similar to Cannot remove article because you are not a member of workflow or have no enough permissions with workflow.
         /// </summary>
         public static string CannotRemoveBecauseOfWorkflow {
             get {
@@ -276,7 +276,7 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot update article because you are not a member of workflow.
+        ///   Looks up a localized string similar to Cannot update article because you are not a member of workflow or have no enough permissions with workflow.
         /// </summary>
         public static string CannotUpdateBecauseOfWorkflow {
             get {
