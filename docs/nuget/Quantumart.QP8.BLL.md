@@ -10,7 +10,7 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x для .NET8
 
-### Quantumart.QP8.BLL.3.6.5
+### Quantumart.QP8.BLL.3.6.6
 
 * Исправлена проверка действий в ArticleService c учётом Workflow
 
@@ -32,7 +32,7 @@ https://nuget.qsupport.ru/packages/Quantumart.QP8.BLL
 
 ## Quantumart.QP8.BLL 3.x
 
-### Quantumart.QP8.BLL.3.5.6
+### Quantumart.QP8.BLL.3.5.7
 
 * Исправлена проверка действий в ArticleService c учётом Workflow
 
