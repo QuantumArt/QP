@@ -283,10 +283,10 @@
     <value>Cannot add new article into the content because you are not a member of workflow</value>
   </data>
   <data name="CannotRemoveBecauseOfWorkflow" xml:space="preserve">
-    <value>Cannot remove article from the content because you are not a member of workflow or have no enough permissions with workflow</value>
+    <value>Cannot remove article because you are not a member of workflow or have no enough permissions with workflow</value>
   </data>
   <data name="CannotUpdateBecauseOfWorkflow" xml:space="preserve">
-    <value>Cannot update article because you are not a member of workflow</value>
+    <value>Cannot update article because you are not a member of workflow or have no enough permissions with workflow</value>
   </data>
   <data name="CannotAddBecauseOfSecurity" xml:space="preserve">
     <value>Cannot add new article into the content because you have no enough permissions</value>

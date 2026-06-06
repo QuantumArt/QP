@@ -384,7 +384,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 }
                 var disableSecurityCheck = !content.AllowItemsPermission;
                 var ids = model.Articles.Where(n => n.ContentId == contentId).Select(n => n.Id).ToArray();
-                var checkResult = CheckIdResult<Article>.CreateForUpdate(contentId, ids, disableSecurityCheck).GetServiceResult();
+                var checkResult = CheckIdResult<Article>.CreateForUpdate(contentId, ids, disableSecurityCheck, true).GetServiceResult();
                 if (checkResult is { FailedIds: not null } && checkResult.FailedIds.Any())
                 {
                     result = BatchUpdateResult.CreateError(checkResult.Text, checkResult.FailedIds);
