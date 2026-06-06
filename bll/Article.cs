@@ -216,7 +216,7 @@ namespace Quantumart.QP8.BLL
 
         public bool IsRemovableWithWorkflow => ActualWorkflowBinding.CurrentUserCanRemoveArticles;
 
-        public bool HasMaxStatus => StatusTypeId == ActualWorkflowBinding.MaxStatus.Id;
+        public bool HasMaxStatus => ActualWorkflowBinding.IsAssigned && StatusTypeId == ActualWorkflowBinding.MaxStatus.Id;
 
         public bool IsUpdatableWithRelationSecurity
         {
